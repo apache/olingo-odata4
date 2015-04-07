@@ -22,14 +22,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
@@ -44,9 +41,10 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.domain.ODataEntity;
 import org.apache.olingo.commons.api.domain.ODataEntitySet;
 import org.apache.olingo.commons.api.domain.ODataObjectFactory;
@@ -54,11 +52,11 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.fit.v4.AbstractTestITCase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BatchClientITCase extends AbstractTestITCase {
@@ -66,8 +64,8 @@ public class BatchClientITCase extends AbstractTestITCase {
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_NOT_AVAILABLE_NAME = "ESNotAvailable";
-  private static final FullQualifiedName ES_NOT_AVAILABLE = new FullQualifiedName(SERVICE_NAMESPACE, 
-                                                                                  ES_NOT_AVAILABLE_NAME);
+  private static final FullQualifiedName ES_NOT_AVAILABLE = new FullQualifiedName(SERVICE_NAMESPACE,
+      ES_NOT_AVAILABLE_NAME);
   private static final String PROPERTY_STRING = "PropertyString";
 
   @Before
@@ -107,7 +105,7 @@ public class BatchClientITCase extends AbstractTestITCase {
         .appendEntitySetSegment(ES_NOT_AVAILABLE_NAME)
         .build();
     final ODataEntityCreateRequest<ODataEntity> createRequest = client.getCUDRequestFactory()
-                                                                      .getEntityCreateRequest(targetURI, entity);
+        .getEntityCreateRequest(targetURI, entity);
     changeset.addRequest(createRequest);
 
     final ODataBatchResponse response = payloadManager.getResponse();
@@ -277,8 +275,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(400, oDataResponse.getStatusCode());
   }
 
-  @Test
-  @Ignore
+  @Test(expected = HttpClientException.class)
   public void testInvalidHost() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
@@ -290,12 +287,10 @@ public class BatchClientITCase extends AbstractTestITCase {
     payload.addRequest(queryReq);
 
     // Fetch result
-    final ODataBatchResponse response = payload.getResponse();
-    assertEquals(400, response.getStatusCode());
+    payload.getResponse();
   }
 
-  @Test
-  @Ignore
+  @Test(expected = HttpClientException.class)
   public void testInvalidAbsoluteRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     request.setAccept(ACCEPT);
@@ -307,8 +302,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     payload.addRequest(queryReq);
 
     // Fetch result
-    final ODataBatchResponse response = payload.getResponse();
-    assertEquals(400, response.getStatusCode());
+    payload.getResponse();
   }
 
   @Test
@@ -367,111 +361,92 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
-  @Ignore("Not implemented")
-  public void changesetWithReferences() throws EdmPrimitiveTypeException {
+  @SuppressWarnings("unchecked")
+  public void changesetWithReferences() throws EdmPrimitiveTypeException, URISyntaxException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
     request.setAccept(ACCEPT);
     final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
-    ODataEntity esAllPrim = newESAllPrim((short) 23);
+    final ODataEntity entityESAllPrim = getClient().getObjectFactory().
+        newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
 
+    entityESAllPrim.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
+        "PropertyDouble",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
+    
+    entityESAllPrim.addLink(
+        of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+                                                                    .appendEntitySetSegment("ESTwoPrim")
+                                                                    .appendKeySegment(-365)
+                                                                    .build()));
+    
+    
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim");
 
     // add create request
     final ODataEntityCreateRequest<ODataEntity> createReq =
-        client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), esAllPrim);
-
+        client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), entityESAllPrim);
+    createReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(createReq);
 
     // retrieve request reference
     int createRequestRef = changeset.getLastContentId();
 
     // add update request
-    final ODataEntity customerChanges = client.getObjectFactory().newEntity(esAllPrim.getTypeName());
-    customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
+    final ODataEntity entityUpdate = client.getObjectFactory().newEntity(entityESAllPrim.getTypeName());
+    entityUpdate.addLink(client.getObjectFactory().newEntitySetNavigationLink(
         "NavPropertyETTwoPrimMany",
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("NavPropertyETTwoPrimMany").
-            appendKeySegment(new HashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
-
-              {
-                put("PropertyInt16", 4242);
-                put("PropertyString", "Test");
-              }
-            }).build()));
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767).build()));
 
     final ODataEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
-        URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
-
+        URI.create("$" + createRequestRef), UpdateType.PATCH, entityUpdate);
+    updateReq.setFormat(ODataFormat.JSON);
+    
     changeset.addRequest(updateReq);
 
     final ODataBatchResponse response = streamManager.getResponse();
-    assertEquals(200, response.getStatusCode());
-    assertEquals("OK", response.getStatusMessage());
-
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
     // verify response payload ...
-    final Iterator<ODataBatchResponseItem> iter = response.getBody();
+    final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
+    final ODataBatchResponseItem item = bodyIterator.next();
 
-    final ODataBatchResponseItem item = iter.next();
     assertTrue(item instanceof ODataChangesetResponseItem);
-
     final ODataChangesetResponseItem chgitem = (ODataChangesetResponseItem) item;
-
+    assertTrue(chgitem.hasNext());
     ODataResponse res = chgitem.next();
-    assertEquals(201, res.getStatusCode());
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityCreateResponse);
-
-    esAllPrim = ((ODataEntityCreateResponse<ODataEntity>) res).getBody();
-    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
-        URIUtils.getURI(SERVICE_URI, esAllPrim.getEditLink().toASCIIString() + "/NavPropertyETTwoPrimMany"));
-
-    assertEquals(Integer.valueOf(4242),
-        req.execute().getBody().getEntities().get(0).getProperty("PropertyInt16").getPrimitiveValue().
-            toCastValue(Integer.class));
-
+    final ODataEntityCreateResponse<ODataEntity> createResponse = ((ODataEntityCreateResponse<ODataEntity>) res);
+    
     res = chgitem.next();
-    assertEquals(204, res.getStatusCode());
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityUpdateResponse);
+    
+    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
+        new URI(createResponse.getHeader(HttpHeader.LOCATION).iterator().next() + "/NavPropertyETTwoPrimMany"));
+    req.setFormat(ODataFormat.JSON);
+    req.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntitySet> getResponse = req.execute();
+    
+    assertEquals(32767, getResponse.getBody()
+                               .getEntities()
+                               .get(0)
+                               .getProperty("PropertyInt16")
+                               .getPrimitiveValue()
+                               .toValue());
+  } 
 
-    // clean ...
-    assertEquals(204, client.getCUDRequestFactory().getDeleteRequest(
-        URIUtils.getURI(SERVICE_URI, esAllPrim.getEditLink().toASCIIString())).execute().
-        getStatusCode());
-
-    try {
-      client.getRetrieveRequestFactory().getEntityRequest(
-          URIUtils.getURI(SERVICE_URI, esAllPrim.getEditLink().toASCIIString())).
-          execute().getBody();
-      fail("Entity not deleted");
-    } catch (Exception e) {
-      // ignore
-    }
-  }
-
-  private ODataEntity newESAllPrim(short id) {
-    final ODataEntity entity = getClient().getObjectFactory().
-        newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
-
-    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyInt16",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildInt16(id)));
-
-    entity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyDouble",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
-
-    return entity;
-  }
-
-  // TODO If write support is implemented, remove ignore tag
   @Test
-  @Ignore("Not implemented")
+  @SuppressWarnings("unchecked")
   public void changesetBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
     request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
@@ -491,21 +466,20 @@ public class BatchClientITCase extends AbstractTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim");
     URI editLink = targetURI.build();
 
-    ODataEntity post = client.getObjectFactory().newEntity(
+    ODataEntity postEntity = client.getObjectFactory().newEntity(
         new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    postEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+                                                                             .appendEntitySetSegment("ESTwoPrim")
+                                                                             .appendKeySegment(32766)
+                                                                             .build()));
 
-    post.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyInt16",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 15)));
-
-    post.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
+    postEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
         "PropertyDouble",
         client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     final ODataEntityCreateRequest<ODataEntity> createRequest =
-        client.getCUDRequestFactory().getEntityCreateRequest(editLink, post);
-    createRequest.setFormat(ODataFormat.JSON_FULL_METADATA);
-    createRequest.setContentType("1");
+        client.getCUDRequestFactory().getEntityCreateRequest(editLink, postEntity);
+    createRequest.setFormat(ODataFormat.JSON);
 
     changeset.addRequest(createRequest);
 
@@ -514,40 +488,44 @@ public class BatchClientITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(0);
     editLink = targetURI.build();
 
-    ODataEntity patch = client.getObjectFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
-    patch.setEditLink(editLink);
+    ODataEntity patchEntity = client.getObjectFactory()
+              .newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    patchEntity.setEditLink(editLink);
 
-    patch.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
+    patchEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
         "PropertyDouble",
         client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     ODataEntityUpdateRequest<ODataEntity> changeReq =
-        client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
-    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
-    changeReq.setContentType("2");
+        client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
+    changeReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(changeReq);
 
     // ------------------------
     // Patch request (Upsert)
-    targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(35);
+    targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(15);
     editLink = targetURI.build();
 
-    patch = client.getObjectFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
-    patch.setEditLink(editLink);
+    patchEntity = client.getObjectFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    patchEntity.setEditLink(editLink);
 
-    patch.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
+    patchEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
         "PropertyDouble",
         client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
-
-    changeReq = client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
-    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
-    changeReq.setContentType("3");
+    
+    patchEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESTwoPrim")
+        .appendKeySegment(32766)
+        .build()));
+    
+    changeReq = client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
+    changeReq.setFormat(ODataFormat.JSON);
     changeset.addRequest(changeReq);
 
     // -----------------------------
     // - Append get request
     // -----------------------------
-    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
+    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
 
     // -----------------------------
     // - Fetch result
@@ -560,42 +538,54 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertTrue(bodyIterator.hasNext());
     ODataBatchResponseItem item = bodyIterator.next();
     assertFalse(item.isChangeset());
-
+    assertTrue(item.hasNext());
+    final ODataResponse response0 = item.next();
+    assertTrue(response0 instanceof ODataRetrieveResponse);
+    assertEquals(34, ((ODataRetrieveResponse<ODataEntity>)response0).getBody()
+                                                                    .getProperty("PropertyDecimal")
+                                                                    .getPrimitiveValue()
+                                                                    .toValue());
+    
     // Check change set
     assertTrue(bodyIterator.hasNext());
     item = bodyIterator.next();
     assertTrue(item.isChangeset());
+    
+    // Insert
+    assertTrue(item.hasNext());
+    final ODataResponse response1 = item.next();
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), response1.getStatusCode());
+    assertTrue(response1 instanceof ODataEntityCreateResponse);
+    assertEquals(3.1415, ((ODataEntityCreateResponse<ODataEntity>) response1).getBody().getProperty("PropertyDouble")
+                                                                                       .getPrimitiveValue()
+                                                                                       .toValue());
+    // Update
+    assertTrue(item.hasNext());
+    final ODataResponse response2 = item.next();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response2.getStatusCode());
+    assertTrue(response2 instanceof ODataEntityUpdateResponse);
 
-    for (int i = 0; i < 3; i++) {
-      assertTrue(item.hasNext());
-      assertTrue(item instanceof ODataChangesetResponseItem);
-      ODataChangesetResponseItem changeSetResponseItem = (ODataChangesetResponseItem) item.next();
-      assertNotNull(changeSetResponseItem);
-
-      ODataResponse chgRequest = changeSetResponseItem.next();
-      final String contentId = chgRequest.getHeader(ODataBatchConstants.CHANGESET_CONTENT_ID_NAME).iterator().next();
-
-      if (contentId == "1") {
-        // Insert
-        assertEquals(HttpStatusCode.CREATED.getStatusCode(), chgRequest.getStatusCode());
-      } else if (contentId == "2") {
-        // Update
-        assertEquals(HttpStatusCode.OK.getStatusCode(), chgRequest.getStatusCode());
-      } else if (contentId == "3") {
-        // Upsert
-        assertEquals(HttpStatusCode.CREATED.getStatusCode(), chgRequest.getStatusCode());
-      } else {
-        fail("Unkonwn content id " + contentId);
-      }
-    }
-    assertFalse(item.hasNext());
-
+    // Upsert
+    assertTrue(item.hasNext());
+    final ODataResponse response3 = item.next();
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(),response3.getStatusCode());
+    assertTrue(response3 instanceof ODataEntityUpdateResponse);
+    assertEquals(3.1415, ((ODataEntityUpdateResponse<ODataEntity>) response3).getBody().getProperty("PropertyDouble")
+                                                                                       .getPrimitiveValue()
+                                                                                       .toValue());
+    
     // Check second get request
     assertTrue(bodyIterator.hasNext());
     item = bodyIterator.next();
     assertFalse(item.isChangeset());
+    assertTrue(item.hasNext());
+    final ODataResponse response4 = item.next();
+    assertTrue(response4 instanceof ODataRetrieveResponse);
+    assertEquals(3.1415, ((ODataRetrieveResponse<ODataEntity>)response4).getBody()
+                                                                        .getProperty("PropertyDouble")
+                                                                        .getPrimitiveValue()
+                                                                        .toValue());
   }
-
   private void appendGetRequest(final BatchManager manager, final String segment, final Object key, boolean isRelative)
       throws URISyntaxException {
     final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);

@@ -44,19 +44,30 @@ import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 public class RequestValidator {
   private DataProvider provider;
   private boolean isInsert;
+  private boolean isPatch;
   private UriHelper uriHelper;
   private Edm edm;
   private String rawServiceRoot;
 
-  public RequestValidator(final DataProvider provider, final boolean isInsert, final UriHelper uriHelper,
+  public RequestValidator(final DataProvider provider, final UriHelper uriHelper,
       final Edm edm, final String rawServiceRoot) {
     this.provider = provider;
-    this.isInsert = isInsert;
+    this.isInsert = true;
     this.uriHelper = uriHelper;
     this.edm = edm;
     this.rawServiceRoot = rawServiceRoot;
   }
 
+  public RequestValidator(final DataProvider provider, final boolean isUpdate, final boolean isPatch, 
+      final UriHelper uriHelper, final Edm edm, final String rawServiceRoot) {
+    this.provider = provider;
+    this.isInsert = !isUpdate;
+    this.isPatch = isPatch;
+    this.uriHelper = uriHelper;
+    this.edm = edm;
+    this.rawServiceRoot = rawServiceRoot;
+  }
+  
   public void validate(final EdmBindingTarget edmBindingTarget, final Entity entity) 
       throws DataProviderException {
     final List<String> path = new ArrayList<String>();
@@ -84,9 +95,10 @@ public class RequestValidator {
                                                                   edmProperty, 
                                                                   target);
   
-        if ((   isInsert  && !edmProperty.isNullable() && (bindingResult != ValidatioResult.FOUND 
-                                                        && linkResult != ValidatioResult.FOUND))
-            || (!isInsert && !edmProperty.isNullable() && linkResult == ValidatioResult.EMPTY)) {
+        if ((     isInsert && !edmProperty.isNullable() 
+                           && (bindingResult != ValidatioResult.FOUND 
+                           && linkResult != ValidatioResult.FOUND))
+            || (!(isInsert && isPatch) && !edmProperty.isNullable() && linkResult == ValidatioResult.EMPTY)) {
           throw new DataProviderException("Navigation property " + navPropertyName + " must not be null",
               HttpStatusCode.BAD_REQUEST);
         }
@@ -192,8 +204,9 @@ public class RequestValidator {
         
         // Check if all "not nullable" properties are set
         if(!edmProperty.isNullable()) {
-          if((property != null && property.isNull())    // Update,insert; Property is explicit set to null
-            || (isInsert && property == null) ) {       // Insert; Property not provided
+          if((property != null && property.isNull())            // Update,insert; Property is explicit set to null
+            || (isInsert && property == null)                   // Insert; Property not provided
+            || (!isInsert && !isPatch && property == null)) {   // Insert(Put); Property not provided     
             throw new DataProviderException("Property " + propertyName + " must not be null", 
                 HttpStatusCode.BAD_REQUEST);
           }

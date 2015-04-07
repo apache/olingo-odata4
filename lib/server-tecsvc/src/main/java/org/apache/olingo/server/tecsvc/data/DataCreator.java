@@ -522,6 +522,11 @@ public class DataCreator {
     setLink(entitySet.getEntities().get(0), "NavPropertyETMediaOne", esMediaTargets.get(0));
     setLink(entitySet.getEntities().get(1), "NavPropertyETMediaOne", esMediaTargets.get(1));
     setLink(entitySet.getEntities().get(2), "NavPropertyETMediaOne", esMediaTargets.get(2));
+    
+    // NavPropertyETMediaMany
+    setLinks(entitySet.getEntities().get(0), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(2));
+    setLinks(entitySet.getEntities().get(1), "NavPropertyETMediaMany", esMediaTargets.get(2));
+    setLinks(entitySet.getEntities().get(2), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(1));
   }
 
   private void linkESTwoKeyNav(Map<String, EntityCollection> data) {

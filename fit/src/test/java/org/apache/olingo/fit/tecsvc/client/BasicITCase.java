@@ -21,6 +21,7 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -64,6 +65,7 @@ import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.domain.ODataValue;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -461,7 +463,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
           .add(of.newComplexValue("CTPrimComp")
               .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short)42)))
               .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("42"))))))));
+                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("42"))))))
+          .add(of.newComplexValue("CTPrimComp")
+              .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short)43)))
+              .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                  .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("43"))))))));
     
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                                .appendEntitySetSegment("ESKeyNav")
@@ -484,19 +490,26 @@ public class BasicITCase extends AbstractBaseTestITCase {
     
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
     assertNotNull(entityResponse.getBody().getProperty("CollPropertyComp"));
-    assertEquals(1, entityResponse.getBody().getProperty("CollPropertyComp").getCollectionValue().size());
+    assertEquals(2, entityResponse.getBody().getProperty("CollPropertyComp").getCollectionValue().size());
     
-    ODataComplexValue complexProperty = entityResponse.getBody()
-                                                      .getProperty("CollPropertyComp")
-                                                      .getCollectionValue()
-                                                      .iterator()
-                                                      .next()
-                                                      .asComplex();
+    final Iterator<ODataValue> collectionIterator = entityResponse.getBody()
+                                                                  .getProperty("CollPropertyComp")
+                                                                  .getCollectionValue()
+                                                                  .iterator();
+    
+    ODataComplexValue complexProperty = collectionIterator.next().asComplex();
     assertEquals(42, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
     assertNotNull(complexProperty.get("PropertyComp"));
     
-    final ODataComplexValue innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
+    ODataComplexValue innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
     assertEquals("42", innerComplexProperty.get("PropertyString").getPrimitiveValue().toValue());
+    
+    complexProperty = collectionIterator.next().asComplex();
+    assertEquals(43, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertNotNull(complexProperty.get("PropertyComp"));
+    
+    innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
+    assertEquals("43", innerComplexProperty.get("PropertyString").getPrimitiveValue().toValue());
   }
   
   @Test
@@ -613,6 +626,297 @@ public class BasicITCase extends AbstractBaseTestITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
+  
+  @Test
+  public void testUpsert() throws EdmPrimitiveTypeException {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+  
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
+    entity.getProperties().add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
+                                                                           .buildString("Test")));
+    
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(33).build();
+    final ODataEntityUpdateResponse<ODataEntity> updateResponse = 
+        client.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.PATCH, entity).execute();
+    
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), updateResponse.getStatusCode());
+    assertEquals("Test", updateResponse.getBody().getProperty("PropertyString").getPrimitiveValue().toValue());
+    
+    final String cookie = updateResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    final Short key = updateResponse.getBody().getProperty("PropertyInt16")
+                                              .getPrimitiveValue()
+                                              .toCastValue(Short.class);
+    
+    final ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory()
+                                                                .getEntityRequest(client.newURIBuilder()
+                                                                    .appendEntitySetSegment("ESTwoPrim")
+                                                                    .appendKeySegment(key)
+                                                                    .build());
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntity> responseEntityRequest = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), responseEntityRequest.getStatusCode());
+    assertEquals("Test", responseEntityRequest.getBody().getProperty("PropertyString").getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void testUpdatePropertyWithNull() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+  
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+                                .appendEntitySetSegment("ESAllPrim")
+                                .appendKeySegment(32767)
+                                .build();
+    
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    entity.getProperties().add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
+                                                                            .buildString(null)));
+    
+    final ODataEntityUpdateResponse<ODataEntity> updateResponse = client.getCUDRequestFactory()
+        .getEntityUpdateRequest(targetURI,  UpdateType.PATCH, entity)
+        .execute();
+    
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), updateResponse.getStatusCode());
+    final String cookie = updateResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory()
+                                                                .getEntityRequest(targetURI);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    
+    assertTrue(entityResponse.getBody().getProperty("PropertyString").hasNullValue());
+    assertEquals(34, entityResponse.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
+  }
+  
+  @Test(expected=ODataClientErrorException.class)
+  public void testUpdatePropertyWithNullNotAllowed() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+  
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+                                .appendEntitySetSegment("ESKeyNav")
+                                .appendKeySegment(32767)
+                                .build();
+    
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    entity.getProperties().add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
+                                                                            .buildString(null)));
+    
+    client.getCUDRequestFactory().getEntityUpdateRequest(targetURI,  UpdateType.PATCH, entity).execute();
+  }
+  
+  @Test
+  public void testUpdateMerge() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+  
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+                                .appendEntitySetSegment("ESKeyNav")
+                                .appendKeySegment(1)
+                                .build();
+
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    entity.addLink(of.newEntityNavigationLink("NavPropertyETKeyNavOne", targetURI));
+    entity.addLink(of.newEntitySetNavigationLink("NavPropertyETKeyNavMany", client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
+    entity.getProperties().add(of.newCollectionProperty("CollPropertyString", of.newCollectionValue("Edm.String")
+        .add(of.newPrimitiveValueBuilder().buildString("Single entry!"))));
+    entity.getProperties().add(of.newComplexProperty("PropertyCompAllPrim", 
+        of.newComplexValue("CTAllPrim")
+          .add(of.newPrimitiveProperty("PropertyString", 
+              of.newPrimitiveValueBuilder().buildString("Changed")))));
+    
+    final ODataEntityUpdateResponse<ODataEntity> response = client.getCUDRequestFactory()
+                                                .getEntityUpdateRequest(targetURI,UpdateType.PATCH, entity)
+                                                .execute();
+    
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory()
+                                                      .getEntityRequest(
+                                                          client.newURIBuilder()
+                                                          .appendEntitySetSegment("ESKeyNav")
+                                                          .appendKeySegment(1)
+                                                          .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
+                                                          .build());
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntity> entitytResponse = entityRequest.execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entitytResponse.getStatusCode());
+    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+                                             .asInlineEntity()
+                                             .getEntity()
+                                             .getProperty("PropertyInt16")
+                                             .getPrimitiveValue()
+                                             .toValue());
+    
+    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+    
+    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                             .asInlineEntitySet()
+                                             .getEntitySet()
+                                             .getEntities()
+                                             .get(0)
+                                             .getProperty("PropertyInt16")
+                                             .getPrimitiveValue()
+                                             .toValue());
+    
+    assertEquals(2, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                              .asInlineEntitySet()
+                                              .getEntitySet()
+                                              .getEntities()
+                                              .get(1)
+                                              .getProperty("PropertyInt16")
+                                              .getPrimitiveValue()
+                                              .toValue());
+    
+    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                              .asInlineEntitySet()
+                                              .getEntitySet()
+                                              .getEntities()
+                                              .get(2)
+                                              .getProperty("PropertyInt16")
+                                              .getPrimitiveValue()
+                                              .toValue());
+    
+    final Iterator<ODataValue> collectionIterator = entitytResponse.getBody()
+                                                                   .getProperty("CollPropertyString")
+                                                                   .getCollectionValue()
+                                                                   .iterator();
+    assertTrue(collectionIterator.hasNext());
+    assertEquals("Single entry!", collectionIterator.next().asPrimitive().toValue());
+    assertFalse(collectionIterator.hasNext());
+    
+    final ODataComplexValue complexValue = entitytResponse.getBody()
+                                                          .getProperty("PropertyCompAllPrim")
+                                                          .getComplexValue();
+    
+    assertEquals("Changed", complexValue.get("PropertyString").getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void testUpdateReplace() {
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataObjectFactory of = client.getObjectFactory();
+  
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+                                .appendEntitySetSegment("ESKeyNav")
+                                .appendKeySegment(1)
+                                .build();
+
+    final ODataEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    entity.addLink(of.newEntityNavigationLink("NavPropertyETKeyNavOne", targetURI));
+    entity.addLink(of.newEntitySetNavigationLink("NavPropertyETKeyNavMany", client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
+    entity.getProperties().add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
+        .buildString("Must not be null")));
+    entity.getProperties().add(of.newComplexProperty("PropertyCompTwoPrim", of.newComplexValue("CTTwoPrim")
+        .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
+                                                          .buildString("Must not be null")))
+        .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    entity.getProperties().add(of.newCollectionProperty("CollPropertyString", of.newCollectionValue("Edm.String")
+        .add(of.newPrimitiveValueBuilder().buildString("Single entry!"))));
+    entity.getProperties().add(of.newComplexProperty("PropertyCompAllPrim", 
+        of.newComplexValue("CTAllPrim")
+          .add(of.newPrimitiveProperty("PropertyString", 
+              of.newPrimitiveValueBuilder().buildString("Changed")))));
+    
+    final ODataEntityUpdateResponse<ODataEntity> response = client.getCUDRequestFactory()
+                                                .getEntityUpdateRequest(targetURI,UpdateType.REPLACE, entity)
+                                                .execute();
+    
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory()
+                                                      .getEntityRequest(
+                                                          client.newURIBuilder()
+                                                          .appendEntitySetSegment("ESKeyNav")
+                                                          .appendKeySegment(1)
+                                                          .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
+                                                          .build());
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
+    final ODataRetrieveResponse<ODataEntity> entitytResponse = entityRequest.execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entitytResponse.getStatusCode());
+    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+                                             .asInlineEntity()
+                                             .getEntity()
+                                             .getProperty("PropertyInt16")
+                                             .getPrimitiveValue()
+                                             .toValue());
+    
+    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+    
+    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                             .asInlineEntitySet()
+                                             .getEntitySet()
+                                             .getEntities()
+                                             .get(0)
+                                             .getProperty("PropertyInt16")
+                                             .getPrimitiveValue()
+                                             .toValue());
+    
+    assertEquals(2, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                              .asInlineEntitySet()
+                                              .getEntitySet()
+                                              .getEntities()
+                                              .get(1)
+                                              .getProperty("PropertyInt16")
+                                              .getPrimitiveValue()
+                                              .toValue());
+    
+    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+                                              .asInlineEntitySet()
+                                              .getEntitySet()
+                                              .getEntities()
+                                              .get(2)
+                                              .getProperty("PropertyInt16")
+                                              .getPrimitiveValue()
+                                              .toValue());
+    
+    final Iterator<ODataValue> collectionIterator = entitytResponse.getBody()
+                                                                   .getProperty("CollPropertyString")
+                                                                   .getCollectionValue()
+                                                                   .iterator();
+    assertTrue(collectionIterator.hasNext());
+    assertEquals("Single entry!", collectionIterator.next().asPrimitive().toValue());
+    assertFalse(collectionIterator.hasNext());
+    
+    final ODataComplexValue propCompAllPrim = entitytResponse.getBody()
+                                                          .getProperty("PropertyCompAllPrim")
+                                                          .getComplexValue();
+    
+    assertEquals("Changed", propCompAllPrim.get("PropertyString").getPrimitiveValue().toValue());
+    assertTrue(propCompAllPrim.get("PropertyInt16").hasNullValue());
+    assertTrue(propCompAllPrim.get("PropertyDate").hasNullValue());
+    
+   final ODataComplexValue propCompTwoPrim = entitytResponse.getBody()
+                                                            .getProperty("PropertyCompTwoPrim")
+                                                            .getComplexValue();
+   
+   assertEquals("Must not be null", propCompTwoPrim.get("PropertyString").getPrimitiveValue().toValue());
+   assertEquals(42, propCompTwoPrim.get("PropertyInt16").getPrimitiveValue().toValue());
+   
+   assertNotNull(entitytResponse.getBody().getProperty("PropertyCompNav").getComplexValue());
+   assertTrue(entitytResponse.getBody()
+                             .getProperty("PropertyCompNav")
+                             .getComplexValue()
+                             .get("PropertyInt16")
+                             .hasNullValue());
+  }
+
   
   @Override
   protected ODataClient getClient() {
