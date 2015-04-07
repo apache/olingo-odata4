@@ -117,9 +117,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-
-      // Create a shallow copy of each entity. So the expanded navigation properties can be modified for serialization,
-      // without affecting the data stored in the database.
+      
+      // Transform the entity graph to a tree. The construction is controlled by the expand tree.
+      // Apply all expand system query options to the tree.So the expanded navigation properties can be modified 
+      // for serialization,without affecting the data stored in the database.
       final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
       final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet, 
                                                                                            edmEntitySet, 
@@ -270,7 +271,19 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
-    Entity entity = readEntity(uriInfo);
+    Entity entity;
+    
+    try {
+      entity = readEntity(uriInfo);
+    } catch(ODataApplicationException e) {
+      if(e.getStatusCode() == HttpStatusCode.NOT_FOUND.getStatusCode()) {
+        // Perform upsert
+        createEntity(request, response, uriInfo, requestFormat, responseFormat);
+        return;
+      } else {
+        throw e;
+      }
+    }
     checkRequestFormat(requestFormat);
     final ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
