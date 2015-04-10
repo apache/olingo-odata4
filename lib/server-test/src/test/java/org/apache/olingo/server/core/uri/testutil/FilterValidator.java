@@ -193,22 +193,13 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator runUriEx(final String path, final String query) {
-    Parser parser = new Parser();
-    UriInfo uriInfo = null;
-
+    exception = null;
     try {
-      uriInfo = parser.parseUri(path, query, null, edm);
-    } catch (UriParserException e) {
+      new Parser().parseUri(path, query, null, edm);
+      fail("Expected exception not thrown.");
+    } catch (final UriParserException e) {
       exception = e;
-      return this;
     }
-
-    if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("Filtervalidator can only be used on resourcePaths");
-    }
-
-    setFilter((FilterOptionImpl) uriInfo.getFilterOption());
-    curExpression = filter.getExpression();
     return this;
   }
 
@@ -227,22 +218,13 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator runUriOrderByEx(final String path, final String query) {
-    Parser parser = new Parser();
-    UriInfo uriInfo = null;
-
+    exception = null;
     try {
-      uriInfo = parser.parseUri(path, query, null, edm);
+      new Parser().parseUri(path, query, null, edm);
       fail("Expected exception not thrown.");
-    } catch (UriParserException e) {
+    } catch (final UriParserException e) {
       exception = e;
-      return this;
     }
-
-    if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("Filtervalidator can only be used on resourcePaths");
-    }
-
-    setOrderBy((OrderByOptionImpl) uriInfo.getOrderByOption());
     return this;
   }
 

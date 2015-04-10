@@ -366,14 +366,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     UriResource lastResourcePart = context.contextUriInfo.getLastResourcePart();
 
     if (lastResourcePart == null) {
-      if (context.contextTypes.size() == 0) {
-        if(checkFirst && ctx.vNS == null){
+      if (context.contextTypes.empty()) {
+        if (checkFirst && ctx.vNS == null) {
           throw wrap(new UriParserSemanticException(
               "Cannot find EntitySet, Singleton, ActionImport or FunctionImport with name '" + odi + "'.",
               UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND, odi));
         }
-        throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only applied on typed "
-            + "resource parts",
+        throw wrap(new UriParserSemanticException(
+            "Resource part '" + odi + "' can only applied on typed resource parts",
             UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
       }
       source = context.contextTypes.peek();
@@ -381,8 +381,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       source = getTypeInformation(lastResourcePart);
 
       if (source.type == null) {
-        throw wrap(new UriParserSemanticException("Resource part '" + odi + "' can only be applied on typed "
-            + "resource parts.", UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
+        throw wrap(new UriParserSemanticException(
+            "Resource part '" + odi + "' can only be applied on typed resource parts.",
+            UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS, odi));
       }
     }
 
@@ -400,12 +401,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       if (!(source.type instanceof EdmStructuredType)) {
-        throw wrap(new UriParserSemanticException("Cannot parse '" + odi
-            + "'; previous path segment is not a structural type.",
+        throw wrap(new UriParserSemanticException(
+            "Cannot parse '" + odi + "'; previous path segment is not a structural type.",
             UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE, odi));
       }
 
-      if (ctx.depth() <= 2  // path evaluation for the resource path
+      if ((ctx.depth() <= 2  // path evaluation for the resource path
+          || lastResourcePart instanceof UriResourceTypedImpl
+          || lastResourcePart instanceof UriResourceNavigationPropertyImpl)
           && source.isCollection) {
         throw wrap(new UriParserSemanticException("Property '" + odi + "' is not allowed after collection.",
             UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION, odi));
@@ -416,11 +419,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       EdmElement property = structType.getProperty(odi);
       if (property == null) {
         throw wrap(new UriParserSemanticException("Property '" + odi + "' not found in type '"
-            + structType.getNamespace() + "." + structType.getName() + "'",
+            + structType.getFullQualifiedName().getFullQualifiedNameAsString() + "'",
             ctx.depth() > 2 ?  // path evaluation inside an expression or for the resource path?
                 UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE :
                 UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
-            structType.getFullQualifiedName().toString(), odi));
+            structType.getFullQualifiedName().getFullQualifiedNameAsString(), odi));
       }
 
       if (property instanceof EdmProperty) {

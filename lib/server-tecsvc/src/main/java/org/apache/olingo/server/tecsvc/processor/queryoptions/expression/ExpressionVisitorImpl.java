@@ -24,7 +24,6 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -32,7 +31,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
@@ -102,7 +101,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     case NOT:
       return unaryOperator.notOperation();
     default:
-      // Can`t happen
+      // Can't happen.
       return throwNotImplemented();
     }
   }
@@ -180,22 +179,19 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     final List<UriResource> uriResourceParts = member.getUriResourceParts();
 
     // UriResourceParts contains at least one UriResource
-    Property currentProperty = entity.getProperty(uriResourceParts.get(0).toString());
-    EdmType currentType = ((UriResourcePartTyped) uriResourceParts.get(0)).getType();
+    if (!(uriResourceParts.get(0) instanceof UriResourceProperty)) {
+      return throwNotImplemented();
+    }
 
-    EdmProperty currentEdmProperty = bindingTarget.getEntityType()
-        .getStructuralProperty(uriResourceParts.get(0).toString());
+    EdmProperty currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(0)).getProperty();
+    Property currentProperty = entity.getProperty(currentEdmProperty.getName());
 
     for (int i = 1; i < uriResourceParts.size(); i++) {
-      currentType = ((UriResourcePartTyped) uriResourceParts.get(i)).getType();
-
       if (currentProperty.isComplex()) {
+        currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
         final List<Property> complex = currentProperty.asComplex().getValue();
-
         for (final Property innerProperty : complex) {
-          if (innerProperty.getName().equals(uriResourceParts.get(i).toString())) {
-            EdmComplexType edmComplexType = (EdmComplexType) currentEdmProperty.getType();
-            currentEdmProperty = edmComplexType.getStructuralProperty(uriResourceParts.get(i).toString());
+          if (innerProperty.getName().equals(currentEdmProperty.getName())) {
             currentProperty = innerProperty;
             break;
           }
@@ -203,7 +199,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       }
     }
 
-    return new TypedOperand(currentProperty.getValue(), currentType, currentEdmProperty);
+    return new TypedOperand(currentProperty.getValue(), currentEdmProperty.getType(), currentEdmProperty);
   }
 
   @Override
