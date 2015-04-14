@@ -111,6 +111,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
     for (ODataLink link : links) {
       if (name.equals(link.getName())) {
         result = link;
+        break;
       }
     }
 

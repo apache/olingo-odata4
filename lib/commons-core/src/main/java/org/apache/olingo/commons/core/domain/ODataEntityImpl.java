@@ -111,6 +111,7 @@ public class ODataEntityImpl  extends AbstractODataPayload implements ODataEntit
     for (ODataOperation operation : operations) {
       if (title.equals(operation.getTitle())) {
         result = operation;
+        break;
       }
     }
 
@@ -136,6 +137,7 @@ public class ODataEntityImpl  extends AbstractODataPayload implements ODataEntit
       for (ODataProperty property : getProperties()) {
         if (name.equals(property.getName())) {
           result = property;
+          break;
         }
       }
     }
@@ -177,6 +179,7 @@ public class ODataEntityImpl  extends AbstractODataPayload implements ODataEntit
     for (ODataLink link : links) {
       if (name.equals(link.getName())) {
         result = link;
+        break;
       }
     }
 
