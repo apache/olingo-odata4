@@ -20,12 +20,13 @@ package org.apache.olingo.server.api.deserializer;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 
 /**
  * Result type for {@link ODataDeserializer} methods
@@ -53,7 +54,11 @@ public interface DeserializerResult {
    * Returns the deserialized action-parameters of an {@link Entity} object.
    * @return a collection {@link Parameter}
    */
-  List<Parameter> getActionParameter();
+  /**
+   * Returns the deserialized action-parameters as key value pairs.
+   * @return the action parameters
+   */
+  Map<String, Parameter> getActionParameters();
 
   /**
    * Returns a Property or collections of properties (primitive & complex)

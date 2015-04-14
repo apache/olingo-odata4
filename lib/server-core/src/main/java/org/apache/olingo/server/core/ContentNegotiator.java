@@ -49,13 +49,14 @@ public class ContentNegotiator {
     default:
       return Arrays.asList(
           ODataFormat.JSON.getContentType(),
-          ODataFormat.JSON_NO_METADATA.getContentType());
+          ODataFormat.JSON_NO_METADATA.getContentType(),
+          ODataFormat.APPLICATION_JSON.getContentType());
     }
   }
 
   private static List<ContentType> getSupportedContentTypes(
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-          throws ContentNegotiatorException {
+      throws ContentNegotiatorException {
     final List<ContentType> defaultSupportedContentTypes = getDefaultSupportedContentTypes(representationType);
     final List<ContentType> result = customContentTypeSupport == null ? defaultSupportedContentTypes :
         customContentTypeSupport.modifySupportedContentTypes(defaultSupportedContentTypes, representationType);
@@ -69,7 +70,7 @@ public class ContentNegotiator {
 
   public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-          throws ContentNegotiatorException {
+      throws ContentNegotiatorException {
     final List<ContentType> supportedContentTypes =
         getSupportedContentTypes(customContentTypeSupport, representationType);
     final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
@@ -79,15 +80,15 @@ public class ContentNegotiator {
       final String formatString = formatOption.getFormat().trim();
       final ODataFormat format =
           ODataFormat.JSON.name().equalsIgnoreCase(formatString) ? ODataFormat.JSON :
-          ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
-          ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
+              ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
+                  ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
       try {
         result = getAcceptedType(
             AcceptType.fromContentType(format == null ?
                 ContentType.create(formatOption.getFormat()) : format.getContentType()),
             supportedContentTypes);
       } catch (final IllegalArgumentException e) {
-        //Exception results in result = null for next check.
+        // Exception results in result = null for next check.
       }
       if (result == null) {
         throw new ContentNegotiatorException("Unsupported $format = " + formatString,
@@ -142,9 +143,8 @@ public class ContentNegotiator {
 
   public static void checkSupport(final ContentType contentType,
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-          throws ContentNegotiatorException {
-    for (final ContentType supportedContentType :
-      getSupportedContentTypes(customContentTypeSupport, representationType)) {
+      throws ContentNegotiatorException {
+    for (ContentType supportedContentType : getSupportedContentTypes(customContentTypeSupport, representationType)) {
       if (AcceptType.fromContentType(supportedContentType).get(0).matches(contentType)) {
         return;
       }
@@ -154,11 +154,10 @@ public class ContentNegotiator {
   }
 
   public static boolean isSupported(final ContentType contentType,
-                                  final CustomContentTypeSupport customContentTypeSupport,
-                                  final RepresentationType representationType) throws ContentNegotiatorException {
+      final CustomContentTypeSupport customContentTypeSupport,
+      final RepresentationType representationType) throws ContentNegotiatorException {
 
-    for (final ContentType supportedContentType :
-            getSupportedContentTypes(customContentTypeSupport, representationType)) {
+    for (ContentType supportedContentType : getSupportedContentTypes(customContentTypeSupport, representationType)) {
       if (AcceptType.fromContentType(supportedContentType).get(0).matches(contentType)) {
         return true;
       }

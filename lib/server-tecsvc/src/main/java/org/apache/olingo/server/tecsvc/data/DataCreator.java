@@ -57,6 +57,7 @@ public class DataCreator {
     data.put("ESTwoKeyNav", createESTwoKeyNav());
     data.put("ESCompCollComp", createESCompCollComp());
     data.put("ESServerSidePaging", createESServerSidePaging());
+    data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim());
 
     // No data available but to allow an insert operation create empty EntitySets
     data.put("ESAllNullable", new EntityCollection());
@@ -64,7 +65,6 @@ public class DataCreator {
     data.put("ESTwoBase", new EntityCollection());
     data.put("ESBaseTwoKeyNav", new EntityCollection());
     data.put("ESBaseTwoKeyTwoPrim", new EntityCollection());
-    data.put("ESTwoKeyTwoPrim", new EntityCollection());
     data.put("ESCompCollAllPrim", new EntityCollection());
     data.put("ESKeyTwoKeyComp", new EntityCollection());
     data.put("ESFourKeyAlias", new EntityCollection());
@@ -81,6 +81,19 @@ public class DataCreator {
 
   protected Map<String, EntityCollection> getData() {
     return data;
+  }
+
+  private EntityCollection createESTwoKeyTwoPrim() {
+    EntityCollection entitySet = new EntityCollection();
+    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity(32767, "Test String1"));
+    entitySet.getEntities().add(createETKeyNavEntity(-365, "Test String2"));
+    entitySet.getEntities().add(createETKeyNavEntity(-32766, "Test String3"));
+    return entitySet;
+  }
+
+  private Entity createETTwoKeyTwoPrimEntity(int propertyInt16, String propertyString) {
+    return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
+        .addProperty(createPrimitive("PropertyString", propertyString));
   }
 
   private EntityCollection createESServerSidePaging() {
@@ -136,8 +149,10 @@ public class DataCreator {
 
   @SuppressWarnings("unchecked")
   private Entity createESTwoKeyNavEntity(int propertyInt16, String propertyString) {
-    return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
-        .addProperty(createPrimitive("PropertyString", propertyString)).addProperty(
+    return new Entity()
+        .addProperty(createPrimitive("PropertyInt16", propertyInt16))
+        .addProperty(createPrimitive("PropertyString", propertyString))
+        .addProperty(
             createComplex("PropertyComp", createPrimitive("PropertyInt16", 11),
                 createComplex("PropertyComp", createPrimitive("PropertyString", "StringValue"),
                     createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
@@ -149,7 +164,8 @@ public class DataCreator {
                     createPrimitive("PropertyInt16", Short.MAX_VALUE),
                     createPrimitive("PropertyInt32", Integer.MAX_VALUE),
                     createPrimitive("PropertyInt64", Long.MAX_VALUE), createPrimitive("PropertySByte", Byte.MAX_VALUE),
-                    createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59))))).addProperty(
+                    createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59)))))
+        .addProperty(
             createComplex("PropertyCompNav", createPrimitive("PropertyInt16", 1),
                 createKeyNavAllPrimComplexValue("PropertyComp")))
         .addProperty(createComplexCollection("CollPropertyComp"))
@@ -159,7 +175,7 @@ public class DataCreator {
                 createPrimitive("PropertyString", "11")));
   }
 
-  private Property createKeyNavAllPrimComplexValue(final String name) {
+  protected Property createKeyNavAllPrimComplexValue(final String name) {
     return createComplex(name, createPrimitive("PropertyString", "First Resource - positive values"),
         createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
         createPrimitive("PropertyBoolean", true), createPrimitive("PropertyByte", 255),
@@ -335,7 +351,7 @@ public class DataCreator {
             3.2100000000000000E+03)).addProperty(createPrimitiveCollection("CollPropertyDecimal", 12, -2, 1234))
         .addProperty(
             createPrimitiveCollection("CollPropertyBinary", new byte[] { (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }, new
-                    byte[] { 0x01, 0x23, 0x45 },
+                byte[] { 0x01, 0x23, 0x45 },
                 new byte[] { 0x54, 0x67, (byte) 0x89 })).addProperty(
             createPrimitiveCollection("CollPropertyDate", getDateTime(1958, 12, 3, 0, 0, 0),
                 getDateTime(1999, 8, 5, 0, 0, 0), getDateTime(2013, 6, 25, 0, 0, 0))).addProperty(
@@ -362,7 +378,8 @@ public class DataCreator {
   }
 
   private EntityCollection createESMixPrimCollComp() {
-    @SuppressWarnings("unchecked") final Property complexCollection = createComplexCollection("CollPropertyComp",
+    @SuppressWarnings("unchecked")
+    final Property complexCollection = createComplexCollection("CollPropertyComp",
         Arrays.asList(createPrimitive("PropertyInt16", 123), createPrimitive("PropertyString", "TEST 1")),
         Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
         Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
@@ -522,7 +539,7 @@ public class DataCreator {
     setLink(entitySet.getEntities().get(0), "NavPropertyETMediaOne", esMediaTargets.get(0));
     setLink(entitySet.getEntities().get(1), "NavPropertyETMediaOne", esMediaTargets.get(1));
     setLink(entitySet.getEntities().get(2), "NavPropertyETMediaOne", esMediaTargets.get(2));
-    
+
     // NavPropertyETMediaMany
     setLinks(entitySet.getEntities().get(0), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(2));
     setLinks(entitySet.getEntities().get(1), "NavPropertyETMediaMany", esMediaTargets.get(2));
@@ -583,7 +600,7 @@ public class DataCreator {
     return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
-  private Calendar getDateTime(final int year, final int month, final int day,
+  private static Calendar getDateTime(final int year, final int month, final int day,
       final int hour, final int minute, final int second) {
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.clear();
@@ -591,7 +608,7 @@ public class DataCreator {
     return dateTime;
   }
 
-  private Calendar getTime(final int hour, final int minute, final int second) {
+  private static Calendar getTime(final int hour, final int minute, final int second) {
     Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     time.clear();
     time.set(Calendar.HOUR_OF_DAY, hour);
@@ -600,7 +617,7 @@ public class DataCreator {
     return time;
   }
 
-  private Timestamp getTimestamp(final int year, final int month, final int day,
+  private static Timestamp getTimestamp(final int year, final int month, final int day,
       final int hour, final int minute, final int second, final int nanosecond) {
     Timestamp timestamp = new Timestamp(getDateTime(year, month, day, hour, minute, second).getTimeInMillis());
     timestamp.setNanos(nanosecond);

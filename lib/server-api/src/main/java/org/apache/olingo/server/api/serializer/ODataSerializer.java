@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.server.api.serializer;
 
-import java.io.InputStream;
-
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;

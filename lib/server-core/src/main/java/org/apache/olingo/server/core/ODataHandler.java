@@ -322,7 +322,7 @@ public class ODataHandler {
               .processActionEntity(request, response, uriInfo, requestFormat, responseFormat);
         }
         break;
-          
+
       case PRIMITIVE:
         responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, customContentTypeSupport,
@@ -623,11 +623,7 @@ public class ODataHandler {
 
   private void checkContentTypeSupport(ContentType requestFormat, RepresentationType representationType)
       throws ODataHandlerException, ContentNegotiatorException {
-    if (!ContentNegotiator.isSupported(requestFormat, customContentTypeSupport, representationType)) {
-      final String contentTypeString = requestFormat.toContentTypeString();
-      throw new ODataHandlerException("ContentType " + contentTypeString + " is not supported.",
-          ODataHandlerException.MessageKeys.UNSUPPORTED_CONTENT_TYPE, contentTypeString);
-    }
+    ContentNegotiator.checkSupport(requestFormat, customContentTypeSupport, representationType);
   }
 
   private void validateODataVersion(final ODataRequest request, final ODataResponse response)

@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -45,6 +46,7 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
 import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
@@ -61,10 +63,12 @@ import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
@@ -110,8 +114,43 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void processActionPrimitive(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Not supported yet.",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    EdmAction action = checkBoundAndExtractAction(uriInfo);
+    DeserializerResult deserializerResult =
+        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+            .actionParameters(request.getBody(), action);
+
+    Property property = dataProvider.processActionPrimitive(action.getName(), deserializerResult.getActionParameters());
+    EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
+    if (property.isNull()) {
+      if (action.getReturnType().isNullable()) {
+        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      } else {
+        // Not nullable return type so we have to give back a 500
+        throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+      }
+    } else {
+      ContextURL contextURL = ContextURL.with().type(type).build();
+      PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
+
+      SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat)).primitive(type,
+          property, options);
+
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setContent(result.getContent());
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    }
+  }
+
+  private EdmAction checkBoundAndExtractAction(final UriInfo uriInfo) throws ODataApplicationException {
+    final UriInfoResource resource = uriInfo.asUriInfoResource();
+    List<UriResource> uriResourceParts = resource.getUriResourceParts();
+    if (uriResourceParts.size() > 1) {
+      throw new ODataApplicationException("Bound acctions not supported yet.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
+    UriResourceAction uriResourceAction = (UriResourceAction) uriResourceParts.get(0);
+    EdmAction action = uriResourceAction.getAction();
+    return action;
   }
 
   @Override
@@ -188,8 +227,31 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void processActionComplexCollection(ODataRequest request, ODataResponse response,
       UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Not supported yet.",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    EdmAction action = checkBoundAndExtractAction(uriInfo);
+    DeserializerResult deserializerResult =
+        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+            .actionParameters(request.getBody(), action);
+
+    Property property = dataProvider.processActionPrimitive(action.getName(), deserializerResult.getActionParameters());
+
+    if (property.isNull()) {
+      // Collection Propertys must never be null
+      throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+    } else if (property.asCollection().contains(null) && !action.getReturnType().isNullable()) {
+      // Not nullable return type but array contains a null value
+      throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+    }
+    EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
+    ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
+    ComplexSerializerOptions options = ComplexSerializerOptions.with().contextURL(contextURL).build();
+
+    SerializerResult result =
+        odata.createSerializer(ODataFormat.fromContentType(responseFormat)).complexCollection(serviceMetadata, type,
+            property, options);
+
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setContent(result.getContent());
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
   @Override

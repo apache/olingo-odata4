@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -72,8 +73,9 @@ public class DataProvider {
     return entitySet == null ? null : read(edmEntitySet.getEntityType(), entitySet, keys);
   }
 
-  public Entity read(final EdmEntityType edmEntityType, final EntityCollection entitySet, final List<UriParameter> keys)
-      throws DataProviderException {
+  public Entity
+      read(final EdmEntityType edmEntityType, final EntityCollection entitySet, final List<UriParameter> keys)
+          throws DataProviderException {
     try {
       for (final Entity entity : entitySet.getEntities()) {
         boolean found = true;
@@ -488,6 +490,16 @@ public class DataProvider {
     return FunctionData.primitiveComplexFunction(function.getName(), parameters, data);
   }
 
+  public Property processActionPrimitive(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.primitiveAction(name, actionParameters);
+  }
+
+  public Property processActionPrimitiveCollection(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.primitiveCollectionAction(name, actionParameters);
+  }
+
   public void setEdm(final Edm edm) {
     this.edm = edm;
   }
@@ -511,4 +523,5 @@ public class DataProvider {
       super(message, statusCode.getStatusCode(), Locale.ROOT);
     }
   }
+
 }

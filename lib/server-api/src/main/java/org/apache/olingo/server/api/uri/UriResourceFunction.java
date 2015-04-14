@@ -31,7 +31,9 @@ import java.util.List;
 public interface UriResourceFunction extends UriResourcePartTyped {
 
   /**
-   * @return Function used in the resource path
+   * If the resource path specifies a function import this method will deliver the unbound function for the function
+   * import.
+   * @return Function used in the resource path or function import
    */
   EdmFunction getFunction();
 

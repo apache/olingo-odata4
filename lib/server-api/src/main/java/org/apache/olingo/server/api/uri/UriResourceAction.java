@@ -28,7 +28,8 @@ import org.apache.olingo.commons.api.edm.EdmActionImport;
 public interface UriResourceAction extends UriResourcePartTyped {
 
   /**
-   * @return Action used in the resource path
+   * If the resource path specifies an action import this method will deliver the unbound action for the action import.
+   * @return Action used in the resource path or action import
    */
   EdmAction getAction();
 

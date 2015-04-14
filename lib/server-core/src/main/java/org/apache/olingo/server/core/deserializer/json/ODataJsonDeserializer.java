@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -191,9 +192,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       throws DeserializerException {
     try {
       ObjectNode tree = parseJsonTree(stream);
-      List<Parameter> parameters = new ArrayList<Parameter>();
-      consumeParameters(edmAction, tree, parameters);
-      assertJsonNodeIsEmpty(tree);
+      Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
+      if (tree != null) {
+        consumeParameters(edmAction, tree, parameters);
+        assertJsonNodeIsEmpty(tree);
+      }
       return DeserializerResultImpl.with().actionParameters(parameters).build();
 
     } catch (final JsonParseException e) {
@@ -217,18 +220,18 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return tree;
   }
 
-  private void consumeParameters(final EdmAction edmAction, ObjectNode node, List<Parameter> parameters)
+  private void consumeParameters(final EdmAction edmAction, ObjectNode node, Map<String, Parameter> parameters)
       throws DeserializerException {
     List<String> parameterNames = edmAction.getParameterNames();
     if (edmAction.isBound()) {
       // The binding parameter must not occur in the payload.
       parameterNames = parameterNames.subList(1, parameterNames.size());
     }
-    for (final String name : parameterNames) {
-      final EdmParameter edmParameter = edmAction.getParameter(name);
+    for (final String paramName : parameterNames) {
+      final EdmParameter edmParameter = edmAction.getParameter(paramName);
       Parameter parameter = new Parameter();
-      parameter.setName(name);
-      JsonNode jsonNode = node.get(name);
+      parameter.setName(paramName);
+      JsonNode jsonNode = node.get(paramName);
 
       switch (edmParameter.getType().getKind()) {
       case PRIMITIVE:
@@ -237,11 +240,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         if (jsonNode == null || jsonNode.isNull()) {
           if (!edmParameter.isNullable()) {
             throw new DeserializerException("Non-nullable parameter not present or null",
-                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, name);
+                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, paramName);
           }
           if (edmParameter.isCollection()) {
-            throw new DeserializerException("Collection must not be null for parameter: " + name,
-                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, name);
+            throw new DeserializerException("Collection must not be null for parameter: " + paramName,
+                DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, paramName);
           }
           parameter.setValue(ValueType.PRIMITIVE, null);
         } else {
@@ -250,8 +253,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
                   edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), edmParameter
                       .getScale(), true, edmParameter.getMapping(), jsonNode);
           parameter.setValue(consumePropertyNode.getValueType(), consumePropertyNode.getValue());
-          parameters.add(parameter);
-          node.remove(name);
+          parameters.put(paramName, parameter);
+          node.remove(paramName);
         }
         break;
       case COMPLEX:
@@ -260,7 +263,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             DeserializerException.MessageKeys.NOT_IMPLEMENTED);
       default:
         throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
-            + " for action parameter: " + name, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE, name);
+            + " for action parameter: " + paramName, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE,
+            paramName);
       }
     }
   }

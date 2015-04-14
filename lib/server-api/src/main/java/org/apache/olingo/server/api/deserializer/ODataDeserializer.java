@@ -56,7 +56,7 @@ public interface ODataDeserializer {
    * Validates: parameter types, no double parameters, correct json types.
    * @param stream
    * @param edmAction
-   * @return {@link DeserializerResult#getActionParameter()}
+   * @return {@link DeserializerResult#getActionParameters()}
    * @throws DeserializerException
    */
   DeserializerResult actionParameters(InputStream stream, EdmAction edmAction) throws DeserializerException;

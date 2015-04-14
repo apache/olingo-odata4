@@ -20,7 +20,9 @@ package org.apache.olingo.server.core.deserializer;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -34,7 +36,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   private EntityCollection entitySet;
   private ExpandOption expandOption;
   private Property property;
-  private List<Parameter> actionParametes;
+  private Map<String, Parameter> actionParametes;
   private List<URI> entityReferences;
   
   private DeserializerResultImpl() {}
@@ -55,7 +57,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   }
   
   @Override
-  public List<Parameter> getActionParameter() {
+  public Map<String, Parameter> getActionParameters() {
     return actionParametes;
   }
 
@@ -78,7 +80,7 @@ public class DeserializerResultImpl implements DeserializerResult {
     private EntityCollection entitySet;
     private ExpandOption expandOption;
     private Property property;
-    private List<Parameter> actionParametes;
+    private Map<String, Parameter> actionParametes;
     private List<URI> entityReferences;
     
     public DeserializerResult build() {
@@ -88,7 +90,7 @@ public class DeserializerResultImpl implements DeserializerResult {
       result.expandOption = expandOption;
       result.property = property;
       result.entityReferences = (entityReferences == null) ? new ArrayList<URI>() : entityReferences;
-      result.actionParametes = (actionParametes == null) ? new ArrayList<Parameter>() : actionParametes;
+      result.actionParametes = (actionParametes == null) ? new LinkedHashMap<String, Parameter>() : actionParametes;
       
       return result;
     }
@@ -118,7 +120,7 @@ public class DeserializerResultImpl implements DeserializerResult {
       return this;
     }
     
-    public DeserializerResultBuilder actionParameters(final List<Parameter> actionParameters) {
+    public DeserializerResultBuilder actionParameters(final Map<String, Parameter> actionParameters) {
       this.actionParametes = actionParameters;
       return this;
     }
