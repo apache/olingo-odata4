@@ -113,12 +113,14 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
   public List<EdmReferentialConstraint> getReferentialConstraints() {
     if (referentialConstraints == null) {
       final List<ReferentialConstraint> providerConstraints = navigationProperty.getReferentialConstraints();
-      referentialConstraints = new ArrayList<EdmReferentialConstraint>();
+      final List<EdmReferentialConstraint> referentialConstraintsLocal = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
         for (ReferentialConstraint constraint : providerConstraints) {
-          referentialConstraints.add(new EdmReferentialConstraintImpl(edm, constraint));
+          referentialConstraintsLocal.add(new EdmReferentialConstraintImpl(edm, constraint));
         }
       }
+      
+      referentialConstraints = referentialConstraintsLocal;
     }
     return Collections.unmodifiableList(referentialConstraints);
   }

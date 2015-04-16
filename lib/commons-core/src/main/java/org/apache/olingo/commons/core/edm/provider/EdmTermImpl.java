@@ -87,14 +87,16 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   @Override
   public List<Class<?>> getAppliesTo() {
     if (appliesTo == null) {
-      appliesTo = new ArrayList<Class<?>>();
+      final List<Class<?>> appliesToLocal = new ArrayList<Class<?>>();
       for (String element : term.getAppliesTo()) {
         try {
-          appliesTo.add(ClassUtils.getClass(EdmTerm.class.getPackage().getName() + ".Edm" + element));
+          appliesToLocal.add(ClassUtils.getClass(EdmTerm.class.getPackage().getName() + ".Edm" + element));
         } catch (ClassNotFoundException e) {
           LOG.error("Could not load Edm class for {}", element, e);
         }
       }
+      
+      appliesTo = appliesToLocal;
     }
     return appliesTo;
   }

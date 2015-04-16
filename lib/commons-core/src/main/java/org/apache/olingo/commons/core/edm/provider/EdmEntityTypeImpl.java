@@ -40,8 +40,9 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
   private boolean baseTypeChecked = false;
   private final boolean hasStream;
   protected EdmEntityType entityBaseType;
-  private final List<String> keyPredicateNames = new ArrayList<String>();
-  private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = new LinkedHashMap<String, EdmKeyPropertyRef>();
+  private final List<String> keyPredicateNames = Collections.synchronizedList(new ArrayList<String>());
+  private final Map<String, EdmKeyPropertyRef> keyPropertyRefs = 
+      Collections.synchronizedMap(new LinkedHashMap<String, EdmKeyPropertyRef>());
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
   public EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {

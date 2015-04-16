@@ -40,10 +40,6 @@ public class ODataCollectionValueImpl<OV extends ODataValue> extends AbstractODa
     super(typeName == null || typeName.startsWith("Collection(") ? typeName : "Collection(" + typeName + ")");
   }
 
-  protected ODataCollectionValueImpl getThis() {
-    return this;
-  }
-
   @Override
   public boolean isEnum() {
     return false;
@@ -91,7 +87,7 @@ public class ODataCollectionValueImpl<OV extends ODataValue> extends AbstractODa
   @SuppressWarnings("unchecked")
   public ODataCollectionValue<OV> add(final ODataValue value) {
     values.add((OV) value);
-    return getThis();
+    return this;
   }
 
   /**

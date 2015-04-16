@@ -52,7 +52,8 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       if (enumValues.size() == 1) {
         value = enumValues.get(0);
       } else {
-        final ODataCollectionValueImpl collValue = new ODataCollectionValueImpl(enumTypeName);
+        final ODataCollectionValueImpl<ODataEnumValue> collValue 
+          = new ODataCollectionValueImpl<ODataEnumValue>(enumTypeName);
         for (ODataValue enumValue : enumValues) {
           collValue.add(enumValue);
         }

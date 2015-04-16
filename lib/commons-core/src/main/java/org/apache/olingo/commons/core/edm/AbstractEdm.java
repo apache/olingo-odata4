@@ -45,38 +45,47 @@ public abstract class AbstractEdm implements Edm {
   protected List<EdmSchema> schemaList;
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
-      new HashMap<FullQualifiedName, EdmEntityContainer>();
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityContainer>());
 
-  private final Map<FullQualifiedName, EdmEnumType> enumTypes = new HashMap<FullQualifiedName, EdmEnumType>();
+  private final Map<FullQualifiedName, EdmEnumType> enumTypes = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEnumType>());
 
   private final Map<FullQualifiedName, EdmTypeDefinition> typeDefinitions =
-      new HashMap<FullQualifiedName, EdmTypeDefinition>();
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmTypeDefinition>());
 
-  private final Map<FullQualifiedName, EdmEntityType> entityTypes = new HashMap<FullQualifiedName, EdmEntityType>();
+  private final Map<FullQualifiedName, EdmEntityType> entityTypes = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityType>());
 
-  private final Map<FullQualifiedName, EdmComplexType> complexTypes = new HashMap<FullQualifiedName, EdmComplexType>();
+  private final Map<FullQualifiedName, EdmComplexType> complexTypes = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmComplexType>());
 
-  private final Map<FullQualifiedName, EdmAction> unboundActions = new HashMap<FullQualifiedName, EdmAction>();
+  private final Map<FullQualifiedName, EdmAction> unboundActions = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmAction>());
 
   private final Map<FullQualifiedName, List<EdmFunction>> unboundFunctionsByName =
-      new HashMap<FullQualifiedName, List<EdmFunction>>();
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<EdmFunction>>());
 
-  private final Map<FunctionMapKey, EdmFunction> unboundFunctionsByKey = new HashMap<FunctionMapKey, EdmFunction>();
+  private final Map<FunctionMapKey, EdmFunction> unboundFunctionsByKey = 
+      Collections.synchronizedMap(new HashMap<FunctionMapKey, EdmFunction>());
 
-  private final Map<ActionMapKey, EdmAction> boundActions = new HashMap<ActionMapKey, EdmAction>();
+  private final Map<ActionMapKey, EdmAction> boundActions = 
+      Collections.synchronizedMap(new HashMap<ActionMapKey, EdmAction>());
 
-  private final Map<FunctionMapKey, EdmFunction> boundFunctions = new HashMap<FunctionMapKey, EdmFunction>();
+  private final Map<FunctionMapKey, EdmFunction> boundFunctions = 
+      Collections.synchronizedMap(new HashMap<FunctionMapKey, EdmFunction>());
 
-  private final Map<FullQualifiedName, EdmTerm> terms = new HashMap<FullQualifiedName, EdmTerm>();
+  private final Map<FullQualifiedName, EdmTerm> terms = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmTerm>());
 
   private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
-      new HashMap<FullQualifiedName, EdmAnnotations>();
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmAnnotations>());
 
   private final Map<FullQualifiedName, List<EdmAnnotation>> annotations =
-      new HashMap<FullQualifiedName, List<EdmAnnotation>>();
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<EdmAnnotation>>());
 
-  private Map<String, String> aliasToNamespaceInfo;
-
+  private Map<String, String> aliasToNamespaceInfo = Collections.synchronizedMap(new HashMap<String, String>());
+  private boolean aliasToNamespaceInfoCreated = false;
+  
   @Override
   public List<EdmSchema> getSchemas() {
     if (schemaList == null) {
@@ -93,7 +102,7 @@ public abstract class AbstractEdm implements Edm {
 
     EdmSchema schema = schemas.get(namespace);
     if (schema == null) {
-      if (aliasToNamespaceInfo == null) {
+      if (!aliasToNamespaceInfoCreated) {
         aliasToNamespaceInfo = createAliasToNamespaceInfo();
       }
       schema = schemas.get(aliasToNamespaceInfo.get(namespace));
@@ -103,8 +112,9 @@ public abstract class AbstractEdm implements Edm {
   }
 
   private void initSchemas() {
-    aliasToNamespaceInfo = new HashMap<String, String>();
     schemas = createSchemas();
+    aliasToNamespaceInfoCreated = true;
+    
     if (schemas == null) {
       schemas = Collections.emptyMap();
     }
@@ -329,7 +339,7 @@ public abstract class AbstractEdm implements Edm {
   }
 
   private FullQualifiedName resolvePossibleAlias(final FullQualifiedName namespaceOrAliasFQN) {
-    if (aliasToNamespaceInfo == null) {
+    if (!aliasToNamespaceInfoCreated) {
       aliasToNamespaceInfo = createAliasToNamespaceInfo();
     }
     FullQualifiedName finalFQN = null;
@@ -350,9 +360,6 @@ public abstract class AbstractEdm implements Edm {
   protected abstract Map<String, String> createAliasToNamespaceInfo();
 
   public void cacheAliasNamespaceInfo(String alias, String namespace) {
-    if (aliasToNamespaceInfo == null) {
-      aliasToNamespaceInfo = new HashMap<String, String>();
-    }
     aliasToNamespaceInfo.put(alias, namespace);
   }
 

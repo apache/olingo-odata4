@@ -86,7 +86,6 @@ public class EdmSchemaImpl implements EdmSchema {
     annotationGroups = createAnnotationGroups();
     annotations = createAnnotations();
     terms = createTerms();
-
   }
 
   @Override

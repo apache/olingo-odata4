@@ -50,14 +50,17 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
   public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
     if (navigationPropertyBindings == null) {
       List<NavigationPropertyBinding> providerBindings = target.getNavigationPropertyBindings();
-      navigationPropertyBindings = new ArrayList<EdmNavigationPropertyBinding>();
+      final List<EdmNavigationPropertyBinding> navigationPropertyBindingsLocal = 
+          new ArrayList<EdmNavigationPropertyBinding>();
       if (providerBindings != null) {
         for (NavigationPropertyBinding binding : providerBindings) {
-          navigationPropertyBindings.add(new EdmNavigationPropertyBindingImpl(binding.getPath(), binding.getTarget()));
+          navigationPropertyBindingsLocal.add(new EdmNavigationPropertyBindingImpl(binding.getPath(), 
+                                                                                   binding.getTarget()));
         }
+        navigationPropertyBindings = Collections.unmodifiableList(navigationPropertyBindingsLocal);
       }
     }
-    return Collections.unmodifiableList(navigationPropertyBindings);
+    return navigationPropertyBindings;
   }
 
   @Override

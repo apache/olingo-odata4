@@ -55,13 +55,15 @@ public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     if (annotations == null) {
-      annotations = new ArrayList<EdmAnnotation>();
+      final List<EdmAnnotation> annotationsLocal = new ArrayList<EdmAnnotation>();
       if (annotatable != null) {
         for (Annotation annotation : annotatable.getAnnotations()) {
-          annotations.add(new EdmAnnotationImpl(edm, annotation));
+          annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
         }
+        
+        annotations = Collections.unmodifiableList(annotationsLocal);
       }
     }
-    return Collections.unmodifiableList(annotations);
+    return annotations;
   }
 }

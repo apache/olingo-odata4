@@ -99,13 +99,16 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
 
   private void createEdmMembers() {
-    membersMap = new LinkedHashMap<String, EdmMember>();
-    memberNames = new ArrayList<String>();
+    final LinkedHashMap<String, EdmMember> membersMapLocal = new LinkedHashMap<String, EdmMember>();
+    final List<String> memberNamesLocal = new ArrayList<String>();
     if (enumType.getMembers() != null) {
       for (final EnumMember member : enumType.getMembers()) {
-        membersMap.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
-        memberNames.add(member.getName());
+        membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
+        memberNamesLocal.add(member.getName());
       }
+      
+      membersMap = membersMapLocal;
+      memberNames = memberNamesLocal;
     }
   }
 

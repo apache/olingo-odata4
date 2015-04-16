@@ -59,10 +59,6 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
     super(typeName);
   }
 
-  protected ODataComplexValue getThis() {
-    return this;
-  }
-
   @Override
   public boolean isEnum() {
     return false;
@@ -172,7 +168,7 @@ public class ODataComplexValueImpl extends AbstractODataValue implements ODataCo
   @Override
   public ODataComplexValue add(final ODataProperty field) {
     fields.put(field.getName(), field);
-    return getThis();
+    return this;
   }
 
   /**

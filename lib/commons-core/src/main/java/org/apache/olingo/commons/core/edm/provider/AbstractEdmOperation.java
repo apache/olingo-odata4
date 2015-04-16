@@ -67,18 +67,21 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
   }
   
   private void createParameters() {
-    parameters = new LinkedHashMap<String, EdmParameter>();
-
-    final List<Parameter> providerParameters = operation.getParameters();
-    if (providerParameters != null) {
-      parameterNames = new ArrayList<String>(providerParameters.size());
-      for (Parameter parameter : providerParameters) {
-        parameters.put(parameter.getName(), new EdmParameterImpl(edm, parameter));
-        parameterNames.add(parameter.getName());
+    if(parameters == null) {
+      final Map<String, EdmParameter> parametersLocal = new LinkedHashMap<String, EdmParameter>();
+      final List<Parameter> providerParameters = operation.getParameters();
+      if (providerParameters != null) {
+        final List<String> parameterNamesLocal = new ArrayList<String>(providerParameters.size());
+        for (Parameter parameter : providerParameters) {
+          parametersLocal.put(parameter.getName(), new EdmParameterImpl(edm, parameter));
+          parameterNamesLocal.add(parameter.getName());
+        }
+        
+        parameters = parametersLocal;
+        parameterNames = parameterNamesLocal;
+      } else {
+        parameterNames = Collections.emptyList();
       }
-
-    } else {
-      parameterNames = Collections.emptyList();
     }
   }
 

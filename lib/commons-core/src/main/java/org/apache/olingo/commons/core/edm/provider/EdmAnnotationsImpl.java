@@ -81,28 +81,29 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       final String path = splitted.length > 1 ? splitted[1] : null;
 
       final EdmEntityContainer baseEntityContainer = schema.getEntityContainer();
-
-      target = baseEntityContainer == null ? null : baseEntityContainer.getActionImport(path);
-      if (target == null) {
-        target = getTarget(edm.getComplexType(base), path);
-        if (target == null) {
+      
+      EdmAnnotationsTarget localTarget = baseEntityContainer == null ? null 
+                                                                     : baseEntityContainer.getActionImport(path);
+      if (localTarget == null) {
+        localTarget = getTarget(edm.getComplexType(base), path);
+        if (localTarget == null) {
           if(baseEntityContainer != null && baseEntityContainer.getFullQualifiedName().equals(base)){
-            target = baseEntityContainer;
+            localTarget = baseEntityContainer;
           }
-          if (target == null) {
-            target = baseEntityContainer == null ? null : baseEntityContainer.getEntitySet(path);
-            if (target == null) {
-              target = getTarget(edm.getEntityType(base), path);
-              if (target == null) {
-                target = getTarget(edm.getEnumType(base), path);
-                if (target == null) {
-                  target = baseEntityContainer == null ? null : baseEntityContainer.getFunctionImport(path);
-                  if (target == null) {
-                    target = baseEntityContainer == null ? null : baseEntityContainer.getSingleton(path);
-                    if (target == null) {
-                      target = edm.getTerm(base);
-                      if (target == null) {
-                        target = edm.getTypeDefinition(base);
+          if (localTarget == null) {
+            localTarget = baseEntityContainer == null ? null : baseEntityContainer.getEntitySet(path);
+            if (localTarget == null) {
+              localTarget = getTarget(edm.getEntityType(base), path);
+              if (localTarget == null) {
+                localTarget = getTarget(edm.getEnumType(base), path);
+                if (localTarget == null) {
+                  localTarget = baseEntityContainer == null ? null : baseEntityContainer.getFunctionImport(path);
+                  if (localTarget == null) {
+                    localTarget = baseEntityContainer == null ? null : baseEntityContainer.getSingleton(path);
+                    if (localTarget == null) {
+                      localTarget = edm.getTerm(base);
+                      if (localTarget == null) {
+                        localTarget = edm.getTypeDefinition(base);
                       }
                     }
                   }
@@ -112,7 +113,9 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
           }
         }
       }
+      target = localTarget;
     }
+    
     return target;
   }
 
@@ -135,12 +138,14 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
   @Override
   public List<EdmAnnotation> getAnnotations() {
     if (annotations == null) {
-      annotations = new ArrayList<EdmAnnotation>();
+      List<EdmAnnotation> annotationsLocal = new ArrayList<EdmAnnotation>();
       for (Annotation annotation : annotationGroup.getAnnotations()) {
-        annotations.add(new EdmAnnotationImpl(edm, annotation));
+        annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
       }
+      
+      annotations = Collections.unmodifiableList(annotationsLocal);
     }
-    return Collections.unmodifiableList(annotations);
+    return annotations;
   }
 
 }

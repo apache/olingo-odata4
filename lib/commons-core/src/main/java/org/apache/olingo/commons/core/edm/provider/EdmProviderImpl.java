@@ -59,8 +59,10 @@ import org.apache.olingo.commons.core.edm.AbstractEdm;
 public class EdmProviderImpl extends AbstractEdm {
 
   private final EdmProvider provider;
-  private final Map<FullQualifiedName, List<Action>> actionsMap = new HashMap<FullQualifiedName, List<Action>>();
-  private final Map<FullQualifiedName, List<Function>> functionsMap = new HashMap<FullQualifiedName, List<Function>>();
+  private final Map<FullQualifiedName, List<Action>> actionsMap = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<Action>>());
+  private final Map<FullQualifiedName, List<Function>> functionsMap = 
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<Function>>());
 
   public EdmProviderImpl(final EdmProvider provider) {
     this.provider = provider;
