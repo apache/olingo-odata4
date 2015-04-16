@@ -927,23 +927,10 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-
-  /**
-   * Retrieve entity set or function execution sample.
-   *
-   * @param accept Accept header.
-   * @param name entity set or function name.
-   * @param format format query option.
-   * @param count inlinecount query option.
-   * @param filter filter query option.
-   * @param orderby orderby query option.
-   * @param skiptoken skiptoken query option.
-   * @return entity set or function result.
-   */
+  
   @GET
-  @Path("/{name}")
-  public Response getEntitySet(
-      @Context final UriInfo uriInfo,
+  @Path("/{name}/{type:[a-zA-Z].*}")
+  public Response getEntitySet(@Context final UriInfo uriInfo,
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @PathParam("name") final String name,
       @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
@@ -952,8 +939,9 @@ public abstract class AbstractServices {
       @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
       @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
       @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
-      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
-
+      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken,
+      @PathParam("type") final String type) {
+    
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -971,13 +959,17 @@ public abstract class AbstractServices {
         if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
           throw new UnsupportedMediaTypeException("Unsupported media type");
         }
-
+        
         // search for entitySet ...
         final String basePath = name + File.separatorChar;
 
         final StringBuilder builder = new StringBuilder();
         builder.append(basePath);
-
+        
+        if(type != null) {
+          builder.append(type).append(File.separatorChar);
+        }
+        
         if (StringUtils.isNotBlank(orderby)) {
           builder.append(Constants.get(ConstantKey.ORDERBY)).append(File.separatorChar).
               append(orderby).append(File.separatorChar);
@@ -1038,6 +1030,36 @@ public abstract class AbstractServices {
     } catch (Exception e) {
       return xml.createFaultResponse(accept, e);
     }
+  }
+  
+  
+  /**
+   * Retrieve entity set or function execution sample.
+   *
+   * @param accept Accept header.
+   * @param name entity set or function name.
+   * @param format format query option.
+   * @param count inlinecount query option.
+   * @param filter filter query option.
+   * @param orderby orderby query option.
+   * @param skiptoken skiptoken query option.
+   * @return entity set or function result.
+   */
+  @GET
+  @Path("/{name}")
+  public Response getEntitySet(
+      @Context final UriInfo uriInfo,
+      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
+      @PathParam("name") final String name,
+      @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
+      @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
+      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
+      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+      @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
+      @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
+      @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {
+
+    return getEntitySet(uriInfo, accept, name, top, skip, format, count, filter, orderby, skiptoken, null);
   }
 
   protected abstract void setInlineCount(final EntityCollection feed, final String count);

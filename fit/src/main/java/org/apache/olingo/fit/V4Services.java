@@ -395,7 +395,7 @@ public class V4Services extends AbstractServices {
             ? super.getEntityInternal(
                 uriInfo.getRequestUri().toASCIIString(), accept, "People", type, format, null, null)
             : super.getEntitySet(accept, "People", type)
-        : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken);
+        : super.getEntitySet(uriInfo, accept, "People", top, skip, format, count, filter, orderby, skiptoken, type);
   }
 
   @GET

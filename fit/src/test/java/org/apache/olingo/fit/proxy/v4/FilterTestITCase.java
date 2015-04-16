@@ -22,28 +22,43 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.olingo.ext.proxy.api.Search;
-import org.apache.olingo.ext.proxy.api.Sort;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
 
+import org.apache.olingo.ext.proxy.api.Search;
+import org.apache.olingo.ext.proxy.api.Sort;
 //CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.People;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
+import org.junit.Test;
 //CHECKSTYLE:ON (Maven checkstyle)
 
 public class FilterTestITCase extends AbstractTestITCase {
 
+  @Test
+  public void testFilterWithEntityType() {
+    final People people = container.getPeople();
+    final EmployeeCollection response = people.filter(service.getClient().getFilterFactory().lt("PersonID", 4))
+                                                                         .execute(EmployeeCollection.class);
+    
+    assertEquals(1, response.size());
+    
+    for(final Employee employee : response) {
+      assertEquals(Integer.valueOf(3), employee.getPersonID());
+    }
+  }
+  
   @Test
   public void filterOrderby() {
     final People people = container.getPeople();
 
     PersonCollection result =
             people.filter(service.getClient().getFilterFactory().lt("PersonID", 3)).execute();
-
+    
     // 1. check that result looks as expected
     assertEquals(2, result.size());
 

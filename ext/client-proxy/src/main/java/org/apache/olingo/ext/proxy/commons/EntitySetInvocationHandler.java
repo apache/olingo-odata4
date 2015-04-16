@@ -169,20 +169,19 @@ public class EntitySetInvocationHandler<
     final Class<S> oref = (Class<S>) ClassUtils.extractTypeArg(this.collItemRef,
             AbstractEntitySet.class, AbstractSingleton.class, EntityCollection.class);
 
-    final URIBuilder uriBuilder = getClient().newURIBuilder(this.uri.build().toASCIIString());
-
+    
     if (!oref.equals(ref)) {
-      uriBuilder.appendDerivedEntityTypeSegment(new FullQualifiedName(
+      uri.appendDerivedEntityTypeSegment(new FullQualifiedName(
               ClassUtils.getNamespace(ref), ClassUtils.getEntityTypeName(ref)).toString());
     }
 
     final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
 
-    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uriBuilder.build(), (Class<T>) ref);
+    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uri.build(), (Class<T>) ref);
     anns.addAll(entitySet.getRight());
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler = new EntityCollectionInvocationHandler<S>(
-            service, (List<S>) entitySet.getLeft(), collTypeRef, this.baseURI, uriBuilder);
+            service, (List<S>) entitySet.getLeft(), collTypeRef, this.baseURI, uri);
     entityCollectionHandler.setAnnotations(anns);
 
     entityCollectionHandler.nextPageURI = entitySet.getMiddle();
