@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>odata-server-core</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
@@ -78,6 +78,7 @@
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -112,6 +113,21 @@
           <!--maven antlr plugin has trouble with grammer import if the grammerfiles
             are not directly inside src/main/antlr4, hence we have to set the libDirectory -->
           <libDirectory>src/main/antlr4/org/apache/olingo/server/core/uri/antlr</libDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              org.apache.olingo.server.core
+            </Export-Package>
+            <Import-Package>
+              *
+            </Import-Package>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>
