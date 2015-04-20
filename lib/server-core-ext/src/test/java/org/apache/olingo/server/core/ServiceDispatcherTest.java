@@ -68,6 +68,7 @@ import org.mockito.Mockito;
 public class ServiceDispatcherTest {
   private static final int TOMCAT_PORT = 9900;
   private Tomcat tomcat = new Tomcat();
+  private String baseURL;
   
   public class SampleODataServlet extends HttpServlet {
     private final ServiceHandler handler; // must be stateless
@@ -100,6 +101,7 @@ public class ServiceDispatcherTest {
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, edmProvider));
     cxt.addServletMapping("/*", "trippin");
+    baseURL = "http://" + tomcat.getHost().getName() + ":"+ TOMCAT_PORT;
     tomcat.setPort(TOMCAT_PORT);
     tomcat.start();
   }

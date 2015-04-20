@@ -405,8 +405,8 @@ public class TripPinServiceTest {
     postRequest.addHeader("Prefer", "return=minimal");
 
     HttpResponse response = httpSend(postRequest, 204);
-    // the below woud be 204, if minimal was not supplied
-    assertEquals("http://localhost:9900/trippin/People('olingodude')", getHeader(response, "Location"));
+    // the below would be 204, if minimal was not supplied
+    assertEquals(baseURL +"/People('olingodude')", getHeader(response, "Location"));
     assertEquals("return=minimal", getHeader(response, "Preference-Applied"));
 
     String location = getHeader(response, "Location");
