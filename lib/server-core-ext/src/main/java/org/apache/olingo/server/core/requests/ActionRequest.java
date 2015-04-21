@@ -36,7 +36,6 @@ import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.responses.EntityResponse;
 import org.apache.olingo.server.core.responses.EntitySetResponse;
 import org.apache.olingo.server.core.responses.NoContentResponse;
-import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
 
 public class ActionRequest extends OperationRequest {

@@ -67,6 +67,8 @@ public class TripPinServiceTest {
   public static void beforeTest() throws Exception {
     tomcat.setPort(TOMCAT_PORT);
     File baseDir = new File(System.getProperty("java.io.tmpdir"));
+    tomcat.setBaseDir(baseDir.getAbsolutePath());
+    tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new TripPinServlet());
     cxt.addServletMapping("/*", "trippin");
@@ -80,7 +82,7 @@ public class TripPinServiceTest {
   }
 
   private HttpHost getLocalhost() {
-    return new HttpHost(tomcat.getHost().getName(), 9900);
+    return new HttpHost(tomcat.getHost().getName(), TOMCAT_PORT);
   }
   
   private HttpResponse httpGET(String url, int expectedStatus) throws Exception{
@@ -94,8 +96,7 @@ public class TripPinServiceTest {
     return response;
   }
 
-  private JsonNode getJSONNode(HttpResponse response) throws IOException,
-      JsonProcessingException {
+  private JsonNode getJSONNode(HttpResponse response) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     JsonNode node = objectMapper.readTree(response.getEntity().getContent());
     return node;
@@ -103,9 +104,9 @@ public class TripPinServiceTest {
   
   private String getHeader(HttpResponse response, String header) {
     Header[] headers = response.getAllHeaders();
-    for (int i = 0; i < headers.length; i++) {
-      if (headers[i].getName().equalsIgnoreCase(header)) {
-        return headers[i].getValue();
+    for (Header h : headers) {
+      if (h.getName().equalsIgnoreCase(header)) {
+        return h.getValue();
       }
     }
     return null;
