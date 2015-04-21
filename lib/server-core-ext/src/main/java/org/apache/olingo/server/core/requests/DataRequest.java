@@ -80,6 +80,7 @@ import org.apache.olingo.server.core.responses.NoContentResponse;
 import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
 import org.apache.olingo.server.core.responses.StreamResponse;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 
 public class DataRequest extends ServiceRequest {
   protected UriResourceEntitySet uriResourceEntitySet;
@@ -423,6 +424,10 @@ public class DataRequest extends ServiceRequest {
       } else if (isDELETE()) {
         // if this against the collection, user need to look at $id param for entity ref #11.4.6.2
         String id = getQueryParameter("$id");
+        if (id == null && isCollection()) {
+          throw new UriParserSemanticException("$id not specified for delete of reference", 
+              UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        }
         if (id == null) {
           handler.deleteReference(DataRequest.this, null, getETag(), new NoContentResponse(
               getServiceMetaData(), response));
@@ -440,7 +445,7 @@ public class DataRequest extends ServiceRequest {
             getServiceMetaData(), response));
       } else if (isPOST()) {
         // this needs to be against collection of references
-        handler.addReference(DataRequest.this, getETag(), getPayload(), new NoContentResponse(
+        handler.addReference(DataRequest.this, getETag(), getPayload().get(0), new NoContentResponse(
             getServiceMetaData(), response));
       }
     }

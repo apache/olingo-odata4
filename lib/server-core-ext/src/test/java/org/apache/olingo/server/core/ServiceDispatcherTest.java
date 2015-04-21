@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -409,7 +408,7 @@ public class ServiceDispatcherTest {
           public void validate() throws Exception {
             ArgumentCaptor<DataRequest> arg1 = ArgumentCaptor.forClass(DataRequest.class);
             ArgumentCaptor<String> arg2 = ArgumentCaptor.forClass(String.class);
-            ArgumentCaptor<List> arg3 = ArgumentCaptor.forClass(List.class);
+            ArgumentCaptor<URI> arg3 = ArgumentCaptor.forClass(URI.class);
             ArgumentCaptor<NoContentResponse> arg4 = ArgumentCaptor
                 .forClass(NoContentResponse.class);
             Mockito.verify(handler).addReference(arg1.capture(), arg2.capture(), arg3.capture(),

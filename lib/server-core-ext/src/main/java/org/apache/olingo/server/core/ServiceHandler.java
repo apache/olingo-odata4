@@ -194,19 +194,19 @@ public interface ServiceHandler extends Processor {
       throws ODataTranslatedException, ODataApplicationException;
 
   /**
-   * Add references (relationships) to Entity.
+   * Add references (relationships) to Entity. This is always on collection valued navigation property
    * @param request
    * @param entityETag - entity etag to match before add operation, "*" allows all.
-   * @param idReferences - references to add
+   * @param referenceId - references to add
    * @param response - return always should be 204
    * @throws ODataTranslatedException
    * @throws ODataApplicationException
    */
-  void addReference(DataRequest request, String entityETag, List<URI> idReferences, NoContentResponse response)
+  void addReference(DataRequest request, String entityETag, URI referenceId, NoContentResponse response)
       throws ODataTranslatedException, ODataApplicationException;
 
   /**
-   * Update references (relationships) in an Entity
+   * Update references (relationships) in an Entity; This is always against single valued navigation property
    * @param request
    * @param entityETag
    * @param referenceId
@@ -220,7 +220,8 @@ public interface ServiceHandler extends Processor {
   /**
    * Delete references (relationships) in an Entity
    * @param request
-   * @param deleteId
+   * @param deleteId; for collection valued navigation this will be non-null value; for single valued
+   * navigation property, this will be null.
    * @param entityETag
    * @param response - always should be 204
    * @throws ODataTranslatedException

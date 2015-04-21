@@ -344,12 +344,9 @@ public class TripPinServiceTest {
 
     //ADD
     String payload = "{\n" +
-        "  \"@odata.context\": \""+baseURL+"/$metadata#Collection($ref)\",\n" +
-        "  \"value\": [\n" +
-        "    { \"@odata.id\": \"People('russellwhyte')\" },\n" +
-        "    { \"@odata.id\": \"People('scottketchum')\" } \n" +
-        "  ]\n" +
+        "\"@odata.id\": \"/People('scottketchum')\"\n" +
         "}";
+    
     HttpPost postRequest = new HttpPost(baseURL + "/People('kristakemp')/Friends/$ref");
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     response = httpSend(postRequest, 204);
@@ -360,8 +357,7 @@ public class TripPinServiceTest {
 
     assertTrue(node.get("value").isArray());
     assertEquals("/People('genevievereeves')", ((ArrayNode)node.get("value")).get(0).get("@odata.id").asText());
-    assertEquals("/People('russellwhyte')", ((ArrayNode)node.get("value")).get(1).get("@odata.id").asText());
-    assertEquals("/People('scottketchum')", ((ArrayNode)node.get("value")).get(2).get("@odata.id").asText());
+    assertEquals("/People('scottketchum')", ((ArrayNode)node.get("value")).get(1).get("@odata.id").asText());
   }
 
 

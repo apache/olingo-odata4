@@ -434,18 +434,16 @@ public class TripPinHandler implements ServiceHandler {
   }
 
   @Override
-  public void addReference(DataRequest request, String entityETag, List<URI> references,
+  public void addReference(DataRequest request, String entityETag, URI referenceId,
       NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
 
     final EntityDetails details = process(request);
 
     try {
-      for (URI reference : references) {
-        DataRequest bindingRequest = request.parseLink(reference);
+        DataRequest bindingRequest = request.parseLink(referenceId);
         Entity linkEntity = this.dataModel.getEntity(bindingRequest.getEntitySet().getName(),
             bindingRequest.getKeyPredicates());
         this.dataModel.addNavigationLink(details.navigationProperty, details.entity, linkEntity);
-      }
     } catch (URISyntaxException e) {
       throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault(), e);
     }

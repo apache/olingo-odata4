@@ -389,7 +389,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
   }
 
   @Override
-  public void addReference(DataRequest request, String entityETag, List<URI> idReferences,
+  public void addReference(DataRequest request, String entityETag, URI referenceId,
       NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
       selectProcessor(ReferenceProcessor.class).createReference(
           request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
