@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.ServiceMetadata;
 public class NoContentResponse extends ServiceResponse {
 
   public NoContentResponse(ServiceMetadata metadata, ODataResponse response) {
-    super(metadata, response, Collections.EMPTY_MAP);
+    super(metadata, response, Collections.<String,String>emptyMap());
   }
 
   // 200

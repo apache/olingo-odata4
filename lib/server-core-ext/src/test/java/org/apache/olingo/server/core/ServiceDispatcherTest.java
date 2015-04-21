@@ -404,6 +404,7 @@ public class ServiceDispatcherTest {
     final ServiceHandler handler = Mockito.mock(ServiceHandler.class);
     helpTest(handler, "trippin/People('russelwhyte')/Friends/$ref", "POST", payload,
         new TestResult() {
+          @SuppressWarnings({ "unchecked", "rawtypes" })
           @Override
           public void validate() throws Exception {
             ArgumentCaptor<DataRequest> arg1 = ArgumentCaptor.forClass(DataRequest.class);

@@ -21,7 +21,6 @@ package org.apache.olingo.server.core.responses;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataTranslatedException;
 
-@SuppressWarnings("unused")
 public class ServiceResponseVisior {
 
   public void visit(CountResponse response) throws ODataTranslatedException,

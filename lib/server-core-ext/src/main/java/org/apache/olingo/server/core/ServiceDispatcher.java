@@ -103,6 +103,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     // http://localhost/EntitySet(key)
     if (this.idOption != null) {
       try {
+        this.request.setODataRequest(odRequest);
         this.request = this.request.parseLink(new URI(this.idOption));
       } catch (URISyntaxException e) {
         throw new ODataHandlerException("Invalid $id value",

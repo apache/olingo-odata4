@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.ServiceMetadata;
 public class StreamResponse extends ServiceResponse {
 
   public StreamResponse(ServiceMetadata metadata, ODataResponse response) {
-    super(metadata, response, Collections.EMPTY_MAP);
+    super(metadata, response, Collections.<String,String>emptyMap());
   }
 
   public void writeStreamResponse(InputStream streamContent, ContentType contentType) {

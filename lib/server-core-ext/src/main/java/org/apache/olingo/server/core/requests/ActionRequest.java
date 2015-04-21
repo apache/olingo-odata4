@@ -85,6 +85,7 @@ public class ActionRequest extends OperationRequest {
     return (isPOST());
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
       throws ContentNegotiatorException {

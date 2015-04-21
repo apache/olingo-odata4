@@ -27,7 +27,6 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.ContentNegotiator;
 import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ServiceRequest;
@@ -73,7 +72,7 @@ public abstract class OperationRequest extends ServiceRequest {
       return null;
     }
 
-    final UriHelper helper = odata.createUriHelper();
+    //final UriHelper helper = odata.createUriHelper();
 
     if (isReturnTypePrimitive() || isReturnTypeComplex()) {
       // Part 1 {10.14, 10.14} since the function return properties does not

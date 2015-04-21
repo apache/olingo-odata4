@@ -20,6 +20,7 @@
 package org.apache.olingo.server.core;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +140,7 @@ public abstract class ServiceRequest {
     return this.request.getMethod() == HttpMethod.POST;
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl,
       boolean references) throws ContentNegotiatorException {
     final ODataFormat format = ODataFormat.fromContentType(getResponseContentType());
@@ -240,13 +242,17 @@ public abstract class ServiceRequest {
     return null;
   }
 
-  public DataRequest parseLink(URI uri) throws UriParserException {
+  public DataRequest parseLink(URI uri) throws UriParserException, URISyntaxException {
+    String path = "/";
+    URI servicePath = new URI(getODataRequest().getRawBaseUri());
+    path = servicePath.getPath();
+    
     String rawPath = uri.getPath();
-    int e = rawPath.indexOf("/", 1);
+    int e = rawPath.indexOf(path);
     if (-1 == e) {
       rawPath = uri.getPath();
     } else {
-      rawPath = rawPath.substring(e);
+      rawPath = rawPath.substring(e+path.length());
     }
 
     UriInfo uriInfo = new Parser().parseUri(rawPath, uri.getQuery(), null,

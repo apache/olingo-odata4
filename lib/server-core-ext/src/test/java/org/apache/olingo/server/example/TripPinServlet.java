@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.core.MetadataParser;
 import org.apache.olingo.server.core.OData4Impl;
 
@@ -57,7 +58,7 @@ public class TripPinServlet extends HttpServlet {
       throw new IOException(e);
     }
 
-    ServiceMetadata metadata = odata.createServiceMetadata(edmProvider, Collections.EMPTY_LIST);
+    ServiceMetadata metadata = odata.createServiceMetadata(edmProvider, Collections.<EdmxReference>emptyList());
 
     ODataHttpHandler handler = odata.createHandler(metadata);
 

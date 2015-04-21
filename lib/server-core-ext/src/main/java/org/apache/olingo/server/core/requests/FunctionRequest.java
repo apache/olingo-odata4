@@ -80,6 +80,7 @@ public class FunctionRequest extends OperationRequest {
     return isGET();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
       throws ContentNegotiatorException {

@@ -242,6 +242,7 @@ public class DataRequest extends ServiceRequest {
     this.type.execute(handler, response);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
       throws ContentNegotiatorException {
