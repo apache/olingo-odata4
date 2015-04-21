@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -30,6 +32,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.provider.EdmEnumTypeImpl;
 import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +52,9 @@ public class EdmEnumTest {
 
   private final EdmEnumType instance;
   private final EdmEnumType nonFlagsInstance;
+  private final EdmEnumType int16EnumType;
+  private final EdmEnumType int32EnumType;
+  private final EdmEnumType int32FlagType;
 
   public EdmEnumTest() {
     final List<EnumMember> memberList = Arrays.asList(
@@ -64,6 +70,38 @@ public class EdmEnumTest {
     nonFlagsInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
         new EnumType().setName("name").setMembers(memberList).setFlags(false)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
+
+    int16EnumType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
+        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        .setName("MyEnum")
+        .setFlags(false)
+        .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
+        .setMembers(
+            Arrays.asList(
+                new EnumMember().setName("A")
+                    .setValue("0"),
+                new EnumMember().setName("B")
+                    .setValue("1"),
+                new EnumMember().setName("C")
+                    .setValue("2"))));
+
+    int32EnumType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
+        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        .setName("MyEnum")
+        .setFlags(false)
+        .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
+        .setMembers(Arrays
+            .asList(new EnumMember().setName("A").setValue("0"), new EnumMember().setName("B").setValue("1"),
+                new EnumMember().setName("C").setValue("2"))));
+
+    int32FlagType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
+        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        .setName("MyEnum")
+        .setFlags(true)
+        .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
+        .setMembers(Arrays
+            .asList(new EnumMember().setName("A").setValue("2"), new EnumMember().setName("B").setValue("4"),
+                new EnumMember().setName("C").setValue("8"))));
   }
 
   @Test
@@ -90,6 +128,11 @@ public class EdmEnumTest {
   @Test
   public void defaultType() throws Exception {
     assertEquals(Byte.class, instance.getDefaultType());
+    EdmEnumType instance = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
+        new FullQualifiedName("testNamespace", "testName"),
+        new EnumType()
+            .setName("MyEnum"));
+    assertEquals(Integer.class, instance.getUnderlyingType().getDefaultType());
   }
 
   @Test
@@ -149,6 +192,20 @@ public class EdmEnumTest {
     expectNullErrorInValueToString(instance);
     expectContentErrorInValueToString(instance, 3);
     expectTypeErrorInValueToString(instance, 1.0);
+
+    assertEquals("A", int32EnumType.valueToString(0, false, 0, 0, 0, false));
+    assertEquals("B", int32EnumType.valueToString(1, false, 0, 0, 0, false));
+    assertEquals("C", int32EnumType.valueToString(2, false, 0, 0, 0, false));
+
+    assertEquals("A", int16EnumType.valueToString(0, false, 0, 0, 0, false));
+    assertEquals("B", int16EnumType.valueToString(1, false, 0, 0, 0, false));
+    assertEquals("C", int16EnumType.valueToString(2, false, 0, 0, 0, false));
+
+    assertEquals("A", int32FlagType.valueToString(2, false, 0, 0, 0, false));
+    assertEquals("B", int32FlagType.valueToString(4, false, 0, 0, 0, false));
+    assertEquals("C", int32FlagType.valueToString(8, false, 0, 0, 0, false));
+    assertEquals("A,B", int32FlagType.valueToString(0x2 + 0x4, false, 0, 0, 0, false));
+    assertEquals("B,C", int32FlagType.valueToString(0x4 + 0x8, false, 0, 0, 0, false));
   }
 
   @Test
@@ -170,7 +227,75 @@ public class EdmEnumTest {
     expectContentErrorInValueOfString(instance, "1,");
     expectContentErrorInValueOfString(instance, ",1");
     expectTypeErrorInValueOfString(instance, "1");
+
+    assertEquals(Integer.valueOf(0), int32EnumType.valueOfString("A", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(1), int32EnumType.valueOfString("B", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(2), int32EnumType.valueOfString("C", null, null, null, null, null, Integer.class));
+
+    assertEquals(Integer.valueOf(0), int16EnumType.valueOfString("A", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(1), int16EnumType.valueOfString("B", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(2), int16EnumType.valueOfString("C", null, null, null, null, null, Integer.class));
+
+    assertEquals(Integer.valueOf(2), int32FlagType.valueOfString("A", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(4), int32FlagType.valueOfString("B", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(8), int32FlagType.valueOfString("C", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(0x2 + 0x4), int32FlagType.valueOfString("A,B", null, null, null, null, null,
+        Integer.class));
+    assertEquals(Integer.valueOf(0x4 + 0x8), int32FlagType.valueOfString("B,C", null, null, null, null, null,
+        Integer.class));
+    assertEquals(Integer.valueOf(0x2 + 0x4), int32FlagType.valueOfString("B,A", null, null, null, null, null,
+        Integer.class));
   }
+
+  private void expectErrorInValueToString(final EdmEnumType instance,
+      final Object value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode,
+      final String message) {
+    try {
+      instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+      fail("Expected exception not thrown");
+    } catch (final EdmPrimitiveTypeException e) {
+      assertNotNull(e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage(), containsString(message));
+    }
+  }
+
+  private void expectErrorInUnderlyingType(
+      final EdmPrimitiveTypeKind underlyingType,
+      final String message) {
+    try {
+      @SuppressWarnings("unused")
+      EdmEnumType instance = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
+          new FullQualifiedName("testNamespace", "testName"),
+          new EnumType()
+              .setName("MyEnum")
+              .setFlags(false)
+              .setUnderlyingType(underlyingType.getFullQualifiedName())
+              .setMembers(
+                  Arrays.asList(
+                      new EnumMember().setName("A")
+                          .setValue("0"))));
+      fail("Expected exception not thrown");
+    } catch (final EdmException e) {
+      assertNotNull(e.getLocalizedMessage());
+      assertThat(e.getLocalizedMessage(), containsString(message));
+    }
+  }
+
+  @Test
+  public void unsupportedUnderlyingType() throws Exception {
+    // Test some random unsupported types
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Date, "");
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Geography, "");
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Guid, "");
+  }
+
+  @Test
+  public void outOfRangeValueToString() throws Exception {
+    expectErrorInValueToString(int16EnumType, Integer.MAX_VALUE, null, null, null, null, null, "");
+  }
+
+
 
   protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {
     try {

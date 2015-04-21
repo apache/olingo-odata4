@@ -170,18 +170,26 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
   }
 
-  protected String constructEnumValue(final long value) throws EdmPrimitiveTypeException {
+  protected String constructEnumValue(final long value)
+      throws EdmPrimitiveTypeException {
     long remaining = value;
     StringBuilder result = new StringBuilder();
 
     for (final EdmMember member : getMembers()) {
-      final long memberValue = Long.parseLong(member.getValue());
-      if ((memberValue & remaining) == memberValue) {
-        if (result.length() > 0) {
-          result.append(',');
+      if (isFlags()) {
+        final long memberValue = Long.parseLong(member.getValue());
+        if ((memberValue & remaining) == memberValue) {
+          if (result.length() > 0) {
+            result.append(',');
+          }
+          result.append(member.getName());
+          remaining ^= memberValue;
         }
-        result.append(member.getName());
-        remaining ^= memberValue;
+      } else {
+        final long memberValue = Long.parseLong(member.getValue());
+        if (value == memberValue) {
+          return member.getName();
+        }
       }
     }
 
@@ -192,9 +200,9 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
 
   private Collection<EdmMember> getMembers() {
-   if(membersMap == null){
-     createEdmMembers();
-   }
+    if(membersMap == null){
+      createEdmMembers();
+    }
     return membersMap.values();
   }
 
