@@ -18,16 +18,15 @@
  */
 package org.apache.olingo.server.sample.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -157,12 +156,13 @@ public class DataProvider {
   }
 
   private Property createAddress(final String street, final String city, final String zipCode, final String country) {
-    List<Property> addressProperties = new ArrayList<Property>();
+    ComplexValue complexValue=new ComplexValue();
+    List<Property> addressProperties = complexValue.getValue();
     addressProperties.add(createPrimitive("Street", street));
     addressProperties.add(createPrimitive("City", city));
     addressProperties.add(createPrimitive("ZipCode", zipCode));
     addressProperties.add(createPrimitive("Country", country));
-    return new Property(null, "Address", ValueType.COMPLEX, addressProperties);
+    return new Property(null, "Address", ValueType.COMPLEX, complexValue);
   }
 
   private Property createPrimitive(final String name, final Object value) {
