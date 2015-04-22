@@ -173,14 +173,15 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
   }
 
-  protected String constructEnumValue(final long value)
+  private String constructEnumValue(final long value)
       throws EdmPrimitiveTypeException {
     long remaining = value;
-    StringBuilder result = new StringBuilder();
+    final StringBuilder result = new StringBuilder();
 
+    final boolean flags = isFlags();
     for (final EdmMember member : getMembers()) {
-      if (isFlags()) {
-        final long memberValue = Long.parseLong(member.getValue());
+      final long memberValue = Long.parseLong(member.getValue());
+      if (flags) {
         if ((memberValue & remaining) == memberValue) {
           if (result.length() > 0) {
             result.append(',');
@@ -189,7 +190,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
           remaining ^= memberValue;
         }
       } else {
-        final long memberValue = Long.parseLong(member.getValue());
         if (value == memberValue) {
           return member.getName();
         }
