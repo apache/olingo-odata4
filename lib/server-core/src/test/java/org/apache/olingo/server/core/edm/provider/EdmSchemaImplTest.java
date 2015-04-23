@@ -60,7 +60,7 @@ import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

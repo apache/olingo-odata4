@@ -71,7 +71,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.rest.ResolvingReferencesInterceptor;

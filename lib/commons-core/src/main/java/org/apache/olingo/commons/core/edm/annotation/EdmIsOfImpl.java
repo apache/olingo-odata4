@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpressi
 import org.apache.olingo.commons.api.edm.annotation.EdmIsOf;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.annotation.IsOf;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmIsOf {
 

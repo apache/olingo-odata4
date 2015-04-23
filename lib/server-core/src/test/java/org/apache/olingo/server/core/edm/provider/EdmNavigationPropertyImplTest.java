@@ -28,8 +28,8 @@ import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
-import org.apache.olingo.commons.core.edm.provider.EdmNavigationPropertyImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmNavigationPropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;

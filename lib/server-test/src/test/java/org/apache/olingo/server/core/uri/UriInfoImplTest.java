@@ -21,7 +21,7 @@ package org.apache.olingo.server.core.uri;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.uri.UriInfoAll;
 import org.apache.olingo.server.api.uri.UriInfoBatch;
 import org.apache.olingo.server.api.uri.UriInfoCrossjoin;

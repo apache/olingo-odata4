@@ -24,7 +24,7 @@ import java.util.Arrays;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;

@@ -29,8 +29,8 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmReturnTypeImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmReturnTypeImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.commons.EntityContainerInvocationHandler;

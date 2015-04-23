@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.core.edm.provider.EdmEnumTypeImpl;
+import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.junit.Test;
 
 public class URIEscapeTest {

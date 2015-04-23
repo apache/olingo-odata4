@@ -58,7 +58,7 @@ import org.apache.olingo.commons.api.edm.provider.ReturnType;
 import org.apache.olingo.commons.api.edm.provider.Schema;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.edm.provider.EdmComplexTypeImpl;
+import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;

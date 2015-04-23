@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import java.io.InputStream;
 import java.util.ArrayList;

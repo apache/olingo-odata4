@@ -34,7 +34,7 @@ import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.edm.provider.EdmEnumTypeImpl;
+import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.junit.Test;
 
 public class FilterFactoryTest extends AbstractTest {

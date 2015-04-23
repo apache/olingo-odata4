@@ -31,8 +31,8 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Mapping;
 import org.apache.olingo.commons.api.edm.provider.Parameter;
 import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.core.edm.provider.EdmParameterImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmPropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmParameterImpl;
+import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.junit.Test;
 
 public class EdmMappingTest {

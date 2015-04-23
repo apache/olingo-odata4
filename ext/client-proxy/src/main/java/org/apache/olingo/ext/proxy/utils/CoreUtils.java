@@ -57,7 +57,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;

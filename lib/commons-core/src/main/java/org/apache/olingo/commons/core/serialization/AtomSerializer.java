@@ -49,7 +49,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 

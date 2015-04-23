@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmRecord {
 

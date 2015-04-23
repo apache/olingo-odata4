@@ -27,8 +27,8 @@ import org.apache.olingo.commons.api.edm.provider.ComplexType;
 import org.apache.olingo.commons.api.edm.provider.EdmProvider;
 import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.core.edm.provider.EdmComplexTypeImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

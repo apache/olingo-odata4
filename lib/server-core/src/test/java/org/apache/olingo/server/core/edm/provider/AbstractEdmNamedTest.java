@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmNamed;
 import org.apache.olingo.commons.api.edm.provider.Annotatable;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.core.edm.provider.AbstractEdmNamed;
+import org.apache.olingo.commons.core.edm.AbstractEdmNamed;
 import org.junit.Test;
 
 import java.util.Arrays;

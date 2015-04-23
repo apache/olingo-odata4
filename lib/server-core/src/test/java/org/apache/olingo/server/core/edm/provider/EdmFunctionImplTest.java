@@ -24,8 +24,8 @@ import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.Function;
 import org.apache.olingo.commons.api.edm.provider.ReturnType;
-import org.apache.olingo.commons.core.edm.provider.EdmFunctionImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmFunctionImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 

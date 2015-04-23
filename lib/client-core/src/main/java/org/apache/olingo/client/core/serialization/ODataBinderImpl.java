@@ -92,7 +92,7 @@ import org.apache.olingo.commons.core.domain.ODataDeletedEntityImpl;
 import org.apache.olingo.commons.core.domain.ODataDeltaLinkImpl;
 import org.apache.olingo.commons.core.domain.ODataPropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.provider.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.serialization.ContextURLParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

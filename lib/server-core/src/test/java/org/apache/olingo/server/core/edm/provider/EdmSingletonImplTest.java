@@ -37,9 +37,9 @@ import org.apache.olingo.commons.api.edm.provider.EntityType;
 import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.core.edm.provider.EdmEntityContainerImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmProviderImpl;
-import org.apache.olingo.commons.core.edm.provider.EdmSingletonImpl;
+import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
+import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.EdmSingletonImpl;
 import org.junit.Test;
 
 public class EdmSingletonImplTest {
