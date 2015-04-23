@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.TimeZone;
 
-import org.apache.olingo.client.core.edm.xml.EnumTypeImpl;
+import org.apache.olingo.client.core.edm.xml.ClientEnumType;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -51,7 +51,7 @@ public class URIEscapeTest {
   @Test
   public void _enum() throws UnsupportedEncodingException {
     final EdmEnumType pattern =
-        new EdmEnumTypeImpl(null, new FullQualifiedName("Sales", "Pattern"), new EnumTypeImpl());
+        new EdmEnumTypeImpl(null, new FullQualifiedName("Sales", "Pattern"), new ClientEnumType());
 
     assertEquals("Sales.Pattern'Yellow'", URIUtils.escape( pattern.toUriLiteral("Yellow")));
   }

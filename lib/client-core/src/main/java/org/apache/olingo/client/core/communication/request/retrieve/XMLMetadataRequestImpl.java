@@ -31,8 +31,8 @@ import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.core.edm.xml.AnnotationsImpl;
-import org.apache.olingo.client.core.edm.xml.SchemaImpl;
+import org.apache.olingo.client.core.edm.xml.ClientAnnotations;
+import org.apache.olingo.client.core.edm.xml.ClientSchema;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 import org.apache.olingo.commons.api.edm.provider.Annotations;
 import org.apache.olingo.commons.api.edm.provider.Schema;
@@ -68,7 +68,7 @@ public class XMLMetadataRequestImpl
         if (includedSchema != null) {
           response.getBody().getSchemas().add(includedSchema);
           if (StringUtils.isNotBlank(include.getAlias())) {
-            ((SchemaImpl) includedSchema).setAlias(include.getAlias());
+            ((ClientSchema) includedSchema).setAlias(include.getAlias());
           }
         }
       }
@@ -77,7 +77,7 @@ public class XMLMetadataRequestImpl
       for (IncludeAnnotations include : reference.getIncludeAnnotations()) {
         for (Schema schema : includeMetadata.getSchemas()) {
           // create empty schema that will be fed with edm:Annotations that match the criteria in IncludeAnnotations
-          final SchemaImpl forInclusion = new SchemaImpl();
+          final ClientSchema forInclusion = new ClientSchema();
           forInclusion.setNamespace(schema.getNamespace());
           forInclusion.setAlias(schema.getAlias());
 
@@ -91,7 +91,7 @@ public class XMLMetadataRequestImpl
                 && (StringUtils.isBlank(include.getQualifier())
                 || include.getQualifier().equals(annotationGroup.getQualifier()))) {
 
-              final AnnotationsImpl toBeIncluded = new AnnotationsImpl();
+              final ClientAnnotations toBeIncluded = new ClientAnnotations();
               toBeIncluded.setTarget(annotationGroup.getTarget());
               toBeIncluded.setQualifier(annotationGroup.getQualifier());
               // only import annotations with terms matching the given TermNamespace

@@ -29,8 +29,8 @@ import java.util.List;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.edm.xml.annotation.ConstantAnnotationExpressionImpl;
-import org.apache.olingo.client.core.edm.xml.annotation.PathImpl;
+import org.apache.olingo.client.core.edm.xml.annotation.ClientConstantAnnotationExpression;
+import org.apache.olingo.client.core.edm.xml.annotation.ClientPath;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -297,16 +297,16 @@ public class MetadataTest extends AbstractTest {
     assertEquals(Constants.CANONICAL_FUNCTION_CONCAT, apply.getFunction());
     assertEquals(3, apply.getParameters().size());
 
-    final PathImpl firstArg = new PathImpl();
+    final ClientPath firstArg = new ClientPath();
     firstArg.setValue("Name");
     assertEquals(firstArg, apply.getParameters().get(0));
 
-    final ConstantAnnotationExpression secondArg = new ConstantAnnotationExpressionImpl();
+    final ConstantAnnotationExpression secondArg = new ClientConstantAnnotationExpression();
     secondArg.setType(ConstantAnnotationExpression.Type.String);
     secondArg.setValue(" in ");
     assertEquals(secondArg, apply.getParameters().get(1));
 
-    final PathImpl thirdArg = new PathImpl();
+    final ClientPath thirdArg = new ClientPath();
     thirdArg.setValue("Address/CountryName");
     assertEquals(thirdArg, apply.getParameters().get(2));
 
