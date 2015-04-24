@@ -77,12 +77,25 @@ public class BatchRequest extends ServiceRequest {
 
     for (BatchRequestPart part : parts) {
       if (part.isChangeSet()) {
-        String txnId = handler.startTransaction();
-        partResponse = processChangeSet(part, handler);
-        if (partResponse.getResponses().get(0).getStatusCode() > 400) {
-          handler.rollback(txnId);
+        String txnId = null;
+        try {
+          txnId = handler.startTransaction();
+          partResponse = processChangeSet(part, handler);
+          if (partResponse.getResponses().get(0).getStatusCode() > 400) {
+            handler.rollback(txnId);
+          }
+          handler.commit(txnId);
+        } catch(ODataTranslatedException e) {
+          if (txnId != null) {
+            handler.rollback(txnId);
+          }
+          throw e;
+        } catch (ODataApplicationException e) {
+          if (txnId != null) {
+            handler.rollback(txnId);
+          }
+          throw e;
         }
-        handler.commit(txnId);
       } else {
         // single request, a static request
         ODataRequest partRequest = part.getRequests().get(0);
