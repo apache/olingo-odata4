@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientNavigationPropertyBinding.NavigationPropertyBindingDeserializer.class)
-public class ClientNavigationPropertyBinding extends NavigationPropertyBinding {
+class ClientNavigationPropertyBinding extends NavigationPropertyBinding {
 
   private static final long serialVersionUID = -7056978592235483660L;
 

@@ -16,13 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.apache.olingo.client.core.edm.xml.AbstractClientEdmDeserializer;
-import org.apache.olingo.client.core.edm.xml.ClientAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.Null;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -30,7 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientNull.NullDeserializer.class)
-public class ClientNull extends AbstractClientAnnotatableDynamicAnnotationExpression implements Null {
+class ClientNull extends AbstractClientAnnotatableDynamicAnnotationExpression implements Null {
 
   private static final long serialVersionUID = -3148516847180393142L;
 

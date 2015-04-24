@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.edm.provider.Schema;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientDataServices.DataServicesDeserializer.class)
-public class ClientDataServices extends AbstractEdmItem implements DataServices {
+class ClientDataServices extends AbstractEdmItem implements DataServices {
 
   private static final long serialVersionUID = 4200317286476885204L;
 

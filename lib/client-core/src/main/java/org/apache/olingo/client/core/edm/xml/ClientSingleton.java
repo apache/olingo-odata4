@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientSingleton.SingletonDeserializer.class)
-public class ClientSingleton extends Singleton {
+class ClientSingleton extends Singleton {
 
   private static final long serialVersionUID = 1656749615107151921L;
 

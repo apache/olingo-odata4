@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientReferentialConstraint.ReferentialConstraintDeserializer.class)
-public class ClientReferentialConstraint extends ReferentialConstraint {
+class ClientReferentialConstraint extends ReferentialConstraint {
 
   private static final long serialVersionUID = -5822115908069878139L;
 

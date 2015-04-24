@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientEnumType.EnumTypeDeserializer.class)
-public class ClientEnumType extends EnumType {
+class ClientEnumType extends EnumType {
 
   private static final long serialVersionUID = 9191189755592743333L;
 

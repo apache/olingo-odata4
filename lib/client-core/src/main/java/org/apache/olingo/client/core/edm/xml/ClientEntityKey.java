@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientEntityKey.EntityKeyDeserializer.class)
-public class ClientEntityKey extends AbstractEdmItem {
+class ClientEntityKey extends AbstractEdmItem {
 
   private static final long serialVersionUID = 520227585458843347L;
 

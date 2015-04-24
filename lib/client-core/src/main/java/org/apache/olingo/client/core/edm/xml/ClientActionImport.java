@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.ActionImport;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientActionImport.ActionImportDeserializer.class)
-public class ClientActionImport extends ActionImport {
+class ClientActionImport extends ActionImport {
 
   private static final long serialVersionUID = 2971468441177647068L;
 

@@ -16,24 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.Not;
+import org.apache.olingo.commons.api.edm.provider.annotation.PropertyPath;
 
-public class ClientNot extends AbstractClientDynamicAnnotationExpression implements Not {
+class ClientPropertyPath extends AbstractClientElementOrAttributeExpression implements PropertyPath {
 
-  private static final long serialVersionUID = -437788415922966812L;
-
-  private DynamicAnnotationExpression expression;
-
-  @Override
-  public DynamicAnnotationExpression getExpression() {
-    return expression;
-  }
-
-  public void setExpression(final DynamicAnnotationExpression expression) {
-    this.expression = expression;
-  }
+  private static final long serialVersionUID = -9133862135834738470L;
 
 }

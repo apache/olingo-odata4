@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientParameter.ParameterDeserializer.class)
-public class ClientParameter extends Parameter {
+class ClientParameter extends Parameter {
 
   private static final long serialVersionUID = 7119478691341167904L;
 

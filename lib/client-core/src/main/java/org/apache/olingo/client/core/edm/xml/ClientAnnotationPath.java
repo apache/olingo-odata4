@@ -16,23 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationPath;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+class ClientAnnotationPath extends AbstractClientElementOrAttributeExpression implements AnnotationPath {
 
-abstract class AbstractClientAnnotatableDynamicAnnotationExpression
-        extends AbstractClientDynamicAnnotationExpression implements Annotatable {
+  private static final long serialVersionUID = 5360735207353494466L;
 
-  private static final long serialVersionUID = -450668773857358139L;
-
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
-
-  @Override
-  public List<Annotation> getAnnotations() {
-    return annotations;
-  }
 }

@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.PropertyRef;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientPropertyRef.PropertyRefDeserializer.class)
-public class ClientPropertyRef extends PropertyRef {
+class ClientPropertyRef extends PropertyRef {
 
   private static final long serialVersionUID = 1504095609268590326L;
 

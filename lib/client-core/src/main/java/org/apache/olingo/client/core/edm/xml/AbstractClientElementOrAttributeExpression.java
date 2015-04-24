@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
 /**
  * Groups dynamic expressions that may be provided using element notation or attribute notation.
  */
-abstract class AbstractClientElementOrAttributeExpression extends AbstractClientDynamicAnnotationExpression {
+class AbstractClientElementOrAttributeExpression extends AbstractClientDynamicAnnotationExpression {
 
   private static final long serialVersionUID = 1588336268773032932L;
 

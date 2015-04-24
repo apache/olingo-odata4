@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.annotation.Path;
+import org.apache.olingo.commons.api.edm.provider.annotation.NavigationPropertyPath;
 
-public class ClientPath extends AbstractClientElementOrAttributeExpression implements Path {
+class ClientNavigationPropertyPath extends AbstractClientElementOrAttributeExpression
+    implements NavigationPropertyPath {
 
-  private static final long serialVersionUID = 6020168217561402545L;
+  private static final long serialVersionUID = 879840502446301312L;
 
 }

@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientAnnotations.AnnotationsDeserializer.class)
-public class ClientAnnotations extends Annotations {
+class ClientAnnotations extends Annotations {
 
   private static final long serialVersionUID = -5961207981571644200L;
 

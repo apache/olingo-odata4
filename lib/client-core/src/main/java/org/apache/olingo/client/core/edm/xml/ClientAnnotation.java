@@ -23,13 +23,12 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.apache.olingo.client.core.edm.xml.annotation.AbstractClientDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.Annotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientAnnotation.AnnotationDeserializer.class)
-public class ClientAnnotation extends Annotation {
+class ClientAnnotation extends Annotation {
 
   private static final long serialVersionUID = 5464714417411058033L;
 

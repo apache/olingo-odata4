@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientComplexType.ComplexTypeDeserializer.class)
-public class ClientComplexType extends ComplexType {
+class ClientComplexType extends ComplexType {
 
   private static final long serialVersionUID = 4076944306925840115L;
 

@@ -16,47 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
 
-public class ClientTwoParamsOpDynamicAnnotationExpression
-        extends AbstractClientDynamicAnnotationExpression implements TwoParamsOpDynamicAnnotationExpression {
+class ClientConstantAnnotationExpression
+        extends AbstractClientAnnotationExpression implements ConstantAnnotationExpression {
 
-  private static final long serialVersionUID = 6241842185452451946L;
+  private static final long serialVersionUID = 5618680702707972904L;
 
   private Type type;
 
-  private DynamicAnnotationExpression left;
-
-  private DynamicAnnotationExpression right;
+  private String value;
 
   @Override
   public Type getType() {
     return type;
   }
 
+  @Override
   public void setType(final Type type) {
     this.type = type;
   }
 
   @Override
-  public DynamicAnnotationExpression getLeftExpression() {
-    return left;
-  }
-
-  public void setLeftExpression(final DynamicAnnotationExpression left) {
-    this.left = left;
+  public String getValue() {
+    return value;
   }
 
   @Override
-  public DynamicAnnotationExpression getRightExpression() {
-    return right;
-  }
-
-  public void setRightExpression(final DynamicAnnotationExpression right) {
-    this.right = right;
+  public void setValue(final String value) {
+    this.value = value;
   }
 
 }

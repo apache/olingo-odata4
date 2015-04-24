@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.EnumMember;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientEnumMember.EnumMemberDeserializer.class)
-public class ClientEnumMember extends EnumMember {
+class ClientEnumMember extends EnumMember {
 
   private static final long serialVersionUID = -6138606817225829791L;
 

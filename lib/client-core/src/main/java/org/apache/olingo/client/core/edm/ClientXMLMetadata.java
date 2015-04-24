@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml;
+package org.apache.olingo.client.core.edm;
 
 import java.util.HashMap;
 import java.util.List;

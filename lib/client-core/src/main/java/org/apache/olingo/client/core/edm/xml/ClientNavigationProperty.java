@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientNavigationProperty.NavigationPropertyDeserializer.class)
-public class ClientNavigationProperty extends NavigationProperty {
+class ClientNavigationProperty extends NavigationProperty {
 
   private static final long serialVersionUID = 6240231735592427582L;
 

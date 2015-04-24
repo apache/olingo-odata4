@@ -16,37 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.Path;
 
-public class ClientConstantAnnotationExpression
-        extends AbstractClientAnnotationExpression implements ConstantAnnotationExpression {
+class ClientPath extends AbstractClientElementOrAttributeExpression implements Path {
 
-  private static final long serialVersionUID = 5618680702707972904L;
-
-  private Type type;
-
-  private String value;
-
-  @Override
-  public Type getType() {
-    return type;
-  }
-
-  @Override
-  public void setType(final Type type) {
-    this.type = type;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(final String value) {
-    this.value = value;
-  }
+  private static final long serialVersionUID = 6020168217561402545L;
 
 }

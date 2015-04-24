@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.provider.OnDeleteAction;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientOnDelete.OnDeleteDeserializer.class)
-public class ClientOnDelete extends OnDelete {
+class ClientOnDelete extends OnDelete {
 
   private static final long serialVersionUID = -7130889202653716784L;
 

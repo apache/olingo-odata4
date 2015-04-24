@@ -29,8 +29,6 @@ import java.util.List;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.client.core.edm.xml.annotation.ClientConstantAnnotationExpression;
-import org.apache.olingo.client.core.edm.xml.annotation.ClientPath;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -63,6 +61,7 @@ import org.apache.olingo.commons.api.edm.provider.Term;
 import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
 import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.Path;
 import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -297,18 +296,16 @@ public class MetadataTest extends AbstractTest {
     assertEquals(Constants.CANONICAL_FUNCTION_CONCAT, apply.getFunction());
     assertEquals(3, apply.getParameters().size());
 
-    final ClientPath firstArg = new ClientPath();
-    firstArg.setValue("Name");
-    assertEquals(firstArg, apply.getParameters().get(0));
+    Path path = (Path) apply.getParameters().get(0);
+    assertEquals("Name", path.getValue());
 
-    final ConstantAnnotationExpression secondArg = new ClientConstantAnnotationExpression();
-    secondArg.setType(ConstantAnnotationExpression.Type.String);
-    secondArg.setValue(" in ");
-    assertEquals(secondArg, apply.getParameters().get(1));
+    ConstantAnnotationExpression expression =
+        (ConstantAnnotationExpression) apply.getParameters().get(1);
+    assertEquals(" in ", expression.getValue());
+    assertEquals(ConstantAnnotationExpression.Type.String, expression.getType());
 
-    final ClientPath thirdArg = new ClientPath();
-    thirdArg.setValue("Address/CountryName");
-    assertEquals(thirdArg, apply.getParameters().get(2));
+    Path thirdArg = (Path) apply.getParameters().get(2);
+    assertEquals("Address/CountryName", thirdArg.getValue());
 
     // Check Tags
     final Annotation tags = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Product").

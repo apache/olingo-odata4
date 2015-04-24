@@ -16,34 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.If;
 
-public abstract class AbstractClientAnnotationExpression extends AbstractEdmItem implements AnnotationExpression {
+class ClientIf extends AbstractClientAnnotatableDynamicAnnotationExpression implements If {
 
-  private static final long serialVersionUID = -4238652997159205377L;
+  private static final long serialVersionUID = -8571383625077590656L;
+
+  private AnnotationExpression guard;
+
+  private AnnotationExpression _then;
+
+  private AnnotationExpression _else;
 
   @Override
-  public boolean isConstant() {
-    return this instanceof ConstantAnnotationExpression;
+  public AnnotationExpression getGuard() {
+    return guard;
+  }
+
+  public void setGuard(final AnnotationExpression guard) {
+    this.guard = guard;
   }
 
   @Override
-  public ConstantAnnotationExpression asConstant() {
-    return isConstant() ? (ConstantAnnotationExpression) this : null;
+  public AnnotationExpression getThen() {
+    return _then;
+  }
+
+  public void setThen(final AnnotationExpression _then) {
+    this._then = _then;
   }
 
   @Override
-  public boolean isDynamic() {
-    return this instanceof DynamicAnnotationExpression;
+  public AnnotationExpression getElse() {
+    return _else;
   }
 
-  @Override
-  public DynamicAnnotationExpression asDynamic() {
-    return isDynamic() ? (DynamicAnnotationExpression) this : null;
+  public void setElse(final AnnotationExpression _else) {
+    this._else = _else;
   }
+
 }

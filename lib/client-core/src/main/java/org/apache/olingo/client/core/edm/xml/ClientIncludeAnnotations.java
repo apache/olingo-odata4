@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientIncludeAnnotations.IncludeAnnotationsDeserializer.class)
-public class ClientIncludeAnnotations extends AbstractEdmItem implements IncludeAnnotations {
+class ClientIncludeAnnotations extends AbstractEdmItem implements IncludeAnnotations {
 
   private static final long serialVersionUID = -8157841387011422396L;
 

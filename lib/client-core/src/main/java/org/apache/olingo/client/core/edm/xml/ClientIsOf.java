@@ -16,25 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml.annotation;
+package org.apache.olingo.client.core.edm.xml;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.apache.olingo.client.core.edm.xml.AbstractClientEdmDeserializer;
-import org.apache.olingo.client.core.edm.xml.ClientAnnotation;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.IsOf;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
-@JsonDeserialize(using = ClientCast.CastDeserializer.class)
-public class ClientCast extends AbstractClientAnnotatableDynamicAnnotationExpression implements Cast {
+@JsonDeserialize(using = ClientIsOf.IsOfDeserializer.class)
+class ClientIsOf extends AbstractClientAnnotatableDynamicAnnotationExpression implements IsOf {
 
-  private static final long serialVersionUID = 3312415984116005313L;
+  private static final long serialVersionUID = -893355856129761174L;
 
   private String type;
 
@@ -102,38 +100,37 @@ public class ClientCast extends AbstractClientAnnotatableDynamicAnnotationExpres
     this.value = value;
   }
 
-  static class CastDeserializer extends AbstractClientEdmDeserializer<ClientCast> {
-
+  static class IsOfDeserializer extends AbstractClientEdmDeserializer<ClientIsOf> {
     @Override
-    protected ClientCast doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected ClientIsOf doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
-      final ClientCast cast = new ClientCast();
+      final ClientIsOf isof = new ClientIsOf();
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();
         if (token == JsonToken.FIELD_NAME) {
           if ("Type".equals(jp.getCurrentName())) {
-            cast.setType(jp.nextTextValue());
+            isof.setType(jp.nextTextValue());
           } else if ("Annotation".equals(jp.getCurrentName())) {
-            cast.getAnnotations().add(jp.readValueAs(ClientAnnotation.class));
+            isof.getAnnotations().add(jp.readValueAs(ClientAnnotation.class));
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            cast.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            isof.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
-            cast.setPrecision(Integer.valueOf(jp.nextTextValue()));
+            isof.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            cast.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            isof.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {
-              cast.setSrid(SRID.valueOf(srid));
+              isof.setSrid(SRID.valueOf(srid));
             }
           } else {
-            cast.setValue(jp.readValueAs(AbstractClientDynamicAnnotationExpression.class));
+            isof.setValue(jp.readValueAs(AbstractClientDynamicAnnotationExpression.class));
           }
         }
       }
-      return cast;
+      return isof;
     }
   }
 }

@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 import org.apache.olingo.client.core.edm.xml.ClientEdmx;
-import org.apache.olingo.client.core.edm.xml.ClientXMLMetadata;
+import org.apache.olingo.client.core.edm.ClientXMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;

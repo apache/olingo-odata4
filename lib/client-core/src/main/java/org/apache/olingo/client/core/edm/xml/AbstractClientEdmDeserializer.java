@@ -20,14 +20,12 @@ package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.annotation.ClientConstantAnnotationExpression;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
-public abstract class AbstractClientEdmDeserializer<T> extends JsonDeserializer<T> {
+abstract class AbstractClientEdmDeserializer<T> extends JsonDeserializer<T> {
 
   protected boolean isAnnotationConstExprConstruct(final JsonParser jp) throws IOException {
     return ClientConstantAnnotationExpression.Type.fromString(jp.getCurrentName()) != null;

@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @JsonDeserialize(using = ClientTerm.TermDeserializer.class)
-public class ClientTerm extends Term {
+class ClientTerm extends Term {
 
   private static final long serialVersionUID = -8350072064720586186L;
 

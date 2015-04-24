@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientReturnType.ReturnTypeDeserializer.class)
-public class ClientReturnType extends ReturnType {
+class ClientReturnType extends ReturnType {
 
   private static final long serialVersionUID = 6261092793901735110L;
 
