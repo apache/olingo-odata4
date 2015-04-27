@@ -158,6 +158,7 @@ public class Entity extends Linked {
     for (Property property : properties) {
       if (name.equals(property.getName())) {
         result = property;
+        break;
       }
     }
 

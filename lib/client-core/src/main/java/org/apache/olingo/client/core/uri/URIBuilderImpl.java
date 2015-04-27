@@ -180,6 +180,13 @@ public class URIBuilderImpl implements URIBuilder {
   }
 
   @Override
+  public URIBuilder appendActionCallSegment(final String action) {
+    segments.add(new Segment(
+        segments.size() == 1 ? SegmentType.UNBOUND_ACTION : SegmentType.BOUND_ACTION, action));
+    return this;
+  }
+  
+  @Override
   public URIBuilder appendOperationCallSegment(final String operation) {
     segments.add(new Segment(
         segments.size() == 1 ? SegmentType.UNBOUND_OPERATION : SegmentType.BOUND_OPERATION, operation));
@@ -266,7 +273,9 @@ public class URIBuilderImpl implements URIBuilder {
         case BOUND_OPERATION:
           segmentsBuilder.append(getBoundOperationSeparator());
           break;
-
+        case BOUND_ACTION:
+          segmentsBuilder.append(getBoundOperationSeparator());
+          break;
         default:
           if (segmentsBuilder.length() > 0 && segmentsBuilder.charAt(segmentsBuilder.length() - 1) != '/') {
             segmentsBuilder.append('/');

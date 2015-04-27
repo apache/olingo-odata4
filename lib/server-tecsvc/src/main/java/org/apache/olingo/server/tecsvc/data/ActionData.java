@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
@@ -49,11 +50,17 @@ public class ActionData {
   protected static Property primitiveCollectionAction(String name, Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollStringTwoParam".equals(name)) {
-      List<Object> collectionValues = new ArrayList<Object>();
-      int loopCount = (Integer) parameters.get("ParameterInt16").asPrimitive();
+      Parameter paramInt16 = parameters.get("ParameterInt16");
+      Parameter paramDuration = parameters.get("ParameterDuration");
+      if (paramInt16 == null || paramDuration == null) {
+        throw new DataProviderException("Missing parameters for action: UARTCollStringTwoParam",
+            HttpStatusCode.BAD_REQUEST);
+      }
+      short loopCount = (Short) paramInt16.asPrimitive();
+      BigDecimal duration = (BigDecimal) paramDuration.asPrimitive();
       EdmPrimitiveType primDuration = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
-      BigDecimal duration = (BigDecimal) parameters.get("ParameterDuration").asPrimitive();
       BigDecimal addValue = new BigDecimal(1);
+      List<Object> collectionValues = new ArrayList<Object>();
       for (int i = 0; i < loopCount; i++) {
         try {
           String value = primDuration.valueToString(duration, false, null, null, null, null);
@@ -63,78 +70,92 @@ public class ActionData {
         }
         duration = duration.add(addValue);
       }
-      return DataCreator.createPrimitiveCollection(null, collectionValues);
+      return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, collectionValues);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
   protected static Property complexAction(String name, Map<String, Parameter> parameters) throws DataProviderException {
     if ("UARTCTTwoPrimParam".equals(name)) {
-      Integer number = (Integer) parameters.get("ParameterInt16").asPrimitive();
-      if (number == null) {
-        number = new Integer(32767);
+      Parameter paramInt16 = parameters.get("ParameterInt16");
+      Short number;
+      if (paramInt16 == null) {
+        number = new Short((short) 32767);
+      } else {
+        number = (Short) paramInt16.asPrimitive();
       }
-      Property complexProp = createCTTwoPrimComplexProperty(number, "UARTCTTwoPrimParam string value");
 
-      return complexProp;
+      return createCTTwoPrimComplexProperty(number, "UARTCTTwoPrimParam string value");
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  private static Property createCTTwoPrimComplexProperty(Integer number, String text) {
-    List<Property> props = new ArrayList<Property>();
+  private static Property createCTTwoPrimComplexProperty(Short number, String text) {
+    ComplexValue compValue = new ComplexValue();
     Property propInt = new Property();
     propInt.setName("PropertyInt16");
     propInt.setValue(ValueType.PRIMITIVE, number);
-    props.add(propInt);
+    compValue.getValue().add(propInt);
     Property propString = new Property();
     propString.setName("PropertyString");
     propString.setValue(ValueType.PRIMITIVE, text);
-    props.add(propString);
+    compValue.getValue().add(propString);
 
     Property complexProp = new Property();
-    complexProp.setValue(ValueType.COMPLEX, props);
+    complexProp.setValue(ValueType.COMPLEX, compValue);
     return complexProp;
   }
 
   protected static Property complexCollectionAction(String name, Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollCTTwoPrimParam".equals(name)) {
-      ArrayList<Property> complexCollection = new ArrayList<Property>();
-      complexCollection.add(createCTTwoPrimComplexProperty(16, "Test123"));
-      complexCollection.add(createCTTwoPrimComplexProperty(17, "Test456"));
-      complexCollection.add(createCTTwoPrimComplexProperty(18, "Test678"));
+      List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
+      complexCollection.add(createCTTwoPrimComplexProperty((short) 16, "Test123").asComplex());
+      complexCollection.add(createCTTwoPrimComplexProperty((short) 17, "Test456").asComplex());
+      complexCollection.add(createCTTwoPrimComplexProperty((short) 18, "Test678").asComplex());
 
-      Integer number = (Integer) parameters.get("ParameterInt16").asPrimitive();
-      if (number != null && number >= 0 && number < complexCollection.size()) {
-        complexCollection.subList(number, complexCollection.size() - 1).clear();
+      Parameter paramInt16 = parameters.get("ParameterInt16");
+      if (paramInt16 != null) {
+        Short number = (Short) paramInt16.asPrimitive();
+        if (number < 0) {
+          complexCollection.clear();
+        } else if (number >= 0 && number < complexCollection.size()) {
+          complexCollection = complexCollection.subList(0, number);
+
+        }
+        Property complexCollProperty = new Property();
+        complexCollProperty.setValue(ValueType.COLLECTION_COMPLEX, complexCollection);
+        return complexCollProperty;
       }
-
-      Property complexCollProperty = new Property();
-      complexCollProperty.setValue(ValueType.COLLECTION_COMPLEX, complexCollection);
-      return complexCollProperty;
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  protected static Entity entityAction(String name, Map<String, Parameter> parameters) throws DataProviderException {
+  protected static EntityActionResult entityAction(String name, Map<String, Parameter> parameters)
+      throws DataProviderException {
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
-      Integer number = (Integer) parameters.get("ParameterInt16").asPrimitive();
-      if (number == null) {
-        number = 0;
+      Parameter parameter = parameters.get("ParameterInt16");
+      Short number;
+      if (parameter != null) {
+        number = (Short) parameter.asPrimitive();
+      } else {
+        number = (short) 0;
       }
+
       EntityCollection entityCollection = new DataCreator().getData().get("ESTwoKeyTwoPrim");
       for (Entity entity : entityCollection.getEntities()) {
-        if (number.equals(entity.getProperty("PropertyInt16").asPrimitive())) {
-          return entity;
+        Object asPrimitive = entity.getProperty("PropertyInt16").asPrimitive();
+        if (number.equals(asPrimitive)) {
+          return new EntityActionResult().setEntity(entity);
         }
       }
       // Entity Not found
       throw new DataProviderException("Entity not found with key: " + number, HttpStatusCode.NOT_FOUND);
     } else if ("UARTETAllPrimParam".equals(name)) {
-      Calendar date = (Calendar) parameters.get("ParameterDate").asPrimitive();
+      Parameter paramDate = parameters.get("ParameterDate");
       EntityCollection entityCollection = new DataCreator().getData().get("ESAllPrim");
-      if (date != null) {
+      if (paramDate != null) {
+        Calendar date = (Calendar) paramDate.asPrimitive();
         boolean freeKey;
         Short key = 0;
         do {
@@ -147,10 +168,10 @@ public class ActionData {
           }
           key++;
         } while (!freeKey);
-        // TODO: Set create response code
-        return createAllPrimEntity(key, "UARTETAllPrimParam string value", date);
+        return new EntityActionResult().setEntity(createAllPrimEntity(key, "UARTETAllPrimParam string value", date))
+            .setCreated(true);
       } else {
-        return entityCollection.getEntities().get(0);
+        return new EntityActionResult().setEntity(entityCollection.getEntities().get(0));
       }
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
@@ -178,26 +199,31 @@ public class ActionData {
   protected static EntityCollection entityCollectionAction(String name, Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollETKeyNavParam".equals(name)) {
-      Short number = (Short) parameters.get("ParameterInt16").asPrimitive();
-      EntityCollection collection = new EntityCollection();
-      if (number != null && number > 0) {
-        for (int i = 1; i <= number; i++) {
-          collection.getEntities().add(createETKeyNavEntity(number));
-        }
+      Parameter paramInt16 = parameters.get("ParameterInt16");
+      Short number;
+      if (paramInt16 == null) {
+        number = (short) 0;
       } else {
-        return collection;
+        number = (Short) paramInt16.asPrimitive();
       }
-    } else if ("UARTCollETAllPrimParam".equals(name)) {
-      Calendar timeOfDay = (Calendar) parameters.get("ParameterTimeOfDay").asPrimitive();
       EntityCollection collection = new EntityCollection();
-      if (timeOfDay != null) {
+      if (number > 0) {
+        for (short i = 1; i <= number; i++) {
+          collection.getEntities().add(createETKeyNavEntity(i));
+        }
+      }
+      return collection;
+    } else if ("UARTCollETAllPrimParam".equals(name)) {
+      Parameter paramTimeOfDay = parameters.get("ParameterTimeOfDay");
+      EntityCollection collection = new EntityCollection();
+      if (paramTimeOfDay != null) {
+        Calendar timeOfDay = (Calendar) paramTimeOfDay.asPrimitive();
         int count = timeOfDay.get(Calendar.HOUR_OF_DAY);
         for (short i = 1; i <= count; i++) {
           collection.getEntities().add(createAllPrimEntity(i, "UARTCollETAllPrimParam int16 value: " + i, null));
         }
-      } else {
-        return collection;
-      }  
+      }
+      return collection;
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }

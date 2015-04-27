@@ -495,9 +495,29 @@ public class DataProvider {
     return ActionData.primitiveAction(name, actionParameters);
   }
 
+  public Property processActionComplex(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.complexAction(name, actionParameters);
+  }
+
+  public Property processActionComplexCollection(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.complexCollectionAction(name, actionParameters);
+  }
+
   public Property processActionPrimitiveCollection(String name, Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.primitiveCollectionAction(name, actionParameters);
+  }
+
+  public EntityActionResult processActionEntity(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.entityAction(name, actionParameters);
+  }
+
+  public EntityCollection processActionEntityCollection(String name, Map<String, Parameter> actionParameters)
+      throws DataProviderException {
+    return ActionData.entityCollectionAction(name, actionParameters);
   }
 
   public void setEdm(final Edm edm) {
