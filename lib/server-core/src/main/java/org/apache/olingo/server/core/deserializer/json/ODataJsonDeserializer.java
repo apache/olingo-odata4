@@ -195,6 +195,22 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
       if (tree != null) {
         consumeParameters(edmAction, tree, parameters);
+        
+        final List<String> toRemove = new ArrayList<String>();
+        Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
+        while (fieldsIterator.hasNext()) {
+          Map.Entry<String, JsonNode> field = fieldsIterator.next();
+
+          if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
+            // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
+            toRemove.add(field.getKey());
+          } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
+            throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
+                DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+          }
+        }
+        // remove here to avoid iterator issues.
+        tree.remove(toRemove);
         assertJsonNodeIsEmpty(tree);
       }
       return DeserializerResultImpl.with().actionParameters(parameters).build();
