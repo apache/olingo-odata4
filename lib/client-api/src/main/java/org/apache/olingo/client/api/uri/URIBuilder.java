@@ -355,4 +355,12 @@ public interface URIBuilder {
    * @see org.apache.olingo.client.api.uri.QueryOption#SELECT
    */
   URIBuilder expandWithSelect(String expandItem, String... selectItems);
+
+  /**
+   * Appends action segment to the URI.
+   *
+   * @param action Action name
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendActionCallSegment(String action);
 }

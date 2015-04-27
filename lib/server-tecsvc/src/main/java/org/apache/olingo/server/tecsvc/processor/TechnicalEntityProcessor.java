@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -52,6 +52,7 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
@@ -59,6 +60,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.data.EntityActionResult;
 import org.apache.olingo.server.tecsvc.data.RequestValidator;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.ExpandSystemQueryOptionHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
@@ -117,14 +119,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       ODataSerializer serializer = odata.createSerializer(format);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
-      
+
       // Transform the entity graph to a tree. The construction is controlled by the expand tree.
-      // Apply all expand system query options to the tree.So the expanded navigation properties can be modified 
+      // Apply all expand system query options to the tree.So the expanded navigation properties can be modified
       // for serialization,without affecting the data stored in the database.
       final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
-      final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet, 
-                                                                                           edmEntitySet, 
-                                                                                           expand);
+      final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet,
+          edmEntitySet,
+          expand);
       expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
 
       // Serialize
@@ -147,8 +149,32 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void processActionEntityCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Process entity collection is not supported yet.",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    EdmAction action = checkBoundAndExtractAction(uriInfo);
+    DeserializerResult deserializerResult =
+        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+            .actionParameters(request.getBody(), action);
+
+    EntityCollection collection =
+        dataProvider.processActionEntityCollection(action.getName(), deserializerResult.getActionParameters());
+
+    if (collection == null) {
+      // Collection Propertys must never be null
+      throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+    } else if (collection.getEntities().contains(null) && !action.getReturnType().isNullable()) {
+      // Not nullable return type but array contains a null value
+      throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+    }
+    EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
+    ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
+    EntityCollectionSerializerOptions options = EntityCollectionSerializerOptions.with().contextURL(contextURL).build();
+
+    SerializerResult result =
+        odata.createSerializer(ODataFormat.fromContentType(responseFormat))
+            .entityCollection(serviceMetadata, type, collection, options);
+
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setContent(result.getContent());
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
   @Override
@@ -230,7 +256,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-    
+
     final Entity entity;
     ExpandOption expand = null;
     if (edmEntityType.hasStream()) { // called from createMediaEntity(...), not directly
@@ -238,14 +264,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
           requestFormat.toContentTypeString());
     } else {
-      final DeserializerResult deserializerResult = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-                                                         .entity(request.getBody(), edmEntityType);
-      new RequestValidator(dataProvider, 
-                           odata.createUriHelper(), 
-                           serviceMetadata.getEdm(), 
-                           request.getRawBaseUri()
-                           ).validate(edmEntitySet, deserializerResult.getEntity());
-      
+      final DeserializerResult deserializerResult =
+          odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+              .entity(request.getBody(), edmEntityType);
+      new RequestValidator(dataProvider,
+          odata.createUriHelper(),
+          serviceMetadata.getEdm(),
+          request.getRawBaseUri()).validate(edmEntitySet, deserializerResult.getEntity());
+
       entity = dataProvider.create(edmEntitySet);
       dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, deserializerResult.getEntity(), false, true);
       expand = deserializerResult.getExpandTree();
@@ -271,11 +297,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       throws ODataApplicationException, DeserializerException, SerializerException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     Entity entity;
-    
+
     try {
       entity = readEntity(uriInfo);
-    } catch(ODataApplicationException e) {
-      if(e.getStatusCode() == HttpStatusCode.NOT_FOUND.getStatusCode()) {
+    } catch (ODataApplicationException e) {
+      if (e.getStatusCode() == HttpStatusCode.NOT_FOUND.getStatusCode()) {
         // Perform upsert
         createEntity(request, response, uriInfo, requestFormat, responseFormat);
         return;
@@ -286,15 +312,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     checkRequestFormat(requestFormat);
     final ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
-    
-    new RequestValidator(dataProvider, 
-                         true,        // Update
-                         request.getMethod() == HttpMethod.PATCH,
-                         odata.createUriHelper(), 
-                         serviceMetadata.getEdm(), 
-                         request.getRawBaseUri()
-                         ).validate(edmEntitySet, changedEntity);
-    
+
+    new RequestValidator(dataProvider,
+        true, // Update
+        request.getMethod() == HttpMethod.PATCH,
+        odata.createUriHelper(),
+        serviceMetadata.getEdm(),
+        request.getRawBaseUri()).validate(edmEntitySet, changedEntity);
+
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
         request.getMethod() == HttpMethod.PATCH, false);
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -325,8 +350,36 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   public void processActionEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
-    throw new ODataApplicationException("Any action returning an entity is not supported yet.",
-        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    EdmAction action = checkBoundAndExtractAction(uriInfo);
+    DeserializerResult deserializerResult =
+        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+            .actionParameters(request.getBody(), action);
+
+    EntityActionResult entityResult =
+        dataProvider.processActionEntity(action.getName(), deserializerResult.getActionParameters());
+    EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
+    if (entityResult == null || entityResult.getEntity() == null) {
+      if (action.getReturnType().isNullable()) {
+        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      } else {
+        // Not nullable return type so we have to give back a 500
+        throw new ODataApplicationException("The action could no be executed", 500, Locale.ROOT);
+      }
+    } else {
+      ContextURL contextURL = ContextURL.with().type(type).build();
+      EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextURL).build();
+
+      SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat))
+          .entity(serviceMetadata, type, entityResult.getEntity(), options);
+
+      if(entityResult.isCreated()){
+        response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
+      }else{
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      }
+      response.setContent(result.getContent());
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    }
   }
 
   @Override

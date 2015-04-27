@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -34,9 +35,11 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -211,5 +214,17 @@ public abstract class TechnicalProcessor implements Processor {
       throw new ODataApplicationException("Not all of the specified options are supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
+  }
+  
+  protected EdmAction checkBoundAndExtractAction(final UriInfo uriInfo) throws ODataApplicationException {
+    final UriInfoResource resource = uriInfo.asUriInfoResource();
+    List<UriResource> uriResourceParts = resource.getUriResourceParts();
+    if (uriResourceParts.size() > 1) {
+      throw new ODataApplicationException("Bound acctions not supported yet.",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
+    UriResourceAction uriResourceAction = (UriResourceAction) uriResourceParts.get(0);
+    EdmAction action = uriResourceAction.getAction();
+    return action;
   }
 }

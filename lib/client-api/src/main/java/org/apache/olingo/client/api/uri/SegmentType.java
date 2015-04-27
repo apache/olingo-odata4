@@ -37,6 +37,8 @@ public enum SegmentType {
   COUNT("$count"),
   BOUND_OPERATION,
   UNBOUND_OPERATION,
+  BOUND_ACTION,
+  UNBOUND_ACTION,
   METADATA("$metadata"),
   BATCH("$batch"),
   LINKS("$links"),
