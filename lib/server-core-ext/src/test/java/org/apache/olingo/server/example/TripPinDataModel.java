@@ -630,6 +630,48 @@ public class TripPinDataModel {
     return copy;
   }
 
+  public boolean updateEntity(EdmEntitySet edmEntitySet, String eTag, String key, Object keyValue, 
+      boolean merge, Entity changes, String baseURL) throws ODataApplicationException {
+    boolean updated = false;
+
+    if (merge) {
+      EntityCollection set = getEntitySet(edmEntitySet.getName());
+      Iterator<Entity> it = set.getEntities().iterator();
+      while (it.hasNext()) {
+        Entity entity = it.next();
+        if (entity.getProperty(key).getValue().equals(keyValue) && eTag.equals("*")
+            || eTag.equals(entity.getETag())) {
+          
+          for (Property p :changes.getProperties()) {
+            for (Property p1: entity.getProperties()) {
+              if (p.getName().equals(p1.getName())) {
+                p1.setValue(p1.getValueType(), p.getValue());
+                updated = true;
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
+    } else {
+      // this is delete, then insert      
+      EntityCollection set = getEntitySet(edmEntitySet.getName());
+      Iterator<Entity> it = set.getEntities().iterator();
+      while (it.hasNext()) {
+        Entity entity = it.next();
+        if (entity.getProperty(key).getValue().equals(keyValue) && eTag.equals("*")
+            || eTag.equals(entity.getETag())) {
+          Property p = entity.getProperty(key);
+          changes.addProperty(p);
+          createEntity(edmEntitySet, changes, baseURL);
+          updated = true;
+        }
+      }
+    }
+    return updated;
+  }
+  
   public boolean deleteEntity(String entitySetName, String eTag, String key, Object keyValue) {
     EntityCollection set = getEntitySet(entitySetName);
     Iterator<Entity> it = set.getEntities().iterator();
