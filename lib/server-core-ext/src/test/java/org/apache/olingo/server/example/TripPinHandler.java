@@ -273,9 +273,25 @@ public class TripPinHandler implements ServiceHandler {
   }
 
   @Override
-  public void updateEntity(DataRequest request, Entity entity, boolean merge, String entityETag,
+  public void updateEntity(DataRequest request, Entity entity, boolean merge, String eTag,
       EntityResponse response) throws ODataTranslatedException, ODataApplicationException {
-    response.writeServerError(true);
+    EdmEntitySet edmEntitySet = request.getEntitySet();
+    
+    Entity currentEntity = this.dataModel.getEntity(edmEntitySet.getName(), request.getKeyPredicates());
+    if (currentEntity == null) {
+      response.writeNotFound(true);
+      return;
+    }
+    String key = edmEntitySet.getEntityType().getKeyPredicateNames().get(0);
+    String baseURL = request.getODataRequest().getRawBaseUri();
+    boolean updated = this.dataModel.updateEntity(edmEntitySet, eTag, key, currentEntity
+        .getProperty(key).getValue(), merge, entity, baseURL);
+
+    if (updated) {
+      response.writeUpdatedEntity();
+    } else {
+      response.writeNotModified();
+    }
   }
 
   @Override

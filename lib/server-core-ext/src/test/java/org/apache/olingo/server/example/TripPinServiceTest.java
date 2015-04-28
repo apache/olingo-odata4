@@ -34,6 +34,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
@@ -418,6 +419,32 @@ public class TripPinServiceTest {
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
+  @Test
+  public void testUpdateEntity() throws Exception {
+    String payload = "{" + 
+        "  \"Emails\":[" + 
+        "     \"Krista@example.com\"," +
+        "     \"Krista@gmail.com\"" +        
+        "         ]" + 
+        "}";
+    HttpPatch updateRequest = new HttpPatch(baseURL+"/People('kristakemp')");
+    updateRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
+    httpSend(updateRequest, 204);
+    
+    HttpResponse response = httpGET(baseURL + "/People('kristakemp')", 200);
+    JsonNode node = getJSONNode(response);
+    assertEquals("$metadata#People/$entity", node.get("@odata.context").asText());
+    assertEquals("Krista@example.com", node.get("Emails").get(0).asText());
+    assertEquals("Krista@gmail.com", node.get("Emails").get(1).asText());
+  }  
+  
+  @Test
+  public void testDeleteEntity() throws Exception{
+    // fail because no key predicates supplied
+    HttpDelete deleteRequest = new HttpDelete(baseURL+"/People");
+    HttpResponse response = httpSend(deleteRequest, 405);
+    EntityUtils.consumeQuietly(response.getEntity());
+  }
 
   @Test
   public void testCreateEntityWithLinkToRelatedEntities() throws Exception {

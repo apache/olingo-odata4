@@ -100,10 +100,10 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Categories").appendKeySegment(1).
         appendNavigationSegment("Products").appendNavigationSegment("Model").
-        appendOperationCallSegment("AllOrders");
+        appendActionCallSegment("AllOrders");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
-        SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders()").build(), uriBuilder.build());
+        SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders").build(), uriBuilder.build());
   }
 
   @Test

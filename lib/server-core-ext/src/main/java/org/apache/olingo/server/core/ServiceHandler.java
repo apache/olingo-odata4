@@ -235,21 +235,27 @@ public interface ServiceHandler extends Processor {
    * During a batch operation, this method starts the transaction (if any) before any operation is handled
    * by the service. No nested transactions.
    * @return must return a unique transaction id that references a atomic operation.
+   * @throws ODataTranslatedException
+   * @throws ODataApplicationException
    */
-  String startTransaction();
+  String startTransaction() throws ODataTranslatedException, ODataApplicationException;;
 
   /**
    * When a batch operation is complete and all the intermediate service requests are successful, then
    * commit is called with transaction id returned in the startTransaction method.
    * @param txnId
+   * @throws ODataTranslatedException
+   * @throws ODataApplicationException
    */
-  void commit(String txnId);
+  void commit(String txnId) throws ODataTranslatedException, ODataApplicationException;;
   /**
    * When a batch operation is in-complete due to an error in the middle of changeset, then rollback is
    * called with transaction id, that returned from startTransaction method.
    * @param txnId
+   * @throws ODataTranslatedException
+   * @throws ODataApplicationException
    */
-  void rollback(String txnId);
+  void rollback(String txnId) throws ODataTranslatedException, ODataApplicationException;;
 
   /**
    * This is not complete, more URL parsing changes required. Cross join between two entities.

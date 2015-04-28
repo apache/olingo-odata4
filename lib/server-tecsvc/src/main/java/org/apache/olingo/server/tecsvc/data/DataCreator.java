@@ -85,13 +85,13 @@ public class DataCreator {
 
   private EntityCollection createESTwoKeyTwoPrim() {
     EntityCollection entitySet = new EntityCollection();
-    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity(32767, "Test String1"));
-    entitySet.getEntities().add(createETKeyNavEntity(-365, "Test String2"));
-    entitySet.getEntities().add(createETKeyNavEntity(-32766, "Test String3"));
+    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) 32767, "Test String1"));
+    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) -365, "Test String2"));
+    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) -32766, "Test String3"));
     return entitySet;
   }
 
-  private Entity createETTwoKeyTwoPrimEntity(int propertyInt16, String propertyString) {
+  private Entity createETTwoKeyTwoPrimEntity(short propertyInt16, String propertyString) {
     return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString));
   }
@@ -266,7 +266,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 0))
+    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", (short) 0))
         .addProperty(createPrimitive("PropertyString", "")).addProperty(createPrimitive("PropertyBoolean", false))
         .addProperty(createPrimitive("PropertyByte", 0)).addProperty(createPrimitive("PropertySByte", 0))
         .addProperty(createPrimitive("PropertyInt32", 0)).addProperty(createPrimitive("PropertyInt64", 0))
@@ -600,7 +600,7 @@ public class DataCreator {
     return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
-  private static Calendar getDateTime(final int year, final int month, final int day,
+  protected static Calendar getDateTime(final int year, final int month, final int day,
       final int hour, final int minute, final int second) {
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.clear();
@@ -608,7 +608,7 @@ public class DataCreator {
     return dateTime;
   }
 
-  private static Calendar getTime(final int hour, final int minute, final int second) {
+  protected static Calendar getTime(final int hour, final int minute, final int second) {
     Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     time.clear();
     time.set(Calendar.HOUR_OF_DAY, hour);

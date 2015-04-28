@@ -273,6 +273,11 @@ public class DataRequest extends ServiceRequest {
         return false;
       }
       
+      // in update, delete entity cases, predicate must be there
+      if ((isPATCH() || isPUT() || isDELETE()) 
+          && (getKeyPredicates() == null || getKeyPredicates().isEmpty())) {
+        return false;
+      }
       return true;
     }
 

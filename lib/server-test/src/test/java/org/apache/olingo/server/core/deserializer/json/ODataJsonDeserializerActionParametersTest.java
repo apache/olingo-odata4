@@ -65,6 +65,22 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertTrue(parameters.isEmpty());
   }
 
+  @Test
+  public void ignoreODataAnnotations() throws Exception {
+    final String input =
+        "{\"ParameterDuration@odata.type\":\"Edm.Duration\","
+        + "\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
+    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam");
+    assertNotNull(parameters);
+    assertEquals(2, parameters.size());
+    Parameter parameter = parameters.get("ParameterInt16");
+    assertNotNull(parameter);
+    assertEquals((short) 42, parameter.getValue());
+    parameter = parameters.get("ParameterDuration");
+    assertNotNull(parameter);
+    assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
+  }
+
   @Test(expected = DeserializerException.class)
   public void bindingParameter() throws Exception {
     deserialize("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim");
