@@ -25,12 +25,12 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataDelta;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientDelta;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
 
 public interface ODataBinder {
 
@@ -40,7 +40,7 @@ public interface ODataBinder {
    * @param entitySet OData entity set.
    * @return {@link EntityCollection} object.
    */
-  EntityCollection getEntitySet(ODataEntitySet entitySet);
+  EntityCollection getEntitySet(ClientEntitySet entitySet);
 
   /**
    * Gets an <tt>Entity</tt> from the given OData entity.
@@ -48,7 +48,7 @@ public interface ODataBinder {
    * @param entity OData entity.
    * @return {@link Entity} object.
    */
-  Entity getEntity(ODataEntity entity);
+  Entity getEntity(ClientEntity entity);
 
   /**
    * Gets a <tt>Link</tt> from the given OData link.
@@ -56,7 +56,7 @@ public interface ODataBinder {
    * @param link OData link.
    * @return <tt>Link</tt> object.
    */
-  Link getLink(ODataLink link);
+  Link getLink(ClientLink link);
 
   /**
    * Gets a <tt>Property</tt> from the given OData property.
@@ -64,7 +64,7 @@ public interface ODataBinder {
    * @param property OData property.
    * @return <tt>Property</tt> object.
    */
-  Property getProperty(ODataProperty property);
+  Property getProperty(ClientProperty property);
 
   /**
    * Adds the given property to the given entity.
@@ -73,7 +73,7 @@ public interface ODataBinder {
    * @param property OData property.
    * @return whether add was successful or not.
    */
-  boolean add(ODataEntity entity, ODataProperty property);
+  boolean add(ClientEntity entity, ClientProperty property);
 
   /**
    * Gets <tt>ODataServiceDocument</tt> from the given service document resource.
@@ -81,31 +81,31 @@ public interface ODataBinder {
    * @param resource service document resource.
    * @return <tt>ODataServiceDocument</tt> object.
    */
-  ODataServiceDocument getODataServiceDocument(ServiceDocument resource);
+  ClientServiceDocument getODataServiceDocument(ServiceDocument resource);
 
   /**
    * Gets <tt>ODataEntitySet</tt> from the given entity set resource.
    *
    * @param resource entity set resource.
-   * @return {@link org.apache.olingo.commons.api.domain.ODataEntitySet} object.
+   * @return {@link ClientEntitySet} object.
    */
-  ODataEntitySet getODataEntitySet(ResWrap<EntityCollection> resource);
+  ClientEntitySet getODataEntitySet(ResWrap<EntityCollection> resource);
 
   /**
    * Gets <tt>ODataEntity</tt> from the given entity resource.
    *
    * @param resource entity resource.
-   * @return {@link org.apache.olingo.commons.api.domain.ODataEntity} object.
+   * @return {@link ClientEntity} object.
    */
-  ODataEntity getODataEntity(ResWrap<Entity> resource);
+  ClientEntity getODataEntity(ResWrap<Entity> resource);
 
   /**
    * Gets an <tt>ODataProperty</tt> from the given property resource.
    *
    * @param resource property resource.
-   * @return {@link org.apache.olingo.commons.api.domain.ODataProperty} object.
+   * @return {@link ClientProperty} object.
    */
-  ODataProperty getODataProperty(ResWrap<Property> resource);
+  ClientProperty getODataProperty(ResWrap<Property> resource);
 
-  ODataDelta getODataDelta(ResWrap<Delta> resource);
+  ClientDelta getODataDelta(ResWrap<Delta> resource);
 }

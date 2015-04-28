@@ -29,14 +29,14 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData entity property query request.
  */
-public class ODataPropertyRequestImpl<T extends ODataProperty>
+public class ODataPropertyRequestImpl<T extends ClientProperty>
         extends AbstractODataRetrieveRequest<T> implements ODataPropertyRequest<T> {
 
   /**

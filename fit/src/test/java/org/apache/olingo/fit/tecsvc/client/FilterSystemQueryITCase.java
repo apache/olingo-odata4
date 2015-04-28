@@ -30,10 +30,10 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataObjectFactory;
-import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientObjectFactory;
+import org.apache.olingo.commons.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -53,100 +53,100 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   @AfterClass
   public static void tearDownAfterClass() throws Exception {
-    //Nothing here.
+    // Nothing here.
   }
 
   @Test
   public void testTimeOfDayLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyTimeOfDay eq 03:26:05");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyTimeOfDay eq 03:26:05");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testBooleanLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
+    ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
     assertEquals(2, response.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    oDataEntity = response.getBody().getEntities().get(1);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = response.getBody().getEntities().get(1);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
     response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq true");
     assertEquals(1, response.getBody().getEntities().size());
 
-    oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateTimeOffsetLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:23Z");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testInt64Literal() {
     long value = Integer.MAX_VALUE + 1L;
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 gt " + value);
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDoubleLiteral() {
     Double value = -17900000000000000000.0;
 
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDouble le " + value.toString());
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testSimpleEq() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq 1");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq 1");
 
     assertEquals(2, result.getBody().getEntities().size());
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testBinaryIntegerOperations() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add 1 eq (1 sub 3) div 2 mul 3 add 7");
 
     assertEquals(1, result.getBody().getEntities().size());
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
@@ -161,47 +161,47 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
         .filter(filter)
         .build();
 
-    final ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri).execute();
 
     assertEquals(1, response.getBody().getEntities().size());
-    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
+    ClientEntity clientEntity = response.getBody().getEntities().get(0);
 
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testStringProperty() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2'");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2'");
 
     assertEquals(1, result.getBody().getEntities().size());
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testBooleanOperator() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' and PropertyInt16 eq 1");
     assertEquals(1, result.getBody().getEntities().size());
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' or PropertyInt16 eq 1");
     assertEquals(2, result.getBody().getEntities().size());
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testBooleanOperatorWithNull() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq null");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq null");
     assertEquals(0, result.getBody().getEntities().size());
 
     result = sendRequest(ES_TWO_KEY_NAV, "null eq null");
@@ -213,7 +213,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testUnaryWithNullLiterals() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyBoolean eq not null");
     assertEquals(0, result.getBody().getEntities().size());
 
@@ -230,7 +230,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   @Test
   public void testMethodCallsWithNull() {
     // One representative of "stringFuntion" "residue class"
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "endswith(PropertyString, null) eq null"); // null eq null => true
     assertEquals(3, result.getBody().getEntities().size());
 
@@ -251,13 +251,13 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     // See OASIS JIRA ODATA-781
 
     // -1 should be treated as 0
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "substring(PropertyString, -1, 1) eq 'F'");
     assertEquals(1, response.getBody().getEntities().size());
 
     assertEquals(32767, response.getBody().getEntities().get(0).getProperty("PropertyInt16").getPrimitiveValue()
         .toValue());
-    
+
     // -1 should be treated as 0, Same values substring(PropertyString, 0, 0) returns the empty String
     response = sendRequest(ES_ALL_PRIM, "substring(PropertyString, 0, -1) eq ''");
     assertEquals(3, response.getBody().getEntities().size());
@@ -283,21 +283,21 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     final String filterString = "PropertyString eq null";
 
     ODataClient client = getClient();
-    ODataObjectFactory objectFactory = client.getObjectFactory();
+    ClientObjectFactory objectFactory = client.getObjectFactory();
 
-    ODataEntity entity = objectFactory.newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
+    ClientEntity entity = objectFactory.newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
 
     entity.getProperties().add(
         objectFactory.newPrimitiveProperty("PropertyInt16", objectFactory.newPrimitiveValueBuilder()
             .buildInt16((short) 1)));
-    entity.addLink(objectFactory.newEntityNavigationLink("NavPropertyETTwoPrimOne", 
+    entity.addLink(objectFactory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
         client.newURIBuilder(SERVICE_URI)
-              .appendEntitySetSegment("ESTwoPrim")
-              .appendKeySegment(32766)
-              .build()));
-    
+            .appendEntitySetSegment("ESTwoPrim")
+            .appendKeySegment(32766)
+            .build()));
+
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
-    ODataEntityCreateResponse<ODataEntity> createResponse =
+    ODataEntityCreateResponse<ClientEntity> createResponse =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, entity).execute();
 
     final URI receiveURI =
@@ -306,17 +306,17 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
             .filter(filterString)
             .build();
 
-    ODataEntitySetRequest<ODataEntitySet> filterRequest =
+    ODataEntitySetRequest<ClientEntitySet> filterRequest =
         client.getRetrieveRequestFactory().getEntitySetRequest(receiveURI);
     filterRequest.addCustomHeader(HttpHeader.COOKIE, createResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    ODataRetrieveResponse<ODataEntitySet> filterResponse = filterRequest.execute();
+    ODataRetrieveResponse<ClientEntitySet> filterResponse = filterRequest.execute();
 
     assertEquals(1, filterResponse.getBody().getEntities().size());
   }
 
   @Test
   public void testNumericComparisionOperators() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 ge 1");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 ge 1");
     assertEquals(4, result.getBody().getEntities().size());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt 1");
@@ -351,131 +351,131 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
         + "PropertyComp/PropertyInt16 eq " // Complex Property
         + "5.5 mul 2"; // Single * Int16 => Single => Int16 eq Single => Single eq Single
 
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, filterString);
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, filterString);
     assertEquals(3, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("11", ((ODataValuable) ((ODataValuable) oDataEntity.getProperty("PropertyComp")).getComplexValue()
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("11", ((ClientValuable) ((ClientValuable) clientEntity.getProperty("PropertyComp")).getComplexValue()
         .get("PropertyInt16")).getValue()
         .toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("11", ((ODataValuable) ((ODataValuable) oDataEntity.getProperty("PropertyComp")).getComplexValue()
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("11", ((ClientValuable) ((ClientValuable) clientEntity.getProperty("PropertyComp")).getComplexValue()
         .get("PropertyInt16")).getValue()
         .toString());
 
-    oDataEntity = result.getBody().getEntities().get(2);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
-    assertEquals("11", ((ODataValuable) ((ODataValuable) oDataEntity.getProperty("PropertyComp")).getComplexValue()
+    clientEntity = result.getBody().getEntities().get(2);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
+    assertEquals("11", ((ClientValuable) ((ClientValuable) clientEntity.getProperty("PropertyComp")).getComplexValue()
         .get("PropertyInt16")).getValue()
         .toString());
   }
 
   @Test
   public void testNotOperator() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not (PropertyInt16 eq 1)");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not (PropertyInt16 eq 1)");
     assertEquals(2, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testUnaryMinusOperator() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2 add - -3");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2 add - -3");
     assertEquals(2, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testUnaryMinusOperatorDecimal() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2.0 add - -3.0");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2.0 add - -3.0");
     assertEquals(2, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testStringPropertyEqualsNull() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq null");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq null");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
   public void testAddNullLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq 1");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq 1");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
   public void testAddNullLiteralEqualsNull() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq null");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq null");
     assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
   public void testSubstringStartAndEndGiven() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First') add 1, 8) eq ('Resource')");
 
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testSubstringStartGiven() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "substring(PropertyComp/PropertyComp/PropertyString, 6) eq 'Value'");
 
     assertEquals(4, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(2);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(2);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(3);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(3);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   @SuppressWarnings("unused")
   public void testSubstringDouble() {
     try {
-      ODataRetrieveResponse<ODataEntitySet> result =
+      ODataRetrieveResponse<ClientEntitySet> result =
           sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First')"
               + "add 1, 2.0 * 4) eq ('Resource')");
     } catch (ODataClientErrorException e) {
@@ -485,150 +485,150 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testYearFunctionDate() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDate) eq 2015");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDate) eq 2015");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testYearFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDateTimeOffset) eq 2012");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDateTimeOffset) eq 2012");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testMonthFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDateTimeOffset) eq 12");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDateTimeOffset) eq 12");
     assertEquals(3, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(2);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(2);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testMonthFunctionDate() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDate) eq 11");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDate) eq 11");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDayFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDateTimeOffset) eq 3");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDateTimeOffset) eq 3");
     assertEquals(3, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(2);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(2);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDayFunctionDate() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDate) eq 5");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDate) eq 5");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testHourFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyDateTimeOffset) eq 7");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyDateTimeOffset) eq 7");
     assertEquals(2, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testHourFuntionTimeOfDay() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyTimeOfDay) eq 3");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyTimeOfDay) eq 3");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testMinuteFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyDateTimeOffset) eq 17");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyDateTimeOffset) eq 17");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testMinuteFuntionTimeOfDay() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyTimeOfDay) eq 49");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyTimeOfDay) eq 49");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testSecondFunctionDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyDateTimeOffset) eq 8");
+    ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyDateTimeOffset) eq 8");
     assertEquals(1, response.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testSecondFuntionTimeOfDay() {
-    ODataRetrieveResponse<ODataEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyTimeOfDay) eq 14");
+    ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyTimeOfDay) eq 14");
     assertEquals(1, response.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testFractionalsecondsDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_COMP_ALL_PRIM, "fractionalseconds(PropertyComp/PropertyDateTimeOffset) eq 0.1234567");
     assertEquals(2, response.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = response.getBody().getEntities().get(1);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = response.getBody().getEntities().get(1);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testFractionalsecondsDateOfTime() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "fractionalseconds(PropertyTimeOfDay) eq 0");
     assertEquals(3, response.getBody().getEntities().size());
   }
 
   @Test
   public void testDateTimeFunctionsNull() {
-    ODataRetrieveResponse<ODataEntitySet> response;
+    ODataRetrieveResponse<ClientEntitySet> response;
 
     response = sendRequest(ES_ALL_PRIM, "year(null) eq null");
     assertEquals(3, response.getBody().getEntities().size());
@@ -651,243 +651,243 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testFloor() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.8)");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.8)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testCeiling() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.1)");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.6)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testRound() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.5)");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.5)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.4)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("2", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("2", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.6)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(3.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("3", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
-    assertEquals("1", ((ODataValuable) oDataEntity.getProperty("PropertyString")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("3", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    assertEquals("1", ((ClientValuable) clientEntity.getProperty("PropertyString")).getValue().toString());
   }
 
   @Test
   public void testEndsWith() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "endswith(PropertyString, 'values')");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "endswith(PropertyString, 'values')");
     assertEquals(2, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    oDataEntity = result.getBody().getEntities().get(1);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    clientEntity = result.getBody().getEntities().get(1);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testIndexOf() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "indexof(PropertyString, 'positive') eq 17");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testStartsWith() {
-    ODataRetrieveResponse<ODataEntitySet> result = sendRequest(ES_ALL_PRIM, "startswith(PropertyString, 'First')");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "startswith(PropertyString, 'First')");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testToLower() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString, tolower('POSITIVE'))");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testToUpper() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString, concat(toupper('f'), 'irst'))");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testTrim() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "trim(substring(PropertyString, 0, 6)) eq 'First'");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDecimalDiv() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDouble eq 0 sub (358000 div 2)");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("-32768", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testNumericPromotionToInt64() {
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 eq 0");
     assertEquals(1, result.getBody().getEntities().size());
 
-    ODataEntity oDataEntity = result.getBody().getEntities().get(0);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void castEdm64ToDouble() {
     double value = Float.MAX_VALUE + 1;
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 lt " + value);
     assertEquals(3, result.getBody().getEntities().size());
   }
 
   @Test
   public void testDateTimeOffsetAddDuraton() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:19Z add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDurrationAddDuration() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'PT2S' add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDurrationLiteral() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'P1DT'");
     assertEquals(0, response.getBody().getEntities().size());
   }
 
   @Test
   public void testDateAddDuration() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-02 add duration'P1DT7H16M23S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateTimeOffsetSubDuration() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:27Z sub duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDurrationSubDuration() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration sub duration'PT2S' eq duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateSubDuration() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-04 sub duration'P0DT16H43M37S'");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("32767", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateSubDate() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2012-12-04 sub 2012-12-04");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void testDateTimeOffsetSubDateTimeOffset() {
-    ODataRetrieveResponse<ODataEntitySet> response =
+    ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2005-12-03T00:00:00Z sub 2005-12-03T00:00:00Z");
     assertEquals(1, response.getBody().getEntities().size());
 
-    final ODataEntity oDataEntity = response.getBody().getEntities().get(0);
-    assertEquals("0", ((ODataValuable) oDataEntity.getProperty("PropertyInt16")).getValue().toString());
+    final ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
@@ -896,7 +896,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
      * The idea is use the largest possible number of a specific type and add a another number to force an
      * implicit conversion to an higher type
      */
-    ODataRetrieveResponse<ODataEntitySet> response;
+    ODataRetrieveResponse<ClientEntitySet> response;
 
     // SByte => Int16
     byte byteValue = Byte.MAX_VALUE; // 2 ^ 7 -1 = 127
@@ -931,8 +931,8 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
 
     final ODataClient client = getClient();
-    final ODataObjectFactory factory = client.getObjectFactory();
-    ODataEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    final ClientObjectFactory factory = client.getObjectFactory();
+    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt16",
         factory.newPrimitiveValueBuilder().buildInt16((short) 4)));
@@ -954,7 +954,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
                 .add(factory.newPrimitiveProperty(
                     "PropertyString",
                     factory.newPrimitiveValueBuilder().buildString("Test2")))));
-    
+
     newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
         client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_TWO_KEY_NAV)
@@ -967,17 +967,17 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
               }
             })
             .build()));
-    
+
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build();
-    ODataEntityCreateRequest<ODataEntity> request =
+    ODataEntityCreateRequest<ClientEntity> request =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
-    ODataEntityCreateResponse<ODataEntity> response = request.execute();
+    ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
 
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     // Do the filter request
-    ODataRetrieveResponse<ODataEntitySet> result =
+    ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyCompNav/PropertyInt16 eq 1", cookie);
     assertEquals(3, result.getBody().getEntities().size());
 
@@ -991,11 +991,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     fail("ESServerSidePaging", "filter=contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
   }
 
-  private ODataRetrieveResponse<ODataEntitySet> sendRequest(String entitySet, String filterString) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(String entitySet, String filterString) {
     return sendRequest(entitySet, filterString, null);
   }
 
-  private ODataRetrieveResponse<ODataEntitySet> sendRequest(String entitySet, String filterString, String cookie) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(String entitySet, String filterString, String cookie) {
     final ODataClient client = getClient();
 
     final URI uri =
@@ -1004,7 +1004,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
             .filter(filterString)
             .build();
 
-    ODataEntitySetRequest<ODataEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
     if (cookie != null) {
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
     }

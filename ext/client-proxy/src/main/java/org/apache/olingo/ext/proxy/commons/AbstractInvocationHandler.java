@@ -32,8 +32,8 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexType;
@@ -94,7 +94,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
   protected ComplexType<?> getComplex(
       final String name,
-      final ODataValue value,
+      final ClientValue value,
       final Class<?> ref,
       final EntityInvocationHandler handler,
       final URI baseURI,
@@ -153,7 +153,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
 
     final String namespace = handler.getUUID().getType().getAnnotation(Namespace.class).value();
 
-    final ODataEntity template;
+    final ClientEntity template;
 
     final URI entityURI;
     if (handler.getEntityURI() == null || handler.getUUID().getKey() == null) {

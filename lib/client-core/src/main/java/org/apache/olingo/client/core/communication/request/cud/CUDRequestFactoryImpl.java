@@ -38,10 +38,10 @@ import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEn
 import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientSingleton;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl implements CUDRequestFactory {
@@ -53,14 +53,14 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   }
 
   @Override
-  public <E extends ODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
+  public <E extends ClientEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
       final URI targetURI, final E entity) {
 
     return new ODataEntityCreateRequestImpl<E>(client, targetURI, entity);
   }
 
   @Override
-  public <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+  public <E extends ClientEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
       final URI targetURI, final UpdateType type, final E changes) {
 
     final ODataEntityUpdateRequest<E> req;
@@ -76,7 +76,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   }
 
   @Override
-  public <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
+  public <E extends ClientEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(
       final UpdateType type, final E entity) {
 
     if (entity.getEditLink() == null) {
@@ -97,7 +97,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
 
   @Override
   public ODataValueUpdateRequest getValueUpdateRequest(
-      final URI targetURI, final UpdateType type, final ODataPrimitiveValue value) {
+      final URI targetURI, final UpdateType type, final ClientPrimitiveValue value) {
 
     final ODataValueUpdateRequest req;
 
@@ -113,7 +113,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
 
   @Override
   public ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(
-      final URI targetURI, final ODataProperty property) {
+      final URI targetURI, final ClientProperty property) {
 
     if (!property.hasPrimitiveValue()) {
       throw new IllegalArgumentException("A primitive value is required");
@@ -133,7 +133,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
 
   @Override
   public ODataPropertyUpdateRequest getPropertyComplexValueUpdateRequest(
-      final URI targetURI, final UpdateType type, final ODataProperty property) {
+      final URI targetURI, final UpdateType type, final ClientProperty property) {
 
     if (!property.hasComplexValue()) {
       throw new IllegalArgumentException("A complex value is required");
@@ -153,7 +153,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
 
   @Override
   public ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(
-      final URI targetURI, final ODataProperty property) {
+      final URI targetURI, final ClientProperty property) {
 
     if (!property.hasCollectionValue()) {
       throw new IllegalArgumentException("A collection value is required");
@@ -186,7 +186,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   }
 
   @Override
-  public <E extends ODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+  public <E extends ClientEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
       final URI targetURI, final InputStream media) {
 
     return new ODataMediaEntityCreateRequestImpl<E>(client, targetURI, media);
@@ -207,7 +207,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   }
 
   @Override
-  public <E extends ODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+  public <E extends ClientEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
       final URI editURI, final InputStream media) {
 
     final ODataMediaEntityUpdateRequest<E> req;
@@ -223,15 +223,15 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   }
 
   @Override
-  public ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-      final UpdateType type, final ODataSingleton entity) {
+  public ODataEntityUpdateRequest<ClientSingleton> getSingletonUpdateRequest(
+      final UpdateType type, final ClientSingleton entity) {
 
     return getEntityUpdateRequest(type, entity);
   }
 
   @Override
-  public ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-      final URI targetURI, final UpdateType type, final ODataSingleton changes) {
+  public ODataEntityUpdateRequest<ClientSingleton> getSingletonUpdateRequest(
+      final URI targetURI, final UpdateType type, final ClientSingleton changes) {
 
     return getEntityUpdateRequest(targetURI, type, changes);
   }

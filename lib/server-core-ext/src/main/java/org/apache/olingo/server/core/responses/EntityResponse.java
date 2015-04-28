@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -150,7 +150,7 @@ public class EntityResponse extends ServiceResponse {
     }
   }
   
-  public void writeError(ODataServerError error) {
+  public void writeError(ClientServerError error) {
     try {
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {

@@ -40,22 +40,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataAnnotatable;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientAnnotatable;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEnumValue;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
+import org.apache.olingo.commons.core.domain.ClientAnnotationImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -88,10 +88,10 @@ public final class CoreUtils {
     // Empty private constructor for static utility classes
   }
 
-  public static ODataValue getODataValue(
+  public static ClientValue getODataValue(
       final EdmEnabledODataClient client, final EdmTypeInfo type, final Object obj) {
 
-    final ODataValue value;
+    final ClientValue value;
 
     if (type.isCollection()) {
       value = client.getObjectFactory().newCollectionValue(type.getFullQualifiedName().toString());
@@ -144,7 +144,7 @@ public final class CoreUtils {
     return value;
   }
 
-  private static ODataProperty getODataEntityProperty(
+  private static ClientProperty getODataEntityProperty(
       final EdmEnabledODataClient client,
       final FullQualifiedName entity,
       final String property,
@@ -154,7 +154,7 @@ public final class CoreUtils {
     return getODataProperty(client, edmProperty, property, obj);
   }
 
-  private static ODataProperty getODataComplexProperty(
+  private static ClientProperty getODataComplexProperty(
       final EdmEnabledODataClient client,
       final FullQualifiedName complex,
       final String property,
@@ -164,7 +164,7 @@ public final class CoreUtils {
     return getODataProperty(client, edmProperty, property, obj);
   }
 
-  private static ODataProperty getODataProperty(
+  private static ClientProperty getODataProperty(
       final EdmEnabledODataClient client,
       final EdmElement edmProperty,
       final String property,
@@ -186,29 +186,29 @@ public final class CoreUtils {
     return getODataProperty(client, property, type, obj);
   }
 
-  public static ODataAnnotation getODataAnnotation(
+  public static ClientAnnotation getODataAnnotation(
       final EdmEnabledODataClient client, final String term, final EdmType type, final Object obj) {
 
-    ODataAnnotation annotation;
+    ClientAnnotation annotation;
 
     if (obj == null) {
-      annotation = new ODataAnnotationImpl(term, null);
+      annotation = new ClientAnnotationImpl(term, null);
     } else {
       final EdmTypeInfo valueType = type == null
           ? guessTypeFromObject(client, obj)
           : new EdmTypeInfo.Builder().setEdm(client.getCachedEdm()).
               setTypeExpression(type.getFullQualifiedName().toString()).build();
 
-      annotation = new ODataAnnotationImpl(term, getODataValue(client, valueType, obj));
+      annotation = new ClientAnnotationImpl(term, getODataValue(client, valueType, obj));
     }
 
     return annotation;
   }
 
-  public static ODataProperty getODataProperty(
+  public static ClientProperty getODataProperty(
       final EdmEnabledODataClient client, final String name, final EdmTypeInfo type, final Object obj) {
 
-    ODataProperty property;
+    ClientProperty property;
 
     try {
       if (obj == null) {
@@ -217,7 +217,7 @@ public final class CoreUtils {
         final EdmTypeInfo valueType = type == null
             ? guessTypeFromObject(client, obj)
             : type;
-        final ODataValue value = getODataValue(client, valueType, obj);
+        final ClientValue value = getODataValue(client, valueType, obj);
 
         if (valueType.isCollection()) {
           property = client.getObjectFactory().newCollectionProperty(name, value.asCollection());
@@ -287,7 +287,7 @@ public final class CoreUtils {
   public static void addProperties(
       final EdmEnabledODataClient client,
       final Map<String, Object> changes,
-      final ODataEntity entity) {
+      final ClientEntity entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
       entity.getProperties()
@@ -298,7 +298,7 @@ public final class CoreUtils {
   public static void addProperties(
       final EdmEnabledODataClient client,
       final Map<String, Object> changes,
-      final ODataComplexValue entity) {
+      final ClientComplexValue entity) {
 
     for (Map.Entry<String, Object> entry : changes.entrySet()) {
       entity.add(getODataComplexProperty(
@@ -312,7 +312,7 @@ public final class CoreUtils {
   public static void addAnnotations(
       final EdmEnabledODataClient client,
       final Map<Class<? extends AbstractTerm>, Object> annotations,
-      final ODataAnnotatable annotatable) {
+      final ClientAnnotatable annotatable) {
 
     for (Map.Entry<Class<? extends AbstractTerm>, Object> entry : annotations.entrySet()) {
       final Namespace nsAnn = entry.getKey().getAnnotation(Namespace.class);
@@ -329,7 +329,7 @@ public final class CoreUtils {
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private static Enum<?> enumValueToObject(final ODataEnumValue value, final Class<?> reference) {
+  private static Enum<?> enumValueToObject(final ClientEnumValue value, final Class<?> reference) {
     final Namespace namespace = reference.getAnnotation(Namespace.class);
     final EnumType enumType = reference.getAnnotation(EnumType.class);
     if (value.getTypeName().equals(namespace.value() + "." + enumType.name())) {
@@ -339,7 +339,7 @@ public final class CoreUtils {
     return null;
   }
 
-  private static Object primitiveValueToObject(final ODataPrimitiveValue value, final Class<?> reference) {
+  private static Object primitiveValueToObject(final ClientPrimitiveValue value, final Class<?> reference) {
     Object obj;
 
     try {
@@ -378,7 +378,7 @@ public final class CoreUtils {
   public static URIBuilder buildEditLink(
       final EdmEnabledODataClient client,
       final String entitySetURI,
-      final ODataEntity entity,
+      final ClientEntity entity,
       final Object key) {
 
     if (key == null) {
@@ -428,14 +428,14 @@ public final class CoreUtils {
       final EdmEnabledODataClient client,
       final EntityInvocationHandler typeHandler,
       final Class<?> entityTypeRef,
-      final ODataEntity entity) {
+      final ClientEntity entity) {
 
     Object res = null;
 
     if (!entity.getProperties().isEmpty()) {
       final Class<?> keyRef = ClassUtils.getCompoundKeyRef(entityTypeRef);
       if (keyRef == null) {
-        final ODataProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
+        final ClientProperty property = entity.getProperty(firstValidEntityKey(entityTypeRef));
         if (property != null && property.hasPrimitiveValue()) {
           res = primitiveValueToObject(
               property.getPrimitiveValue(), getPropertyClass(entityTypeRef, property.getName()));
@@ -459,7 +459,7 @@ public final class CoreUtils {
       final EntityInvocationHandler typeHandler,
       final Object bean,
       final Class<? extends Annotation> getterAnn,
-      final Iterator<? extends ODataProperty> propItor) {
+      final Iterator<? extends ClientProperty> propItor) {
 
     if (bean != null) {
       final Class<?> typeRef;
@@ -484,11 +484,11 @@ public final class CoreUtils {
       final Object bean,
       final Class<?> typeRef,
       final Class<? extends Annotation> getterAnn,
-      final Iterator<? extends ODataProperty> propItor) {
+      final Iterator<? extends ClientProperty> propItor) {
 
     if (bean != null) {
       while (propItor.hasNext()) {
-        final ODataProperty property = propItor.next();
+        final ClientProperty property = propItor.next();
 
         final Method getter = ClassUtils.findGetterByAnnotatedName(typeRef, getterAnn, property.getName());
 
@@ -520,9 +520,9 @@ public final class CoreUtils {
                 setPropertyValue(bean, getter, collection);
               }
 
-              final Iterator<ODataValue> collPropItor = property.getValue().asCollection().iterator();
+              final Iterator<ClientValue> collPropItor = property.getValue().asCollection().iterator();
               while (collPropItor.hasNext()) {
-                final ODataValue value = collPropItor.next();
+                final ClientValue value = collPropItor.next();
                 if (value.isPrimitive()) {
                   collection.add(primitiveValueToObject(
                       value.asPrimitive(), getPropertyClass(typeRef, property.getName())));
@@ -546,7 +546,7 @@ public final class CoreUtils {
   }
 
   public static Object getObjectFromODataValue(
-      final ODataValue value,
+      final ClientValue value,
       final Type typeRef,
       final AbstractService<?> service)
       throws InstantiationException, IllegalAccessException {
@@ -566,7 +566,7 @@ public final class CoreUtils {
   }
 
   public static Object getObjectFromODataValue(
-      final ODataValue value,
+      final ClientValue value,
       final Class<?> ref,
       final AbstractService<?> service)
       throws InstantiationException, IllegalAccessException {
@@ -585,9 +585,9 @@ public final class CoreUtils {
     } else if (value.isCollection()) {
       final ArrayList<Object> collection = new ArrayList<Object>();
 
-      final Iterator<ODataValue> collPropItor = value.asCollection().iterator();
+      final Iterator<ClientValue> collPropItor = value.asCollection().iterator();
       while (collPropItor.hasNext()) {
-        final ODataValue itemValue = collPropItor.next();
+        final ClientValue itemValue = collPropItor.next();
         if (itemValue.isPrimitive()) {
           collection.add(CoreUtils.primitiveValueToObject(itemValue.asPrimitive(), ref));
         } else if (itemValue.isComplex()) {
@@ -602,8 +602,8 @@ public final class CoreUtils {
       }
 
       res = collection;
-    } else if (value instanceof ODataEnumValue) {
-      res = enumValueToObject((ODataEnumValue) value, ref == null ? getEnumTypeRef(service, value) : ref);
+    } else if (value instanceof ClientEnumValue) {
+      res = enumValueToObject((ClientEnumValue) value, ref == null ? getEnumTypeRef(service, value) : ref);
     } else {
       res = primitiveValueToObject(value.asPrimitive(), ref);
     }
@@ -612,11 +612,11 @@ public final class CoreUtils {
   }
 
   public static Collection<Class<? extends AbstractTerm>> getAnnotationTerms(
-      final AbstractService<?> service, final List<ODataAnnotation> annotations) {
+      final AbstractService<?> service, final List<ClientAnnotation> annotations) {
 
     final List<Class<? extends AbstractTerm>> res = new ArrayList<Class<? extends AbstractTerm>>();
 
-    for (ODataAnnotation annotation : annotations) {
+    for (ClientAnnotation annotation : annotations) {
       final Class<? extends AbstractTerm> clazz = service.getTermClass(annotation.getTerm());
       if (clazz != null) {
         res.add(clazz);
@@ -626,11 +626,11 @@ public final class CoreUtils {
     return res;
   }
 
-  private static Class<?> getEnumTypeRef(final AbstractService<?> service, final ODataValue value) {
+  private static Class<?> getEnumTypeRef(final AbstractService<?> service, final ClientValue value) {
     return service.getEnumTypeClass(value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
   }
 
-  public static Class<?> getComplexTypeRef(final AbstractService<?> service, final ODataValue value) {
+  public static Class<?> getComplexTypeRef(final AbstractService<?> service, final ClientValue value) {
     return service.getComplexTypeClass(value.getTypeName().replaceAll("^Collection\\(", "").replaceAll("\\)$", ""));
   }
 
@@ -646,8 +646,8 @@ public final class CoreUtils {
     return null;
   }
 
-  public static URI getMediaEditLink(final String name, final ODataEntity entity) {
-    final ODataLink mediaEditLink = entity.getMediaEditLink(name);
+  public static URI getMediaEditLink(final String name, final ClientEntity entity) {
+    final ClientLink mediaEditLink = entity.getMediaEditLink(name);
     return mediaEditLink == null ? URIUtils.getURI(entity.getEditLink(), name) : mediaEditLink.getLink();
   }
 

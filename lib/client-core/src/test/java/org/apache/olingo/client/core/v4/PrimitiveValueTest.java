@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10, 21, 45, 17);
 
-    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+    final ClientValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.TimeOfDay, value.asPrimitive().getTypeKind());
 
@@ -60,7 +60,7 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10);
 
-    final ODataValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+    final ClientValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Date).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.Date, value.asPrimitive().getTypeKind());
 

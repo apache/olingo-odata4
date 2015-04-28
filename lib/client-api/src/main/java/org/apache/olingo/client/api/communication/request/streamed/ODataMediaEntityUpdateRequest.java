@@ -20,14 +20,14 @@ package org.apache.olingo.client.api.communication.request.streamed;
 
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 
 /**
  * This class implements an OData Media Entity create request. Get instance by using ODataStreamedRequestFactory.
  *
  * @param <E> concrete ODataEntity implementation
  */
-public interface ODataMediaEntityUpdateRequest<E extends ODataEntity>
+public interface ODataMediaEntityUpdateRequest<E extends ClientEntity>
         extends ODataStreamedEntityRequest<ODataMediaEntityUpdateResponse<E>, MediaEntityUpdateStreamManager<E>>,
         ODataBatchableRequest {
 //No additional methods needed for now.

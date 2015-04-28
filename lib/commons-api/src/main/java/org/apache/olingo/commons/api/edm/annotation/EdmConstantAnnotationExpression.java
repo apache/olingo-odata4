@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientValue;
 
 public interface EdmConstantAnnotationExpression extends EdmAnnotationExpression {
 
-  ODataValue getValue();
+  ClientValue getValue();
 
 }

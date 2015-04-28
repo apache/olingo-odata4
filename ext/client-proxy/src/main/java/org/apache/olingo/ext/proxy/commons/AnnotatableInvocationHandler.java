@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
@@ -77,17 +77,17 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
     return annotations;
   }
 
-  private List<ODataAnnotation> internalAnnotations() {
-    List<ODataAnnotation> result = Collections.<ODataAnnotation> emptyList();
+  private List<ClientAnnotation> internalAnnotations() {
+    List<ClientAnnotation> result = Collections.<ClientAnnotation> emptyList();
 
-    if (targetHandler.getInternal() instanceof ODataEntity) {
+    if (targetHandler.getInternal() instanceof ClientEntity) {
       result = propName == null
-          ? ((ODataEntity) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
-          : ((ODataEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
-    } else if (targetHandler.getInternal() instanceof ODataComplexValue) {
+          ? ((ClientEntity) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
+          : ((ClientEntity) targetHandler.getInternal()).getProperty(propName).getAnnotations();
+    } else if (targetHandler.getInternal() instanceof ClientComplexValue) {
       result = propName == null
-          ? ((ODataComplexValue) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
-          : ((ODataComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
+          ? ((ClientComplexValue) targetHandler.getInternal()).getNavigationLink(navPropName).getAnnotations()
+          : ((ClientComplexValue) targetHandler.getInternal()).get(propName).getAnnotations();
     }
 
     return result;
@@ -146,8 +146,8 @@ public class AnnotatableInvocationHandler extends AbstractInvocationHandler impl
       try {
         final Term termAnn = term.getAnnotation(Term.class);
         final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
-        ODataAnnotation annotation = null;
-        for (ODataAnnotation _annotation : internalAnnotations()) {
+        ClientAnnotation annotation = null;
+        for (ClientAnnotation _annotation : internalAnnotations()) {
           if ((namespaceAnn.value() + "." + termAnn.name()).equals(_annotation.getTerm())) {
             annotation = _annotation;
           }

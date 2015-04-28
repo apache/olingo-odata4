@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -28,8 +28,8 @@ import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
@@ -54,7 +54,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
+    final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
     assertNotNull(entitySet.getPayload());
     assertTrue(entitySet.getContextURL().toASCIIString().endsWith("$metadata#People"));
   }
@@ -79,7 +79,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
 
-    final ResWrap<ODataEntitySet> entitySet = res.getBodyAs(ODataEntitySet.class);
+    final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
     assertEquals(5, entitySet.getPayload().getEntities().size());
 
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address",
@@ -104,12 +104,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   private void readODataEntitySetIterator(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
-    final ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> req =
+    final ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> req =
         client.getRetrieveRequestFactory().getEntitySetIteratorRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntitySetIterator<ODataEntitySet, ODataEntity>> res = req.execute();
-    final ODataEntitySetIterator<ODataEntitySet, ODataEntity> feedIterator = res.getBody();
+    final ODataRetrieveResponse<ODataEntitySetIterator<ClientEntitySet, ClientEntity>> res = req.execute();
+    final ODataEntitySetIterator<ClientEntitySet, ClientEntity> feedIterator = res.getBody();
 
     assertNotNull(feedIterator);
 
@@ -146,13 +146,13 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   private void readWithNext(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
-    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+    final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
         getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
     req.setPrefer(client.newPreferences().maxPageSize(5));
 
-    final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
-    final ODataEntitySet feed = res.getBody();
+    final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
+    final ClientEntitySet feed = res.getBody();
 
     assertNotNull(feed);
 

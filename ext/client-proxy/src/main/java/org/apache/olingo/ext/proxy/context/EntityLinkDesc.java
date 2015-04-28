@@ -22,7 +22,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ public class EntityLinkDesc implements Serializable {
 
   private final Collection<EntityInvocationHandler> targets;
 
-  private final ODataLinkType type;
+  private final ClientLinkType type;
 
   private final String reference;
 
@@ -47,7 +47,7 @@ public class EntityLinkDesc implements Serializable {
           final String sourceName,
           final EntityInvocationHandler source,
           final Collection<EntityInvocationHandler> target,
-          final ODataLinkType type) {
+          final ClientLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
     this.targets = target;
@@ -59,7 +59,7 @@ public class EntityLinkDesc implements Serializable {
           final String sourceName,
           final EntityInvocationHandler source,
           final EntityInvocationHandler target,
-          final ODataLinkType type) {
+          final ClientLinkType type) {
     this.sourceName = sourceName;
     this.source = source;
     this.targets = Collections.<EntityInvocationHandler>singleton(target);
@@ -90,7 +90,7 @@ public class EntityLinkDesc implements Serializable {
     return targets;
   }
 
-  public ODataLinkType getType() {
+  public ClientLinkType getType() {
     return type;
   }
 

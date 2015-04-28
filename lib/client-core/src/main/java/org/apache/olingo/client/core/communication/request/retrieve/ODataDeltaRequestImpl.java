@@ -29,11 +29,11 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataDelta;
+import org.apache.olingo.commons.api.domain.ClientDelta;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
-public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDelta>
+public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ClientDelta>
     implements ODataDeltaRequest {
 
   public ODataDeltaRequestImpl(final ODataClient odataClient, final URI query) {
@@ -46,14 +46,14 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDel
   }
 
   @Override
-  public ODataRetrieveResponse<ODataDelta> execute() {
+  public ODataRetrieveResponse<ClientDelta> execute() {
     final HttpResponse res = doExecute();
     return new ODataDeltaResponseImpl(odataClient, httpClient, res);
   }
 
   protected class ODataDeltaResponseImpl extends AbstractODataRetrieveResponse {
 
-    private ODataDelta delta = null;
+    private ClientDelta delta = null;
 
     private ODataDeltaResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
         final HttpResponse res) {
@@ -62,7 +62,7 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ODataDel
     }
 
     @Override
-    public ODataDelta getBody() {
+    public ClientDelta getBody() {
       if (delta == null) {
         try {
           final ResWrap<Delta> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType())).

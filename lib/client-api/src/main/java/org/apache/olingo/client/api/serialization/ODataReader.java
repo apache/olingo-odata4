@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -65,7 +65,7 @@ public interface ODataReader {
    * @return List of URIs.
    * @throws ODataDeserializerException
    */
-  ODataServiceDocument readServiceDocument(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientServiceDocument readServiceDocument(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * De-Serializes a stream into an OData entity set.
@@ -75,7 +75,7 @@ public interface ODataReader {
    * @return de-serialized entity set.
    * @throws ODataDeserializerException
    */
-  ODataEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
@@ -85,7 +85,7 @@ public interface ODataReader {
    * @return entity de-serialized.
    * @throws ODataDeserializerException
    */
-  ODataEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
@@ -95,7 +95,7 @@ public interface ODataReader {
    * @return OData entity property de-serialized.
    * @throws ODataDeserializerException
    */
-  ODataProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into an OData error.
@@ -105,7 +105,7 @@ public interface ODataReader {
    * @return OData error.
    * @throws ODataDeserializerException
    */
-  ODataError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
+  ClientError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into the object type specified by the given reference.

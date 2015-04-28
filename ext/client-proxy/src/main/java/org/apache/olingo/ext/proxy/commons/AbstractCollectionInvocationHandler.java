@@ -35,7 +35,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.EntityType;
@@ -59,7 +59,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   protected final Class<T> itemRef;
 
-  protected final List<ODataAnnotation> annotations = new ArrayList<ODataAnnotation>();
+  protected final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
 
   private final Map<Class<? extends AbstractTerm>, Object> annotationsByTerm =
           new HashMap<Class<? extends AbstractTerm>, Object>();
@@ -92,7 +92,7 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   public Collection<T> execute() {
     if (this.uri != null) {
-      final Triple<List<T>, URI, List<ODataAnnotation>> res = fetchPartial(this.uri.build(), itemRef);
+      final Triple<List<T>, URI, List<ClientAnnotation>> res = fetchPartial(this.uri.build(), itemRef);
       this.nextPageURI = res.getMiddle();
 
       if (items == null) {
@@ -109,9 +109,9 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
     return this;
   }
 
-  public abstract Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef);
+  public abstract Triple<List<T>, URI, List<ClientAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef);
 
-  public void setAnnotations(final List<ODataAnnotation> annotations) {
+  public void setAnnotations(final List<ClientAnnotation> annotations) {
     this.annotations.clear();
     this.annotationsByTerm.clear();
     this.annotations.addAll(annotations);
@@ -145,8 +145,8 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
       try {
         final Term termAnn = term.getAnnotation(Term.class);
         final Namespace namespaceAnn = term.getAnnotation(Namespace.class);
-        ODataAnnotation annotation = null;
-        for (ODataAnnotation _annotation : annotations) {
+        ClientAnnotation annotation = null;
+        for (ClientAnnotation _annotation : annotations) {
           if ((namespaceAnn.value() + "." + termAnn.name()).equals(_annotation.getTerm())) {
             annotation = _annotation;
           }

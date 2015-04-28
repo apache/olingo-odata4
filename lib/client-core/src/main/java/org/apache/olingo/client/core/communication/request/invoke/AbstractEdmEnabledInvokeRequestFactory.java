@@ -25,8 +25,8 @@ import java.util.Map;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.EdmEnabledInvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -46,7 +46,7 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
           final String functionImportName) {
 
     return getFunctionImportInvokeRequest(functionImportName, null);
@@ -54,8 +54,8 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
 
   @Override
   @SuppressWarnings("unchecked")
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
-          final String functionImportName, final Map<String, ODataValue> parameters) {
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+          final String functionImportName, final Map<String, ClientValue> parameters) {
 
     EdmFunctionImport efi = null;
     for (EdmSchema schema : edmClient.getCachedEdm().getSchemas()) {
@@ -82,7 +82,7 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
           final String actionImportName) {
 
     return getActionImportInvokeRequest(actionImportName, null);
@@ -90,8 +90,8 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
 
   @Override
   @SuppressWarnings("unchecked")
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
-          final String actionImportName, final Map<String, ODataValue> parameters) {
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+          final String actionImportName, final Map<String, ClientValue> parameters) {
 
     EdmActionImport eai = null;
     for (EdmSchema schema : edmClient.getCachedEdm().getSchemas()) {
@@ -111,7 +111,7 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
           final URI bindingParameterURI, final FullQualifiedName functionName,
           final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
@@ -121,10 +121,10 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
 
   @Override
   @SuppressWarnings("unchecked")
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
           final URI bindingParameterURI, final FullQualifiedName functionName,
           final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-          final Map<String, ODataValue> parameters) {
+          final Map<String, ClientValue> parameters) {
 
     final EdmFunction function = edmClient.getCachedEdm().getBoundFunction(
             functionName, bindingParameterTypeName, isBindingParameterCollection,
@@ -141,7 +141,7 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
           final URI bindingParameterURI, final FullQualifiedName actionName,
           final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
@@ -151,10 +151,10 @@ public abstract class AbstractEdmEnabledInvokeRequestFactory extends AbstractInv
 
   @Override
   @SuppressWarnings("unchecked")
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
           final URI bindingParameterURI, final FullQualifiedName actionName,
           final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection,
-          final Map<String, ODataValue> parameters) {
+          final Map<String, ClientValue> parameters) {
 
     final EdmAction action = edmClient.getCachedEdm().getBoundAction(
             actionName, bindingParameterTypeName, isBindingParameterCollection);

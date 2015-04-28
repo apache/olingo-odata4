@@ -37,7 +37,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
@@ -80,7 +80,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private ODataResponse handleException(ODataRequest odRequest, Exception e) {
     ODataResponse resp = new ODataResponse();
-    ODataServerError serverError;
+    ClientServerError serverError;
     if (e instanceof ODataHandlerException) {
       serverError = ODataExceptionHelper.createServerErrorObject((ODataHandlerException) e, null);
     } else if (e instanceof ODataTranslatedException) {

@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -55,40 +55,40 @@ public class ErrorHandler {
 
   public void handleException(Exception e, ODataRequest request, ODataResponse response) {
     if (e instanceof UriValidationException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((UriValidationException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((UriValidationException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof UriParserSemanticException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserSemanticException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserSemanticException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof  UriParserSyntaxException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserSyntaxException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserSyntaxException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof  UriParserException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((UriParserException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof ContentNegotiatorException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((ContentNegotiatorException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((ContentNegotiatorException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof SerializerException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((SerializerException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((SerializerException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof BatchDeserializerException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((BatchDeserializerException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((BatchDeserializerException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof DeserializerException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((DeserializerException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((DeserializerException)e, null);
       handleServerError(request, response, serverError);
     } else if(e instanceof ODataHandlerException) {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((ODataHandlerException)e, null);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject((ODataHandlerException)e, null);
       handleServerError(request, response, serverError);
     } else {
-      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
+      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleServerError(request, response, serverError);
     }
   }
 
   void handleServerError(final ODataRequest request, final ODataResponse response,
-      final ODataServerError serverError) {
+      final ClientServerError serverError) {
     ContentType requestedContentType;
     try {
       UriInfo uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(),
@@ -103,7 +103,7 @@ public class ErrorHandler {
     processError(response, serverError, requestedContentType);
   }
 
-  void processError(ODataResponse response, ODataServerError serverError,
+  void processError(ODataResponse response, ClientServerError serverError,
       ContentType requestedContentType) {
     try {
       ODataSerializer serializer = this.odata.createSerializer(ODataFormat

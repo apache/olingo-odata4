@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 
 /**
  * This class implements the response to an OData update entity property request.
@@ -32,5 +32,5 @@ public interface ODataPropertyUpdateResponse extends ODataResponse {
    *
    * @return updated object.
    */
-  ODataProperty getBody();
+  ClientProperty getBody();
 }

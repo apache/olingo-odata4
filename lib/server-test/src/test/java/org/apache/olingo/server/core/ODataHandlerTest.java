@@ -51,7 +51,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
@@ -692,7 +692,7 @@ public class ODataHandlerTest {
     ErrorProcessor errorProcessor = mock(ErrorProcessor.class);
     dispatch(HttpMethod.POST, "ESAllPrim", "", HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
     verifyZeroInteractions(processor);
-    verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class), any(ODataServerError.class),
+    verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class), any(ClientServerError.class),
         any(ContentType.class));
   }
 

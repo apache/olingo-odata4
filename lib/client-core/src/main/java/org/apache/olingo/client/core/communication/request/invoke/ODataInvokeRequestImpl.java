@@ -21,11 +21,11 @@ package org.apache.olingo.client.core.communication.request.invoke;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
-public class ODataInvokeRequestImpl<T extends ODataInvokeResult> extends AbstractODataInvokeRequest<T> {
+public class ODataInvokeRequestImpl<T extends ClientInvokeResult> extends AbstractODataInvokeRequest<T> {
 
   private ODataFormat format;
 

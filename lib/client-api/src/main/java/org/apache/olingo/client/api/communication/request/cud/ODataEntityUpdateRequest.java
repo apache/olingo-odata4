@@ -21,14 +21,14 @@ package org.apache.olingo.client.api.communication.request.cud;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 
 /**
  * This class implements an OData update request.
  *
  * @param <E> concrete ODataEntity implementation
  */
-public interface ODataEntityUpdateRequest<E extends ODataEntity>
+public interface ODataEntityUpdateRequest<E extends ClientEntity>
     extends ODataBasicRequest<ODataEntityUpdateResponse<E>>, ODataBatchableRequest {
 //No additional methods needed for now.
 }

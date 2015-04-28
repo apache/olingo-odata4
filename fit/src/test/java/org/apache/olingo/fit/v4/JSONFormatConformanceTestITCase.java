@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -29,12 +29,12 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -62,21 +62,21 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item1() throws EdmPrimitiveTypeException {
     final URI uri = edmClient.newURIBuilder().
-            appendEntitySetSegment("Accounts").appendKeySegment(102).
-            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();
-    final ODataEntityRequest<ODataEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
+        appendEntitySetSegment("Accounts").appendKeySegment(102).
+        appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();
+    final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
 
     // request format (via Accept header) is set to minimal by default
     assertEquals("application/json;odata.metadata=minimal", req.getAccept());
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
 
     // response is odata.metadata=minimal
     assertFalse(res.getContentType().contains("odata.metadata=none"));
     assertFalse(res.getContentType().contains("odata.metadata=full"));
 
     // response payload is understood
-    final ODataEntity entity = res.getBody();
+    final ClientEntity entity = res.getBody();
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", entity.getTypeName().toString());
     assertEquals(102902, entity.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
@@ -89,23 +89,23 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item2() {
     final URI uri = edmClient.newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Accounts").appendKeySegment(102).build();
-    final ODataEntityRequest<ODataEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
+        appendEntitySetSegment("Accounts").appendKeySegment(102).build();
+    final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     // request format (via Accept header) is set to full metadata
     assertEquals("application/json;odata.metadata=full", req.getAccept());
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
 
     // response is odata.metadata=full
     assertTrue(res.getContentType().contains("odata.metadata=full"));
 
     // response payload is understood (including links, only returned with full metadata)
-    final ODataEntity entity = res.getBody();
+    final ClientEntity entity = res.getBody();
     assertNotNull(entity);
-    assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("MyPaymentInstruments").getType());
-    assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("ActiveSubscriptions").getType());
+    assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("MyPaymentInstruments").getType());
+    assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("ActiveSubscriptions").getType());
   }
 
   /**
@@ -119,36 +119,36 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item3() throws Exception {
     final String fromSection71 = "{"
-            + "\"NullValue\": null,"
-            + "\"TrueValue\": true,"
-            + "\"FalseValue\": false,"
-            + "\"BinaryValue@odata.type\": \"Binary\","
-            + "\"BinaryValue\": \"T0RhdGE\","
-            + "\"IntegerValue\": -128,"
-            + "\"DoubleValue\": 3.1415926535897931,"
-            + "\"SingleValue@odata.type\": \"Single\","
-            + "\"SingleValue\": \"INF\","
-            + "\"DecimalValue@odata.type\": \"Decimal\","
-            + "\"DecimalValue\": 34.95,"
-            + "\"StringValue\": \"Say \\\"Hello\\\",\\nthen go\","
-            + "\"DateValue@odata.type\": \"Date\","
-            + "\"DateValue\": \"2012-12-03\","
-            + "\"DateTimeOffsetValue@odata.type\": \"DateTimeOffset\","
-            + "\"DateTimeOffsetValue\": \"2012-12-03T07:16:23Z\","
-            + "\"DurationValue@odata.type\": \"Duration\","
-            + "\"DurationValue\": \"P12DT23H59M59.999999999999S\","
-            + "\"TimeOfDayValue@odata.type\": \"TimeOfDay\","
-            + "\"TimeOfDayValue\": \"07:59:59.999\","
-            + "\"GuidValue@odata.type\": \"Guid\","
-            + "\"GuidValue\": \"01234567-89ab-cdef-0123-456789abcdef\","
-            + "\"Int64Value@odata.type\": \"Int64\","
-            + "\"Int64Value\": 0,"
-            + "\"ColorEnumValue@odata.type\": \"Test.Color\","
-            + "\"ColorEnumValue\": \"Yellow\","
-            + "\"GeographyPoint\": {\"type\": \"Point\",\"coordinates\":[142.1,64.1]}"
-            + "}";
+        + "\"NullValue\": null,"
+        + "\"TrueValue\": true,"
+        + "\"FalseValue\": false,"
+        + "\"BinaryValue@odata.type\": \"Binary\","
+        + "\"BinaryValue\": \"T0RhdGE\","
+        + "\"IntegerValue\": -128,"
+        + "\"DoubleValue\": 3.1415926535897931,"
+        + "\"SingleValue@odata.type\": \"Single\","
+        + "\"SingleValue\": \"INF\","
+        + "\"DecimalValue@odata.type\": \"Decimal\","
+        + "\"DecimalValue\": 34.95,"
+        + "\"StringValue\": \"Say \\\"Hello\\\",\\nthen go\","
+        + "\"DateValue@odata.type\": \"Date\","
+        + "\"DateValue\": \"2012-12-03\","
+        + "\"DateTimeOffsetValue@odata.type\": \"DateTimeOffset\","
+        + "\"DateTimeOffsetValue\": \"2012-12-03T07:16:23Z\","
+        + "\"DurationValue@odata.type\": \"Duration\","
+        + "\"DurationValue\": \"P12DT23H59M59.999999999999S\","
+        + "\"TimeOfDayValue@odata.type\": \"TimeOfDay\","
+        + "\"TimeOfDayValue\": \"07:59:59.999\","
+        + "\"GuidValue@odata.type\": \"Guid\","
+        + "\"GuidValue\": \"01234567-89ab-cdef-0123-456789abcdef\","
+        + "\"Int64Value@odata.type\": \"Int64\","
+        + "\"Int64Value\": 0,"
+        + "\"ColorEnumValue@odata.type\": \"Test.Color\","
+        + "\"ColorEnumValue\": \"Yellow\","
+        + "\"GeographyPoint\": {\"type\": \"Point\",\"coordinates\":[142.1,64.1]}"
+        + "}";
 
-    final ODataEntity entity = client.getReader().readEntity(IOUtils.toInputStream(fromSection71), ODataFormat.JSON);
+    final ClientEntity entity = client.getReader().readEntity(IOUtils.toInputStream(fromSection71), ODataFormat.JSON);
 
     assertTrue(entity.getProperty("NullValue").hasNullValue());
 
@@ -165,29 +165,29 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
 
     assertEquals(EdmPrimitiveTypeKind.Double, entity.getProperty("DoubleValue").getPrimitiveValue().getTypeKind());
     assertEquals(3.1415926535897931,
-            entity.getProperty("DoubleValue").getPrimitiveValue().toCastValue(Double.class), 0);
+        entity.getProperty("DoubleValue").getPrimitiveValue().toCastValue(Double.class), 0);
 
     assertEquals(EdmPrimitiveTypeKind.Single, entity.getProperty("SingleValue").getPrimitiveValue().getTypeKind());
     assertEquals(Float.POSITIVE_INFINITY,
-            entity.getProperty("SingleValue").getPrimitiveValue().toCastValue(Float.class), 0);
+        entity.getProperty("SingleValue").getPrimitiveValue().toCastValue(Float.class), 0);
 
     assertEquals(EdmPrimitiveTypeKind.Decimal, entity.getProperty("DecimalValue").getPrimitiveValue().getTypeKind());
     assertEquals(BigDecimal.valueOf(34.95),
-            entity.getProperty("DecimalValue").getPrimitiveValue().toCastValue(BigDecimal.class));
+        entity.getProperty("DecimalValue").getPrimitiveValue().toCastValue(BigDecimal.class));
 
     assertEquals(EdmPrimitiveTypeKind.String, entity.getProperty("StringValue").getPrimitiveValue().getTypeKind());
     assertEquals("Say \"Hello\",\nthen go",
-            entity.getProperty("StringValue").getPrimitiveValue().toCastValue(String.class));
+        entity.getProperty("StringValue").getPrimitiveValue().toCastValue(String.class));
 
     assertEquals(EdmPrimitiveTypeKind.Date, entity.getProperty("DateValue").getPrimitiveValue().getTypeKind());
 
     assertEquals(EdmPrimitiveTypeKind.DateTimeOffset,
-            entity.getProperty("DateTimeOffsetValue").getPrimitiveValue().getTypeKind());
+        entity.getProperty("DateTimeOffsetValue").getPrimitiveValue().getTypeKind());
 
     assertEquals(EdmPrimitiveTypeKind.Duration, entity.getProperty("DurationValue").getPrimitiveValue().getTypeKind());
 
     assertEquals(EdmPrimitiveTypeKind.TimeOfDay,
-            entity.getProperty("TimeOfDayValue").getPrimitiveValue().getTypeKind());
+        entity.getProperty("TimeOfDayValue").getPrimitiveValue().getTypeKind());
 
     assertEquals(EdmPrimitiveTypeKind.Guid, entity.getProperty("GuidValue").getPrimitiveValue().getTypeKind());
 
@@ -196,7 +196,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     assertTrue(entity.getProperty("ColorEnumValue").hasEnumValue());
 
     assertEquals(EdmPrimitiveTypeKind.GeographyPoint,
-            entity.getProperty("GeographyPoint").getPrimitiveValue().getTypeKind());
+        entity.getProperty("GeographyPoint").getPrimitiveValue().getTypeKind());
   }
 
   /**
@@ -205,21 +205,21 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item4() throws Exception {
     final String fromSection45_1 = "{"
-            + "\"@odata.context\": \"http://host/service/$metadata#Customers/$entity\","
-            + "\"@odata.metadataEtag\": \"W/\\\"A1FF3E230954908F\\\"\","
-            + "\"@odata.etag\": \"W/\\\"A1FF3E230954908G\\\"\","
-            + "\"@odata.type\": \"#Model.VipCustomer\","
-            + "\"@odata.id\": \"http://host/service/Employees(PersonID=3)\","
-            + "\"@odata.editLink\": \"People(976)\","
-            + "\"@odata.mediaEditLink\": \"Employees(1)/$value\","
-            + "\"@odata.mediaContentType\": \"image/jpeg\","
-            + "\"@odata.mediaEtag\": \"W/\\\"A1FF3E230954908H\\\"\","
-            + "\"Parent@odata.navigationLink\": \"People(976)/Parent\","
-            + "\"Parent@odata.associationLink\": \"People(976)/Parent\""
-            + "}";
+        + "\"@odata.context\": \"http://host/service/$metadata#Customers/$entity\","
+        + "\"@odata.metadataEtag\": \"W/\\\"A1FF3E230954908F\\\"\","
+        + "\"@odata.etag\": \"W/\\\"A1FF3E230954908G\\\"\","
+        + "\"@odata.type\": \"#Model.VipCustomer\","
+        + "\"@odata.id\": \"http://host/service/Employees(PersonID=3)\","
+        + "\"@odata.editLink\": \"People(976)\","
+        + "\"@odata.mediaEditLink\": \"Employees(1)/$value\","
+        + "\"@odata.mediaContentType\": \"image/jpeg\","
+        + "\"@odata.mediaEtag\": \"W/\\\"A1FF3E230954908H\\\"\","
+        + "\"Parent@odata.navigationLink\": \"People(976)/Parent\","
+        + "\"Parent@odata.associationLink\": \"People(976)/Parent\""
+        + "}";
 
     final ResWrap<Entity> entity =
-            client.getDeserializer(ODataFormat.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
+        client.getDeserializer(ODataFormat.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
 
     assertEquals("http://host/service/$metadata#Customers/$entity", entity.getContextURL().toASCIIString());
     assertEquals("W/\"A1FF3E230954908F\"", entity.getMetadataETag());
@@ -234,14 +234,14 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     assertEquals("People(976)/Parent", entity.getPayload().getAssociationLink("Parent").getHref());
 
     final String fromSection45_2 = "{"
-            + "  \"@odata.count\": 5,"
-            + "  \"value\": [],"
-            + "  \"@odata.nextLink\": \"Customers?$expand=Orders&$skipToken=5\","
-            + "  \"@odata.deltaLink\": \"Customers?$expand=Orders&$deltatoken=8015\""
-            + "}";
+        + "  \"@odata.count\": 5,"
+        + "  \"value\": [],"
+        + "  \"@odata.nextLink\": \"Customers?$expand=Orders&$skipToken=5\","
+        + "  \"@odata.deltaLink\": \"Customers?$expand=Orders&$deltatoken=8015\""
+        + "}";
 
     final ResWrap<EntityCollection> entitySet =
-            client.getDeserializer(ODataFormat.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
+        client.getDeserializer(ODataFormat.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
 
     assertEquals(5, entitySet.getPayload().getCount(), 0);
     assertEquals("Customers?$expand=Orders&$skipToken=5", entitySet.getPayload().getNext().toASCIIString());
@@ -255,54 +255,54 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item5() throws Exception {
     final String sample = "{"
-            + "  \"@odata.context\": \"http://host/service/$metadata#Customers\","
-            + "  \"@odata.notdefined\": 11,"
-            + "  \"@com.contoso.customer.setkind\": \"VIPs\","
-            + "  \"value\": ["
-            + "    {"
-            + "      \"@com.contoso.display.highlight\": true,"
-            + "      \"ID\": \"ALFKI\","
-            + "      \"CompanyName@com.contoso.display.style\": { \"title\": true, \"order\": 1 },"
-            + "      \"CompanyName\": \"Alfreds Futterkiste\","
-            + "      \"Orders@com.contoso.display.style\": { \"order\": 2 },"
-            + "      \"Orders@odata.navigationLink\": \"People(976)/Orders\""
-            + "    }"
-            + "  ]"
-            + "}";
+        + "  \"@odata.context\": \"http://host/service/$metadata#Customers\","
+        + "  \"@odata.notdefined\": 11,"
+        + "  \"@com.contoso.customer.setkind\": \"VIPs\","
+        + "  \"value\": ["
+        + "    {"
+        + "      \"@com.contoso.display.highlight\": true,"
+        + "      \"ID\": \"ALFKI\","
+        + "      \"CompanyName@com.contoso.display.style\": { \"title\": true, \"order\": 1 },"
+        + "      \"CompanyName\": \"Alfreds Futterkiste\","
+        + "      \"Orders@com.contoso.display.style\": { \"order\": 2 },"
+        + "      \"Orders@odata.navigationLink\": \"People(976)/Orders\""
+        + "    }"
+        + "  ]"
+        + "}";
 
-    final ODataEntitySet entitySet = client.getReader().
-            readEntitySet(IOUtils.toInputStream(sample), ODataFormat.JSON);
+    final ClientEntitySet entitySet = client.getReader().
+        readEntitySet(IOUtils.toInputStream(sample), ODataFormat.JSON);
 
     assertEquals(2, entitySet.getAnnotations().size());
 
-    final ODataAnnotation notdefined = entitySet.getAnnotations().get(0);
+    final ClientAnnotation notdefined = entitySet.getAnnotations().get(0);
     assertEquals("odata.notdefined", notdefined.getTerm());
     assertEquals(11, notdefined.getPrimitiveValue().toCastValue(Integer.class), 0);
 
-    final ODataAnnotation setkind = entitySet.getAnnotations().get(1);
+    final ClientAnnotation setkind = entitySet.getAnnotations().get(1);
     assertEquals("com.contoso.customer.setkind", setkind.getTerm());
     assertEquals("VIPs", setkind.getPrimitiveValue().toCastValue(String.class));
 
-    final ODataEntity entity = entitySet.getEntities().get(0);
+    final ClientEntity entity = entitySet.getEntities().get(0);
     assertEquals(1, entity.getAnnotations().size());
 
-    final ODataAnnotation highlight = entity.getAnnotations().get(0);
+    final ClientAnnotation highlight = entity.getAnnotations().get(0);
     assertEquals("com.contoso.display.highlight", highlight.getTerm());
     assertEquals(Boolean.TRUE, highlight.getPrimitiveValue().toCastValue(Boolean.class));
 
-    final ODataProperty property = entity.getProperty("CompanyName");
+    final ClientProperty property = entity.getProperty("CompanyName");
     assertEquals(1, property.getAnnotations().size());
 
-    final ODataAnnotation style = property.getAnnotations().get(0);
+    final ClientAnnotation style = property.getAnnotations().get(0);
     assertEquals("com.contoso.display.style", style.getTerm());
     assertTrue(style.hasComplexValue());
     assertEquals(Boolean.TRUE, style.getComplexValue().get("title").getPrimitiveValue().toCastValue(Boolean.class));
     assertEquals(1, style.getComplexValue().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
 
-    final ODataLink orders = entity.getNavigationLink("Orders");
+    final ClientLink orders = entity.getNavigationLink("Orders");
     assertEquals(1, orders.getAnnotations().size());
 
-    final ODataAnnotation style2 = orders.getAnnotations().get(0);
+    final ClientAnnotation style2 = orders.getAnnotations().get(0);
     assertEquals("com.contoso.display.style", style2.getTerm());
     assertTrue(style2.hasComplexValue());
     assertEquals(2, style2.getComplexValue().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
@@ -314,17 +314,17 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
   @Test
   public void item6() throws EdmPrimitiveTypeException {
     final URI uri = edmClient.newURIBuilder().
-            appendEntitySetSegment("Accounts").appendKeySegment(102).
-            appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();
-    final ODataEntityRequest<ODataEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
+        appendEntitySetSegment("Accounts").appendKeySegment(102).
+        appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();
+    final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
 
     // request format (via Accept header) does not contain odata.streaming=true
     assertEquals("application/json;odata.metadata=minimal", req.getAccept());
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
 
     // response payload is understood
-    final ODataEntity entity = res.getBody();
+    final ClientEntity entity = res.getBody();
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", entity.getTypeName().toString());
     assertEquals(102902, entity.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);

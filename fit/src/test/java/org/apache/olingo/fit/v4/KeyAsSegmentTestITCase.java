@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -24,8 +24,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.AfterClass;
@@ -52,13 +52,14 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   private void read(final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
-            appendEntitySetSegment("Accounts").appendKeySegment(101);
+        appendEntitySetSegment("Accounts").appendKeySegment(101);
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
-    final ODataEntity entity = res.getBody();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
+    final ClientEntity entity = res.getBody();
     assertNotNull(entity);
 
     // In JSON with minimal metadata, links are not provided
@@ -89,27 +90,27 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   private void update(final ODataFormat format) {
-    final ODataEntity changes = getClient().getObjectFactory().newEntity(
-            new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
-    final ODataProperty middleName = getClient().getObjectFactory().newPrimitiveProperty("MiddleName",
-            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("middle"));
+    final ClientEntity changes = getClient().getObjectFactory().newEntity(
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
+    final ClientProperty middleName = getClient().getObjectFactory().newPrimitiveProperty("MiddleName",
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("middle"));
     changes.getProperties().add(middleName);
 
     final URI uri = getClient().newURIBuilder(testKeyAsSegmentServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(5).build();
-    final ODataEntityUpdateRequest<ODataEntity> req = getClient().getCUDRequestFactory().
-            getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
+        appendEntitySetSegment("People").appendKeySegment(5).build();
+    final ODataEntityUpdateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
+        getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
     req.setFormat(format);
 
-    final ODataEntityUpdateResponse<ODataEntity> res = req.execute();
+    final ODataEntityUpdateResponse<ClientEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
 
-    final ODataEntity updated = getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute().getBody();
+    final ClientEntity updated = getClient().getRetrieveRequestFactory().getEntityRequest(uri).execute().getBody();
     assertNotNull(updated);
     assertFalse(updated.getEditLink().toASCIIString().contains("("));
     assertFalse(updated.getEditLink().toASCIIString().contains(")"));
 
-    final ODataProperty updatedMiddleName = updated.getProperty("MiddleName");
+    final ClientProperty updatedMiddleName = updated.getProperty("MiddleName");
     assertNotNull(updatedMiddleName);
     assertEquals("middle", updatedMiddleName.getPrimitiveValue().toString());
   }

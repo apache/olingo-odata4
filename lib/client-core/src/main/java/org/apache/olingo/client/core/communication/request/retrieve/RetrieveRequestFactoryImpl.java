@@ -35,10 +35,10 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataValueReq
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientSingleton;
 
 public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
 
@@ -93,28 +93,28 @@ public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
   }
 
   @Override
-  public ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(final URI uri) {
-    return new ODataEntitySetRequestImpl<ODataEntitySet>(client, uri);
+  public ODataEntitySetRequest<ClientEntitySet> getEntitySetRequest(final URI uri) {
+    return new ODataEntitySetRequestImpl<ClientEntitySet>(client, uri);
   }
 
   @Override
-  public ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(final URI uri) {
-    return new ODataEntitySetIteratorRequestImpl<ODataEntitySet, ODataEntity>(client, uri);
+  public ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> getEntitySetIteratorRequest(final URI uri) {
+    return new ODataEntitySetIteratorRequestImpl<ClientEntitySet, ClientEntity>(client, uri);
   }
 
   @Override
-  public ODataEntityRequest<ODataSingleton> getSingletonRequest(final URI uri) {
-    return new ODataEntityRequestImpl<ODataSingleton>(client, uri);
+  public ODataEntityRequest<ClientSingleton> getSingletonRequest(final URI uri) {
+    return new ODataEntityRequestImpl<ClientSingleton>(client, uri);
   }
 
   @Override
-  public ODataEntityRequest<ODataEntity> getEntityRequest(final URI uri) {
-    return new ODataEntityRequestImpl<ODataEntity>(client, uri);
+  public ODataEntityRequest<ClientEntity> getEntityRequest(final URI uri) {
+    return new ODataEntityRequestImpl<ClientEntity>(client, uri);
   }
 
   @Override
-  public ODataPropertyRequest<ODataProperty> getPropertyRequest(final URI uri) {
-    return new ODataPropertyRequestImpl<ODataProperty>(client, uri);
+  public ODataPropertyRequest<ClientProperty> getPropertyRequest(final URI uri) {
+    return new ODataPropertyRequestImpl<ClientProperty>(client, uri);
   }
 
   @Override

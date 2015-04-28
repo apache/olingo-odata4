@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ODataDelta;
+import org.apache.olingo.commons.api.domain.ClientDelta;
 
 /**
  * Describes an OData retrieve request returning a delta object.
  */
-public interface ODataDeltaRequest extends ODataRetrieveRequest<ODataDelta> {
+public interface ODataDeltaRequest extends ODataRetrieveRequest<ClientDelta> {
 //No additional methods needed for now.
 }

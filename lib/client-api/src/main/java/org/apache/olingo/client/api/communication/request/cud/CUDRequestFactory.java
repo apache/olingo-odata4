@@ -24,10 +24,10 @@ import java.net.URI;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientSingleton;
 
 public interface CUDRequestFactory {
 
@@ -41,7 +41,7 @@ public interface CUDRequestFactory {
    * @param entity entity to be created.
    * @return new ODataEntityCreateRequest instance.
    */
-  <E extends ODataEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(URI targetURI, E entity);
+  <E extends ClientEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(URI targetURI, E entity);
 
   /**
    * Gets an update request object instance.
@@ -52,7 +52,8 @@ public interface CUDRequestFactory {
    * @param changes changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(URI targetURI, UpdateType type, E changes);
+  <E extends ClientEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(URI targetURI,
+                                                                              UpdateType type, E changes);
 
   /**
    * Gets an update request object instance; uses entity's edit link as endpoint.
@@ -62,7 +63,7 @@ public interface CUDRequestFactory {
    * @param entity changes to be applied.
    * @return new ODataEntityUpdateRequest instance.
    */
-  <E extends ODataEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(UpdateType type, E entity);
+  <E extends ClientEntity> ODataEntityUpdateRequest<E> getEntityUpdateRequest(UpdateType type, E entity);
 
   /**
    * Gets a create request object instance.
@@ -74,7 +75,7 @@ public interface CUDRequestFactory {
    * @param value value to be created.
    * @return new ODataValueUpdateRequest instance.
    */
-  ODataValueUpdateRequest getValueUpdateRequest(URI targetURI, UpdateType type, ODataPrimitiveValue value);
+  ODataValueUpdateRequest getValueUpdateRequest(URI targetURI, UpdateType type, ClientPrimitiveValue value);
 
   /**
    * Gets an update request object instance.
@@ -85,7 +86,7 @@ public interface CUDRequestFactory {
    * @param property value to be update.
    * @return new ODataPropertyUpdateRequest instance.
    */
-  ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(URI targetURI, ODataProperty property);
+  ODataPropertyUpdateRequest getPropertyPrimitiveValueUpdateRequest(URI targetURI, ClientProperty property);
 
   /**
    * Gets an update request object instance.
@@ -98,7 +99,7 @@ public interface CUDRequestFactory {
    * @return new ODataPropertyUpdateRequest instance.
    */
   ODataPropertyUpdateRequest
-      getPropertyComplexValueUpdateRequest(URI targetURI, UpdateType type, ODataProperty property);
+      getPropertyComplexValueUpdateRequest(URI targetURI, UpdateType type, ClientProperty property);
 
   /**
    * Gets an update request object instance.
@@ -109,7 +110,7 @@ public interface CUDRequestFactory {
    * @param property value to be update.
    * @return new ODataPropertyUpdateRequest instance.
    */
-  ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(URI targetURI, ODataProperty property);
+  ODataPropertyUpdateRequest getPropertyCollectionValueUpdateRequest(URI targetURI, ClientProperty property);
 
   /**
    * Gets a delete request object instance.
@@ -131,7 +132,7 @@ public interface CUDRequestFactory {
    * @param media entity blob to be created.
    * @return new ODataMediaEntityCreateRequest instance.
    */
-  <E extends ODataEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
+  <E extends ClientEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
       URI targetURI, InputStream media);
 
   /**
@@ -155,14 +156,14 @@ public interface CUDRequestFactory {
    * @param media entity blob to be updated.
    * @return new ODataMediaEntityUpdateRequest instance.
    */
-  <E extends ODataEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
+  <E extends ClientEntity> ODataMediaEntityUpdateRequest<E> getMediaEntityUpdateRequest(
       URI editURI, InputStream media);
 
-  ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-      URI targetURI, UpdateType type, ODataSingleton changes);
+  ODataEntityUpdateRequest<ClientSingleton> getSingletonUpdateRequest(
+      URI targetURI, UpdateType type, ClientSingleton changes);
 
-  ODataEntityUpdateRequest<ODataSingleton> getSingletonUpdateRequest(
-      UpdateType type, ODataSingleton entity);
+  ODataEntityUpdateRequest<ClientSingleton> getSingletonUpdateRequest(
+      UpdateType type, ClientSingleton entity);
 
   /**
    * A successful POST request to a navigation property's references collection adds a relationship to an existing

@@ -21,8 +21,8 @@ package org.apache.olingo.client.api.communication.request.invoke;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
@@ -34,7 +34,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param functionImportName operation to be invoked
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
           String functionImportName);
 
   /**
@@ -45,8 +45,8 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to operation import invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
-          String functionImportName, Map<String, ODataValue> parameters);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+          String functionImportName, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action import with the given name.
@@ -55,7 +55,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param actionImportName operation to be invoked
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
           String actionImportName);
 
   /**
@@ -66,8 +66,8 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to operation import invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
-          String actionImportName, Map<String, ODataValue> parameters);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+          String actionImportName, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (no parameters).
@@ -79,7 +79,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param isBindingParameterCollection whether binding parameter is collection
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection);
 
@@ -94,9 +94,9 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
-          Boolean isBindingParameterCollection, Map<String, ODataValue> parameters);
+          Boolean isBindingParameterCollection, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (no parameters).
@@ -108,7 +108,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param isBindingParameterCollection whether binding parameter is collection
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection);
 
@@ -123,8 +123,8 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
-          Boolean isBindingParameterCollection, Map<String, ODataValue> parameters);
+          Boolean isBindingParameterCollection, Map<String, ClientValue> parameters);
 
 }

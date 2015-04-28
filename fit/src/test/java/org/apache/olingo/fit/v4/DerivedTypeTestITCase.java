@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -30,10 +30,10 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -46,11 +46,11 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").
         appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.ODataWCFService.Customer");
-    ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+    ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
         getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
-    for (ODataEntity customer : req.execute().getBody().getEntities()) {
+    for (ClientEntity customer : req.execute().getBody().getEntities()) {
       assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", customer.getTypeName().toString());
     }
 
@@ -62,7 +62,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
-    for (ODataEntity customer : req.execute().getBody().getEntities()) {
+    for (ClientEntity customer : req.execute().getBody().getEntities()) {
       assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI", customer.getTypeName().toString());
     }
   }
@@ -78,7 +78,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
   }
 
   private void createDelete(final ODataFormat format) {
-    final ODataEntity customer = client.getObjectFactory().
+    final ClientEntity customer = client.getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
 
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("PersonID",
@@ -88,7 +88,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("LastName",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Test")));
 
-    final ODataComplexValue homeAddress =
+    final ClientComplexValue homeAddress =
         client.getObjectFactory().newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress");
     homeAddress.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("V.le Gabriele D'Annunzio")));
@@ -115,24 +115,24 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
         client.getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
 
-    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
+    final ODataEntityCreateRequest<ClientEntity> createReq = client.getCUDRequestFactory().
         getEntityCreateRequest(
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People").build(),
             customer);
     createReq.setFormat(format);
 
-    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
+    final ODataEntityCreateResponse<ClientEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
-    final ODataEntityRequest<ODataEntity> fetchReq = client.getRetrieveRequestFactory().
+    final ODataEntityRequest<ClientEntity> fetchReq = client.getRetrieveRequestFactory().
         getEntityRequest(client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(976).build());
     fetchReq.setFormat(format);
 
-    final ODataEntity actual = fetchReq.execute().getBody();
+    final ClientEntity actual = fetchReq.execute().getBody();
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", actual.getTypeName().toString());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-        ((ODataValuable) actual.getProperty("HomeAddress")).getValue().getTypeName());
+        ((ClientValuable) actual.getProperty("HomeAddress")).getValue().getTypeName());
 
     final ODataDeleteRequest deleteReq = client.getCUDRequestFactory().getDeleteRequest(actual.getEditLink());
     assertEquals(204, deleteReq.execute().getStatusCode());

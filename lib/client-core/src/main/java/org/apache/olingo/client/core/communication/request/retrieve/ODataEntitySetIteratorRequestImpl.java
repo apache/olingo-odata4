@@ -26,14 +26,14 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData EntitySet query request.
  */
-public class ODataEntitySetIteratorRequestImpl<ES extends ODataEntitySet, E extends ODataEntity>
+public class ODataEntitySetIteratorRequestImpl<ES extends ClientEntitySet, E extends ClientEntity>
         extends AbstractODataRetrieveRequest<ODataEntitySetIterator<ES, E>>
         implements ODataEntitySetIteratorRequest<ES, E> {
 

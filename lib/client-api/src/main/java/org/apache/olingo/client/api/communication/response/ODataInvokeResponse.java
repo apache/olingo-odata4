@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
 
 /**
  * This class implements a response to a specific invoke request.
  *
  * @param <T> the actual invoke result
  */
-public interface ODataInvokeResponse<T extends ODataInvokeResult> extends ODataResponse {
+public interface ODataInvokeResponse<T extends ClientInvokeResult> extends ODataResponse {
 
   /**
    * Gets operation return value if exists.

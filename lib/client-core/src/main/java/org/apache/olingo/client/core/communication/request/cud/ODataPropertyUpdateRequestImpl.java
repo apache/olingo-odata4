@@ -33,7 +33,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
@@ -48,7 +48,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   /**
    * Value to be created.
    */
-  private final ODataProperty property;
+  private final ClientProperty property;
 
   /**
    * Constructor.
@@ -59,7 +59,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    * @param property value to be created.
    */
   ODataPropertyUpdateRequestImpl(final ODataClient odataClient,
-          final HttpMethod method, final URI targetURI, final ODataProperty property) {
+          final HttpMethod method, final URI targetURI, final ClientProperty property) {
 
     super(odataClient, method, targetURI);
     // set request body
@@ -97,7 +97,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    */
   private class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
 
-    private ODataProperty resProperty = null;
+    private ClientProperty resProperty = null;
 
     private ODataPropertyUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -106,7 +106,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     }
 
     @Override
-    public ODataProperty getBody() {
+    public ClientProperty getBody() {
       if (resProperty == null) {
         try {
           final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).

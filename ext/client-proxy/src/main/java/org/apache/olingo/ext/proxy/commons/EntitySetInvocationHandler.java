@@ -30,8 +30,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -128,7 +128,7 @@ public class EntitySetInvocationHandler<
     EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
     if (handler == null) {
-      final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+      final ClientEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
               typeRef.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(typeRef)));
 
       handler = EntityInvocationHandler.getInstance(key, entity, this.baseURI, typeRef, service);
@@ -175,9 +175,9 @@ public class EntitySetInvocationHandler<
               ClassUtils.getNamespace(ref), ClassUtils.getEntityTypeName(ref)).toString());
     }
 
-    final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
+    final List<ClientAnnotation> anns = new ArrayList<ClientAnnotation>();
 
-    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(uri.build(), (Class<T>) ref);
+    final Triple<List<T>, URI, List<ClientAnnotation>> entitySet = fetchPartial(uri.build(), (Class<T>) ref);
     anns.addAll(entitySet.getRight());
 
     final EntityCollectionInvocationHandler<S> entityCollectionHandler = new EntityCollectionInvocationHandler<S>(
@@ -212,11 +212,11 @@ public class EntitySetInvocationHandler<
           final URIBuilder uriBuilder, final Class<S> typeRef, final Class<SEC> collTypeRef) {
 
     final List<S> res = new ArrayList<S>();
-    final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
+    final List<ClientAnnotation> anns = new ArrayList<ClientAnnotation>();
 
     URI nextURI = uriBuilder.build();
     while (nextURI != null) {
-      final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = fetchPartial(nextURI, (Class<T>) typeRef);
+      final Triple<List<T>, URI, List<ClientAnnotation>> entitySet = fetchPartial(nextURI, (Class<T>) typeRef);
       res.addAll((List<S>) entitySet.getLeft());
       nextURI = entitySet.getMiddle();
       anns.addAll(entitySet.getRight());

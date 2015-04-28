@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,9 +23,9 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
@@ -51,10 +51,11 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    final ODataEntity customer = req.execute().getBody();
-    assertTrue(customer.getNavigationLink("Orders") instanceof ODataInlineEntitySet);
+    final ClientEntity customer = req.execute().getBody();
+    assertTrue(customer.getNavigationLink("Orders") instanceof ClientInlineEntitySet);
   }
 
   @Test
@@ -64,10 +65,11 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
         expandWithOptions("Orders", Collections.<QueryOption, Object> singletonMap(
             QueryOption.FILTER, getClient().getFilterFactory().gt("OrderID", 7).build()));
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    final ODataEntity customer = req.execute().getBody();
-    assertTrue(customer.getNavigationLink("Orders") instanceof ODataInlineEntitySet);
+    final ClientEntity customer = req.execute().getBody();
+    assertTrue(customer.getNavigationLink("Orders") instanceof ClientInlineEntitySet);
   }
 
   /**
@@ -81,16 +83,16 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("People").filter("(PersonID lt 3)");
 
     // 1. check that filtered entity set looks as expected
-    ODataEntitySetRequest<ODataEntitySet> req =
+    ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
 
-    ODataEntitySet feed = req.execute().getBody();
+    ClientEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(2, feed.getEntities().size());
 
     // 2. extract PersonID values - sorted ASC by default
     final List<Integer> former = new ArrayList<Integer>(2);
-    for (ODataEntity entity : feed.getEntities()) {
+    for (ClientEntity entity : feed.getEntities()) {
       final Integer personID = entity.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(personID < 3);
       former.add(personID);
@@ -105,7 +107,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     // 4. extract again VIN value - now they were required to be sorted DESC
     final List<Integer> latter = new ArrayList<Integer>(2);
-    for (ODataEntity entity : feed.getEntities()) {
+    for (ClientEntity entity : feed.getEntities()) {
       final Integer personID = entity.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class);
       assertTrue(personID < 3);
       latter.add(personID);
@@ -124,10 +126,11 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).format("json");
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(ODataFormat.ATOM);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertNotNull(res);
     assertTrue(res.getContentType().replaceAll(" ", "").
         startsWith(ODataFormat.JSON.getContentType().toContentTypeString()));
@@ -140,10 +143,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
-    final ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.skip(2).build());
 
-    final ODataEntitySet feed = req.execute().getBody();
+    final ClientEntitySet feed = req.execute().getBody();
     assertEquals(3, feed.getEntities().size());
   }
 
@@ -154,10 +157,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     // 1. check that filtered entity set looks as expected
-    final ODataEntitySetRequest<ODataEntitySet> req = client.getRetrieveRequestFactory().
+    final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
         getEntitySetRequest(uriBuilder.top(2).build());
 
-    final ODataEntitySet feed = req.execute().getBody();
+    final ClientEntitySet feed = req.execute().getBody();
     assertEquals(2, feed.getEntities().size());
   }
 
@@ -169,14 +172,14 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL);
     uriBuilder.appendEntitySetSegment("People").skipToken("5");
 
-    final ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
 
-    final ODataEntitySet feed = req.execute().getBody();
+    final ClientEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(1, feed.getEntities().size());
 
-    for (ODataEntity entity : feed.getEntities()) {
+    for (ClientEntity entity : feed.getEntities()) {
       assertTrue(entity.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class) > 5);
     }
   }
@@ -189,10 +192,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder =
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").count(true);
 
-    final ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
 
-    final ODataEntitySet feed = req.execute().getBody();
+    final ClientEntitySet feed = req.execute().getBody();
     assertNotNull(feed);
     assertEquals(Integer.valueOf(feed.getEntities().size()), feed.getCount());
   }
@@ -205,12 +208,13 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).select("PersonID,Orders").expand("Orders");
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    final ODataEntity customer = req.execute().getBody();
+    final ClientEntity customer = req.execute().getBody();
     assertEquals(1, customer.getProperties().size());
     assertEquals(1, customer.getNavigationLinks().size());
-    assertTrue((customer.getNavigationLinks().get(0) instanceof ODataInlineEntitySet));
+    assertTrue((customer.getNavigationLinks().get(0) instanceof ClientInlineEntitySet));
   }
 
   @Test
@@ -219,9 +223,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("relatedEntitySelect").appendEntitySetSegment("Customers").appendKeySegment(1).
         expandWithSelect("Orders", "OrderID", "OrderDetails");
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
   }
 
@@ -231,10 +236,10 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("People").search(client.getSearchFactory().
             or(client.getSearchFactory().literal("Bob"), client.getSearchFactory().literal("Jill")));
 
-    final ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(builder.build());
 
-    final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
+    final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
     assertEquals(200, res.getStatusCode());
     assertFalse(res.getBody().getEntities().isEmpty());
   }

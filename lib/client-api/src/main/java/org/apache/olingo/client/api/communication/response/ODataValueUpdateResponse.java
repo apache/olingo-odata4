@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
 
 /**
  * This class implements the response to an OData update entity property request.
@@ -32,5 +32,5 @@ public interface ODataValueUpdateResponse extends ODataResponse {
    *
    * @return updated object.
    */
-  ODataPrimitiveValue getBody();
+  ClientPrimitiveValue getBody();
 }

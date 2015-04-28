@@ -23,9 +23,9 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
@@ -46,7 +46,7 @@ public interface ODataWriter {
    * @return stream of serialized objects.
    * @throws ODataSerializerException
    */
-  InputStream writeEntities(Collection<ODataEntity> entities, ODataFormat format)
+  InputStream writeEntities(Collection<ClientEntity> entities, ODataFormat format)
       throws ODataSerializerException;
 
   /**
@@ -57,7 +57,7 @@ public interface ODataWriter {
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeEntity(ODataEntity entity, ODataFormat format)
+  InputStream writeEntity(ClientEntity entity, ODataFormat format)
       throws ODataSerializerException;
 
   /**
@@ -68,7 +68,7 @@ public interface ODataWriter {
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeProperty(ODataProperty property, ODataFormat format)
+  InputStream writeProperty(ClientProperty property, ODataFormat format)
       throws ODataSerializerException;
 
   /**
@@ -79,7 +79,7 @@ public interface ODataWriter {
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeLink(ODataLink link, ODataFormat format)
+  InputStream writeLink(ClientLink link, ODataFormat format)
       throws ODataSerializerException;
   
   /**

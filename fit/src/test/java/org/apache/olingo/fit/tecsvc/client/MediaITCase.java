@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -39,8 +39,8 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreat
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -96,13 +96,13 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
-    ODataMediaEntityUpdateRequest<ODataEntity> request =
+    ODataMediaEntityUpdateRequest<ClientEntity> request =
         client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri,
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     assertNotNull(request);
 
-    final ODataMediaEntityUpdateResponse<ODataEntity> response = request.payloadManager().getResponse();
+    final ODataMediaEntityUpdateResponse<ClientEntity> response = request.payloadManager().getResponse();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the media stream has changed.
@@ -118,19 +118,19 @@ public final class MediaITCase extends AbstractBaseTestITCase {
   @Test
   public void create() throws Exception {
     final ODataClient client = getClient();
-    ODataMediaEntityCreateRequest<ODataEntity> request =
+    ODataMediaEntityCreateRequest<ClientEntity> request =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     assertNotNull(request);
 
-    final ODataMediaEntityCreateResponse<ODataEntity> response = request.payloadManager().getResponse();
+    final ODataMediaEntityCreateResponse<ClientEntity> response = request.payloadManager().getResponse();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
     assertEquals(request.getURI() + "(5)", response.getHeader(HttpHeader.LOCATION).iterator().next());
-    final ODataEntity entity = response.getBody();
+    final ClientEntity entity = response.getBody();
     assertNotNull(entity);
-    final ODataProperty property = entity.getProperty("PropertyInt16");
+    final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals(5, property.getPrimitiveValue().toValue());

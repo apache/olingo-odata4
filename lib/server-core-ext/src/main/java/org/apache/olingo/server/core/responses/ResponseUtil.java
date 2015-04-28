@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 
 public class ResponseUtil {
   public static Property createPrimitive(final String name, final String type, final Object value) {
@@ -62,7 +62,7 @@ public class ResponseUtil {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
-      link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+      link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
       link.setTitle(navigationPropertyName);
       entity.getNavigationLinks().add(link);
     }
@@ -73,7 +73,7 @@ public class ResponseUtil {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
-      link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
+      link.setType(ClientLinkType.ENTITY_SET_NAVIGATION.toString());
       link.setTitle(navigationPropertyName);
       EntityCollection target = new EntityCollection();
       target.getEntities().addAll(Arrays.asList(targets));

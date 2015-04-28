@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -34,9 +34,9 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;
@@ -46,15 +46,15 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void _enum(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
-    final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
+    final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataProperty prop = req.execute().getBody();
+    final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
     // cast to workaround JDK 6 bug, fixed in JDK 7
     assertEquals("Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
-        ((ODataValuable) prop).getValue().getTypeName());
+        ((ClientValuable) prop).getValue().getTypeName());
   }
 
   @Test
@@ -75,14 +75,14 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void geospatial(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
-    final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
+    final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataProperty prop = req.execute().getBody();
+    final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
     // cast to workaround JDK 6 bug, fixed in JDK 7
-    assertEquals("Edm.GeographyPoint", ((ODataValuable) prop).getValue().getTypeName());
+    assertEquals("Edm.GeographyPoint", ((ClientValuable) prop).getValue().getTypeName());
   }
 
   @Test
@@ -103,15 +103,15 @@ public class PropertyTestITCase extends AbstractTestITCase {
   private void complex(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(2).appendPropertySegment("HomeAddress");
-    final ODataPropertyRequest<ODataProperty> req = client.getRetrieveRequestFactory().
+    final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataProperty prop = req.execute().getBody();
+    final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
     // cast to workaround JDK 6 bug, fixed in JDK 7
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address",
-        ((ODataValuable) prop).getValue().getTypeName());
+        ((ClientValuable) prop).getValue().getTypeName());
   }
 
   @Test
@@ -133,14 +133,14 @@ public class PropertyTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
 
-    ODataPropertyRequest<ODataProperty> retrieveReq =
+    ODataPropertyRequest<ClientProperty> retrieveReq =
         client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
     retrieveReq.setFormat(format);
 
-    ODataRetrieveResponse<ODataProperty> retrieveRes = retrieveReq.execute();
+    ODataRetrieveResponse<ClientProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
-    ODataProperty homeAddress = client.getObjectFactory().newComplexProperty("HomeAddress",
+    ClientProperty homeAddress = client.getObjectFactory().newComplexProperty("HomeAddress",
         client.getObjectFactory().newComplexValue(retrieveRes.getBody().getComplexValue().getTypeName()));
 
     homeAddress.getComplexValue().add(client.getObjectFactory().
@@ -176,17 +176,17 @@ public class PropertyTestITCase extends AbstractTestITCase {
   @Test
   public void createAndDelete() {
     // 1. create
-    final ODataEntity category = client.getObjectFactory().newEntity(null);
+    final ClientEntity category = client.getObjectFactory().newEntity(null);
     category.setId(client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Categories").appendKeySegment(1).build());
 
     final URIBuilder createBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Products").appendKeySegment(0).appendNavigationSegment("Categories").
         appendRefSegment();
-    final ODataEntityCreateRequest<ODataEntity> createReq = client.getCUDRequestFactory().
+    final ODataEntityCreateRequest<ClientEntity> createReq = client.getCUDRequestFactory().
         getEntityCreateRequest(createBuilder.build(), category);
 
-    final ODataEntityCreateResponse<ODataEntity> createRes = createReq.execute();
+    final ODataEntityCreateResponse<ClientEntity> createRes = createReq.execute();
     assertEquals(204, createRes.getStatusCode());
 
     // 2. delete

@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.domain.ClientErrorDetail;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,9 +34,9 @@ public class JsonODataErrorDetailDeserializer extends JsonDeserializer {
     super(serverMode);
   }
 
-  protected ResWrap<ODataErrorDetail> doDeserialize(final JsonParser parser) throws IOException {
+  protected ResWrap<ClientErrorDetail> doDeserialize(final JsonParser parser) throws IOException {
 
-    final ODataErrorDetail error = new ODataErrorDetail();
+    final ClientErrorDetail error = new ClientErrorDetail();
     final JsonNode errorNode = parser.getCodec().readTree(parser);
     if (errorNode.has(Constants.ERROR_CODE)) {
       error.setCode(errorNode.get(Constants.ERROR_CODE).textValue());
@@ -53,6 +53,6 @@ public class JsonODataErrorDetailDeserializer extends JsonDeserializer {
       error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
     }
 
-    return new ResWrap<ODataErrorDetail>((URI) null, null, error);
+    return new ResWrap<ClientErrorDetail>((URI) null, null, error);
   }
 }

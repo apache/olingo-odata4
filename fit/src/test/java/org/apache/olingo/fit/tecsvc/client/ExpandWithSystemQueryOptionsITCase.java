@@ -33,8 +33,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -58,20 +58,20 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
 
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
       final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
-      final ODataEntitySet inlineEntitySet =
+      final ClientEntitySet inlineEntitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
         assertEquals("2", inlineEntity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
@@ -79,7 +79,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
         assertEquals(0, inlineEntitySet.getEntities().size());
       } else if (propInt16.equals(2) && propString.equals("1")) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
         assertEquals("2", inlineEntity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
@@ -96,21 +96,21 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.ORDERBY, "PropertyString desc");
 
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
       final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
-      final ODataEntitySet inlineEntitySet =
+      final ClientEntitySet inlineEntitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
         assertEquals(2, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity1 = inlineEntitySet.getEntities().get(0);
-        final ODataEntity inlineEntity2 = inlineEntitySet.getEntities().get(1);
+        final ClientEntity inlineEntity1 = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity2 = inlineEntitySet.getEntities().get(1);
 
         assertEquals(1, inlineEntity1.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
         assertEquals("2", inlineEntity1.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
@@ -120,30 +120,30 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
       }
     }
   }
-  
+
   @Test
   public void testSkip() {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.SKIP, "1");
 
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(3, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
-      final ODataEntitySet inlineEntitySet =
+      final ClientEntitySet inlineEntitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1)) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(2, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(2)) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(3, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(3)) {
@@ -157,24 +157,24 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.TOP, "1");
 
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(3, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
-      final ODataEntitySet inlineEntitySet =
+      final ClientEntitySet inlineEntitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1)) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(2)) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(2, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       } else if (propInt16.equals(3)) {
@@ -190,20 +190,20 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1");
     options.put(QueryOption.SKIP, "1");
 
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
       final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
-      final ODataEntitySet inlineEntitySet =
+      final ClientEntitySet inlineEntitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
         assertEquals(1, inlineEntitySet.getEntities().size());
-        final ODataEntity inlineEntity = inlineEntitySet.getEntities().get(0);
+        final ClientEntity inlineEntity = inlineEntitySet.getEntities().get(0);
 
         assertEquals(1, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
         assertEquals("2", inlineEntity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
@@ -231,16 +231,16 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).expandWithOptions(
             NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options).addQueryOption(QueryOption.SELECT,
             "PropertyInt16,PropertyString").build();
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
 
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
-    for (final ODataEntity entity : entities) {
+    for (final ClientEntity entity : entities) {
       final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
       final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
-      final ODataEntitySet entitySet =
+      final ClientEntitySet entitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
       if (propInt16.equals(1) && propString.equals("1")) {
@@ -269,11 +269,11 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
 
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(keys)
         .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, options).build();
-    final ODataRetrieveResponse<ODataEntity> response =
+    final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
-    final ODataEntitySet entitySet =
+    final ClientEntitySet entitySet =
         response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
     assertEquals(1, entitySet.getEntities().size());
     assertEquals(1, entitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -284,182 +284,182 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1"
         + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S' and length(PropertyString) gt 4");
-    final ODataRetrieveResponse<ODataEntitySet> response =
+    final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
-    final List<ODataEntity> entities = response.getBody().getEntities();
+    final List<ClientEntity> entities = response.getBody().getEntities();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(4, entities.size());
   }
-  
+
   @Test
   public void testCyclicExpand() {
     // Expand entity in the following order
     // 1 => 2 => 1
-    // Entity with Key (PropertyInt16=1, PrroperyString='1') holds references to (PropertyInt16=1, PropertyString='1') 
+    // Entity with Key (PropertyInt16=1, PrroperyString='1') holds references to (PropertyInt16=1, PropertyString='1')
     // and (PropertyInt16=1, PropertyString='2')
     // Entity with Key (PropertyInt16=1, PropertyString='2') holds references to (PropertyInt16=1, PropertyString='1')
     // Define filters to select explicit the entities at any level => Circle
-    
+
     final ODataClient client = getClient();
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY 
-                                  + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY 
-                                  + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "))");
+    options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
+        + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
+        + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "))");
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
-    
+
     final Map<String, Object> keys = new HashMap<String, Object>();
     keys.put(PROPERTY_INT16, 1);
     keys.put(PROPERTY_STRING, "1");
-    
+
     final URI uri = client.newURIBuilder(SERVICE_URI)
-                          .appendEntitySetSegment(ES_TWO_KEY_NAV)
-                          .appendKeySegment(keys)
-                          .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
-                          .build();
-    
-    final ODataRetrieveResponse<ODataEntity> response = client.getRetrieveRequestFactory()
-                                                              .getEntityRequest(uri)
-                                                              .execute();
-    
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(keys)
+        .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
+        .build();
+
+    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
+        .getEntityRequest(uri)
+        .execute();
+
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(1, response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                      .asInlineEntitySet()
-                                      .getEntitySet()
-                                      .getEntities()
-                                      .size());
-    
-    final ODataEntity entitySecondLevel = response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                            .asInlineEntitySet()
-                                                            .getEntitySet()
-                                                            .getEntities()
-                                                            .get(0);
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final ClientEntity entitySecondLevel = response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .get(0);
+
     assertEquals(1, entitySecondLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("2", entitySecondLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-    
+
     assertNotNull(entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(1, entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                     .asInlineEntitySet()
-                                     .getEntitySet()
-                                     .getEntities()
-                                     .size());
-    
-    final ODataEntity entityThirdLevel = entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                          .asInlineEntitySet()
-                                                          .getEntitySet()
-                                                          .getEntities()
-                                                          .get(0);
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final ClientEntity entityThirdLevel = entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .get(0);
+
     assertEquals(1, entityThirdLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("1", entityThirdLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-    
+
     assertNotNull(entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(2, entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                    .asInlineEntitySet()
-                                    .getEntitySet()
-                                    .getEntities()
-                                    .size());
-    
-    final List<ODataEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                                 .asInlineEntitySet()
-                                                                 .getEntitySet()
-                                                                 .getEntities();
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final List<ClientEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities();
+
     assertEquals(1, fourthLevelEntites.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("1", fourthLevelEntites.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
 
     assertEquals(1, fourthLevelEntites.get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("2", fourthLevelEntites.get(1).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
-  
+
   @Test
   public void testSystemQueryOptionOnThirdLevel() {
     final ODataClient client = getClient();
     final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY 
-                                  + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY 
-                                  + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY 
-                                  + ";$filter=PropertyString eq '1'))");
+    options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
+        + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
+        + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
+        + ";$filter=PropertyString eq '1'))");
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
-    
+
     final Map<String, Object> keys = new HashMap<String, Object>();
     keys.put(PROPERTY_INT16, 1);
     keys.put(PROPERTY_STRING, "1");
-    
+
     final URI uri = client.newURIBuilder(SERVICE_URI)
-                          .appendEntitySetSegment(ES_TWO_KEY_NAV)
-                          .appendKeySegment(keys)
-                          .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
-                          .build();
-    
-    final ODataRetrieveResponse<ODataEntity> response = client.getRetrieveRequestFactory()
-                                                              .getEntityRequest(uri)
-                                                              .execute();
-    
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(keys)
+        .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
+        .build();
+
+    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
+        .getEntityRequest(uri)
+        .execute();
+
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(1, response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                      .asInlineEntitySet()
-                                      .getEntitySet()
-                                      .getEntities()
-                                      .size());
-    
-    final ODataEntity entitySecondLevel = response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                            .asInlineEntitySet()
-                                                            .getEntitySet()
-                                                            .getEntities()
-                                                            .get(0);
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final ClientEntity entitySecondLevel = response.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .get(0);
+
     assertEquals(1, entitySecondLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("2", entitySecondLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-    
+
     assertNotNull(entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(1, entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                     .asInlineEntitySet()
-                                     .getEntitySet()
-                                     .getEntities()
-                                     .size());
-    
-    final ODataEntity entityThirdLevel = entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                          .asInlineEntitySet()
-                                                          .getEntitySet()
-                                                          .getEntities()
-                                                          .get(0);
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final ClientEntity entityThirdLevel = entitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .get(0);
+
     assertEquals(1, entityThirdLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("1", entityThirdLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-    
+
     assertNotNull(entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(1, entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                    .asInlineEntitySet()
-                                    .getEntitySet()
-                                    .getEntities()
-                                    .size());
-    
-    final List<ODataEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-                                                                 .asInlineEntitySet()
-                                                                 .getEntitySet()
-                                                                 .getEntities();
-    
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities()
+        .size());
+
+    final List<ClientEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
+        .asInlineEntitySet()
+        .getEntitySet()
+        .getEntities();
+
     assertEquals(1, fourthLevelEntites.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("1", fourthLevelEntites.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
-  
-  private ODataRetrieveResponse<ODataEntitySet> buildRequest(final String entitySet, final String navigationProperty,
+
+  private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions) {
     return buildRequest(entitySet, navigationProperty, expandOptions, null);
   }
 
-  private ODataRetrieveResponse<ODataEntitySet> buildRequest(final String entitySet, final String navigationProperty,
+  private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions, final String cookie) {
     final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(entitySet)
         .expandWithOptions(navigationProperty, expandOptions)
         .build();
 
-    final ODataEntitySetRequest<ODataEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
 
     if (cookie != null) {
       request.addCustomHeader(HttpHeader.COOKIE, cookie);

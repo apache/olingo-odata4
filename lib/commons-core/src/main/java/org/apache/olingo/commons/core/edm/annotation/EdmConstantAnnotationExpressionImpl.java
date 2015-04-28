@@ -23,38 +23,38 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEnumValue;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.core.domain.ODataCollectionValueImpl;
-import org.apache.olingo.commons.core.domain.ODataEnumValueImpl;
-import org.apache.olingo.commons.core.domain.ODataPrimitiveValueImpl;
+import org.apache.olingo.commons.core.domain.ClientCollectionValueImpl;
+import org.apache.olingo.commons.core.domain.ClientEnumValueImpl;
+import org.apache.olingo.commons.core.domain.ClientPrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
 
-  private final ODataValue value;
+  private final ClientValue value;
 
   public EdmConstantAnnotationExpressionImpl(final ConstantAnnotationExpression constExprConstruct) {
     if (constExprConstruct.getType() == ConstantAnnotationExpression.Type.EnumMember) {
-      final List<ODataEnumValue> enumValues = new ArrayList<ODataEnumValue>();
+      final List<ClientEnumValue> enumValues = new ArrayList<ClientEnumValue>();
       String enumTypeName = null;
       for (String split : StringUtils.split(constExprConstruct.getValue(), ' ')) {
         final String[] enumSplit = StringUtils.split(split, '/');
         enumTypeName = enumSplit[0];
-        enumValues.add(new ODataEnumValueImpl(enumSplit[0], enumSplit[1]));
+        enumValues.add(new ClientEnumValueImpl(enumSplit[0], enumSplit[1]));
       }
       if (enumValues.size() == 1) {
         value = enumValues.get(0);
       } else {
-        final ODataCollectionValueImpl<ODataEnumValue> collValue 
-          = new ODataCollectionValueImpl<ODataEnumValue>(enumTypeName);
-        for (ODataValue enumValue : enumValues) {
+        final ClientCollectionValueImpl<ClientEnumValue> collValue
+          = new ClientCollectionValueImpl<ClientEnumValue>(enumTypeName);
+        for (ClientValue enumValue : enumValues) {
           collValue.add(enumValue);
         }
         value = collValue;
@@ -96,7 +96,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       default:
         kind = EdmPrimitiveTypeKind.String;
       }
-      final ODataPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ODataPrimitiveValueImpl.BuilderImpl();
+      final ClientPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ClientPrimitiveValueImpl.BuilderImpl();
       primitiveValueBuilder.setType(kind);
       try {
         final EdmPrimitiveType primitiveType = EdmPrimitiveTypeFactory.getInstance(kind);
@@ -133,7 +133,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
   }
 
   @Override
-  public ODataValue getValue() {
+  public ClientValue getValue() {
     return value;
   }
 

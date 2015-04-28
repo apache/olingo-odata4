@@ -22,15 +22,15 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 
 /**
  * This class implements an OData invoke operation request.
  *
  * @param <T> the actual invoke result
  */
-public interface ODataInvokeRequest<T extends ODataInvokeResult>
+public interface ODataInvokeRequest<T extends ClientInvokeResult>
     extends ODataBasicRequest<ODataInvokeResponse<T>> {
 
   /**
@@ -38,5 +38,5 @@ public interface ODataInvokeRequest<T extends ODataInvokeResult>
    *
    * @param parameters operation parameters.
    */
-  void setParameters(Map<String, ODataValue> parameters);
+  void setParameters(Map<String, ClientValue> parameters);
 }

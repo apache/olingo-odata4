@@ -40,9 +40,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddi
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
@@ -118,8 +118,8 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     service.getContext().detachAll();
   }
 
-  private ODataLink buildNavigationLink(final String name, final URI uri, final ODataLinkType type) {
-    ODataLink result;
+  private ClientLink buildNavigationLink(final String name, final URI uri, final ClientLinkType type) {
+    ClientLink result;
 
     switch (type) {
     case ENTITY_NAVIGATION:
@@ -146,7 +146,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     int posNumber = pos;
     items.put(handler, null);
 
-    final ODataEntity entity = handler.getEntity();
+    final ClientEntity entity = handler.getEntity();
     entity.getNavigationLinks().clear();
 
     final AttachedEntityStatus currentStatus = service.getContext().entityContext().getStatus(handler);
@@ -166,13 +166,13 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
     }
 
     for (Map.Entry<NavigationProperty, Object> property : handler.getLinkChanges().entrySet()) {
-      final ODataLinkType type = Collection.class.isAssignableFrom(property.getValue().getClass())
-          ? ODataLinkType.ENTITY_SET_NAVIGATION
-          : ODataLinkType.ENTITY_NAVIGATION;
+      final ClientLinkType type = Collection.class.isAssignableFrom(property.getValue().getClass())
+          ? ClientLinkType.ENTITY_SET_NAVIGATION
+          : ClientLinkType.ENTITY_NAVIGATION;
 
       final Set<EntityInvocationHandler> toBeLinked = new HashSet<EntityInvocationHandler>();
 
-      for (Object proxy : type == ODataLinkType.ENTITY_SET_NAVIGATION
+      for (Object proxy : type == ClientLinkType.ENTITY_SET_NAVIGATION
           ? (Collection<?>) property.getValue() : Collections.singleton(property.getValue())) {
 
         final EntityInvocationHandler target = (EntityInvocationHandler) Proxy.getInvocationHandler(proxy);
@@ -312,7 +312,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
         posNumber++;
         items.put(delayedUpdate.getSource(), posNumber);
 
-        final ODataEntity changes =
+        final ClientEntity changes =
             service.getClient().getObjectFactory().newEntity(delayedUpdate.getSource().getEntity().getTypeName());
 
         AttachedEntityStatus status = service.getContext().entityContext().getStatus(delayedUpdate.getSource());
@@ -339,7 +339,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
             targetURI = URI.create("$" + targetPos);
           }
 
-          changes.addLink(delayedUpdate.getType() == ODataLinkType.ENTITY_NAVIGATION
+          changes.addLink(delayedUpdate.getType() == ClientLinkType.ENTITY_NAVIGATION
               ? service.getClient().getObjectFactory().
                   newEntityNavigationLink(delayedUpdate.getSourceName(), targetURI)
               : service.getClient().getObjectFactory().
@@ -366,7 +366,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private AttachedEntityStatus queue(
       final EntityInvocationHandler handler,
-      final ODataEntity entity,
+      final ClientEntity entity,
       final PersistenceChanges changeset) {
 
     switch (service.getContext().entityContext().getStatus(handler)) {
@@ -390,7 +390,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueCreate(
       final EntityInvocationHandler handler,
-      final ODataEntity entity,
+      final ClientEntity entity,
       final PersistenceChanges changeset) {
 
     LOG.debug("Create '{}'", handler);
@@ -445,12 +445,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueUpdate(
       final EntityInvocationHandler handler,
-      final ODataEntity changes,
+      final ClientEntity changes,
       final PersistenceChanges changeset) {
 
     LOG.debug("Update '{}'", handler.getEntityURI());
 
-    final ODataEntityUpdateRequest<ODataEntity> req =
+    final ODataEntityUpdateRequest<ClientEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(handler.getEntityURI(),
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
@@ -490,12 +490,12 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
   private void queueUpdate(
       final EntityInvocationHandler handler,
       final URI uri,
-      final ODataEntity changes,
+      final ClientEntity changes,
       final PersistenceChanges changeset) {
 
     LOG.debug("Update '{}'", uri);
 
-    final ODataEntityUpdateRequest<ODataEntity> req =
+    final ODataEntityUpdateRequest<ClientEntity> req =
         ((EdmEnabledODataClient) service.getClient()).getCUDRequestFactory().
             getEntityUpdateRequest(uri,
                 org.apache.olingo.client.api.communication.request.cud.UpdateType.PATCH, changes);
@@ -511,7 +511,7 @@ abstract class AbstractPersistenceManager implements PersistenceManager {
 
   private void queueDelete(
       final EntityInvocationHandler handler,
-      final ODataEntity entity,
+      final ClientEntity entity,
       final PersistenceChanges changeset) {
     final URI deleteURI = entity.getEditLink() == null ? handler.getEntityURI() : entity.getEditLink();
     changeset.addChange(buildDeleteRequest(deleteURI, handler.getETag()), handler);

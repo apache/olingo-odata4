@@ -41,7 +41,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ClientOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -302,7 +302,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     links(writer, entity.getMediaEditLinks());
 
     if (serverMode) {
-      for (ODataOperation operation : entity.getOperations()) {
+      for (ClientOperation operation : entity.getOperations()) {
         writer.writeStartElement(namespaceMetadata, Constants.ATOM_ELEM_ACTION);
         writer.writeAttribute(Constants.ATTR_METADATA, operation.getMetadataAnchor());
         writer.writeAttribute(Constants.ATTR_TITLE, operation.getTitle());

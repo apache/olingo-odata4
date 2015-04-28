@@ -34,7 +34,7 @@ public class BasicHttpExceptionHandlingITCase extends AbstractBaseTestITCase {
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
 
   @Test
-  public void ambigiousXHTTPMethod() throws Exception{
+  public void ambigiousXHTTPMethod() throws Exception {
     URL url = new URL(SERVICE_URI + "?$format=json");
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();

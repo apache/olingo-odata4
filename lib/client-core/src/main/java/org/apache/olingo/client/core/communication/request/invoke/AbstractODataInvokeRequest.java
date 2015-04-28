@@ -32,17 +32,17 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
+import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
@@ -51,7 +51,7 @@ import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 /**
  * This class implements an OData invoke operation request.
  */
-public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
+public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
     extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
     implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
@@ -60,7 +60,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   /**
    * Function parameters.
    */
-  protected Map<String, ODataValue> parameters;
+  protected Map<String, ClientValue> parameters;
 
   /**
    * Constructor.
@@ -79,11 +79,11 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     super(odataClient, method, uri);
 
     this.reference = reference;
-    this.parameters = new LinkedHashMap<String, ODataValue>();
+    this.parameters = new LinkedHashMap<String, ClientValue>();
   }
 
   @Override
-  public void setParameters(final Map<String, ODataValue> parameters) {
+  public void setParameters(final Map<String, ClientValue> parameters) {
     this.parameters.clear();
     if (parameters != null && !parameters.isEmpty()) {
       this.parameters.putAll(parameters);
@@ -96,7 +96,7 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   }
 
   private String getActualFormat(final ODataFormat format) {
-    return ((ODataProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
+    return ((ClientProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
         ? ODataFormat.XML : format).getContentType().toContentTypeString();
   }
 
@@ -113,9 +113,9 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
   protected InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
-      final ODataEntity tmp = odataClient.getObjectFactory().newEntity(null);
-      for (Map.Entry<String, ODataValue> param : parameters.entrySet()) {
-        ODataProperty property = null;
+      final ClientEntity tmp = odataClient.getObjectFactory().newEntity(null);
+      for (Map.Entry<String, ClientValue> param : parameters.entrySet()) {
+        ClientProperty property = null;
 
         if (param.getValue().isPrimitive()) {
           property = odataClient.getObjectFactory().
@@ -190,18 +190,18 @@ public abstract class AbstractODataInvokeRequest<T extends ODataInvokeResult>
     public T getBody() {
       if (invokeResult == null) {
         try {
-          if (ODataNoContent.class.isAssignableFrom(reference)) {
-            invokeResult = reference.cast(new ODataNoContent());
+          if (ClientNoContent.class.isAssignableFrom(reference)) {
+            invokeResult = reference.cast(new ClientNoContent());
           } else {
             // avoid getContent() twice:IllegalStateException: Content has been consumed
             final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
-            if (ODataEntitySet.class.isAssignableFrom(reference)) {
+            if (ClientEntitySet.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
                   ODataFormat.fromString(getContentType())));
-            } else if (ODataEntity.class.isAssignableFrom(reference)) {
+            } else if (ClientEntity.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
                   ODataFormat.fromString(getContentType())));
-            } else if (ODataProperty.class.isAssignableFrom(reference)) {
+            } else if (ClientProperty.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
                   ODataFormat.fromString(getContentType())));
             }

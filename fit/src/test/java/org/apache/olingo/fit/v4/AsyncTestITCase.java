@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -24,11 +24,11 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataLink;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInlineEntity;
+import org.apache.olingo.commons.api.domain.ClientLink;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
   public void clientAsync() throws InterruptedException, ExecutionException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers");
-    final Future<ODataRetrieveResponse<ODataEntitySet>> futureRes =
+    final Future<ODataRetrieveResponse<ClientEntitySet>> futureRes =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
     assertNotNull(futureRes);
 
@@ -56,7 +56,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
       Thread.sleep(1000L);
     }
 
-    final ODataRetrieveResponse<ODataEntitySet> res = futureRes.get();
+    final ODataRetrieveResponse<ClientEntitySet> res = futureRes.get();
     assertNotNull(res);
     assertEquals(200, res.getStatusCode());
     assertFalse(res.getBody().getEntities().isEmpty());
@@ -66,18 +66,19 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntity>> async =
-        client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntity>> getAsyncRequestWrapper(req);
+    final AsyncRequestWrapper<ODataRetrieveResponse<ClientEntity>> async =
+        client.getAsyncRequestFactory().<ODataRetrieveResponse<ClientEntity>> getAsyncRequestWrapper(req);
 
-    final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntity>> responseWrapper = async.execute();
+    final AsyncResponseWrapper<ODataRetrieveResponse<ClientEntity>> responseWrapper = async.execute();
 
     assertFalse(responseWrapper.isPreferenceApplied());
 
-    final ODataRetrieveResponse<ODataEntity> res = responseWrapper.getODataResponse();
-    final ODataEntity entity = res.getBody();
+    final ODataRetrieveResponse<ClientEntity> res = responseWrapper.getODataResponse();
+    final ClientEntity entity = res.getBody();
 
     assertNotNull(entity);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
@@ -92,12 +93,12 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     boolean found = false;
 
-    for (ODataLink link : entity.getNavigationLinks()) {
-      if (link instanceof ODataInlineEntity) {
-        final ODataEntity inline = ((ODataInlineEntity) link).getEntity();
+    for (ClientLink link : entity.getNavigationLinks()) {
+      if (link instanceof ClientInlineEntity) {
+        final ClientEntity inline = ((ClientInlineEntity) link).getEntity();
         assertNotNull(inline);
 
-        final List<? extends ODataProperty> properties = inline.getProperties();
+        final List<? extends ClientProperty> properties = inline.getProperties();
         assertEquals(5, properties.size());
 
         assertTrue(properties.get(0).getName().equals("CompanyID")
@@ -133,21 +134,21 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
-    final ODataEntitySetRequest<ODataEntitySet> req =
+    final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final AsyncRequestWrapper<ODataRetrieveResponse<ODataEntitySet>> async =
-        client.getAsyncRequestFactory().<ODataRetrieveResponse<ODataEntitySet>> getAsyncRequestWrapper(req);
+    final AsyncRequestWrapper<ODataRetrieveResponse<ClientEntitySet>> async =
+        client.getAsyncRequestFactory().<ODataRetrieveResponse<ClientEntitySet>> getAsyncRequestWrapper(req);
     async.callback(URI.create("http://client.service.it/callback/endpoint"));
 
-    final AsyncResponseWrapper<ODataRetrieveResponse<ODataEntitySet>> responseWrapper = async.execute();
+    final AsyncResponseWrapper<ODataRetrieveResponse<ClientEntitySet>> responseWrapper = async.execute();
 
     assertTrue(responseWrapper.isPreferenceApplied());
     assertTrue(responseWrapper.isDone());
 
-    final ODataRetrieveResponse<ODataEntitySet> res = responseWrapper.getODataResponse();
-    final ODataEntitySet entitySet = res.getBody();
+    final ODataRetrieveResponse<ClientEntitySet> res = responseWrapper.getODataResponse();
+    final ClientEntitySet entitySet = res.getBody();
 
     assertFalse(entitySet.getEntities().isEmpty());
   }

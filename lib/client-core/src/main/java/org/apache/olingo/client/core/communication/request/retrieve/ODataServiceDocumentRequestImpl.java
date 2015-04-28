@@ -27,14 +27,14 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceD
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData service document request.
  */
-public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ODataServiceDocument>
+public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveRequest<ClientServiceDocument>
         implements ODataServiceDocumentRequest {
 
   /**
@@ -53,7 +53,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
   }
 
   @Override
-  public ODataRetrieveResponse<ODataServiceDocument> execute() {
+  public ODataRetrieveResponse<ClientServiceDocument> execute() {
     final HttpResponse res = doExecute();
     return new ODataServiceResponseImpl(odataClient, httpClient, res);
   }
@@ -63,7 +63,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
    */
   protected class ODataServiceResponseImpl extends AbstractODataRetrieveResponse {
 
-    private ODataServiceDocument serviceDocument = null;
+    private ClientServiceDocument serviceDocument = null;
 
     private ODataServiceResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -72,7 +72,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
     }
 
     @Override
-    public ODataServiceDocument getBody() {
+    public ClientServiceDocument getBody() {
       if (serviceDocument == null) {
         try {
           final ResWrap<ServiceDocument> resource = odataClient.

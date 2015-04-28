@@ -33,12 +33,12 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
@@ -73,14 +73,14 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public ODataServiceDocument readServiceDocument(final InputStream input, final ODataFormat format)
+  public ClientServiceDocument readServiceDocument(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getBinder().getODataServiceDocument(
         client.getDeserializer(format).toServiceDocument(input).getPayload());
   }
 
   @Override
-  public ODataError readError(final InputStream inputStream, final ODataFormat format)
+  public ClientError readError(final InputStream inputStream, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getDeserializer(format).toError(inputStream);
   }
@@ -95,28 +95,28 @@ public class ODataReaderImpl implements ODataReader {
         res = new ResWrap<T>(
             (URI) null,
             null,
-            reference.cast(new ODataEntitySetIterator<ODataEntitySet, ODataEntity>(
+            reference.cast(new ODataEntitySetIterator<ClientEntitySet, ClientEntity>(
                 client, src, ODataFormat.fromString(format))));
-      } else if (ODataEntitySet.class.isAssignableFrom(reference)) {
+      } else if (ClientEntitySet.class.isAssignableFrom(reference)) {
         final ResWrap<EntityCollection> resource = client.getDeserializer(ODataFormat.fromString(format))
             .toEntitySet(src);
         res = new ResWrap<T>(
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntitySet(resource)));
-      } else if (ODataEntity.class.isAssignableFrom(reference)) {
+      } else if (ClientEntity.class.isAssignableFrom(reference)) {
         final ResWrap<Entity> container = client.getDeserializer(ODataFormat.fromString(format)).toEntity(src);
         res = new ResWrap<T>(
             container.getContextURL(),
             container.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntity(container)));
-      } else if (ODataProperty.class.isAssignableFrom(reference)) {
+      } else if (ClientProperty.class.isAssignableFrom(reference)) {
         final ResWrap<Property> container = client.getDeserializer(ODataFormat.fromString(format)).toProperty(src);
         res = new ResWrap<T>(
             container.getContextURL(),
             container.getMetadataETag(),
             reference.cast(client.getBinder().getODataProperty(container)));
-      } else if (ODataValue.class.isAssignableFrom(reference)) {
+      } else if (ClientValue.class.isAssignableFrom(reference)) {
         res = new ResWrap<T>(
             (URI) null,
             null,
@@ -130,14 +130,14 @@ public class ODataReaderImpl implements ODataReader {
             (URI) null,
             null,
             reference.cast(readMetadata(src)));
-      } else if (ODataServiceDocument.class.isAssignableFrom(reference)) {
+      } else if (ClientServiceDocument.class.isAssignableFrom(reference)) {
         final ResWrap<ServiceDocument> resource =
             client.getDeserializer(ODataFormat.fromString(format)).toServiceDocument(src);
         res = new ResWrap<T>(
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataServiceDocument(resource.getPayload())));
-      } else if (ODataError.class.isAssignableFrom(reference)) {
+      } else if (ClientError.class.isAssignableFrom(reference)) {
         res = new ResWrap<T>(
             (URI) null,
             null,
@@ -158,19 +158,19 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public ODataEntitySet readEntitySet(final InputStream input, final ODataFormat format)
+  public ClientEntitySet readEntitySet(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
   }
 
   @Override
-  public ODataEntity readEntity(final InputStream input, final ODataFormat format)
+  public ClientEntity readEntity(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
   }
 
   @Override
-  public ODataProperty readProperty(final InputStream input, final ODataFormat format)
+  public ClientProperty readProperty(final InputStream input, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getBinder().getODataProperty(client.getDeserializer(format).toProperty(input));
   }

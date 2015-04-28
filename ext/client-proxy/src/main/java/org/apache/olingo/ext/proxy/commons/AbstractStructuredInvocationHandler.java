@@ -41,13 +41,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientInlineEntity;
+import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientLinked;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -309,7 +309,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         } else if (propertyCache.containsKey(name)) {
           res = propertyCache.get(name);
         } else {
-          final ODataProperty property = getInternalProperty(name);
+          final ClientProperty property = getInternalProperty(name);
 
           if (ref != null && ClassUtils.getTypeClass(type).isAnnotationPresent(ComplexType.class)) {
             res = getComplex(
@@ -332,7 +332,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
             } else {
               List items = new ArrayList();
 
-              for (ODataValue item : property.getValue().asCollection()) {
+              for (ClientValue item : property.getValue().asCollection()) {
                 items.add(getComplex(
                         name,
                         item,
@@ -364,7 +364,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
                       ? null : getClient().newURIBuilder(baseURI.toASCIIString()).appendPropertySegment(name));
             } else {
               List items = new ArrayList();
-              for (ODataValue item : property.getValue().asCollection()) {
+              for (ClientValue item : property.getValue().asCollection()) {
                 items.add(item.asPrimitive().toValue());
               }
               collectionHandler = new PrimitiveCollectionInvocationHandler(
@@ -450,25 +450,25 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
     final Object navPropValue;
 
     URI targetEntitySetURI = CoreUtils.getTargetEntitySetURI(getClient(), property);
-    final ODataLink link = ((ODataLinked) internal).getNavigationLink(property.name());
+    final ClientLink link = ((ClientLinked) internal).getNavigationLink(property.name());
 
-    if (link instanceof ODataInlineEntity) {
+    if (link instanceof ClientInlineEntity) {
       // return entity
       navPropValue = ProxyUtils.getEntityProxy(
               service,
-              ((ODataInlineEntity) link).getEntity(),
+              ((ClientInlineEntity) link).getEntity(),
               targetEntitySetURI,
               type,
               null,
               false);
-    } else if (link instanceof ODataInlineEntitySet) {
+    } else if (link instanceof ClientInlineEntitySet) {
       // return entity set
       navPropValue = ProxyUtils.getEntityCollectionProxy(
               service,
               collItemType,
               type,
               targetEntitySetURI,
-              ((ODataInlineEntitySet) link).getEntitySet(),
+              ((ClientInlineEntitySet) link).getEntitySet(),
               targetEntitySetURI,
               false);
     } else {
@@ -494,7 +494,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         EntityInvocationHandler handler = getContext().entityContext().getEntity(uuid);
 
         if (handler == null) {
-          final ODataEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
+          final ClientEntity entity = getClient().getObjectFactory().newEntity(new FullQualifiedName(
                   collItemType.getAnnotation(Namespace.class).value(), ClassUtils.getEntityTypeName(collItemType)));
 
           handler = EntityInvocationHandler.getInstance(
@@ -543,7 +543,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
       }
     }
 
-    for (ODataProperty property : getInternalProperties()) {
+    for (ClientProperty property : getInternalProperties()) {
       if (!propertyNames.contains(property.getName())) {
         res.add(property.getName());
       }
@@ -644,7 +644,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   public abstract boolean isChanged();
 
-  protected abstract <T extends ODataProperty> List<T> getInternalProperties();
+  protected abstract <T extends ClientProperty> List<T> getInternalProperties();
 
-  protected abstract ODataProperty getInternalProperty(final String name);
+  protected abstract ClientProperty getInternalProperty(final String name);
 }

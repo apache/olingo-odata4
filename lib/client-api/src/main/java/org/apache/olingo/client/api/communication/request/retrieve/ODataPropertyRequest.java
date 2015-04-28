@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 
 /**
  * This class implements an OData entity property query request.
  */
-public interface ODataPropertyRequest<T extends ODataProperty> extends ODataRetrieveRequest<T> {
+public interface ODataPropertyRequest<T extends ClientProperty> extends ODataRetrieveRequest<T> {
 //No additional methods needed for now.
 }

@@ -30,10 +30,10 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientSingleton;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -93,27 +93,27 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
 
   @SuppressWarnings("unchecked")
   @Override
-  public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(
+  public Triple<List<T>, URI, List<ClientAnnotation>> fetchPartial(
       final URI uri, final Class<T> typeRef) {
 
-    final List<ODataEntity> entities = new ArrayList<ODataEntity>();
+    final List<ClientEntity> entities = new ArrayList<ClientEntity>();
     final URI next;
-    final List<ODataAnnotation> anns = new ArrayList<ODataAnnotation>();
+    final List<ClientAnnotation> anns = new ArrayList<ClientAnnotation>();
 
     if (isSingleton) {
-      final ODataRetrieveResponse<ODataSingleton> res =
+      final ODataRetrieveResponse<ClientSingleton> res =
           ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
       entities.add(res.getBody());
       next = null;
     } else {
-      final ODataEntitySetRequest<ODataEntitySet> req =
+      final ODataEntitySetRequest<ClientEntitySet> req =
           getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
-      final ODataRetrieveResponse<ODataEntitySet> res = req.execute();
+      final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
 
-      final ODataEntitySet entitySet = res.getBody();
+      final ClientEntitySet entitySet = res.getBody();
       entities.addAll(entitySet.getEntities());
       next = entitySet.getNext();
       anns.addAll(entitySet.getAnnotations());
@@ -121,7 +121,7 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
 
     final List<T> res = new ArrayList<T>(entities.size());
 
-    for (ODataEntity entity : entities) {
+    for (ClientEntity entity : entities) {
       Class<?> actualRef = null;
       if (entity.getTypeName() != null) {
         actualRef = service.getEntityTypeClass(entity.getTypeName().toString());
@@ -150,6 +150,6 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
           handlerInTheContext == null ? handler : handlerInTheContext));
     }
 
-    return new ImmutableTriple<List<T>, URI, List<ODataAnnotation>>(res, next, anns);
+    return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(res, next, anns);
   }
 }

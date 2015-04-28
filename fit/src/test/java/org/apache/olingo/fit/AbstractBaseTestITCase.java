@@ -32,9 +32,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.fit.server.TomcatTestServer;
@@ -94,15 +94,15 @@ public abstract class AbstractBaseTestITCase {
     }
   }
 
-  protected void debugODataProperty(final ODataProperty property, final String message) {
+  protected void debugODataProperty(final ClientProperty property, final String message) {
     LOG.debug(message + "\n{}", property.toString());
   }
 
-  protected void debugODataValue(final ODataValue value, final String message) {
+  protected void debugODataValue(final ClientValue value, final String message) {
     LOG.debug(message + "\n{}", value.toString());
   }
 
-  protected void debugODataEntity(final ODataEntity entity, final String message) {
+  protected void debugODataEntity(final ClientEntity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       try {

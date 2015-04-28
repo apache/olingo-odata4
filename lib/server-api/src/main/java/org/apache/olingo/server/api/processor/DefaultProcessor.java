@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -71,7 +71,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
   }
 
   @Override
-  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
+  public void processError(ODataRequest request, ODataResponse response, ClientServerError serverError,
                            ContentType requestedContentType) {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));

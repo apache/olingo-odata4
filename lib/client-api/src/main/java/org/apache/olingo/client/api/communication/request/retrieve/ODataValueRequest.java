@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
 
 /**
  * This class implements an OData entity property value query request.
  */
-public interface ODataValueRequest extends ODataRetrieveRequest<ODataPrimitiveValue> {
+public interface ODataValueRequest extends ODataRetrieveRequest<ClientPrimitiveValue> {
 //No additional methods needed for now.
 }

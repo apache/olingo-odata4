@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -36,8 +36,8 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdat
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataValuable;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -61,16 +61,16 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
-    final ODataEntityRequest<ODataEntity> entityReq =
+    final ODataEntityRequest<ClientEntity> entityReq =
         client.getRetrieveRequestFactory().getEntityRequest(builder.build());
     entityReq.setFormat(format);
 
-    final ODataEntity entity = entityReq.execute().getBody();
+    final ClientEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
     assertTrue(entity.isMediaEntity());
     // cast to workaround JDK 6 bug, fixed in JDK 7
     assertEquals(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName().toString(),
-        ((ODataValuable) entity.getProperty("AirDate")).getValue().getTypeName());
+        ((ClientValuable) entity.getProperty("AirDate")).getValue().getTypeName());
 
     final ODataMediaRequest streamReq = client.getRetrieveRequestFactory().
         getMediaRequest(entity.getMediaContentSource());
@@ -101,28 +101,28 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final InputStream input = IOUtils.toInputStream(random);
 
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
-    final ODataMediaEntityCreateRequest<ODataEntity> createReq =
+    final ODataMediaEntityCreateRequest<ClientEntity> createReq =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, input);
-    final MediaEntityCreateStreamManager<ODataEntity> streamManager = createReq.payloadManager();
+    final MediaEntityCreateStreamManager<ClientEntity> streamManager = createReq.payloadManager();
 
-    final ODataMediaEntityCreateResponse<ODataEntity> createRes = streamManager.getResponse();
+    final ODataMediaEntityCreateResponse<ClientEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
     final Collection<String> location = createRes.getHeader(HeaderName.location);
     assertNotNull(location);
     final URI createdLocation = URI.create(location.iterator().next());
 
-    final ODataEntity changes = client.getObjectFactory().
+    final ClientEntity changes = client.getObjectFactory().
         newEntity(new FullQualifiedName("ODataDemo.Advertisement"));
     changes.getProperties().add(client.getObjectFactory().newPrimitiveProperty("AirDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
             setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
 
-    final ODataEntityUpdateRequest<ODataEntity> updateReq = getClient().getCUDRequestFactory().
+    final ODataEntityUpdateRequest<ClientEntity> updateReq = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(createdLocation, UpdateType.PATCH, changes);
     updateReq.setFormat(format);
 
-    final ODataEntityUpdateResponse<ODataEntity> updateRes = updateReq.execute();
+    final ODataEntityUpdateResponse<ClientEntity> updateRes = updateReq.execute();
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
@@ -153,12 +153,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final String random = RandomStringUtils.random(124);
 
     // 1. update providing media content
-    final ODataMediaEntityUpdateRequest<ODataEntity> updateReq = client.getCUDRequestFactory().
+    final ODataMediaEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().
         getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
     updateReq.setFormat(format);
 
-    final MediaEntityUpdateStreamManager<ODataEntity> streamManager = updateReq.payloadManager();
-    final ODataMediaEntityUpdateResponse<ODataEntity> createRes = streamManager.getResponse();
+    final MediaEntityUpdateStreamManager<ClientEntity> streamManager = updateReq.payloadManager();
+    final ODataMediaEntityUpdateResponse<ClientEntity> createRes = streamManager.getResponse();
     assertEquals(204, createRes.getStatusCode());
 
     // 2. check that media content was effectively uploaded

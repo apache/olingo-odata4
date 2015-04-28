@@ -33,8 +33,8 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> concrete ODataEntity implementation
  * @param <ES> concrete ODataEntitySet implementation
  */
-public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEntity>
+public class ODataEntitySetIterator<ES extends ClientEntitySet, E extends ClientEntity>
         implements Iterator<E> {
 
   /**

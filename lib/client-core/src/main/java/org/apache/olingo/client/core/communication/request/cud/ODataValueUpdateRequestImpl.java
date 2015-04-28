@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -46,7 +46,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
   /**
    * Value to be created.
    */
-  private final ODataPrimitiveValue value;
+  private final ClientPrimitiveValue value;
 
   /**
    * Constructor.
@@ -57,7 +57,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    * @param value value to be created.
    */
   ODataValueUpdateRequestImpl(final ODataClient odataClient,
-          final HttpMethod method, final URI targetURI, final ODataPrimitiveValue value) {
+          final HttpMethod method, final URI targetURI, final ClientPrimitiveValue value) {
 
     super(odataClient, method, targetURI);
     // set request body
@@ -94,7 +94,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    */
   private class ODataValueUpdateResponseImpl extends AbstractODataResponse implements ODataValueUpdateResponse {
 
-    private ODataPrimitiveValue resValue = null;
+    private ClientPrimitiveValue resValue = null;
 
     private ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -103,7 +103,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
     }
 
     @Override
-    public ODataPrimitiveValue getBody() {
+    public ClientPrimitiveValue getBody() {
       if (resValue == null) {
         final ODataFormat format = ODataFormat.fromString(getAccept());
 

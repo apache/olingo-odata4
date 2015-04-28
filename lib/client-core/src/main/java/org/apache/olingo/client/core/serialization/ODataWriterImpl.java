@@ -32,9 +32,9 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
@@ -47,7 +47,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntities(final Collection<ODataEntity> entities, final ODataFormat format)
+  public InputStream writeEntities(final Collection<ClientEntity> entities, final ODataFormat format)
       throws ODataSerializerException {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -57,7 +57,7 @@ public class ODataWriterImpl implements ODataWriter {
       writer = null;
     }
     try {
-      for (ODataEntity entity : entities) {
+      for (ClientEntity entity : entities) {
         client.getSerializer(format).write(writer, client.getBinder().getEntity(entity));
       }
 
@@ -68,13 +68,13 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final ODataEntity entity, final ODataFormat format)
+  public InputStream writeEntity(final ClientEntity entity, final ODataFormat format)
       throws ODataSerializerException {
-    return writeEntities(Collections.<ODataEntity>singleton(entity), format);
+    return writeEntities(Collections.<ClientEntity>singleton(entity), format);
   }
 
   @Override
-  public InputStream writeProperty(final ODataProperty property, final ODataFormat format)
+  public InputStream writeProperty(final ClientProperty property, final ODataFormat format)
       throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -93,7 +93,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeLink(final ODataLink link, final ODataFormat format) throws ODataSerializerException {
+  public InputStream writeLink(final ClientLink link, final ODataFormat format) throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
     try {

@@ -23,12 +23,12 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -36,46 +36,46 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 public abstract class AbstractInvokeRequestFactory implements InvokeRequestFactory {
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
           final URI uri, final Class<RES> resultRef) {
 
     return getFunctionInvokeRequest(uri, resultRef, null);
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
-          final URI uri, final Class<RES> resultRef, final Map<String, ODataValue> parameters) {
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
+          final URI uri, final Class<RES> resultRef, final Map<String, ClientValue> parameters) {
 
     return getInvokeRequest(HttpMethod.GET, uri, resultRef, parameters);
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
           final URI uri, final Class<RES> resultRef) {
 
     return getActionInvokeRequest(uri, resultRef, null);
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
-          final URI uri, final Class<RES> resultRef, final Map<String, ODataValue> parameters) {
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
+          final URI uri, final Class<RES> resultRef, final Map<String, ClientValue> parameters) {
 
     return getInvokeRequest(HttpMethod.POST, uri, resultRef, parameters);
   }
 
   @SuppressWarnings("unchecked")
-  protected <RES extends ODataInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
+  protected <RES extends ClientInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
     Class<RES> result;
 
     if (returnType == null) {
-      result = (Class<RES>) ODataNoContent.class;
+      result = (Class<RES>) ClientNoContent.class;
     } else {
       if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) ODataEntitySet.class;
+        result = (Class<RES>) ClientEntitySet.class;
       } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) ODataEntity.class;
+        result = (Class<RES>) ClientEntity.class;
       } else {
-        result = (Class<RES>) ODataProperty.class;
+        result = (Class<RES>) ClientProperty.class;
       }
     }
 

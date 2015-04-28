@@ -35,8 +35,8 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataOperation;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
+import org.apache.olingo.commons.api.domain.ClientOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -154,7 +154,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
         link.setTitle(getTitle(field));
         link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
-        link.setType(ODataLinkType.MEDIA_EDIT.toString());
+        link.setType(ClientLinkType.MEDIA_EDIT.toString());
         entity.getMediaEditLinks().add(link);
 
         if (tree.has(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG))) {
@@ -174,7 +174,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
         }
         toRemove.add(field.getKey());
       } else if (field.getKey().charAt(0) == '#') {
-        final ODataOperation operation = new ODataOperation();
+        final ClientOperation operation = new ClientOperation();
         operation.setMetadataAnchor(field.getKey());
 
         final ObjectNode opNode = (ObjectNode) tree.get(field.getKey());

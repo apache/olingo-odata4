@@ -20,10 +20,10 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientCollectionValue;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -45,15 +45,15 @@ public class PropertyTest extends AbstractTest {
 
   private void _enum(final ODataFormat format) throws ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Products_5_SkinColor." + getSuffix(format));
-    final ODataProperty property = getClient().getReader().readProperty(input, format);
+    final ClientProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasEnumValue());
 
-    final ODataProperty written = getClient().getReader().readProperty(
+    final ClientProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     // This is needed because type information gets lost with serialization
     if (format == ODataFormat.XML) {
-      final ODataProperty comparable = getClient().getObjectFactory().newEnumProperty(property.getName(),
+      final ClientProperty comparable = getClient().getObjectFactory().newEnumProperty(property.getName(),
               getClient().getObjectFactory().
               newEnumValue(property.getEnumValue().getTypeName(), written.getEnumValue().getValue()));
 
@@ -73,21 +73,21 @@ public class PropertyTest extends AbstractTest {
 
   private void complex(final ODataFormat format) throws ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Employees_3_HomeAddress." + getSuffix(format));
-    final ODataProperty property = getClient().getReader().readProperty(input, format);
+    final ClientProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasComplexValue());
     assertEquals(3, property.getComplexValue().size());
 
-    final ODataProperty written = getClient().getReader().readProperty(
+    final ClientProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     // This is needed because type information gets lost with JSON serialization
-    final ODataComplexValue typedValue = getClient().getObjectFactory().
+    final ClientComplexValue typedValue = getClient().getObjectFactory().
             newComplexValue(property.getComplexValue().getTypeName());
-    for (final Iterator<ODataProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
-      final ODataProperty prop = itor.next();
+    for (final Iterator<ClientProperty> itor = written.getComplexValue().iterator(); itor.hasNext();) {
+      final ClientProperty prop = itor.next();
       typedValue.add(prop);
     }
-    final ODataProperty comparable = getClient().getObjectFactory().
+    final ClientProperty comparable = getClient().getObjectFactory().
             newComplexProperty(property.getName(), typedValue);
 
     assertEquals(property, comparable);
@@ -105,22 +105,22 @@ public class PropertyTest extends AbstractTest {
 
   private void collection(final ODataFormat format) throws ODataDeserializerException, ODataSerializerException {
     final InputStream input = getClass().getResourceAsStream("Products_5_CoverColors." + getSuffix(format));
-    final ODataProperty property = getClient().getReader().readProperty(input, format);
+    final ClientProperty property = getClient().getReader().readProperty(input, format);
     assertNotNull(property);
     assertTrue(property.hasCollectionValue());
     assertEquals(3, property.getCollectionValue().size());
 
-    final ODataProperty written = getClient().getReader().readProperty(
+    final ClientProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, format), format);
     // This is needed because type information gets lost with JSON serialization
     if (format == ODataFormat.XML) {
-      final ODataCollectionValue<ODataValue> typedValue = getClient().getObjectFactory().
+      final ClientCollectionValue<ClientValue> typedValue = getClient().getObjectFactory().
               newCollectionValue(property.getCollectionValue().getTypeName());
-      for (final Iterator<ODataValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {
-        final ODataValue value = itor.next();
+      for (final Iterator<ClientValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {
+        final ClientValue value = itor.next();
         typedValue.add(value);
       }
-      final ODataProperty comparable = getClient().getObjectFactory().
+      final ClientProperty comparable = getClient().getObjectFactory().
               newCollectionProperty(property.getName(), typedValue);
 
       assertEquals(property, comparable);

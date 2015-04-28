@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataSingleton;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientSingleton;
 
 public interface RetrieveRequestFactory {
 
@@ -63,7 +63,7 @@ public interface RetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntitySetRequest} instance.
    */
-  ODataEntitySetRequest<ODataEntitySet> getEntitySetRequest(URI uri);
+  ODataEntitySetRequest<ClientEntitySet> getEntitySetRequest(URI uri);
 
   /**
    * Gets a uri request returning a set of one or more OData entities.
@@ -74,7 +74,7 @@ public interface RetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntitySetIteratorRequest} instance.
    */
-  ODataEntitySetIteratorRequest<ODataEntitySet, ODataEntity> getEntitySetIteratorRequest(URI uri);
+  ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> getEntitySetIteratorRequest(URI uri);
 
   /**
    * Gets a uri request returning a single OData entity.
@@ -82,7 +82,7 @@ public interface RetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataEntityRequest} instance.
    */
-  ODataEntityRequest<ODataEntity> getEntityRequest(URI uri);
+  ODataEntityRequest<ClientEntity> getEntityRequest(URI uri);
 
   /**
    * Gets a uri request returning a single OData entity property.
@@ -90,7 +90,7 @@ public interface RetrieveRequestFactory {
    * @param uri request URI.
    * @return new {@link ODataPropertyRequest} instance.
    */
-  ODataPropertyRequest<ODataProperty> getPropertyRequest(URI uri);
+  ODataPropertyRequest<ClientProperty> getPropertyRequest(URI uri);
   
   /**
    * Gets a uri request returning a single OData entity property value.
@@ -132,7 +132,7 @@ public interface RetrieveRequestFactory {
    */
   ODataRawRequest getRawRequest(URI uri);
 
-  ODataEntityRequest<ODataSingleton> getSingletonRequest(URI uri);
+  ODataEntityRequest<ClientSingleton> getSingletonRequest(URI uri);
 
   ODataDeltaRequest getDeltaRequest(URI uri);
 }

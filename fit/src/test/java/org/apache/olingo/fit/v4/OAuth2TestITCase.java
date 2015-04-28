@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,17 +42,17 @@ import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 public class OAuth2TestITCase extends AbstractTestITCase {
 
   private static final URI OAUTH2_GRANT_SERVICE_URI =
-          URI.create("http://localhost:9080/stub/StaticService/oauth2/authorize");
+      URI.create("http://localhost:9080/stub/StaticService/oauth2/authorize");
 
   private static final URI OAUTH2_TOKEN_SERVICE_URI =
-          URI.create("http://localhost:9080/stub/StaticService/oauth2/token");
+      URI.create("http://localhost:9080/stub/StaticService/oauth2/token");
 
   private EdmEnabledODataClient _edmClient;
 
   @BeforeClass
   public static void enableOAuth2() {
     client.getConfiguration().setHttpClientFactory(
-            new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
+        new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
   }
 
   @AfterClass
@@ -64,7 +64,7 @@ public class OAuth2TestITCase extends AbstractTestITCase {
     if (_edmClient == null) {
       _edmClient = ODataClientFactory.getEdmEnabledClient(testOAuth2ServiceRootURL);
       _edmClient.getConfiguration().setHttpClientFactory(
-              new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
+          new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
     }
 
     return _edmClient;
@@ -72,18 +72,19 @@ public class OAuth2TestITCase extends AbstractTestITCase {
 
   private void read(final ODataClient client, final ODataFormat format) {
     final URIBuilder uriBuilder =
-            client.newURIBuilder(testOAuth2ServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
+        client.newURIBuilder(testOAuth2ServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
 
-    final ODataEntityRequest<ODataEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
+    final ODataEntityRequest<ClientEntity> req =
+        client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntity> res = req.execute();
+    final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
 
     final String etag = res.getETag();
     assertTrue(StringUtils.isNotBlank(etag));
 
-    final ODataEntity order = res.getBody();
+    final ClientEntity order = res.getBody();
     assertEquals(etag, order.getETag());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Order", order.getTypeName().toString());
     assertEquals("Edm.Int32", order.getProperty("OrderID").getPrimitiveValue().getTypeName());

@@ -27,14 +27,14 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * This class implements an OData entity property value query request.
  */
-public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPrimitiveValue>
+public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPrimitiveValue>
         implements ODataValueRequest {
 
   /**
@@ -53,7 +53,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
   }
 
   @Override
-  public ODataRetrieveResponse<ODataPrimitiveValue> execute() {
+  public ODataRetrieveResponse<ClientPrimitiveValue> execute() {
     final HttpResponse res = doExecute();
     return new ODataValueResponseImpl(odataClient, httpClient, res);
   }
@@ -63,7 +63,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
    */
   protected class ODataValueResponseImpl extends AbstractODataRetrieveResponse {
 
-    private ODataPrimitiveValue value = null;
+    private ClientPrimitiveValue value = null;
 
     private ODataValueResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
@@ -72,7 +72,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ODataPri
     }
 
     @Override
-    public ODataPrimitiveValue getBody() {
+    public ClientPrimitiveValue getBody() {
       if (value == null) {
         final ODataFormat format = ODataFormat.fromString(getContentType());
 

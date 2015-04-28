@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * REST resource for an <tt>ODataServiceDocument</tt>.
  *
- * @see org.apache.olingo.commons.api.domain.ODataServiceDocument
+ * @see org.apache.olingo.commons.api.domain.ClientServiceDocument
  */
 public interface ServiceDocument {
 

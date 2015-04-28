@@ -48,25 +48,25 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataAnnotatable;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataDeletedEntity.Reason;
-import org.apache.olingo.commons.api.domain.ODataDelta;
-import org.apache.olingo.commons.api.domain.ODataDeltaLink;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataLinked;
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
-import org.apache.olingo.commons.api.domain.ODataValuable;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientAnnotatable;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientCollectionValue;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientDeletedEntity.Reason;
+import org.apache.olingo.commons.api.domain.ClientDelta;
+import org.apache.olingo.commons.api.domain.ClientDeltaLink;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInlineEntity;
+import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinked;
+import org.apache.olingo.commons.api.domain.ClientOperation;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientValuable;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -87,10 +87,10 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.domain.ODataAnnotationImpl;
-import org.apache.olingo.commons.core.domain.ODataDeletedEntityImpl;
-import org.apache.olingo.commons.core.domain.ODataDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.ODataPropertyImpl;
+import org.apache.olingo.commons.core.domain.ClientAnnotationImpl;
+import org.apache.olingo.commons.core.domain.ClientDeletedEntityImpl;
+import org.apache.olingo.commons.core.domain.ClientDeltaLinkImpl;
+import org.apache.olingo.commons.core.domain.ClientPropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.serialization.ContextURLParser;
@@ -111,17 +111,17 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public boolean add(final ODataEntity entity, final ODataProperty property) {
+  public boolean add(final ClientEntity entity, final ClientProperty property) {
     return entity.getProperties().add(property);
   }
 
-  protected boolean add(final ODataEntitySet entitySet, final ODataEntity entity) {
+  protected boolean add(final ClientEntitySet entitySet, final ClientEntity entity) {
     return entitySet.getEntities().add(entity);
   }
 
   @Override
-  public ODataServiceDocument getODataServiceDocument(final ServiceDocument resource) {
-    final ODataServiceDocument serviceDocument = new ODataServiceDocument();
+  public ClientServiceDocument getODataServiceDocument(final ServiceDocument resource) {
+    final ClientServiceDocument serviceDocument = new ClientServiceDocument();
 
     for (ServiceDocumentItem entitySet : resource.getEntitySets()) {
       serviceDocument.getEntitySets().
@@ -146,7 +146,7 @@ public class ODataBinderImpl implements ODataBinder {
     return serviceDocument;
   }
 
-  private void updateValuable(final Valuable propertyResource, final ODataValuable odataValuable) {
+  private void updateValuable(final Valuable propertyResource, final ClientValuable odataValuable) {
     final Object propertyValue = getValue(odataValuable.getValue());
     if (odataValuable.hasPrimitiveValue()) {
       propertyResource.setType(odataValuable.getPrimitiveValue().getTypeName());
@@ -160,10 +160,10 @@ public class ODataBinderImpl implements ODataBinder {
       propertyResource.setType(odataValuable.getComplexValue().getTypeName());
       propertyResource.setValue(ValueType.COMPLEX, propertyValue);
     } else if (odataValuable.hasCollectionValue()) {
-      final ODataCollectionValue<ODataValue> collectionValue =
+      final ClientCollectionValue<ClientValue> collectionValue =
           odataValuable.getCollectionValue();
       propertyResource.setType(collectionValue.getTypeName());
-      final ODataValue value = collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
+      final ClientValue value = collectionValue.iterator().hasNext() ? collectionValue.iterator().next() : null;
       ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
       if (value == null) {
         valueType = ValueType.COLLECTION_PRIMITIVE;
@@ -179,8 +179,8 @@ public class ODataBinderImpl implements ODataBinder {
     }
   }
 
-  private void annotations(final ODataAnnotatable odataAnnotatable, final Annotatable annotatable) {
-    for (ODataAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
+  private void annotations(final ClientAnnotatable odataAnnotatable, final Annotatable annotatable) {
+    for (ClientAnnotation odataAnnotation : odataAnnotatable.getAnnotations()) {
       final Annotation annotation = new Annotation();
 
       annotation.setTerm(odataAnnotation.getTerm());
@@ -192,7 +192,7 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public EntityCollection getEntitySet(final ODataEntitySet odataEntitySet) {
+  public EntityCollection getEntitySet(final ClientEntitySet odataEntitySet) {
     final EntityCollection entitySet = new EntityCollection();
 
     entitySet.setCount(odataEntitySet.getCount());
@@ -202,7 +202,7 @@ public class ODataBinderImpl implements ODataBinder {
       entitySet.setNext(next);
     }
 
-    for (ODataEntity entity : odataEntitySet.getEntities()) {
+    for (ClientEntity entity : odataEntitySet.getEntities()) {
       entitySet.getEntities().add(getEntity(entity));
     }
 
@@ -211,12 +211,12 @@ public class ODataBinderImpl implements ODataBinder {
     return entitySet;
   }
 
-  protected void links(final ODataLinked odataLinked, final Linked linked) {
+  protected void links(final ClientLinked odataLinked, final Linked linked) {
     // -------------------------------------------------------------
     // Append navigation links (handling inline entity / entity set as well)
     // -------------------------------------------------------------
     // handle navigation links
-    for (ODataLink link : odataLinked.getNavigationLinks()) {
+    for (ClientLink link : odataLinked.getNavigationLinks()) {
       // append link
       LOG.debug("Append navigation link\n{}", link);
       linked.getNavigationLinks().add(getLink(link));
@@ -226,22 +226,22 @@ public class ODataBinderImpl implements ODataBinder {
     // -------------------------------------------------------------
     // Append association links
     // -------------------------------------------------------------
-    for (ODataLink link : odataLinked.getAssociationLinks()) {
+    for (ClientLink link : odataLinked.getAssociationLinks()) {
       LOG.debug("Append association link\n{}", link);
       linked.getAssociationLinks().add(getLink(link));
     }
     // -------------------------------------------------------------
 
     for (Link link : linked.getNavigationLinks()) {
-      final ODataLink odataLink = odataLinked.getNavigationLink(link.getTitle());
-      if (!(odataLink instanceof ODataInlineEntity) && !(odataLink instanceof ODataInlineEntitySet)) {
+      final ClientLink odataLink = odataLinked.getNavigationLink(link.getTitle());
+      if (!(odataLink instanceof ClientInlineEntity) && !(odataLink instanceof ClientInlineEntitySet)) {
         annotations(odataLink, link);
       }
     }
   }
 
   @Override
-  public Entity getEntity(final ODataEntity odataEntity) {
+  public Entity getEntity(final ClientEntity odataEntity) {
     final Entity entity = new Entity();
 
     entity.setType(odataEntity.getTypeName() == null ? null : odataEntity.getTypeName().toString());
@@ -272,7 +272,7 @@ public class ODataBinderImpl implements ODataBinder {
     // -------------------------------------------------------------
     // Append edit-media links
     // -------------------------------------------------------------
-    for (ODataLink link : odataEntity.getMediaEditLinks()) {
+    for (ClientLink link : odataEntity.getMediaEditLinks()) {
       LOG.debug("Append edit-media link\n{}", link);
       entity.getMediaEditLinks().add(getLink(link));
     }
@@ -284,7 +284,7 @@ public class ODataBinderImpl implements ODataBinder {
       entity.setMediaETag(odataEntity.getMediaETag());
     }
 
-    for (ODataProperty property : odataEntity.getProperties()) {
+    for (ClientProperty property : odataEntity.getProperties()) {
       entity.getProperties().add(getProperty(property));
     }
 
@@ -294,7 +294,7 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public Link getLink(final ODataLink link) {
+  public Link getLink(final ClientLink link) {
     final Link linkResource = new Link();
     linkResource.setRel(link.getRel());
     linkResource.setTitle(link.getName());
@@ -302,15 +302,15 @@ public class ODataBinderImpl implements ODataBinder {
     linkResource.setType(link.getType().toString());
     linkResource.setMediaETag(link.getMediaETag());
 
-    if (link instanceof ODataInlineEntity) {
+    if (link instanceof ClientInlineEntity) {
       // append inline entity
-      final ODataEntity inlineEntity = ((ODataInlineEntity) link).getEntity();
+      final ClientEntity inlineEntity = ((ClientInlineEntity) link).getEntity();
       LOG.debug("Append in-line entity\n{}", inlineEntity);
 
       linkResource.setInlineEntity(getEntity(inlineEntity));
-    } else if (link instanceof ODataInlineEntitySet) {
+    } else if (link instanceof ClientInlineEntitySet) {
       // append inline entity set
-      final ODataEntitySet InlineEntitySet = ((ODataInlineEntitySet) link).getEntitySet();
+      final ClientEntitySet InlineEntitySet = ((ClientInlineEntitySet) link).getEntitySet();
       LOG.debug("Append in-line entity set\n{}", InlineEntitySet);
 
       linkResource.setInlineEntitySet(getEntitySet(InlineEntitySet));
@@ -320,7 +320,7 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public Property getProperty(final ODataProperty property) {
+  public Property getProperty(final ClientProperty property) {
 
     final Property propertyResource = new Property();
     propertyResource.setName(property.getName());
@@ -330,7 +330,7 @@ public class ODataBinderImpl implements ODataBinder {
     return propertyResource;
   }
 
-  protected Object getValue(final ODataValue value) {
+  protected Object getValue(final ClientValue value) {
     Object valueResource = null;
     if (value == null) {
       return null;
@@ -341,7 +341,7 @@ public class ODataBinderImpl implements ODataBinder {
       valueResource = value.asPrimitive().toValue();
     } else if (value.isComplex()) {
       List<Property> complexProperties = new ArrayList<Property>();
-      for (final ODataProperty propertyValue : value.asComplex()) {
+      for (final ClientProperty propertyValue : value.asComplex()) {
         complexProperties.add(getProperty(propertyValue));
       }
       final ComplexValue lcValueResource = new ComplexValue();
@@ -351,10 +351,10 @@ public class ODataBinderImpl implements ODataBinder {
       valueResource = lcValueResource;
 
     } else if (value.isCollection()) {
-      final ODataCollectionValue<? extends ODataValue> _value = value.asCollection();
+      final ClientCollectionValue<? extends ClientValue> _value = value.asCollection();
       ArrayList<Object> lcValueResource = new ArrayList<Object>();
 
-      for (final ODataValue collectionValue : _value) {
+      for (final ClientValue collectionValue : _value) {
         lcValueResource.add(getValue(collectionValue));
       }
       valueResource = lcValueResource;
@@ -362,7 +362,7 @@ public class ODataBinderImpl implements ODataBinder {
     return valueResource;
   }
 
-  private void odataAnnotations(final Annotatable annotatable, final ODataAnnotatable odataAnnotatable) {
+  private void odataAnnotations(final Annotatable annotatable, final ClientAnnotatable odataAnnotatable) {
     for (Annotation annotation : annotatable.getAnnotations()) {
       FullQualifiedName fqn = null;
       if (client instanceof EdmEnabledODataClient) {
@@ -380,14 +380,14 @@ public class ODataBinderImpl implements ODataBinder {
         }
       }
 
-      final ODataAnnotation odataAnnotation =
-          new ODataAnnotationImpl(annotation.getTerm(), getODataValue(fqn, annotation, null, null));
+      final ClientAnnotation odataAnnotation =
+          new ClientAnnotationImpl(annotation.getTerm(), getODataValue(fqn, annotation, null, null));
       odataAnnotatable.getAnnotations().add(odataAnnotation);
     }
   }
 
   @Override
-  public ODataEntitySet getODataEntitySet(final ResWrap<EntityCollection> resource) {
+  public ClientEntitySet getODataEntitySet(final ResWrap<EntityCollection> resource) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
@@ -405,7 +405,7 @@ public class ODataBinderImpl implements ODataBinder {
 
     final URI next = resource.getPayload().getNext();
 
-    final ODataEntitySet entitySet = next == null
+    final ClientEntitySet entitySet = next == null
         ? client.getObjectFactory().newEntitySet()
         : client.getObjectFactory().newEntitySet(URIUtils.getURI(base, next.toASCIIString()));
 
@@ -427,29 +427,29 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   protected void odataNavigationLinks(final EdmType edmType,
-      final Linked linked, final ODataLinked odataLinked, final String metadataETag, final URI base) {
+      final Linked linked, final ClientLinked odataLinked, final String metadataETag, final URI base) {
     for (Link link : linked.getNavigationLinks()) {
       final String href = link.getHref();
       final String title = link.getTitle();
       final Entity inlineEntity = link.getInlineEntity();
       final EntityCollection inlineEntitySet = link.getInlineEntitySet();
       if (inlineEntity == null && inlineEntitySet == null) {
-        ODataLinkType linkType = null;
+        ClientLinkType linkType = null;
         if (edmType instanceof EdmStructuredType) {
           final EdmNavigationProperty navProp = ((EdmStructuredType) edmType).getNavigationProperty(title);
           if (navProp != null) {
             linkType = navProp.isCollection() ?
-                ODataLinkType.ENTITY_SET_NAVIGATION :
-                ODataLinkType.ENTITY_NAVIGATION;
+                ClientLinkType.ENTITY_SET_NAVIGATION :
+                ClientLinkType.ENTITY_NAVIGATION;
           }
         }
         if (linkType == null) {
           linkType = link.getType() == null ?
-              ODataLinkType.ENTITY_NAVIGATION :
-              ODataLinkType.fromString(link.getRel(), link.getType());
+              ClientLinkType.ENTITY_NAVIGATION :
+              ClientLinkType.fromString(link.getRel(), link.getType());
         }
 
-        odataLinked.addLink(linkType == ODataLinkType.ENTITY_NAVIGATION ?
+        odataLinked.addLink(linkType == ClientLinkType.ENTITY_NAVIGATION ?
             client.getObjectFactory().newEntityNavigationLink(title, URIUtils.getURI(base, href)) :
             client.getObjectFactory().newEntitySetNavigationLink(title, URIUtils.getURI(base, href)));
       } else if (inlineEntity != null) {
@@ -461,24 +461,24 @@ public class ODataBinderImpl implements ODataBinder {
       }
     }
 
-    for (ODataLink link : odataLinked.getNavigationLinks()) {
-      if (!(link instanceof ODataInlineEntity) && !(link instanceof ODataInlineEntitySet)) {
+    for (ClientLink link : odataLinked.getNavigationLinks()) {
+      if (!(link instanceof ClientInlineEntity) && !(link instanceof ClientInlineEntitySet)) {
         odataAnnotations(linked.getNavigationLink(link.getName()), link);
       }
     }
   }
 
-  private ODataInlineEntity createODataInlineEntity(final Entity inlineEntity,
+  private ClientInlineEntity createODataInlineEntity(final Entity inlineEntity,
       final URI uri, final String title, final String metadataETag) {
-    return new ODataInlineEntity(uri, ODataLinkType.ENTITY_NAVIGATION, title,
+    return new ClientInlineEntity(uri, ClientLinkType.ENTITY_NAVIGATION, title,
         getODataEntity(new ResWrap<Entity>(
             inlineEntity.getBaseURI() == null ? null : inlineEntity.getBaseURI(), metadataETag,
             inlineEntity)));
   }
 
-  private ODataInlineEntitySet createODataInlineEntitySet(final EntityCollection inlineEntitySet,
+  private ClientInlineEntitySet createODataInlineEntitySet(final EntityCollection inlineEntitySet,
       final URI uri, final String title, final String metadataETag) {
-    return new ODataInlineEntitySet(uri, ODataLinkType.ENTITY_SET_NAVIGATION, title,
+    return new ClientInlineEntitySet(uri, ClientLinkType.ENTITY_SET_NAVIGATION, title,
         getODataEntitySet(new ResWrap<EntityCollection>(
             inlineEntitySet.getBaseURI() == null ? null : inlineEntitySet.getBaseURI(), metadataETag,
             inlineEntitySet)));
@@ -565,7 +565,7 @@ public class ODataBinderImpl implements ODataBinder {
     return type;
   }
 
-  private ODataLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
+  private ClientLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
     if (property.isCollection()) {
       EntityCollection inlineEntitySet = new EntityCollection();
       for (final Object inlined : property.asCollection()) {
@@ -584,7 +584,7 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public ODataEntity getODataEntity(final ResWrap<Entity> resource) {
+  public ClientEntity getODataEntity(final ResWrap<Entity> resource) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
@@ -610,7 +610,7 @@ public class ODataBinderImpl implements ODataBinder {
       typeName = new FullQualifiedName(resource.getPayload().getType());
     }
 
-    final ODataEntity entity = resource.getPayload().getSelfLink() == null
+    final ClientEntity entity = resource.getPayload().getSelfLink() == null
         ? client.getObjectFactory().newEntity(typeName)
         : client.getObjectFactory().newEntity(typeName,
             URIUtils.getURI(base, resource.getPayload().getSelfLink().getHref()));
@@ -635,7 +635,7 @@ public class ODataBinderImpl implements ODataBinder {
           newMediaEditLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
     }
 
-    for (ODataOperation operation : resource.getPayload().getOperations()) {
+    for (ClientOperation operation : resource.getPayload().getOperations()) {
       operation.setTarget(URIUtils.getURI(base, operation.getTarget()));
       entity.getOperations().add(operation);
     }
@@ -670,12 +670,12 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public ODataProperty getODataProperty(final ResWrap<Property> resource) {
+  public ClientProperty getODataProperty(final ResWrap<Property> resource) {
     final Property payload = resource.getPayload();
     final EdmTypeInfo typeInfo = buildTypeInfo(ContextURLParser.parse(resource.getContextURL()),
         resource.getMetadataETag(), payload.getName(), payload.getType());
 
-    final ODataProperty property = new ODataPropertyImpl(payload.getName(),
+    final ClientProperty property = new ClientPropertyImpl(payload.getName(),
         getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
             payload, resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(payload, property);
@@ -717,10 +717,10 @@ public class ODataBinderImpl implements ODataBinder {
     return typeInfo;
   }
 
-  protected ODataProperty getODataProperty(final EdmType type, final Property resource) {
+  protected ClientProperty getODataProperty(final EdmType type, final Property resource) {
     final EdmTypeInfo typeInfo = buildTypeInfo(type == null ? null : type.getFullQualifiedName(), resource.getType());
 
-    final ODataProperty property = new ODataPropertyImpl(resource.getName(),
+    final ClientProperty property = new ClientPropertyImpl(resource.getName(),
         getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
             resource, null, null));
     odataAnnotations(resource, property);
@@ -728,7 +728,7 @@ public class ODataBinderImpl implements ODataBinder {
     return property;
   }
 
-  protected ODataValue getODataValue(final FullQualifiedName type,
+  protected ClientValue getODataValue(final FullQualifiedName type,
       final Valuable valuable, final URI contextURL, final String metadataETag) {
 
     // fixes enum values treated as primitive when no type information is available
@@ -739,7 +739,7 @@ public class ODataBinderImpl implements ODataBinder {
       }
     }
 
-    ODataValue value = null;
+    ClientValue value = null;
 
     if (valuable.isCollection()) {
       value = client.getObjectFactory().newCollectionValue(type == null ? null : "Collection(" + type.toString() + ")");
@@ -753,7 +753,7 @@ public class ODataBinderImpl implements ODataBinder {
       value = client.getObjectFactory().newEnumValue(type == null ? null : type.toString(),
           valuable.asEnum().toString());
     } else if (valuable.isComplex()) {
-      final ODataComplexValue lcValue =
+      final ClientComplexValue lcValue =
           client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
 
       EdmComplexType edmType = null;
@@ -813,7 +813,7 @@ public class ODataBinderImpl implements ODataBinder {
                 : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
             build();
       } else if (valuable.isComplex()) {
-        final ODataComplexValue cValue =
+        final ClientComplexValue cValue =
             client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
 
         if (!valuable.isNull()) {
@@ -843,14 +843,14 @@ public class ODataBinderImpl implements ODataBinder {
   }
 
   @Override
-  public ODataDelta getODataDelta(final ResWrap<Delta> resource) {
+  public ClientDelta getODataDelta(final ResWrap<Delta> resource) {
     final URI base = resource.getContextURL() == null
         ? resource.getPayload().getBaseURI()
         : ContextURLParser.parse(resource.getContextURL()).getServiceRoot();
 
     final URI next = resource.getPayload().getNext();
 
-    final ODataDelta delta = next == null
+    final ClientDelta delta = next == null
         ? client.getObjectFactory().newDelta()
         : client.getObjectFactory().newDelta(URIUtils.getURI(base, next.toASCIIString()));
 
@@ -867,7 +867,7 @@ public class ODataBinderImpl implements ODataBinder {
           new ResWrap<Entity>(resource.getContextURL(), resource.getMetadataETag(), entityResource)));
     }
     for (DeletedEntity deletedEntity : resource.getPayload().getDeletedEntities()) {
-      final ODataDeletedEntityImpl impl = new ODataDeletedEntityImpl();
+      final ClientDeletedEntityImpl impl = new ClientDeletedEntityImpl();
       impl.setId(URIUtils.getURI(base, deletedEntity.getId()));
       impl.setReason(Reason.valueOf(deletedEntity.getReason().name()));
 
@@ -877,7 +877,7 @@ public class ODataBinderImpl implements ODataBinder {
     odataAnnotations(resource.getPayload(), delta);
 
     for (DeltaLink link : resource.getPayload().getAddedLinks()) {
-      final ODataDeltaLink impl = new ODataDeltaLinkImpl();
+      final ClientDeltaLink impl = new ClientDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));
@@ -887,7 +887,7 @@ public class ODataBinderImpl implements ODataBinder {
       delta.getAddedLinks().add(impl);
     }
     for (DeltaLink link : resource.getPayload().getDeletedLinks()) {
-      final ODataDeltaLink impl = new ODataDeltaLinkImpl();
+      final ClientDeltaLink impl = new ClientDeltaLinkImpl();
       impl.setRelationship(link.getRelationship());
       impl.setSource(URIUtils.getURI(base, link.getSource()));
       impl.setTarget(URIUtils.getURI(base, link.getTarget()));

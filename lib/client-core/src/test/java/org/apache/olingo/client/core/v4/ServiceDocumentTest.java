@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataServiceDocument;
+import org.apache.olingo.commons.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
@@ -44,14 +44,14 @@ public class ServiceDocumentTest extends AbstractTest {
     return format == ODataFormat.XML ? "xml" : "json";
   }
 
-  private ODataServiceDocument parse(final ODataFormat format) throws ODataDeserializerException {
+  private ClientServiceDocument parse(final ODataFormat format) throws ODataDeserializerException {
     ResWrap<ServiceDocument> service = getClient().getDeserializer(format).toServiceDocument(
             getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)));
 
     assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL());
     assertEquals("W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"", service.getMetadataETag());
 
-    final ODataServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());
+    final ClientServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());
     assertNotNull(serviceDocument);
 
     assertTrue(serviceDocument.getEntitySetNames().contains("Order Details"));

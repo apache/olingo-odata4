@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -358,14 +358,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         final ExpandTreeBuilder childExpandBuilder = (expandBuilder != null) ?
             expandBuilder.expand(edmNavigationProperty) : null;
         if (jsonNode.isArray() && edmNavigationProperty.isCollection()) {
-          link.setType(ODataLinkType.ENTITY_SET_NAVIGATION.toString());
+          link.setType(ClientLinkType.ENTITY_SET_NAVIGATION.toString());
           EntityCollection inlineEntitySet = new EntityCollection();
           inlineEntitySet.getEntities().addAll(consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode,
               childExpandBuilder));
           link.setInlineEntitySet(inlineEntitySet);
         } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull())
             && !edmNavigationProperty.isCollection()) {
-          link.setType(ODataLinkType.ENTITY_NAVIGATION.toString());
+          link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
           if (!jsonNode.isNull()) {
             Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), (ObjectNode) jsonNode,
                 childExpandBuilder);
@@ -409,7 +409,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         }
         bindingLinkStrings.add(arrayValue.asText());
       }
-      bindingLink.setType(ODataLinkType.ENTITY_COLLECTION_BINDING.toString());
+      bindingLink.setType(ClientLinkType.ENTITY_COLLECTION_BINDING.toString());
       bindingLink.setBindingLinks(bindingLinkStrings);
     } else {
       assertIsNullNode(key, jsonNode);
@@ -418,7 +418,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
       }
       bindingLink.setBindingLink(jsonNode.asText());
-      bindingLink.setType(ODataLinkType.ENTITY_BINDING.toString());
+      bindingLink.setType(ClientLinkType.ENTITY_BINDING.toString());
     }
     return bindingLink;
   }

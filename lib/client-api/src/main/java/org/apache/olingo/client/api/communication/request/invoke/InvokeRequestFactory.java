@@ -21,8 +21,8 @@ package org.apache.olingo.client.api.communication.request.invoke;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -43,8 +43,8 @@ public interface InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          HttpMethod method, URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
+          HttpMethod method, URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (no parameters).
@@ -54,7 +54,7 @@ public interface InvokeRequestFactory {
    * @param resultRef reference Class for result
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(URI uri, Class<RES> resultRef);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(URI uri, Class<RES> resultRef);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (with parameters).
@@ -65,8 +65,8 @@ public interface InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
-          URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
+          URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (no parameters).
@@ -76,7 +76,7 @@ public interface InvokeRequestFactory {
    * @param resultRef reference Class for result
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(URI uri, Class<RES> resultRef);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(URI uri, Class<RES> resultRef);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (with parameters).
@@ -87,6 +87,6 @@ public interface InvokeRequestFactory {
    * @param parameters parameters to pass to action invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
-          URI uri, Class<RES> resultRef, Map<String, ODataValue> parameters);
+  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
+          URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
 }

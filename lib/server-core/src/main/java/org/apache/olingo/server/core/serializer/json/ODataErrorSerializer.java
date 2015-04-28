@@ -21,15 +21,15 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.IOException;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ClientErrorDetail;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataErrorSerializer {
 
-  public void writeErrorDocument(JsonGenerator json, final ODataError error)
+  public void writeErrorDocument(JsonGenerator json, final ClientError error)
       throws IOException, SerializerException {
     if (error == null) {
       throw new SerializerException("ODataError object MUST NOT be null!",
@@ -43,7 +43,7 @@ public class ODataErrorSerializer {
 
     if (error.getDetails() != null) {
       json.writeArrayFieldStart(Constants.ERROR_DETAILS);
-      for (ODataErrorDetail detail : error.getDetails()) {
+      for (ClientErrorDetail detail : error.getDetails()) {
         json.writeStartObject();
         writeODataError(json, detail.getCode(), detail.getMessage(), detail.getTarget());
         json.writeEndObject();

@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -27,15 +27,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataEnumValue;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
+import org.apache.olingo.commons.api.domain.ClientCollectionValue;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEnumValue;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
@@ -44,31 +44,31 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   private void functionImports(final ODataFormat format) throws EdmPrimitiveTypeException {
     // GetDefaultColor
-    final ODataInvokeRequest<ODataProperty> defaultColorReq = getClient().getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> defaultColorReq = getClient().getInvokeRequestFactory().
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetDefaultColor").build(), ODataProperty.class);
+            appendOperationCallSegment("GetDefaultColor").build(), ClientProperty.class);
     defaultColorReq.setFormat(format);
-    final ODataProperty defaultColor = defaultColorReq.execute().getBody();
+    final ClientProperty defaultColor = defaultColorReq.execute().getBody();
     assertNotNull(defaultColor);
     assertTrue(defaultColor.hasEnumValue());
     assertEquals("Red", defaultColor.getEnumValue().getValue());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Color", defaultColor.getEnumValue().getTypeName());
 
     // GetPerson2
-    final ODataPrimitiveValue city = getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("London");
+    final ClientPrimitiveValue city = getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("London");
 
-    final ODataInvokeRequest<ODataEntity> person2Req = getClient().getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientEntity> person2Req = getClient().getInvokeRequestFactory().
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetPerson2").build(), ODataEntity.class,
-            Collections.<String, ODataValue> singletonMap("city", city));
+            appendOperationCallSegment("GetPerson2").build(), ClientEntity.class,
+            Collections.<String, ClientValue> singletonMap("city", city));
     person2Req.setFormat(format);
-    final ODataEntity person2 = person2Req.execute().getBody();
+    final ClientEntity person2 = person2Req.execute().getBody();
     assertNotNull(person2);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", person2.getTypeName().toString());
     assertEquals(1, person2.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetPerson
-    final ODataComplexValue address = getClient().getObjectFactory().
+    final ClientComplexValue address = getClient().getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("1 Microsoft Way")));
@@ -77,34 +77,34 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("98052")));
 
-    final ODataInvokeRequest<ODataEntity> personReq = getClient().getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientEntity> personReq = getClient().getInvokeRequestFactory().
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetPerson").build(), ODataEntity.class,
-            Collections.<String, ODataValue> singletonMap("address", address));
+            appendOperationCallSegment("GetPerson").build(), ClientEntity.class,
+            Collections.<String, ClientValue> singletonMap("address", address));
     personReq.setFormat(format);
-    final ODataEntity person = personReq.execute().getBody();
+    final ClientEntity person = personReq.execute().getBody();
     assertNotNull(person);
     assertEquals(person2, person);
 
     // GetAllProducts
-    final ODataInvokeRequest<ODataEntitySet> productsReq = getClient().getInvokeRequestFactory()
+    final ODataInvokeRequest<ClientEntitySet> productsReq = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetAllProducts").build(), ODataEntitySet.class);
+            appendOperationCallSegment("GetAllProducts").build(), ClientEntitySet.class);
     productsReq.setFormat(format);
-    final ODataEntitySet products = productsReq.execute().getBody();
+    final ClientEntitySet products = productsReq.execute().getBody();
     assertNotNull(products);
     assertEquals(5, products.getEntities().size());
 
     // GetProductsByAccessLevel
-    final ODataEnumValue accessLevel = getClient().getObjectFactory().
+    final ClientEnumValue accessLevel = getClient().getObjectFactory().
         newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "None");
 
-    final ODataInvokeRequest<ODataProperty> prodByALReq = getClient().getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> prodByALReq = getClient().getInvokeRequestFactory().
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetProductsByAccessLevel").build(), ODataProperty.class,
-            Collections.<String, ODataValue> singletonMap("accessLevel", accessLevel));
+            appendOperationCallSegment("GetProductsByAccessLevel").build(), ClientProperty.class,
+            Collections.<String, ClientValue> singletonMap("accessLevel", accessLevel));
     prodByALReq.setFormat(format);
-    final ODataProperty prodByAL = prodByALReq.execute().getBody();
+    final ClientProperty prodByAL = prodByALReq.execute().getBody();
     assertNotNull(prodByAL);
     assertTrue(prodByAL.hasCollectionValue());
     assertEquals(5, prodByAL.getCollectionValue().size());
@@ -124,27 +124,27 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void edmEnabledFunctionImports() throws EdmPrimitiveTypeException {
     // GetDefaultColor
-    final ODataInvokeRequest<ODataProperty> defaultColorReq = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> defaultColorReq = edmClient.getInvokeRequestFactory().
         getFunctionImportInvokeRequest("GetDefaultColor");
-    final ODataProperty defaultColor = defaultColorReq.execute().getBody();
+    final ClientProperty defaultColor = defaultColorReq.execute().getBody();
     assertNotNull(defaultColor);
     assertTrue(defaultColor.hasEnumValue());
     assertEquals("Red", defaultColor.getEnumValue().getValue());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Color", defaultColor.getEnumValue().getTypeName());
 
     // GetPerson2
-    final ODataPrimitiveValue city =
+    final ClientPrimitiveValue city =
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("London");
-    final ODataInvokeRequest<ODataEntity> person2Req = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientEntity> person2Req = edmClient.getInvokeRequestFactory().
         getFunctionImportInvokeRequest(
-            "GetPerson2", Collections.<String, ODataValue> singletonMap("city", city));
-    final ODataEntity person2 = person2Req.execute().getBody();
+            "GetPerson2", Collections.<String, ClientValue> singletonMap("city", city));
+    final ClientEntity person2 = person2Req.execute().getBody();
     assertNotNull(person2);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", person2.getTypeName().toString());
     assertEquals(1, person2.getProperty("PersonID").getPrimitiveValue().toCastValue(Integer.class), 0);
 
     // GetPerson
-    final ODataComplexValue address = getClient().getObjectFactory().
+    final ClientComplexValue address = getClient().getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("1 Microsoft Way")));
@@ -153,29 +153,29 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("98052")));
 
-    final ODataInvokeRequest<ODataEntity> personReq = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientEntity> personReq = edmClient.getInvokeRequestFactory().
         getFunctionImportInvokeRequest(
-            "GetPerson", Collections.<String, ODataValue> singletonMap("address", address));
-    final ODataEntity person = personReq.execute().getBody();
+            "GetPerson", Collections.<String, ClientValue> singletonMap("address", address));
+    final ClientEntity person = personReq.execute().getBody();
     assertNotNull(person);
     assertEquals(person2, person);
 
     // GetAllProducts
-    final ODataInvokeRequest<ODataEntitySet> productsReq = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientEntitySet> productsReq = edmClient.getInvokeRequestFactory().
         getFunctionImportInvokeRequest("GetAllProducts");
-    final ODataEntitySet products = productsReq.execute().getBody();
+    final ClientEntitySet products = productsReq.execute().getBody();
     assertNotNull(products);
     assertEquals(5, products.getEntities().size());
 
     // GetProductsByAccessLevel
-    final ODataEnumValue accessLevel = getClient().getObjectFactory().
+    final ClientEnumValue accessLevel = getClient().getObjectFactory().
         newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "None");
 
-    final ODataInvokeRequest<ODataProperty> prodByALReq = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> prodByALReq = edmClient.getInvokeRequestFactory().
         getFunctionImportInvokeRequest(
             "GetProductsByAccessLevel",
-            Collections.<String, ODataValue> singletonMap("accessLevel", accessLevel));
-    final ODataProperty prodByAL = prodByALReq.execute().getBody();
+            Collections.<String, ClientValue> singletonMap("accessLevel", accessLevel));
+    final ClientProperty prodByAL = prodByALReq.execute().getBody();
     assertNotNull(prodByAL);
     assertTrue(prodByAL.hasCollectionValue());
     assertEquals(5, prodByAL.getCollectionValue().size());
@@ -184,17 +184,17 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   private void actionImports(final ODataFormat format) {
     // Discount
-    final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
-    final ODataInvokeRequest<ODataNoContent> discountReq = getClient().getInvokeRequestFactory().
+    final ClientPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
+    final ODataInvokeRequest<ClientNoContent> discountReq = getClient().getInvokeRequestFactory().
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("Discount").build(), ODataNoContent.class,
-            Collections.<String, ODataValue> singletonMap("percentage", percentage));
+            appendOperationCallSegment("Discount").build(), ClientNoContent.class,
+            Collections.<String, ClientValue> singletonMap("percentage", percentage));
     discountReq.setFormat(format);
-    final ODataNoContent discount = discountReq.execute().getBody();
+    final ClientNoContent discount = discountReq.execute().getBody();
     assertNotNull(discount);
 
     // ResetBossAddress
-    final ODataComplexValue address = getClient().getObjectFactory().
+    final ClientComplexValue address = getClient().getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Via Le Mani Dal Naso, 123")));
@@ -203,12 +203,12 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("66010")));
 
-    final ODataInvokeRequest<ODataProperty> resetBossAddressReq = getClient().getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> resetBossAddressReq = getClient().getInvokeRequestFactory().
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("ResetBossAddress").build(), ODataProperty.class,
-            Collections.<String, ODataValue> singletonMap("address", address));
+            appendOperationCallSegment("ResetBossAddress").build(), ClientProperty.class,
+            Collections.<String, ClientValue> singletonMap("address", address));
     resetBossAddressReq.setFormat(format);
-    final ODataProperty resetBossAddress = resetBossAddressReq.execute().getBody();
+    final ClientProperty resetBossAddress = resetBossAddressReq.execute().getBody();
     assertNotNull(resetBossAddress);
     assertEquals(address, resetBossAddress.getComplexValue());
   }
@@ -226,15 +226,15 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void edmEnabledActionImports() {
     // Discount
-    final ODataPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
-    final ODataInvokeRequest<ODataNoContent> discountReq = edmClient.getInvokeRequestFactory().
+    final ClientPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
+    final ODataInvokeRequest<ClientNoContent> discountReq = edmClient.getInvokeRequestFactory().
         getActionImportInvokeRequest(
-            "Discount", Collections.<String, ODataValue> singletonMap("percentage", percentage));
-    final ODataNoContent discount = discountReq.execute().getBody();
+            "Discount", Collections.<String, ClientValue> singletonMap("percentage", percentage));
+    final ClientNoContent discount = discountReq.execute().getBody();
     assertNotNull(discount);
 
     // ResetBossAddress
-    final ODataComplexValue address = getClient().getObjectFactory().
+    final ClientComplexValue address = getClient().getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("Via Le Mani Dal Naso, 123")));
@@ -243,38 +243,38 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     address.add(client.getObjectFactory().newPrimitiveProperty("PostalCode",
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("66010")));
 
-    final ODataInvokeRequest<ODataProperty> resetBossAddressReq = edmClient.getInvokeRequestFactory().
+    final ODataInvokeRequest<ClientProperty> resetBossAddressReq = edmClient.getInvokeRequestFactory().
         getActionImportInvokeRequest(
-            "ResetBossAddress", Collections.<String, ODataValue> singletonMap("address", address));
-    final ODataProperty resetBossAddress = resetBossAddressReq.execute().getBody();
+            "ResetBossAddress", Collections.<String, ClientValue> singletonMap("address", address));
+    final ClientProperty resetBossAddress = resetBossAddressReq.execute().getBody();
     assertNotNull(resetBossAddress);
     assertEquals(address.getTypeName(), resetBossAddress.getComplexValue().getTypeName());
   }
 
   private void bossEmails(final ODataFormat format) {
     // ResetBossEmail
-    final ODataCollectionValue<org.apache.olingo.commons.api.domain.ODataValue> emails =
+    final ClientCollectionValue<ClientValue> emails =
         getClient().getObjectFactory().newCollectionValue("Collection(Edm.String)");
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("first@olingo.apache.org"));
     emails.add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("second@olingo.apache.org"));
-    ODataInvokeRequest<ODataProperty> bossEmailsReq = getClient().getInvokeRequestFactory().
+    ODataInvokeRequest<ClientProperty> bossEmailsReq = getClient().getInvokeRequestFactory().
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("ResetBossEmail").build(), ODataProperty.class,
-            Collections.<String, ODataValue> singletonMap("emails", emails));
+            appendOperationCallSegment("ResetBossEmail").build(), ClientProperty.class,
+            Collections.<String, ClientValue> singletonMap("emails", emails));
     bossEmailsReq.setFormat(format);
-    final ODataProperty bossEmails = bossEmailsReq.execute().getBody();
+    final ClientProperty bossEmails = bossEmailsReq.execute().getBody();
     assertNotNull(bossEmails);
     assertTrue(bossEmails.hasCollectionValue());
     assertEquals(2, bossEmails.getCollectionValue().size());
 
-    final Map<String, ODataValue> params = new LinkedHashMap<String, ODataValue>(2);
+    final Map<String, ClientValue> params = new LinkedHashMap<String, ClientValue>(2);
     params.put("start", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(0));
     params.put("count", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(100));
     bossEmailsReq = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetBossEmails").build(), ODataProperty.class, params);
+            appendOperationCallSegment("GetBossEmails").build(), ClientProperty.class, params);
     bossEmailsReq.setFormat(format);
-    final ODataProperty bossEmailsViaGET = bossEmailsReq.execute().getBody();
+    final ClientProperty bossEmailsViaGET = bossEmailsReq.execute().getBody();
     assertNotNull(bossEmailsViaGET);
     assertTrue(bossEmailsViaGET.hasCollectionValue());
     assertEquals(2, bossEmailsViaGET.getCollectionValue().size());

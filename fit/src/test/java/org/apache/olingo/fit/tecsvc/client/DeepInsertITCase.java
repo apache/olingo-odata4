@@ -40,15 +40,15 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInlineEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataObjectFactory;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInlineEntity;
+import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientObjectFactory;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -93,8 +93,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
-    final ODataObjectFactory of = client.getObjectFactory();
-    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
 
     // Root entity
     entity.getProperties().add(
@@ -106,7 +106,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
                 "String Property level 0, complex level 1")))));
 
     // First level NavPropertyETTwoKeyNavOne => Type ETTwoKeyNav
-    final ODataEntity firstLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity firstLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
     firstLevelTwoKeyNav.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
@@ -116,12 +116,12 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     firstLevelTwoKeyNav.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
-    final ODataInlineEntity firstLevelTwoKeyOneInline =
+    final ClientInlineEntity firstLevelTwoKeyOneInline =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, firstLevelTwoKeyNav);
     entity.addLink(firstLevelTwoKeyOneInline);
 
     // Second level NavPropertyETTwoKeyNavOne => Type ETTwoKeyNav
-    final ODataEntity secondLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity secondLevelTwoKeyNav = of.newEntity(ET_TWO_KEY_NAV);
     secondLevelTwoKeyNav.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 421)))
@@ -131,7 +131,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     secondLevelTwoKeyNav.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
-    
+
     // Binding links
     secondLevelTwoKeyNav.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, client.newURIBuilder(
         SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String, Object>() {
@@ -142,12 +142,12 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
       }
     }).build()));
 
-    final ODataInlineEntity secondLevelTwoKeyOneInline =
+    final ClientInlineEntity secondLevelTwoKeyOneInline =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, secondLevelTwoKeyNav);
     firstLevelTwoKeyNav.addLink(secondLevelTwoKeyOneInline);
 
     // Third level NavPropertyETTwoKeyNavMany => Type ETTwoKeyNav
-    final ODataEntity thirdLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity thirdLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
     thirdLevelTwoKeyNavMany1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))
@@ -157,8 +157,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     thirdLevelTwoKeyNavMany1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
-    
-    final ODataEntity thirdLevelTwoKeyNavMany2 = of.newEntity(ET_TWO_KEY_NAV);
+
+    final ClientEntity thirdLevelTwoKeyNavMany2 = of.newEntity(ET_TWO_KEY_NAV);
     thirdLevelTwoKeyNavMany2.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
@@ -168,15 +168,15 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     thirdLevelTwoKeyNavMany2.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
-    
-    final ODataEntitySet entitySetThirdLevelTwoKeyNavMany = of.newEntitySet();
+
+    final ClientEntitySet entitySetThirdLevelTwoKeyNavMany = of.newEntitySet();
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany1);
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany2);
     secondLevelTwoKeyNav.addLink(of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
         entitySetThirdLevelTwoKeyNavMany));
 
     // First level NavPropertyETTwoKeyNavMany => Type ETTwoKeyNav
-    final ODataEntity firstLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity firstLevelTwoKeyNavMany1 = of.newEntity(ET_TWO_KEY_NAV);
     firstLevelTwoKeyNavMany1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 422)))
@@ -186,17 +186,17 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     firstLevelTwoKeyNavMany1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
-    
-    final ODataEntitySet entitySetfirstLevelTwoKeyNavMany = of.newEntitySet();
+
+    final ClientEntitySet entitySetfirstLevelTwoKeyNavMany = of.newEntitySet();
     entitySetfirstLevelTwoKeyNavMany.getEntities().add(firstLevelTwoKeyNavMany1);
     entity.addLink(of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
         entitySetfirstLevelTwoKeyNavMany));
 
-    final ODataEntityCreateResponse<ODataEntity> createResponse =
+    final ODataEntityCreateResponse<ClientEntity> createResponse =
         client.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
 
     // Check response
-    final ODataEntity resultEntityFirstLevel =
+    final ClientEntity resultEntityFirstLevel =
         createResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).asInlineEntity().getEntity();
     assertEquals(42, resultEntityFirstLevel.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_INT16)
         .getPrimitiveValue().toValue());
@@ -204,7 +204,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .getComplexValue().get(PROPERTY_STRING)
         .getPrimitiveValue().toValue());
 
-    final ODataEntity resultEntitySecondLevel =
+    final ClientEntity resultEntitySecondLevel =
         resultEntityFirstLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE).asInlineEntity().getEntity();
     assertEquals(421, resultEntitySecondLevel.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_INT16)
         .getPrimitiveValue().toValue());
@@ -213,7 +213,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .getComplexValue().get(PROPERTY_STRING)
         .getPrimitiveValue().toValue());
 
-    final ODataEntitySet thirdLevelEntitySetNavMany =
+    final ClientEntitySet thirdLevelEntitySetNavMany =
         resultEntitySecondLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
     assertEquals(2, thirdLevelEntitySetNavMany.getEntities().size());
 
@@ -227,7 +227,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     assertEquals("String Property level 3, complex level 1", thirdLevelEntitySetNavMany.getEntities().get(1)
         .getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().get(PROPERTY_STRING).getPrimitiveValue().toValue());
 
-    final ODataEntitySet firstLevelEntitySetNavMany =
+    final ClientEntitySet firstLevelEntitySetNavMany =
         createResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
     assertEquals(1, firstLevelEntitySetNavMany.getEntities().size());
     assertEquals(422, firstLevelEntitySetNavMany.getEntities().get(0).getProperty(PROPERTY_COMP_TWO_PRIM)
@@ -240,8 +240,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   public void testSimpleDeepInsert() throws EdmPrimitiveTypeException {
     final ODataClient client = getClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
-    final ODataObjectFactory of = client.getObjectFactory();
-    final ODataEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final ClientEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
@@ -266,7 +266,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
-    final ODataEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntitySingle.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
@@ -284,7 +284,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
     // Create related entity(EntitySet: ESTwoKeyNav, Type: NavPropertyETTwoKeyNavMany
-    final ODataEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol1.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
     inlineEntityCol1.getProperties()
@@ -299,7 +299,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
 
-    final ODataEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
     inlineEntityCol2.getProperties()
@@ -314,19 +314,19 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
 
-    final ODataInlineEntity newDeepInsertEntityLink =
+    final ClientInlineEntity newDeepInsertEntityLink =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
-    final ODataEntitySet newDeepInsertEntitySet = of.newEntitySet();
+    final ClientEntitySet newDeepInsertEntitySet = of.newEntitySet();
     newDeepInsertEntitySet.getEntities().add(inlineEntityCol1);
     newDeepInsertEntitySet.getEntities().add(inlineEntityCol2);
-    final ODataInlineEntitySet newDeepInsertEntitySetLink =
+    final ClientInlineEntitySet newDeepInsertEntitySetLink =
         of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, newDeepInsertEntitySet);
 
     entity.addLink(newDeepInsertEntityLink);
     entity.addLink(newDeepInsertEntitySetLink);
 
     // Perform create request
-    final ODataEntityCreateResponse<ODataEntity> responseCreate = client.getCUDRequestFactory()
+    final ODataEntityCreateResponse<ClientEntity> responseCreate = client.getCUDRequestFactory()
         .getEntityCreateRequest(createURI, entity)
         .execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), responseCreate.getStatusCode());
@@ -334,16 +334,16 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final String cookie = responseCreate.getHeader(HttpHeader.SET_COOKIE).toString();
 
     // Fetch ESKeyNav entity with expand of NavPropertyETTwoKeyNavOne nav. property
-    ODataProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
+    ClientProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
     final URI esKeyNavURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
             NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
-    final ODataEntityRequest<ODataEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
     esKeyNavRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esKeyNavResponse = esKeyNavRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esKeyNavResponse = esKeyNavRequest.execute();
 
     // Check nav. property NavPropertyETTwoKeyNavOne
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE));
@@ -354,12 +354,12 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(2, esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).getCollectionValue()
         .size());
-    Iterator<ODataValue> twoKeyNavManyIterator =
+    Iterator<ClientValue> twoKeyNavManyIterator =
         esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).getCollectionValue().iterator();
-    final ODataValue firstTwoKeyNavEnity = twoKeyNavManyIterator.next(); // First entity
+    final ClientValue firstTwoKeyNavEnity = twoKeyNavManyIterator.next(); // First entity
     assertEquals(441, firstTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
-    final ODataValue secondTwoKeyNavEnity = twoKeyNavManyIterator.next(); // Second entity
+    final ClientValue secondTwoKeyNavEnity = twoKeyNavManyIterator.next(); // Second entity
     assertEquals(451, secondTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
@@ -378,10 +378,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .appendKeySegment(composedKey)
         .build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esTwoKeyNavEntitySingleURI);
     esTwoKeyNavSingleRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
     assertEquals(431, esTwoKeyNavSingleResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
@@ -395,10 +395,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
             .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavManyOneRequest =
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
     esTwoKeyNavManyOneRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
 
     assertEquals(441, esTwoKeyNavManyOneResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -416,10 +416,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
             .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavManyTwoRequest =
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
     esTwoKeyNavManyTwoRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
 
     assertEquals(451, esTwoKeyNavManyTwoResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -432,8 +432,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   public void testDeepInsertSameEntitySet() throws EdmPrimitiveTypeException {
     final ODataClient client = getClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
-    final ODataObjectFactory of = client.getObjectFactory();
-    final ODataEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final ClientEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
@@ -469,7 +469,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .build()));
 
     // Prepare inline entity(EntitySet: ESKeyNav, Type: ETKeyNav)
-    final ODataEntity innerEntity = of.newEntity(ET_KEY_NAV);
+    final ClientEntity innerEntity = of.newEntity(ET_KEY_NAV);
     innerEntity.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     innerEntity.getProperties()
@@ -503,11 +503,11 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
               }
             })
             .build()));
-    
-    ODataInlineEntity inlineEntity = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
+
+    ClientInlineEntity inlineEntity = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineEntity);
 
-    final ODataEntityCreateResponse<ODataEntity> responseCreate =
+    final ODataEntityCreateResponse<ClientEntity> responseCreate =
         client.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
     final String cookie = responseCreate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     final Short esKeyNavEntityKey =
@@ -518,9 +518,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(esKeyNavEntityKey)
             .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
-    ODataEntityRequest<ODataEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(fetchEntityURI);
+    ODataEntityRequest<ClientEntity> entityRequest =
+        client.getRetrieveRequestFactory().getEntityRequest(fetchEntityURI);
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> entityResponse = entityRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
     // Check values
     assertEquals(431, entityResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue().get(
@@ -533,10 +534,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final URI innerEntityURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(innerEntityInt16Key)
             .build();
-    final ODataEntityRequest<ODataEntity> innerRequest =
+    final ODataEntityRequest<ClientEntity> innerRequest =
         client.getRetrieveRequestFactory().getEntityRequest(innerEntityURI);
     innerRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    ODataRetrieveResponse<ODataEntity> innerResponse = innerRequest.execute();
+    ODataRetrieveResponse<ClientEntity> innerResponse = innerRequest.execute();
 
     assertEquals(431, innerResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(PROPERTY_INT16)
         .getPrimitiveValue().toValue());
@@ -545,11 +546,11 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   @Test
   public void testConsistency() throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    final ODataObjectFactory of = client.getObjectFactory();
+    final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
-    
+
     // Do not set PropertyString(Nullable=false)
-    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
     entity.getProperties().add(
         of.newCollectionProperty(COL_PROPERTY_STRING,
             of.newCollectionValue(EDM_STRING).add(
@@ -558,7 +559,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
 
     try {
-      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -570,19 +571,19 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Entity must not be created
     validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
   }
-  
+
   @Test
   public void testInvalidType() throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    final ODataObjectFactory of = client.getObjectFactory();
+    final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
 
-    final ODataEntity entity = of.newEntity(ET_KEY_NAV);
+    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
     entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildInt32(1)));
     final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
 
     try {
-      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -598,7 +599,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
                 of.newPrimitiveValueBuilder().buildString("Test"))));
 
     try {
-      ODataEntityCreateRequest<ODataEntity> request = client.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -608,14 +609,14 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
   }
-  
+
   @Test
   @Ignore
   public void testDeepInsertOnNavigationPropertyInComplexProperty() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    final ODataObjectFactory of = client.getObjectFactory();
-    
-    final ODataEntity inlineEntity = of.newEntity(ET_TWO_KEY_NAV);
+    final ClientObjectFactory of = client.getObjectFactory();
+
+    final ClientEntity inlineEntity = of.newEntity(ET_TWO_KEY_NAV);
     inlineEntity.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntity.getProperties().add(
@@ -624,8 +625,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("1")))));
-    
-    final ODataEntity entity = of.newEntity(ET_TWO_KEY_NAV);
+
+    final ClientEntity entity = of.newEntity(ET_TWO_KEY_NAV);
     entity.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     entity.getProperties().add(
@@ -634,46 +635,46 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 2)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
-    
-    final ODataLink link = of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntity);
-    final ODataComplexValue complexValueCreate = of.newComplexValue(CT_NAV_FIVE_PROP);
+
+    final ClientLink link = of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntity);
+    final ClientComplexValue complexValueCreate = of.newComplexValue(CT_NAV_FIVE_PROP);
     complexValueCreate.getNavigationLinks().add(link);
-    
+
     entity.getProperties().add(
         of.newCollectionProperty(COL_PROPERTY_COMP_NAV, of.newCollectionValue(CT_NAV_FIVE_PROP)
-                                                          .add(complexValueCreate)));
-    
+            .add(complexValueCreate)));
+
     final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).build();
-    final ODataEntityCreateResponse<ODataEntity> response = client.getCUDRequestFactory()
-                                                                  .getEntityCreateRequest(targetURI, entity)
-                                                                  .execute();
-    
+    final ODataEntityCreateResponse<ClientEntity> response = client.getCUDRequestFactory()
+        .getEntityCreateRequest(targetURI, entity)
+        .execute();
+
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
-    final Iterator<ODataValue> iter = response.getBody()
-                                              .getProperty(COL_PROPERTY_COMP_NAV)
-                                              .getCollectionValue()
-                                              .iterator();
-    
+    final Iterator<ClientValue> iter = response.getBody()
+        .getProperty(COL_PROPERTY_COMP_NAV)
+        .getCollectionValue()
+        .iterator();
+
     assertTrue(iter.hasNext());
-    final ODataComplexValue complexValue = iter.next().asComplex();
-    final ODataLink linkedEntity = complexValue.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE);
+    final ClientComplexValue complexValue = iter.next().asComplex();
+    final ClientLink linkedEntity = complexValue.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE);
     assertNotNull(linkedEntity);
     assertEquals(1, linkedEntity.asInlineEntity()
-                                .getEntity()
-                                .getProperty(PROPERTY_INT16)
-                                .getPrimitiveValue()
-                                .toValue());
+        .getEntity()
+        .getProperty(PROPERTY_INT16)
+        .getPrimitiveValue()
+        .toValue());
   }
-  
+
   @Test
   public void testDeepUpsert() {
     final ODataClient client = getClient();
     final URI updateURI = client.newURIBuilder(SERVICE_URI)
-                                .appendEntitySetSegment(ES_KEY_NAV)
-                                .appendKeySegment(815)
-                                .build();
-    final ODataObjectFactory of = client.getObjectFactory();
-    final ODataEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
+        .appendEntitySetSegment(ES_KEY_NAV)
+        .appendKeySegment(815)
+        .build();
+    final ClientObjectFactory of = client.getObjectFactory();
+    final ClientEntity entity = client.getObjectFactory().newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
@@ -698,7 +699,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
-    final ODataEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntitySingle.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
@@ -716,7 +717,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
     // Create related entity(EntitySet: ESTwoKeyNav, Type: NavPropertyETTwoKeyNavMany
-    final ODataEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol1.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
     inlineEntityCol1.getProperties()
@@ -731,7 +732,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
 
-    final ODataEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
     inlineEntityCol2.getProperties()
@@ -746,19 +747,19 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
             .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
             .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
 
-    final ODataInlineEntity newDeepInsertEntityLink =
+    final ClientInlineEntity newDeepInsertEntityLink =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
-    final ODataEntitySet newDeepInsertEntitySet = of.newEntitySet();
+    final ClientEntitySet newDeepInsertEntitySet = of.newEntitySet();
     newDeepInsertEntitySet.getEntities().add(inlineEntityCol1);
     newDeepInsertEntitySet.getEntities().add(inlineEntityCol2);
-    final ODataInlineEntitySet newDeepInsertEntitySetLink =
+    final ClientInlineEntitySet newDeepInsertEntitySetLink =
         of.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, newDeepInsertEntitySet);
 
     entity.addLink(newDeepInsertEntityLink);
     entity.addLink(newDeepInsertEntitySetLink);
 
     // Perform update request (upsert)
-    final ODataEntityUpdateResponse<ODataEntity> responseCreate = client.getCUDRequestFactory()
+    final ODataEntityUpdateResponse<ClientEntity> responseCreate = client.getCUDRequestFactory()
         .getEntityUpdateRequest(updateURI, UpdateType.PATCH, entity)
         .execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), responseCreate.getStatusCode());
@@ -766,16 +767,16 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final String cookie = responseCreate.getHeader(HttpHeader.SET_COOKIE).toString();
 
     // Fetch ESKeyNav entity with expand of NavPropertyETTwoKeyNavOne nav. property
-    ODataProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
+    ClientProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
     final URI esKeyNavURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
             NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
-    final ODataEntityRequest<ODataEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
     esKeyNavRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esKeyNavResponse = esKeyNavRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esKeyNavResponse = esKeyNavRequest.execute();
 
     // Check nav. property NavPropertyETTwoKeyNavOne
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE));
@@ -786,12 +787,12 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     assertNotNull(esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
     assertEquals(2, esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).getCollectionValue()
         .size());
-    Iterator<ODataValue> twoKeyNavManyIterator =
+    Iterator<ClientValue> twoKeyNavManyIterator =
         esKeyNavResponse.getBody().getProperty(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).getCollectionValue().iterator();
-    final ODataValue firstTwoKeyNavEnity = twoKeyNavManyIterator.next(); // First entity
+    final ClientValue firstTwoKeyNavEnity = twoKeyNavManyIterator.next(); // First entity
     assertEquals(441, firstTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
-    final ODataValue secondTwoKeyNavEnity = twoKeyNavManyIterator.next(); // Second entity
+    final ClientValue secondTwoKeyNavEnity = twoKeyNavManyIterator.next(); // Second entity
     assertEquals(451, secondTwoKeyNavEnity.asComplex().get(PROPERTY_COMP_NAV).getValue().asComplex().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
@@ -810,10 +811,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         .appendKeySegment(composedKey)
         .build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esTwoKeyNavEntitySingleURI);
     esTwoKeyNavSingleRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
     assertEquals(431, esTwoKeyNavSingleResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
 
@@ -827,10 +828,10 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
             .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavManyOneRequest =
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
     esTwoKeyNavManyOneRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
 
     assertEquals(441, esTwoKeyNavManyOneResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -848,22 +849,22 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
             .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
-    final ODataEntityRequest<ODataEntity> esTwoKeyNavManyTwoRequest =
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
     esTwoKeyNavManyTwoRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
 
     assertEquals(451, esTwoKeyNavManyTwoResponse.getBody().getProperty(PROPERTY_COMP_NAV).getComplexValue().get(
         PROPERTY_INT16).getPrimitiveValue().toValue());
     assertNotNull(esTwoKeyNavManyTwoResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue());
     assertEquals(propertyInt16.getPrimitiveValue().toValue(), esTwoKeyNavManyTwoResponse.getBody().getProperty(
         NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue().get(PROPERTY_INT16).getPrimitiveValue().toValue());
-  
+
   }
-  
+
   private String getCookie() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    final ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build())
         .execute();
 
@@ -872,15 +873,15 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
   private void validateSet(final URI uri, final String cookie, final short... keys) throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    final ODataEntitySetRequest<ODataEntitySet> request = client.getRetrieveRequestFactory()
+    final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri);
     request.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ODataEntitySet> response = request.execute();
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(3, response.getBody().getEntities().size());
 
-    for (final ODataEntity responseEntity : response.getBody().getEntities()) {
+    for (final ClientEntity responseEntity : response.getBody().getEntities()) {
       short propertyInt16 = responseEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class);
 
       boolean found = false;

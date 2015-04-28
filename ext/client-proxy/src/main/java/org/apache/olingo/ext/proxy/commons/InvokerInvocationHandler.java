@@ -30,15 +30,15 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.communication.request.invoke.ODataNoContent;
+import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
@@ -63,7 +63,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
 
   private URIBuilder uri;
 
-  private final Map<String, ODataValue> parameters;
+  private final Map<String, ClientValue> parameters;
 
   private final Operation operation;
 
@@ -75,7 +75,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
 
   public InvokerInvocationHandler(
           final URI uri,
-          final Map<String, ODataValue> parameters,
+          final Map<String, ClientValue> parameters,
           final Operation operation,
           final EdmOperation edmOperation,
           final Type[] references,
@@ -120,7 +120,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
       }
 
       // 2. invoke
-      final ODataInvokeResult result = service.getClient().getInvokeRequestFactory().getInvokeRequest(
+      final ClientInvokeResult result = service.getClient().getInvokeRequestFactory().getInvokeRequest(
               edmOperation instanceof EdmFunction ? HttpMethod.GET : HttpMethod.POST,
               uri.build(),
               getResultReference(edmOperation.getReturnType()),
@@ -143,13 +143,13 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
                   collItemType,
                   targetRef,
                   null,
-                  (ODataEntitySet) result,
+                  (ClientEntitySet) result,
                   this.baseURI,
                   false);
         } else {
           return (T) ProxyUtils.getEntityProxy(
                   service,
-                  (ODataEntity) result,
+                  (ClientEntity) result,
                   null,
                   targetRef,
                   null,
@@ -159,7 +159,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
         Object res;
 
         final Class<?> ref = ClassUtils.getTypeClass(targetRef);
-        final ODataProperty property = (ODataProperty) result;
+        final ClientProperty property = (ClientProperty) result;
 
         if (property == null || property.hasNullValue()) {
           res = null;
@@ -168,7 +168,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
             final Class<?> itemRef = ClassUtils.extractTypeArg(ref, ComplexCollection.class);
             final List items = new ArrayList();
 
-            for (ODataValue item : property.getValue().asCollection()) {
+            for (ClientValue item : property.getValue().asCollection()) {
               items.add(ProxyUtils.getComplexProxy(
                       service,
                       property.getName(),
@@ -189,7 +189,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
           } else {
             final List items = new ArrayList();
 
-            for (ODataValue item : property.getValue().asCollection()) {
+            for (ClientValue item : property.getValue().asCollection()) {
               items.add(item.asPrimitive().toValue());
             }
 
@@ -218,18 +218,18 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
   }
 
   @SuppressWarnings("unchecked")
-  private <RES extends ODataInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
+  private <RES extends ClientInvokeResult> Class<RES> getResultReference(final EdmReturnType returnType) {
     Class<RES> result;
 
     if (returnType == null) {
-      result = (Class<RES>) ODataNoContent.class;
+      result = (Class<RES>) ClientNoContent.class;
     } else {
       if (returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) ODataEntitySet.class;
+        result = (Class<RES>) ClientEntitySet.class;
       } else if (!returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY) {
-        result = (Class<RES>) ODataEntity.class;
+        result = (Class<RES>) ClientEntity.class;
       } else {
-        result = (Class<RES>) ODataProperty.class;
+        result = (Class<RES>) ClientProperty.class;
       }
     }
 

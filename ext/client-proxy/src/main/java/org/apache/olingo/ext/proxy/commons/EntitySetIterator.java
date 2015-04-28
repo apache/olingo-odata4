@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
 
@@ -81,7 +81,7 @@ class EntitySetIterator<T extends EntityType<?>, KEY extends Serializable, EC ex
   }
 
   private void goOn() {
-    final Triple<List<T>, URI, List<ODataAnnotation>> entitySet = esi.fetchPartial(this.next, this.esi.getTypeRef());
+    final Triple<List<T>, URI, List<ClientAnnotation>> entitySet = esi.fetchPartial(this.next, this.esi.getTypeRef());
     this.current = entitySet.getLeft().iterator();
     this.next = entitySet.getMiddle();
   }

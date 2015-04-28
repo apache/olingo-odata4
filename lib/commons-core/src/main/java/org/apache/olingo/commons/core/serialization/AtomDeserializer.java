@@ -50,9 +50,9 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.ODataPropertyType;
+import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ClientOperation;
+import org.apache.olingo.commons.api.domain.ClientPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -214,7 +214,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     valuable.setValue(valueType, values);
   }
 
-  private ODataPropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
+  private ClientPropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
       throws XMLStreamException {
 
     XMLEvent child = null;
@@ -227,24 +227,24 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     }
 
-    final ODataPropertyType type;
+    final ClientPropertyType type;
     if (child == null) {
-      type = typeInfo == null || typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.ENUM;
+      type = typeInfo == null || typeInfo.isPrimitiveType() ? ClientPropertyType.PRIMITIVE : ClientPropertyType.ENUM;
     } else {
       if (child.isStartElement()) {
         if (Constants.NS_GML.equals(child.asStartElement().getName().getNamespaceURI())) {
-          type = ODataPropertyType.PRIMITIVE;
+          type = ClientPropertyType.PRIMITIVE;
         } else if (elementQName.equals(child.asStartElement().getName())) {
-          type = ODataPropertyType.COLLECTION;
+          type = ClientPropertyType.COLLECTION;
         } else {
-          type = ODataPropertyType.COMPLEX;
+          type = ClientPropertyType.COMPLEX;
         }
       } else if (child.isCharacters()) {
         type = typeInfo == null || typeInfo.isPrimitiveType()
-            ? ODataPropertyType.PRIMITIVE
-            : ODataPropertyType.ENUM;
+            ? ClientPropertyType.PRIMITIVE
+            : ClientPropertyType.ENUM;
       } else {
-        type = ODataPropertyType.EMPTY;
+        type = ClientPropertyType.EMPTY;
       }
     }
 
@@ -286,9 +286,9 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       valuable.setType(typeInfo.internal());
     }
 
-    final ODataPropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
-        typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
-            typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.COMPLEX;
+    final ClientPropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
+        typeInfo.isCollection() ? ClientPropertyType.COLLECTION :
+            typeInfo.isPrimitiveType() ? ClientPropertyType.PRIMITIVE : ClientPropertyType.COMPLEX;
 
     if (nullAttr == null) {
       switch (propType) {
@@ -316,10 +316,10 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
       }
     } else {
-      valuable.setValue(propType == ODataPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
-          propType == ODataPropertyType.ENUM ? ValueType.ENUM :
-              propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
-                  propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
+      valuable.setValue(propType == ClientPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
+          propType == ClientPropertyType.ENUM ? ValueType.ENUM :
+              propType == ClientPropertyType.COMPLEX ? ValueType.COMPLEX :
+                  propType == ClientPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
           null);
     }
   }
@@ -649,7 +649,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
               entity.getMediaEditLinks().add(link);
             }
           } else if (actionQName.equals(event.asStartElement().getName())) {
-            final ODataOperation operation = new ODataOperation();
+            final ClientOperation operation = new ClientOperation();
             final Attribute metadata =
                 event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATTR_METADATA));
             if (metadata != null) {
@@ -800,8 +800,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private ODataError error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
-    final ODataError error = new ODataError();
+  private ClientError error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
+    final ClientError error = new ClientError();
 
     boolean setCode = false;
     boolean codeSet = false;
@@ -851,7 +851,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
   }
 
   @Override
-  public ODataError toError(final InputStream input) throws ODataDeserializerException {
+  public ClientError toError(final InputStream input) throws ODataDeserializerException {
     try {
       final XMLEventReader reader = getReader(input);
       final StartElement start = skipBeforeFirstStartElement(reader);

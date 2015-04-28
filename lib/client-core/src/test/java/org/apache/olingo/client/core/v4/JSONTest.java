@@ -35,10 +35,10 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientCollectionValue;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
@@ -225,21 +225,21 @@ public class JSONTest extends AbstractTest {
 
   @Test
   public void issueOLINGO390() throws Exception {
-    final ODataEntity message = getClient().getObjectFactory().
+    final ClientEntity message = getClient().getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
 
-    final ODataComplexValue toRecipient = getClient().getObjectFactory().
+    final ClientComplexValue toRecipient = getClient().getObjectFactory().
         newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Name",
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
     toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Address",
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
-    final ODataCollectionValue<ODataValue> toRecipients = getClient().getObjectFactory().
+    final ClientCollectionValue<ClientValue> toRecipients = getClient().getObjectFactory().
         newCollectionValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipients.add(toRecipient);
     message.getProperties().add(getClient().getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
 
-    final ODataComplexValue body =
+    final ClientComplexValue body =
         getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
     body.add(getClient().getObjectFactory().newPrimitiveProperty("Content",
         getClient().getObjectFactory().newPrimitiveValueBuilder().

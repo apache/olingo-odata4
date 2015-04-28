@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ClientError;
 
 import java.io.InputStream;
 
@@ -61,5 +61,5 @@ public interface ODataDeserializer {
    * @param input stream to be parsed and de-serialized.
    * @return parsed ODataError object represented by the given InputStream
    */
-  ODataError toError(InputStream input) throws ODataDeserializerException;
+  ClientError toError(InputStream input) throws ODataDeserializerException;
 }

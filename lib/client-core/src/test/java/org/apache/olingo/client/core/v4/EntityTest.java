@@ -33,15 +33,15 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.core.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataComplexValue;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ODataLink;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValuable;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientComplexValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValuable;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -80,35 +80,35 @@ public class EntityTest extends AbstractTest {
 
   private void singleton(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("VipCustomer." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
 
-    final ODataProperty birthday = entity.getProperty("Birthday");
+    final ClientProperty birthday = entity.getProperty("Birthday");
     assertTrue(birthday.hasPrimitiveValue());
     assertEquals(EdmDateTimeOffset.getInstance(), birthday.getPrimitiveValue().getType());
 
-    final ODataProperty timeBetweenLastTwoOrders = entity.getProperty("TimeBetweenLastTwoOrders");
+    final ClientProperty timeBetweenLastTwoOrders = entity.getProperty("TimeBetweenLastTwoOrders");
     assertTrue(timeBetweenLastTwoOrders.hasPrimitiveValue());
     assertEquals(EdmDuration.getInstance(), timeBetweenLastTwoOrders.getPrimitiveValue().getType());
 
     int checked = 0;
-    for (ODataLink link : entity.getNavigationLinks()) {
+    for (ClientLink link : entity.getNavigationLinks()) {
       if ("Parent".equals(link.getName())) {
         checked++;
-        assertEquals(ODataLinkType.ENTITY_NAVIGATION, link.getType());
+        assertEquals(ClientLinkType.ENTITY_NAVIGATION, link.getType());
       }
       if ("Orders".equals(link.getName())) {
         checked++;
         if (format == ODataFormat.ATOM) {
-          assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, link.getType());
+          assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, link.getType());
         }
       }
       if ("Company".equals(link.getName())) {
         checked++;
-        assertEquals(ODataLinkType.ENTITY_NAVIGATION, link.getType());
+        assertEquals(ClientLinkType.ENTITY_NAVIGATION, link.getType());
       }
     }
     assertEquals(3, checked);
@@ -121,7 +121,7 @@ public class EntityTest extends AbstractTest {
 
     // operations won't get serialized
     entity.getOperations().clear();
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -139,25 +139,25 @@ public class EntityTest extends AbstractTest {
 
   private void withEnums(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("Products_5." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
-    final ODataProperty skinColor = entity.getProperty("SkinColor");
+    final ClientProperty skinColor = entity.getProperty("SkinColor");
     assertTrue(skinColor.hasEnumValue());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Color", skinColor.getEnumValue().getTypeName());
     assertEquals("Red", skinColor.getEnumValue().getValue());
 
-    final ODataProperty coverColors = entity.getProperty("CoverColors");
+    final ClientProperty coverColors = entity.getProperty("CoverColors");
     assertTrue(coverColors.hasCollectionValue());
-    for (final Iterator<ODataValue> itor = coverColors.getCollectionValue().iterator(); itor.hasNext();) {
-      final ODataValue item = itor.next();
+    for (final Iterator<ClientValue> itor = coverColors.getCollectionValue().iterator(); itor.hasNext();) {
+      final ClientValue item = itor.next();
       assertTrue(item.isEnum());
     }
 
     // operations won't get serialized
     entity.getOperations().clear();
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -176,15 +176,15 @@ public class EntityTest extends AbstractTest {
   private void withInlineEntitySet(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream(
         "Accounts_101_expand_MyPaymentInstruments." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
-    final ODataLink instruments = entity.getNavigationLink("MyPaymentInstruments");
+    final ClientLink instruments = entity.getNavigationLink("MyPaymentInstruments");
     assertNotNull(instruments);
-    assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION, instruments.getType());
+    assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, instruments.getType());
 
-    final ODataInlineEntitySet inline = instruments.asInlineEntitySet();
+    final ClientInlineEntitySet inline = instruments.asInlineEntitySet();
     assertNotNull(inline);
     assertEquals(3, inline.getEntitySet().getEntities().size());
 
@@ -192,7 +192,7 @@ public class EntityTest extends AbstractTest {
     inline.getEntitySet().setCount(3);
     // operations won't get serialized
     entity.getOperations().clear();
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -211,7 +211,7 @@ public class EntityTest extends AbstractTest {
   private void mediaEntity(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream(
         "Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
@@ -219,7 +219,7 @@ public class EntityTest extends AbstractTest {
     assertNotNull(entity.getMediaContentSource());
     assertEquals("\"8zOOKKvgOtptr4gt8IrnapX3jds=\"", entity.getMediaETag());
 
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -237,16 +237,16 @@ public class EntityTest extends AbstractTest {
 
   private void withStream(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("PersonDetails_1." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
     assertFalse(entity.isMediaEntity());
 
-    final ODataLink editMedia = entity.getMediaEditLink("Photo");
+    final ClientLink editMedia = entity.getMediaEditLink("Photo");
     assertNotNull(editMedia);
 
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -264,13 +264,13 @@ public class EntityTest extends AbstractTest {
 
   private void ref(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("entityReference." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
     assertNotNull(entity.getId());
 
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -288,17 +288,17 @@ public class EntityTest extends AbstractTest {
 
   private void complexNavigationProperties(final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("entity.withcomplexnavigation." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
-    final ODataComplexValue addressValue = entity.getProperty("Address").getComplexValue();
+    final ClientComplexValue addressValue = entity.getProperty("Address").getComplexValue();
     assertNotNull(addressValue);
     assertNotNull(addressValue.getNavigationLink("Country"));
 
     // ETag is not serialized
     entity.setETag(null);
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -316,13 +316,13 @@ public class EntityTest extends AbstractTest {
 
   private void annotated(final ODataFormat format) throws EdmPrimitiveTypeException, Exception {
     final InputStream input = getClass().getResourceAsStream("annotated." + getSuffix(format));
-    final ODataEntity entity = getClient().getBinder().getODataEntity(
+    final ClientEntity entity = getClient().getBinder().getODataEntity(
         getClient().getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
     assertFalse(entity.getAnnotations().isEmpty());
 
-    ODataAnnotation annotation = entity.getAnnotations().get(0);
+    ClientAnnotation annotation = entity.getAnnotations().get(0);
     assertEquals("com.contoso.display.highlight", annotation.getTerm());
     assertEquals(true, annotation.getPrimitiveValue().toCastValue(Boolean.class));
 
@@ -334,7 +334,7 @@ public class EntityTest extends AbstractTest {
     assertEquals("com.contoso.display.style", annotation.getTerm());
     assertTrue(annotation.hasComplexValue());
 
-    final ODataLink orders = entity.getNavigationLink("Orders");
+    final ClientLink orders = entity.getNavigationLink("Orders");
     assertFalse(orders.getAnnotations().isEmpty());
 
     annotation = orders.getAnnotations().get(0);
@@ -344,7 +344,7 @@ public class EntityTest extends AbstractTest {
     assertEquals(2,
         annotation.getValue().asComplex().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
 
-    final ODataEntity written = getClient().getBinder().getODataEntity(
+    final ClientEntity written = getClient().getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, getClient().getBinder().getEntity(entity)));
     assertEquals(entity, written);
     input.close();
@@ -364,12 +364,12 @@ public class EntityTest extends AbstractTest {
 
   private void derived(final ODataClient client, final ODataFormat format) throws Exception {
     final InputStream input = getClass().getResourceAsStream("Customer." + getSuffix(format));
-    final ODataEntity entity = client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
+    final ClientEntity entity = client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
     assertNotNull(entity);
 
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-        ((ODataValuable) entity.getProperty("HomeAddress")).getValue().getTypeName());
+        ((ClientValuable) entity.getProperty("HomeAddress")).getValue().getTypeName());
     input.close();
   }
 

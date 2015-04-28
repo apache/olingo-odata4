@@ -33,10 +33,10 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataAnnotation;
-import org.apache.olingo.commons.api.domain.ODataCollectionValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientAnnotation;
+import org.apache.olingo.commons.api.domain.ClientCollectionValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
@@ -96,18 +96,18 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
 
   @SuppressWarnings("unchecked")
   @Override
-  public Triple<List<T>, URI, List<ODataAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
-    final ODataPropertyRequest<ODataProperty> req =
+  public Triple<List<T>, URI, List<ClientAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
+    final ODataPropertyRequest<ClientProperty> req =
         getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
     req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
-    final ODataRetrieveResponse<ODataProperty> res = req.execute();
+    final ODataRetrieveResponse<ClientProperty> res = req.execute();
 
     final List<T> resItems = new ArrayList<T>();
 
-    final ODataProperty property = res.getBody();
+    final ClientProperty property = res.getBody();
     if (property != null && property.hasCollectionValue()) {
-      for (ODataValue item : (ODataCollectionValue<ODataValue>) property.getValue()) {
+      for (ClientValue item : (ClientCollectionValue<ClientValue>) property.getValue()) {
         Class<?> actualRef = null;
         if (StringUtils.isNotBlank(item.getTypeName())) {
           actualRef = service.getComplexTypeClass(item.getTypeName());
@@ -120,7 +120,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
       }
     }
 
-    return new ImmutableTriple<List<T>, URI, List<ODataAnnotation>>(
-        resItems, null, Collections.<ODataAnnotation> emptyList());
+    return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(
+        resItems, null, Collections.<ClientAnnotation> emptyList());
   }
 }

@@ -40,7 +40,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
@@ -157,14 +157,14 @@ public class JsonSerializer implements ODataSerializer {
         valuable(jgen, annotation, link.getTitle() + "@" + annotation.getTerm());
       }
 
-      ODataLinkType type = null;
+      ClientLinkType type = null;
       try {
-        type = ODataLinkType.fromString(link.getRel(), link.getType());
+        type = ClientLinkType.fromString(link.getRel(), link.getType());
       } catch (IllegalArgumentException e) {
         // ignore
       }
 
-      if (type == ODataLinkType.ENTITY_SET_NAVIGATION) {
+      if (type == ClientLinkType.ENTITY_SET_NAVIGATION) {
         final List<String> uris;
         if (entitySetLinks.containsKey(link.getTitle())) {
           uris = entitySetLinks.get(link.getTitle());

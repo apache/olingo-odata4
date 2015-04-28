@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataOperation;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientOperation;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -171,7 +171,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
           throw new IllegalStateException("Invalid target invocation");
         }
 
-        final Map<String, ODataValue> parameterValues = new LinkedHashMap<String, ODataValue>();
+        final Map<String, ClientValue> parameterValues = new LinkedHashMap<String, ClientValue>();
         for (Map.Entry<Parameter, Object> parameter : parameters.entrySet()) {
           if (!parameter.getKey().nullable() && parameter.getValue() == null) {
             throw new IllegalArgumentException(
@@ -181,7 +181,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
           final EdmTypeInfo parameterType = new EdmTypeInfo.Builder().
                   setEdm(service.getClient().getCachedEdm()).setTypeExpression(parameter.getKey().type()).build();
 
-          final ODataValue paramValue = parameter.getValue() == null
+          final ClientValue paramValue = parameter.getValue() == null
                   ? null
                   : CoreUtils.getODataValue(service.getClient(), parameterType, parameter.getValue());
 
@@ -239,10 +239,10 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
   }
 
   private Map.Entry<URI, EdmOperation> getBoundOperation(final Operation operation, final List<String> parameterNames) {
-    final ODataEntity entity = EntityInvocationHandler.class.cast(target).getEntity();
+    final ClientEntity entity = EntityInvocationHandler.class.cast(target).getEntity();
     final URI entityURI = EntityInvocationHandler.class.cast(target).getEntityURI();
 
-    ODataOperation boundOp = entity.getOperation(operation.name());
+    ClientOperation boundOp = entity.getOperation(operation.name());
     if (boundOp == null) {
       boundOp = entity.getOperation(new FullQualifiedName(targetFQN.getNamespace(), operation.name()).toString());
     }
@@ -261,7 +261,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
       if (action == null) {
         baseType = baseType.getBaseType();
       } else {
-        boundOp = new ODataOperation();
+        boundOp = new ClientOperation();
         boundOp.setMetadataAnchor(action.getFullQualifiedName().toString());
         boundOp.setTitle(boundOp.getMetadataAnchor());
         boundOp.setTarget(URI.create(entityURI.toASCIIString() + "/"
@@ -279,7 +279,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
       if (func == null) {
         baseType = baseType.getBaseType();
       } else {
-        boundOp = new ODataOperation();
+        boundOp = new ClientOperation();
         boundOp.setMetadataAnchor(func.getFullQualifiedName().toString());
         boundOp.setTitle(boundOp.getMetadataAnchor());
         boundOp.setTarget(URI.create(entityURI.toASCIIString() + "/"

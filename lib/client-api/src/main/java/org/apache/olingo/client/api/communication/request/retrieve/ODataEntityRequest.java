@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 
 /**
  * Describes an OData retrieve query request returning a single entity.
  */
-public interface ODataEntityRequest<E extends ODataEntity> extends ODataRetrieveRequest<E> {
+public interface ODataEntityRequest<E extends ClientEntity> extends ODataRetrieveRequest<E> {
 //No additional methods needed for now.
 }

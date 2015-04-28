@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.domain.ODataLinkType;
+import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -46,7 +46,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     assertNotNull(navigationLink);
 
     assertEquals("NavPropertyETTwoPrimOne", navigationLink.getTitle());
-    assertEquals(ODataLinkType.ENTITY_NAVIGATION.toString(), navigationLink.getType());
+    assertEquals(ClientLinkType.ENTITY_NAVIGATION.toString(), navigationLink.getType());
     assertNotNull(navigationLink.getInlineEntity());
     assertNull(navigationLink.getInlineEntitySet());
   }
@@ -68,7 +68,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     assertNotNull(navigationLink);
 
     assertEquals("NavPropertyETTwoPrimMany", navigationLink.getTitle());
-    assertEquals(ODataLinkType.ENTITY_SET_NAVIGATION.toString(), navigationLink.getType());
+    assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION.toString(), navigationLink.getType());
     assertNull(navigationLink.getInlineEntity());
     assertNotNull(navigationLink.getInlineEntitySet());
     assertEquals(1, navigationLink.getInlineEntitySet().getEntities().size());

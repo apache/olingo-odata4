@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.commons.api.domain.ODataInvokeResult;
-import org.apache.olingo.commons.api.domain.ODataValue;
+import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.commons.api.domain.ClientValue;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
@@ -36,9 +36,9 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
   }
 
   @Override
-  public <RES extends ODataInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
+  public <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
           final HttpMethod method, final URI uri, final Class<RES> resultRef,
-          final Map<String, ODataValue> parameters) {
+          final Map<String, ClientValue> parameters) {
 
     final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<RES>(client, resultRef, method, uri);
     if (parameters != null) {

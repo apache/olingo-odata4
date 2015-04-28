@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -36,8 +36,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataValueReq
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ODataProperty;
+import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.commons.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -52,20 +52,20 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readSimpleProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
             .build());
-    
+
     assertNotNull(request);
 
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
+    ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
 
-    final ODataProperty property = response.getBody();
+    final ClientProperty property = response.getBody();
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals("Test String1", property.getPrimitiveValue().toValue());
@@ -73,18 +73,18 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readSimplePropertyContextURL() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
             .build());
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    String expectedResult = 
+    ODataRetrieveResponse<ClientProperty> response = request.execute();
+    String expectedResult =
         "{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\"," +
-        "\"value\":\"Test String1\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
-  }  
+            "\"value\":\"Test String1\"}";
+    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
+  }
 
   @Test
   public void deletePrimitive() throws Exception {
@@ -97,7 +97,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     // Check that the property is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ODataProperty> propertyRequest = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> propertyRequest = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     propertyRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), propertyRequest.execute().getStatusCode());
@@ -122,12 +122,12 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     // Check that the property is not gone but empty now.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    final ODataRetrieveResponse<ODataProperty> propertyResponse = request.execute();
+    final ODataRetrieveResponse<ClientProperty> propertyResponse = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), propertyResponse.getStatusCode());
-    final ODataProperty property = propertyResponse.getBody();
+    final ClientProperty property = propertyResponse.getBody();
     assertNotNull(property);
     assertNotNull(property.getCollectionValue());
     assertTrue(property.getCollectionValue().isEmpty());
@@ -135,36 +135,36 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readComplexProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
             .appendPropertySegment("PropertyComp")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
+            .build());
+    ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
 
-    final ODataProperty property = response.getBody();
+    final ClientProperty property = response.getBody();
     assertNotNull(property);
     assertNotNull(property.getComplexValue());
-    assertEquals("TEST B", property.getComplexValue().get("PropertyString").getPrimitiveValue().toValue());   
-  }  
+    assertEquals("TEST B", property.getComplexValue().get("PropertyString").getPrimitiveValue().toValue());
+  }
 
   @Test
   public void readComplexPropertyContextURL() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
             .appendPropertySegment("PropertyComp")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
-    String expectedResult = 
+            .build());
+    ODataRetrieveResponse<ClientProperty> response = request.execute();
+    String expectedResult =
         "{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\"," +
-        "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));    
-  }  
+            "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}";
+    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
+  }
 
   @Test
   public void deleteComplex() throws Exception {
@@ -177,7 +177,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     // Check that the property is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ODataProperty> propertyRequest = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> propertyRequest = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     propertyRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), propertyRequest.execute().getStatusCode());
@@ -185,15 +185,15 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readUnknownProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("Unknown")
             .build());
     try {
-     request.execute();
-     fail("Expected exception not thrown!");
+      request.execute();
+      fail("Expected exception not thrown!");
     } catch (final ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
     }
@@ -201,15 +201,15 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readNoContentProperty() throws Exception {
-    ODataPropertyRequest<ODataProperty> request = getClient().getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(-32766)
             .appendPropertySegment("PropertyString")
-            .build());    
-    ODataRetrieveResponse<ODataProperty> response = request.execute();
+            .build());
+    ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-  }   
+  }
 
   @Test
   public void readPropertyValue() throws Exception {
@@ -220,9 +220,9 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyString")
             .appendValueSegment()
             .build());
-    ODataRetrieveResponse<ODataPrimitiveValue> response = request.execute();
+    ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
     assertEquals("Test String1", response.getBody().toValue());
-  }   
+  }
 
   @Override
   protected ODataClient getClient() {

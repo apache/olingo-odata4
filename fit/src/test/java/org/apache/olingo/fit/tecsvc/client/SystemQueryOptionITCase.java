@@ -28,8 +28,8 @@ import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ODataEntity;
-import org.apache.olingo.commons.api.domain.ODataEntitySet;
+import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.commons.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -50,7 +50,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, "true")
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -66,7 +66,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, "true")
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -82,14 +82,14 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(5).toString())
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
     assertEquals(5, response.getBody().getEntities().size());
 
     for (int i = 0; i < 5; i++) {
-      ODataEntity entity = response.getBody().getEntities().get(i);
+      ClientEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(i + 1).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
     }
   }
@@ -102,14 +102,14 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(5).toString())
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
     assertEquals(10, response.getBody().getEntities().size());
 
     for (int i = 0; i < 10; i++) {
-      ODataEntity entity = response.getBody().getEntities().get(i);
+      ClientEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(i + 6).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
     }
   }
@@ -123,7 +123,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(503).toString())
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -138,7 +138,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.SKIP, new Integer(10000).toString())
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -157,7 +157,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(43).toString()) // 102, 101, ...., 59
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -168,7 +168,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check first 10 entities
     for (int i = 0; i < 10; i++) {
-      ODataEntity entity = response.getBody().getEntities().get(i);
+      ClientEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
       id--;
     }
@@ -179,7 +179,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
       assertEquals(Integer.valueOf(105), response.getBody().getCount());
       assertEquals(10, response.getBody().getEntities().size());
       for (int i = 0; i < 10; i++) {
-        ODataEntity entity = response.getBody().getEntities().get(i);
+        ClientEntity entity = response.getBody().getEntities().get(i);
         assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
         id--;
       }
@@ -190,7 +190,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     assertEquals(Integer.valueOf(105), response.getBody().getCount());
     assertEquals(3, response.getBody().getEntities().size());
     for (int i = 0; i < 3; i++) {
-      ODataEntity entity = response.getBody().getEntities().get(i);
+      ClientEntity entity = response.getBody().getEntities().get(i);
       assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
       id--;
     }
@@ -206,7 +206,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -233,7 +233,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.COUNT, Boolean.TRUE.toString())
         .build();
 
-    ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+    ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
 
@@ -241,7 +241,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     URI nextLink = response.getBody().getNext();
     assertEquals("http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken=1",
         nextLink.toASCIIString());
-    
+
     int token = 1;
     while (nextLink != null) {
       token++;
@@ -252,13 +252,14 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
           .execute();
 
       nextLink = response.getBody().getNext();
-      if(nextLink != null) {
-      assertEquals(
-          "http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken=" + token,
-          nextLink.toASCIIString());
+      if (nextLink != null) {
+        assertEquals(
+            "http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken="
+                + token,
+            nextLink.toASCIIString());
       }
     }
-    
+
     assertEquals(50 + 1, token);
   }
 
@@ -272,7 +273,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .build();
 
     try {
-      ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+      ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
           .getEntitySetRequest(uri)
           .execute();
       fail();
@@ -290,7 +291,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(-5).toString())
         .build();
     try {
-      ODataRetrieveResponse<ODataEntitySet> response = client.getRetrieveRequestFactory()
+      ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
           .getEntitySetRequest(uri)
           .execute();
       fail();

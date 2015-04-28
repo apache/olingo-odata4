@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.domain.ODataEntity;
+import org.apache.olingo.commons.api.domain.ClientEntity;
 
 /**
  * This class implements the response to an Odata media entity update request.
  *
  * @param <E> concrete ODataEntity implementation
  */
-public interface ODataMediaEntityUpdateResponse<E extends ODataEntity> extends ODataResponse {
+public interface ODataMediaEntityUpdateResponse<E extends ClientEntity> extends ODataResponse {
 
   /**
    * Gets updated object.
