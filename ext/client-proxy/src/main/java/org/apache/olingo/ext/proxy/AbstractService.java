@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.core.edm.ClientEdmProvider;
+import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
@@ -86,7 +86,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
     }
     final Edm edm;
     if (metadata != null) {
-      ClientEdmProvider provider = new ClientEdmProvider(metadata.getSchemaByNsOrAlias());
+      ClientCsdlEdmProvider provider = new ClientCsdlEdmProvider(metadata.getSchemaByNsOrAlias());
       edm = new EdmProviderImpl(provider);
     }else{
       edm = null;

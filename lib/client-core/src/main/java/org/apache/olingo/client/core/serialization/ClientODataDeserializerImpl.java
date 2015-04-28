@@ -28,8 +28,8 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
-import org.apache.olingo.client.core.edm.xml.ClientEdmx;
-import org.apache.olingo.client.core.edm.ClientXMLMetadata;
+import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
+import org.apache.olingo.client.core.edm.ClientCsdlXMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -114,7 +114,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public XMLMetadata toMetadata(final InputStream input) {
     try {
-      return new ClientXMLMetadata(getXmlMapper().readValue(input, ClientEdmx.class));
+      return new ClientCsdlXMLMetadata(getXmlMapper().readValue(input, ClientCsdlEdmx.class));
     } catch (Exception e) {
       throw new IllegalArgumentException("Could not parse as Edmx document", e);
     }

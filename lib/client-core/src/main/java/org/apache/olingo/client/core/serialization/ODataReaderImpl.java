@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataReader;
-import org.apache.olingo.client.core.edm.ClientEdmProvider;
+import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
@@ -68,7 +68,7 @@ public class ODataReaderImpl implements ODataReader {
 
   @Override
   public Edm readMetadata(final Map<String, CsdlSchema> xmlSchemas) {
-    ClientEdmProvider prov = new ClientEdmProvider(xmlSchemas);
+    ClientCsdlEdmProvider prov = new ClientCsdlEdmProvider(xmlSchemas);
     return new EdmProviderImpl(prov);
   }
 
