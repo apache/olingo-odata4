@@ -182,11 +182,11 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
     ResWrap<Entity> jsonEntity = null;
     try {
       int c;
-
       boolean foundNewOne = false;
 
       do {
         c = input.read();
+
         if (c == '{') {
           entity.write(c);
           c = -1;
@@ -194,6 +194,7 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
         }
         if (c == ']') {
           osEntitySet.write(c);
+
           c = -1;
         }
       } while (c >= 0);
@@ -208,11 +209,32 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
             count++;
           } else if (c == '}') {
             count--;
+          } else if (c == '"') {
+              // Parse a JSON string
+              // Per ECMA-404, this string is surrounded by quotes
+              // Within the quotes are either:
+              //     any unicode character except a quote or reverse solidus
+              //  or
+              //     a reverse solidus followed by a quote, reverse solidus, solidus, b, f, n, r, t, or u
+              boolean escaped;
+              do {
+                  escaped = false;
+                  entity.write(c);
+                  c = input.read();
+
+                  if (c == '\\') {
+                      entity.write(c);
+                      c = input.read();
+                      escaped = true;  // Don't end the loop, even if c is a quote, as this character is escaped
+                  }
+
+              }while (c >= 0 && (escaped || (c != '"')));
           }
+
           entity.write(c);
         }
 
-        if (c >= 0) {
+        if (count == 0) {
           jsonEntity = odataClient.getDeserializer(ODataFormat.JSON).toEntity(
                   new ByteArrayInputStream(entity.toByteArray()));
         }
@@ -222,7 +244,8 @@ public class ODataEntitySetIterator<ES extends ODataEntitySet, E extends ODataEn
         }
       }
     } catch (Exception e) {
-      LOG.error("Error retrieving entities from EntitySet", e);
+        LOG.error("Error retrieving entities from EntitySet", e);
+        throw new IllegalStateException("Error retrieving entities from EntitySet", e);
     }
 
     return jsonEntity;
