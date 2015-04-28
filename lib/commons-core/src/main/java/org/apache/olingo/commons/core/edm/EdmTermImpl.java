@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Term;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +36,14 @@ import org.slf4j.LoggerFactory;
 public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
 
   private static final Logger LOG = LoggerFactory.getLogger(EdmTermImpl.class);
-  private final Term term;
+  private final CsdlTerm term;
   private final FullQualifiedName fqn;
   private final EdmTypeInfo typeInfo;
   private EdmType termType;
   private EdmTerm baseTerm;
   private List<Class<?>> appliesTo;
 
-  public EdmTermImpl(final Edm edm, final String namespace, final Term term) {
+  public EdmTermImpl(final Edm edm, final String namespace, final CsdlTerm term) {
     super(edm, term.getName(), term);
 
     this.term = term;

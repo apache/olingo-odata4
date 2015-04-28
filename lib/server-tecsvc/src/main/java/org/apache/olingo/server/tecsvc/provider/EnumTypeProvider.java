@@ -21,8 +21,8 @@ package org.apache.olingo.server.tecsvc.provider;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 
 import java.util.Arrays;
 
@@ -30,16 +30,16 @@ public class EnumTypeProvider {
 
   public static final FullQualifiedName nameENString = new FullQualifiedName(SchemaProvider.NAMESPACE, "ENString");
 
-  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+  public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
     if (enumTypeName.equals(nameENString)) {
-      return new EnumType()
+      return new CsdlEnumType()
           .setName("ENString")
           .setFlags(true)
           .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
           .setMembers(Arrays.asList(
-              new EnumMember().setName("String1").setValue("1"),
-              new EnumMember().setName("String2").setValue("2"),
-              new EnumMember().setName("String3").setValue("4")));
+              new CsdlEnumMember().setName("String1").setValue("1"),
+              new CsdlEnumMember().setName("String2").setValue("2"),
+              new CsdlEnumMember().setName("String3").setValue("4")));
     }
 
     return null;

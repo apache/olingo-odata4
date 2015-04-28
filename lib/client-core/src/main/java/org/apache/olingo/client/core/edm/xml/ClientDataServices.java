@@ -26,17 +26,17 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.DataServices;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientDataServices.DataServicesDeserializer.class)
-class ClientDataServices extends AbstractEdmItem implements DataServices {
+class ClientDataServices extends CsdlAbstractEdmItem implements DataServices {
 
   private static final long serialVersionUID = 4200317286476885204L;
 
-  private final List<Schema> schemas = new ArrayList<Schema>();
+  private final List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
   
   private String dataServiceVersion;
 
@@ -61,7 +61,7 @@ class ClientDataServices extends AbstractEdmItem implements DataServices {
   }
 
   @Override
-  public List<Schema> getSchemas() {
+  public List<CsdlSchema> getSchemas() {
     return schemas;
   }
 

@@ -33,17 +33,17 @@ import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.Operation;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlOperation;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 
 public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOperation {
 
-  private final Operation operation;
+  private final CsdlOperation operation;
   private Map<String, EdmParameter> parameters;
   private List<String> parameterNames;
   private EdmReturnType returnType;
 
-  protected AbstractEdmOperation(final Edm edm, final FullQualifiedName name, final Operation operation,
+  protected AbstractEdmOperation(final Edm edm, final FullQualifiedName name, final CsdlOperation operation,
       final EdmTypeKind kind) {
 
     super(edm, name, kind, operation);
@@ -69,10 +69,10 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
   private void createParameters() {
     if(parameters == null) {
       final Map<String, EdmParameter> parametersLocal = new LinkedHashMap<String, EdmParameter>();
-      final List<Parameter> providerParameters = operation.getParameters();
+      final List<CsdlParameter> providerParameters = operation.getParameters();
       if (providerParameters != null) {
         final List<String> parameterNamesLocal = new ArrayList<String>(providerParameters.size());
-        for (Parameter parameter : providerParameters) {
+        for (CsdlParameter parameter : providerParameters) {
           parametersLocal.put(parameter.getName(), new EdmParameterImpl(edm, parameter));
           parameterNamesLocal.add(parameter.getName());
         }
@@ -120,7 +120,7 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
   @Override
   public FullQualifiedName getBindingParameterTypeFqn() {
     if (isBound()) {
-      Parameter bindingParameter = operation.getParameters().get(0);
+      CsdlParameter bindingParameter = operation.getParameters().get(0);
       return bindingParameter.getTypeFQN();
     }
     return null;
@@ -129,7 +129,7 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
   @Override
   public Boolean isBindingParameterTypeCollection() {
     if (isBound()) {
-      Parameter bindingParameter = operation.getParameters().get(0);
+      CsdlParameter bindingParameter = operation.getParameters().get(0);
       return bindingParameter.isCollection();
     }
     return null;

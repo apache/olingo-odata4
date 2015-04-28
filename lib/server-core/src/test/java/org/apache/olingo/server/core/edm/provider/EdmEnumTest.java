@@ -26,8 +26,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
@@ -57,51 +57,51 @@ public class EdmEnumTest {
   private final EdmEnumType int32FlagType;
 
   public EdmEnumTest() {
-    final List<EnumMember> memberList = Arrays.asList(
-        new EnumMember().setName("first").setValue("1"),
-        new EnumMember().setName("second").setValue("64"));
+    final List<CsdlEnumMember> memberList = Arrays.asList(
+        new CsdlEnumMember().setName("first").setValue("1"),
+        new CsdlEnumMember().setName("second").setValue("64"));
 
     final FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
 
     instance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
-        new EnumType().setName("name").setMembers(memberList).setFlags(true)
+        new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
 
     nonFlagsInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
-        new EnumType().setName("name").setMembers(memberList).setFlags(false)
+        new CsdlEnumType().setName("name").setMembers(memberList).setFlags(false)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
 
     int16EnumType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
-        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        new FullQualifiedName("testNamespace", "testName"), new CsdlEnumType()
         .setName("MyEnum")
         .setFlags(false)
         .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
         .setMembers(
             Arrays.asList(
-                new EnumMember().setName("A")
+                new CsdlEnumMember().setName("A")
                     .setValue("0"),
-                new EnumMember().setName("B")
+                new CsdlEnumMember().setName("B")
                     .setValue("1"),
-                new EnumMember().setName("C")
+                new CsdlEnumMember().setName("C")
                     .setValue("2"))));
 
     int32EnumType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
-        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        new FullQualifiedName("testNamespace", "testName"), new CsdlEnumType()
         .setName("MyEnum")
         .setFlags(false)
         .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
         .setMembers(Arrays
-            .asList(new EnumMember().setName("A").setValue("0"), new EnumMember().setName("B").setValue("1"),
-                new EnumMember().setName("C").setValue("2"))));
+            .asList(new CsdlEnumMember().setName("A").setValue("0"), new CsdlEnumMember().setName("B").setValue("1"),
+                new CsdlEnumMember().setName("C").setValue("2"))));
 
     int32FlagType = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
-        new FullQualifiedName("testNamespace", "testName"), new EnumType()
+        new FullQualifiedName("testNamespace", "testName"), new CsdlEnumType()
         .setName("MyEnum")
         .setFlags(true)
         .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
         .setMembers(Arrays
-            .asList(new EnumMember().setName("A").setValue("2"), new EnumMember().setName("B").setValue("4"),
-                new EnumMember().setName("C").setValue("8"))));
+            .asList(new CsdlEnumMember().setName("A").setValue("2"), new CsdlEnumMember().setName("B").setValue("4"),
+                new CsdlEnumMember().setName("C").setValue("8"))));
   }
 
   @Test
@@ -130,7 +130,7 @@ public class EdmEnumTest {
     assertEquals(Byte.class, instance.getDefaultType());
     EdmEnumType instance = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
         new FullQualifiedName("testNamespace", "testName"),
-        new EnumType()
+        new CsdlEnumType()
             .setName("MyEnum"));
     assertEquals(Integer.class, instance.getUnderlyingType().getDefaultType());
   }
@@ -267,13 +267,13 @@ public class EdmEnumTest {
       @SuppressWarnings("unused")
       EdmEnumType instance = new EdmEnumTypeImpl(Mockito.mock(Edm.class),
           new FullQualifiedName("testNamespace", "testName"),
-          new EnumType()
+          new CsdlEnumType()
               .setName("MyEnum")
               .setFlags(false)
               .setUnderlyingType(underlyingType.getFullQualifiedName())
               .setMembers(
                   Arrays.asList(
-                      new EnumMember().setName("A")
+                      new CsdlEnumMember().setName("A")
                           .setValue("0"))));
       fail("Expected exception not thrown");
     } catch (final EdmException e) {

@@ -19,13 +19,13 @@
 package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.ODataException;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,25 +40,25 @@ public class SchemaProvider {
     this.prov = prov;
   }
 
-  public List<Schema> getSchemas() throws ODataException {
-    List<Schema> schemas = new ArrayList<Schema>();
-    Schema schema = new Schema();
+  public List<CsdlSchema> getSchemas() throws ODataException {
+    List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+    CsdlSchema schema = new CsdlSchema();
     schema.setNamespace(NAMESPACE);
     schema.setAlias("Namespace1_Alias");
     schemas.add(schema);
     
     // EnumTypes
-    List<EnumType> enumTypes = new ArrayList<EnumType>();
+    List<CsdlEnumType> enumTypes = new ArrayList<CsdlEnumType>();
     schema.setEnumTypes(enumTypes);
 
     // TypeDefinitions
-    List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
+    List<CsdlTypeDefinition> typeDefinitions = new ArrayList<CsdlTypeDefinition>();
     schema.setTypeDefinitions(typeDefinitions);
     typeDefinitions.add(prov.getTypeDefinition(TypeDefinitionProvider.nameTDString));
     enumTypes.add(prov.getEnumType(EnumTypeProvider.nameENString));
     
     // EntityTypes
-    List<EntityType> entityTypes = new ArrayList<EntityType>();
+    List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     schema.setEntityTypes(entityTypes);
 
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrim));
@@ -90,7 +90,7 @@ public class SchemaProvider {
     
     
     // ComplexTypes
-    List<ComplexType> complexType = new ArrayList<ComplexType>();
+    List<CsdlComplexType> complexType = new ArrayList<CsdlComplexType>();
     schema.setComplexTypes(complexType);
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTPrim));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTAllPrim));
@@ -111,7 +111,7 @@ public class SchemaProvider {
         
     
     // Actions
-    List<Action> actions = new ArrayList<Action>();
+    List<CsdlAction> actions = new ArrayList<CsdlAction>();
     schema.setActions(actions);
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESAllPrimRTETAllPrim));
@@ -134,7 +134,7 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameUARTTwoParam));
 
     // Functions
-    List<Function> functions = new ArrayList<Function>();
+    List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
     schema.setFunctions(functions);
 
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTInt16));

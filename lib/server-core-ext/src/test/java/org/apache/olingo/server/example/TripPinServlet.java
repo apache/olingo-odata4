@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -50,7 +50,7 @@ public class TripPinServlet extends HttpServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
     OData odata = OData4Impl.newInstance();
     MetadataParser parser = new MetadataParser();
-    EdmProvider edmProvider = null;
+    CsdlEdmProvider edmProvider = null;
 
     try {
       edmProvider = parser.buildEdmProvider(new FileReader("src/test/resources/trippin.xml"));

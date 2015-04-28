@@ -25,13 +25,14 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 
 public class EdmFunctionImportImpl extends AbstractEdmOperationImport implements EdmFunctionImport {
 
-  private final FunctionImport functionImport;
+  private final CsdlFunctionImport functionImport;
 
-  public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container, final FunctionImport functionImport) {
+  public EdmFunctionImportImpl(final Edm edm, final EdmEntityContainer container,
+                               final CsdlFunctionImport functionImport) {
     super(edm, container, functionImport);
     this.functionImport = functionImport;
   }

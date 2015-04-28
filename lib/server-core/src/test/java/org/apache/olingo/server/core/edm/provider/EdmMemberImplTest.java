@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
 import org.apache.olingo.commons.core.edm.EdmMemberImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class EdmMemberImplTest {
 
   @Test
   public void enumMember() {
-    final EnumMember member = new EnumMember().setName("name").setValue("value");
+    final CsdlEnumMember member = new CsdlEnumMember().setName("name").setValue("value");
     final EdmMemberImpl memberImpl = new EdmMemberImpl(mock(EdmProviderImpl.class), null, member);
 
     assertEquals("name", memberImpl.getName());

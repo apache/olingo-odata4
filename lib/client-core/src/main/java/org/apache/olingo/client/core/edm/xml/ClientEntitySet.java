@@ -22,20 +22,20 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientEntitySet.EntitySetDeserializer.class)
-class ClientEntitySet extends EntitySet {
+class ClientEntitySet extends CsdlEntitySet {
 
   private static final long serialVersionUID = -5553885465204370676L;
 
-  static class EntitySetDeserializer extends AbstractClientEdmDeserializer<EntitySet> {
+  static class EntitySetDeserializer extends AbstractClientEdmDeserializer<CsdlEntitySet> {
     @Override
-    protected EntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlEntitySet doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
       final ClientEntitySet entitySet = new ClientEntitySet();

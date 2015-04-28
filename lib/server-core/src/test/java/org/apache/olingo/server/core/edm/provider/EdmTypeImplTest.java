@@ -22,8 +22,8 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.core.edm.EdmTypeImpl;
 import org.junit.Test;
 
@@ -51,10 +51,10 @@ public class EdmTypeImplTest {
     }
   }
 
-  private class AnnoTester implements Annotatable {
+  private class AnnoTester implements CsdlAnnotatable {
     @Override
-    public List<Annotation> getAnnotations() {
-      Annotation annotation = new Annotation();
+    public List<CsdlAnnotation> getAnnotations() {
+      CsdlAnnotation annotation = new CsdlAnnotation();
       annotation.setTerm("NS.SimpleTerm");
       return Arrays.asList(annotation);
     }

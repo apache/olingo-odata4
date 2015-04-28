@@ -30,19 +30,19 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmElement, EdmNavigationProperty {
 
   private final FullQualifiedName structuredTypeName;
-  private final NavigationProperty navigationProperty;
+  private final CsdlNavigationProperty navigationProperty;
   private List<EdmReferentialConstraint> referentialConstraints;
   private EdmEntityType typeImpl;
   private EdmNavigationProperty partnerNavigationProperty;
 
   public EdmNavigationPropertyImpl(
-      final Edm edm, final FullQualifiedName structuredTypeName, final NavigationProperty navigationProperty) {
+      final Edm edm, final FullQualifiedName structuredTypeName, final CsdlNavigationProperty navigationProperty) {
     super(edm, navigationProperty.getName(), navigationProperty);
     this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
@@ -98,9 +98,9 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
 
   @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
-    final List<ReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
+    final List<CsdlReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
     if (referentialConstraints != null) {
-      for (ReferentialConstraint constraint : referentialConstraints) {
+      for (CsdlReferentialConstraint constraint : referentialConstraints) {
         if (constraint.getReferencedProperty().equals(referencedPropertyName)) {
           return constraint.getProperty();
         }
@@ -112,10 +112,10 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
   @Override
   public List<EdmReferentialConstraint> getReferentialConstraints() {
     if (referentialConstraints == null) {
-      final List<ReferentialConstraint> providerConstraints = navigationProperty.getReferentialConstraints();
+      final List<CsdlReferentialConstraint> providerConstraints = navigationProperty.getReferentialConstraints();
       final List<EdmReferentialConstraint> referentialConstraintsLocal = new ArrayList<EdmReferentialConstraint>();
       if (providerConstraints != null) {
-        for (ReferentialConstraint constraint : providerConstraints) {
+        for (CsdlReferentialConstraint constraint : providerConstraints) {
           referentialConstraintsLocal.add(new EdmReferentialConstraintImpl(edm, constraint));
         }
       }

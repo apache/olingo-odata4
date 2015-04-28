@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
-public interface Null extends DynamicAnnotationExpression, Annotatable {
+public interface Null extends DynamicAnnotationExpression, CsdlAnnotatable {
 //No additional methods needed for now.
 }

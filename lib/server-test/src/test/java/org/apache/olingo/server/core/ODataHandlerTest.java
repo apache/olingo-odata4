@@ -39,8 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
@@ -223,8 +223,8 @@ public class ODataHandlerTest {
   public void uriParserExceptionResultsInRightResponseEdmCause() throws Exception {
     final OData odata = OData.newInstance();
     final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
-        new AbstractEdmProvider() {
-          public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+        new CsdlAbstractEdmProvider() {
+          public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
               throws ODataException {
             throw new ODataException("msg");
           }

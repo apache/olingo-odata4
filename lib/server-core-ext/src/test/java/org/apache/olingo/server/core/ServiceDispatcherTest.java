@@ -41,7 +41,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -70,9 +70,9 @@ public class ServiceDispatcherTest {
 
   public class SampleODataServlet extends HttpServlet {
     private final ServiceHandler handler; // must be stateless
-    private final EdmProvider provider; // must be stateless
+    private final CsdlEdmProvider provider; // must be stateless
 
-    public SampleODataServlet(ServiceHandler handler, EdmProvider provider) {
+    public SampleODataServlet(ServiceHandler handler, CsdlEdmProvider provider) {
       this.handler = handler;
       this.provider = provider;
     }
@@ -92,7 +92,7 @@ public class ServiceDispatcherTest {
   
   public void beforeTest(ServiceHandler serviceHandler) throws Exception {
     MetadataParser parser = new MetadataParser();
-    EdmProvider edmProvider = parser.buildEdmProvider(new FileReader(
+    CsdlEdmProvider edmProvider = parser.buildEdmProvider(new FileReader(
         "src/test/resources/trippin.xml"));
 
     File baseDir = new File(System.getProperty("java.io.tmpdir"));

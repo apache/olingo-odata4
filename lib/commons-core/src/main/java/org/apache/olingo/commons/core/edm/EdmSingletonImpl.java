@@ -21,11 +21,11 @@ package org.apache.olingo.commons.core.edm;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 
 public class EdmSingletonImpl extends AbstractEdmBindingTarget implements EdmSingleton {
 
-  public EdmSingletonImpl(final Edm edm, final EdmEntityContainer container, final Singleton singleton) {
+  public EdmSingletonImpl(final Edm edm, final EdmEntityContainer container, final CsdlSingleton singleton) {
     super(edm, container, singleton);
   }
 

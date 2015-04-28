@@ -38,25 +38,25 @@ import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.server.api.OData;
@@ -212,7 +212,7 @@ public class MetadataDocumentXmlSerializerTest {
 
   @Test
   public void aliasTest() throws Exception {
-    EdmProvider provider = new LocalProvider();
+    CsdlEdmProvider provider = new LocalProvider();
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList());
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
@@ -240,14 +240,14 @@ public class MetadataDocumentXmlSerializerTest {
     List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
 
     FullQualifiedName name = new FullQualifiedName("namespace", "ComplexType");
-    ComplexType complexType = new ComplexType();
+    CsdlComplexType complexType = new CsdlComplexType();
     complexType.setAbstract(true);
     complexType.setName(name.getName());
     complexType.setOpenType(true);
-    List<Property> properties = new ArrayList<Property>();
+    List<CsdlProperty> properties = new ArrayList<CsdlProperty>();
 
-    properties.add(new Property().setName("prop1").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    properties.add(new Property().setName("prop2").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new CsdlProperty().setName("prop1").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new CsdlProperty().setName("prop2").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
 
     complexType.setProperties(properties);
     EdmComplexTypeImpl c1 = new EdmComplexTypeImpl(edm, name, complexType);
@@ -263,7 +263,7 @@ public class MetadataDocumentXmlSerializerTest {
         + "</ComplexType>"));
   }
 
-  private class LocalProvider extends AbstractEdmProvider {
+  private class LocalProvider extends CsdlAbstractEdmProvider {
     private final static String nameSpace = "namespace";
 
     private final FullQualifiedName nameETAbstract = new FullQualifiedName(nameSpace, "ETAbstract");
@@ -272,11 +272,11 @@ public class MetadataDocumentXmlSerializerTest {
     private final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
     private final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
     private final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
-    private final Property propertyInt16_NotNullable = new Property()
+    private final CsdlProperty propertyInt16_NotNullable = new CsdlProperty()
         .setName("PropertyInt16")
         .setType(nameInt16)
         .setNullable(false);
-    private final Property propertyString = new Property()
+    private final CsdlProperty propertyString = new CsdlProperty()
         .setName("PropertyString")
         .setType(nameString);
 
@@ -287,35 +287,35 @@ public class MetadataDocumentXmlSerializerTest {
     private final FullQualifiedName nameENString = new FullQualifiedName(nameSpace, "ENString");
 
     @Override
-    public List<AliasInfo> getAliasInfos() throws ODataException {
+    public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
       return Arrays.asList(
-          new AliasInfo().setAlias("Alias").setNamespace(nameSpace)
+          new CsdlAliasInfo().setAlias("Alias").setNamespace(nameSpace)
           );
     }
 
     @Override
-    public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
-      return new EnumType()
+    public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+      return new CsdlEnumType()
           .setName("ENString")
           .setFlags(true)
           .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
           .setMembers(Arrays.asList(
-              new EnumMember().setName("String1").setValue("1")));
+              new CsdlEnumMember().setName("String1").setValue("1")));
     }
 
     @Override
-    public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+    public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
       if (entityTypeName.equals(nameETAbstract)) {
-        return new EntityType()
+        return new CsdlEntityType()
             .setName("ETAbstract")
             .setAbstract(true)
             .setProperties(Arrays.asList(propertyString));
 
       } else if (entityTypeName.equals(nameETAbstractBase)) {
-        return new EntityType()
+        return new CsdlEntityType()
             .setName("ETAbstractBase")
             .setBaseType(nameETAbstract)
-            .setKey(Arrays.asList(new PropertyRef().setName("PropertyInt16")))
+            .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
             .setProperties(Arrays.asList(
                 propertyInt16_NotNullable));
       }
@@ -323,15 +323,15 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+    public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
       if (complexTypeName.equals(nameCTTwoPrim)) {
-        return new ComplexType()
+        return new CsdlComplexType()
             .setName("CTTwoPrim")
             .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
 
       }
       if (complexTypeName.equals(nameCTTwoPrimBase)) {
-        return new ComplexType()
+        return new CsdlComplexType()
             .setName("CTTwoPrimBase")
             .setBaseType(nameCTTwoPrim)
             .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
@@ -342,14 +342,14 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
+    public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
       if (actionName.equals(nameUARTPrimParam)) {
         return Arrays.asList(
-            new Action().setName("UARTPrimParam")
+            new CsdlAction().setName("UARTPrimParam")
                 .setParameters(Arrays.asList(
-                    new Parameter().setName("ParameterInt16").setType(nameInt16)))
+                    new CsdlParameter().setName("ParameterInt16").setType(nameInt16)))
 
-                .setReturnType(new ReturnType().setType(nameString))
+                .setReturnType(new CsdlReturnType().setType(nameString))
             );
 
       }
@@ -357,14 +357,14 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
       if (functionName.equals(nameUFNRTInt16)) {
         return Arrays.asList(
-            new Function()
+            new CsdlFunction()
                 .setName("UFNRTInt16")
-                .setParameters(new ArrayList<Parameter>())
+                .setParameters(new ArrayList<CsdlParameter>())
                 .setReturnType(
-                    new ReturnType().setType(nameInt16))
+                    new CsdlReturnType().setType(nameInt16))
             );
 
       }
@@ -372,10 +372,10 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+    public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
         throws ODataException {
       if (entitySetName.equals("ESAllPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESAllPrim")
             .setType(nameETAbstractBase);
 
@@ -384,10 +384,10 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+    public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
         throws ODataException {
       if (singletonName.equals("SI")) {
-        return new Singleton()
+        return new CsdlSingleton()
             .setName("SI")
             .setType(nameETAbstractBase);
 
@@ -396,11 +396,11 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+    public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       if (entityContainer.equals(nameContainer)) {
         if (actionImportName.equals("AIRTPrimParam")) {
-          return new ActionImport()
+          return new CsdlActionImport()
               .setName("AIRTPrimParam")
               .setAction(nameUARTPrimParam);
 
@@ -410,11 +410,12 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+    public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
+                                                final String functionImportName)
         throws ODataException {
       if (entityContainer.equals(nameContainer)) {
         if (functionImportName.equals("FINRTInt16")) {
-          return new FunctionImport()
+          return new CsdlFunctionImport()
               .setName("FINRTInt16")
               .setFunction(nameUFNRTInt16)
               .setIncludeInServiceDocument(true);
@@ -425,25 +426,25 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public List<Schema> getSchemas() throws ODataException {
-      List<Schema> schemas = new ArrayList<Schema>();
-      Schema schema = new Schema();
+    public List<CsdlSchema> getSchemas() throws ODataException {
+      List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+      CsdlSchema schema = new CsdlSchema();
       schema.setNamespace(nameSpace);
       schema.setAlias("Alias");
       schemas.add(schema);
       // EnumTypes
-      List<EnumType> enumTypes = new ArrayList<EnumType>();
+      List<CsdlEnumType> enumTypes = new ArrayList<CsdlEnumType>();
       schema.setEnumTypes(enumTypes);
       enumTypes.add(getEnumType(nameENString));
       // EntityTypes
-      List<EntityType> entityTypes = new ArrayList<EntityType>();
+      List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
       schema.setEntityTypes(entityTypes);
 
       entityTypes.add(getEntityType(nameETAbstract));
       entityTypes.add(getEntityType(nameETAbstractBase));
 
       // ComplexTypes
-      List<ComplexType> complexType = new ArrayList<ComplexType>();
+      List<CsdlComplexType> complexType = new ArrayList<CsdlComplexType>();
       schema.setComplexTypes(complexType);
       complexType.add(getComplexType(nameCTTwoPrim));
       complexType.add(getComplexType(nameCTTwoPrimBase));
@@ -451,12 +452,12 @@ public class MetadataDocumentXmlSerializerTest {
       // TypeDefinitions
 
       // Actions
-      List<Action> actions = new ArrayList<Action>();
+      List<CsdlAction> actions = new ArrayList<CsdlAction>();
       schema.setActions(actions);
       actions.addAll(getActions(nameUARTPrimParam));
 
       // Functions
-      List<Function> functions = new ArrayList<Function>();
+      List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
       schema.setFunctions(functions);
 
       functions.addAll(getFunctions(nameUFNRTInt16));
@@ -468,27 +469,27 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public EntityContainer getEntityContainer() throws ODataException {
-      EntityContainer container = new EntityContainer();
+    public CsdlEntityContainer getEntityContainer() throws ODataException {
+      CsdlEntityContainer container = new CsdlEntityContainer();
       container.setName("container");
 
       // EntitySets
-      List<EntitySet> entitySets = new ArrayList<EntitySet>();
+      List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
       container.setEntitySets(entitySets);
       entitySets.add(getEntitySet(nameContainer, "ESAllPrim"));
 
       // Singletons
-      List<Singleton> singletons = new ArrayList<Singleton>();
+      List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
       container.setSingletons(singletons);
       singletons.add(getSingleton(nameContainer, "SI"));
 
       // ActionImports
-      List<ActionImport> actionImports = new ArrayList<ActionImport>();
+      List<CsdlActionImport> actionImports = new ArrayList<CsdlActionImport>();
       container.setActionImports(actionImports);
       actionImports.add(getActionImport(nameContainer, "AIRTPrimParam"));
 
       // FunctionImports
-      List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
+      List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
       container.setFunctionImports(functionImports);
       functionImports.add(getFunctionImport(nameContainer, "FINRTInt16"));
 

@@ -22,24 +22,24 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientNavigationProperty.NavigationPropertyDeserializer.class)
-class ClientNavigationProperty extends NavigationProperty {
+class ClientNavigationProperty extends CsdlNavigationProperty {
 
   private static final long serialVersionUID = 6240231735592427582L;
 
-  static class NavigationPropertyDeserializer extends AbstractClientEdmDeserializer<NavigationProperty> {
+  static class NavigationPropertyDeserializer extends AbstractClientEdmDeserializer<CsdlNavigationProperty> {
 
     @Override
-    protected NavigationProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlNavigationProperty doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
-      final NavigationProperty property = new ClientNavigationProperty();
+      final CsdlNavigationProperty property = new ClientNavigationProperty();
 
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();

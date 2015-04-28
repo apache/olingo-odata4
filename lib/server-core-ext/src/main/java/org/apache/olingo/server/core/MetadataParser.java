@@ -33,38 +33,38 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.OnDelete;
-import org.apache.olingo.commons.api.edm.provider.OnDeleteAction;
-import org.apache.olingo.commons.api.edm.provider.Operation;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDeleteAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlOperation;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
 /**
  * This class can convert a CSDL document into EDMProvider object
  */
 public class MetadataParser {
 
-  public EdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
+  public CsdlEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
 
@@ -112,18 +112,18 @@ public class MetadataParser {
   private void readSchema(XMLEventReader reader, StartElement element,
       SchemaBasedEdmProvider provider) throws XMLStreamException {
 
-    Schema schema = new Schema();
-    schema.setComplexTypes(new ArrayList<ComplexType>());
-    schema.setActions(new ArrayList<Action>());
-    schema.setEntityTypes(new ArrayList<EntityType>());
-    schema.setEnumTypes(new ArrayList<EnumType>());
-    schema.setFunctions(new ArrayList<Function>());
-    schema.setTerms(new ArrayList<Term>());
-    schema.setTypeDefinitions(new ArrayList<TypeDefinition>());
+    CsdlSchema schema = new CsdlSchema();
+    schema.setComplexTypes(new ArrayList<CsdlComplexType>());
+    schema.setActions(new ArrayList<CsdlAction>());
+    schema.setEntityTypes(new ArrayList<CsdlEntityType>());
+    schema.setEnumTypes(new ArrayList<CsdlEnumType>());
+    schema.setFunctions(new ArrayList<CsdlFunction>());
+    schema.setTerms(new ArrayList<CsdlTerm>());
+    schema.setTypeDefinitions(new ArrayList<CsdlTypeDefinition>());
 
-    new ElementReader<Schema>() {
+    new ElementReader<CsdlSchema>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, Schema schema, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
           throws XMLStreamException {
         schema.setNamespace(attr(element, "Namespace"));
         schema.setAlias(attr(element, "Alias"));
@@ -133,10 +133,10 @@ public class MetadataParser {
     provider.addSchema(schema);
   }
 
-  private void readSchemaContents(XMLEventReader reader, Schema schema) throws XMLStreamException {
-    new ElementReader<Schema>() {
+  private void readSchemaContents(XMLEventReader reader, CsdlSchema schema) throws XMLStreamException {
+    new ElementReader<CsdlSchema>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, Schema schema, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
           throws XMLStreamException {
         if (name.equals("Action")) {
           readAction(reader, element, schema);
@@ -164,11 +164,11 @@ public class MetadataParser {
         "EntityContainer", "EntityType", "EnumType", "Function", "Term", "TypeDefinition");
   }
 
-  private void readAction(XMLEventReader reader, StartElement element, Schema schema)
+  private void readAction(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
 
-    Action action = new Action();
-    action.setParameters(new ArrayList<Parameter>());
+    CsdlAction action = new CsdlAction();
+    action.setParameters(new ArrayList<CsdlParameter>());
     action.setName(attr(element, "Name"));
     action.setBound(Boolean.parseBoolean(attr(element, "IsBound")));
     String entitySetPath = attr(element, "EntitySetPath");
@@ -196,8 +196,8 @@ public class MetadataParser {
     return false;
   }
 
-  private void readReturnType(StartElement element, Operation operation) {
-    ReturnType returnType = new ReturnType();
+  private void readReturnType(StartElement element, CsdlOperation operation) {
+    CsdlReturnType returnType = new CsdlReturnType();
     returnType.setType(readType(element));
     returnType.setCollection(isCollectionType(element));
     returnType.setNullable(Boolean.parseBoolean(attr(element, "Nullable")));
@@ -221,8 +221,8 @@ public class MetadataParser {
     operation.setReturnType(returnType);
   }
 
-  private void readParameter(StartElement element, Operation operation) {
-    Parameter parameter = new Parameter();
+  private void readParameter(StartElement element, CsdlOperation operation) {
+    CsdlParameter parameter = new CsdlParameter();
     parameter.setName(attr(element, "Name"));
     parameter.setType(readType(element));
     parameter.setCollection(isCollectionType(element));
@@ -247,8 +247,8 @@ public class MetadataParser {
     operation.getParameters().add(parameter);
   }
 
-  private TypeDefinition readTypeDefinition(StartElement element) {
-    TypeDefinition td = new TypeDefinition();
+  private CsdlTypeDefinition readTypeDefinition(StartElement element) {
+    CsdlTypeDefinition td = new CsdlTypeDefinition();
     td.setName(attr(element, "Name"));
     td.setUnderlyingType(new FullQualifiedName(attr(element, "UnderlyingType")));
     td.setUnicode(Boolean.parseBoolean(attr(element, "Unicode")));
@@ -272,8 +272,8 @@ public class MetadataParser {
     return td;
   }
 
-  private Term readTerm(StartElement element) {
-    Term term = new Term();
+  private CsdlTerm readTerm(StartElement element) {
+    CsdlTerm term = new CsdlTerm();
     term.setName(attr(element, "Name"));
     term.setType(attr(element, "Type"));
     if (attr(element, "BaseTerm") != null) {
@@ -305,10 +305,10 @@ public class MetadataParser {
     return term;
   }
 
-  private void readFunction(XMLEventReader reader, StartElement element, Schema schema)
+  private void readFunction(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
-    Function function = new Function();
-    function.setParameters(new ArrayList<Parameter>());
+    CsdlFunction function = new CsdlFunction();
+    function.setParameters(new ArrayList<CsdlParameter>());
     function.setName(attr(element, "Name"));
     function.setBound(Boolean.parseBoolean(attr(element, "IsBound")));
     function.setComposable(Boolean.parseBoolean(attr(element, "IsComposable")));
@@ -321,11 +321,11 @@ public class MetadataParser {
     schema.getFunctions().add(function);
   }
 
-  private void readOperationParameters(XMLEventReader reader, final Operation operation)
+  private void readOperationParameters(XMLEventReader reader, final CsdlOperation operation)
       throws XMLStreamException {
-    new ElementReader<Operation>() {
+    new ElementReader<CsdlOperation>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, Operation operation, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlOperation operation, String name)
           throws XMLStreamException {
         if (name.equals("Parameter")) {
           readParameter(element, operation);
@@ -336,10 +336,10 @@ public class MetadataParser {
     }.read(reader, null, operation, "Parameter", "ReturnType");
   }
 
-  private void readEnumType(XMLEventReader reader, StartElement element, Schema schema)
+  private void readEnumType(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
-    EnumType type = new EnumType();
-    type.setMembers(new ArrayList<EnumMember>());
+    CsdlEnumType type = new CsdlEnumType();
+    type.setMembers(new ArrayList<CsdlEnumMember>());
     type.setName(attr(element, "Name"));
     if (attr(element, "UnderlyingType") != null) {
       type.setUnderlyingType(new FullQualifiedName(attr(element, "UnderlyingType")));
@@ -350,13 +350,13 @@ public class MetadataParser {
     schema.getEnumTypes().add(type);
   }
 
-  private void readEnumMembers(XMLEventReader reader, StartElement element, EnumType type)
+  private void readEnumMembers(XMLEventReader reader, StartElement element, CsdlEnumType type)
       throws XMLStreamException {
-    new ElementReader<EnumType>() {
+    new ElementReader<CsdlEnumType>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, EnumType type, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlEnumType type, String name)
           throws XMLStreamException {
-        EnumMember member = new EnumMember();
+        CsdlEnumMember member = new CsdlEnumMember();
         member.setName(attr(element, "Name"));
         member.setValue(attr(element, "Value"));
         type.getMembers().add(member);
@@ -364,12 +364,12 @@ public class MetadataParser {
     }.read(reader, element, type, "Member");
   }
 
-  private void readEntityType(XMLEventReader reader, StartElement element, Schema schema)
+  private void readEntityType(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
-    EntityType entityType = new EntityType();
-    entityType.setProperties(new ArrayList<Property>());
-    entityType.setNavigationProperties(new ArrayList<NavigationProperty>());
-    entityType.setKey(new ArrayList<PropertyRef>());
+    CsdlEntityType entityType = new CsdlEntityType();
+    entityType.setProperties(new ArrayList<CsdlProperty>());
+    entityType.setNavigationProperties(new ArrayList<CsdlNavigationProperty>());
+    entityType.setKey(new ArrayList<CsdlPropertyRef>());
     entityType.setName(attr(element, "Name"));
     if (attr(element, "BaseType") != null) {
       entityType.setBaseType(new FullQualifiedName(attr(element, "BaseType")));
@@ -381,11 +381,11 @@ public class MetadataParser {
     schema.getEntityTypes().add(entityType);
   }
 
-  private void readEntityProperties(XMLEventReader reader, EntityType entityType)
+  private void readEntityProperties(XMLEventReader reader, CsdlEntityType entityType)
       throws XMLStreamException {
-    new ElementReader<EntityType>() {
+    new ElementReader<CsdlEntityType>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, EntityType entityType, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlEntityType entityType, String name)
           throws XMLStreamException {
         if (name.equals("Property")) {
           entityType.getProperties().add(readProperty(element));
@@ -398,13 +398,13 @@ public class MetadataParser {
     }.read(reader, null, entityType, "Property", "NavigationProperty", "Key");
   }
 
-  private void readKey(XMLEventReader reader, StartElement element, EntityType entityType)
+  private void readKey(XMLEventReader reader, StartElement element, CsdlEntityType entityType)
       throws XMLStreamException {
-    new ElementReader<EntityType>() {
+    new ElementReader<CsdlEntityType>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, EntityType entityType, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlEntityType entityType, String name)
           throws XMLStreamException {
-        PropertyRef ref = new PropertyRef();
+        CsdlPropertyRef ref = new CsdlPropertyRef();
         ref.setName(attr(element, "Name"));
         ref.setAlias(attr(element, "Alias"));
         entityType.getKey().add(ref);
@@ -412,10 +412,10 @@ public class MetadataParser {
     }.read(reader, element, entityType, "PropertyRef");
   }
 
-  private NavigationProperty readNavigationProperty(XMLEventReader reader, StartElement element)
+  private CsdlNavigationProperty readNavigationProperty(XMLEventReader reader, StartElement element)
       throws XMLStreamException {
-    NavigationProperty property = new NavigationProperty();
-    property.setReferentialConstraints(new ArrayList<ReferentialConstraint>());
+    CsdlNavigationProperty property = new CsdlNavigationProperty();
+    property.setReferentialConstraints(new ArrayList<CsdlReferentialConstraint>());
 
     property.setName(attr(element, "Name"));
     property.setType(readType(element));
@@ -424,17 +424,17 @@ public class MetadataParser {
     property.setPartner(attr(element, "Partner"));
     property.setContainsTarget(Boolean.parseBoolean(attr(element, "ContainsTarget")));
 
-    new ElementReader<NavigationProperty>() {
+    new ElementReader<CsdlNavigationProperty>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, NavigationProperty property,
+      void build(XMLEventReader reader, StartElement element, CsdlNavigationProperty property,
           String name) throws XMLStreamException {
         if (name.equals("ReferentialConstraint")) {
-          ReferentialConstraint constraint = new ReferentialConstraint();
+          CsdlReferentialConstraint constraint = new CsdlReferentialConstraint();
           constraint.setProperty(attr(element, "Property"));
           constraint.setReferencedProperty(attr(element, "ReferencedProperty"));
           property.getReferentialConstraints().add(constraint);
         } else if (name.equals("OnDelete")) {
-          property.setOnDelete(new OnDelete().setAction(OnDeleteAction.valueOf(attr(element, "Action"))));
+          property.setOnDelete(new CsdlOnDelete().setAction(CsdlOnDeleteAction.valueOf(attr(element, "Action"))));
         }
       }
     }.read(reader, element, property, "ReferentialConstraint", "OnDelete");
@@ -449,8 +449,8 @@ public class MetadataParser {
     return null;
   }
 
-  private Property readProperty(StartElement element) {
-    Property property = new Property();
+  private CsdlProperty readProperty(StartElement element) {
+    CsdlProperty property = new CsdlProperty();
     property.setName(attr(element, "Name"));
     property.setType(readType(element));
     property.setCollection(isCollectionType(element));
@@ -481,21 +481,21 @@ public class MetadataParser {
     return property;
   }
 
-  private void readEntityContainer(XMLEventReader reader, StartElement element, Schema schema)
+  private void readEntityContainer(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
-    final EntityContainer container = new EntityContainer();
+    final CsdlEntityContainer container = new CsdlEntityContainer();
     container.setName(attr(element, "Name"));
     if (attr(element, "Extends") != null) {
       container.setExtendsContainer(attr(element, "Extends"));
     }
-    container.setActionImports(new ArrayList<ActionImport>());
-    container.setFunctionImports(new ArrayList<FunctionImport>());
-    container.setEntitySets(new ArrayList<EntitySet>());
-    container.setSingletons(new ArrayList<Singleton>());
+    container.setActionImports(new ArrayList<CsdlActionImport>());
+    container.setFunctionImports(new ArrayList<CsdlFunctionImport>());
+    container.setEntitySets(new ArrayList<CsdlEntitySet>());
+    container.setSingletons(new ArrayList<CsdlSingleton>());
 
-    new ElementReader<Schema>() {
+    new ElementReader<CsdlSchema>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, Schema schema, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
           throws XMLStreamException {
         if (name.equals("EntitySet")) {
           readEntitySet(reader, element, container);
@@ -508,8 +508,8 @@ public class MetadataParser {
         }
       }
 
-      private void readFunctionImport(StartElement element, EntityContainer container) {
-        FunctionImport functionImport = new FunctionImport();
+      private void readFunctionImport(StartElement element, CsdlEntityContainer container) {
+        CsdlFunctionImport functionImport = new CsdlFunctionImport();
         functionImport.setName(attr(element, "Name"));
         functionImport.setFunction(new FullQualifiedName(attr(element, "Function")));
         functionImport.setIncludeInServiceDocument(Boolean.parseBoolean(attr(element,
@@ -522,8 +522,8 @@ public class MetadataParser {
         container.getFunctionImports().add(functionImport);
       }
 
-      private void readActionImport(StartElement element, EntityContainer container) {
-        ActionImport actionImport = new ActionImport();
+      private void readActionImport(StartElement element, CsdlEntityContainer container) {
+        CsdlActionImport actionImport = new CsdlActionImport();
         actionImport.setName(attr(element, "Name"));
         actionImport.setAction(new FullQualifiedName(attr(element, "Action")));
 
@@ -535,35 +535,35 @@ public class MetadataParser {
       }
 
       private void readSingleton(XMLEventReader reader, StartElement element,
-          EntityContainer container) throws XMLStreamException {
-        Singleton singleton = new Singleton();
-        singleton.setNavigationPropertyBindings(new ArrayList<NavigationPropertyBinding>());
+          CsdlEntityContainer container) throws XMLStreamException {
+        CsdlSingleton singleton = new CsdlSingleton();
+        singleton.setNavigationPropertyBindings(new ArrayList<CsdlNavigationPropertyBinding>());
         singleton.setName(attr(element, "Name"));
         singleton.setType(new FullQualifiedName(attr(element, "Type")));
-        singleton.setNavigationPropertyBindings(new ArrayList<NavigationPropertyBinding>());
+        singleton.setNavigationPropertyBindings(new ArrayList<CsdlNavigationPropertyBinding>());
         readNavigationPropertyBindings(reader, element, singleton.getNavigationPropertyBindings());
         container.getSingletons().add(singleton);
       }
 
       private void readEntitySet(XMLEventReader reader, StartElement element,
-          EntityContainer container) throws XMLStreamException {
-        EntitySet entitySet = new EntitySet();
+          CsdlEntityContainer container) throws XMLStreamException {
+        CsdlEntitySet entitySet = new CsdlEntitySet();
         entitySet.setName(attr(element, "Name"));
         entitySet.setType(new FullQualifiedName(attr(element, "EntityType")));
         entitySet.setIncludeInServiceDocument(Boolean.parseBoolean(attr(element,
             "IncludeInServiceDocument")));
-        entitySet.setNavigationPropertyBindings(new ArrayList<NavigationPropertyBinding>());
+        entitySet.setNavigationPropertyBindings(new ArrayList<CsdlNavigationPropertyBinding>());
         readNavigationPropertyBindings(reader, element, entitySet.getNavigationPropertyBindings());
         container.getEntitySets().add(entitySet);
       }
 
       private void readNavigationPropertyBindings(XMLEventReader reader, StartElement element,
-          List<NavigationPropertyBinding> bindings) throws XMLStreamException {
-        new ElementReader<List<NavigationPropertyBinding>>() {
+          List<CsdlNavigationPropertyBinding> bindings) throws XMLStreamException {
+        new ElementReader<List<CsdlNavigationPropertyBinding>>() {
           @Override
           void build(XMLEventReader reader, StartElement element,
-              List<NavigationPropertyBinding> bindings, String name) throws XMLStreamException {
-            NavigationPropertyBinding binding = new NavigationPropertyBinding();
+              List<CsdlNavigationPropertyBinding> bindings, String name) throws XMLStreamException {
+            CsdlNavigationPropertyBinding binding = new CsdlNavigationPropertyBinding();
             binding.setPath(attr(element, "Path"));
             binding.setTarget(attr(element, "Target"));
             bindings.add(binding);
@@ -576,11 +576,11 @@ public class MetadataParser {
     schema.setEntityContainer(container);
   }
 
-  private void readComplexType(XMLEventReader reader, StartElement element, Schema schema)
+  private void readComplexType(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
-    ComplexType complexType = new ComplexType();
-    complexType.setProperties(new ArrayList<Property>());
-    complexType.setNavigationProperties(new ArrayList<NavigationProperty>());
+    CsdlComplexType complexType = new CsdlComplexType();
+    complexType.setProperties(new ArrayList<CsdlProperty>());
+    complexType.setNavigationProperties(new ArrayList<CsdlNavigationProperty>());
     complexType.setName(attr(element, "Name"));
     if (attr(element, "BaseType") != null) {
       complexType.setBaseType(new FullQualifiedName(attr(element, "BaseType")));
@@ -592,11 +592,11 @@ public class MetadataParser {
     schema.getComplexTypes().add(complexType);
   }
 
-  private void readProperties(XMLEventReader reader, ComplexType complexType)
+  private void readProperties(XMLEventReader reader, CsdlComplexType complexType)
       throws XMLStreamException {
-    new ElementReader<ComplexType>() {
+    new ElementReader<CsdlComplexType>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, ComplexType complexType, String name)
+      void build(XMLEventReader reader, StartElement element, CsdlComplexType complexType, String name)
           throws XMLStreamException {
         if (name.equals("Property")) {
           complexType.getProperties().add(readProperty(element));

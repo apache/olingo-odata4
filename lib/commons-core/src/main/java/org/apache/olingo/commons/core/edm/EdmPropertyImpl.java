@@ -26,16 +26,16 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 
 public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, EdmElement {
 
   private final FullQualifiedName structuredTypeName;
-  private final Property property;
+  private final CsdlProperty property;
   private final EdmTypeInfo typeInfo;
   private EdmType propertyType;
 
-  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final Property property) {
+  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final CsdlProperty property) {
     super(edm, property.getName(), property);
 
     this.structuredTypeName = structuredTypeName;

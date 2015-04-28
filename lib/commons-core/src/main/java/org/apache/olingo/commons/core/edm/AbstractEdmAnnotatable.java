@@ -22,8 +22,8 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +31,11 @@ import java.util.List;
 
 public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
 
-  private final Annotatable annotatable;
+  private final CsdlAnnotatable annotatable;
   private List<EdmAnnotation> annotations;
   protected final Edm edm;
 
-  public AbstractEdmAnnotatable(final Edm edm, final Annotatable annotatable) {
+  public AbstractEdmAnnotatable(final Edm edm, final CsdlAnnotatable annotatable) {
     this.edm = edm;
     this.annotatable = annotatable;
   }
@@ -57,7 +57,7 @@ public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
     if (annotations == null) {
       final List<EdmAnnotation> annotationsLocal = new ArrayList<EdmAnnotation>();
       if (annotatable != null) {
-        for (Annotation annotation : annotatable.getAnnotations()) {
+        for (CsdlAnnotation annotation : annotatable.getAnnotations()) {
           annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
         }
         

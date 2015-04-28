@@ -25,15 +25,15 @@ import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 
 public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter, EdmElement {
 
-  private final Parameter parameter;
+  private final CsdlParameter parameter;
   private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
 
-  public EdmParameterImpl(final Edm edm, final Parameter parameter) {
+  public EdmParameterImpl(final Edm edm, final CsdlParameter parameter) {
     super(edm, parameter.getName(), parameter);
     this.parameter = parameter;
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();

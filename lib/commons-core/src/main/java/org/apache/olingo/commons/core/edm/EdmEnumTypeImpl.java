@@ -35,8 +35,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
@@ -52,13 +52,13 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
 
   private final EdmPrimitiveType underlyingType;
-  private final EnumType enumType;
+  private final CsdlEnumType enumType;
   private final String uriPrefix;
   private final String uriSuffix;
   private List<String> memberNames;
   private LinkedHashMap<String, EdmMember> membersMap;
 
-  public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final EnumType enumType) {
+  public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final CsdlEnumType enumType) {
     super(edm, enumName, EdmTypeKind.ENUM, enumType);
 
     if (enumType.getUnderlyingType() == null) {
@@ -102,7 +102,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     final LinkedHashMap<String, EdmMember> membersMapLocal = new LinkedHashMap<String, EdmMember>();
     final List<String> memberNamesLocal = new ArrayList<String>();
     if (enumType.getMembers() != null) {
-      for (final EnumMember member : enumType.getMembers()) {
+      for (final CsdlEnumMember member : enumType.getMembers()) {
         membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
         memberNamesLocal.add(member.getName());
       }

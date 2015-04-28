@@ -22,8 +22,8 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.EdmFunctionImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
@@ -45,9 +45,10 @@ public class EdmFunctionImplTest {
   public void setupFunctions() {
     EdmProviderImpl provider = mock(EdmProviderImpl.class);
 
-    Function function1 = new Function().setReturnType(new ReturnType().setType(new FullQualifiedName("Edm", "String")));
+    CsdlFunction function1 = new CsdlFunction().setReturnType(
+            new CsdlReturnType().setType(new FullQualifiedName("Edm", "String")));
     functionImpl1 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function1);
-    Function function2 = new Function().setComposable(true);
+    CsdlFunction function2 = new CsdlFunction().setComposable(true);
     functionImpl2 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function2);
   }
 

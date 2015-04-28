@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
-public interface LabeledElement extends DynamicAnnotationExpression, Annotatable {
+public interface LabeledElement extends DynamicAnnotationExpression, CsdlAnnotatable {
 
   String getName();
 

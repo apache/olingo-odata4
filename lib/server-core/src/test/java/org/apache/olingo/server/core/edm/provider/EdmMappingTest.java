@@ -28,9 +28,9 @@ import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Mapping;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.core.edm.EdmParameterImpl;
 import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.junit.Test;
@@ -39,12 +39,12 @@ public class EdmMappingTest {
 
   @Test
   public void initialMappingMustBeNull() {
-    Property property = new Property().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
+    CsdlProperty property = new CsdlProperty().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
 
     assertNull(edmProperty.getMapping());
 
-    Parameter parameter = new Parameter().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
+    CsdlParameter parameter = new CsdlParameter().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmParameter edmParameter = new EdmParameterImpl(null, parameter);
 
     assertNull(edmParameter.getMapping());
@@ -52,8 +52,8 @@ public class EdmMappingTest {
 
   @Test
   public void getDataClassForPrimTypeViaMapping() {
-    Mapping mapping = new Mapping().setMappedJavaClass(Date.class);
-    Property property = new Property()
+    CsdlMapping mapping = new CsdlMapping().setMappedJavaClass(Date.class);
+    CsdlProperty property = new CsdlProperty()
         .setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
         .setMapping(mapping);
     EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
@@ -61,7 +61,7 @@ public class EdmMappingTest {
     assertNotNull(edmProperty.getMapping());
     assertEquals(Date.class, edmProperty.getMapping().getMappedJavaClass());
 
-    Parameter parameter = new Parameter()
+    CsdlParameter parameter = new CsdlParameter()
         .setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
         .setMapping(mapping);
     EdmParameter edmParameter = new EdmParameterImpl(null, parameter);

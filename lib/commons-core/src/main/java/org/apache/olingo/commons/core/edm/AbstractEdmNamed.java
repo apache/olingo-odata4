@@ -20,13 +20,13 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNamed;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
 public abstract class AbstractEdmNamed extends AbstractEdmAnnotatable implements EdmNamed {
 
   private final String name;
 
-  public AbstractEdmNamed(final Edm edm, final String name, final Annotatable annotatable) {
+  public AbstractEdmNamed(final Edm edm, final String name, final CsdlAnnotatable annotatable) {
     super(edm, annotatable);
     this.name = name;
   }

@@ -21,11 +21,11 @@ package org.apache.olingo.server.core.uri.testutil;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 import java.util.Arrays;
@@ -43,20 +43,20 @@ public class EdmTechTestProvider extends EdmTechProvider {
   public static final String NAMESPACE = "olingo.odata.test1";
   public static final FullQualifiedName nameContainer = new FullQualifiedName(NAMESPACE, "Container");
 
-  Property propertyAInt16 = new Property().setName("a").setType(nameInt16);
-  Property propertyBInt16 = new Property().setName("b").setType(nameInt16);
-  Property propertyCInt16 = new Property().setName("c").setType(nameInt16);
-  Property propertyDInt16 = new Property().setName("d").setType(nameInt16);
-  Property propertyEInt16 = new Property().setName("e").setType(nameInt16);
-  Property propertyFInt16 = new Property().setName("f").setType(nameInt16);
+  CsdlProperty propertyAInt16 = new CsdlProperty().setName("a").setType(nameInt16);
+  CsdlProperty propertyBInt16 = new CsdlProperty().setName("b").setType(nameInt16);
+  CsdlProperty propertyCInt16 = new CsdlProperty().setName("c").setType(nameInt16);
+  CsdlProperty propertyDInt16 = new CsdlProperty().setName("d").setType(nameInt16);
+  CsdlProperty propertyEInt16 = new CsdlProperty().setName("e").setType(nameInt16);
+  CsdlProperty propertyFInt16 = new CsdlProperty().setName("f").setType(nameInt16);
 
   public static final FullQualifiedName nameCTabc = new FullQualifiedName(NAMESPACE, "CTabc");
   public static final FullQualifiedName nameETabc = new FullQualifiedName(NAMESPACE, "ETabc");
 
   @Override
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+  public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
     if (complexTypeName.equals(nameCTabc)) {
-      return new ComplexType()
+      return new CsdlComplexType()
           .setName("CTabc")
           .setProperties(Arrays.asList(
               propertyAInt16, propertyBInt16, propertyCInt16,
@@ -69,10 +69,10 @@ public class EdmTechTestProvider extends EdmTechProvider {
   }
 
   @Override
-  public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
+  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
     if (nameContainer.equals(entityContainer)) {
       if (name.equals("ESabc")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESabc")
             .setType(nameETabc);
       }
@@ -82,11 +82,11 @@ public class EdmTechTestProvider extends EdmTechProvider {
   }
 
   @Override
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-    List<PropertyRef> oneKeyPropertyInt16 = Arrays.asList(new PropertyRef().setName("a"));
+  public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+    List<CsdlPropertyRef> oneKeyPropertyInt16 = Arrays.asList(new CsdlPropertyRef().setName("a"));
 
     if (entityTypeName.equals(nameETabc)) {
-      return new EntityType()
+      return new CsdlEntityType()
           .setName("ETabc")
           .setProperties(Arrays.asList(
               propertyAInt16, propertyBInt16, propertyCInt16,

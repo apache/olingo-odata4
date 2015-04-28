@@ -23,12 +23,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientIncludeAnnotations.IncludeAnnotationsDeserializer.class)
-class ClientIncludeAnnotations extends AbstractEdmItem implements IncludeAnnotations {
+class ClientIncludeAnnotations extends CsdlAbstractEdmItem implements IncludeAnnotations {
 
   private static final long serialVersionUID = -8157841387011422396L;
 

@@ -28,12 +28,12 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.DataServices;
 import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.Reference;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientEdmx.EdmxDeserializer.class)
-public class ClientEdmx extends AbstractEdmItem implements Edmx {
+public class ClientEdmx extends CsdlAbstractEdmItem implements Edmx {
 
   private static final long serialVersionUID = -6293476719276092572L;
 

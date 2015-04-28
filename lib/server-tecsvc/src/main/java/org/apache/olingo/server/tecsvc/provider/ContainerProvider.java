@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 
 public class ContainerProvider {
 
@@ -47,8 +47,8 @@ public class ContainerProvider {
   public static final String AIRT_PARAM = "AIRTParam";
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
 
-  EntityContainerInfo entityContainerInfoTest1 =
-      new EntityContainerInfo().setContainerName(nameContainer);
+  CsdlEntityContainerInfo entityContainerInfoTest1 =
+      new CsdlEntityContainerInfo().setContainerName(nameContainer);
 
   private EdmTechProvider prov;
 
@@ -56,7 +56,8 @@ public class ContainerProvider {
     prov = edmTechProvider;
   }
 
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
+  public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+      throws ODataException {
     if (entityContainerName == null) {
       return entityContainerInfoTest1;
     } else if (entityContainerName.equals(nameContainer)) {
@@ -66,12 +67,12 @@ public class ContainerProvider {
     return null;
   }
 
-  public EntityContainer getEntityContainer() throws ODataException {
-    EntityContainer container = new EntityContainer();
+  public CsdlEntityContainer getEntityContainer() throws ODataException {
+    CsdlEntityContainer container = new CsdlEntityContainer();
     container.setName(ContainerProvider.nameContainer.getName());
 
     // EntitySets
-    List<EntitySet> entitySets = new ArrayList<EntitySet>();
+    List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
     container.setEntitySets(entitySets);
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCollAllPrim"));
@@ -100,16 +101,16 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumDefCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNavCont"));
-    
+
     // Singletons
-    List<Singleton> singletons = new ArrayList<Singleton>();
+    List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
     container.setSingletons(singletons);
     singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SI"));
     singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SINav"));
     singletons.add(prov.getSingleton(ContainerProvider.nameContainer, "SIMedia"));
 
     // ActionImports
-    List<ActionImport> actionImports = new ArrayList<ActionImport>();
+    List<CsdlActionImport> actionImports = new ArrayList<CsdlActionImport>();
     container.setActionImports(actionImports);
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_STRING));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_COLL_STRING_TWO_PARAM));
@@ -124,7 +125,7 @@ public class ContainerProvider {
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_TWO_PARAM));
 
     // FunctionImports
-    List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
+    List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
     container.setFunctionImports(functionImports);
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTInt16"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINInvisibleRTInt16"));
@@ -148,291 +149,291 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESTwoKeyNavParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollCTNavFiveProp"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));  
-    
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));
+
     return container;
   }
 
-  public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
+  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
     if (entityContainer == nameContainer) {
       if (name.equals("ESAllPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESAllPrim")
             .setType(EntityTypeProvider.nameETAllPrim)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoPrimOne")
-                  .setTarget("ESTwoPrim"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoPrimMany")
-                  .setTarget("ESTwoPrim")
-             ));
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoPrimOne")
+                    .setTarget("ESTwoPrim"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoPrimMany")
+                    .setTarget("ESTwoPrim")
+                ));
 
       } else if (name.equals("ESCollAllPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCollAllPrim")
             .setType(EntityTypeProvider.nameETCollAllPrim);
 
       } else if (name.equals("ESTwoPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESTwoPrim")
             .setType(EntityTypeProvider.nameETTwoPrim)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETAllPrimOne")
-                  .setTarget("ESAllPrim"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETAllPrimMany")
-                  .setTarget("ESAllPrim")
-             ));
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETAllPrimOne")
+                    .setTarget("ESAllPrim"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETAllPrimMany")
+                    .setTarget("ESAllPrim")
+                ));
 
       } else if (name.equals("ESMixPrimCollComp")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESMixPrimCollComp")
             .setType(EntityTypeProvider.nameETMixPrimCollComp);
 
       } else if (name.equals("ESBase")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESBase")
             .setType(EntityTypeProvider.nameETBase);
 
       } else if (name.equals("ESTwoBase")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESTwoBase")
             .setType(EntityTypeProvider.nameETTwoBase);
 
       } else if (name.equals("ESTwoKeyTwoPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESTwoKeyTwoPrim")
             .setType(EntityTypeProvider.nameETTwoKeyTwoPrim);
 
       } else if (name.equals("ESBaseTwoKeyTwoPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESBaseTwoKeyTwoPrim")
             .setType(EntityTypeProvider.nameETBaseTwoKeyTwoPrim);
 
       } else if (name.equals("ESTwoBaseTwoKeyTwoPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESTwoBaseTwoKeyTwoPrim")
             .setType(EntityTypeProvider.nameETTwoBaseTwoKeyTwoPrim);
 
       } else if (name.equals("ESAllKey")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESAllKey")
             .setType(EntityTypeProvider.nameETAllKey);
 
       } else if (name.equals("ESCompAllPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCompAllPrim")
             .setType(EntityTypeProvider.nameETCompAllPrim);
 
       } else if (name.equals("ESCompCollAllPrim")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCompCollAllPrim")
             .setType(EntityTypeProvider.nameETCompCollAllPrim);
 
       } else if (name.equals("ESCompComp")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCompComp")
             .setType(EntityTypeProvider.nameETCompComp);
 
       } else if (name.equals("ESCompCollComp")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCompCollComp")
             .setType(EntityTypeProvider.nameETCompCollComp);
 
       } else if (name.equals("ESMedia")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESMedia")
             .setType(EntityTypeProvider.nameETMedia)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("ESKeyTwoKeyComp")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESKeyTwoKeyComp")
             .setType(EntityTypeProvider.nameETKeyTwoKeyComp);
 
       } else if (name.equals("ESInvisible")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESInvisible")
             .setIncludeInServiceDocument(false)
             .setType(EntityTypeProvider.nameETAllPrim);
 
       } else if (name.equals("ESServerSidePaging")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESServerSidePaging")
             .setType(EntityTypeProvider.nameETServerSidePaging);
 
       } else if (name.equals("ESAllNullable")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESAllNullable")
             .setType(EntityTypeProvider.nameETAllNullable);
 
       } else if (name.equals("ESKeyNav")) {
-        
-        return new EntitySet()
+
+        return new CsdlEntitySet()
             .setName("ESKeyNav")
             .setType(EntityTypeProvider.nameETKeyNav)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETKeyNavOne")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETKeyNavMany")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETMediaOne")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETMediaMany")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETMediaOne")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETMediaMany")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaOne")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaMany")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/com.corp.odata.test1.CTNavFiveProp/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav")
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavMany")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETMediaOne")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETMediaMany")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETMediaOne")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETMediaMany")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaOne")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompCompNav/PropertyCompNav/NavPropertyETMediaMany")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("ETKeyNav/PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/com.corp.odata.test1.CTNavFiveProp/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav")
                 ));
-        
+
       } else if (name.equals("ESTwoKeyNav")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESTwoKeyNav")
             .setType(EntityTypeProvider.nameETTwoKeyNav)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETKeyNavOne")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETKeyNavMany")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETKeyNavOne")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("PropertyCompNav/NavPropertyETKeyNavMany")
-                  .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavOne")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("CollPropertyCompNav/NavPropertyETMediaOne")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("CollPropertyCompNav/NavPropertyETMediaMany")
-                  .setTarget("ESMedia"),
-                new NavigationPropertyBinding()
-                  .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
-                  .setTarget("ESBaseTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("ETBaseTwoKeyNav/CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
-                  .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
-                  .setPath("ETBaseTwoKeyNav/NavPropertyETTwoBaseTwoKeyNavOne")
-                  .setTarget("ESBaseTwoKeyNav"),
-                new NavigationPropertyBinding()
-                .setPath("NavPropertySINav")
-                .setTarget("SINav")
-            ));
-        
-      } else if(name.equals("ESKeyNavCont")) {
-        return new EntitySet()
-          .setName("ESKeyNavCont")
-          .setType(EntityTypeProvider.nameETKeyNavCont)
-          .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavMany")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNav/NavPropertyETKeyNavMany")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavOne")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("CollPropertyCompNav/NavPropertyETMediaOne")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("CollPropertyCompNav/NavPropertyETMediaMany")
+                    .setTarget("ESMedia"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
+                    .setTarget("ESBaseTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("ETBaseTwoKeyNav/CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+                    .setTarget("ESTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("ETBaseTwoKeyNav/NavPropertyETTwoBaseTwoKeyNavOne")
+                    .setTarget("ESBaseTwoKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertySINav")
+                    .setTarget("SINav")
+                ));
+
+      } else if (name.equals("ESKeyNavCont")) {
+        return new CsdlEntitySet()
+            .setName("ESKeyNavCont")
+            .setType(EntityTypeProvider.nameETKeyNavCont)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETKeyNavContMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETKeyNavContOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav")
-              ));
+                ));
 
       } else if (name.equals("ESBaseTwoKeyNav")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESBaseTwoKeyNav")
             .setType(EntityTypeProvider.nameETBaseTwoKeyNav)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
-                        .setPath("NavPropertyETKeyNavMany")
-                        .setTarget("ESKeyNav"))
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavMany")
+                    .setTarget("ESKeyNav"))
             );
-      } else if(name.equals("ESTwoBaseTwoKeyNav")) {
-        return new EntitySet()
-          .setName("ESTwoBaseTwoKeyNav")
-          .setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
-        
+      } else if (name.equals("ESTwoBaseTwoKeyNav")) {
+        return new CsdlEntitySet()
+            .setName("ESTwoBaseTwoKeyNav")
+            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
+
       } else if (name.equals("ESCompMixPrimCollComp")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESCompMixPrimCollComp")
             .setType(EntityTypeProvider.nameETCompMixPrimCollComp);
 
       } else if (name.equals("ESFourKeyAlias")) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName("ESFourKeyAlias")
             .setType(EntityTypeProvider.nameETFourKeyAlias);
-        
+
       } else if (name.equals("ESMixEnumDefCollComp")) {
-        return new EntitySet().setName("ESMixEnumDefCollComp").setType(
+        return new CsdlEntitySet().setName("ESMixEnumDefCollComp").setType(
             EntityTypeProvider.nameETMixEnumDefCollComp);
       }
     }
@@ -440,63 +441,63 @@ public class ContainerProvider {
     return null;
   }
 
-  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String name)
+  public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String name)
       throws ODataException {
     if (entityContainer.equals(nameContainer)) {
       if (name.equals(AIRT_STRING)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_STRING)
             .setAction(ActionProvider.nameUARTString);
 
       } else if (name.equals(AIRT_COLL_STRING_TWO_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_COLL_STRING_TWO_PARAM)
             .setAction(ActionProvider.nameUARTCollStringTwoParam);
 
       } else if (name.equals(AIRTCT_TWO_PRIM_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRTCT_TWO_PRIM_PARAM)
             .setAction(ActionProvider.nameUARTCTTwoPrimParam);
 
       } else if (name.equals(AIRT_COLL_CT_TWO_PRIM_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_COLL_CT_TWO_PRIM_PARAM)
             .setAction(ActionProvider.nameUARTCollCTTwoPrimParam);
 
       } else if (name.equals(AIRTET_TWO_KEY_TWO_PRIM_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRTET_TWO_KEY_TWO_PRIM_PARAM)
             .setAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam);
 
       } else if (name.equals(AIRT_COLL_ET_KEY_NAV_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_COLL_ET_KEY_NAV_PARAM)
             .setAction(ActionProvider.nameUARTCollETKeyNavParam);
 
       } else if (name.equals(AIRTES_ALL_PRIM_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRTES_ALL_PRIM_PARAM)
             .setEntitySet("ESAllPrim")
             .setAction(ActionProvider.nameUARTETAllPrimParam);
 
       } else if (name.equals(AIRT_COLL_ES_ALL_PRIM_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_COLL_ES_ALL_PRIM_PARAM)
             .setEntitySet("ESAllPrim")
             .setAction(ActionProvider.nameUARTCollETAllPrimParam);
 
       } else if (name.equals(AIRT)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT)
             .setAction(ActionProvider.nameUART);
 
       } else if (name.equals(AIRT_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_PARAM)
             .setAction(ActionProvider.nameUARTParam);
 
       } else if (name.equals(AIRT_TWO_PARAM)) {
-        return new ActionImport()
+        return new CsdlActionImport()
             .setName(AIRT_TWO_PARAM)
             .setAction(ActionProvider.nameUARTTwoParam);
       }
@@ -505,179 +506,179 @@ public class ContainerProvider {
     return null;
   }
 
-  public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String name)
+  public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String name)
       throws ODataException {
 
     if (entityContainer.equals(nameContainer)) {
       if (name.equals("FINRTInt16")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FINInvisibleRTInt16")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16);
 
       } else if (name.equals("FINInvisible2RTInt16")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFNRTInt16);
 
       } else if (name.equals("FICRTETKeyNav")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETKeyNav);
 
       } else if (name.equals("FICRTESTwoKeyNav")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETTwoKeyNav)
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESTwoKeyNav")
             .setIncludeInServiceDocument(true);
       } else if (name.equals("FICRTETTwoKeyNavParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETTwoKeyNavParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTStringTwoParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTStringTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollStringTwoParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollStringTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTAllPrimTwoParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTAllPrimTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTESMixPrimCollCompTwoParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
-        
-      } else if(name.equals("FINRTCollETMixPrimCollCompTwoParam")) {
-        return new FunctionImport()
-          .setName(name)
-          .setFunction(FunctionProvider.nameUFNRTCollETMixPrimCollCompTwoParam)
-          .setIncludeInServiceDocument(true);
-      
+
+      } else if (name.equals("FINRTCollETMixPrimCollCompTwoParam")) {
+        return new CsdlFunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFNRTCollETMixPrimCollCompTwoParam)
+            .setIncludeInServiceDocument(true);
+
       } else if (name.equals("FICRTCollETMixPrimCollCompTwoParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollCTTwoPrim")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrim)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTESMedia")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETMedia)
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESMedia")
             .setIncludeInServiceDocument(true);
       } else if (name.equals("FICRTCollESMedia")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollETMedia)
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESMedia")
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTTwoPrimParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTTwoPrimParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTTwoPrim")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTTwoPrim)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollString")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollString)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTString")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTString)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollESTwoKeyNavParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollETTwoKeyNavParam)
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESTwoKeyNav")
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCollCTTwoPrimParam")) {
-        return new FunctionImport()
+        return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrimParam)
             .setIncludeInServiceDocument(true);
-        
-      } else if(name.equals("FINRTCollCTNavFiveProp")) {
-        return new FunctionImport()
-          .setName(name)
-          .setFunction(FunctionProvider.nameUFNRTCollCTNavFiveProp)
-          .setIncludeInServiceDocument(true);
-        
-      } else if(name.equals("FICRTCollESKeyNavContParam")) {
-        return new FunctionImport()
-        .setName(name)
-        .setFunction(FunctionProvider.nameUFCRTCollETKeyNavContParam)
-        .setEntitySet("ESKeyNavCont")
-        .setIncludeInServiceDocument(true);
+
+      } else if (name.equals("FINRTCollCTNavFiveProp")) {
+        return new CsdlFunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFNRTCollCTNavFiveProp)
+            .setIncludeInServiceDocument(true);
+
+      } else if (name.equals("FICRTCollESKeyNavContParam")) {
+        return new CsdlFunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFCRTCollETKeyNavContParam)
+            .setEntitySet("ESKeyNavCont")
+            .setIncludeInServiceDocument(true);
       }
     }
-    
+
     return null;
   }
 
-  public Singleton getSingleton(final FullQualifiedName entityContainer, final String name) throws ODataException {
+  public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String name) throws ODataException {
     if (entityContainer.equals(nameContainer)) {
 
       if (name.equals("SI")) {
-        return new Singleton()
+        return new CsdlSingleton()
             .setName("SI")
             .setType(EntityTypeProvider.nameETTwoPrim);
 
       } else if (name.equals("SINav")) {
-        return new Singleton()
+        return new CsdlSingleton()
             .setName("SINav")
             .setType(EntityTypeProvider.nameETTwoKeyNav)
             .setNavigationPropertyBindings(Arrays.asList(
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETTwoKeyNavMany")
                     .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETTwoKeyNavOne")
                     .setTarget("ESTwoKeyNav"),
-                new NavigationPropertyBinding()
+                new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav")
                 ));
 
       } else if (name.equals("SIMedia")) {
-        return new Singleton()
+        return new CsdlSingleton()
             .setName("SIMedia")
             .setType(EntityTypeProvider.nameETMedia);
       }

@@ -21,9 +21,9 @@ package org.apache.olingo.client.api.edm.xml;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
-public interface Reference extends Annotatable {
+public interface Reference extends CsdlAnnotatable {
 
   URI getUri();
 

@@ -23,10 +23,10 @@ import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,48 +54,48 @@ public class EdmProviderImplOverloadingTest {
 
   @Before
   public void setup() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
 
-    List<Action> actions = new ArrayList<Action>();
-    Action action = new Action().setName(operationName1.getName());
+    List<CsdlAction> actions = new ArrayList<CsdlAction>();
+    CsdlAction action = new CsdlAction().setName(operationName1.getName());
     actions.add(action);
-    List<Parameter> action1Parameters = new ArrayList<Parameter>();
-    action1Parameters.add(new Parameter().setType(operationType1).setCollection(false));
+    List<CsdlParameter> action1Parameters = new ArrayList<CsdlParameter>();
+    action1Parameters.add(new CsdlParameter().setType(operationType1).setCollection(false));
     action =
-        new Action().setName(operationName1.getName()).setBound(true).setParameters(action1Parameters);
+        new CsdlAction().setName(operationName1.getName()).setBound(true).setParameters(action1Parameters);
     actions.add(action);
-    List<Parameter> action2Parameters = new ArrayList<Parameter>();
-    action2Parameters.add(new Parameter().setType(operationType1).setCollection(true));
+    List<CsdlParameter> action2Parameters = new ArrayList<CsdlParameter>();
+    action2Parameters.add(new CsdlParameter().setType(operationType1).setCollection(true));
     action =
-        new Action().setName(operationName1.getName()).setBound(true).setParameters(action2Parameters);
+        new CsdlAction().setName(operationName1.getName()).setBound(true).setParameters(action2Parameters);
     actions.add(action);
     when(provider.getActions(operationName1)).thenReturn(actions);
 
-    List<Function> functions = new ArrayList<Function>();
-    Function function = new Function().setName(operationName1.getName());
+    List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+    CsdlFunction function = new CsdlFunction().setName(operationName1.getName());
     functions.add(function);
-    List<Parameter> function1Parameters = new ArrayList<Parameter>();
-    function1Parameters.add(new Parameter().setType(operationType1).setName("a"));
-    function = new Function().setName(operationName1.getName()).setParameters(function1Parameters);
+    List<CsdlParameter> function1Parameters = new ArrayList<CsdlParameter>();
+    function1Parameters.add(new CsdlParameter().setType(operationType1).setName("a"));
+    function = new CsdlFunction().setName(operationName1.getName()).setParameters(function1Parameters);
     functions.add(function);
-    List<Parameter> function2Parameters = new ArrayList<Parameter>();
-    function2Parameters.add(new Parameter().setType(operationType1).setName("b"));
-    function = new Function().setName(operationName1.getName()).setParameters(function2Parameters);
+    List<CsdlParameter> function2Parameters = new ArrayList<CsdlParameter>();
+    function2Parameters.add(new CsdlParameter().setType(operationType1).setName("b"));
+    function = new CsdlFunction().setName(operationName1.getName()).setParameters(function2Parameters);
     functions.add(function);
-    List<Parameter> function3Parameters = new ArrayList<Parameter>();
-    function3Parameters.add(new Parameter().setName("a").setType(operationType1));
-    function3Parameters.add(new Parameter().setName("b").setType(operationType1));
-    function = new Function().setName(operationName1.getName()).setParameters(function3Parameters).setBound(true);
+    List<CsdlParameter> function3Parameters = new ArrayList<CsdlParameter>();
+    function3Parameters.add(new CsdlParameter().setName("a").setType(operationType1));
+    function3Parameters.add(new CsdlParameter().setName("b").setType(operationType1));
+    function = new CsdlFunction().setName(operationName1.getName()).setParameters(function3Parameters).setBound(true);
     functions.add(function);
-    List<Parameter> function4Parameters = new ArrayList<Parameter>();
-    function4Parameters.add(new Parameter().setName("a").setType(operationType2));
-    function4Parameters.add(new Parameter().setName("b").setType(operationType2));
-    function = new Function().setName(operationName1.getName()).setParameters(function4Parameters).setBound(true);
+    List<CsdlParameter> function4Parameters = new ArrayList<CsdlParameter>();
+    function4Parameters.add(new CsdlParameter().setName("a").setType(operationType2));
+    function4Parameters.add(new CsdlParameter().setName("b").setType(operationType2));
+    function = new CsdlFunction().setName(operationName1.getName()).setParameters(function4Parameters).setBound(true);
     functions.add(function);
     when(provider.getFunctions(operationName1)).thenReturn(functions);
 
-    List<Function> badFunctions = new ArrayList<Function>();
-    Function badFunction = new Function().setName(operationName1.getName()).setBound(true).setParameters(null);
+    List<CsdlFunction> badFunctions = new ArrayList<CsdlFunction>();
+    CsdlFunction badFunction = new CsdlFunction().setName(operationName1.getName()).setBound(true).setParameters(null);
     badFunctions.add(badFunction);
 
     when(provider.getFunctions(badOperationName)).thenReturn(badFunctions);

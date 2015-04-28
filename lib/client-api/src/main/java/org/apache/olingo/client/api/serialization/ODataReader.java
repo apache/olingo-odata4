@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.domain.ODataProperty;
 import org.apache.olingo.commons.api.domain.ODataServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
@@ -55,7 +55,7 @@ public interface ODataReader {
    * <tt>&lt;edmx:Reference/&gt;</tt>) metadata document
    * @return metadata representation.
    */
-  Edm readMetadata(Map<String, Schema> xmlSchemas);
+  Edm readMetadata(Map<String, CsdlSchema> xmlSchemas);
 
   /**
    * Parses an OData service document.

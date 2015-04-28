@@ -24,25 +24,25 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 
-public class EdmTechProvider extends AbstractEdmProvider {
+public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
   public static final String nameSpace = "olingo.odata.test1";
 
@@ -71,83 +71,84 @@ public class EdmTechProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public List<AliasInfo> getAliasInfos() throws ODataException {
+  public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
     return Arrays.asList(
-        new AliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace)
+        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace)
         );
   }
 
   @Override
-  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+  public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
     return enumTypeProvider.getEnumType(enumTypeName);
   }
 
   @Override
-  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
+  public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
     return typeDefinitionProvider.getTypeDefinition(typeDefinitionName);
   }
 
   @Override
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+  public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     return entityTypeProvider.getEntityType(entityTypeName);
   }
 
   @Override
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+  public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
     return complexTypeProvider.getComplexType(complexTypeName);
   }
 
   @Override
-  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
+  public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
     return actionProvider.getActions(actionName);
   }
 
   @Override
-  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+  public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
     return functionProvider.getFunctions(functionName);
   }
 
   @Override
-  public Term getTerm(final FullQualifiedName termName) throws ODataException {
+  public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException {
     return null;
   }
 
   @Override
-  public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
       throws ODataException {
     return containerProvider.getEntitySet(entityContainer, entitySetName);
   }
 
   @Override
-  public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+  public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
       throws ODataException {
     return containerProvider.getSingleton(entityContainer, singletonName);
   }
 
   @Override
-  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+  public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
       throws ODataException {
     return containerProvider.getActionImport(entityContainer, actionImportName);
   }
 
   @Override
-  public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+  public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
       throws ODataException {
     return containerProvider.getFunctionImport(entityContainer, functionImportName);
   }
 
   @Override
-  public List<Schema> getSchemas() throws ODataException {
+  public List<CsdlSchema> getSchemas() throws ODataException {
     return schemaProvider.getSchemas();
   }
 
   @Override
-  public EntityContainer getEntityContainer() throws ODataException {
+  public CsdlEntityContainer getEntityContainer() throws ODataException {
     return containerProvider.getEntityContainer();
   }
 
   @Override
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
+  public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+          throws ODataException {
     return containerProvider.getEntityContainerInfo(entityContainerName);
   }
 }

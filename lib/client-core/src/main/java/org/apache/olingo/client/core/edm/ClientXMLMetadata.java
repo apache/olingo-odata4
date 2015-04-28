@@ -26,13 +26,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 /**
  * Entry point for access information about EDM metadata.
  */
-public class ClientXMLMetadata extends AbstractEdmItem implements XMLMetadata {
+public class ClientXMLMetadata extends CsdlAbstractEdmItem implements XMLMetadata {
 
   private static final long serialVersionUID = 6025723060298454901L;
   protected final Edmx edmx;
@@ -42,24 +42,24 @@ public class ClientXMLMetadata extends AbstractEdmItem implements XMLMetadata {
   }
 
   @Override
-  public List<Schema> getSchemas() {
+  public List<CsdlSchema> getSchemas() {
     return this.edmx.getDataServices().getSchemas();
   }
 
   @Override
-  public Schema getSchema(final int index) {
+  public CsdlSchema getSchema(final int index) {
     return getSchemas().get(index);
   }
 
   @Override
-  public Schema getSchema(final String key) {
+  public CsdlSchema getSchema(final String key) {
     return getSchemaByNsOrAlias().get(key);
   }
 
   @Override
-  public Map<String, Schema> getSchemaByNsOrAlias() {
-    final Map<String, Schema> schemaByNsOrAlias = new HashMap<String, Schema>();
-    for (Schema schema : getSchemas()) {
+  public Map<String, CsdlSchema> getSchemaByNsOrAlias() {
+    final Map<String, CsdlSchema> schemaByNsOrAlias = new HashMap<String, CsdlSchema>();
+    for (CsdlSchema schema : getSchemas()) {
       schemaByNsOrAlias.put(schema.getNamespace(), schema);
       if (StringUtils.isNotBlank(schema.getAlias())) {
         schemaByNsOrAlias.put(schema.getAlias(), schema);

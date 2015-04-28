@@ -25,19 +25,19 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
-public class CarsEdmProvider extends AbstractEdmProvider {
+public class CarsEdmProvider extends CsdlAbstractEdmProvider {
 
   // Service Namespace
   public static final String NAMESPACE = "olingo.odata.sample";
@@ -58,39 +58,39 @@ public class CarsEdmProvider extends AbstractEdmProvider {
   public static final String ES_MANUFACTURER_NAME = "Manufacturers";
 
   @Override
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+  public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if (ET_CAR.equals(entityTypeName)) {
-      return new EntityType()
+      return new CsdlEntityType()
           .setName(ET_CAR.getName())
           .setKey(Arrays.asList(
-              new PropertyRef().setName("Id")))
+              new CsdlPropertyRef().setName("Id")))
           .setProperties(
               Arrays.asList(
-                  new Property().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
-                  new Property().setName("Model").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
-                  new Property().setName("ModelYear").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
+                  new CsdlProperty().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
+                  new CsdlProperty().setName("Model").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
+                  new CsdlProperty().setName("ModelYear").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
                       .setMaxLength(4),
-                  new Property().setName("Price").setType(EdmPrimitiveTypeKind.Decimal.getFullQualifiedName())
+                  new CsdlProperty().setName("Price").setType(EdmPrimitiveTypeKind.Decimal.getFullQualifiedName())
                       .setScale(2),
-                  new Property().setName("Currency").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
+                  new CsdlProperty().setName("Currency").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
                       .setMaxLength(3)
                   )
           ).setNavigationProperties(Arrays.asList(
-              new NavigationProperty().setName("Manufacturer").setType(ET_MANUFACTURER)
+              new CsdlNavigationProperty().setName("Manufacturer").setType(ET_MANUFACTURER)
               )
           );
 
     } else if (ET_MANUFACTURER.equals(entityTypeName)) {
-      return new EntityType()
+      return new CsdlEntityType()
           .setName(ET_MANUFACTURER.getName())
           .setKey(Arrays.asList(
-              new PropertyRef().setName("Id")))
+              new CsdlPropertyRef().setName("Id")))
           .setProperties(Arrays.asList(
-              new Property().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
-              new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
-              new Property().setName("Address").setType(CT_ADDRESS))
+              new CsdlProperty().setName("Id").setType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName()),
+              new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
+              new CsdlProperty().setName("Address").setType(CT_ADDRESS))
           ).setNavigationProperties(Arrays.asList(
-              new NavigationProperty().setName("Cars").setType(ET_CAR).setCollection(true)
+              new CsdlNavigationProperty().setName("Cars").setType(ET_CAR).setCollection(true)
               )
           );
     }
@@ -98,36 +98,36 @@ public class CarsEdmProvider extends AbstractEdmProvider {
     return null;
   }
 
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+  public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
     if (CT_ADDRESS.equals(complexTypeName)) {
-      return new ComplexType().setName(CT_ADDRESS.getName()).setProperties(Arrays.asList(
-          new Property().setName("Street").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
-          new Property().setName("City").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
-          new Property().setName("ZipCode").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
-          new Property().setName("Country").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
+      return new CsdlComplexType().setName(CT_ADDRESS.getName()).setProperties(Arrays.asList(
+          new CsdlProperty().setName("Street").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
+          new CsdlProperty().setName("City").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
+          new CsdlProperty().setName("ZipCode").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()),
+          new CsdlProperty().setName("Country").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
           ));
     }
     return null;
   }
 
   @Override
-  public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
       throws ODataException {
     if (CONTAINER_FQN.equals(entityContainer)) {
       if (ES_CARS_NAME.equals(entitySetName)) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName(ES_CARS_NAME)
             .setType(ET_CAR)
             .setNavigationPropertyBindings(
                 Arrays.asList(
-                    new NavigationPropertyBinding().setPath("Manufacturer").setTarget(
+                    new CsdlNavigationPropertyBinding().setPath("Manufacturer").setTarget(
                         CONTAINER_FQN.getFullQualifiedNameAsString() + "/" + ES_MANUFACTURER_NAME)));
       } else if (ES_MANUFACTURER_NAME.equals(entitySetName)) {
-        return new EntitySet()
+        return new CsdlEntitySet()
             .setName(ES_MANUFACTURER_NAME)
             .setType(ET_MANUFACTURER).setNavigationPropertyBindings(
                 Arrays.asList(
-                    new NavigationPropertyBinding().setPath("Cars")
+                    new CsdlNavigationPropertyBinding().setPath("Cars")
                         .setTarget(CONTAINER_FQN.getFullQualifiedNameAsString() + "/" + ES_CARS_NAME)));
       }
     }
@@ -136,18 +136,18 @@ public class CarsEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public List<Schema> getSchemas() throws ODataException {
-    List<Schema> schemas = new ArrayList<Schema>();
-    Schema schema = new Schema();
+  public List<CsdlSchema> getSchemas() throws ODataException {
+    List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+    CsdlSchema schema = new CsdlSchema();
     schema.setNamespace(NAMESPACE);
     // EntityTypes
-    List<EntityType> entityTypes = new ArrayList<EntityType>();
+    List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     entityTypes.add(getEntityType(ET_CAR));
     entityTypes.add(getEntityType(ET_MANUFACTURER));
     schema.setEntityTypes(entityTypes);
 
     // ComplexTypes
-    List<ComplexType> complexTypes = new ArrayList<ComplexType>();
+    List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
     complexTypes.add(getComplexType(CT_ADDRESS));
     schema.setComplexTypes(complexTypes);
 
@@ -159,12 +159,12 @@ public class CarsEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public EntityContainer getEntityContainer() throws ODataException {
-    EntityContainer container = new EntityContainer();
+  public CsdlEntityContainer getEntityContainer() throws ODataException {
+    CsdlEntityContainer container = new CsdlEntityContainer();
     container.setName(CONTAINER_FQN.getName());
 
     // EntitySets
-    List<EntitySet> entitySets = new ArrayList<EntitySet>();
+    List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
     container.setEntitySets(entitySets);
     entitySets.add(getEntitySet(CONTAINER_FQN, ES_CARS_NAME));
     entitySets.add(getEntitySet(CONTAINER_FQN, ES_MANUFACTURER_NAME));
@@ -173,9 +173,10 @@ public class CarsEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
+  public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+          throws ODataException {
     if (entityContainerName == null || CONTAINER_FQN.equals(entityContainerName)) {
-      return new EntityContainerInfo().setContainerName(CONTAINER_FQN);
+      return new CsdlEntityContainerInfo().setContainerName(CONTAINER_FQN);
     }
     return null;
   }

@@ -22,21 +22,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientPropertyRef.PropertyRefDeserializer.class)
-class ClientPropertyRef extends PropertyRef {
+class ClientPropertyRef extends CsdlPropertyRef {
 
   private static final long serialVersionUID = 1504095609268590326L;
 
-  static class PropertyRefDeserializer extends AbstractClientEdmDeserializer<PropertyRef> {
+  static class PropertyRefDeserializer extends AbstractClientEdmDeserializer<CsdlPropertyRef> {
     @Override
-    protected PropertyRef doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlPropertyRef doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
-      final PropertyRef propertyRef = new ClientPropertyRef();
+      final CsdlPropertyRef propertyRef = new ClientPropertyRef();
 
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();

@@ -34,23 +34,23 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.api.edm.provider.Annotations;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
 public class EdmSchemaImpl implements EdmSchema {
 
-  private final Schema schema;
+  private final CsdlSchema schema;
   private final EdmProviderImpl edm;
-  private final EdmProvider provider;
+  private final CsdlEdmProvider provider;
 
   protected final String namespace;
   private final String alias;
@@ -65,7 +65,7 @@ public class EdmSchemaImpl implements EdmSchema {
   private List<EdmAnnotation> annotations;
   private EdmEntityContainer entityContainer;
 
-  public EdmSchemaImpl(final EdmProviderImpl edm, final EdmProvider provider, final Schema schema) {
+  public EdmSchemaImpl(final EdmProviderImpl edm, final CsdlEdmProvider provider, final CsdlSchema schema) {
     this.edm = edm;
     this.provider = provider;
     this.schema = schema;
@@ -161,9 +161,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmTypeDefinition> createTypeDefinitions() {
     final List<EdmTypeDefinition> typeDefinitions = new ArrayList<EdmTypeDefinition>();
-    final List<TypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
+    final List<CsdlTypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
-      for (TypeDefinition def : providerTypeDefinitions) {
+      for (CsdlTypeDefinition def : providerTypeDefinitions) {
         FullQualifiedName typeDefName = new FullQualifiedName(namespace, def.getName());
         EdmTypeDefinitionImpl typeDefImpl = new EdmTypeDefinitionImpl(edm, typeDefName, def);
         typeDefinitions.add(typeDefImpl);
@@ -175,9 +175,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmEnumType> createEnumTypes() {
     final List<EdmEnumType> enumTypes = new ArrayList<EdmEnumType>();
-    final List<EnumType> providerEnumTypes = schema.getEnumTypes();
+    final List<CsdlEnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
-      for (EnumType enumType : providerEnumTypes) {
+      for (CsdlEnumType enumType : providerEnumTypes) {
         FullQualifiedName enumName = new FullQualifiedName(namespace, enumType.getName());
         EdmEnumType enumTypeImpl = new EdmEnumTypeImpl(edm, enumName, enumType);
         enumTypes.add(enumTypeImpl);
@@ -189,9 +189,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmEntityType> createEntityTypes() {
     final List<EdmEntityType> entityTypes = new ArrayList<EdmEntityType>();
-    final List<EntityType> providerEntityTypes = schema.getEntityTypes();
+    final List<CsdlEntityType> providerEntityTypes = schema.getEntityTypes();
     if (providerEntityTypes != null) {
-      for (EntityType entityType : providerEntityTypes) {
+      for (CsdlEntityType entityType : providerEntityTypes) {
         FullQualifiedName entityTypeName = new FullQualifiedName(namespace, entityType.getName());
         EdmEntityTypeImpl entityTypeImpl = new EdmEntityTypeImpl(edm, entityTypeName, entityType);
         entityTypes.add(entityTypeImpl);
@@ -203,9 +203,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmComplexType> createComplexTypes() {
     final List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
-    final List<ComplexType> providerComplexTypes = schema.getComplexTypes();
+    final List<CsdlComplexType> providerComplexTypes = schema.getComplexTypes();
     if (providerComplexTypes != null) {
-      for (ComplexType complexType : providerComplexTypes) {
+      for (CsdlComplexType complexType : providerComplexTypes) {
         FullQualifiedName comlexTypeName = new FullQualifiedName(namespace, complexType.getName());
         EdmComplexTypeImpl complexTypeImpl = new EdmComplexTypeImpl(edm, comlexTypeName, complexType);
         complexTypes.add(complexTypeImpl);
@@ -217,9 +217,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmAction> createActions() {
     final List<EdmAction> actions = new ArrayList<EdmAction>();
-    final List<Action> providerActions = schema.getActions();
+    final List<CsdlAction> providerActions = schema.getActions();
     if (providerActions != null) {
-      for (Action action : providerActions) {
+      for (CsdlAction action : providerActions) {
         FullQualifiedName actionName = new FullQualifiedName(namespace, action.getName());
         EdmActionImpl edmActionImpl = new EdmActionImpl(edm, actionName, action);
         actions.add(edmActionImpl);
@@ -231,9 +231,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmFunction> createFunctions() {
     final List<EdmFunction> functions = new ArrayList<EdmFunction>();
-    final List<Function> providerFunctions = schema.getFunctions();
+    final List<CsdlFunction> providerFunctions = schema.getFunctions();
     if (providerFunctions != null) {
-      for (Function function : providerFunctions) {
+      for (CsdlFunction function : providerFunctions) {
         FullQualifiedName functionName = new FullQualifiedName(namespace, function.getName());
         EdmFunctionImpl functionImpl = new EdmFunctionImpl(edm, functionName, function);
         functions.add(functionImpl);
@@ -245,9 +245,9 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmTerm> createTerms() {
     final List<EdmTerm> terms = new ArrayList<EdmTerm>();
-    final List<Term> providerTerms = schema.getTerms();
+    final List<CsdlTerm> providerTerms = schema.getTerms();
     if (providerTerms != null) {
-      for (Term term : providerTerms) {
+      for (CsdlTerm term : providerTerms) {
         FullQualifiedName termName = new FullQualifiedName(namespace, term.getName());
         EdmTermImpl termImpl = new EdmTermImpl(edm, getNamespace(), term);
         terms.add(termImpl);
@@ -259,10 +259,10 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmAnnotations> createAnnotationGroups() {
     final List<EdmAnnotations> annotationGroups = new ArrayList<EdmAnnotations>();
-    final List<Annotations> providerAnnotations =
+    final List<CsdlAnnotations> providerAnnotations =
         schema.getAnnotationGroups();
     if (providerAnnotations != null) {
-      for (Annotations annotationGroup : providerAnnotations) {
+      for (CsdlAnnotations annotationGroup : providerAnnotations) {
         FullQualifiedName annotationsGroupName;
         if (annotationGroup.getTarget().contains(".")) {
           annotationsGroupName = new FullQualifiedName(annotationGroup.getTarget());
@@ -279,10 +279,10 @@ public class EdmSchemaImpl implements EdmSchema {
 
   protected List<EdmAnnotation> createAnnotations() {
     final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
-    final List<Annotation> providerAnnotations =
+    final List<CsdlAnnotation> providerAnnotations =
         schema.getAnnotations();
     if (providerAnnotations != null) {
-      for (Annotation annotation : providerAnnotations) {
+      for (CsdlAnnotation annotation : providerAnnotations) {
         EdmAnnotationImpl annotationImpl = new EdmAnnotationImpl(edm, annotation);
         annotations.add(annotationImpl);
       }

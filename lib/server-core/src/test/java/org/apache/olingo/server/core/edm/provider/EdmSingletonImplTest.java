@@ -31,12 +31,12 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmSingletonImpl;
@@ -46,28 +46,28 @@ public class EdmSingletonImplTest {
 
   @Test
   public void singleton() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     final FullQualifiedName typeName = new FullQualifiedName("ns", "entityType");
-    final EntityType entityTypeProvider = new EntityType()
+    final CsdlEntityType entityTypeProvider = new CsdlEntityType()
         .setName(typeName.getName())
-        .setKey(Arrays.asList(new PropertyRef().setName("Id")));
+        .setKey(Arrays.asList(new CsdlPropertyRef().setName("Id")));
     when(provider.getEntityType(typeName)).thenReturn(entityTypeProvider);
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
-    final EntityContainerInfo containerInfo = new EntityContainerInfo().setContainerName(containerName);
+    final CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(containerName);
     when(provider.getEntityContainerInfo(containerName)).thenReturn(containerInfo);
     final EdmEntityContainer entityContainer = new EdmEntityContainerImpl(edm, provider, containerInfo);
 
     final String singletonName = "singleton";
-    final Singleton singletonProvider =
-        new Singleton()
+    final CsdlSingleton singletonProvider =
+        new CsdlSingleton()
             .setName(singletonName)
             .setType(typeName)
             .setNavigationPropertyBindings(
                 Arrays.asList(
-                    new NavigationPropertyBinding().setPath("path").setTarget(
+                    new CsdlNavigationPropertyBinding().setPath("path").setTarget(
                         containerName.getFullQualifiedNameAsString() + "/" + singletonName)));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
@@ -85,17 +85,17 @@ public class EdmSingletonImplTest {
 
   @Test(expected = EdmException.class)
   public void wrongTarget() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
-    final EntityContainerInfo containerInfo = new EntityContainerInfo().setContainerName(containerName);
+    final CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(containerName);
     when(provider.getEntityContainerInfo(containerName)).thenReturn(containerInfo);
 
     final String singletonName = "singleton";
-    final Singleton singletonProvider = new Singleton()
+    final CsdlSingleton singletonProvider = new CsdlSingleton()
         .setNavigationPropertyBindings(Arrays.asList(
-            new NavigationPropertyBinding().setPath("path")
+            new CsdlNavigationPropertyBinding().setPath("path")
                 .setTarget(containerName.getFullQualifiedNameAsString() + "/wrong")));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
@@ -105,14 +105,14 @@ public class EdmSingletonImplTest {
 
   @Test(expected = EdmException.class)
   public void wrongTargetContainer() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
     final String singletonName = "singleton";
-    final Singleton singletonProvider = new Singleton()
+    final CsdlSingleton singletonProvider = new CsdlSingleton()
         .setNavigationPropertyBindings(Arrays.asList(
-            new NavigationPropertyBinding().setPath("path").setTarget("ns.wrongContainer/" + singletonName)));
+            new CsdlNavigationPropertyBinding().setPath("path").setTarget("ns.wrongContainer/" + singletonName)));
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);
@@ -121,10 +121,10 @@ public class EdmSingletonImplTest {
 
   @Test(expected = EdmException.class)
   public void nonExsistingEntityType() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
-    Singleton singleton = new Singleton().setName("name");
+    CsdlSingleton singleton = new CsdlSingleton().setName("name");
     final EdmSingleton edmSingleton = new EdmSingletonImpl(edm, null, singleton);
     edmSingleton.getEntityType();
   }

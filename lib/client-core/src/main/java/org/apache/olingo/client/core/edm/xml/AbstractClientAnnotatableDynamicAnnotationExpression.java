@@ -21,18 +21,18 @@ package org.apache.olingo.client.core.edm.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 abstract class AbstractClientAnnotatableDynamicAnnotationExpression
-        extends AbstractClientDynamicAnnotationExpression implements Annotatable {
+        extends AbstractClientDynamicAnnotationExpression implements CsdlAnnotatable {
 
   private static final long serialVersionUID = -450668773857358139L;
 
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
+  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
-  public List<Annotation> getAnnotations() {
+  public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
 }

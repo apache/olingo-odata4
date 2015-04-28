@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.client.core.edm.xml;
 
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 
-abstract class AbstractClientAnnotationExpression extends AbstractEdmItem implements AnnotationExpression {
+abstract class AbstractClientAnnotationExpression extends CsdlAbstractEdmItem implements AnnotationExpression {
 
   private static final long serialVersionUID = -4238652997159205377L;
 

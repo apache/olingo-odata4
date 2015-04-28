@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmReturnTypeImpl;
@@ -44,7 +44,7 @@ public class EdmReturnTypeImplTest {
 
   @Test
   public void primitiveReturnType() {
-    ReturnType providerType = new ReturnType().setType(new FullQualifiedName("Edm", "String"));
+    CsdlReturnType providerType = new CsdlReturnType().setType(new FullQualifiedName("Edm", "String"));
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
@@ -59,7 +59,8 @@ public class EdmReturnTypeImplTest {
 
   @Test
   public void primitiveCollectionReturnType() {
-    ReturnType providerType = new ReturnType().setType(new FullQualifiedName("Edm", "String")).setCollection(true);
+    CsdlReturnType providerType = new CsdlReturnType().setType(
+            new FullQualifiedName("Edm", "String")).setCollection(true);
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
@@ -69,7 +70,8 @@ public class EdmReturnTypeImplTest {
 
   @Test(expected = EdmException.class)
   public void invalidPrimitiveType() {
-    ReturnType providerType = new ReturnType().setType(new FullQualifiedName("Edm", "wrong")).setCollection(true);
+    CsdlReturnType providerType = new CsdlReturnType().setType(
+            new FullQualifiedName("Edm", "wrong")).setCollection(true);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
     typeImpl.getType();
   }
@@ -80,7 +82,7 @@ public class EdmReturnTypeImplTest {
     FullQualifiedName baseType = new FullQualifiedName("namespace", "type");
     EdmComplexType edmType = mock(EdmComplexType.class);
     when(mock.getComplexType(baseType)).thenReturn(edmType);
-    ReturnType providerType = new ReturnType().setType(baseType);
+    CsdlReturnType providerType = new CsdlReturnType().setType(baseType);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock, providerType);
     EdmType returnedType = typeImpl.getType();
     assertEquals(edmType, returnedType);
@@ -92,7 +94,7 @@ public class EdmReturnTypeImplTest {
     FullQualifiedName baseType = new FullQualifiedName("namespace", "type");
     EdmEntityType edmType = mock(EdmEntityType.class);
     when(mock.getEntityType(baseType)).thenReturn(edmType);
-    ReturnType providerType = new ReturnType().setType(baseType);
+    CsdlReturnType providerType = new CsdlReturnType().setType(baseType);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock, providerType);
     EdmType returnedType = typeImpl.getType();
     assertEquals(edmType, returnedType);
@@ -104,7 +106,7 @@ public class EdmReturnTypeImplTest {
     FullQualifiedName baseType = new FullQualifiedName("namespace", "type");
     EdmEnumType edmType = mock(EdmEnumType.class);
     when(mock.getEnumType(baseType)).thenReturn(edmType);
-    ReturnType providerType = new ReturnType().setType(baseType);
+    CsdlReturnType providerType = new CsdlReturnType().setType(baseType);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock, providerType);
     EdmType returnedType = typeImpl.getType();
     assertEquals(edmType, returnedType);
@@ -116,7 +118,7 @@ public class EdmReturnTypeImplTest {
     FullQualifiedName baseType = new FullQualifiedName("namespace", "type");
     EdmTypeDefinition edmType = mock(EdmTypeDefinition.class);
     when(mock.getTypeDefinition(baseType)).thenReturn(edmType);
-    ReturnType providerType = new ReturnType().setType(baseType);
+    CsdlReturnType providerType = new CsdlReturnType().setType(baseType);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock, providerType);
     EdmType returnedType = typeImpl.getType();
     assertEquals(edmType, returnedType);
@@ -124,7 +126,7 @@ public class EdmReturnTypeImplTest {
 
   @Test(expected = EdmException.class)
   public void invalidType() {
-    ReturnType providerType = new ReturnType().setType(new FullQualifiedName("wrong", "wrong"));
+    CsdlReturnType providerType = new CsdlReturnType().setType(new FullQualifiedName("wrong", "wrong"));
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
     typeImpl.getType();
   }

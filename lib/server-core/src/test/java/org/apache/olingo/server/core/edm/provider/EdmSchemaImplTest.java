@@ -43,23 +43,23 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class EdmSchemaImplTest {
 
   @Before
   public void before() {
-    EdmProvider provider = new LocalProvider();
+    CsdlEdmProvider provider = new LocalProvider();
     edm = new EdmProviderImpl(provider);
     schema = edm.getSchemas().get(0);
 
@@ -79,17 +79,17 @@ public class EdmSchemaImplTest {
 
   @Test
   public void initialSchemaTest() {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     edm = new EdmProviderImpl(provider);
     edm.getSchemas();
   }
 
   @Test
   public void emptySchemaTest() throws Exception {
-    ArrayList<Schema> schemas = new ArrayList<Schema>();
-    Schema providerSchema = new Schema();
+    ArrayList<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+    CsdlSchema providerSchema = new CsdlSchema();
     schemas.add(providerSchema);
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     when(provider.getSchemas()).thenReturn(schemas);
     edm = new EdmProviderImpl(provider);
     edm.getSchemas();
@@ -205,157 +205,158 @@ public class EdmSchemaImplTest {
     assertTrue(container == edm.getEntityContainer(null));
   }
 
-  private class LocalProvider extends AbstractEdmProvider {
+  private class LocalProvider extends CsdlAbstractEdmProvider {
 
     private static final String ALIAS = "alias";
     private static final String NAMESPACE = "org.namespace";
 
     @Override
-    public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+    public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
+    public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+    public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+    public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
+    public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public Term getTerm(final FullQualifiedName termName) throws ODataException {
+    public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+    public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+    public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+    public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+    public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
+                                                final String functionImportName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+    public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public List<AliasInfo> getAliasInfos() throws ODataException {
+    public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
 
     @Override
-    public List<Schema> getSchemas() throws ODataException {
-      Schema providerSchema = new Schema();
+    public List<CsdlSchema> getSchemas() throws ODataException {
+      CsdlSchema providerSchema = new CsdlSchema();
       providerSchema.setNamespace(NAMESPACE);
       providerSchema.setAlias(ALIAS);
-      EntityContainer container = new EntityContainer().setName("container");
+      CsdlEntityContainer container = new CsdlEntityContainer().setName("container");
 
-      List<EntitySet> entitySets = new ArrayList<EntitySet>();
-      entitySets.add(new EntitySet().setName("entitySetName")
+      List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
+      entitySets.add(new CsdlEntitySet().setName("entitySetName")
           .setType(new FullQualifiedName(NAMESPACE, "entityType1")));
       entitySets
-          .add(new EntitySet().setName("entitySetName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
+          .add(new CsdlEntitySet().setName("entitySetName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
       container.setEntitySets(entitySets);
 
-      List<Singleton> singletons = new ArrayList<Singleton>();
-      singletons.add(new Singleton().setName("singletonName")
+      List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
+      singletons.add(new CsdlSingleton().setName("singletonName")
           .setType(new FullQualifiedName(NAMESPACE, "entityType1")));
       singletons
-          .add(new Singleton().setName("singletonName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
+          .add(new CsdlSingleton().setName("singletonName2").setType(new FullQualifiedName(NAMESPACE, "entityType2")));
       container.setSingletons(singletons);
 
-      List<ActionImport> actionImports = new ArrayList<ActionImport>();
-      actionImports.add(new ActionImport().setName("actionImportName").setAction(
+      List<CsdlActionImport> actionImports = new ArrayList<CsdlActionImport>();
+      actionImports.add(new CsdlActionImport().setName("actionImportName").setAction(
           new FullQualifiedName(NAMESPACE, "action1")));
-      actionImports.add(new ActionImport().setName("actionImportName2").setAction(
+      actionImports.add(new CsdlActionImport().setName("actionImportName2").setAction(
           new FullQualifiedName(NAMESPACE, "action2")));
       container.setActionImports(actionImports);
 
-      List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
-      functionImports.add(new FunctionImport().setName("functionImportName").setFunction(
+      List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
+      functionImports.add(new CsdlFunctionImport().setName("functionImportName").setFunction(
           new FullQualifiedName(NAMESPACE, "function1")));
-      functionImports.add(new FunctionImport().setName("functionImportName2").setFunction(
+      functionImports.add(new CsdlFunctionImport().setName("functionImportName2").setFunction(
           new FullQualifiedName(NAMESPACE, "function2")));
       container.setFunctionImports(functionImports);
       providerSchema.setEntityContainer(container);
 
-      List<TypeDefinition> typeDefinitions = new ArrayList<TypeDefinition>();
-      typeDefinitions.add(new TypeDefinition().setName("typeDefinition1").setUnderlyingType(
+      List<CsdlTypeDefinition> typeDefinitions = new ArrayList<CsdlTypeDefinition>();
+      typeDefinitions.add(new CsdlTypeDefinition().setName("typeDefinition1").setUnderlyingType(
           EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-      typeDefinitions.add(new TypeDefinition().setName("typeDefinition2").setUnderlyingType(
+      typeDefinitions.add(new CsdlTypeDefinition().setName("typeDefinition2").setUnderlyingType(
           EdmPrimitiveTypeKind.String.getFullQualifiedName()));
       providerSchema.setTypeDefinitions(typeDefinitions);
 
-      List<EnumType> enumTypes = new ArrayList<EnumType>();
-      enumTypes.add(new EnumType().setName("enumType1"));
-      enumTypes.add(new EnumType().setName("enumType2"));
+      List<CsdlEnumType> enumTypes = new ArrayList<CsdlEnumType>();
+      enumTypes.add(new CsdlEnumType().setName("enumType1"));
+      enumTypes.add(new CsdlEnumType().setName("enumType2"));
       providerSchema.setEnumTypes(enumTypes);
 
-      List<EntityType> entityTypes = new ArrayList<EntityType>();
-      entityTypes.add(new EntityType().setName("entityType1"));
-      entityTypes.add(new EntityType().setName("entityType2")
+      List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
+      entityTypes.add(new CsdlEntityType().setName("entityType1"));
+      entityTypes.add(new CsdlEntityType().setName("entityType2")
           .setBaseType(new FullQualifiedName(NAMESPACE, "entityType1")));
       providerSchema.setEntityTypes(entityTypes);
 
-      List<ComplexType> complexTypes = new ArrayList<ComplexType>();
-      complexTypes.add(new ComplexType().setName("complexType1"));
-      complexTypes.add(new ComplexType().setName("complexType2").setBaseType(
+      List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
+      complexTypes.add(new CsdlComplexType().setName("complexType1"));
+      complexTypes.add(new CsdlComplexType().setName("complexType2").setBaseType(
           new FullQualifiedName(NAMESPACE, "complexType1")));
       providerSchema.setComplexTypes(complexTypes);
 
-      List<Action> actions = new ArrayList<Action>();
-      actions.add(new Action().setName("action1"));
-      actions.add(new Action().setName("action2"));
+      List<CsdlAction> actions = new ArrayList<CsdlAction>();
+      actions.add(new CsdlAction().setName("action1"));
+      actions.add(new CsdlAction().setName("action2"));
       providerSchema.setActions(actions);
 
-      List<Function> functions = new ArrayList<Function>();
-      functions.add(new Function().setName("function1"));
-      functions.add(new Function().setName("function2"));
+      List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+      functions.add(new CsdlFunction().setName("function1"));
+      functions.add(new CsdlFunction().setName("function2"));
       providerSchema.setFunctions(functions);
-      ArrayList<Schema> schemas = new ArrayList<Schema>();
+      ArrayList<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
       schemas.add(providerSchema);
       return schemas;
     }
 
     @Override
-    public EntityContainer getEntityContainer() throws ODataException {
+    public CsdlEntityContainer getEntityContainer() throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
   }

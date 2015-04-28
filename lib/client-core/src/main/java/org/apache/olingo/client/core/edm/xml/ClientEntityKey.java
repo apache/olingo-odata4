@@ -25,19 +25,19 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientEntityKey.EntityKeyDeserializer.class)
-class ClientEntityKey extends AbstractEdmItem {
+class ClientEntityKey extends CsdlAbstractEdmItem {
 
   private static final long serialVersionUID = 520227585458843347L;
 
-  private final List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
+  private final List<CsdlPropertyRef> propertyRefs = new ArrayList<CsdlPropertyRef>();
 
-  public List<PropertyRef> getPropertyRefs() {
+  public List<CsdlPropertyRef> getPropertyRefs() {
     return propertyRefs;
   }
 

@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 public interface DataServices {
 
@@ -28,5 +28,5 @@ public interface DataServices {
 
   String getMaxDataServiceVersion();
 
-  List<Schema> getSchemas();
+  List<CsdlSchema> getSchemas();
 }

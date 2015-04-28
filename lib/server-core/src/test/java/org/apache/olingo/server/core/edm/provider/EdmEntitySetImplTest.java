@@ -30,12 +30,12 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.EdmEntitySetImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
@@ -45,27 +45,27 @@ public class EdmEntitySetImplTest {
 
   @Test
   public void entitySet() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     final FullQualifiedName typeName = new FullQualifiedName("ns", "entityType");
-    final EntityType entityTypeProvider = new EntityType()
+    final CsdlEntityType entityTypeProvider = new CsdlEntityType()
         .setName(typeName.getName())
-        .setKey(Arrays.asList(new PropertyRef().setName("Id")));
+        .setKey(Arrays.asList(new CsdlPropertyRef().setName("Id")));
     when(provider.getEntityType(typeName)).thenReturn(entityTypeProvider);
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
-    final EntityContainerInfo containerInfo = new EntityContainerInfo().setContainerName(containerName);
+    final CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(containerName);
     when(provider.getEntityContainerInfo(containerName)).thenReturn(containerInfo);
     final EdmEntityContainer entityContainer = new EdmEntityContainerImpl(edm, provider, containerInfo);
 
     final String entitySetName = "entitySet";
-    final EntitySet entitySetProvider = new EntitySet()
+    final CsdlEntitySet entitySetProvider = new CsdlEntitySet()
         .setName(entitySetName)
         .setType(typeName)
         .setIncludeInServiceDocument(true)
         .setNavigationPropertyBindings(Arrays.asList(
-            new NavigationPropertyBinding().setPath("path")
+            new CsdlNavigationPropertyBinding().setPath("path")
                 .setTarget(containerName.getFullQualifiedNameAsString() + "/" + entitySetName)));
     when(provider.getEntitySet(containerName, entitySetName)).thenReturn(entitySetProvider);
 

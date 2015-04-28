@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Term;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @JsonDeserialize(using = ClientTerm.TermDeserializer.class)
-class ClientTerm extends Term {
+class ClientTerm extends CsdlTerm {
 
   private static final long serialVersionUID = -8350072064720586186L;
 

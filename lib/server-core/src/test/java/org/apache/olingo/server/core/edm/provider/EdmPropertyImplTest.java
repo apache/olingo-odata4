@@ -25,11 +25,11 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
@@ -46,8 +46,8 @@ public class EdmPropertyImplTest {
 
   @Test
   public void getTypeReturnsPrimitiveType() {
-    EdmProviderImpl edm = new EdmProviderImpl(mock(EdmProvider.class));
-    Property propertyProvider = new Property();
+    EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));
+    CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(EdmPrimitiveTypeKind.Binary.getFullQualifiedName());
     final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertTrue(property.isPrimitive());
@@ -59,12 +59,12 @@ public class EdmPropertyImplTest {
 
   @Test
   public void getTypeReturnsComplexType() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final FullQualifiedName complexTypeName = new FullQualifiedName("ns", "complex");
-    ComplexType complexTypeProvider = new ComplexType();
+    CsdlComplexType complexTypeProvider = new CsdlComplexType();
     when(provider.getComplexType(complexTypeName)).thenReturn(complexTypeProvider);
-    Property propertyProvider = new Property();
+    CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(complexTypeName);
     final EdmProperty property = new EdmPropertyImpl(edm, complexTypeName, propertyProvider);
     assertFalse(property.isCollection());
@@ -77,12 +77,12 @@ public class EdmPropertyImplTest {
 
   @Test
   public void getTypeReturnsEnumType() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final FullQualifiedName enumTypeName = new FullQualifiedName("ns", "enum");
-    EnumType enumTypeProvider = new EnumType();
+    CsdlEnumType enumTypeProvider = new CsdlEnumType();
     when(provider.getEnumType(enumTypeName)).thenReturn(enumTypeProvider);
-    Property propertyProvider = new Property();
+    CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(enumTypeName);
     final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertFalse(property.isCollection());
@@ -95,12 +95,13 @@ public class EdmPropertyImplTest {
 
   @Test
   public void getTypeReturnsTypeDefinition() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final FullQualifiedName typeName = new FullQualifiedName("ns", "definition");
-    TypeDefinition typeProvider = new TypeDefinition().setUnderlyingType(new FullQualifiedName("Edm", "String"));
+    CsdlTypeDefinition typeProvider =
+            new CsdlTypeDefinition().setUnderlyingType(new FullQualifiedName("Edm", "String"));
     when(provider.getTypeDefinition(typeName)).thenReturn(typeProvider);
-    Property propertyProvider = new Property();
+    CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(typeName);
     final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     assertFalse(property.isPrimitive());
@@ -112,9 +113,9 @@ public class EdmPropertyImplTest {
 
   @Test(expected = EdmException.class)
   public void getTypeReturnsWrongType() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
-    final Property propertyProvider = new Property()
+    final CsdlProperty propertyProvider = new CsdlProperty()
         .setType(new FullQualifiedName("ns", "wrong"));
     final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     property.getType();
@@ -123,9 +124,9 @@ public class EdmPropertyImplTest {
 
   @Test(expected = EdmException.class)
   public void getTypeReturnsNoTypeKind() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
-    final Property propertyProvider = new Property()
+    final CsdlProperty propertyProvider = new CsdlProperty()
         .setType(new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, "type"));
     final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
     property.getType();
@@ -134,8 +135,8 @@ public class EdmPropertyImplTest {
 
   @Test
   public void facets() {
-    EdmProviderImpl edm = new EdmProviderImpl(mock(EdmProvider.class));
-    Property propertyProvider = new Property();
+    EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));
+    CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
     propertyProvider.setPrecision(42);
     propertyProvider.setScale(12);

@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.edm.xml;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 /**
  * Entry point for access information about EDM metadata.
@@ -34,7 +34,7 @@ public interface XMLMetadata {
    * @param index index of the Schema to return
    * @return the Schema at the specified position in the EdM metadata document
    */
-  Schema getSchema(final int index);
+  CsdlSchema getSchema(final int index);
 
   /**
    * Returns the Schema with the specified key (namespace or alias) in the EdM metadata document.
@@ -42,16 +42,16 @@ public interface XMLMetadata {
    * @param key namespace or alias
    * @return the Schema with the specified key in the EdM metadata document
    */
-  Schema getSchema(final String key);
+  CsdlSchema getSchema(final String key);
 
   /**
    * Returns all Schema objects defined in the EdM metadata document.
    *
    * @return all Schema objects defined in the EdM metadata document
    */
-  List<Schema> getSchemas();
+  List<CsdlSchema> getSchemas();
 
-  Map<String, Schema> getSchemaByNsOrAlias();
+  Map<String, CsdlSchema> getSchemaByNsOrAlias();
   
   List<Reference> getReferences();
 }

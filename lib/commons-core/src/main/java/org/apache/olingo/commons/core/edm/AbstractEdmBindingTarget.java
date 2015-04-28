@@ -30,17 +30,17 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.BindingTarget;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlBindingTarget;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 
 public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implements EdmBindingTarget {
 
-  private final BindingTarget target;
+  private final CsdlBindingTarget target;
   private final EdmEntityContainer container;
 
   private List<EdmNavigationPropertyBinding> navigationPropertyBindings;
 
-  public AbstractEdmBindingTarget(final Edm edm, final EdmEntityContainer container, final BindingTarget target) {
+  public AbstractEdmBindingTarget(final Edm edm, final EdmEntityContainer container, final CsdlBindingTarget target) {
     super(edm, target.getName(), target);
     this.container = container;
     this.target = target;
@@ -49,11 +49,11 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
   @Override
   public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
     if (navigationPropertyBindings == null) {
-      List<NavigationPropertyBinding> providerBindings = target.getNavigationPropertyBindings();
+      List<CsdlNavigationPropertyBinding> providerBindings = target.getNavigationPropertyBindings();
       final List<EdmNavigationPropertyBinding> navigationPropertyBindingsLocal = 
           new ArrayList<EdmNavigationPropertyBinding>();
       if (providerBindings != null) {
-        for (NavigationPropertyBinding binding : providerBindings) {
+        for (CsdlNavigationPropertyBinding binding : providerBindings) {
           navigationPropertyBindingsLocal.add(new EdmNavigationPropertyBindingImpl(binding.getPath(), 
                                                                                    binding.getTarget()));
         }

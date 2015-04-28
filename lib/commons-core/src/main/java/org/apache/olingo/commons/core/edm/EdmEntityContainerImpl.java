@@ -33,18 +33,18 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 
 public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntityContainer {
 
-  private final EdmProvider provider;
-  private EntityContainer container;
+  private final CsdlEdmProvider provider;
+  private CsdlEntityContainer container;
 
   private final FullQualifiedName entityContainerName;
   private final FullQualifiedName parentContainerName;
@@ -62,16 +62,16 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   private final Map<String, EdmFunctionImport> functionImportCache = Collections.synchronizedMap(
                                                                     new LinkedHashMap<String, EdmFunctionImport>());
 
-  public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider,
-      final EntityContainerInfo entityContainerInfo) {
+  public EdmEntityContainerImpl(final Edm edm, final CsdlEdmProvider provider,
+      final CsdlEntityContainerInfo entityContainerInfo) {
     super(edm, entityContainerInfo.getContainerName().getName(), null);
     this.provider = provider;
     this.entityContainerName = entityContainerInfo.getContainerName();
     this.parentContainerName = entityContainerInfo.getExtendsContainer();
   }
 
-  public EdmEntityContainerImpl(final Edm edm, final EdmProvider provider, final FullQualifiedName containerFQN,
-      final EntityContainer entityContainer) {
+  public EdmEntityContainerImpl(final Edm edm, final CsdlEdmProvider provider, final FullQualifiedName containerFQN,
+      final CsdlEntityContainer entityContainer) {
     super(edm, containerFQN.getName(), entityContainer);
     this.provider = provider;
     container = entityContainer;
@@ -178,7 +178,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     EdmSingleton singleton = null;
 
     try {
-      final Singleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
+      final CsdlSingleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
       if (providerSingleton != null) {
         singleton = new EdmSingletonImpl(edm, this, providerSingleton);
       }
@@ -193,7 +193,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     EdmEntitySet entitySet = null;
 
     try {
-      final EntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
+      final CsdlEntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
       if (providerEntitySet != null) {
         entitySet = new EdmEntitySetImpl(edm, this, providerEntitySet);
       }
@@ -208,7 +208,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     EdmActionImport actionImport = null;
 
     try {
-      final ActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
+      final CsdlActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
       if (providerImport != null) {
         actionImport = new EdmActionImportImpl(edm, this, providerImport);
       }
@@ -223,7 +223,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     EdmFunctionImport functionImport = null;
 
     try {
-      final FunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
+      final CsdlFunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
       if (providerImport != null) {
         functionImport = new EdmFunctionImportImpl(edm, this, providerImport);
       }
@@ -236,11 +236,11 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
   protected void loadAllEntitySets() {
     loadContainer();
-    final List<EntitySet> providerEntitySets = container.getEntitySets();
+    final List<CsdlEntitySet> providerEntitySets = container.getEntitySets();
     final List<EdmEntitySet> entitySetsLocal = new ArrayList<EdmEntitySet>();
     
     if (providerEntitySets != null) {
-      for (EntitySet entitySet : providerEntitySets) {
+      for (CsdlEntitySet entitySet : providerEntitySets) {
         final EdmEntitySetImpl impl = new EdmEntitySetImpl(edm, this, entitySet);
         entitySetCache.put(impl.getName(), impl);
         entitySetsLocal.add(impl);
@@ -251,11 +251,11 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
   protected void loadAllFunctionImports() {
     loadContainer();
-    final List<FunctionImport> providerFunctionImports = container.getFunctionImports();
+    final List<CsdlFunctionImport> providerFunctionImports = container.getFunctionImports();
     final ArrayList<EdmFunctionImport> functionImportsLocal = new ArrayList<EdmFunctionImport>();
     
     if (providerFunctionImports != null) {
-      for (FunctionImport functionImport : providerFunctionImports) {
+      for (CsdlFunctionImport functionImport : providerFunctionImports) {
         EdmFunctionImportImpl impl = new EdmFunctionImportImpl(edm, this, functionImport);
         functionImportCache.put(impl.getName(), impl);
         functionImportsLocal.add(impl);
@@ -266,11 +266,11 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
   protected void loadAllSingletons() {
     loadContainer();
-    final List<Singleton> providerSingletons = container.getSingletons();
+    final List<CsdlSingleton> providerSingletons = container.getSingletons();
     final List<EdmSingleton> singletonsLocal = new ArrayList<EdmSingleton>();
     
     if (providerSingletons != null) {
-      for (Singleton singleton : providerSingletons) {
+      for (CsdlSingleton singleton : providerSingletons) {
         final EdmSingletonImpl impl = new EdmSingletonImpl(edm, this, singleton);
         singletonCache.put(singleton.getName(), impl);
         singletonsLocal.add(impl);
@@ -281,11 +281,11 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
   protected void loadAllActionImports() {
     loadContainer();
-    final List<ActionImport> providerActionImports = container.getActionImports();
+    final List<CsdlActionImport> providerActionImports = container.getActionImports();
     final List<EdmActionImport> actionImportsLocal = new ArrayList<EdmActionImport>();
 
     if (providerActionImports != null) {
-      for (ActionImport actionImport : providerActionImports) {
+      for (CsdlActionImport actionImport : providerActionImports) {
         final EdmActionImportImpl impl = new EdmActionImportImpl(edm, this, actionImport);
         actionImportCache.put(actionImport.getName(), impl);
         actionImportsLocal.add(impl);
@@ -298,9 +298,9 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   private void loadContainer() {
     if (container == null) {
       try {
-        EntityContainer containerLocal = provider.getEntityContainer();
+        CsdlEntityContainer containerLocal = provider.getEntityContainer();
         if (containerLocal == null) {
-          containerLocal = new EntityContainer().setName(getName());
+          containerLocal = new CsdlEntityContainer().setName(getName());
         }
         
         container = containerLocal;

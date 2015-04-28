@@ -23,19 +23,19 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientAnnotation.AnnotationDeserializer.class)
-class ClientAnnotation extends Annotation {
+class ClientAnnotation extends CsdlAnnotation {
 
   private static final long serialVersionUID = 5464714417411058033L;
 
-  static class AnnotationDeserializer extends AbstractClientEdmDeserializer<Annotation> {
+  static class AnnotationDeserializer extends AbstractClientEdmDeserializer<CsdlAnnotation> {
 
     @Override
-    protected Annotation doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlAnnotation doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
       final ClientAnnotation annotation = new ClientAnnotation();

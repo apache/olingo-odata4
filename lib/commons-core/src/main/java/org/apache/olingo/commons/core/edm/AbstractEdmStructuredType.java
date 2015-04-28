@@ -27,9 +27,9 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.StructuralType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlStructuralType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +42,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
   protected EdmStructuredType baseType;
   protected FullQualifiedName baseTypeName;
   
-  private final StructuralType providerStructuredType;
+  private final CsdlStructuralType providerStructuredType;
 
   private List<String> propertyNames;
   private Map<String, EdmProperty> properties;
@@ -53,7 +53,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
           final Edm edm,
           final FullQualifiedName typeName,
           final EdmTypeKind kind,
-          final StructuralType structuredType) {
+          final CsdlStructuralType structuredType) {
 
     super(edm, typeName, kind, structuredType);
     this.baseTypeName = structuredType.getBaseTypeFQN();
@@ -158,8 +158,8 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
   public Map<String, EdmProperty> getProperties() {
     if (properties == null) {
       final Map<String, EdmProperty> localPorperties = new LinkedHashMap<String, EdmProperty>();
-      final List<Property> structureTypeProperties = providerStructuredType.getProperties();
-        for (Property property : structureTypeProperties) {
+      final List<CsdlProperty> structureTypeProperties = providerStructuredType.getProperties();
+        for (CsdlProperty property : structureTypeProperties) {
           localPorperties.put(property.getName(), new EdmPropertyImpl(edm, typeName, property));
       }
       properties = Collections.unmodifiableMap(localPorperties);
@@ -171,11 +171,11 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
     if (navigationProperties == null) {
       final Map<String, EdmNavigationProperty> localNavigationProperties = 
           new LinkedHashMap<String, EdmNavigationProperty>();
-      final List<NavigationProperty> structuredTypeNavigationProperties = 
+      final List<CsdlNavigationProperty> structuredTypeNavigationProperties =
           providerStructuredType.getNavigationProperties();
 
       if (structuredTypeNavigationProperties != null) {
-        for (NavigationProperty navigationProperty : structuredTypeNavigationProperties) {
+        for (CsdlNavigationProperty navigationProperty : structuredTypeNavigationProperties) {
           localNavigationProperties.put(navigationProperty.getName(),
                   new EdmNavigationPropertyImpl(edm, typeName, navigationProperty));
         }

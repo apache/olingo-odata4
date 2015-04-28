@@ -22,14 +22,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.commons.api.edm.provider.Function;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientFunction.FunctionDeserializer.class)
-class ClientFunction extends Function {
+class ClientFunction extends CsdlFunction {
 
   private static final long serialVersionUID = -5494898295282843362L;
 

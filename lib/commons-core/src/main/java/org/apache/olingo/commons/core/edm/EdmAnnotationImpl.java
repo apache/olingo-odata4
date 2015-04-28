@@ -29,8 +29,8 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.PropertyValue;
@@ -62,11 +62,11 @@ import org.apache.olingo.commons.core.edm.annotation.EdmUrlRefImpl;
 
 public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnnotation {
 
-  private final Annotation annotation;
+  private final CsdlAnnotation annotation;
   private EdmTerm term;
   private EdmAnnotationExpression expression;
 
-  public EdmAnnotationImpl(final Edm edm, final Annotation annotation) {
+  public EdmAnnotationImpl(final Edm edm, final CsdlAnnotation annotation) {
     super(edm, annotation);
     this.annotation = annotation;
   }
@@ -206,8 +206,8 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
       _expression = new EdmUrlRefImpl(getExpression(exp.asUrlRef().getValue()));
     }
 
-    if (_expression instanceof EdmAnnotatable && exp instanceof Annotatable) {
-      for (Annotation _annotation : ((Annotatable) exp).getAnnotations()) {
+    if (_expression instanceof EdmAnnotatable && exp instanceof CsdlAnnotatable) {
+      for (CsdlAnnotation _annotation : ((CsdlAnnotatable) exp).getAnnotations()) {
         ((EdmAnnotatable) _expression).getAnnotations().add(new EdmAnnotationImpl(edm, _annotation));
       }
     }

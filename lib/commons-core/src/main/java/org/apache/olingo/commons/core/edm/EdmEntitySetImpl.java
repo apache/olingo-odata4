@@ -21,13 +21,13 @@ package org.apache.olingo.commons.core.edm;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 
 public class EdmEntitySetImpl extends AbstractEdmBindingTarget implements EdmEntitySet {
 
-  private EntitySet entitySet;
+  private CsdlEntitySet entitySet;
 
-  public EdmEntitySetImpl(final Edm edm, final EdmEntityContainer container, final EntitySet entitySet) {
+  public EdmEntitySetImpl(final Edm edm, final EdmEntityContainer container, final CsdlEntitySet entitySet) {
     super(edm, container, entitySet);
     this.entitySet = entitySet;
   }

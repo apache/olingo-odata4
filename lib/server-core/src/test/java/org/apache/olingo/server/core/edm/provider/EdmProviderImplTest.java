@@ -27,14 +27,14 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,26 +59,26 @@ public class EdmProviderImplTest {
 
   @Before
   public void setup() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
-    EntityContainerInfo containerInfo = new EntityContainerInfo().setContainerName(FQN);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
+    CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(FQN);
     when(provider.getEntityContainerInfo(FQN)).thenReturn(containerInfo);
     when(provider.getEntityContainerInfo(null)).thenReturn(containerInfo);
 
-    EnumType enumType = new EnumType().setName(FQN.getName());
+    CsdlEnumType enumType = new CsdlEnumType().setName(FQN.getName());
     when(provider.getEnumType(FQN)).thenReturn(enumType);
 
-    TypeDefinition typeDefinition =
-        new TypeDefinition().setName(FQN.getName()).setUnderlyingType(new FullQualifiedName("Edm", "String"));
+    CsdlTypeDefinition typeDefinition =
+        new CsdlTypeDefinition().setName(FQN.getName()).setUnderlyingType(new FullQualifiedName("Edm", "String"));
     when(provider.getTypeDefinition(FQN)).thenReturn(typeDefinition);
 
-    EntityType entityType = new EntityType().setName(FQN.getName()).setKey(new ArrayList<PropertyRef>());
+    CsdlEntityType entityType = new CsdlEntityType().setName(FQN.getName()).setKey(new ArrayList<CsdlPropertyRef>());
     when(provider.getEntityType(FQN)).thenReturn(entityType);
 
-    ComplexType complexType = new ComplexType().setName(FQN.getName());
+    CsdlComplexType complexType = new CsdlComplexType().setName(FQN.getName());
     when(provider.getComplexType(FQN)).thenReturn(complexType);
 
-    List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
-    aliasInfos.add(new AliasInfo().setAlias("alias").setNamespace("namespace"));
+    List<CsdlAliasInfo> aliasInfos = new ArrayList<CsdlAliasInfo>();
+    aliasInfos.add(new CsdlAliasInfo().setAlias("alias").setNamespace("namespace"));
     when(provider.getAliasInfos()).thenReturn(aliasInfos);
 
     edm = new EdmProviderImpl(provider);
@@ -86,7 +86,7 @@ public class EdmProviderImplTest {
 
   @Test
   public void nothingSpecifiedMustNotResultInExceptions() throws Exception {
-    EdmProvider localProvider = mock(EdmProvider.class);
+    CsdlEdmProvider localProvider = mock(CsdlEdmProvider.class);
     when(localProvider.getActions(FQN)).thenReturn(null);
     when(localProvider.getFunctions(FQN)).thenReturn(null);
     Edm localEdm = new EdmProviderImpl(localProvider);
@@ -103,7 +103,7 @@ public class EdmProviderImplTest {
 
   @Test
   public void convertExceptionsTest() throws Exception {
-    EdmProvider localProvider = mock(EdmProvider.class);
+    CsdlEdmProvider localProvider = mock(CsdlEdmProvider.class);
     FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
     when(localProvider.getEntityContainerInfo(fqn)).thenThrow(new ODataException("msg"));
     when(localProvider.getEnumType(fqn)).thenThrow(new ODataException("msg"));
@@ -161,7 +161,7 @@ public class EdmProviderImplTest {
 
   @Test(expected = EdmException.class)
   public void convertExceptionsAliasTest() throws Exception {
-    EdmProvider localProvider = mock(EdmProvider.class);
+    CsdlEdmProvider localProvider = mock(CsdlEdmProvider.class);
     when(localProvider.getAliasInfos()).thenThrow(new ODataException("msg"));
 
     Edm localEdm = new EdmProviderImpl(localProvider);

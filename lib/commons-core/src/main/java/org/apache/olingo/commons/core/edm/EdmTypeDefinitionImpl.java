@@ -27,17 +27,17 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDefinition {
 
-  private TypeDefinition typeDefinition;
+  private CsdlTypeDefinition typeDefinition;
   private FullQualifiedName typeDefinitionName;
   private EdmPrimitiveType edmPrimitiveTypeInstance;
 
   public EdmTypeDefinitionImpl(final Edm edm, final FullQualifiedName typeDefinitionName,
-      final TypeDefinition typeDefinition) {
+      final CsdlTypeDefinition typeDefinition) {
     super(edm, typeDefinitionName.getName(), typeDefinition);
     this.typeDefinitionName = typeDefinitionName;
     this.typeDefinition = typeDefinition;

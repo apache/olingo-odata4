@@ -31,12 +31,12 @@ import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 
 public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmEntityType {
 
-  private EntityType entityType;
+  private CsdlEntityType entityType;
   private boolean baseTypeChecked = false;
   private final boolean hasStream;
   protected EdmEntityType entityBaseType;
@@ -45,7 +45,7 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
       Collections.synchronizedMap(new LinkedHashMap<String, EdmKeyPropertyRef>());
   private List<EdmKeyPropertyRef> keyPropertyRefsList;
 
-  public EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final EntityType entityType) {
+  public EdmEntityTypeImpl(final Edm edm, final FullQualifiedName name, final CsdlEntityType entityType) {
     super(edm, name, EdmTypeKind.ENTITY, entityType);
     this.entityType = entityType;
     hasStream = entityType.hasStream();
@@ -60,10 +60,10 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
       }
       if (baseType == null
           || (baseType.isAbstract() && ((EdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
-        final List<PropertyRef> key = entityType.getKey();
+        final List<CsdlPropertyRef> key = entityType.getKey();
         if (key != null) {
           final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();
-          for (PropertyRef ref : key) {
+          for (CsdlPropertyRef ref : key) {
             edmKey.add(new EdmKeyPropertyRefImpl(this, ref));
           }
           setEdmKeyPropertyRef(edmKey);

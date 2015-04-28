@@ -23,15 +23,15 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 
 public class EdmKeyPropertyRefImpl implements EdmKeyPropertyRef {
 
-  private final PropertyRef ref;
+  private final CsdlPropertyRef ref;
   private EdmEntityType edmEntityType;
   private EdmProperty property;
 
-  public EdmKeyPropertyRefImpl(final EdmEntityType edmEntityType, final PropertyRef ref) {
+  public EdmKeyPropertyRefImpl(final EdmEntityType edmEntityType, final CsdlPropertyRef ref) {
     this.edmEntityType = edmEntityType;
     this.ref = ref;
   }

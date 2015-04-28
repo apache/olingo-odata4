@@ -20,7 +20,7 @@ package org.apache.olingo.server.core;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -36,7 +36,7 @@ public class ServiceMetadataImpl implements ServiceMetadata {
   private final EdmProviderImpl edm;
   private final List<EdmxReference> references = new ArrayList<EdmxReference>();
 
-  public ServiceMetadataImpl(EdmProvider edmProvider, List<EdmxReference> references) {
+  public ServiceMetadataImpl(CsdlEdmProvider edmProvider, List<EdmxReference> references) {
     this.edm = new EdmProviderImpl(edmProvider);
     this.references.addAll(references);
   }

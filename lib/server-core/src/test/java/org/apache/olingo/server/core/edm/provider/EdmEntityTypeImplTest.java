@@ -37,12 +37,12 @@ import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.PropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.core.edm.EdmEntityTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
@@ -58,62 +58,62 @@ public class EdmEntityTypeImplTest {
 
   @Before
   public void setupTypes() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
-    EntityType baseType = new EntityType();
+    CsdlEntityType baseType = new CsdlEntityType();
     baseType.setName(baseName.getName());
-    List<Property> properties = new ArrayList<Property>();
-    properties.add(new Property().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    List<CsdlProperty> properties = new ArrayList<CsdlProperty>();
+    properties.add(new CsdlProperty().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     baseType.setProperties(properties);
-    List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setName("Id"));
+    List<CsdlPropertyRef> key = new ArrayList<CsdlPropertyRef>();
+    key.add(new CsdlPropertyRef().setName("Id"));
     baseType.setKey(key);
-    List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-    navigationProperties.add(new NavigationProperty().setName("nav1"));
+    List<CsdlNavigationProperty> navigationProperties = new ArrayList<CsdlNavigationProperty>();
+    navigationProperties.add(new CsdlNavigationProperty().setName("nav1"));
     baseType.setNavigationProperties(navigationProperties);
     when(provider.getEntityType(baseName)).thenReturn(baseType);
 
     this.baseType = new EdmEntityTypeImpl(edm, baseName, baseType);
 
     FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
-    EntityType type = new EntityType();
+    CsdlEntityType type = new CsdlEntityType();
     type.setName(typeName.getName());
     type.setBaseType(baseName);
-    List<Property> typeProperties = new ArrayList<Property>();
-    typeProperties.add(new Property().setName("address").setType(
+    List<CsdlProperty> typeProperties = new ArrayList<CsdlProperty>();
+    typeProperties.add(new CsdlProperty().setName("address").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    typeProperties.add(new Property().setName("email").setType(
+    typeProperties.add(new CsdlProperty().setName("email").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     type.setProperties(typeProperties);
-    List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
-    typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
+    List<CsdlNavigationProperty> typeNavigationProperties = new ArrayList<CsdlNavigationProperty>();
+    typeNavigationProperties.add(new CsdlNavigationProperty().setName("nav2"));
     type.setNavigationProperties(typeNavigationProperties);
     when(provider.getEntityType(typeName)).thenReturn(type);
 
     typeWithBaseType = new EdmEntityTypeImpl(edm, typeName, type);
 
     FullQualifiedName typeWithComplexKeyName = new FullQualifiedName("namespace", "typeName");
-    EntityType typeWithComplexKeyProvider = new EntityType();
+    CsdlEntityType typeWithComplexKeyProvider = new CsdlEntityType();
     typeWithComplexKeyProvider.setName(typeWithComplexKeyName.getName());
-    List<Property> typeWithComplexKeyProperties = new ArrayList<Property>();
-    typeWithComplexKeyProperties.add(new Property().setName("Id").setType(
+    List<CsdlProperty> typeWithComplexKeyProperties = new ArrayList<CsdlProperty>();
+    typeWithComplexKeyProperties.add(new CsdlProperty().setName("Id").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
 
-    List<Property> complexTypeProperties = new ArrayList<Property>();
-    complexTypeProperties.add(new Property().setName("ComplexPropName").setType(
+    List<CsdlProperty> complexTypeProperties = new ArrayList<CsdlProperty>();
+    complexTypeProperties.add(new CsdlProperty().setName("ComplexPropName").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     FullQualifiedName complexTypeName = new FullQualifiedName("namespace", "complexTypeName");
     when(provider.getComplexType(complexTypeName)).thenReturn(
-        new ComplexType().setName("complexTypeName").setProperties(complexTypeProperties));
+        new CsdlComplexType().setName("complexTypeName").setProperties(complexTypeProperties));
 
-    typeWithComplexKeyProperties.add(new Property().setName("Comp").setType(complexTypeName));
+    typeWithComplexKeyProperties.add(new CsdlProperty().setName("Comp").setType(complexTypeName));
     typeWithComplexKeyProvider.setProperties(typeWithComplexKeyProperties);
-    List<PropertyRef> keyForTypeWithComplexKey = new ArrayList<PropertyRef>();
-    keyForTypeWithComplexKey.add(new PropertyRef().setName("Id"));
-    keyForTypeWithComplexKey.add(new PropertyRef().setName("Comp/ComplexPropName").setAlias("alias"));
+    List<CsdlPropertyRef> keyForTypeWithComplexKey = new ArrayList<CsdlPropertyRef>();
+    keyForTypeWithComplexKey.add(new CsdlPropertyRef().setName("Id"));
+    keyForTypeWithComplexKey.add(new CsdlPropertyRef().setName("Comp/ComplexPropName").setAlias("alias"));
     typeWithComplexKeyProvider.setKey(keyForTypeWithComplexKey);
     when(provider.getEntityType(typeWithComplexKeyName)).thenReturn(typeWithComplexKeyProvider);
 
@@ -122,18 +122,18 @@ public class EdmEntityTypeImplTest {
 
   @Test
   public void testAbstractBaseTypeWithoutKey() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
-    EntityType baseType = new EntityType();
+    CsdlEntityType baseType = new CsdlEntityType();
     baseType.setName(baseName.getName());
-    List<Property> properties = new ArrayList<Property>();
-    properties.add(new Property().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    List<CsdlProperty> properties = new ArrayList<CsdlProperty>();
+    properties.add(new CsdlProperty().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     baseType.setProperties(properties);
-    List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-    navigationProperties.add(new NavigationProperty().setName("nav1"));
+    List<CsdlNavigationProperty> navigationProperties = new ArrayList<CsdlNavigationProperty>();
+    navigationProperties.add(new CsdlNavigationProperty().setName("nav1"));
     baseType.setNavigationProperties(navigationProperties);
     when(provider.getEntityType(baseName)).thenReturn(baseType);
     baseType.setAbstract(true);
@@ -144,20 +144,20 @@ public class EdmEntityTypeImplTest {
     assertEquals("Name", edmAbstarctBaseType.getPropertyNames().get(1));
 
     FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
-    EntityType type = new EntityType();
+    CsdlEntityType type = new CsdlEntityType();
     type.setName(typeName.getName());
     type.setBaseType(baseName);
-    List<Property> typeProperties = new ArrayList<Property>();
-    typeProperties.add(new Property().setName("address").setType(
+    List<CsdlProperty> typeProperties = new ArrayList<CsdlProperty>();
+    typeProperties.add(new CsdlProperty().setName("address").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    typeProperties.add(new Property().setName("email").setType(
+    typeProperties.add(new CsdlProperty().setName("email").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     type.setProperties(typeProperties);
-    List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setName("email"));
+    List<CsdlPropertyRef> key = new ArrayList<CsdlPropertyRef>();
+    key.add(new CsdlPropertyRef().setName("email"));
     type.setKey(key);
-    List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
-    typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
+    List<CsdlNavigationProperty> typeNavigationProperties = new ArrayList<CsdlNavigationProperty>();
+    typeNavigationProperties.add(new CsdlNavigationProperty().setName("nav2"));
     type.setNavigationProperties(typeNavigationProperties);
     when(provider.getEntityType(typeName)).thenReturn(type);
 
@@ -182,38 +182,38 @@ public class EdmEntityTypeImplTest {
 
   @Test
   public void testAbstractBaseTypeWithtKey() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
-    EntityType baseType = new EntityType();
+    CsdlEntityType baseType = new CsdlEntityType();
     baseType.setName(baseName.getName());
-    List<Property> properties = new ArrayList<Property>();
-    properties.add(new Property().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    properties.add(new Property().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    List<CsdlProperty> properties = new ArrayList<CsdlProperty>();
+    properties.add(new CsdlProperty().setName("Id").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
+    properties.add(new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     baseType.setProperties(properties);
-    List<PropertyRef> key = new ArrayList<PropertyRef>();
-    key.add(new PropertyRef().setName("Id"));
+    List<CsdlPropertyRef> key = new ArrayList<CsdlPropertyRef>();
+    key.add(new CsdlPropertyRef().setName("Id"));
     baseType.setKey(key);
-    List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-    navigationProperties.add(new NavigationProperty().setName("nav1"));
+    List<CsdlNavigationProperty> navigationProperties = new ArrayList<CsdlNavigationProperty>();
+    navigationProperties.add(new CsdlNavigationProperty().setName("nav1"));
     baseType.setNavigationProperties(navigationProperties);
     when(provider.getEntityType(baseName)).thenReturn(baseType);
     baseType.setAbstract(true);
     EdmEntityType edmAbstarctBaseType = new EdmEntityTypeImpl(edm, baseName, baseType);
 
     FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
-    EntityType type = new EntityType();
+    CsdlEntityType type = new CsdlEntityType();
     type.setName(typeName.getName());
     type.setBaseType(baseName);
-    List<Property> typeProperties = new ArrayList<Property>();
-    typeProperties.add(new Property().setName("address").setType(
+    List<CsdlProperty> typeProperties = new ArrayList<CsdlProperty>();
+    typeProperties.add(new CsdlProperty().setName("address").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    typeProperties.add(new Property().setName("email").setType(
+    typeProperties.add(new CsdlProperty().setName("email").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
     type.setProperties(typeProperties);
-    List<NavigationProperty> typeNavigationProperties = new ArrayList<NavigationProperty>();
-    typeNavigationProperties.add(new NavigationProperty().setName("nav2"));
+    List<CsdlNavigationProperty> typeNavigationProperties = new ArrayList<CsdlNavigationProperty>();
+    typeNavigationProperties.add(new CsdlNavigationProperty().setName("nav2"));
     type.setNavigationProperties(typeNavigationProperties);
     when(provider.getEntityType(typeName)).thenReturn(type);
     EdmEntityType edmType = new EdmEntityTypeImpl(edm, typeName, type);
@@ -366,25 +366,25 @@ public class EdmEntityTypeImplTest {
   @Test
   public void abstractTypeDoesNotNeedKey() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
-    EntityType entityType = new EntityType().setName("n").setAbstract(true);
+    CsdlEntityType entityType = new CsdlEntityType().setName("n").setAbstract(true);
     new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
   @Test(expected = EdmException.class)
   public void invalidBaseType() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
-    EntityType entityType = new EntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
+    CsdlEntityType entityType = new CsdlEntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
     EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
     instance.getBaseType();
   }
 
   @Test
   public void abstractTypeWithAbstractBaseTypeDoesNotNeedKey() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     FullQualifiedName baseName = new FullQualifiedName("n", "base");
-    when(provider.getEntityType(baseName)).thenReturn(new EntityType().setName("base").setAbstract(true));
-    EntityType entityType = new EntityType().setName("n").setAbstract(true).setBaseType(baseName);
+    when(provider.getEntityType(baseName)).thenReturn(new CsdlEntityType().setName("base").setAbstract(true));
+    CsdlEntityType entityType = new CsdlEntityType().setName("n").setAbstract(true).setBaseType(baseName);
     new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
   }
 

@@ -33,18 +33,18 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.api.edm.provider.Annotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 
 public class EdmAnnotationsImpl implements EdmAnnotations {
 
   private final Edm edm;
   private final EdmSchema schema;
-  private final Annotations annotationGroup;
+  private final CsdlAnnotations annotationGroup;
   private EdmAnnotationsTarget target;
   private List<EdmAnnotation> annotations;
 
-  public EdmAnnotationsImpl(final Edm edm, final EdmSchema schema, final Annotations annotationGroup) {
+  public EdmAnnotationsImpl(final Edm edm, final EdmSchema schema, final CsdlAnnotations annotationGroup) {
     this.edm = edm;
     this.schema = schema;
     this.annotationGroup = annotationGroup;
@@ -139,7 +139,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
   public List<EdmAnnotation> getAnnotations() {
     if (annotations == null) {
       List<EdmAnnotation> annotationsLocal = new ArrayList<EdmAnnotation>();
-      for (Annotation annotation : annotationGroup.getAnnotations()) {
+      for (CsdlAnnotation annotation : annotationGroup.getAnnotations()) {
         annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
       }
       

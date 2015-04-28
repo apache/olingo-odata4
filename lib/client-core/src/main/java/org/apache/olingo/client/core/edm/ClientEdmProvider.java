@@ -24,36 +24,36 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotations;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
-public class ClientEdmProvider extends AbstractEdmProvider {
+public class ClientEdmProvider extends CsdlAbstractEdmProvider {
 
-  private final Map<String, Schema> xmlSchemas;
+  private final Map<String, CsdlSchema> xmlSchemas;
 
-  public ClientEdmProvider(Map<String, Schema> xmlSchemas) {
+  public ClientEdmProvider(Map<String, CsdlSchema> xmlSchemas) {
     this.xmlSchemas = xmlSchemas;
   }
 
   @Override
-  public EnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
-    Schema schema = xmlSchemas.get(enumTypeName.getNamespace());
+  public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(enumTypeName.getNamespace());
     if (schema != null) {
       return schema.getEnumType(enumTypeName.getName());
     }
@@ -61,8 +61,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
-    Schema schema = xmlSchemas.get(typeDefinitionName.getNamespace());
+  public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(typeDefinitionName.getNamespace());
     if (schema != null) {
       return schema.getTypeDefinition(typeDefinitionName.getName());
     }
@@ -70,8 +70,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public EntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-    Schema schema = xmlSchemas.get(entityTypeName.getNamespace());
+  public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(entityTypeName.getNamespace());
     if (schema != null) {
       return schema.getEntityType(entityTypeName.getName());
     }
@@ -79,8 +79,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public ComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
-    Schema schema = xmlSchemas.get(complexTypeName.getNamespace());
+  public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(complexTypeName.getNamespace());
     if (schema != null) {
       return schema.getComplexType(complexTypeName.getName());
     }
@@ -88,8 +88,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public List<Action> getActions(final FullQualifiedName actionName) throws ODataException {
-    Schema schema = xmlSchemas.get(actionName.getNamespace());
+  public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(actionName.getNamespace());
     if (schema != null) {
       return schema.getActions(actionName.getName());
     }
@@ -97,8 +97,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public List<Function> getFunctions(final FullQualifiedName functionName) throws ODataException {
-    Schema schema = xmlSchemas.get(functionName.getNamespace());
+  public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(functionName.getNamespace());
     if (schema != null) {
       return schema.getFunctions(functionName.getName());
     }
@@ -106,8 +106,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public Term getTerm(final FullQualifiedName termName) throws ODataException {
-    Schema schema = xmlSchemas.get(termName.getNamespace());
+  public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(termName.getNamespace());
     if (schema != null) {
       return schema.getTerm(termName.getName());
     }
@@ -115,9 +115,9 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
       throws ODataException {
-    Schema schema = xmlSchemas.get(entityContainer.getNamespace());
+    CsdlSchema schema = xmlSchemas.get(entityContainer.getNamespace());
     if (schema != null) {
       return schema.getEntityContainer().getEntitySet(entitySetName);
     }
@@ -125,9 +125,9 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+  public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
       throws ODataException {
-    Schema schema = xmlSchemas.get(entityContainer.getNamespace());
+    CsdlSchema schema = xmlSchemas.get(entityContainer.getNamespace());
     if (schema != null) {
       return schema.getEntityContainer().getSingleton(singletonName);
     }
@@ -135,9 +135,9 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+  public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
       throws ODataException {
-    Schema schema = xmlSchemas.get(entityContainer.getNamespace());
+    CsdlSchema schema = xmlSchemas.get(entityContainer.getNamespace());
     if (schema != null) {
       return schema.getEntityContainer().getActionImport(actionImportName);
     }
@@ -145,9 +145,9 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+  public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
       throws ODataException {
-    Schema schema = xmlSchemas.get(entityContainer.getNamespace());
+    CsdlSchema schema = xmlSchemas.get(entityContainer.getNamespace());
     if (schema != null) {
       return schema.getEntityContainer().getFunctionImport(functionImportName);
     }
@@ -155,10 +155,11 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public EntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName) throws ODataException {
-    for (Schema schema : xmlSchemas.values()) {
+  public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+          throws ODataException {
+    for (CsdlSchema schema : xmlSchemas.values()) {
       if (schema.getEntityContainer() != null) {
-        return new EntityContainerInfo().setContainerName(entityContainerName).setExtendsContainer(
+        return new CsdlEntityContainerInfo().setContainerName(entityContainerName).setExtendsContainer(
             schema.getEntityContainer().getExtendsContainerFQN());
       }
     }
@@ -166,24 +167,24 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public List<AliasInfo> getAliasInfos() throws ODataException {
-    ArrayList<AliasInfo> aliasInfo = new ArrayList<AliasInfo>();
-    for (Schema schema : xmlSchemas.values()) {
+  public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
+    ArrayList<CsdlAliasInfo> aliasInfo = new ArrayList<CsdlAliasInfo>();
+    for (CsdlSchema schema : xmlSchemas.values()) {
       if (schema.getAlias() != null) {
-        aliasInfo.add(new AliasInfo().setNamespace(schema.getNamespace()).setAlias(schema.getAlias()));
+        aliasInfo.add(new CsdlAliasInfo().setNamespace(schema.getNamespace()).setAlias(schema.getAlias()));
       }
     }
     return aliasInfo;
   }
 
   @Override
-  public List<Schema> getSchemas() throws ODataException {
-    return new ArrayList<Schema>(xmlSchemas.values());
+  public List<CsdlSchema> getSchemas() throws ODataException {
+    return new ArrayList<CsdlSchema>(xmlSchemas.values());
   }
 
   @Override
-  public EntityContainer getEntityContainer() throws ODataException {
-    for (Schema schema : xmlSchemas.values()) {
+  public CsdlEntityContainer getEntityContainer() throws ODataException {
+    for (CsdlSchema schema : xmlSchemas.values()) {
       if (schema.getEntityContainer() != null) {
         return schema.getEntityContainer();
       }
@@ -192,8 +193,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public Annotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
-    Schema schema = xmlSchemas.get(targetName.getNamespace());
+  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
+    CsdlSchema schema = xmlSchemas.get(targetName.getNamespace());
     if (schema != null) {
       return schema.getAnnotationGroup(targetName.getName());
     }
@@ -201,8 +202,8 @@ public class ClientEdmProvider extends AbstractEdmProvider {
   }
 
   @Override
-  public Annotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
-    final Schema schema = xmlSchemas.get(annotatedName.getNamespace());
+  public CsdlAnnotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
+    final CsdlSchema schema = xmlSchemas.get(annotatedName.getNamespace());
     if (schema != null) {
       return schema.getAnnotatables().get(annotatedName.getName());
     }

@@ -20,13 +20,13 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
-import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 public class EdmReferentialConstraintImpl extends AbstractEdmAnnotatable implements EdmReferentialConstraint {
 
-  private final ReferentialConstraint constraint;
+  private final CsdlReferentialConstraint constraint;
   
-  public EdmReferentialConstraintImpl(final Edm edm, final ReferentialConstraint constraint) {
+  public EdmReferentialConstraintImpl(final Edm edm, final CsdlReferentialConstraint constraint) {
     super(edm, constraint);
     this.constraint = constraint;
   }

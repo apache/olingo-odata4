@@ -24,11 +24,11 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 
 public class EdmComplexTypeImpl extends AbstractEdmStructuredType implements EdmComplexType {
 
-  public EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final ComplexType complexType) {
+  public EdmComplexTypeImpl(final Edm edm, final FullQualifiedName name, final CsdlComplexType complexType) {
     super(edm, name, EdmTypeKind.COMPLEX, complexType);
   }
 

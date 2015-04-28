@@ -37,14 +37,14 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmProvider;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainer;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
@@ -56,10 +56,10 @@ public class EdmEntityContainerImplTest {
 
   @Before
   public void setup() {
-    EdmProvider provider = new CustomProvider();
+    CsdlEdmProvider provider = new CustomProvider();
     EdmProviderImpl edm = new EdmProviderImpl(provider);
-    EntityContainerInfo entityContainerInfo =
-        new EntityContainerInfo().setContainerName(new FullQualifiedName("space", "name"));
+    CsdlEntityContainerInfo entityContainerInfo =
+        new CsdlEntityContainerInfo().setContainerName(new FullQualifiedName("space", "name"));
     container = new EdmEntityContainerImpl(edm, provider, entityContainerInfo);
   }
 
@@ -125,15 +125,15 @@ public class EdmEntityContainerImplTest {
 
   @Test
   public void checkEdmExceptionConversion() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     FullQualifiedName containerName = new FullQualifiedName("space", "name");
     when(provider.getEntitySet(containerName, null)).thenThrow(new ODataException("msg"));
     when(provider.getSingleton(containerName, null)).thenThrow(new ODataException("msg"));
     when(provider.getFunctionImport(containerName, null)).thenThrow(new ODataException("msg"));
     when(provider.getActionImport(containerName, null)).thenThrow(new ODataException("msg"));
     EdmProviderImpl edm = new EdmProviderImpl(provider);
-    EntityContainerInfo entityContainerInfo =
-        new EntityContainerInfo().setContainerName(containerName);
+    CsdlEntityContainerInfo entityContainerInfo =
+        new CsdlEntityContainerInfo().setContainerName(containerName);
     EdmEntityContainer container = new EdmEntityContainerImpl(edm, provider, entityContainerInfo);
     boolean thrown = false;
     try {
@@ -232,64 +232,65 @@ public class EdmEntityContainerImplTest {
     assertNull(container.getEntitySet(null));
   }
 
-  private class CustomProvider extends AbstractEdmProvider {
+  private class CustomProvider extends CsdlAbstractEdmProvider {
     @Override
-    public EntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+    public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
         throws ODataException {
       if (entitySetName != null) {
-        return new EntitySet().setName("entitySetName");
+        return new CsdlEntitySet().setName("entitySetName");
       }
       return null;
     }
 
     @Override
-    public Singleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+    public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
         throws ODataException {
       if (singletonName != null) {
-        return new Singleton().setName("singletonName");
+        return new CsdlSingleton().setName("singletonName");
       }
       return null;
     }
 
     @Override
-    public ActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+    public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
         throws ODataException {
       if (actionImportName != null) {
-        return new ActionImport().setName("actionImportName");
+        return new CsdlActionImport().setName("actionImportName");
       }
       return null;
     }
 
     @Override
-    public FunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+    public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
+                                                final String functionImportName)
         throws ODataException {
       if (functionImportName != null) {
-        return new FunctionImport().setName("functionImportName");
+        return new CsdlFunctionImport().setName("functionImportName");
       }
       return null;
     }
 
     @Override
-    public EntityContainer getEntityContainer() throws ODataException {
-      EntityContainer container = new EntityContainer();
-      List<EntitySet> entitySets = new ArrayList<EntitySet>();
-      entitySets.add(new EntitySet().setName("entitySetName"));
-      entitySets.add(new EntitySet().setName("entitySetName2"));
+    public CsdlEntityContainer getEntityContainer() throws ODataException {
+      CsdlEntityContainer container = new CsdlEntityContainer();
+      List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
+      entitySets.add(new CsdlEntitySet().setName("entitySetName"));
+      entitySets.add(new CsdlEntitySet().setName("entitySetName2"));
       container.setEntitySets(entitySets);
 
-      List<Singleton> singletons = new ArrayList<Singleton>();
-      singletons.add(new Singleton().setName("singletonName"));
-      singletons.add(new Singleton().setName("singletonName2"));
+      List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
+      singletons.add(new CsdlSingleton().setName("singletonName"));
+      singletons.add(new CsdlSingleton().setName("singletonName2"));
       container.setSingletons(singletons);
 
-      List<ActionImport> actionImports = new ArrayList<ActionImport>();
-      actionImports.add(new ActionImport().setName("actionImportName"));
-      actionImports.add(new ActionImport().setName("actionImportName2"));
+      List<CsdlActionImport> actionImports = new ArrayList<CsdlActionImport>();
+      actionImports.add(new CsdlActionImport().setName("actionImportName"));
+      actionImports.add(new CsdlActionImport().setName("actionImportName2"));
       container.setActionImports(actionImports);
 
-      List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
-      functionImports.add(new FunctionImport().setName("functionImportName"));
-      functionImports.add(new FunctionImport().setName("functionImportName2"));
+      List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
+      functionImports.add(new CsdlFunctionImport().setName("functionImportName"));
+      functionImports.add(new CsdlFunctionImport().setName("functionImportName2"));
       container.setFunctionImports(functionImports);
 
       return container;

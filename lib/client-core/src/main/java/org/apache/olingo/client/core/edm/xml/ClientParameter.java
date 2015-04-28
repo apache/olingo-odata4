@@ -23,14 +23,14 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientParameter.ParameterDeserializer.class)
-class ClientParameter extends Parameter {
+class ClientParameter extends CsdlParameter {
 
   private static final long serialVersionUID = 7119478691341167904L;
 

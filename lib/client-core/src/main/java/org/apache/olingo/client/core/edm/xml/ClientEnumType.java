@@ -22,14 +22,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientEnumType.EnumTypeDeserializer.class)
-class ClientEnumType extends EnumType {
+class ClientEnumType extends CsdlEnumType {
 
   private static final long serialVersionUID = 9191189755592743333L;
 

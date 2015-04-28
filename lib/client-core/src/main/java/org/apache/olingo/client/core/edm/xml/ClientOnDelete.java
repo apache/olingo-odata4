@@ -22,28 +22,28 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.commons.api.edm.provider.OnDelete;
-import org.apache.olingo.commons.api.edm.provider.OnDeleteAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDeleteAction;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientOnDelete.OnDeleteDeserializer.class)
-class ClientOnDelete extends OnDelete {
+class ClientOnDelete extends CsdlOnDelete {
 
   private static final long serialVersionUID = -7130889202653716784L;
 
-  static class OnDeleteDeserializer extends AbstractClientEdmDeserializer<OnDelete> {
+  static class OnDeleteDeserializer extends AbstractClientEdmDeserializer<CsdlOnDelete> {
     @Override
-    protected OnDelete doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlOnDelete doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
-      final OnDelete ondelete = new ClientOnDelete();
+      final CsdlOnDelete ondelete = new ClientOnDelete();
 
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();
         if (token == JsonToken.FIELD_NAME) {
           if ("Action".equals(jp.getCurrentName())) {
-            OnDeleteAction action = OnDeleteAction.valueOf(jp.nextTextValue());
+            CsdlOnDeleteAction action = CsdlOnDeleteAction.valueOf(jp.nextTextValue());
             ondelete.setAction(action);
           }
         }

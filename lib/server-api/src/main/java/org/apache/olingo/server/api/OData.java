@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
@@ -93,7 +93,7 @@ public abstract class OData {
    * @param edmProvider a custom or default implementation for creating metadata
    * @param references list of edmx references
    */
-  public abstract ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references);
+  public abstract ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references);
 
   /**
    * Creates a new URI helper object for performing URI-related tasks.

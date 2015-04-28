@@ -33,10 +33,10 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
@@ -175,16 +175,16 @@ public class ContextURLBuilderTest {
 
   @Test
   public void buildComplexType() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
-    ComplexType baseComplexType = new ComplexType();
-    List<Property> baseProperties = new ArrayList<Property>();
-    baseProperties.add(new Property().setName("prop1").setType(
+    CsdlComplexType baseComplexType = new CsdlComplexType();
+    List<CsdlProperty> baseProperties = new ArrayList<CsdlProperty>();
+    baseProperties.add(new CsdlProperty().setName("prop1").setType(
         EdmPrimitiveTypeKind.String.getFullQualifiedName()));
-    List<NavigationProperty> baseNavigationProperties = new ArrayList<NavigationProperty>();
-    baseNavigationProperties.add(new NavigationProperty().setName("nav1"));
+    List<CsdlNavigationProperty> baseNavigationProperties = new ArrayList<CsdlNavigationProperty>();
+    baseNavigationProperties.add(new CsdlNavigationProperty().setName("nav1"));
     baseComplexType.setName("BaseTypeName").setAbstract(false).setOpenType(false).setProperties(baseProperties)
         .setNavigationProperties(baseNavigationProperties);
     when(provider.getComplexType(baseName)).thenReturn(baseComplexType);

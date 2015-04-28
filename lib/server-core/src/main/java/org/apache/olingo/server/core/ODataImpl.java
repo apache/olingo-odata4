@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
@@ -76,7 +76,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ServiceMetadata createServiceMetadata(EdmProvider edmProvider, List<EdmxReference> references) {
+  public ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references) {
     return new ServiceMetadataImpl(edmProvider, references);
   }
 

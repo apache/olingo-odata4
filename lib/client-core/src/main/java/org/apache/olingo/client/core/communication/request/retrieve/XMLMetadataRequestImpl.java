@@ -31,9 +31,9 @@ import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.api.edm.provider.Annotations;
-import org.apache.olingo.commons.api.edm.provider.Schema;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class XMLMetadataRequestImpl
@@ -62,7 +62,7 @@ public class XMLMetadataRequestImpl
 
       // edmx:Include
       for (Include include : reference.getIncludes()) {
-        final Schema includedSchema = includeMetadata.getSchema(include.getNamespace());
+        final CsdlSchema includedSchema = includeMetadata.getSchema(include.getNamespace());
         if (includedSchema != null) {
           response.getBody().getSchemas().add(includedSchema);
           if (StringUtils.isNotBlank(include.getAlias())) {
@@ -73,14 +73,14 @@ public class XMLMetadataRequestImpl
 
       // edmx:IncludeAnnotations
       for (IncludeAnnotations include : reference.getIncludeAnnotations()) {
-        for (Schema schema : includeMetadata.getSchemas()) {
+        for (CsdlSchema schema : includeMetadata.getSchemas()) {
           // create empty schema that will be fed with edm:Annotations that match the criteria in IncludeAnnotations
-          final Schema forInclusion = new Schema();
+          final CsdlSchema forInclusion = new CsdlSchema();
           forInclusion.setNamespace(schema.getNamespace());
           forInclusion.setAlias(schema.getAlias());
 
           // process all edm:Annotations in each schema of the included document
-          for (Annotations annotationGroup : schema.getAnnotationGroups()) {
+          for (CsdlAnnotations annotationGroup : schema.getAnnotationGroups()) {
             // take into account only when (TargetNamespace was either not provided or matches) and
             // (Qualifier was either not provided or matches)
             if ((StringUtils.isBlank(include.getTargetNamespace())
@@ -89,11 +89,11 @@ public class XMLMetadataRequestImpl
                 && (StringUtils.isBlank(include.getQualifier())
                 || include.getQualifier().equals(annotationGroup.getQualifier()))) {
 
-              final Annotations toBeIncluded = new Annotations();
+              final CsdlAnnotations toBeIncluded = new CsdlAnnotations();
               toBeIncluded.setTarget(annotationGroup.getTarget());
               toBeIncluded.setQualifier(annotationGroup.getQualifier());
               // only import annotations with terms matching the given TermNamespace
-              for (Annotation annotation : annotationGroup.getAnnotations()) {
+              for (CsdlAnnotation annotation : annotationGroup.getAnnotations()) {
                 if (include.getTermNamespace().equals(StringUtils.substringBeforeLast(annotation.getTerm(), "."))) {
                   toBeIncluded.getAnnotations().add(annotation);
                 }

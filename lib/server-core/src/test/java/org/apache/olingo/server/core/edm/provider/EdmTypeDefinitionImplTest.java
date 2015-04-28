@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeDefinitionImpl;
@@ -39,8 +39,8 @@ public class EdmTypeDefinitionImplTest {
   @Test
   public void typeDefOnStringNoFacets() throws Exception {
     final FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    final TypeDefinition providerTypeDef =
-        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
+    final CsdlTypeDefinition providerTypeDef =
+        new CsdlTypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("Edm", "String"));
     final EdmTypeDefinition typeDefImpl =
         new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
 
@@ -68,8 +68,8 @@ public class EdmTypeDefinitionImplTest {
   @Test(expected = EdmException.class)
   public void invalidTypeResultsInEdmException() throws Exception {
     FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
-    TypeDefinition providerTypeDef =
-        new TypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
+    CsdlTypeDefinition providerTypeDef =
+        new CsdlTypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
     EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
     def.getUnderlyingType();
   }

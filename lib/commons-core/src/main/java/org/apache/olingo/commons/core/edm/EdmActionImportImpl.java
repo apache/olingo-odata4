@@ -22,13 +22,13 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 
 public class EdmActionImportImpl extends AbstractEdmOperationImport implements EdmActionImport {
 
-  private final ActionImport actionImport;
+  private final CsdlActionImport actionImport;
 
-  public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final ActionImport actionImport) {
+  public EdmActionImportImpl(final Edm edm, final EdmEntityContainer container, final CsdlActionImport actionImport) {
 
     super(edm, container, actionImport);
     this.actionImport = actionImport;

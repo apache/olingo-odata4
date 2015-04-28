@@ -23,15 +23,15 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 
 public class EdmReturnTypeImpl implements EdmReturnType {
 
-  private final ReturnType returnType;
+  private final CsdlReturnType returnType;
   private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
   
-  public EdmReturnTypeImpl(final Edm edm, final ReturnType returnType) {
+  public EdmReturnTypeImpl(final Edm edm, final CsdlReturnType returnType) {
     this.returnType = returnType;
     this.typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(returnType.getType()).build();
   }

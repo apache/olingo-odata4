@@ -29,19 +29,19 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.ActionImport;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntitySet;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.Property;
-import org.apache.olingo.commons.api.edm.provider.Singleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class MetadataParserTest {
   final String NS = "Microsoft.OData.SampleService.Models.TripPin";
   final FullQualifiedName NSF = new FullQualifiedName(NS);
 
-  EdmProvider provider = null;
+  CsdlEdmProvider provider = null;
 
   @Before
   public void setUp() throws Exception {
@@ -60,7 +60,7 @@ public class MetadataParserTest {
   @Test
   public void testAction() throws ODataException {
     // test action
-    List<Action> actions = provider.getActions(new FullQualifiedName(NS, "ResetDataSource"));
+    List<CsdlAction> actions = provider.getActions(new FullQualifiedName(NS, "ResetDataSource"));
     assertNotNull(actions);
     assertEquals(1, actions.size());
   }
@@ -68,7 +68,7 @@ public class MetadataParserTest {
   @Test
   public void testFunction() throws ODataException {
     // test function
-    List<Function> functions = provider
+    List<CsdlFunction> functions = provider
         .getFunctions(new FullQualifiedName(NS, "GetFavoriteAirline"));
     assertNotNull(functions);
     assertEquals(1, functions.size());
@@ -79,7 +79,7 @@ public class MetadataParserTest {
         "person/Trips/PlanItems/Microsoft.OData.SampleService.Models.TripPin.Flight/Airline",
         functions.get(0).getEntitySetPath());
 
-    List<Parameter> parameters = functions.get(0).getParameters();
+    List<CsdlParameter> parameters = functions.get(0).getParameters();
     assertNotNull(parameters);
     assertEquals(1, parameters.size());
     assertEquals("person", parameters.get(0).getName());
@@ -95,7 +95,7 @@ public class MetadataParserTest {
   @Test
   public void testEnumType() throws ODataException {
     // test enum type
-    EnumType enumType = provider.getEnumType(new FullQualifiedName(NS, "PersonGender"));
+    CsdlEnumType enumType = provider.getEnumType(new FullQualifiedName(NS, "PersonGender"));
     assertNotNull(enumType);
     assertEquals("Male", enumType.getMembers().get(0).getName());
     assertEquals("Female", enumType.getMembers().get(1).getName());
@@ -108,7 +108,7 @@ public class MetadataParserTest {
   @Test
   public void testEntityType() throws ODataException {
     // test Entity Type
-    EntityType et = provider.getEntityType(new FullQualifiedName(NS, "Photo"));
+    CsdlEntityType et = provider.getEntityType(new FullQualifiedName(NS, "Photo"));
     assertNotNull(et);
     assertNotNull(et.getKey());
     assertEquals("Id", et.getKey().get(0).getName());
@@ -122,10 +122,10 @@ public class MetadataParserTest {
   @Test
   public void testComplexType() throws ODataException {
     // Test Complex Type
-    ComplexType ct = provider.getComplexType(new FullQualifiedName(NS, "City"));
+    CsdlComplexType ct = provider.getComplexType(new FullQualifiedName(NS, "City"));
     assertNotNull(ct);
     assertEquals(3, ct.getProperties().size());
-    Property p = ct.getProperties().get(0);
+    CsdlProperty p = ct.getProperties().get(0);
     assertEquals("CountryRegion", p.getName());
     assertEquals("Edm.String", p.getType());
     assertEquals(false, p.isNullable());
@@ -139,11 +139,11 @@ public class MetadataParserTest {
 
   @Test
   public void testEntitySet() throws Exception {
-    EntitySet es = provider.getEntitySet(NSF, "People");
+    CsdlEntitySet es = provider.getEntitySet(NSF, "People");
     assertNotNull(es);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Person",es.getType());
 
-    List<NavigationPropertyBinding> bindings = es.getNavigationPropertyBindings();
+    List<CsdlNavigationPropertyBinding> bindings = es.getNavigationPropertyBindings();
     assertNotNull(bindings);
     assertEquals(6, bindings.size());
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Flight/From", bindings.get(2)
@@ -153,7 +153,7 @@ public class MetadataParserTest {
 
   @Test
   public void testFunctionImport() throws Exception {
-    FunctionImport fi = provider.getFunctionImport(NSF, "GetNearestAirport");
+    CsdlFunctionImport fi = provider.getFunctionImport(NSF, "GetNearestAirport");
     assertNotNull(fi);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.GetNearestAirport", fi.getFunction());
     assertEquals("Airports", fi.getEntitySet());
@@ -162,7 +162,7 @@ public class MetadataParserTest {
 
   @Test
   public void testActionImport() throws Exception {
-    ActionImport ai = provider.getActionImport(NSF, "ResetDataSource");
+    CsdlActionImport ai = provider.getActionImport(NSF, "ResetDataSource");
     assertNotNull(ai);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.ResetDataSource", ai.getAction());
     assertNull(ai.getEntitySet());
@@ -170,12 +170,12 @@ public class MetadataParserTest {
 
   @Test
   public void testSingleton() throws Exception {
-    Singleton single = this.provider.getSingleton(NSF, "Me");
+    CsdlSingleton single = this.provider.getSingleton(NSF, "Me");
     assertNotNull(single);
 
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Person",single.getType());
 
-    List<NavigationPropertyBinding> bindings = single.getNavigationPropertyBindings();
+    List<CsdlNavigationPropertyBinding> bindings = single.getNavigationPropertyBindings();
     assertNotNull(bindings);
     assertEquals(6, bindings.size());
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Flight/From", bindings.get(2).getPath());

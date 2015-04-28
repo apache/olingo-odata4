@@ -19,9 +19,9 @@
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
-public interface IsOf extends DynamicAnnotationExpression, Annotatable {
+public interface IsOf extends DynamicAnnotationExpression, CsdlAnnotatable {
 
   Integer getMaxLength();
 

@@ -22,21 +22,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.commons.api.edm.provider.ReferentialConstraint;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientReferentialConstraint.ReferentialConstraintDeserializer.class)
-class ClientReferentialConstraint extends ReferentialConstraint {
+class ClientReferentialConstraint extends CsdlReferentialConstraint {
 
   private static final long serialVersionUID = -5822115908069878139L;
 
-  static class ReferentialConstraintDeserializer extends AbstractClientEdmDeserializer<ReferentialConstraint> {
+  static class ReferentialConstraintDeserializer extends AbstractClientEdmDeserializer<CsdlReferentialConstraint> {
     @Override
-    protected ReferentialConstraint doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlReferentialConstraint doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
-      final ReferentialConstraint refConst = new ClientReferentialConstraint();
+      final CsdlReferentialConstraint refConst = new ClientReferentialConstraint();
 
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();

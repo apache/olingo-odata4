@@ -39,38 +39,38 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.AliasInfo;
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
-import org.apache.olingo.commons.api.edm.provider.Annotations;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.EntityType;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.Schema;
-import org.apache.olingo.commons.api.edm.provider.Term;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
 public class EdmProviderImpl extends AbstractEdm {
 
-  private final EdmProvider provider;
-  private final Map<FullQualifiedName, List<Action>> actionsMap = 
-      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<Action>>());
-  private final Map<FullQualifiedName, List<Function>> functionsMap = 
-      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<Function>>());
+  private final CsdlEdmProvider provider;
+  private final Map<FullQualifiedName, List<CsdlAction>> actionsMap =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<CsdlAction>>());
+  private final Map<FullQualifiedName, List<CsdlFunction>> functionsMap =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<CsdlFunction>>());
 
-  public EdmProviderImpl(final EdmProvider provider) {
+  public EdmProviderImpl(final CsdlEdmProvider provider) {
     this.provider = provider;
   }
 
   @Override
   public EdmEntityContainer createEntityContainer(final FullQualifiedName containerName) {
     try {
-      EntityContainerInfo entityContainerInfo = provider.getEntityContainerInfo(containerName);
+      CsdlEntityContainerInfo entityContainerInfo = provider.getEntityContainerInfo(containerName);
       if (entityContainerInfo != null) {
         return new EdmEntityContainerImpl(this, provider, entityContainerInfo);
       }
@@ -83,7 +83,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   public EdmEnumType createEnumType(final FullQualifiedName enumName) {
     try {
-      EnumType enumType = provider.getEnumType(enumName);
+      CsdlEnumType enumType = provider.getEnumType(enumName);
       if (enumType != null) {
         return new EdmEnumTypeImpl(this, enumName, enumType);
       }
@@ -96,7 +96,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   public EdmTypeDefinition createTypeDefinition(final FullQualifiedName typeDefinitionName) {
     try {
-      TypeDefinition typeDefinition = provider.getTypeDefinition(typeDefinitionName);
+      CsdlTypeDefinition typeDefinition = provider.getTypeDefinition(typeDefinitionName);
       if (typeDefinition != null) {
         return new EdmTypeDefinitionImpl(this, typeDefinitionName, typeDefinition);
       }
@@ -109,7 +109,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   public EdmEntityType createEntityType(final FullQualifiedName entityTypeName) {
     try {
-      EntityType entityType = provider.getEntityType(entityTypeName);
+      CsdlEntityType entityType = provider.getEntityType(entityTypeName);
       if (entityType != null) {
         return new EdmEntityTypeImpl(this, entityTypeName, entityType);
       }
@@ -122,7 +122,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   public EdmComplexType createComplexType(final FullQualifiedName complexTypeName) {
     try {
-      final ComplexType complexType = provider.getComplexType(complexTypeName);
+      final CsdlComplexType complexType = provider.getComplexType(complexTypeName);
       if (complexType != null) {
         return new EdmComplexTypeImpl(this, complexTypeName, complexType);
       }
@@ -137,7 +137,7 @@ public class EdmProviderImpl extends AbstractEdm {
       final FullQualifiedName bindingParameterTypeName, final Boolean isBindingParameterCollection) {
 
     try {
-      List<Action> actions = actionsMap.get(actionName);
+      List<CsdlAction> actions = actionsMap.get(actionName);
       if (actions == null) {
         actions = provider.getActions(actionName);
         if (actions == null) {
@@ -147,10 +147,10 @@ public class EdmProviderImpl extends AbstractEdm {
         }
       }
       // Search for bound action where binding parameter matches
-      for (Action action : actions) {
+      for (CsdlAction action : actions) {
         if (action.isBound()) {
-          final List<Parameter> parameters = action.getParameters();
-          final Parameter parameter = parameters.get(0);
+          final List<CsdlParameter> parameters = action.getParameters();
+          final CsdlParameter parameter = parameters.get(0);
           if (bindingParameterTypeName.equals(parameter.getTypeFQN())
               && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
@@ -171,7 +171,7 @@ public class EdmProviderImpl extends AbstractEdm {
       final List<String> parameterNames) {
 
     try {
-      List<Function> functions = functionsMap.get(functionName);
+      List<CsdlFunction> functions = functionsMap.get(functionName);
       if (functions == null) {
         functions = provider.getFunctions(functionName);
         if (functions == null) {
@@ -182,13 +182,13 @@ public class EdmProviderImpl extends AbstractEdm {
       }
       final List<String> parameterNamesCopy =
           parameterNames == null ? Collections.<String> emptyList() : parameterNames;
-      for (Function function : functions) {
+      for (CsdlFunction function : functions) {
         if (function.isBound()) {
-          List<Parameter> providerParameters = function.getParameters();
+          List<CsdlParameter> providerParameters = function.getParameters();
           if (providerParameters == null || providerParameters.size() == 0) {
             throw new EdmException("No parameter specified for bound function: " + functionName);
           }
-          final Parameter bindingParameter = providerParameters.get(0);
+          final CsdlParameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
               && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
 
@@ -214,9 +214,9 @@ public class EdmProviderImpl extends AbstractEdm {
   protected Map<String, String> createAliasToNamespaceInfo() {
     final Map<String, String> aliasToNamespaceInfos = new HashMap<String, String>();
     try {
-      final List<AliasInfo> aliasInfos = provider.getAliasInfos();
+      final List<CsdlAliasInfo> aliasInfos = provider.getAliasInfos();
       if (aliasInfos != null) {
-        for (AliasInfo info : aliasInfos) {
+        for (CsdlAliasInfo info : aliasInfos) {
           aliasToNamespaceInfos.put(info.getAlias(), info.getNamespace());
         }
       }
@@ -229,7 +229,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected EdmAction createUnboundAction(final FullQualifiedName actionName) {
     try {
-      List<Action> actions = actionsMap.get(actionName);
+      List<CsdlAction> actions = actionsMap.get(actionName);
       if (actions == null) {
         actions = provider.getActions(actionName);
         if (actions == null) {
@@ -239,7 +239,7 @@ public class EdmProviderImpl extends AbstractEdm {
         }
       }
       // Search for first unbound action
-      for (Action action : actions) {
+      for (CsdlAction action : actions) {
         if (!action.isBound()) {
           return new EdmActionImpl(this, actionName, action);
         }
@@ -255,7 +255,7 @@ public class EdmProviderImpl extends AbstractEdm {
     List<EdmFunction> result = new ArrayList<EdmFunction>();
 
     try {
-      List<Function> functions = functionsMap.get(functionName);
+      List<CsdlFunction> functions = functionsMap.get(functionName);
       if (functions == null) {
         functions = provider.getFunctions(functionName);
         if (functions != null) {
@@ -263,7 +263,7 @@ public class EdmProviderImpl extends AbstractEdm {
         }
       }
       if (functions != null) {
-        for (Function function : functions) {
+        for (CsdlFunction function : functions) {
           if (!function.isBound()) {
             result.add(new EdmFunctionImpl(this, functionName, function));
           }
@@ -279,7 +279,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected EdmFunction createUnboundFunction(final FullQualifiedName functionName, final List<String> parameterNames) {
     try {
-      List<Function> functions = functionsMap.get(functionName);
+      List<CsdlFunction> functions = functionsMap.get(functionName);
       if (functions == null) {
         functions = provider.getFunctions(functionName);
         if (functions == null) {
@@ -291,15 +291,15 @@ public class EdmProviderImpl extends AbstractEdm {
 
       final List<String> parameterNamesCopy =
           parameterNames == null ? Collections.<String> emptyList() : parameterNames;
-      for (Function function : functions) {
+      for (CsdlFunction function : functions) {
         if (!function.isBound()) {
-          List<Parameter> providerParameters = function.getParameters();
+          List<CsdlParameter> providerParameters = function.getParameters();
           if (providerParameters == null) {
             providerParameters = Collections.emptyList();
           }
           if (parameterNamesCopy.size() == providerParameters.size()) {
             final List<String> functionParameterNames = new ArrayList<String>();
-            for (Parameter parameter : providerParameters) {
+            for (CsdlParameter parameter : providerParameters) {
               functionParameterNames.add(parameter.getName());
             }
 
@@ -319,7 +319,7 @@ public class EdmProviderImpl extends AbstractEdm {
   protected Map<String, EdmSchema> createSchemas() {
     try {
       final Map<String, EdmSchema> providerSchemas = new LinkedHashMap<String, EdmSchema>();
-      for (Schema schema : provider.getSchemas()) {
+      for (CsdlSchema schema : provider.getSchemas()) {
         providerSchemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
       }
       return providerSchemas;
@@ -331,7 +331,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected EdmTerm createTerm(final FullQualifiedName termName) {
     try {
-      Term providerTerm = provider.getTerm(termName);
+      CsdlTerm providerTerm = provider.getTerm(termName);
       if (providerTerm != null) {
         return new EdmTermImpl(this, termName.getNamespace(), providerTerm);
       }
@@ -346,7 +346,7 @@ public class EdmProviderImpl extends AbstractEdm {
   protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
     try {
       EdmSchema schema = getSchema(targetName.getNamespace());
-      Annotations providerGroup = provider.getAnnotationsGroup(targetName);
+      CsdlAnnotations providerGroup = provider.getAnnotationsGroup(targetName);
       if (providerGroup != null) {
         return new EdmAnnotationsImpl(this, schema, providerGroup);
       }
@@ -359,10 +359,10 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
     try {
-      Annotatable providerAnnotatable = provider.getAnnoatatable(annotatedName);
+      CsdlAnnotatable providerAnnotatable = provider.getAnnoatatable(annotatedName);
       if (providerAnnotatable != null && providerAnnotatable.getAnnotations() != null) {
         List<EdmAnnotation> result = new ArrayList<EdmAnnotation>();
-        for(Annotation annotation : providerAnnotatable.getAnnotations()){
+        for(CsdlAnnotation annotation : providerAnnotatable.getAnnotations()){
           //Load Term
           getTerm(new FullQualifiedName(annotation.getTerm()));
           result.add(new EdmAnnotationImpl(this, annotation));

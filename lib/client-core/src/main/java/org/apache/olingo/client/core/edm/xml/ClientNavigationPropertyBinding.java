@@ -22,30 +22,31 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.commons.api.edm.provider.NavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientNavigationPropertyBinding.NavigationPropertyBindingDeserializer.class)
-class ClientNavigationPropertyBinding extends NavigationPropertyBinding {
+class ClientNavigationPropertyBinding extends CsdlNavigationPropertyBinding {
 
   private static final long serialVersionUID = -7056978592235483660L;
 
   @Override
-  public NavigationPropertyBinding setPath(final String path) {
+  public CsdlNavigationPropertyBinding setPath(final String path) {
     super.setPath(path);
     return this;
   }
 
   @Override
-  public NavigationPropertyBinding setTarget(final String target) {
+  public CsdlNavigationPropertyBinding setTarget(final String target) {
     super.setTarget(target);
     return this;
   }
 
-  static class NavigationPropertyBindingDeserializer extends AbstractClientEdmDeserializer<NavigationPropertyBinding> {
+  static class NavigationPropertyBindingDeserializer extends
+          AbstractClientEdmDeserializer<CsdlNavigationPropertyBinding> {
     @Override
-    protected NavigationPropertyBinding doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlNavigationPropertyBinding doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
       final ClientNavigationPropertyBinding member = new ClientNavigationPropertyBinding();

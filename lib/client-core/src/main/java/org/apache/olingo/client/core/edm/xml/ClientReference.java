@@ -29,23 +29,23 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.client.api.edm.xml.IncludeAnnotations;
 import org.apache.olingo.client.api.edm.xml.Reference;
-import org.apache.olingo.commons.api.edm.provider.AbstractEdmItem;
-import org.apache.olingo.commons.api.edm.provider.Annotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientReference.ReferenceDeserializer.class)
-class ClientReference extends AbstractEdmItem implements Reference {
+class ClientReference extends CsdlAbstractEdmItem implements Reference {
 
   private static final long serialVersionUID = 7720274712545267654L;
 
   private URI uri;
   private final List<Include> includes = new ArrayList<Include>();
   private final List<IncludeAnnotations> includeAnnotations = new ArrayList<IncludeAnnotations>();
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
+  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
-  public List<Annotation> getAnnotations() {
+  public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
   

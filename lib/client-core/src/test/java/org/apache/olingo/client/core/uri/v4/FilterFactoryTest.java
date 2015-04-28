@@ -33,7 +33,7 @@ import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EnumType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class FilterFactoryTest extends AbstractTest {
   @Test
   public void has() {
     final EdmEnumType pattern =
-        new EdmEnumTypeImpl(null, new FullQualifiedName("Sales", "Pattern"), new EnumType());
+        new EdmEnumTypeImpl(null, new FullQualifiedName("Sales", "Pattern"), new CsdlEnumType());
     final URIFilter filter = getFilterFactory().has(getFilterArgFactory().property("style"), pattern, "Yellow");
 
     assertEquals("(style has Sales.Pattern'Yellow')", filter.build());

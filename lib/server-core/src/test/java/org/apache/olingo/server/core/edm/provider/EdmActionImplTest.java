@@ -37,9 +37,9 @@ import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.provider.Action;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.EdmActionImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
@@ -54,21 +54,21 @@ public class EdmActionImplTest {
   @Before
   public void setup() {
     EdmProviderImpl provider = mock(EdmProviderImpl.class);
-    List<Parameter> parameters = new ArrayList<Parameter>();
-    parameters.add(new Parameter().setName("Id").setType(new FullQualifiedName("namespace", "name")));
+    List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
+    parameters.add(new CsdlParameter().setName("Id").setType(new FullQualifiedName("namespace", "name")));
     FullQualifiedName action1Name = new FullQualifiedName("namespace", "action1");
-    Action action1 = new Action().setName("action1").setBound(true).setParameters(parameters);
+    CsdlAction action1 = new CsdlAction().setName("action1").setBound(true).setParameters(parameters);
     actionImpl1 = new EdmActionImpl(provider, action1Name, action1);
 
     FullQualifiedName action2Name = new FullQualifiedName("namespace", "action2");
     FullQualifiedName returnTypeName = new FullQualifiedName("Edm", "String");
-    ReturnType returnType = new ReturnType().setType(returnTypeName);
-    Action action2 = new Action().setName("action2").setParameters(parameters).setReturnType(returnType);
+    CsdlReturnType returnType = new CsdlReturnType().setType(returnTypeName);
+    CsdlAction action2 = new CsdlAction().setName("action2").setParameters(parameters).setReturnType(returnType);
     actionImpl2 = new EdmActionImpl(provider, action2Name, action2);
 
     FullQualifiedName action3Name = new FullQualifiedName("namespace", "action3");
-    Action action3 =
-        new Action().setName("action3").setParameters(parameters).setReturnType(returnType).setEntitySetPath(
+    CsdlAction action3 =
+        new CsdlAction().setName("action3").setParameters(parameters).setReturnType(returnType).setEntitySetPath(
             "path/Id");
     actionImpl3 = new EdmActionImpl(provider, action3Name, action3);
   }

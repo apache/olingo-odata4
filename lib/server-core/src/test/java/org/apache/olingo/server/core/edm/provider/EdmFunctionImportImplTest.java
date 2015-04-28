@@ -23,12 +23,12 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.EdmProvider;
-import org.apache.olingo.commons.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.commons.api.edm.provider.Function;
-import org.apache.olingo.commons.api.edm.provider.FunctionImport;
-import org.apache.olingo.commons.api.edm.provider.Parameter;
-import org.apache.olingo.commons.api.edm.provider.ReturnType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.EdmFunctionImportImpl;
@@ -48,25 +48,25 @@ public class EdmFunctionImportImplTest {
 
   @Test
   public void functionImport() throws Exception {
-    EdmProvider provider = mock(EdmProvider.class);
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     final FullQualifiedName functionName = new FullQualifiedName("ns", "function");
-    final Function functionProvider = new Function()
+    final CsdlFunction functionProvider = new CsdlFunction()
         .setName(functionName.getName())
-        .setParameters(Collections.<Parameter> emptyList())
+        .setParameters(Collections.<CsdlParameter> emptyList())
         .setBound(false)
         .setComposable(false)
-        .setReturnType(new ReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
+        .setReturnType(new CsdlReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName()));
     when(provider.getFunctions(functionName)).thenReturn(Arrays.asList(functionProvider));
 
     final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
-    final EntityContainerInfo containerInfo = new EntityContainerInfo().setContainerName(containerName);
+    final CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(containerName);
     when(provider.getEntityContainerInfo(containerName)).thenReturn(containerInfo);
     final EdmEntityContainer entityContainer = new EdmEntityContainerImpl(edm, provider, containerInfo);
 
     final String functionImportName = "functionImport";
-    final FunctionImport functionImportProvider = new FunctionImport()
+    final CsdlFunctionImport functionImportProvider = new CsdlFunctionImport()
         .setName(functionImportName)
         .setFunction(functionName)
         .setIncludeInServiceDocument(true);

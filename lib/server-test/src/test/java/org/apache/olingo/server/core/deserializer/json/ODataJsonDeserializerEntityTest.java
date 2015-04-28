@@ -45,7 +45,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.Mapping;
+import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -656,7 +656,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     propertyNames.add("PropertyDate");
     propertyNames.add("PropertyDateTimeOffset");
     when(entityType.getPropertyNames()).thenReturn(propertyNames);
-    Mapping mapping = new Mapping().setMappedJavaClass(Date.class);
+    CsdlMapping mapping = new CsdlMapping().setMappedJavaClass(Date.class);
 
     EdmProperty propertyDate = mock(EdmProperty.class);
     when(propertyDate.getName()).thenReturn("PropertyDate");

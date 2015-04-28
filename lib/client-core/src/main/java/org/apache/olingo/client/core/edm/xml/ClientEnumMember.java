@@ -22,21 +22,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.olingo.commons.api.edm.provider.EnumMember;
+import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientEnumMember.EnumMemberDeserializer.class)
-class ClientEnumMember extends EnumMember {
+class ClientEnumMember extends CsdlEnumMember {
 
   private static final long serialVersionUID = -6138606817225829791L;
 
-  static class EnumMemberDeserializer extends AbstractClientEdmDeserializer<EnumMember> {
+  static class EnumMemberDeserializer extends AbstractClientEdmDeserializer<CsdlEnumMember> {
     @Override
-    protected EnumMember doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlEnumMember doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
-      final EnumMember member = new EnumMember();
+      final CsdlEnumMember member = new CsdlEnumMember();
 
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();

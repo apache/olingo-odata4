@@ -20,9 +20,9 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.provider.Annotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
-public interface Apply extends DynamicAnnotationExpression, Annotatable {
+public interface Apply extends DynamicAnnotationExpression, CsdlAnnotatable {
 
   String getFunction();
 

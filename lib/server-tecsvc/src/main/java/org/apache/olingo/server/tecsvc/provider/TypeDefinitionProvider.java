@@ -20,15 +20,15 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.TypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
 public class TypeDefinitionProvider {
 
   public static final FullQualifiedName nameTDString = new FullQualifiedName(SchemaProvider.NAMESPACE, "TDString");
 
-  public TypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
+  public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
     if (nameTDString.equals(typeDefinitionName)) {
-      return new TypeDefinition().setName(nameTDString.getName()).setUnderlyingType(
+      return new CsdlTypeDefinition().setName(nameTDString.getName()).setUnderlyingType(
           EdmPrimitiveTypeKind.String.getFullQualifiedName()).setMaxLength(15);
     }
     return null;

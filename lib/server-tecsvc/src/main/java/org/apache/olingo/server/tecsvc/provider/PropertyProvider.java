@@ -20,8 +20,8 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.NavigationProperty;
-import org.apache.olingo.commons.api.edm.provider.Property;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 
 public class PropertyProvider {
 
@@ -50,731 +50,737 @@ public class PropertyProvider {
   public static final FullQualifiedName nameTimeOfDay = EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName();
 
   // Primitive Properties --------------------------------------------------------------------------------------------
-  public static final Property collPropertyBinary = new Property()
+  public static final CsdlProperty collPropertyBinary = new CsdlProperty()
       .setName("CollPropertyBinary")
       .setType(nameBinary)
       .setCollection(true);
 
-  public static final Property collPropertyBinary_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyBinary_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyBinary")
       .setType(nameBinary)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyBinary_NotNullable = new Property()
+  public static final CsdlProperty collPropertyBinary_NotNullable = new CsdlProperty()
       .setName("CollPropertyBinary")
       .setType(nameBinary)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyBoolean = new Property()
+  public static final CsdlProperty collPropertyBoolean = new CsdlProperty()
       .setName("CollPropertyBoolean")
       .setType(nameBoolean)
       .setCollection(true);
 
-  public static final Property collPropertyBoolean_ExplicitNullable = new Property()
-      .setName("CollPropertyBoolean")
-      .setType(nameBoolean)
-      .setNullable(true)
-      .setCollection(true);
-
-  public static final Property collPropertyBoolean_NotNullable = new Property()
+  public static final CsdlProperty collPropertyBoolean_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyBoolean")
       .setType(nameBoolean)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyByte = new Property()
+  public static final CsdlProperty collPropertyBoolean_NotNullable = new CsdlProperty()
+      .setName("CollPropertyBoolean")
+      .setType(nameBoolean)
+      .setNullable(true)
+      .setCollection(true);
+
+  public static final CsdlProperty collPropertyByte = new CsdlProperty()
       .setName("CollPropertyByte")
       .setType(nameByte)
       .setCollection(true);
 
-  public static final Property collPropertyByte_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyByte_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyByte")
       .setType(nameByte)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyByte_NotNullable = new Property()
+  public static final CsdlProperty collPropertyByte_NotNullable = new CsdlProperty()
       .setName("CollPropertyByte")
       .setType(nameByte)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyDate = new Property()
+  public static final CsdlProperty collPropertyDate = new CsdlProperty()
       .setName("CollPropertyDate")
       .setType(nameDate)
       .setCollection(true);
 
-  public static final Property collPropertyDate_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyDate_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyDate")
       .setType(nameDate)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyDate_NotNullable = new Property()
+  public static final CsdlProperty collPropertyDate_NotNullable = new CsdlProperty()
       .setName("CollPropertyDate")
       .setType(nameDate)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyDateTimeOffset = new Property()
+  public static final CsdlProperty collPropertyDateTimeOffset = new CsdlProperty()
       .setName("CollPropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setCollection(true);
 
-  public static final Property collPropertyDateTimeOffset_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyDateTimeOffset_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyDateTimeOffset_NotNullable = new Property()
+  public static final CsdlProperty collPropertyDateTimeOffset_NotNullable = new CsdlProperty()
       .setName("CollPropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyDecimal = new Property()
+  public static final CsdlProperty collPropertyDecimal = new CsdlProperty()
       .setName("CollPropertyDecimal")
       .setType(nameDecimal)
       .setCollection(true);
 
-  public static final Property collPropertyDecimal_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyDecimal_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyDecimal")
       .setType(nameDecimal)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyDecimal_NotNullable = new Property()
+  public static final CsdlProperty collPropertyDecimal_NotNullable = new CsdlProperty()
       .setName("CollPropertyDecimal")
       .setType(nameDecimal)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyDouble = new Property()
+  public static final CsdlProperty collPropertyDouble = new CsdlProperty()
       .setName("CollPropertyDouble")
       .setType(nameDouble)
       .setCollection(true);
 
-  public static final Property collPropertyDouble_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyDouble_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyDouble")
       .setType(nameDouble)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyDouble_NotNullable = new Property()
+  public static final CsdlProperty collPropertyDouble_NotNullable = new CsdlProperty()
       .setName("CollPropertyDouble")
       .setType(nameDouble)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyDuration = new Property()
+  public static final CsdlProperty collPropertyDuration = new CsdlProperty()
       .setName("CollPropertyDuration")
       .setType(nameDuration)
       .setCollection(true);
 
-  public static final Property collPropertyDuration_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyDuration_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyDuration")
       .setType(nameDuration)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyDuration_NotNullable = new Property()
+  public static final CsdlProperty collPropertyDuration_NotNullable = new CsdlProperty()
       .setName("CollPropertyDuration")
       .setType(nameDuration)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyGuid = new Property()
+  public static final CsdlProperty collPropertyGuid = new CsdlProperty()
       .setName("CollPropertyGuid")
       .setType(nameGuid)
       .setCollection(true);
 
-  public static final Property collPropertyGuid_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyGuid_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyGuid")
       .setType(nameGuid)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyGuid_NotNullable = new Property()
+  public static final CsdlProperty collPropertyGuid_NotNullable = new CsdlProperty()
       .setName("CollPropertyGuid")
       .setType(nameGuid)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyInt16 = new Property()
+  public static final CsdlProperty collPropertyInt16 = new CsdlProperty()
       .setName("CollPropertyInt16")
       .setType(nameInt16)
       .setCollection(true);
 
-  public static final Property collPropertyInt16_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyInt16_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyInt16")
       .setType(nameInt16)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyInt16_NotNullable = new Property()
+  public static final CsdlProperty collPropertyInt16_NotNullable = new CsdlProperty()
       .setName("CollPropertyInt16")
       .setType(nameInt16)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyInt32 = new Property()
+  public static final CsdlProperty collPropertyInt32 = new CsdlProperty()
       .setName("CollPropertyInt32")
       .setType(nameInt32)
       .setCollection(true);
 
-  public static final Property collPropertyInt32_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyInt32_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyInt32")
       .setType(nameInt32)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyInt32_NotNullable = new Property()
+  public static final CsdlProperty collPropertyInt32_NotNullable = new CsdlProperty()
       .setName("CollPropertyInt32")
       .setType(nameInt32)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyInt64 = new Property()
+  public static final CsdlProperty collPropertyInt64 = new CsdlProperty()
       .setName("CollPropertyInt64")
       .setType(nameInt64)
       .setCollection(true);
 
-  public static final Property collPropertyInt64_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyInt64_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyInt64")
       .setType(nameInt64)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyInt64_NotNullable = new Property()
+  public static final CsdlProperty collPropertyInt64_NotNullable = new CsdlProperty()
       .setName("CollPropertyInt64")
       .setType(nameInt64)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertySByte = new Property()
+  public static final CsdlProperty collPropertySByte = new CsdlProperty()
       .setName("CollPropertySByte")
       .setType(nameSByte)
       .setCollection(true);
 
-  public static final Property collPropertySByte_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertySByte_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertySByte")
       .setType(nameSByte)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertySByte_NotNullable = new Property()
+  public static final CsdlProperty collPropertySByte_NotNullable = new CsdlProperty()
       .setName("CollPropertySByte")
       .setType(nameSByte)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertySingle = new Property()
+  public static final CsdlProperty collPropertySingle = new CsdlProperty()
       .setName("CollPropertySingle")
       .setType(nameSingle)
       .setCollection(true);
 
-  public static final Property collPropertySingle_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertySingle_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertySingle")
       .setType(nameSingle)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertySingle_NotNullable = new Property()
+  public static final CsdlProperty collPropertySingle_NotNullable = new CsdlProperty()
       .setName("CollPropertySingle")
       .setType(nameSingle)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyString = new Property()
+  public static final CsdlProperty collPropertyString = new CsdlProperty()
       .setName("CollPropertyString")
       .setType(nameString)
       .setCollection(true);
 
-  public static final Property collPropertyString_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyString_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyString")
       .setType(nameString)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyString_NotNullable = new Property()
+  public static final CsdlProperty collPropertyString_NotNullable = new CsdlProperty()
       .setName("CollPropertyString")
       .setType(nameString)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property collPropertyTimeOfDay = new Property()
+  public static final CsdlProperty collPropertyTimeOfDay = new CsdlProperty()
       .setName("CollPropertyTimeOfDay")
       .setType(nameTimeOfDay)
       .setCollection(true);
 
-  public static final Property collPropertyTimeOfDay_ExplicitNullable = new Property()
+  public static final CsdlProperty collPropertyTimeOfDay_ExplicitNullable = new CsdlProperty()
       .setName("CollPropertyTimeOfDay")
       .setType(nameTimeOfDay)
       .setNullable(true)
       .setCollection(true);
 
-  public static final Property collPropertyTimeOfDay_NotNullable = new Property()
+  public static final CsdlProperty collPropertyTimeOfDay_NotNullable = new CsdlProperty()
       .setName("CollPropertyTimeOfDay")
       .setType(nameTimeOfDay)
       .setNullable(false)
       .setCollection(true);
 
-  public static final Property propertyBinary = new Property()
+  public static final CsdlProperty propertyBinary = new CsdlProperty()
       .setName("PropertyBinary")
       .setType(nameBinary);
 
-  public static final Property propertyBinary_NotNullable = new Property()
+  public static final CsdlProperty propertyBinary_NotNullable = new CsdlProperty()
       .setName("PropertyBinary")
       .setType(nameBinary)
       .setNullable(false);
 
-  public static final Property propertyBinary_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyBinary_ExplicitNullable = new CsdlProperty()
       .setName("PropertyBinary")
       .setType(nameBinary)
       .setNullable(true);
 
-  public static final Property propertyBoolean = new Property()
+  public static final CsdlProperty propertyBoolean = new CsdlProperty()
       .setName("PropertyBoolean")
       .setType(nameBoolean);
 
-  public static final Property propertyBoolean_NotNullable = new Property()
+  public static final CsdlProperty propertyBoolean_NotNullable = new CsdlProperty()
       .setName("PropertyBoolean")
       .setType(nameBoolean)
       .setNullable(false);
 
-  public static final Property propertyBoolean_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyBoolean_ExplicitNullable = new CsdlProperty()
       .setName("PropertyBoolean")
       .setType(nameBoolean)
       .setNullable(true);
 
-  public static final Property propertyByte = new Property()
+  public static final CsdlProperty propertyByte = new CsdlProperty()
       .setName("PropertyByte")
       .setType(nameByte);
 
-  public static final Property propertyByte_NotNullable = new Property()
+  public static final CsdlProperty propertyByte_NotNullable = new CsdlProperty()
       .setName("PropertyByte")
       .setType(nameByte)
       .setNullable(false);
 
-  public static final Property propertyByte_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyByte_ExplicitNullable = new CsdlProperty()
       .setName("PropertyByte")
       .setType(nameByte)
       .setNullable(true);
 
-  public static final Property propertyDate = new Property()
+  public static final CsdlProperty propertyDate = new CsdlProperty()
       .setName("PropertyDate")
       .setType(nameDate);
 
-  public static final Property propertyDate_NotNullable = new Property()
+  public static final CsdlProperty propertyDate_NotNullable = new CsdlProperty()
       .setName("PropertyDate")
       .setType(nameDate)
       .setNullable(false);
 
-  public static final Property propertyDate_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyDate_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDate")
       .setType(nameDate)
       .setNullable(true);
 
-  public static final Property propertyDateTimeOffset = new Property()
+  public static final CsdlProperty propertyDateTimeOffset = new CsdlProperty()
       .setName("PropertyDateTimeOffset")
       .setType(nameDateTimeOffset);
 
-  public static final Property propertyDateTimeOffset_Precision = new Property()
+  public static final CsdlProperty propertyDateTimeOffset_Precision = new CsdlProperty()
       .setName("PropertyDateTimeOffset")
       .setPrecision(12)
       .setType(nameDateTimeOffset);
 
-  public static final Property propertyDateTimeOffset_NotNullable = new Property()
+  public static final CsdlProperty propertyDateTimeOffset_NotNullable = new CsdlProperty()
       .setName("PropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setNullable(false);
 
-  public static final Property propertyDateTimeOffset_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyDateTimeOffset_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
       .setNullable(true);
 
-  public static final Property propertyDecimal_Scale_Precision = new Property()
+  public static final CsdlProperty propertyDecimal_Scale_Precision = new CsdlProperty()
       .setName("PropertyDecimal")
       .setScale(5)
       .setPrecision(11)
       .setType(nameDecimal);
 
-  public static final Property propertyDecimal_Scale = new Property()
+  public static final CsdlProperty propertyDecimal_Scale = new CsdlProperty()
       .setName("PropertyDecimal")
       .setScale(10)
       .setType(nameDecimal);
 
-  public static final Property propertyDecimal_NotNullable = new Property()
+  public static final CsdlProperty propertyDecimal_NotNullable = new CsdlProperty()
       .setName("PropertyDecimal")
       .setType(nameDecimal)
       .setNullable(false);
 
-  public static final Property propertyDecimal_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyDecimal_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDecimal")
       .setType(nameDecimal)
       .setNullable(true);
 
-  public static final Property propertyDouble = new Property()
+  public static final CsdlProperty propertyDouble = new CsdlProperty()
       .setName("PropertyDouble")
       .setType(nameDouble);
 
-  public static final Property propertyDouble_NotNullable = new Property()
+  public static final CsdlProperty propertyDouble_NotNullable = new CsdlProperty()
       .setName("PropertyDouble")
       .setType(nameDouble)
       .setNullable(false);
 
-  public static final Property propertyDouble_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyDouble_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDouble")
       .setType(nameDouble)
       .setNullable(true);
 
-  public static final Property propertyDuration = new Property()
+  public static final CsdlProperty propertyDuration = new CsdlProperty()
       .setName("PropertyDuration")
       .setType(nameDuration);
 
-  public static final Property propertyDuration_NotNullable = new Property()
+  public static final CsdlProperty propertyDuration_NotNullable = new CsdlProperty()
       .setName("PropertyDuration")
       .setType(nameDuration)
       .setNullable(false);
 
-  public static final Property propertyDuration_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyDuration_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDuration")
       .setType(nameDuration)
       .setNullable(true);
 
-  public static final Property propertyGuid = new Property()
+  public static final CsdlProperty propertyGuid = new CsdlProperty()
       .setName("PropertyGuid")
       .setType(nameGuid);
 
-  public static final Property propertyGuid_NotNullable = new Property()
+  public static final CsdlProperty propertyGuid_NotNullable = new CsdlProperty()
       .setName("PropertyGuid")
       .setType(nameGuid)
       .setNullable(false);
 
-  public static final Property propertyGuid_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyGuid_ExplicitNullable = new CsdlProperty()
       .setName("PropertyGuid")
       .setType(nameGuid)
       .setNullable(true);
 
-  public static final Property propertyInt16 = new Property()
+  public static final CsdlProperty propertyInt16 = new CsdlProperty()
       .setName("PropertyInt16")
       .setType(nameInt16);
 
-  public static final Property propertyInt16_NotNullable = new Property()
+  public static final CsdlProperty propertyInt16_NotNullable = new CsdlProperty()
       .setName("PropertyInt16")
       .setType(nameInt16)
       .setNullable(false);
 
-  public static final Property propertyInt16_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyInt16_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt16")
       .setType(nameInt16)
       .setNullable(true);
 
-  public static final Property propertyInt32 = new Property()
+  public static final CsdlProperty propertyInt32 = new CsdlProperty()
       .setName("PropertyInt32")
       .setType(nameInt32);
 
-  public static final Property propertyInt32_NotNullable = new Property()
+  public static final CsdlProperty propertyInt32_NotNullable = new CsdlProperty()
       .setName("PropertyInt32")
       .setType(nameInt32)
       .setNullable(false);
 
-  public static final Property propertyInt32_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyInt32_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt32")
       .setType(nameInt32)
       .setNullable(true);
 
-  public static final Property propertyInt64 = new Property()
+  public static final CsdlProperty propertyInt64 = new CsdlProperty()
       .setName("PropertyInt64")
       .setType(nameInt64);
 
-  public static final Property propertyInt64_NotNullable = new Property()
+  public static final CsdlProperty propertyInt64_NotNullable = new CsdlProperty()
       .setName("PropertyInt64")
       .setType(nameInt64)
       .setNullable(false);
 
-  public static final Property propertyInt64_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyInt64_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt64")
       .setType(nameInt64)
       .setNullable(true);
 
-  public static final Property propertySByte = new Property()
+  public static final CsdlProperty propertySByte = new CsdlProperty()
       .setName("PropertySByte")
       .setType(nameSByte);
 
-  public static final Property propertySByte_NotNullable = new Property()
+  public static final CsdlProperty propertySByte_NotNullable = new CsdlProperty()
       .setName("PropertySByte")
       .setType(nameSByte)
       .setNullable(false);
 
-  public static final Property propertySByte_ExplicitNullable = new Property()
+  public static final CsdlProperty propertySByte_ExplicitNullable = new CsdlProperty()
       .setName("PropertySByte")
       .setType(nameSByte)
       .setNullable(true);
 
-  public static final Property propertySingle = new Property()
+  public static final CsdlProperty propertySingle = new CsdlProperty()
       .setName("PropertySingle")
       .setType(nameSingle);
 
-  public static final Property propertySingle_NotNullable = new Property()
+  public static final CsdlProperty propertySingle_NotNullable = new CsdlProperty()
       .setName("PropertySingle")
       .setType(nameSingle)
       .setNullable(false);
 
-  public static final Property propertySingle_ExplicitNullable = new Property()
+  public static final CsdlProperty propertySingle_ExplicitNullable = new CsdlProperty()
       .setName("PropertySingle")
       .setType(nameSingle)
       .setNullable(true);
 
-  public static final Property propertyString = new Property()
+  public static final CsdlProperty propertyString = new CsdlProperty()
       .setName("PropertyString")
       .setType(nameString);
 
-  public static final Property propertyString_NotNullable = new Property()
+  public static final CsdlProperty propertyString_NotNullable = new CsdlProperty()
       .setName("PropertyString")
       .setType(nameString)
       .setNullable(false);
 
-  public static final Property propertyString_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyString_ExplicitNullable = new CsdlProperty()
       .setName("PropertyString")
       .setType(nameString)
       .setNullable(true);
 
-  public static final Property propertyTimeOfDay = new Property()
+  public static final CsdlProperty propertyTimeOfDay = new CsdlProperty()
       .setName("PropertyTimeOfDay")
       .setType(nameTimeOfDay);
 
-  public static final Property propertyTimeOfDay_Precision = new Property()
+  public static final CsdlProperty propertyTimeOfDay_Precision = new CsdlProperty()
       .setName("PropertyTimeOfDay")
       .setPrecision(12)
       .setType(nameTimeOfDay);
 
-  public static final Property propertyTimeOfDay_NotNullable = new Property()
+  public static final CsdlProperty propertyTimeOfDay_NotNullable = new CsdlProperty()
       .setName("PropertyTimeOfDay")
       .setType(nameTimeOfDay)
       .setNullable(false);
 
-  public static final Property propertyTimeOfDay_ExplicitNullable = new Property()
+  public static final CsdlProperty propertyTimeOfDay_ExplicitNullable = new CsdlProperty()
       .setName("PropertyTimeOfDay")
       .setType(nameTimeOfDay)
       .setNullable(true);
 
   // Complex Properties ----------------------------------------------------------------------------------------------
-  public static final Property collPropertyComp_CTPrimComp = new Property()
+  public static final CsdlProperty collPropertyComp_CTPrimComp = new CsdlProperty()
       .setName("CollPropertyComp")
       .setType(ComplexTypeProvider.nameCTPrimComp)
       .setCollection(true);
 
-  public static final Property collPropertyComp_CTTwoPrim = new Property()
+  public static final CsdlProperty collPropertyComp_CTTwoPrim = new CsdlProperty()
       .setName("CollPropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim)
       .setCollection(true);
 
-  public static final Property propertyComp_CTAllPrim = new Property()
+  public static final CsdlProperty propertyComp_CTAllPrim = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTAllPrim);
 
-  public static final Property propertyComp_CTCollAllPrim = new Property()
+  public static final CsdlProperty propertyComp_CTCollAllPrim = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCollAllPrim);
 
-  public static final Property propertyComp_CTCompCollComp = new Property()
+  public static final CsdlProperty propertyComp_CTCompCollComp = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCompCollComp);
 
-  public static final Property propertyComp_CTCompComp = new Property()
+  public static final CsdlProperty propertyComp_CTCompComp = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTCompComp);
 
-  public static final Property propertyComp_CTNavFiveProp = new Property()
+  public static final CsdlProperty propertyComp_CTNavFiveProp = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTNavFiveProp);
 
-  public static final Property propertyCompNav_CTNavFiveProp = new Property()
+  public static final CsdlProperty propertyCompNav_CTNavFiveProp = new CsdlProperty()
       .setName("PropertyCompNav")
       .setType(ComplexTypeProvider.nameCTNavFiveProp);
 
-  public static final Property propertyComp_CTPrimComp_NotNullable = new Property()
+  public static final CsdlProperty propertyComp_CTPrimComp_NotNullable = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTPrimComp)
       .setNullable(false);
 
-  public static final Property propertyComp_CTTwoPrim = new Property()
+  public static final CsdlProperty propertyComp_CTTwoPrim = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim);
 
-  public static final Property propertyComp_CTTwoPrim_NotNullable = new Property()
+  public static final CsdlProperty propertyComp_CTTwoPrim_NotNullable = new CsdlProperty()
       .setName("PropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim)
       .setNullable(false);
 
-  public static final Property propertyCompNavCont = new Property()
+  public static final CsdlProperty propertyCompNavCont = new CsdlProperty()
       .setName("PropertyCompNavCont")
       .setType(ComplexTypeProvider.nameCTNavCont);
 
-  public static final Property propertyCompAllPrim_CTAllPrim = new Property()
+  public static final CsdlProperty propertyCompAllPrim_CTAllPrim = new CsdlProperty()
       .setName("PropertyCompAllPrim")
       .setType(ComplexTypeProvider.nameCTAllPrim);
 
-  public static final Property propertyCompComp_CTCompComp = new Property()
+  public static final CsdlProperty propertyCompComp_CTCompComp = new CsdlProperty()
       .setName("PropertyCompComp")
       .setType(ComplexTypeProvider.nameCTCompComp);
 
-  public static final Property propertyCompComp_CTCompComp_NotNullable = new Property()
+  public static final CsdlProperty propertyCompComp_CTCompComp_NotNullable = new CsdlProperty()
       .setName("PropertyCompComp")
       .setType(ComplexTypeProvider.nameCTCompComp)
       .setNullable(false);
 
-  public static final Property propertyCompTwoPrim_CTTwoPrim = new Property()
+  public static final CsdlProperty propertyCompTwoPrim_CTTwoPrim = new CsdlProperty()
       .setName("PropertyCompTwoPrim")
       .setType(ComplexTypeProvider.nameCTTwoPrim);
 
-  public static final Property propertyMixedPrimCollComp_CTMixPrimCollComp = new Property()
+  public static final CsdlProperty propertyMixedPrimCollComp_CTMixPrimCollComp = new CsdlProperty()
       .setName("PropertyMixedPrimCollComp")
       .setType(ComplexTypeProvider.nameCTMixPrimCollComp);
 
-  public static final Property propertyComp_CTMixEnumTypeDefColl = new Property()
+  public static final CsdlProperty propertyComp_CTMixEnumTypeDefColl = new CsdlProperty()
       .setName("PropertyCompMixedEnumDef")
       .setType(ComplexTypeProvider.nameCTMixEnumDef);
 
-  public static final Property propertyCompColl_CTMixEnumTypeDefColl = new Property()
+  public static final CsdlProperty propertyCompColl_CTMixEnumTypeDefColl = new CsdlProperty()
       .setName("CollPropertyCompMixedEnumDef")
       .setType(ComplexTypeProvider.nameCTMixEnumDef)
       .setCollection(true);
 
   // Navigation Properties -------------------------------------------------------------------------------------------
-  public static final NavigationProperty collectionNavPropertyETKeyNavMany_ETKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETKeyNavMany_ETKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETKeyNavMany")
       .setType(EntityTypeProvider.nameETKeyNav)
       .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertyETMediaMany_ETMedia = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETMediaMany_ETMedia = new CsdlNavigationProperty()
       .setName("NavPropertyETMediaMany")
       .setType(EntityTypeProvider.nameETMedia)
       .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne =
-      new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne =
+      new CsdlNavigationProperty()
           .setName("NavPropertyETTwoKeyNavMany")
           .setType(EntityTypeProvider.nameETTwoKeyNav)
           .setCollection(true)
           .setPartner("NavPropertyETKeyNavOne");
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavMany")
       .setType(EntityTypeProvider.nameETTwoKeyNav)
       .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavOne")
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
-  public static final NavigationProperty collectionNavPropertyETTwoPrimMany_ETTwoPrim = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoPrimMany_ETTwoPrim =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETTwoPrimMany")
       .setType(EntityTypeProvider.nameETTwoPrim)
       .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertyETAllPrimMany_ETAllPrim = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETAllPrimMany_ETAllPrim =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETAllPrimMany")
       .setType(EntityTypeProvider.nameETAllPrim)
       .setCollection(true);
 
-  public static final NavigationProperty collectionNavPropertySINav = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertySINav = new CsdlNavigationProperty()
       .setName("NavPropertySINav")
       .setCollection(true)
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
-  public static final NavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETKeyNavContMany")
       .setCollection(true)
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
-      new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
+      new CsdlNavigationProperty()
           .setName("NavPropertyETTwoKeyNavContMany")
           .setCollection(true)
           .setContainsTarget(true)
           .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty navPropertyETKeyNavOne_ETKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETKeyNavOne_ETKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETKeyNavOne")
       .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty navPropertyETMediaOne_ETMedia = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETMediaOne_ETMedia = new CsdlNavigationProperty()
       .setName("NavPropertyETMediaOne")
       .setType(EntityTypeProvider.nameETMedia);
 
-  public static final NavigationProperty navPropertyETKeyPrimNavOne_ETKeyPrimNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETKeyPrimNavOne_ETKeyPrimNav = new CsdlNavigationProperty()
       .setName("NavPropertyETKeyPrimNavOne")
       .setType(EntityTypeProvider.nameETKeyPrimNav);
 
-  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable =
+          new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavOne")
       .setType(EntityTypeProvider.nameETTwoKeyNav)
       .setNullable(false);
 
-  public static final NavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavOne")
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
-  public static final NavigationProperty navPropertyETTwoPrimOne_ETTwoPrim = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETTwoPrimOne_ETTwoPrim = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoPrimOne")
       .setType(EntityTypeProvider.nameETTwoPrim)
       .setNullable(false);
 
-  public static final NavigationProperty navPropertyETAllPrimOne_ETAllPrim = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETAllPrimOne_ETAllPrim = new CsdlNavigationProperty()
       .setName("NavPropertyETAllPrimOne")
       .setType(EntityTypeProvider.nameETAllPrim);
 
-  public static final NavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETKeyNavContOne")
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty navPropertyETTwoKeyNavContOne_CT_ETKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavContOne_CT_ETKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavContOne")
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final NavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new NavigationProperty()
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavContOne")
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
-  public static final NavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav =
-      new NavigationProperty()
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav =
+      new CsdlNavigationProperty()
           .setName("NavPropertyETTwoKeyNavContMany")
           .setContainsTarget(true)
           .setCollection(true)
           .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   // EnumProperties --------------------------------------------------------------------------------------------------
-  public static final Property propertyEnumString_ENString = new Property()
+  public static final CsdlProperty propertyEnumString_ENString = new CsdlProperty()
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString)
       .setNullable(false);
 
-  public static final Property propertyEnumString_ENString_Nullable = new Property()
+  public static final CsdlProperty propertyEnumString_ENString_Nullable = new CsdlProperty()
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString);
 
-  public static final Property collPropertyEnumString_ENString = new Property()
+  public static final CsdlProperty collPropertyEnumString_ENString = new CsdlProperty()
       .setName("CollPropertyEnumString")
       .setType(EnumTypeProvider.nameENString)
       .setCollection(true);
 
   // TypeDefinition Properties ---------------------------------------------------------------------------------------
-  public static final Property propertyTypeDefinition_TDString = new Property()
+  public static final CsdlProperty propertyTypeDefinition_TDString = new CsdlProperty()
       .setName("PropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)
       .setMaxLength(15);
 
-  public static final Property collPropertyTypeDefinition_TDString = new Property()
+  public static final CsdlProperty collPropertyTypeDefinition_TDString = new CsdlProperty()
       .setName("CollPropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)
       .setMaxLength(15)

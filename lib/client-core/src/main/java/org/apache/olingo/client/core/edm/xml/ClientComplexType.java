@@ -22,21 +22,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.olingo.commons.api.edm.provider.ComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
 
 @JsonDeserialize(using = ClientComplexType.ComplexTypeDeserializer.class)
-class ClientComplexType extends ComplexType {
+class ClientComplexType extends CsdlComplexType {
 
   private static final long serialVersionUID = 4076944306925840115L;
 
-  static class ComplexTypeDeserializer extends AbstractClientEdmDeserializer<ComplexType> {
+  static class ComplexTypeDeserializer extends AbstractClientEdmDeserializer<CsdlComplexType> {
 
     @Override
-    protected ComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected CsdlComplexType doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
 
       final ClientComplexType complexType = new ClientComplexType();
