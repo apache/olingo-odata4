@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientOperation;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientOperation;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;

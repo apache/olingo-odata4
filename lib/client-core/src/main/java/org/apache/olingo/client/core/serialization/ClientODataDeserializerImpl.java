@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
@@ -86,7 +86,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   }
 
   @Override
-  public ClientError toError(final InputStream input) throws ODataDeserializerException {
+  public ODataError toError(final InputStream input) throws ODataDeserializerException {
     return deserializer.toError(input);
   }
 

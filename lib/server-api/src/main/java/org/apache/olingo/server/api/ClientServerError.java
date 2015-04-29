@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientErrorDetail;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
 /**
  * Server error.
  */
-public class ClientServerError extends ClientError {
+public class ClientServerError extends ODataError {
 
   private Exception exception;
   private int statusCode;
@@ -121,7 +121,7 @@ public class ClientServerError extends ClientError {
    * Sets error details.
    * @return this for method chaining.
    */
-  public ClientServerError setDetails(List<ClientErrorDetail> details) {
+  public ClientServerError setDetails(List<ODataErrorDetail> details) {
     super.setDetails(details);
     return this;
   }

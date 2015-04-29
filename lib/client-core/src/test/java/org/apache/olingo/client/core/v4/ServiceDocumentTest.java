@@ -22,7 +22,7 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;

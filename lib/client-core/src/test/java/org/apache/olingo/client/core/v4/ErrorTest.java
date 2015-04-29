@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
@@ -35,15 +35,15 @@ public class ErrorTest extends AbstractTest {
     return v4Client;
   }
 
-  private ClientError error(final String name, final ODataFormat format) throws ODataDeserializerException {
-    final ClientError error = getClient().getDeserializer(format).toError(
+  private ODataError error(final String name, final ODataFormat format) throws ODataDeserializerException {
+    final ODataError error = getClient().getDeserializer(format).toError(
             getClass().getResourceAsStream(name + "." + getSuffix(format)));
     assertNotNull(error);
     return error;
   }
 
   private void simple(final ODataFormat format) throws ODataDeserializerException {
-    final ClientError error = error("error", format);
+    final ODataError error = error("error", format);
     assertEquals("501", error.getCode());
     assertEquals("Unsupported functionality", error.getMessage());
     assertEquals("query", error.getTarget());

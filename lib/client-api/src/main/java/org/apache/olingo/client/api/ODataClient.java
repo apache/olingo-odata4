@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;

@@ -26,8 +26,8 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**

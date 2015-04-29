@@ -35,12 +35,12 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientInlineEntity;
-import org.apache.olingo.commons.api.domain.ClientLink;
-import org.apache.olingo.commons.api.domain.ClientObjectFactory;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientInlineEntity;
+import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -107,6 +107,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
             .appendEntitySetSegment(ES_TWO_KEY_NAV)
             .appendKeySegment(new LinkedHashMap<String, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
+
               {
                 put(PROPERTY_INT16, 3);
                 put(PROPERTY_STRING, "1");
@@ -348,6 +349,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
             .appendEntitySetSegment(ES_TWO_KEY_NAV)
             .appendKeySegment(new LinkedHashMap<String, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
+
               {
                 put(PROPERTY_INT16, 3);
                 put(PROPERTY_STRING, "1");
@@ -362,6 +364,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
             .appendEntitySetSegment(ES_TWO_KEY_NAV)
             .appendKeySegment(new LinkedHashMap<String, Object>() {
               private static final long serialVersionUID = 3109256773218160485L;
+
               {
                 put(PROPERTY_INT16, 3);
                 put(PROPERTY_STRING, "1");

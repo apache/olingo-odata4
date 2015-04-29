@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 

@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;

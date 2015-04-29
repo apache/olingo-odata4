@@ -32,8 +32,8 @@ import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddi
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataReferenceAddingResponse;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientErrorDetail;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,9 +38,9 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
     super(serverMode);
   }
 
-  protected ClientError doDeserialize(final JsonParser parser) throws IOException {
+  protected ODataError doDeserialize(final JsonParser parser) throws IOException {
 
-    final ClientError error = new ClientError();
+    final ODataError error = new ODataError();
 
     final ObjectNode tree = parser.getCodec().readTree(parser);
     if (tree.has(Constants.JSON_ERROR)) {
@@ -61,7 +61,7 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
         error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
       }
       if (errorNode.hasNonNull(Constants.ERROR_DETAILS)) {
-        List<ClientErrorDetail> details = new ArrayList<ClientErrorDetail>();
+        List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
         JsonODataErrorDetailDeserializer detailDeserializer = new JsonODataErrorDetailDeserializer(serverMode);
         for (JsonNode jsonNode : errorNode.get(Constants.ERROR_DETAILS)) {
           details.add(detailDeserializer.doDeserialize(jsonNode.traverse(parser.getCodec()))

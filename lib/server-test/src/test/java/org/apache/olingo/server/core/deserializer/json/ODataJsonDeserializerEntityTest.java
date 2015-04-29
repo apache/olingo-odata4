@@ -35,12 +35,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ClientLinkType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -474,7 +474,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertNotNull(bindingToOne);
     assertEquals("NavPropertyETTwoPrimOne", bindingToOne.getTitle());
     assertEquals("ESTwoPrim(2)", bindingToOne.getBindingLink());
-    assertEquals(ClientLinkType.ENTITY_BINDING.toString(), bindingToOne.getType());
+    assertEquals(Constants.ENTITY_BINDING_LINK_TYPE, bindingToOne.getType());
     assertTrue(bindingToOne.getBindingLinks().isEmpty());
     assertNull(bindingToOne.getHref());
     assertNull(bindingToOne.getRel());
@@ -484,7 +484,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals("NavPropertyETTwoPrimMany", bindingToMany.getTitle());
     assertNotNull(bindingToMany.getBindingLinks());
     assertEquals(2, bindingToMany.getBindingLinks().size());
-    assertEquals(ClientLinkType.ENTITY_COLLECTION_BINDING.toString(), bindingToMany.getType());
+    assertEquals(Constants.ENTITY_COLLECTION_BINDING_LINK_TYPE, bindingToMany.getType());
     assertNull(bindingToMany.getBindingLink());
     assertNull(bindingToMany.getHref());
     assertNull(bindingToMany.getRel());

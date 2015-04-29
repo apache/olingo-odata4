@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -105,7 +105,7 @@ public interface ODataReader {
    * @return OData error.
    * @throws ODataDeserializerException
    */
-  ClientError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
+  ODataError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
 
   /**
    * Parses a stream into the object type specified by the given reference.

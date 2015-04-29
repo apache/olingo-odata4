@@ -20,7 +20,7 @@ package org.apache.olingo.fit.v4;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 

@@ -21,7 +21,7 @@ package org.apache.olingo.client.core.communication.request.invoke;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 

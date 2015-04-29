@@ -19,8 +19,8 @@
 package org.apache.olingo.fit.v4;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientErrorDetail;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 
@@ -42,10 +42,10 @@ public class ErrorResponseTestITCase extends AbstractTestITCase {
       read(ODataFormat.JSON, readURI);
       fail("should have got exception");
     } catch (Exception ex) {
-      final ClientError err = ((ODataClientErrorException) ex).getODataError();
+      final ODataError err = ((ODataClientErrorException) ex).getODataError();
 
       // verify details
-      final ClientErrorDetail detail = err.getDetails().get(0);
+      final ODataErrorDetail detail = err.getDetails().get(0);
       assertEquals("Code should be correct", "301", detail.getCode());
       assertEquals("Target should be correct", "$search", detail.getTarget());
       assertEquals("Message should be correct", "$search query option not supported", detail.getMessage());

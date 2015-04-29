@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.api.data;
 
-import org.apache.olingo.commons.api.domain.ClientOperation;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,7 @@ public class Entity extends Linked {
   private Link editLink;
 
   private final List<Link> mediaEditLinks = new ArrayList<Link>();
-  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
+  private final List<Operation> operations = new ArrayList<Operation>();
 
   private final List<Property> properties = new ArrayList<Property>();
 
@@ -122,7 +120,7 @@ public class Entity extends Linked {
    * 
    * @return operations.
    */
-  public List<ClientOperation> getOperations() {
+  public List<Operation> getOperations() {
     return operations;
   }
 

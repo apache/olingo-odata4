@@ -36,8 +36,8 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataValueReq
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;

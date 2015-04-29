@@ -30,8 +30,8 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ClientComplexValue;
-import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;

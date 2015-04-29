@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
-import org.apache.olingo.commons.api.domain.ClientInvokeResult;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientInvokeResult;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class EdmEnabledInvokeRequestFactoryImpl extends AbstractEdmEnabledInvokeRequestFactory {

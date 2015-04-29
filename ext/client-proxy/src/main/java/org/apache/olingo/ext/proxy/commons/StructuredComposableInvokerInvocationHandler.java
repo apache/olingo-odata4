@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.ext.proxy.AbstractService;

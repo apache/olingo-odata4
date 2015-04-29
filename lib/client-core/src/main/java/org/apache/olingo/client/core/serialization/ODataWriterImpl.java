@@ -32,9 +32,9 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientLink;
-import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 

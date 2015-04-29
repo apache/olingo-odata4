@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ClientLinkType;
 
 public class DataCreator {
 
@@ -628,7 +628,7 @@ public class DataCreator {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
-      link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
+      link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
       entity.getNavigationLinks().add(link);
     }
@@ -639,7 +639,7 @@ public class DataCreator {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
-      link.setType(ClientLinkType.ENTITY_SET_NAVIGATION.toString());
+      link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
       EntityCollection target = new EntityCollection();
       target.getEntities().addAll(Arrays.asList(targets));

@@ -46,16 +46,16 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ClientCollectionValue;
-import org.apache.olingo.commons.api.domain.ClientDelta;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientDelta;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.core.domain.ClientEntityImpl;
+import org.apache.olingo.client.core.domain.ClientEntityImpl;
 import org.junit.Test;
 
 /**

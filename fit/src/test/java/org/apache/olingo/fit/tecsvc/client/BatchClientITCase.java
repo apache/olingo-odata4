@@ -45,9 +45,9 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;

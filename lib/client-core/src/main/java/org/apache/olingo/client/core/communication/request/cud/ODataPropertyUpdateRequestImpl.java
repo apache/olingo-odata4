@@ -33,7 +33,7 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;

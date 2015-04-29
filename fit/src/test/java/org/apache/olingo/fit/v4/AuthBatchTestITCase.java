@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
-import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;

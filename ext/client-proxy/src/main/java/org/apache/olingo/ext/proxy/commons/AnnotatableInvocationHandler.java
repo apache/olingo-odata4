@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.domain.ClientAnnotation;
-import org.apache.olingo.commons.api.domain.ClientComplexValue;
-import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientAnnotation;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;

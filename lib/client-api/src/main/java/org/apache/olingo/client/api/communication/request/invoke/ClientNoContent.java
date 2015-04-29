@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.invoke;
 
-import org.apache.olingo.commons.api.domain.ClientInvokeResult;
+import org.apache.olingo.client.api.domain.ClientInvokeResult;
 
 /**
  * Marker class for invoke with no return type.

@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;

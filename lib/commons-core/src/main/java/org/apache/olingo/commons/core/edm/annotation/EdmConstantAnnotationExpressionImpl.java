@@ -23,42 +23,41 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ClientEnumValue;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.Valuable;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.core.domain.ClientCollectionValueImpl;
-import org.apache.olingo.commons.core.domain.ClientEnumValueImpl;
-import org.apache.olingo.commons.core.domain.ClientPrimitiveValueImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
 
-  private final ClientValue value;
+  private final Valuable value;
+  private final EdmPrimitiveType type;
 
   public EdmConstantAnnotationExpressionImpl(final ConstantAnnotationExpression constExprConstruct) {
     if (constExprConstruct.getType() == ConstantAnnotationExpression.Type.EnumMember) {
-      final List<ClientEnumValue> enumValues = new ArrayList<ClientEnumValue>();
+      final List<Property> enumValues = new ArrayList<Property>();
       String enumTypeName = null;
       for (String split : StringUtils.split(constExprConstruct.getValue(), ' ')) {
         final String[] enumSplit = StringUtils.split(split, '/');
         enumTypeName = enumSplit[0];
-        enumValues.add(new ClientEnumValueImpl(enumSplit[0], enumSplit[1]));
+        enumValues.add(new Property(enumSplit[0], enumSplit[1]));
       }
       if (enumValues.size() == 1) {
         value = enumValues.get(0);
       } else {
-        final ClientCollectionValueImpl<ClientEnumValue> collValue
-          = new ClientCollectionValueImpl<ClientEnumValue>(enumTypeName);
-        for (ClientValue enumValue : enumValues) {
+        final List<Property> collValue = new ArrayList<Property>();
+        for (Property enumValue : enumValues) {
           collValue.add(enumValue);
         }
-        value = collValue;
+        value = new Property(enumTypeName, "name", ValueType.COLLECTION_ENUM, collValue);
       }
+      type = null;
     } else {
       EdmPrimitiveTypeKind kind;
       switch (constExprConstruct.getType()) {
@@ -96,19 +95,30 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       default:
         kind = EdmPrimitiveTypeKind.String;
       }
-      final ClientPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ClientPrimitiveValueImpl.BuilderImpl();
-      primitiveValueBuilder.setType(kind);
+//      final ClientPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ClientPrimitiveValueImpl.BuilderImpl();
+//      primitiveValueBuilder.setType(kind);
+//      try {
+//        final EdmPrimitiveType type = EdmPrimitiveTypeFactory.getInstance(kind);
+//        primitiveValueBuilder.setValue(
+//            type.valueOfString(constExprConstruct.getValue(),
+//                null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+//                type.getDefaultType()));
+//      } catch (final EdmPrimitiveTypeException e) {
+//        throw new IllegalArgumentException(e);
+//      }
+//
+//      value = primitiveValueBuilder.build();
+
+      type = EdmPrimitiveTypeFactory.getInstance(kind);
       try {
-        final EdmPrimitiveType primitiveType = EdmPrimitiveTypeFactory.getInstance(kind);
-        primitiveValueBuilder.setValue(
-            primitiveType.valueOfString(constExprConstruct.getValue(),
+        Object test = type.valueOfString(constExprConstruct.getValue(),
                 null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-                primitiveType.getDefaultType()));
-      } catch (final EdmPrimitiveTypeException e) {
+                type.getDefaultType());
+        value = new Property(kind.getFullQualifiedName().getFullQualifiedNameAsString(),
+                "name", ValueType.PRIMITIVE, test);
+      } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }
-
-      value = primitiveValueBuilder.build();
     }
   }
 
@@ -133,8 +143,26 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
   }
 
   @Override
-  public ClientValue getValue() {
+  public Valuable getValue() {
     return value;
+  }
+
+  public String toString() {
+    if (value == null) {
+      return "";
+    } else if(value.isEnum()) {
+      return value.toString();
+    } else if (value.isGeospatial()) {
+      return value.toString();
+    } else {
+      // TODO: check after copied from ClientPrimitiveValueImpl
+      try {
+        return type.valueToString(value.getValue(), null, null,
+                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+      } catch (EdmPrimitiveTypeException e) {
+        throw new IllegalArgumentException(e);
+      }
+    }
   }
 
 }

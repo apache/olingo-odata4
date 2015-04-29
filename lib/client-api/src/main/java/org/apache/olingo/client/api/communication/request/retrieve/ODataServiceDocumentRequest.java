@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
 
 /**
  * This class implements an OData service document request.

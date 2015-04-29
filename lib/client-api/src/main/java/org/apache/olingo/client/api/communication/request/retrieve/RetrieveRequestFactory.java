@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientSingleton;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientSingleton;
 
 public interface RetrieveRequestFactory {
 

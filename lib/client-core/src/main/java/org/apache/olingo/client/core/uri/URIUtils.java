@@ -50,7 +50,7 @@ import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;

@@ -24,10 +24,10 @@ import java.net.URI;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientSingleton;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientSingleton;
 
 public interface CUDRequestFactory {
 

@@ -38,10 +38,10 @@ import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEn
 import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientPrimitiveValue;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientSingleton;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientSingleton;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl implements CUDRequestFactory {

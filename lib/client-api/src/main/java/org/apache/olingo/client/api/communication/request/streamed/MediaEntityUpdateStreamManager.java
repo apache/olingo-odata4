@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.communication.request.streamed;
 
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
-import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntity;
 
 /**
  * Media entity payload object.

@@ -25,9 +25,9 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientOperation;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -122,7 +122,7 @@ public class JsonEntitySerializer extends JsonSerializer {
     }
 
     if (serverMode) {
-      for (ClientOperation operation : entity.getOperations()) {
+      for (Operation operation : entity.getOperations()) {
         jgen.writeObjectFieldStart("#" + StringUtils.substringAfterLast(operation.getMetadataAnchor(), "#"));
         jgen.writeStringField(Constants.ATTR_TITLE, operation.getTitle());
         jgen.writeStringField(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());

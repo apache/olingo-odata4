@@ -40,9 +40,9 @@ import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddi
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientLink;
-import org.apache.olingo.commons.api.domain.ClientLinkType;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientLinkType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;

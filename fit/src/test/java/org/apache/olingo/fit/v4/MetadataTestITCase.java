@@ -67,8 +67,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertNotNull(record);
     assertEquals(3, record.getPropertyValues().size());
     assertTrue(record.getPropertyValues().get(0).getValue().isConstant());
-    assertTrue(record.getPropertyValues().get(0).getValue().asConstant().getValue().asPrimitive().
-        toCastValue(Boolean.class));
+    assertTrue((Boolean) record.getPropertyValues().get(0).getValue().asConstant().getValue().asPrimitive());
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().isCollection());
     assertEquals(1, record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().size());
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().get(0).isDynamic());
@@ -134,7 +133,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmAnnotation requiresTypeInScale = edm.getAnnotation(
         scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
     assertNotNull(requiresTypeInScale);
-    assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValue().toString());
+    assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().toString());
 
     // 3. capabilities
     final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities.DeleteRestrictions"));

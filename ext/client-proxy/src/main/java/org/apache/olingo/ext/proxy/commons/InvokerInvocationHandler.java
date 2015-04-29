@@ -34,11 +34,11 @@ import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientInvokeResult;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientInvokeResult;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmOperation;
 import org.apache.olingo.commons.api.edm.EdmReturnType;

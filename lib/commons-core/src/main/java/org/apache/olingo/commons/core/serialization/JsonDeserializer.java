@@ -43,9 +43,8 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientLinkType;
-import org.apache.olingo.commons.api.domain.ClientPropertyType;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.domain.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -100,11 +99,11 @@ public class JsonDeserializer implements ODataDeserializer {
       JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
 
       if (inline instanceof ObjectNode) {
-        link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
+        link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
         link.setInlineEntity(entityDeserializer.doDeserialize(inline.traverse(codec)).getPayload());
 
       } else if (inline instanceof ArrayNode) {
-        link.setType(ClientLinkType.ENTITY_SET_NAVIGATION.toString());
+          link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
 
         final EntityCollection entitySet = new EntityCollection();
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
@@ -136,7 +135,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
       if (field.getValue().isValueNode()) {
         link.setHref(field.getValue().textValue());
-        link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
+        link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
       }
 
       linked.getNavigationLinks().add(link);
@@ -148,7 +147,7 @@ public class JsonDeserializer implements ODataDeserializer {
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_ASSOCIATION_LINK_REL + getTitle(field));
       link.setHref(field.getValue().textValue());
-      link.setType(ClientLinkType.ASSOCIATION.toString());
+      link.setType(Constants.ASSOCIATION_LINK_TYPE);
       linked.getAssociationLinks().add(link);
 
       toRemove.add(field.getKey());
@@ -168,7 +167,7 @@ public class JsonDeserializer implements ODataDeserializer {
         link.setTitle(getTitle(field));
         link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
         link.setHref(field.getValue().textValue());
-        link.setType(ClientLinkType.ENTITY_NAVIGATION.toString());
+        link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
         linked.getNavigationLinks().add(link);
 
         toRemove.add(setInline(field.getKey(), suffix, tree, codec, link));
@@ -180,7 +179,7 @@ public class JsonDeserializer implements ODataDeserializer {
           link.setTitle(getTitle(field));
           link.setRel(Constants.NS_NAVIGATION_LINK_REL + getTitle(field));
           link.setHref(node.asText());
-          link.setType(ClientLinkType.ENTITY_SET_NAVIGATION.toString());
+          link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
           linked.getNavigationLinks().add(link);
           toRemove.add(setInline(field.getKey(), Constants.JSON_BIND_LINK_SUFFIX, tree, codec, link));
         }
@@ -189,32 +188,32 @@ public class JsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private Map.Entry<ClientPropertyType, EdmTypeInfo> guessPropertyType(final JsonNode node) {
-    ClientPropertyType type;
+  private Map.Entry<ODataPropertyType, EdmTypeInfo> guessPropertyType(final JsonNode node) {
+    ODataPropertyType type;
     String typeExpression = null;
 
     if (node.isValueNode() || node.isNull()) {
-      type = ClientPropertyType.PRIMITIVE;
+      type = ODataPropertyType.PRIMITIVE;
       typeExpression = guessPrimitiveTypeKind(node).getFullQualifiedName().toString();
     } else if (node.isArray()) {
-      type = ClientPropertyType.COLLECTION;
+      type = ODataPropertyType.COLLECTION;
       if (node.has(0) && node.get(0).isValueNode()) {
         typeExpression = "Collection(" + guessPrimitiveTypeKind(node.get(0)) + ')';
       }
     } else if (node.isObject()) {
       if (node.has(Constants.ATTR_TYPE)) {
-        type = ClientPropertyType.PRIMITIVE;
+        type = ODataPropertyType.PRIMITIVE;
         typeExpression = "Edm.Geography" + node.get(Constants.ATTR_TYPE).asText();
       } else {
-        type = ClientPropertyType.COMPLEX;
+        type = ODataPropertyType.COMPLEX;
       }
     } else {
-      type = ClientPropertyType.EMPTY;
+      type = ODataPropertyType.EMPTY;
     }
 
     final EdmTypeInfo typeInfo = typeExpression == null ? null :
         new EdmTypeInfo.Builder().setTypeExpression(typeExpression).build();
-    return new SimpleEntry<ClientPropertyType, EdmTypeInfo>(type, typeInfo);
+    return new SimpleEntry<ODataPropertyType, EdmTypeInfo>(type, typeInfo);
   }
 
   private EdmPrimitiveTypeKind guessPrimitiveTypeKind(final JsonNode node) {
@@ -337,15 +336,15 @@ public class JsonDeserializer implements ODataDeserializer {
     EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType()) ? null
         : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
-    final Map.Entry<ClientPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
+    final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
       typeInfo = guessed.getValue();
     }
 
-    final ClientPropertyType propType = typeInfo == null ? guessed.getKey()
-        : typeInfo.isCollection() ? ClientPropertyType.COLLECTION
-            : typeInfo.isPrimitiveType() ? ClientPropertyType.PRIMITIVE
-                : node.isValueNode() ? ClientPropertyType.ENUM : ClientPropertyType.COMPLEX;
+    final ODataPropertyType propType = typeInfo == null ? guessed.getKey()
+        : typeInfo.isCollection() ? ODataPropertyType.COLLECTION
+            : typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE
+                : node.isValueNode() ? ODataPropertyType.ENUM : ODataPropertyType.COMPLEX;
 
     switch (propType) {
     case COLLECTION:
@@ -411,7 +410,7 @@ public class JsonDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public ClientError toError(final InputStream input) throws ODataDeserializerException {
+  public ODataError toError(final InputStream input) throws ODataDeserializerException {
     try {
       parser = new JsonFactory(new ObjectMapper()).createParser(input);
       return new JsonODataErrorDeserializer(serverMode).doDeserialize(parser);

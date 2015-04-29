@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api;
 
+import org.apache.olingo.commons.api.format.ContentType;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -302,4 +304,10 @@ public interface Constants {
 
   public static final String CANONICAL_FUNCTION_URIENCODE = "odata.uriEncode";
 
+  String MEDIA_EDIT_LINK_TYPE = "*/*";
+  String ENTITY_NAVIGATION_LINK_TYPE = ContentType.APPLICATION_ATOM_XML_ENTRY.toContentTypeString();
+  String ENTITY_SET_NAVIGATION_LINK_TYPE = ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString();
+  String ASSOCIATION_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
+  String ENTITY_COLLECTION_BINDING_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
+  String ENTITY_BINDING_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
 }

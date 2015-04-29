@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.domain.ClientErrorDetail;
+import org.apache.olingo.commons.api.domain.ODataErrorDetail;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ClientServerError;
@@ -83,7 +83,7 @@ public class ClientErrorSerializerTest {
   @Test
   public void emptyDetailsList() throws Exception {
     ClientServerError error = new ClientServerError();
-    error.setMessage("ErrorMessage").setDetails(new ArrayList<ClientErrorDetail>());
+    error.setMessage("ErrorMessage").setDetails(new ArrayList<ODataErrorDetail>());
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":\"ErrorMessage\",\"details\":[]}}", jsonString);
@@ -99,8 +99,8 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void singleDetailNothingSet() throws Exception {
-    List<ClientErrorDetail> details = new ArrayList<ClientErrorDetail>();
-    details.add(new ClientErrorDetail());
+    List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
+    details.add(new ODataErrorDetail());
     ClientServerError error = new ClientServerError().setDetails(details);
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
@@ -110,8 +110,8 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void verifiedWithJacksonParser() throws Exception {
-    List<ClientErrorDetail> details = new ArrayList<ClientErrorDetail>();
-    details.add(new ClientErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget"));
+    List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
+    details.add(new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget"));
     ClientServerError error =
         new ClientServerError().setCode("Code").setMessage("Message").setTarget("Target").setDetails(details);
     InputStream stream = ser.error(error).getContent();

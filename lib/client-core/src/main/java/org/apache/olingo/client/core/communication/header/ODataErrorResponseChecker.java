@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ODataError;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
@@ -35,8 +35,8 @@ public final class ODataErrorResponseChecker {
 
   protected static final Logger LOG = LoggerFactory.getLogger(ODataErrorResponseChecker.class);
 
-  private static ClientError getGenericError(final int code, final String errorMsg) {
-    final ClientError error = new ClientError();
+  private static ODataError getGenericError(final int code, final String errorMsg) {
+    final ODataError error = new ODataError();
     error.setCode(String.valueOf(code));
     error.setMessage(errorMsg);
     return error;
@@ -53,7 +53,7 @@ public final class ODataErrorResponseChecker {
     } else {
       final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
 
-      ClientError error;
+      ODataError error;
       try {
         error = odataClient.getReader().readError(entity, format);
       } catch (final RuntimeException e) {

@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.olingo.commons.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexCollection;

@@ -20,10 +20,10 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ClientCollectionValue;
-import org.apache.olingo.commons.api.domain.ClientComplexValue;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;

@@ -33,12 +33,12 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientError;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
@@ -80,7 +80,7 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public ClientError readError(final InputStream inputStream, final ODataFormat format)
+  public ODataError readError(final InputStream inputStream, final ODataFormat format)
       throws ODataDeserializerException {
     return client.getDeserializer(format).toError(inputStream);
   }
@@ -137,7 +137,7 @@ public class ODataReaderImpl implements ODataReader {
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataServiceDocument(resource.getPayload())));
-      } else if (ClientError.class.isAssignableFrom(reference)) {
+      } else if (ODataError.class.isAssignableFrom(reference)) {
         res = new ResWrap<T>(
             (URI) null,
             null,

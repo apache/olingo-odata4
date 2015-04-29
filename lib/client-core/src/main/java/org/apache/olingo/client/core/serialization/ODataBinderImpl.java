@@ -44,29 +44,30 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.domain.ClientAnnotatable;
-import org.apache.olingo.commons.api.domain.ClientAnnotation;
-import org.apache.olingo.commons.api.domain.ClientCollectionValue;
-import org.apache.olingo.commons.api.domain.ClientComplexValue;
-import org.apache.olingo.commons.api.domain.ClientDeletedEntity.Reason;
-import org.apache.olingo.commons.api.domain.ClientDelta;
-import org.apache.olingo.commons.api.domain.ClientDeltaLink;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ClientInlineEntity;
-import org.apache.olingo.commons.api.domain.ClientInlineEntitySet;
-import org.apache.olingo.commons.api.domain.ClientLink;
-import org.apache.olingo.commons.api.domain.ClientLinkType;
-import org.apache.olingo.commons.api.domain.ClientLinked;
-import org.apache.olingo.commons.api.domain.ClientOperation;
-import org.apache.olingo.commons.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.domain.ClientValuable;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientAnnotatable;
+import org.apache.olingo.client.api.domain.ClientAnnotation;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
+import org.apache.olingo.client.api.domain.ClientDeletedEntity.Reason;
+import org.apache.olingo.client.api.domain.ClientDelta;
+import org.apache.olingo.client.api.domain.ClientDeltaLink;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientInlineEntity;
+import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientLinkType;
+import org.apache.olingo.client.api.domain.ClientLinked;
+import org.apache.olingo.client.api.domain.ClientOperation;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientValuable;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -87,10 +88,10 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.domain.ClientAnnotationImpl;
-import org.apache.olingo.commons.core.domain.ClientDeletedEntityImpl;
-import org.apache.olingo.commons.core.domain.ClientDeltaLinkImpl;
-import org.apache.olingo.commons.core.domain.ClientPropertyImpl;
+import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
+import org.apache.olingo.client.core.domain.ClientDeletedEntityImpl;
+import org.apache.olingo.client.core.domain.ClientDeltaLinkImpl;
+import org.apache.olingo.client.core.domain.ClientPropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.serialization.ContextURLParser;
@@ -635,8 +636,11 @@ public class ODataBinderImpl implements ODataBinder {
           newMediaEditLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
     }
 
-    for (ClientOperation operation : resource.getPayload().getOperations()) {
-      operation.setTarget(URIUtils.getURI(base, operation.getTarget()));
+    for (Operation op : resource.getPayload().getOperations()) {
+      ClientOperation operation = new ClientOperation();
+      operation.setTarget(URIUtils.getURI(base, op.getTarget()));
+      operation.setTitle(op.getTitle());
+      operation.setMetadataAnchor(op.getMetadataAnchor());
       entity.getOperations().add(operation);
     }
 

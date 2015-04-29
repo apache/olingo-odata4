@@ -21,12 +21,12 @@ package org.apache.olingo.client.api.communication;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.StatusLine;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.domain.ClientError;
+import org.apache.olingo.commons.api.domain.ODataError;
 
 /**
  * Represents a client error in OData.
  *
- * @see ClientError
+ * @see ODataError
  */
 public class ODataClientErrorException extends ODataRuntimeException {
 
@@ -34,7 +34,7 @@ public class ODataClientErrorException extends ODataRuntimeException {
 
   private final StatusLine statusLine;
 
-  private final ClientError error;
+  private final ODataError error;
 
   /**
    * Constructor.
@@ -54,7 +54,7 @@ public class ODataClientErrorException extends ODataRuntimeException {
    * @param statusLine request status info.
    * @param error OData error to be wrapped.
    */
-  public ODataClientErrorException(final StatusLine statusLine, final ClientError error) {
+  public ODataClientErrorException(final StatusLine statusLine, final ODataError error) {
     super(error == null
             ? statusLine.toString()
             : (StringUtils.isBlank(error.getCode()) ? StringUtils.EMPTY : "(" + error.getCode() + ") ")
@@ -78,7 +78,7 @@ public class ODataClientErrorException extends ODataRuntimeException {
    *
    * @return OData error.
    */
-  public ClientError getODataError() {
+  public ODataError getODataError() {
     return error;
   }
 }

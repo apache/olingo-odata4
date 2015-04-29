@@ -46,8 +46,8 @@ import org.apache.olingo.client.core.communication.request.batch.ODataSingleResp
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl.ODataEntityResponseImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

@@ -20,7 +20,7 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.domain.ClientValue;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
