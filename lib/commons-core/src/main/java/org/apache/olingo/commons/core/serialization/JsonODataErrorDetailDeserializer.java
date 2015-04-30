@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.ODataErrorDetail;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;

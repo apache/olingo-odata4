@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.ODataError;
 
 import java.io.InputStream;
 

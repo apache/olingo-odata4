@@ -57,7 +57,7 @@ import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
@@ -464,27 +464,27 @@ public class BasicITCase extends AbstractBaseTestITCase {
                 .add(
                     of.newComplexValue("CTPrimComp")
                         .add(
-                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                .buildInt16(
-                                    (short) 42)))
+                                of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
+                                        .buildInt16(
+                                                (short) 42)))
                         .add(
-                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                .add(
-                                    of.newPrimitiveProperty("PropertyString", of
-                                        .newPrimitiveValueBuilder()
-                                        .buildString("42"))))))
+                                of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                                        .add(
+                                                of.newPrimitiveProperty("PropertyString", of
+                                                        .newPrimitiveValueBuilder()
+                                                        .buildString("42"))))))
                 .add(
                     of.newComplexValue("CTPrimComp")
                         .add(
-                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                .buildInt16(
-                                    (short) 43)))
+                                of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
+                                        .buildInt16(
+                                                (short) 43)))
                         .add(
-                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                .add(
-                                    of.newPrimitiveProperty("PropertyString", of
-                                        .newPrimitiveValueBuilder()
-                                        .buildString("43"))))))));
+                                of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                                        .add(
+                                                of.newPrimitiveProperty("PropertyString", of
+                                                        .newPrimitiveValueBuilder()
+                                                        .buildString("43"))))))));
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")

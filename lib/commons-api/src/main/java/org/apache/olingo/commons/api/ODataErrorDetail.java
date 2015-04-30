@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.domain;
+package org.apache.olingo.commons.api;
 
 /**
  * OData details， for example <tt>{ "error": {..., "details":[

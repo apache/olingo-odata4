@@ -24,7 +24,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
+import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -108,8 +108,8 @@ public class EntitySetTestITCase extends AbstractTestITCase {
         client.getRetrieveRequestFactory().getEntitySetIteratorRequest(uriBuilder.build());
     req.setFormat(format);
 
-    final ODataRetrieveResponse<ODataEntitySetIterator<ClientEntitySet, ClientEntity>> res = req.execute();
-    final ODataEntitySetIterator<ClientEntitySet, ClientEntity> feedIterator = res.getBody();
+    final ODataRetrieveResponse<ClientEntitySetIterator<ClientEntitySet, ClientEntity>> res = req.execute();
+    final ClientEntitySetIterator<ClientEntitySet, ClientEntity> feedIterator = res.getBody();
 
     assertNotNull(feedIterator);
 

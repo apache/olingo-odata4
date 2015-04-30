@@ -24,4 +24,5 @@ public interface EdmConstantAnnotationExpression extends EdmAnnotationExpression
 
   Valuable getValue();
 
+  String getValueAsString();
 }

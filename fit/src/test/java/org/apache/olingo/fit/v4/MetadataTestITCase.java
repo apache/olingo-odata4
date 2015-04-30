@@ -108,8 +108,10 @@ public class MetadataTestITCase extends AbstractTestITCase {
 
     final EdmAnnotation description = core.getAnnotation(descriptionTerm);
     assertNotNull(description);
+//    assertEquals("Core terms needed to write vocabularies",
+//        description.getExpression().asConstant().getValue().asPrimitive().toString());
     assertEquals("Core terms needed to write vocabularies",
-        description.getExpression().asConstant().getValue().asPrimitive().toString());
+            description.getExpression().asConstant().getValueAsString());
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
@@ -133,7 +135,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmAnnotation requiresTypeInScale = edm.getAnnotation(
         scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
     assertNotNull(requiresTypeInScale);
-    assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().toString());
+    assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValueAsString());
 
     // 3. capabilities
     final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities.DeleteRestrictions"));

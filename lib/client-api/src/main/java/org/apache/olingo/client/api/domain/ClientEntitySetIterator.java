@@ -46,13 +46,13 @@ import org.slf4j.LoggerFactory;
  * @param <E> concrete ODataEntity implementation
  * @param <ES> concrete ODataEntitySet implementation
  */
-public class ODataEntitySetIterator<ES extends ClientEntitySet, E extends ClientEntity>
+public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends ClientEntity>
         implements Iterator<E> {
 
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(ODataEntitySetIterator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ClientEntitySetIterator.class);
 
   protected final ODataClient odataClient;
 
@@ -77,8 +77,8 @@ public class ODataEntitySetIterator<ES extends ClientEntitySet, E extends Client
    * @param stream source stream.
    * @param format OData format.
    */
-  public ODataEntitySetIterator(final ODataClient odataClient, final InputStream stream,
-          final ODataFormat format) {
+  public ClientEntitySetIterator(final ODataClient odataClient, final InputStream stream,
+                                 final ODataFormat format) {
 
     this.odataClient = odataClient;
     this.stream = stream;

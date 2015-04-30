@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.communication;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.StatusLine;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.ODataError;
 
 /**
  * Represents a client error in OData.

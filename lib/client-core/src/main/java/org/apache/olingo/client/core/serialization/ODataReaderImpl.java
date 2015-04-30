@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
+import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
@@ -35,7 +35,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.domain.ODataError;
+import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
@@ -91,11 +91,11 @@ public class ODataReaderImpl implements ODataReader {
     ResWrap<T> res;
 
     try {
-      if (ODataEntitySetIterator.class.isAssignableFrom(reference)) {
+      if (ClientEntitySetIterator.class.isAssignableFrom(reference)) {
         res = new ResWrap<T>(
             (URI) null,
             null,
-            reference.cast(new ODataEntitySetIterator<ClientEntitySet, ClientEntity>(
+            reference.cast(new ClientEntitySetIterator<ClientEntitySet, ClientEntity>(
                 client, src, ODataFormat.fromString(format))));
       } else if (ClientEntitySet.class.isAssignableFrom(reference)) {
         final ResWrap<EntityCollection> resource = client.getDeserializer(ODataFormat.fromString(format))
@@ -149,7 +149,7 @@ public class ODataReaderImpl implements ODataReader {
       LOG.warn("Cast error", e);
       res = null;
     } finally {
-      if (!ODataEntitySetIterator.class.isAssignableFrom(reference)) {
+      if (!ClientEntitySetIterator.class.isAssignableFrom(reference)) {
         IOUtils.closeQuietly(src);
       }
     }

@@ -55,7 +55,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
         for (Property enumValue : enumValues) {
           collValue.add(enumValue);
         }
-        value = new Property(enumTypeName, "name", ValueType.COLLECTION_ENUM, collValue);
+        value = new Property(enumTypeName, null, ValueType.COLLECTION_ENUM, collValue);
       }
       type = null;
     } else {
@@ -95,27 +95,13 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       default:
         kind = EdmPrimitiveTypeKind.String;
       }
-//      final ClientPrimitiveValueImpl.BuilderImpl primitiveValueBuilder = new ClientPrimitiveValueImpl.BuilderImpl();
-//      primitiveValueBuilder.setType(kind);
-//      try {
-//        final EdmPrimitiveType type = EdmPrimitiveTypeFactory.getInstance(kind);
-//        primitiveValueBuilder.setValue(
-//            type.valueOfString(constExprConstruct.getValue(),
-//                null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-//                type.getDefaultType()));
-//      } catch (final EdmPrimitiveTypeException e) {
-//        throw new IllegalArgumentException(e);
-//      }
-//
-//      value = primitiveValueBuilder.build();
-
       type = EdmPrimitiveTypeFactory.getInstance(kind);
       try {
-        Object test = type.valueOfString(constExprConstruct.getValue(),
+        final Object valueOfString = type.valueOfString(constExprConstruct.getValue(),
                 null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
                 type.getDefaultType());
         value = new Property(kind.getFullQualifiedName().getFullQualifiedNameAsString(),
-                "name", ValueType.PRIMITIVE, test);
+                null, ValueType.PRIMITIVE, valueOfString);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }
@@ -147,7 +133,8 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
     return value;
   }
 
-  public String toString() {
+  @Override
+  public String getValueAsString() {
     if (value == null) {
       return "";
     } else if(value.isEnum()) {
@@ -164,5 +151,4 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       }
     }
   }
-
 }

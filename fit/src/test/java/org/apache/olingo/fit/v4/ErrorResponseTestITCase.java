@@ -19,8 +19,8 @@
 package org.apache.olingo.fit.v4;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.commons.api.domain.ODataError;
-import org.apache.olingo.commons.api.domain.ODataErrorDetail;
+import org.apache.olingo.commons.api.ODataError;
+import org.apache.olingo.commons.api.ODataErrorDetail;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
 

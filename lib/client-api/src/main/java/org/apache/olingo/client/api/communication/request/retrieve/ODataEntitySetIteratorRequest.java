@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.retrieve;
 
-import org.apache.olingo.client.api.domain.ODataEntitySetIterator;
+import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 
@@ -26,6 +26,6 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
  * This class implements an OData EntitySet query request.
  */
 public interface ODataEntitySetIteratorRequest<ES extends ClientEntitySet, E extends ClientEntity>
-        extends ODataRetrieveRequest<ODataEntitySetIterator<ES, E>> {
+        extends ODataRetrieveRequest<ClientEntitySetIterator<ES, E>> {
 //No additional methods needed for now.
 }

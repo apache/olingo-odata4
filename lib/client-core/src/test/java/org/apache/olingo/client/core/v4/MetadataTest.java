@@ -273,7 +273,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(weight);
     assertEquals(EdmInt32.getInstance(), weight.getUnderlyingType());
     assertFalse(weight.getAnnotations().isEmpty());
-    assertEquals("Kilograms", weight.getAnnotations().get(0).getExpression().asConstant().getValue().getValue());
+    assertEquals("Kilograms", weight.getAnnotations().get(0).getExpression().asConstant().getValueAsString());
   }
 
   /**
