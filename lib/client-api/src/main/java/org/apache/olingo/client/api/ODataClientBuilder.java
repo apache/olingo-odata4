@@ -25,9 +25,26 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Helper to access an implementation for the API client library.
+ * <p>
+ * Builder to create an ODataClient for the API client library.
+ * This builder is dependent that an according implementation for the ODataClient and or
+ * EdmEnabledODataClient is available in class path.
+ * </p>
+ * <p>
+ * This Builder should only be used in use cases were a direct access to the <code>client-core</code>
+ * library is not possible.
+ * If direct access is possible it is <b>highly recommended</b> to use the
+ * <code>ODataClientFactory</code> provided in the <code>client-core</code> library.
+ * </p>
+ * <p>
+ * By default the ODataClientBuilder use the default Olingo V4 client core implementations
+ * (<code>org.apache.olingo.client.core.ODataClientImpl</code> and
+ * <code>org.apache.olingo.client.core.EdmEnabledODataClientImpl</code>) which can be
+ * overwritten via the System properties <code>ODATA_CLIENT_IMPL_SYS_PROPERTY</code>
+ * and <code>ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY</code>.
+ * </p>
  */
-public final class ODataClientFactory {
+public final class ODataClientBuilder {
 
   private static final String ODATA_CLIENT_IMPL_CLASS = "org.apache.olingo.client.core.ODataClientImpl";
   private static final String ODATA_EDM_CLIENT_IMPL_CLASS = "org.apache.olingo.client.core.EdmEnabledODataClientImpl";
@@ -35,11 +52,59 @@ public final class ODataClientFactory {
   public static final String ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY = "ORG_APACHE_OLINGO_EDM_CLIENT_IMPL_FQN";
 
   /**
+   * Builder class
+   */
+  public static class ClientBuilder {
+    private final String serviceRoot;
+    private Edm edm;
+    private String metadataETag;
+
+    /**
+     * Create the builder for an EdmEnabledODataClient.
+     *
+     * @param serviceRoot service root to use
+     */
+    public ClientBuilder(String serviceRoot) {
+      this.serviceRoot = serviceRoot;
+    }
+
+    /**
+     * Set the edm to use for edm enabled client
+     * @param edm edm to use for edm enabled client
+     * @return current client builder
+     */
+    public ClientBuilder edm(final Edm edm) {
+      this.edm = edm;
+      return this;
+    }
+
+    /**
+     * Set the metadataETag to use for edm enabled client
+     * @param metadataETag edm to use for edm enabled client
+     * @return current client builder
+     */
+    public ClientBuilder metadataETag(final String metadataETag) {
+      this.metadataETag = metadataETag;
+      return this;
+    }
+
+    /**
+     * Create an new EdmEnabledODataClient based on via system property ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY
+     * class name or if not net the default ODATA_EDM_CLIENT_IMPL_CLASS set class
+     * with before set serviceRoot and optional edm and optinal metadataETag.
+     * @return new created ODataClient
+     */
+    public EdmEnabledODataClient createClient() {
+      return ODataClientBuilder.createEdmEnabledClient(serviceRoot, edm, metadataETag);
+    }
+  }
+
+  /**
    * Create an new ODataClient based on via system property ODATA_CLIENT_IMPL_SYS_PROPERTY
    * class name or if not net the default ODATA_CLIENT_IMPL_CLASS set class.
    * @return create ODataClient
    */
-  public static ODataClient getClient() {
+  public static ODataClient createClient() {
     String clientImplClassName = System.getProperty(ODATA_CLIENT_IMPL_SYS_PROPERTY);
     if(clientImplClassName == null) {
       clientImplClassName = ODATA_CLIENT_IMPL_CLASS;
@@ -48,14 +113,15 @@ public final class ODataClientFactory {
   }
 
   /**
-   * Create an new EdmEnabledODataClient based on via system property ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY
-   * class name or if not net the default ODATA_EDM_CLIENT_IMPL_CLASS set class.
-   * @param serviceRoot used service root
-   * @return create ODataClient
+   * Initiate the builder for an EdmEnabledODataClient.
+   *
+   * @param serviceRoot service root to use
+   * @return initiated client builder
    */
-  public static EdmEnabledODataClient getEdmEnabledClient(final String serviceRoot) {
-    return getEdmEnabledClient(serviceRoot, null, null);
+  public static ClientBuilder with(String serviceRoot) {
+    return new ClientBuilder(serviceRoot);
   }
+
 
   /**
    * Create an new EdmEnabledODataClient based on via system property ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY
@@ -65,8 +131,8 @@ public final class ODataClientFactory {
    * @param metadataETag used metadataETag
    * @return create ODataClient
    */
-  public static EdmEnabledODataClient getEdmEnabledClient(
-      final String serviceRoot, final Edm edm, final String metadataETag) {
+  private static EdmEnabledODataClient createEdmEnabledClient(
+          final String serviceRoot, final Edm edm, final String metadataETag) {
 
     String clientImplClassName = System.getProperty(ODATA_EMD_CLIENT_IMPL_SYS_PROPERTY);
     if(clientImplClassName == null) {
