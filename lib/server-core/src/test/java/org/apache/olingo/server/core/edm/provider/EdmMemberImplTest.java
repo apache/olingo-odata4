@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
 import org.apache.olingo.commons.core.edm.EdmMemberImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class EdmMemberImplTest {
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -51,23 +51,23 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
   private List<EdmSingleton> singletons;
   private final Map<String, EdmSingleton> singletonCache = Collections.synchronizedMap(
-                                                                    new LinkedHashMap<String, EdmSingleton>());
+      new LinkedHashMap<String, EdmSingleton>());
   private List<EdmEntitySet> entitySets;
   private final Map<String, EdmEntitySet> entitySetCache = Collections.synchronizedMap(
-                                                                    new LinkedHashMap<String, EdmEntitySet>());
+      new LinkedHashMap<String, EdmEntitySet>());
   private List<EdmActionImport> actionImports;
   private final Map<String, EdmActionImport> actionImportCache = Collections.synchronizedMap(
-                                                                    new LinkedHashMap<String, EdmActionImport>());
+      new LinkedHashMap<String, EdmActionImport>());
   private List<EdmFunctionImport> functionImports;
   private final Map<String, EdmFunctionImport> functionImportCache = Collections.synchronizedMap(
-                                                                    new LinkedHashMap<String, EdmFunctionImport>());
+      new LinkedHashMap<String, EdmFunctionImport>());
 
   public EdmEntityContainerImpl(final Edm edm, final CsdlEdmProvider provider,
       final CsdlEntityContainerInfo entityContainerInfo) {
     super(edm, entityContainerInfo.getContainerName().getName(), null);
     this.provider = provider;
-    this.entityContainerName = entityContainerInfo.getContainerName();
-    this.parentContainerName = entityContainerInfo.getExtendsContainer();
+    entityContainerName = entityContainerInfo.getContainerName();
+    parentContainerName = entityContainerInfo.getExtendsContainer();
   }
 
   public EdmEntityContainerImpl(final Edm edm, final CsdlEdmProvider provider, final FullQualifiedName containerFQN,
@@ -75,8 +75,8 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     super(edm, containerFQN.getName(), entityContainer);
     this.provider = provider;
     container = entityContainer;
-    this.entityContainerName = containerFQN;
-    this.parentContainerName = entityContainer.getExtendsContainerFQN();
+    entityContainerName = containerFQN;
+    parentContainerName = entityContainer.getExtendsContainerFQN();
   }
 
   @Override
@@ -238,7 +238,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     loadContainer();
     final List<CsdlEntitySet> providerEntitySets = container.getEntitySets();
     final List<EdmEntitySet> entitySetsLocal = new ArrayList<EdmEntitySet>();
-    
+
     if (providerEntitySets != null) {
       for (CsdlEntitySet entitySet : providerEntitySets) {
         final EdmEntitySetImpl impl = new EdmEntitySetImpl(edm, this, entitySet);
@@ -253,7 +253,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     loadContainer();
     final List<CsdlFunctionImport> providerFunctionImports = container.getFunctionImports();
     final ArrayList<EdmFunctionImport> functionImportsLocal = new ArrayList<EdmFunctionImport>();
-    
+
     if (providerFunctionImports != null) {
       for (CsdlFunctionImport functionImport : providerFunctionImports) {
         EdmFunctionImportImpl impl = new EdmFunctionImportImpl(edm, this, functionImport);
@@ -268,7 +268,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     loadContainer();
     final List<CsdlSingleton> providerSingletons = container.getSingletons();
     final List<EdmSingleton> singletonsLocal = new ArrayList<EdmSingleton>();
-    
+
     if (providerSingletons != null) {
       for (CsdlSingleton singleton : providerSingletons) {
         final EdmSingletonImpl impl = new EdmSingletonImpl(edm, this, singleton);
@@ -302,7 +302,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
         if (containerLocal == null) {
           containerLocal = new CsdlEntityContainer().setName(getName());
         }
-        
+
         container = containerLocal;
       } catch (ODataException e) {
         throw new EdmException(e);

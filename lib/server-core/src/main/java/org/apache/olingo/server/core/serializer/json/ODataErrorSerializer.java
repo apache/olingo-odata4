@@ -29,7 +29,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataErrorSerializer {
 
-  public void writeErrorDocument(JsonGenerator json, final ODataError error)
+  public void writeErrorDocument(final JsonGenerator json, final ODataError error)
       throws IOException, SerializerException {
     if (error == null) {
       throw new SerializerException("ODataError object MUST NOT be null!",
@@ -55,7 +55,8 @@ public class ODataErrorSerializer {
     json.writeEndObject();
   }
 
-  private void writeODataError(JsonGenerator json, String code, String message, String target) throws IOException {
+  private void writeODataError(final JsonGenerator json, final String code, final String message, final String target)
+      throws IOException {
     json.writeFieldName(Constants.ERROR_CODE);
     if (code == null) {
       json.writeNull();

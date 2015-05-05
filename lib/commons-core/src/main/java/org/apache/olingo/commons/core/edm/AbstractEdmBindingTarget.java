@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -50,12 +50,12 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
   public List<EdmNavigationPropertyBinding> getNavigationPropertyBindings() {
     if (navigationPropertyBindings == null) {
       List<CsdlNavigationPropertyBinding> providerBindings = target.getNavigationPropertyBindings();
-      final List<EdmNavigationPropertyBinding> navigationPropertyBindingsLocal = 
+      final List<EdmNavigationPropertyBinding> navigationPropertyBindingsLocal =
           new ArrayList<EdmNavigationPropertyBinding>();
       if (providerBindings != null) {
         for (CsdlNavigationPropertyBinding binding : providerBindings) {
-          navigationPropertyBindingsLocal.add(new EdmNavigationPropertyBindingImpl(binding.getPath(), 
-                                                                                   binding.getTarget()));
+          navigationPropertyBindingsLocal.add(new EdmNavigationPropertyBindingImpl(binding.getPath(),
+              binding.getTarget()));
         }
         navigationPropertyBindings = Collections.unmodifiableList(navigationPropertyBindingsLocal);
       }
@@ -99,7 +99,7 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
         && !found;) {
 
       final EdmNavigationPropertyBinding binding = itor.next();
-      if(binding.getPath() == null || binding.getTarget() == null){
+      if (binding.getPath() == null || binding.getTarget() == null) {
         throw new EdmException("Path or Target in navigation property binding must not be null!");
       }
       if (path.startsWith(binding.getPath())) {

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,10 +32,11 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
   protected FullQualifiedName type;
 
   protected List<CsdlNavigationPropertyBinding> navigationPropertyBindings =
-          new ArrayList<CsdlNavigationPropertyBinding>();
-  
+      new ArrayList<CsdlNavigationPropertyBinding>();
+
   private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -48,7 +49,7 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
   public String getType() {
     return type.getFullQualifiedNameAsString();
   }
-  
+
   public FullQualifiedName getTypeFQN() {
     return type;
   }
@@ -57,7 +58,7 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
     this.type = new FullQualifiedName(type);
     return this;
   }
-  
+
   public CsdlBindingTarget setType(final FullQualifiedName type) {
     this.type = type;
     return this;
@@ -68,11 +69,11 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
   }
 
   public CsdlBindingTarget setNavigationPropertyBindings(
-          final List<CsdlNavigationPropertyBinding> navigationPropertyBindings) {
+      final List<CsdlNavigationPropertyBinding> navigationPropertyBindings) {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;
   }
-  
+
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;

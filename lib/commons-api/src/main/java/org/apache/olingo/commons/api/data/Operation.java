@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,7 +30,7 @@ public class Operation {
 
   /**
    * Gets metadata anchor.
-   * 
+   *
    * @return metadata anchor.
    */
   public String getMetadataAnchor() {
@@ -39,7 +39,7 @@ public class Operation {
 
   /**
    * Sets metadata anchor.
-   * 
+   *
    * @param metadataAnchor metadata anchor.
    */
   public void setMetadataAnchor(final String metadataAnchor) {
@@ -48,7 +48,7 @@ public class Operation {
 
   /**
    * Gets title.
-   * 
+   *
    * @return title.
    */
   public String getTitle() {
@@ -57,7 +57,7 @@ public class Operation {
 
   /**
    * Sets title.
-   * 
+   *
    * @param title title.
    */
   public void setTitle(final String title) {
@@ -66,7 +66,7 @@ public class Operation {
 
   /**
    * Gets target.
-   * 
+   *
    * @return target.
    */
   public URI getTarget() {
@@ -75,7 +75,7 @@ public class Operation {
 
   /**
    * Sets target.
-   * 
+   *
    * @param target target.
    */
   public void setTarget(final URI target) {

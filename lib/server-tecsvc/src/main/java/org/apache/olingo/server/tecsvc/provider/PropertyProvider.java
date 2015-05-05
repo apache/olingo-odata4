@@ -665,27 +665,27 @@ public class PropertyProvider {
           .setPartner("NavPropertyETKeyNavOne");
 
   public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETTwoKeyNavMany")
-      .setType(EntityTypeProvider.nameETTwoKeyNav)
-      .setCollection(true);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoKeyNavMany")
+          .setType(EntityTypeProvider.nameETTwoKeyNav)
+          .setCollection(true);
 
   public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETTwoKeyNavOne")
-      .setType(EntityTypeProvider.nameETTwoKeyNav);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoKeyNavOne")
+          .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   public static final CsdlNavigationProperty collectionNavPropertyETTwoPrimMany_ETTwoPrim =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETTwoPrimMany")
-      .setType(EntityTypeProvider.nameETTwoPrim)
-      .setCollection(true);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoPrimMany")
+          .setType(EntityTypeProvider.nameETTwoPrim)
+          .setCollection(true);
 
   public static final CsdlNavigationProperty collectionNavPropertyETAllPrimMany_ETAllPrim =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETAllPrimMany")
-      .setType(EntityTypeProvider.nameETAllPrim)
-      .setCollection(true);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETAllPrimMany")
+          .setType(EntityTypeProvider.nameETAllPrim)
+          .setCollection(true);
 
   public static final CsdlNavigationProperty collectionNavPropertySINav = new CsdlNavigationProperty()
       .setName("NavPropertySINav")
@@ -693,11 +693,11 @@ public class PropertyProvider {
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   public static final CsdlNavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETKeyNavContMany")
-      .setCollection(true)
-      .setContainsTarget(true)
-      .setType(EntityTypeProvider.nameETKeyNav);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETKeyNavContMany")
+          .setCollection(true)
+          .setContainsTarget(true)
+          .setType(EntityTypeProvider.nameETKeyNav);
 
   public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
       new CsdlNavigationProperty()
@@ -719,10 +719,10 @@ public class PropertyProvider {
       .setType(EntityTypeProvider.nameETKeyPrimNav);
 
   public static final CsdlNavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav_NotNullable =
-          new CsdlNavigationProperty()
-      .setName("NavPropertyETTwoKeyNavOne")
-      .setType(EntityTypeProvider.nameETTwoKeyNav)
-      .setNullable(false);
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoKeyNavOne")
+          .setType(EntityTypeProvider.nameETTwoKeyNav)
+          .setNullable(false);
 
   public static final CsdlNavigationProperty navPropertyETTwoKeyNavOne_ETTwoKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavOne")

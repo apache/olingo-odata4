@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,23 +34,22 @@ public interface BatchProcessor extends Processor {
 
   /**
    * Process a complete batch request and puts serialized content and status into the response.
-   * @param facade   BatchFacade which should be used for further batch part handling
-   * @param request  OData request object containing raw HTTP information
+   * @param facade BatchFacade which should be used for further batch part handling
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @throws BatchSerializerException     if the service implementation encounters a failure
-   * @throws BatchDeserializerException   if de-serialization failed
+   * @throws BatchSerializerException if the service implementation encounters a failure
+   * @throws BatchDeserializerException if de-serialization failed
    */
   void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
       throws BatchSerializerException, BatchDeserializerException;
 
-
   /**
    * Process a batch change set (containing several batch requests)
    * and puts serialized content and status into the response.
-   * @param facade    BatchFacade which should be used for further batch part handling
-   * @param requests  List of ODataRequests which are included in the to be processed change set
-   * @throws BatchDeserializerException   if de-serialization failed
+   * @param facade BatchFacade which should be used for further batch part handling
+   * @param requests List of ODataRequests which are included in the to be processed change set
+   * @throws BatchDeserializerException if de-serialization failed
    */
   ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests)
-          throws BatchDeserializerException;
+      throws BatchDeserializerException;
 }

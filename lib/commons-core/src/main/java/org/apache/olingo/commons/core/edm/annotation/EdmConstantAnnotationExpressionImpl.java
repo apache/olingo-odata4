@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -98,10 +98,10 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       type = EdmPrimitiveTypeFactory.getInstance(kind);
       try {
         final Object valueOfString = type.valueOfString(constExprConstruct.getValue(),
-                null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-                type.getDefaultType());
+            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+            type.getDefaultType());
         value = new Property(kind.getFullQualifiedName().getFullQualifiedNameAsString(),
-                null, ValueType.PRIMITIVE, valueOfString);
+            null, ValueType.PRIMITIVE, valueOfString);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }
@@ -137,7 +137,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
   public String getValueAsString() {
     if (value == null) {
       return "";
-    } else if(value.isEnum()) {
+    } else if (value.isEnum()) {
       return value.toString();
     } else if (value.isGeospatial()) {
       return value.toString();
@@ -145,7 +145,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
       // TODO: check after copied from ClientPrimitiveValueImpl
       try {
         return type.valueToString(value.getValue(), null, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }

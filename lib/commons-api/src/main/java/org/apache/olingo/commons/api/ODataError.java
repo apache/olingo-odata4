@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,7 +47,7 @@ public class ODataError {
    * @param code
    * @return this for method chaining
    */
-  public ODataError setCode(String code) {
+  public ODataError setCode(final String code) {
     this.code = code;
     return this;
   }
@@ -67,7 +67,7 @@ public class ODataError {
    * @param message
    * @return this for method chaining
    */
-  public ODataError setMessage(String message) {
+  public ODataError setMessage(final String message) {
     this.message = message;
     return this;
   }
@@ -87,14 +87,14 @@ public class ODataError {
    * @param target
    * @return this for method chaining
    */
-  public ODataError setTarget(String target) {
+  public ODataError setTarget(final String target) {
     this.target = target;
     return this;
   }
 
   /**
    * Gets error details.
-   * 
+   *
    * @return ODataErrorDetail list.
    */
   public List<ODataErrorDetail> getDetails() {
@@ -103,17 +103,17 @@ public class ODataError {
 
   /**
    * Sets error details.
-   * 
+   *
    * @return this for method chaining.
    */
-  public ODataError setDetails(List<ODataErrorDetail> details) {
+  public ODataError setDetails(final List<ODataErrorDetail> details) {
     this.details = details;
     return this;
   }
 
   /**
    * Gets server defined key-value pairs for debug environment only.
-   * 
+   *
    * @return a pair representing server defined object. MAY be null.
    */
   public Map<String, String> getInnerError() {
@@ -122,10 +122,10 @@ public class ODataError {
 
   /**
    * Sets server defined key-value pairs for debug environment only.
-   * 
+   *
    * @return this for method chaining.
    */
-  public ODataError setInnerError(Map<String, String> innerError) {
+  public ODataError setInnerError(final Map<String, String> innerError) {
     this.innerError = innerError;
     return this;
   }

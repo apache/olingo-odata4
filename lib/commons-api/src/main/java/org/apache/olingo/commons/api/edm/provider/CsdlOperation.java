@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,9 +34,10 @@ public abstract class CsdlOperation extends CsdlAbstractEdmItem implements CsdlN
   protected List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
 
   protected CsdlReturnType returnType;
-  
+
   protected final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -67,8 +68,8 @@ public abstract class CsdlOperation extends CsdlAbstractEdmItem implements CsdlN
   public List<CsdlParameter> getParameters() {
     return parameters;
   }
-  
-  public CsdlParameter getParameter(String name) {
+
+  public CsdlParameter getParameter(final String name) {
     return getOneByName(name, getParameters());
   }
 
@@ -85,7 +86,8 @@ public abstract class CsdlOperation extends CsdlAbstractEdmItem implements CsdlN
     this.returnType = returnType;
     return this;
   }
-  
+
+  @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }

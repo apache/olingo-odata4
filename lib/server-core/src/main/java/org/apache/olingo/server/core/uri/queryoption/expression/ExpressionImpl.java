@@ -21,5 +21,5 @@ package org.apache.olingo.server.core.uri.queryoption.expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 public abstract class ExpressionImpl implements Expression {
-//No additional methods needed for now.
+  // No additional methods needed for now.
 }

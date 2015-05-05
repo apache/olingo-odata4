@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -32,12 +38,6 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class AbstractEdm implements Edm {
 
   protected Map<String, EdmSchema> schemas;
@@ -47,34 +47,34 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityContainer>());
 
-  private final Map<FullQualifiedName, EdmEnumType> enumTypes = 
+  private final Map<FullQualifiedName, EdmEnumType> enumTypes =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEnumType>());
 
   private final Map<FullQualifiedName, EdmTypeDefinition> typeDefinitions =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmTypeDefinition>());
 
-  private final Map<FullQualifiedName, EdmEntityType> entityTypes = 
+  private final Map<FullQualifiedName, EdmEntityType> entityTypes =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityType>());
 
-  private final Map<FullQualifiedName, EdmComplexType> complexTypes = 
+  private final Map<FullQualifiedName, EdmComplexType> complexTypes =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmComplexType>());
 
-  private final Map<FullQualifiedName, EdmAction> unboundActions = 
+  private final Map<FullQualifiedName, EdmAction> unboundActions =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmAction>());
 
   private final Map<FullQualifiedName, List<EdmFunction>> unboundFunctionsByName =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, List<EdmFunction>>());
 
-  private final Map<FunctionMapKey, EdmFunction> unboundFunctionsByKey = 
+  private final Map<FunctionMapKey, EdmFunction> unboundFunctionsByKey =
       Collections.synchronizedMap(new HashMap<FunctionMapKey, EdmFunction>());
 
-  private final Map<ActionMapKey, EdmAction> boundActions = 
+  private final Map<ActionMapKey, EdmAction> boundActions =
       Collections.synchronizedMap(new HashMap<ActionMapKey, EdmAction>());
 
-  private final Map<FunctionMapKey, EdmFunction> boundFunctions = 
+  private final Map<FunctionMapKey, EdmFunction> boundFunctions =
       Collections.synchronizedMap(new HashMap<FunctionMapKey, EdmFunction>());
 
-  private final Map<FullQualifiedName, EdmTerm> terms = 
+  private final Map<FullQualifiedName, EdmTerm> terms =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmTerm>());
 
   private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
@@ -85,7 +85,7 @@ public abstract class AbstractEdm implements Edm {
 
   private Map<String, String> aliasToNamespaceInfo = Collections.synchronizedMap(new HashMap<String, String>());
   private boolean aliasToNamespaceInfoCreated = false;
-  
+
   @Override
   public List<EdmSchema> getSchemas() {
     if (schemaList == null) {
@@ -114,7 +114,7 @@ public abstract class AbstractEdm implements Edm {
   private void initSchemas() {
     schemas = createSchemas();
     aliasToNamespaceInfoCreated = true;
-    
+
     if (schemas == null) {
       schemas = Collections.emptyMap();
     }
@@ -125,7 +125,7 @@ public abstract class AbstractEdm implements Edm {
   public EdmEntityContainer getEntityContainer() {
     return getEntityContainer(null);
   }
-  
+
   @Override
   public EdmEntityContainer getEntityContainer(final FullQualifiedName namespaceOrAliasFQN) {
     final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
@@ -359,37 +359,37 @@ public abstract class AbstractEdm implements Edm {
 
   protected abstract Map<String, String> createAliasToNamespaceInfo();
 
-  public void cacheAliasNamespaceInfo(String alias, String namespace) {
+  public void cacheAliasNamespaceInfo(final String alias, final String namespace) {
     aliasToNamespaceInfo.put(alias, namespace);
   }
 
   protected abstract EdmEntityContainer createEntityContainer(FullQualifiedName containerName);
 
-  public void cacheEntityContainer(FullQualifiedName containerFQN, EdmEntityContainer container) {
+  public void cacheEntityContainer(final FullQualifiedName containerFQN, final EdmEntityContainer container) {
     entityContainers.put(containerFQN, container);
   }
 
   protected abstract EdmEnumType createEnumType(FullQualifiedName enumName);
 
-  public void cacheEnumType(FullQualifiedName enumName, EdmEnumType enumType) {
+  public void cacheEnumType(final FullQualifiedName enumName, final EdmEnumType enumType) {
     enumTypes.put(enumName, enumType);
   }
 
   protected abstract EdmTypeDefinition createTypeDefinition(FullQualifiedName typeDefinitionName);
 
-  public void cacheTypeDefinition(FullQualifiedName typeDefName, EdmTypeDefinition typeDef) {
+  public void cacheTypeDefinition(final FullQualifiedName typeDefName, final EdmTypeDefinition typeDef) {
     typeDefinitions.put(typeDefName, typeDef);
   }
 
   protected abstract EdmEntityType createEntityType(FullQualifiedName entityTypeName);
 
-  public void cacheEntityType(FullQualifiedName entityTypeName, EdmEntityType entityType) {
+  public void cacheEntityType(final FullQualifiedName entityTypeName, final EdmEntityType entityType) {
     entityTypes.put(entityTypeName, entityType);
   }
 
   protected abstract EdmComplexType createComplexType(FullQualifiedName complexTypeName);
 
-  public void cacheComplexType(FullQualifiedName compelxTypeName, EdmComplexType complexType) {
+  public void cacheComplexType(final FullQualifiedName compelxTypeName, final EdmComplexType complexType) {
     complexTypes.put(compelxTypeName, complexType);
   }
 
@@ -407,7 +407,7 @@ public abstract class AbstractEdm implements Edm {
       FullQualifiedName bindingParameterTypeName, Boolean isBindingParameterCollection,
       List<String> parameterNames);
 
-  public void cacheFunction(FullQualifiedName functionName, EdmFunction function) {
+  public void cacheFunction(final FullQualifiedName functionName, final EdmFunction function) {
     final FunctionMapKey key = new FunctionMapKey(functionName,
         function.getBindingParameterTypeFqn(), function.isBindingParameterTypeCollection(),
         function.getParameterNames());
@@ -424,7 +424,7 @@ public abstract class AbstractEdm implements Edm {
     }
   }
 
-  public void cacheAction(FullQualifiedName actionName, EdmAction action) {
+  public void cacheAction(final FullQualifiedName actionName, final EdmAction action) {
     if (action.isBound()) {
       final ActionMapKey key = new ActionMapKey(actionName,
           action.getBindingParameterTypeFqn(), action.isBindingParameterTypeCollection());
@@ -435,20 +435,21 @@ public abstract class AbstractEdm implements Edm {
   }
 
   protected abstract EdmTerm createTerm(FullQualifiedName termName);
-  
-  public void cacheTerm(FullQualifiedName termName, EdmTerm term) {
+
+  public void cacheTerm(final FullQualifiedName termName, final EdmTerm term) {
     terms.put(termName, term);
   }
 
   protected abstract EdmAnnotations createAnnotationGroup(FullQualifiedName targetName);
- 
-  public void cacheAnnotationGroup(FullQualifiedName annotationsGroupName, EdmAnnotations annotationsGroup) {
+
+  public void cacheAnnotationGroup(final FullQualifiedName annotationsGroupName,
+      final EdmAnnotations annotationsGroup) {
     annotationGroups.put(annotationsGroupName, annotationsGroup);
   }
 
   protected abstract List<EdmAnnotation> createAnnotations(FullQualifiedName annotatedName);
-  
-//  public void cacheAnnotation(FullQualifiedName annotationsGroupName, EdmAnnotations annotationsGroup) {
-//    annotationGroups.put(annotationsGroupName, annotationsGroup);
-//  }
+
+  // public void cacheAnnotation(FullQualifiedName annotationsGroupName, EdmAnnotations annotationsGroup) {
+  // annotationGroups.put(annotationsGroupName, annotationsGroup);
+  // }
 }

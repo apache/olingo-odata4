@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -79,7 +79,7 @@ public abstract class OData {
    * Deserializers are used in Processor implementations.
    */
   public abstract FixedFormatDeserializer createFixedFormatDeserializer();
-  
+
   /**
    * Creates a new ODataHttpHandler for handling OData requests in an HTTP context.
    *
@@ -108,7 +108,7 @@ public abstract class OData {
    * @param format any format supported by Olingo (XML, JSON ...)
    */
   public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
-  
+
   /**
    * @param kind
    * @return a {@link EdmPrimitiveType} instance for the type kind

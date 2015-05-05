@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -57,16 +57,16 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
   public EdmTypeKind getKind() {
     return EdmTypeKind.DEFINITION;
   }
-  
+
   @Override
   public EdmPrimitiveType getUnderlyingType() {
-    if(edmPrimitiveTypeInstance == null){
+    if (edmPrimitiveTypeInstance == null) {
       try {
         if (typeDefinition.getUnderlyingType() == null) {
           throw new EdmException("Underlying Type for type definition: "
               + typeDefinitionName.getFullQualifiedNameAsString() + " must not be null.");
         }
-        this.edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
+        edmPrimitiveTypeInstance = EdmPrimitiveTypeFactory.getInstance(
             EdmPrimitiveTypeKind.valueOfFQN(typeDefinition.getUnderlyingType()));
       } catch (IllegalArgumentException e) {
         throw new EdmException("Invalid underlying type: " + typeDefinition.getUnderlyingType(), e);
@@ -99,7 +99,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
   public Boolean isUnicode() {
     return typeDefinition.isUnicode();
   }
-  
+
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
     return getUnderlyingType().isCompatible(primitiveType);
@@ -145,7 +145,6 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
     return getUnderlyingType().fromUriLiteral(literal);
   }
 
-
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.TypeDefinition;
@@ -155,7 +154,7 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
   public FullQualifiedName getAnnotationsTargetFQN() {
     return getFullQualifiedName();
   }
-  
+
   @Override
   public String getAnnotationsTargetPath() {
     return getName();

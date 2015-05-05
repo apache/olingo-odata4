@@ -262,7 +262,7 @@ public class EdmEntityContainerImplTest {
 
     @Override
     public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
-                                                final String functionImportName)
+        final String functionImportName)
         throws ODataException {
       if (functionImportName != null) {
         return new CsdlFunctionImport().setName("functionImportName");

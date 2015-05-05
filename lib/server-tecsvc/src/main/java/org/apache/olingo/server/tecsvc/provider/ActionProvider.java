@@ -39,7 +39,7 @@ public class ActionProvider {
 
   public static final FullQualifiedName nameBAESTwoKeyNavRTESKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESTwoKeyNavRTESKeyNav");
-  
+
   public static final FullQualifiedName nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETBaseTwoKeyNavRTETBaseTwoKeyNav");
 
@@ -48,18 +48,18 @@ public class ActionProvider {
 
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
-  
-  public static final FullQualifiedName nameBAESAllPrimRT = 
+
+  public static final FullQualifiedName nameBAESAllPrimRT =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESAllPrimRT");
-  
-  public static final FullQualifiedName nameBAETAllPrimRT = 
+
+  public static final FullQualifiedName nameBAETAllPrimRT =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETAllPrimRT");
-  
+
   // Unbound Actions
   public static final FullQualifiedName nameUARTString = new FullQualifiedName(SchemaProvider.NAMESPACE,
-          "UARTString");
+      "UARTString");
   public static final FullQualifiedName nameUARTCollStringTwoParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
-          "UARTCollStringTwoParam");
+      "UARTCollStringTwoParam");
   public static final FullQualifiedName nameUARTCollCTTwoPrimParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTCollCTTwoPrimParam");
   public static final FullQualifiedName nameUARTCTTwoPrimParam = new FullQualifiedName(SchemaProvider.NAMESPACE,
@@ -67,9 +67,9 @@ public class ActionProvider {
   public static final FullQualifiedName nameUARTETTwoKeyTwoPrimParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTETTwoKeyTwoPrimParam");
   public static final FullQualifiedName nameUARTCollETKeyNavParam =
-          new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTCollETKeyNavParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTCollETKeyNavParam");
   public static final FullQualifiedName nameUARTETAllPrimParam =
-          new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTETAllPrimParam");
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTETAllPrimParam");
   public static final FullQualifiedName nameUARTCollETAllPrimParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTCollETAllPrimParam");
   public static final FullQualifiedName nameUART = new FullQualifiedName(SchemaProvider.NAMESPACE, "UART");
@@ -78,7 +78,6 @@ public class ActionProvider {
   public static final FullQualifiedName nameUARTTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
 
-
   public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTString)) {
       return Collections.singletonList(
@@ -86,12 +85,12 @@ public class ActionProvider {
               .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString)));
 
     } else if (actionName.equals(nameUARTCollStringTwoParam)) {
-        return Collections.singletonList(
-            new CsdlAction().setName(nameUARTCollStringTwoParam.getName())
-                .setParameters(Arrays.asList(
-                    new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16),
-                    new CsdlParameter().setName("ParameterDuration").setType(PropertyProvider.nameDuration)))
-                .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString).setCollection(true)));
+      return Collections.singletonList(
+          new CsdlAction().setName(nameUARTCollStringTwoParam.getName())
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16),
+                  new CsdlParameter().setName("ParameterDuration").setType(PropertyProvider.nameDuration)))
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString).setCollection(true)));
 
     } else if (actionName.equals(nameUARTCTTwoPrimParam)) {
       return Collections.singletonList(
@@ -101,7 +100,7 @@ public class ActionProvider {
                       .setNullable(false)))
               .setReturnType(
                   new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false)));
-      
+
     } else if (actionName.equals(nameUARTCollCTTwoPrimParam)) {
       return Collections.singletonList(
           new CsdlAction().setName(nameUARTCollCTTwoPrimParam.getName())
@@ -199,19 +198,19 @@ public class ActionProvider {
               .setBound(true)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)));
-    
-    } else if(actionName.equals(nameBAESTwoKeyNavRTESKeyNav)) {
+
+    } else if (actionName.equals(nameBAESTwoKeyNavRTESKeyNav)) {
       return Arrays.asList(
           new CsdlAction().setName("BAESTwoKeyNavRTESKeyNav")
-          .setBound(true)
-          .setEntitySetPath("BindingParam/NavPropertyETKeyNavMany")
-          .setParameters(Arrays.asList(
-              new CsdlParameter().setName("ParameterETTwoKeyNav")
-                  .setType(EntityTypeProvider.nameETTwoKeyNav)
-                  .setCollection(true)
-                  .setNullable(false)))
-          .setReturnType(
-              new CsdlReturnType().setType(EntityTypeProvider.nameETKeyNav).setCollection(true)));
+              .setBound(true)
+              .setEntitySetPath("BindingParam/NavPropertyETKeyNavMany")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("ParameterETTwoKeyNav")
+                      .setType(EntityTypeProvider.nameETTwoKeyNav)
+                      .setCollection(true)
+                      .setNullable(false)))
+              .setReturnType(
+                  new CsdlReturnType().setType(EntityTypeProvider.nameETKeyNav).setCollection(true)));
 
     } else if (actionName.equals(nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav)) {
       return Arrays.asList(
@@ -234,7 +233,7 @@ public class ActionProvider {
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav)));
 
-    } else if(actionName.equals(nameBAETAllPrimRT)) {
+    } else if (actionName.equals(nameBAETAllPrimRT)) {
       return Arrays.asList(
           new CsdlAction().setName("BAETAllPrimRT")
               .setBound(true)
@@ -243,17 +242,17 @@ public class ActionProvider {
                       .setNullable(false)
                       .setType(EntityTypeProvider.nameETAllPrim)
                   )));
-    } else if(actionName.equals(nameBAESAllPrimRT)) {
+    } else if (actionName.equals(nameBAESAllPrimRT)) {
       return Arrays.asList(
           new CsdlAction().setName("BAESAllPrimRT")
-          .setBound(true)
-          .setParameters(Arrays.asList(
-              new CsdlParameter().setName("ParameterETAllPrim")
-                  .setNullable(false)
-                  .setCollection(true)
-                  .setType(EntityTypeProvider.nameETAllPrim)
-              ))
-      );
+              .setBound(true)
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("ParameterETAllPrim")
+                      .setNullable(false)
+                      .setCollection(true)
+                      .setType(EntityTypeProvider.nameETAllPrim)
+                  ))
+          );
     }
 
     return null;

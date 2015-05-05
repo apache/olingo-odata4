@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -122,7 +122,7 @@ public abstract class AbstractUtilities {
    */
   protected abstract InputStream addLinks(
       final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
-      throws Exception;
+          throws Exception;
 
   /**
    * Retrieve all entity link names.
@@ -155,7 +155,7 @@ public abstract class AbstractUtilities {
    */
   protected abstract InputStream normalizeLinks(
       final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
-      throws Exception;
+          throws Exception;
 
   public InputStream saveSingleEntity(
       final String key,
@@ -168,7 +168,7 @@ public abstract class AbstractUtilities {
     // -----------------------------------------
     final String path =
         entitySetName + File.separatorChar + Commons.getEntityKey(key) + File.separatorChar
-            + Constants.get(ConstantKey.ENTITY);
+        + Constants.get(ConstantKey.ENTITY);
     // -----------------------------------------
 
     // -----------------------------------------
@@ -354,7 +354,7 @@ public abstract class AbstractUtilities {
         final Map.Entry<String, List<String>> currents = extractLinkURIs(entitySetName, entityKey, linkName);
         uris.addAll(currents.getValue());
       } catch (Exception ignore) {
-        //Expected exception
+        // Expected exception
       }
     }
 
@@ -365,7 +365,7 @@ public abstract class AbstractUtilities {
 
   public void putLinksInMemory(
       final String basePath, final String entitySetName, final String linkName, final Collection<String> uris)
-      throws Exception {
+          throws Exception {
 
     fsManager.putInMemory(
         Commons.getLinksAsJSON(entitySetName, new SimpleEntry<String, Collection<String>>(linkName, uris)),
@@ -533,7 +533,7 @@ public abstract class AbstractUtilities {
       throws ODataDeserializerException {
     return accept == Accept.ATOM || accept == Accept.XML
         ? atomDeserializer.toEntity(entity)
-        : jsonDeserializer.toEntity(entity);
+            : jsonDeserializer.toEntity(entity);
   }
 
   public Entity readEntity(final Accept accept, final InputStream entity)
@@ -718,7 +718,7 @@ public abstract class AbstractUtilities {
    */
   public LinkInfo readLinks(
       final String entitySetName, final String entityId, final String linkName, final Accept accept)
-      throws Exception {
+          throws Exception {
 
     final String basePath = getLinksBasePath(entitySetName, entityId);
 
@@ -733,16 +733,16 @@ public abstract class AbstractUtilities {
 
   public InputStream putMediaInMemory(
       final String entitySetName, final String entityId, final InputStream value)
-      throws IOException {
+          throws IOException {
     return putMediaInMemory(entitySetName, entityId, null, value);
   }
 
   public InputStream putMediaInMemory(
       final String entitySetName, final String entityId, final String name, final InputStream value)
-      throws IOException {
+          throws IOException {
     final FileObject fo = fsManager.putInMemory(value, fsManager.getAbsolutePath(
         Commons.getEntityBasePath(entitySetName, entityId)
-            + (name == null ? Constants.get(ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
+        + (name == null ? Constants.get(ConstantKey.MEDIA_CONTENT_FILENAME) : name), null));
 
     return fo.getContent().getInputStream();
   }
@@ -774,7 +774,7 @@ public abstract class AbstractUtilities {
       final String entitySetName,
       final String entityId,
       final String linkName)
-      throws Exception {
+          throws Exception {
 
     // --------------------------------
     // 0. Retrieve all 'linkName' navigation link uris (NotFoundException if missing)
@@ -799,7 +799,7 @@ public abstract class AbstractUtilities {
       final String entityId,
       final InputStream entity,
       final String linkName)
-      throws Exception {
+          throws Exception {
     // --------------------------------
     // 2. Retrieve expanded object (entry or feed)
     // --------------------------------
@@ -832,11 +832,11 @@ public abstract class AbstractUtilities {
 
   public abstract InputStream readEntities(
       final List<String> links, final String linkName, final String next, final boolean forceFeed)
-      throws Exception;
+          throws Exception;
 
   protected abstract InputStream replaceLink(
       final InputStream toBeChanged, final String linkName, final InputStream replacement)
-      throws Exception;
+          throws Exception;
 
   public abstract InputStream selectEntity(final InputStream entity, final String[] propertyNames)
       throws Exception;
@@ -850,11 +850,11 @@ public abstract class AbstractUtilities {
 
   public abstract InputStream addOperation(
       final InputStream content, final String name, final String metaAnchor, final String href)
-      throws Exception;
+          throws Exception;
 
   protected abstract InputStream replaceProperty(
       final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
-      throws Exception;
+          throws Exception;
 
   protected abstract InputStream deleteProperty(final InputStream src, final List<String> path)
       throws Exception;
@@ -864,5 +864,5 @@ public abstract class AbstractUtilities {
 
   public abstract Map.Entry<String, List<String>> extractLinkURIs(
       final String entitySetName, final String entityId, final String linkName)
-      throws Exception;
+          throws Exception;
 }

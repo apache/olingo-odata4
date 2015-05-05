@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,21 @@
  * under the License.
  */
 package org.apache.olingo.fit.v4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
@@ -38,6 +53,8 @@ import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamManager;
 import org.apache.olingo.client.core.communication.request.Wrapper;
@@ -46,29 +63,12 @@ import org.apache.olingo.client.core.communication.request.batch.ODataSingleResp
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.ODataEntityRequestImpl.ODataEntityResponseImpl;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class BatchTestITCase extends AbstractTestITCase {
 
@@ -265,14 +265,14 @@ public class BatchTestITCase extends AbstractTestITCase {
     customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
         "OrderDetails",
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
-            appendKeySegment(new HashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
+        appendKeySegment(new HashMap<String, Object>() {
+          private static final long serialVersionUID = 3109256773218160485L;
 
-              {
-                put("OrderID", 7);
-                put("ProductID", 5);
-              }
-            }).build()));
+          {
+            put("OrderID", 7);
+            put("ProductID", 5);
+          }
+        }).build()));
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
         URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
@@ -301,7 +301,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
     assertEquals(Integer.valueOf(7),
         req.execute().getBody().getEntities().get(0).getProperty("OrderID").getPrimitiveValue().
-            toCastValue(Integer.class));
+        toCastValue(Integer.class));
 
     res = chgitem.next();
     assertEquals(204, res.getStatusCode());
@@ -336,7 +336,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     // prepare URI
     URIBuilder targetURI = client.newURIBuilder(testStaticServiceRootURL);
     targetURI.appendEntitySetSegment("Customers").appendKeySegment(1).
-        expand("Orders").select("PersonID,Orders/OrderID");
+    expand("Orders").select("PersonID,Orders/OrderID");
 
     // create new request
     ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
@@ -644,14 +644,14 @@ public class BatchTestITCase extends AbstractTestITCase {
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(id)));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
+        setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
     order.getProperties().add(getClient().getObjectFactory().newCollectionProperty("OrderShelfLifes",
         getClient().getObjectFactory().newCollectionValue(EdmPrimitiveTypeKind.Duration.name()).add(
             getClient().getObjectFactory().newPrimitiveValueBuilder().setType(EdmPrimitiveTypeKind.Duration).
-                setValue(new BigDecimal("0.0000002")).build())));
+            setValue(new BigDecimal("0.0000002")).build())));
 
     return order;
   }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -49,11 +49,11 @@ public class XMLEventReaderWrapper implements XMLEventReader {
       throws IOException, XMLStreamException {
     final StringBuilder startBuilder = new StringBuilder();
     startBuilder.append("<").append(CONTENT).
-        append(" xmlns:m").append("=\"").append(Constants.get(ConstantKey.METADATA_NS)).append("\"").
-        append(" xmlns:d").append("=\"").append(Constants.get(ConstantKey.DATASERVICES_NS)).append("\"").
-        append(" xmlns:georss").append("=\"").append(Constants.get(ConstantKey.GEORSS_NS)).append("\"").
-        append(" xmlns:gml").append("=\"").append(Constants.get(ConstantKey.GML_NS)).append("\"").
-        append(">");
+    append(" xmlns:m").append("=\"").append(Constants.get(ConstantKey.METADATA_NS)).append("\"").
+    append(" xmlns:d").append("=\"").append(Constants.get(ConstantKey.DATASERVICES_NS)).append("\"").
+    append(" xmlns:georss").append("=\"").append(Constants.get(ConstantKey.GEORSS_NS)).append("\"").
+    append(" xmlns:gml").append("=\"").append(Constants.get(ConstantKey.GML_NS)).append("\"").
+    append(">");
 
     CONTENT_STAG = startBuilder.toString();
 
@@ -63,7 +63,7 @@ public class XMLEventReaderWrapper implements XMLEventReader {
         new ByteArrayInputStream((CONTENT_STAG
             + IOUtils.toString(stream, ENCODING).replaceAll("^<\\?xml.*\\?>", "")
             + XMLEventReaderWrapper.CONTENT_ETAG).getBytes(ENCODING)),
-        Constants.DECODER);
+            Constants.DECODER);
 
     wrapped = factory.createXMLEventReader(reader);
 
@@ -79,7 +79,7 @@ public class XMLEventReaderWrapper implements XMLEventReader {
 
       } while (nextGivenEvent.isStartDocument()
           || (nextGivenEvent.isStartElement()
-          && CONTENT.equals(nextGivenEvent.asStartElement().getName().getLocalPart())));
+              && CONTENT.equals(nextGivenEvent.asStartElement().getName().getLocalPart())));
 
     } catch (Exception ignore) {
       // ignore
@@ -148,6 +148,6 @@ public class XMLEventReaderWrapper implements XMLEventReader {
     // discard content end element tag ...
     return event != null
         && (!event.isEndElement()
-        || !CONTENT.equals(event.asEndElement().getName().getLocalPart()));
+            || !CONTENT.equals(event.asEndElement().getName().getLocalPart()));
   }
 }

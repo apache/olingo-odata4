@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,10 +26,10 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -138,21 +138,21 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
     fail(ES_TWO_PRIM, "PropertyString add 10", HttpStatusCode.BAD_REQUEST);
   }
 
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(String entitySet, String orderByString) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString) {
     final ODataClient client = getClient();
 
     final URI uri =
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(entitySet)
-            .orderBy(orderByString)
-            .build();
+        .appendEntitySetSegment(entitySet)
+        .orderBy(orderByString)
+        .build();
 
     ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
 
     return request.execute();
   }
 
-  private void fail(String entitySet, String filterString, HttpStatusCode errorCode) {
+  private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
     try {
       sendRequest(entitySet, filterString);
       Assert.fail();

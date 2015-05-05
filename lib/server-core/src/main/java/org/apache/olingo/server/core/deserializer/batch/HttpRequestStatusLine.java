@@ -54,7 +54,7 @@ public class HttpRequestStatusLine {
     statusLine = httpStatusLine;
     requestBaseUri = baseUri;
     rawServiceResolutionUri = serviceResolutionUri;
-    
+
     parse();
   }
 
@@ -72,7 +72,7 @@ public class HttpRequestStatusLine {
     }
   }
 
-  private void parseUri(String rawUri, String baseUri) throws BatchDeserializerException {
+  private void parseUri(final String rawUri, final String baseUri) throws BatchDeserializerException {
     try {
       final URI uri = new URI(rawUri);
 
@@ -86,7 +86,7 @@ public class HttpRequestStatusLine {
     }
   }
 
-  private void parseAbsoluteUri(String rawUri, String baseUri) throws BatchDeserializerException {
+  private void parseAbsoluteUri(final String rawUri, final String baseUri) throws BatchDeserializerException {
     if (rawUri.startsWith(baseUri)) {
       final String relativeUri = removeLeadingSlash(rawUri.substring(baseUri.length()));
       parseRelativeUri(relativeUri);
@@ -96,11 +96,11 @@ public class HttpRequestStatusLine {
     }
   }
 
-  private String removeLeadingSlash(String value) {
+  private String removeLeadingSlash(final String value) {
     return (value.length() > 0 && value.charAt(0) == '/') ? value.substring(1) : value;
   }
 
-  private void parseRelativeUri(String rawUri) throws BatchDeserializerException {
+  private void parseRelativeUri(final String rawUri) throws BatchDeserializerException {
     final Matcher relativeUriMatcher = PATTERN_RELATIVE_URI.matcher(rawUri);
 
     if (relativeUriMatcher.matches()) {

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,6 +36,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.ODataError;
+import org.apache.olingo.commons.api.ODataPropertyType;
 import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -51,8 +53,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -98,9 +98,9 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
         final String stringValue = event.asCharacters().getData();
         value = typeInfo == null ? stringValue : // TODO: add facets
-            ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
-                Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
-                ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
+          ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
+              Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+              ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -176,7 +176,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
 
     final EdmTypeInfo type = typeInfo == null ? null :
-        new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+      new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -242,7 +242,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       } else if (child.isCharacters()) {
         type = typeInfo == null || typeInfo.isPrimitiveType()
             ? ODataPropertyType.PRIMITIVE
-            : ODataPropertyType.ENUM;
+                : ODataPropertyType.ENUM;
       } else {
         type = ODataPropertyType.EMPTY;
       }
@@ -280,15 +280,15 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
 
     final EdmTypeInfo typeInfo = StringUtils.isBlank(typeAttrValue) ? null :
-        new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
+      new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
 
     if (typeInfo != null) {
       valuable.setType(typeInfo.internal());
     }
 
     final ODataPropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
-        typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
-            typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.COMPLEX;
+      typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
+        typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.COMPLEX;
 
     if (nullAttr == null) {
       switch (propType) {
@@ -317,10 +317,10 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     } else {
       valuable.setValue(propType == ODataPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
-          propType == ODataPropertyType.ENUM ? ValueType.ENUM :
-              propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
-                  propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
-          null);
+        propType == ODataPropertyType.ENUM ? ValueType.ENUM :
+          propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
+            propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
+                null);
     }
   }
 
@@ -402,7 +402,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     }
   }
 
-  private StartElement getStartElement(XMLEventReader reader) throws XMLStreamException {
+  private StartElement getStartElement(final XMLEventReader reader) throws XMLStreamException {
     while (reader.hasNext()) {
       final XMLEvent innerEvent = reader.peek();
       if (innerEvent.isCharacters() && innerEvent.asCharacters().isWhiteSpace()) {
@@ -867,7 +867,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
     return new ResWrap<T>(
         context == null ? null : URI.create(context.getValue()),
-        metadataETag == null ? null : metadataETag.getValue(),
-        object);
+            metadataETag == null ? null : metadataETag.getValue(),
+                object);
   }
 }

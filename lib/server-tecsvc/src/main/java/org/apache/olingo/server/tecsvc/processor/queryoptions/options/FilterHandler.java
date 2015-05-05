@@ -36,17 +36,17 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
 
 public class FilterHandler {
-  
+
   protected static final OData oData;
   protected static final EdmPrimitiveType primBoolean;
-  
+
   static {
     oData = OData.newInstance();
     primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
   }
 
-  public static void applyFilterSystemQuery(FilterOption filterOption, EntityCollection entitySet, 
-      EdmBindingTarget edmEntitySet) throws ODataApplicationException {
+  public static void applyFilterSystemQuery(final FilterOption filterOption, final EntityCollection entitySet,
+      final EdmBindingTarget edmEntitySet) throws ODataApplicationException {
 
     if (filterOption == null) {
       return;

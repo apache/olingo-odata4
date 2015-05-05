@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 
-import java.util.List;
-
 /**
  * Generic interface to define expression visitors with arbitrary return types.
- * 
+ *
  * @param <T> Return type
  */
 public interface ExpressionVisitor<T> {
@@ -47,7 +47,7 @@ public interface ExpressionVisitor<T> {
   /**
    * Called for each traversed {@link Unary} expression
    * @param operator Operator kind
-   * @param operand  return value of sub tree
+   * @param operand return value of sub tree
    * @return Application return value of type T
    * @throws ExpressionVisitException Thrown if an exception while traversing occured
    * @throws ODataApplicationException Thrown by the application

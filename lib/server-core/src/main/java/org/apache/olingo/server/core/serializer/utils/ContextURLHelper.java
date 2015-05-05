@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -36,10 +36,11 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public final class ContextURLHelper {
 
-  /** Builds a list of selected Properties for the ContextURL,
-   *  taking care to preserve the order as defined in the EDM;
-   *  returns NULL if no selection has taken place.
-   * @param type   the structured type
+  /**
+   * Builds a list of selected Properties for the ContextURL,
+   * taking care to preserve the order as defined in the EDM;
+   * returns NULL if no selection has taken place.
+   * @param type the structured type
    * @param expand the Expand option (from the URL's $expand query option)
    * @param select the Select option (from the URL's $select query option)
    * @return a select-list String
@@ -58,7 +59,8 @@ public final class ContextURLHelper {
     return result.length() == 0 ? null : result.toString();
   }
 
-  private static void handleSelect(final EdmStructuredType type, final SelectOption select, StringBuilder result) {
+  private static void handleSelect(final EdmStructuredType type, final SelectOption select,
+      final StringBuilder result) {
     if (ExpandSelectHelper.isAll(select)) {
       result.append('*');
     } else {
@@ -98,7 +100,7 @@ public final class ContextURLHelper {
     }
   }
 
-  private static void handleExpand(final EdmStructuredType type, final ExpandOption expand, StringBuilder result)
+  private static void handleExpand(final EdmStructuredType type, final ExpandOption expand, final StringBuilder result)
       throws SerializerException {
     final Set<String> expandedPropertyNames = ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
     for (final String propertyName : type.getNavigationPropertyNames()) {
@@ -149,7 +151,7 @@ public final class ContextURLHelper {
    * @param keys the keys as a list of {@link UriParameter} instances
    * @return a String with the key predicate
    */
-  public static String buildKeyPredicate(List<UriParameter> keys) throws SerializerException {
+  public static String buildKeyPredicate(final List<UriParameter> keys) throws SerializerException {
     if (keys == null || keys.isEmpty()) {
       return null;
     } else if (keys.size() == 1) {
@@ -164,5 +166,5 @@ public final class ContextURLHelper {
       }
       return result.toString();
     }
-  }      
+  }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,7 +39,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySe
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
@@ -49,6 +48,7 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -135,12 +135,12 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Binding links
     secondLevelTwoKeyNav.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, client.newURIBuilder(
         SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String, Object>() {
-      private static final long serialVersionUID = 3109256773218160485L;
-      {
-        put(PROPERTY_INT16, 3);
-        put(PROPERTY_STRING, "1");
-      }
-    }).build()));
+          private static final long serialVersionUID = 3109256773218160485L;
+          {
+            put(PROPERTY_INT16, 3);
+            put(PROPERTY_STRING, "1");
+          }
+        }).build()));
 
     final ClientInlineEntity secondLevelTwoKeyOneInline =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, secondLevelTwoKeyNav);
@@ -245,74 +245,74 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-                .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
     final ClientEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntitySingle.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntitySingle.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("432")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("432")))));
 
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
     // Create related entity(EntitySet: ESTwoKeyNav, Type: NavPropertyETTwoKeyNavMany
     final ClientEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol1.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
     inlineEntityCol1.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("44")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol1.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
 
     final ClientEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
     inlineEntityCol2.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("45")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol2.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
 
     final ClientInlineEntity newDeepInsertEntityLink =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
@@ -338,7 +338,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final URI esKeyNavURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
-            NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
+                NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
     final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
@@ -393,7 +393,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     URI esTwoKeyNavEntityManyOneURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
-            .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
@@ -414,7 +414,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     URI esTwoKeyNavEntityManyTwoURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
-            .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
@@ -437,72 +437,72 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-                .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
     entity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 1L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 1L;
 
-              {
-                put(PROPERTY_INT16, 1);
-                put(PROPERTY_STRING, "1");
-              }
-            })
-            .build()));
+          {
+            put(PROPERTY_INT16, 1);
+            put(PROPERTY_STRING, "1");
+          }
+        })
+        .build()));
 
     // Prepare inline entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     final ClientEntity innerEntity = of.newEntity(ET_KEY_NAV);
     innerEntity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     innerEntity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
     innerEntity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     innerEntity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))));
     innerEntity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))));
     innerEntity
-        .getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))
-            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-                .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder()
-                    .buildInt16((short) 431)))))));
+    .getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("431")))
+        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder()
+                .buildInt16((short) 431)))))));
     innerEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 1L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 1L;
 
-              {
-                put(PROPERTY_INT16, 1);
-                put(PROPERTY_STRING, "1");
-              }
-            })
-            .build()));
+          {
+            put(PROPERTY_INT16, 1);
+            put(PROPERTY_STRING, "1");
+          }
+        })
+        .build()));
 
     ClientInlineEntity inlineEntity = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineEntity);
@@ -516,7 +516,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     // Fetch Entity
     URI fetchEntityURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(esKeyNavEntityKey)
-            .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     ODataEntityRequest<ClientEntity> entityRequest =
         client.getRetrieveRequestFactory().getEntityRequest(fetchEntityURI);
@@ -529,11 +529,11 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     Short innerEntityInt16Key =
         entityResponse.getBody().getProperty(NAV_PROPERTY_ET_KEY_NAV_ONE).getComplexValue().get(PROPERTY_INT16)
-            .getPrimitiveValue().toCastValue(Short.class);
+        .getPrimitiveValue().toCastValue(Short.class);
 
     final URI innerEntityURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(innerEntityInt16Key)
-            .build();
+        .build();
     final ODataEntityRequest<ClientEntity> innerRequest =
         client.getRetrieveRequestFactory().getEntityRequest(innerEntityURI);
     innerRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
@@ -678,74 +678,74 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-                .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
     final ClientEntity inlineEntitySingle = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntitySingle.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntitySingle.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("432")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 432)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("432")))));
 
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
     // Create related entity(EntitySet: ESTwoKeyNav, Type: NavPropertyETTwoKeyNavMany
     final ClientEntity inlineEntityCol1 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol1.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 44)));
     inlineEntityCol1.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("44")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol1.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("442")))));
 
     final ClientEntity inlineEntityCol2 = client.getObjectFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 45)));
     inlineEntityCol2.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("45")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
         of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
     inlineEntityCol2.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("452")))));
 
     final ClientInlineEntity newDeepInsertEntityLink =
         of.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
@@ -771,7 +771,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     final URI esKeyNavURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
-            NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
+                NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
     final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
@@ -826,7 +826,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     URI esTwoKeyNavEntityManyOneURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
-            .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
@@ -847,7 +847,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
     URI esTwoKeyNavEntityManyTwoURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
-            .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
         client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);

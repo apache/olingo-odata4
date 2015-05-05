@@ -1,70 +1,69 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v4.demo.odatademo;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.PersistenceManager;
-import org.apache.olingo.ext.proxy.api.OperationType;
+// CHECKSTYLE:OFF (Maven checkstyle)
+import java.io.InputStream;
+
+// CHECKSTYLE:ON (Maven checkstyle)
+import java.io.Serializable;
+
 import org.apache.olingo.ext.proxy.api.ComplexCollection;
 import org.apache.olingo.ext.proxy.api.ComplexType;
+import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.ext.proxy.api.EntityCollection;
 import org.apache.olingo.ext.proxy.api.EntityType;
+import org.apache.olingo.ext.proxy.api.OperationType;
+import org.apache.olingo.ext.proxy.api.PersistenceManager;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.ext.proxy.api.EdmStreamValue;
-import java.io.Serializable;
-import java.io.InputStream;
-//CHECKSTYLE:ON (Maven checkstyle)
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("ODataDemo")
 @org.apache.olingo.ext.proxy.api.annotations.EntityContainer(name = "DemoService",
-  namespace = "ODataDemo")
+    namespace = "ODataDemo")
 public interface DemoService extends PersistenceManager {
 
-    Products getProducts();
+  Products getProducts();
 
-    Advertisements getAdvertisements();
+  Advertisements getAdvertisements();
 
-    Persons getPersons();
+  Persons getPersons();
 
-    Categories getCategories();
+  Categories getCategories();
 
-    PersonDetails getPersonDetails();
+  PersonDetails getPersonDetails();
 
-    Suppliers getSuppliers();
+  Suppliers getSuppliers();
 
-    ProductDetails getProductDetails();
-
-
-
+  ProductDetails getProductDetails();
 
   Operations operations();
 
   public interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
-  
-        
+
     @org.apache.olingo.ext.proxy.api.annotations.Operation(name = "IncreaseSalaries",
-                    type = OperationType.ACTION)
+        type = OperationType.ACTION)
     org.apache.olingo.ext.proxy.api.Invoker<Void> increaseSalaries(
-        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32", nullable = false) java.lang.Integer percentage
-    );
-  
-      }
+        @org.apache.olingo.ext.proxy.api.annotations.Parameter(name = "percentage", type = "Edm.Int32",
+            nullable = false) java.lang.Integer percentage
+        );
+
+  }
 
   <NE extends EntityType<?>> NE newEntityInstance(Class<NE> ref);
 

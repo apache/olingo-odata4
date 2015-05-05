@@ -56,10 +56,10 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
   private final TypeDefinitionProvider typeDefinitionProvider;
 
   public EdmTechProvider() {
-    this(Collections.<EdmxReference>emptyList());
+    this(Collections.<EdmxReference> emptyList());
   }
 
-  public EdmTechProvider(List<EdmxReference> references) {
+  public EdmTechProvider(final List<EdmxReference> references) {
     containerProvider = new ContainerProvider(this);
     entityTypeProvider = new EntityTypeProvider();
     complexTypeProvider = new ComplexTypeProvider();
@@ -148,7 +148,7 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
-          throws ODataException {
+      throws ODataException {
     return containerProvider.getEntityContainerInfo(entityContainerName);
   }
 }

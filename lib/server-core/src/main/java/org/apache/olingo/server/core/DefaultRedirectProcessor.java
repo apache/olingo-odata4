@@ -29,7 +29,7 @@ public class DefaultRedirectProcessor implements RedirectProcessor {
 
   @Override
   public void init(final OData odata, final ServiceMetadata serviceMetadata) {
-    //No init needed
+    // No init needed
   }
 
   @Override

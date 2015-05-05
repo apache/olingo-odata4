@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public class EdmDuration extends SingletonPrimitiveType {
 
@@ -63,9 +63,9 @@ public class EdmDuration extends SingletonPrimitiveType {
         : new BigDecimal(matcher.group(1)).multiply(BigDecimal.valueOf(24 * 60 * 60))).
         add(matcher.group(2) == null ? BigDecimal.ZERO
             : new BigDecimal(matcher.group(2)).multiply(BigDecimal.valueOf(60 * 60))).
-        add(matcher.group(3) == null ? BigDecimal.ZERO
-            : new BigDecimal(matcher.group(3)).multiply(BigDecimal.valueOf(60))).
-        add(matcher.group(4) == null ? BigDecimal.ZERO : new BigDecimal(matcher.group(4)));
+            add(matcher.group(3) == null ? BigDecimal.ZERO
+                : new BigDecimal(matcher.group(3)).multiply(BigDecimal.valueOf(60))).
+                add(matcher.group(4) == null ? BigDecimal.ZERO : new BigDecimal(matcher.group(4)));
 
     if (result.scale() <= (precision == null ? 0 : precision)) {
       result = value.charAt(0) == '-' ? result.negate() : result;

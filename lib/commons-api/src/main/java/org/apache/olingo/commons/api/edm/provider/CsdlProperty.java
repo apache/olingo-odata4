@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
-  
+
   private static final long serialVersionUID = -4224390853690843450L;
 
   private String name;
@@ -50,12 +50,12 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   private Integer scale;
 
   private boolean unicode = true;
-  
+
   private SRID srid;
 
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
-  
 
+  @Override
   public String getName() {
     return name;
   }
@@ -73,13 +73,13 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     this.type = type;
     return this;
   }
-  
-  public FullQualifiedName getTypeAsFQNObject(){
+
+  public FullQualifiedName getTypeAsFQNObject() {
     return new FullQualifiedName(type);
   }
-  
-  public CsdlProperty setType(FullQualifiedName fqnName){
-    this.type = fqnName.getFullQualifiedNameAsString();
+
+  public CsdlProperty setType(final FullQualifiedName fqnName) {
+    type = fqnName.getFullQualifiedNameAsString();
     return this;
   }
 
@@ -168,12 +168,12 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
-  
+
   public CsdlProperty setSrid(final SRID srid) {
     this.srid = srid;
     return this;
   }
-  
+
   public SRID getSrid() {
     return srid;
   }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -43,14 +43,14 @@ public abstract class Valuable extends Annotatable {
   public void setType(final String type) {
     this.type = type;
   }
-  
+
   /**
    * Check if Valuable contains a PRIMITIVE or COLLECTION_PRIMITIVE ValueType
    *
    * @return true if ValueType is a PRIMITIVE or COLLECTION_PRIMITIVE, otherwise false
    */
   public boolean isPrimitive() {
-    if(isCollection()) {
+    if (isCollection()) {
       return valueType.getBaseType() == ValueType.PRIMITIVE;
     }
     return valueType == ValueType.PRIMITIVE;
@@ -62,12 +62,11 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a GEOSPATIAL or COLLECTION_GEOSPATIAL, otherwise false
    */
   public boolean isGeospatial() {
-    if(isCollection()) {
+    if (isCollection()) {
       return valueType.getBaseType() == ValueType.GEOSPATIAL;
     }
     return valueType == ValueType.GEOSPATIAL;
   }
-
 
   /**
    * Check if Valuable contains a ENUM or COLLECTION_ENUM ValueType
@@ -75,7 +74,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a ENUM or COLLECTION_ENUM, otherwise false
    */
   public boolean isEnum() {
-    if(isCollection()) {
+    if (isCollection()) {
       return valueType.getBaseType() == ValueType.ENUM;
     }
     return valueType == ValueType.ENUM;
@@ -87,7 +86,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a COMPLEX or COLLECTION_COMPLEX, otherwise false
    */
   public boolean isComplex() {
-    if(isCollection()) {
+    if (isCollection()) {
       return valueType.getBaseType() == ValueType.COMPLEX;
     }
     return valueType == ValueType.COMPLEX;
@@ -108,7 +107,7 @@ public abstract class Valuable extends Annotatable {
    * @return primitive representation or null if it is not based on a primitive ValueType
    */
   public Object asPrimitive() {
-    if(isCollection()) {
+    if (isCollection()) {
       return null;
     }
     return isPrimitive() ? value : null;
@@ -120,7 +119,7 @@ public abstract class Valuable extends Annotatable {
    * @return geospatial representation or null if it is not based on a geospatial ValueType
    */
   public Geospatial asGeospatial() {
-    if(isCollection()) {
+    if (isCollection()) {
       return null;
     }
     return isGeospatial() ? (Geospatial) value : null;
@@ -132,7 +131,7 @@ public abstract class Valuable extends Annotatable {
    * @return enum representation or null if it is not based on a enum ValueType
    */
   public Object asEnum() {
-    if(isCollection()) {
+    if (isCollection()) {
       return null;
     }
     return isEnum() ? value : null;
@@ -144,7 +143,7 @@ public abstract class Valuable extends Annotatable {
    * @return primitive complex or null if it is not based on a complex ValueType
    */
   public ComplexValue asComplex() {
-    if(isCollection()) {
+    if (isCollection()) {
       return null;
     }
     return isComplex() ? (ComplexValue) value : null;
@@ -176,7 +175,6 @@ public abstract class Valuable extends Annotatable {
   public ValueType getValueType() {
     return valueType;
   }
-
 
   @Override
   public boolean equals(final Object obj) {

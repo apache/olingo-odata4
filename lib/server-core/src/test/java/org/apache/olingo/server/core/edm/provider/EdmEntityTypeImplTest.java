@@ -304,7 +304,7 @@ public class EdmEntityTypeImplTest {
     assertNotNull(keyPropertyRefs);
     assertEquals(1, keyPropertyRefs.size());
     assertEquals("Id", keyPropertyRefs.get(0).getName());
-    for(int i = 0; i < keyPropertyRefs.size(); i++){
+    for (int i = 0; i < keyPropertyRefs.size(); i++) {
       assertEquals(keyPropertyRefs.get(i).getName(), typeWithBaseType.getKeyPropertyRefs().get(i).getName());
     }
   }

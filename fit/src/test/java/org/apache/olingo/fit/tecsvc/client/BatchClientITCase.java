@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,12 +42,12 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -78,11 +78,11 @@ public class BatchClientITCase extends AbstractTestITCase {
     /*
      * A bad request (status code >= 400) without "continue on error prefer header" in a changeset
      * should return a single response with Content-Type: application/http
-     * 
+     *
      * See:
      * OData Version 4.0 Part 1: Protocol Plus Errata 01
      * 11.7.4 Responding to a Batch Request
-     * 
+     *
      * When a request within a change set fails, the change set response is not represented using
      * the multipart/mixed media type. Instead, a single response, using the application/http media type
      * and a Content-Transfer-Encoding header with a value of binary, is returned that applies to all requests
@@ -586,7 +586,8 @@ public class BatchClientITCase extends AbstractTestITCase {
         .toValue());
   }
 
-  private void appendGetRequest(final BatchManager manager, final String segment, final Object key, boolean isRelative)
+  private void appendGetRequest(final BatchManager manager, final String segment, final Object key,
+      final boolean isRelative)
       throws URISyntaxException {
     final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
     targetURI.appendEntitySetSegment(segment).appendKeySegment(key);

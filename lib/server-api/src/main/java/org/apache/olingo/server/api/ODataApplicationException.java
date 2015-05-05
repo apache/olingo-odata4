@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,9 +36,9 @@ public class ODataApplicationException extends ODataException {
 
   /**
    * Exception in an OData service implementation.
-   * @param msg        the text of the exception
+   * @param msg the text of the exception
    * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
-   * @param locale     a {@link Locale} to enable translation of error messages
+   * @param locale a {@link Locale} to enable translation of error messages
    * @see ODataException
    * @see HttpStatusCode
    */
@@ -50,9 +50,9 @@ public class ODataApplicationException extends ODataException {
 
   /**
    * Exception in an OData service implementation.
-   * @param msg            the text of the exception
-   * @param statusCode     the HTTP status code of the error response; the default is 500 - Internal Server Error
-   * @param locale         a {@link Locale} to enable translation of error messages
+   * @param msg the text of the exception
+   * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale a {@link Locale} to enable translation of error messages
    * @param oDataErrorCode the error code of the exception as defined by the OData standard
    * @see ODataException
    * @see HttpStatusCode
@@ -65,10 +65,10 @@ public class ODataApplicationException extends ODataException {
 
   /**
    * Exception in an OData service implementation.
-   * @param msg        the text of the exception
+   * @param msg the text of the exception
    * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
-   * @param locale     a {@link Locale} to enable translation of error messages
-   * @param cause      the cause of this exception 
+   * @param locale a {@link Locale} to enable translation of error messages
+   * @param cause the cause of this exception
    * @see ODataException
    * @see HttpStatusCode
    * @see Throwable#getCause()
@@ -82,10 +82,10 @@ public class ODataApplicationException extends ODataException {
 
   /**
    * Exception in an OData service implementation.
-   * @param msg            the text of the exception
-   * @param statusCode     the HTTP status code of the error response; the default is 500 - Internal Server Error
-   * @param locale         a {@link Locale} to enable translation of error messages
-   * @param cause          the cause of this exception 
+   * @param msg the text of the exception
+   * @param statusCode the HTTP status code of the error response; the default is 500 - Internal Server Error
+   * @param locale a {@link Locale} to enable translation of error messages
+   * @param cause the cause of this exception
    * @param oDataErrorCode the error code of the exception as defined by the OData standard
    * @see ODataException
    * @see HttpStatusCode

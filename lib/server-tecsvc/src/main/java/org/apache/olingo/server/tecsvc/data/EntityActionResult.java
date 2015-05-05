@@ -23,21 +23,23 @@ import org.apache.olingo.commons.api.data.Entity;
 public class EntityActionResult {
   private Entity entity;
   private boolean created = false;
-  
+
   public Entity getEntity() {
     return entity;
   }
-  public EntityActionResult setEntity(Entity entity) {
+
+  public EntityActionResult setEntity(final Entity entity) {
     this.entity = entity;
     return this;
   }
+
   public boolean isCreated() {
     return created;
   }
-  public EntityActionResult setCreated(boolean created) {
+
+  public EntityActionResult setCreated(final boolean created) {
     this.created = created;
     return this;
   }
-  
-  
+
 }

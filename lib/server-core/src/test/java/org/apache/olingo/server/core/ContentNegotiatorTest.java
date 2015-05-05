@@ -70,11 +70,11 @@ public class ContentNegotiatorTest {
       { "a/a;v=w;x=y",          null,             "a/a;x=y",             "a/a;b=c,a/a;v=w;x=y" },
       { "a/a;v=w;x=y",          "a/a;x=y",        null,                  "a/a;b=c,a/a;v=w;x=y" },
       { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_MIN,       null             },
-      { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      ACCEPT_CASE_FULL }, 
+      { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      ACCEPT_CASE_FULL },
       { ACCEPT_CASE_MIN_UTF8,   null,             ACCEPT_CASE_MIN_UTF8,  null             }
-  };                                                                                          
+  };
 
-  String[][] casesMetadata = {                                                                 
+  String[][] casesMetadata = {
       /* expected               $format           accept                 modified content types */
       { ACCEPT_CASE_XML,        null,             null,                  null             },
       { ACCEPT_CASE_XML,        "xml",            null,                  null             },
@@ -87,7 +87,7 @@ public class ContentNegotiatorTest {
       { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        }
   };
 
-  String[][] casesFail = {                                                                 
+  String[][] casesFail = {
       /* expected               $format           accept                 modified content types */
       { null,                   "xxx/yyy",        null,                  null             },
       { null,                   "a/a",            null,                  "b/b"            },
@@ -140,7 +140,7 @@ public class ContentNegotiatorTest {
         testContentNegotiation(useCase, RepresentationType.COLLECTION_ENTITY);
         fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
       } catch (final ContentNegotiatorException e) {
-        //Expected Exception
+        // Expected Exception
       }
     }
   }
@@ -200,8 +200,8 @@ public class ContentNegotiatorTest {
     final String[] contentTypes = contentTypeString.split(",");
 
     List<ContentType> types = new ArrayList<ContentType>();
-    for (int i = 0; i < contentTypes.length; i++) {
-      types.add(ContentType.create(contentTypes[i]));
+    for (String contentType : contentTypes) {
+      types.add(ContentType.create(contentType));
     }
 
     CustomContentTypeSupport customContentTypeSupport = mock(CustomContentTypeSupport.class);

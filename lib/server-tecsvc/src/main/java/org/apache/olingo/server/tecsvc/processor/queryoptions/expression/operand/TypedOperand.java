@@ -34,13 +34,13 @@ public class TypedOperand extends VisitorOperand {
   final private EdmType type;
   final private EdmProperty edmProperty;
 
-  public TypedOperand(Object value, EdmType type) {
+  public TypedOperand(final Object value, final EdmType type) {
     super(value);
     this.type = type;
-    this.edmProperty = null;
+    edmProperty = null;
   }
 
-  public TypedOperand(Object value, EdmType type, EdmProperty edmProperty) {
+  public TypedOperand(final Object value, final EdmType type, final EdmProperty edmProperty) {
     super(value);
     this.type = type;
     this.edmProperty = edmProperty;
@@ -55,7 +55,7 @@ public class TypedOperand extends VisitorOperand {
   }
 
   @Override
-  public TypedOperand asTypedOperand(EdmPrimitiveType... asTypes) throws ODataApplicationException {
+  public TypedOperand asTypedOperand(final EdmPrimitiveType... asTypes) throws ODataApplicationException {
     if (type.equals(EdmNull.getInstance())) {
       return this;
     } else if (isNull()) {
@@ -90,7 +90,7 @@ public class TypedOperand extends VisitorOperand {
     throw new ODataApplicationException("Cast failed ", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
   }
 
-  public TypedOperand castToCommonType(VisitorOperand otherOperand) throws ODataApplicationException {
+  public TypedOperand castToCommonType(final VisitorOperand otherOperand) throws ODataApplicationException {
     final TypedOperand other = otherOperand.asTypedOperand();
     final EdmType oType = other.getType();
 
@@ -128,7 +128,7 @@ public class TypedOperand extends VisitorOperand {
     return type;
   }
 
-  public <T> T getTypedValue(Class<T> clazz) {
+  public <T> T getTypedValue(final Class<T> clazz) {
     return clazz.cast(value);
   }
 
@@ -156,7 +156,7 @@ public class TypedOperand extends VisitorOperand {
         primDecimal);
   }
 
-  public boolean is(EdmPrimitiveType... types) {
+  public boolean is(final EdmPrimitiveType... types) {
     if (isNullLiteral()) {
       return true;
     }
@@ -175,7 +175,7 @@ public class TypedOperand extends VisitorOperand {
     return edmProperty;
   }
 
-  private String getLiteral(Object value) throws EdmPrimitiveTypeException {
+  private String getLiteral(final Object value) throws EdmPrimitiveTypeException {
     final EdmProperty edmProperty = getEdmProperty();
     String uriLiteral = null;
 

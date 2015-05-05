@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -50,20 +50,20 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.edm.xml.Reference;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.edm.xml.Reference;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -342,9 +342,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
     newEntity.getProperties().add(
         factory.newComplexProperty("PropertyCompTwoPrim",
             factory.newComplexValue("CTTwoPrim")
-                .add(factory.newPrimitiveProperty(
-                    "PropertyInt16",
-                    factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(factory.newPrimitiveProperty(
+                "PropertyInt16",
+                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
                 .add(factory.newPrimitiveProperty(
                     "PropertyString",
                     factory.newPrimitiveValueBuilder().buildString("Test2")))));
@@ -380,9 +380,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
         factory.newPrimitiveValueBuilder().buildInt32(42)));
     newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .build()));
+        .appendEntitySetSegment("ESTwoPrim")
+        .appendKeySegment(32766)
+        .build()));
 
     final ODataEntityCreateRequest<ClientEntity> createRequest = client.getCUDRequestFactory().getEntityCreateRequest(
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build(),
@@ -461,30 +461,30 @@ public class BasicITCase extends AbstractBaseTestITCase {
     entity.getProperties().add(
         of.newCollectionProperty("CollPropertyComp",
             of.newCollectionValue("CTPrimComp")
+            .add(
+                of.newComplexValue("CTPrimComp")
                 .add(
-                    of.newComplexValue("CTPrimComp")
-                        .add(
-                                of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                        .buildInt16(
-                                                (short) 42)))
-                        .add(
-                                of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                        .add(
-                                                of.newPrimitiveProperty("PropertyString", of
-                                                        .newPrimitiveValueBuilder()
-                                                        .buildString("42"))))))
-                .add(
-                    of.newComplexValue("CTPrimComp")
-                        .add(
-                                of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                        .buildInt16(
-                                                (short) 43)))
-                        .add(
-                                of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                        .add(
-                                                of.newPrimitiveProperty("PropertyString", of
-                                                        .newPrimitiveValueBuilder()
-                                                        .buildString("43"))))))));
+                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
+                                .buildInt16(
+                                    (short) 42)))
+                            .add(
+                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                                .add(
+                                    of.newPrimitiveProperty("PropertyString", of
+                                        .newPrimitiveValueBuilder()
+                                        .buildString("42"))))))
+                                            .add(
+                                                of.newComplexValue("CTPrimComp")
+                                                .add(
+                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
+                                .buildInt16(
+                                    (short) 43)))
+                                                            .add(
+                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                                .add(
+                                    of.newPrimitiveProperty("PropertyString", of
+                                        .newPrimitiveValueBuilder()
+                                        .buildString("43"))))))));
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
@@ -493,9 +493,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityUpdateResponse<ClientEntity> response = getClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri,
-                UpdateType.PATCH,
-                entity)
-        .execute();
+            UpdateType.PATCH,
+            entity)
+            .execute();
 
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
@@ -540,39 +540,39 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ClientEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     entity.getProperties().add(
         of.newPrimitiveProperty("PropertyString",
-                                of.newPrimitiveValueBuilder().buildString("Complex collection test")));
+            of.newPrimitiveValueBuilder().buildString("Complex collection test")));
     entity.getProperties().add(of.newComplexProperty("PropertyCompTwoPrim",
-         of.newComplexValue("CTTwoPrim")
-           .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 1)))
-           .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("1")))));
+        of.newComplexValue("CTTwoPrim")
+            .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("1")))));
 
     entity.getProperties().add(of.newCollectionProperty("CollPropertyComp",
         of.newCollectionValue("CTPrimComp")
-          .add(of.newComplexValue("CTPrimComp")
-                  .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 1)))
-                  .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                          .add(of.newPrimitiveProperty("PropertyString",
-                                  of.newPrimitiveValueBuilder().buildString("1"))))))
-          .add(of.newComplexValue("CTPrimComp")
-                  .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                          .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString
-                                  ("2")))
-                          .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16(
-                                  (short) 2)))
-                          .add(of.newPrimitiveProperty("PropertySingle",
-                                  of.newPrimitiveValueBuilder().buildSingle(2.0f))))))));
+            .add(of.newComplexValue("CTPrimComp")
+                .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 1)))
+                .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                    .add(of.newPrimitiveProperty("PropertyString",
+                        of.newPrimitiveValueBuilder().buildString("1"))))))
+            .add(of.newComplexValue("CTPrimComp")
+                .add(of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
+                    .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString
+                        ("2")))
+                    .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16(
+                        (short) 2)))
+                    .add(of.newPrimitiveProperty("PropertySingle",
+                        of.newPrimitiveValueBuilder().buildSingle(2.0f))))))));
 
     entity.addLink(of.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
         getClient().newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESTwoKeyNav")
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 1L;
+        .appendEntitySetSegment("ESTwoKeyNav")
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 1L;
 
-              {
-                put("PropertyInt16", 1);
-                put("PropertyString", "1");
-              }
-            }).build()));
+          {
+            put("PropertyInt16", 1);
+            put("PropertyString", "1");
+          }
+        }).build()));
 
     final ODataEntityCreateResponse<ClientEntity> response = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build(),
@@ -671,9 +671,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder()
-                .appendEntitySetSegment("ESTwoPrim")
-                .appendKeySegment(key)
-                .build());
+            .appendEntitySetSegment("ESTwoPrim")
+            .appendKeySegment(key)
+            .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseEntityRequest = entityRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), responseEntityRequest.getStatusCode());
@@ -746,8 +746,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .add(of.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(of.newComplexProperty("PropertyCompAllPrim",
         of.newComplexValue("CTAllPrim")
-            .add(of.newPrimitiveProperty("PropertyString",
-                    of.newPrimitiveValueBuilder().buildString("Changed")))));
+        .add(of.newPrimitiveProperty("PropertyString",
+                of.newPrimitiveValueBuilder().buildString("Changed")))));
 
     final ODataEntityUpdateResponse<ClientEntity> response = client.getCUDRequestFactory()
         .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity)
@@ -758,11 +758,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(
-                client.newURIBuilder()
-                        .appendEntitySetSegment("ESKeyNav")
-                        .appendKeySegment(1)
-                        .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
-                        .build());
+            client.newURIBuilder()
+                .appendEntitySetSegment("ESKeyNav")
+                .appendKeySegment(1)
+                .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
+                .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> entitytResponse = entityRequest.execute();
 
@@ -841,13 +841,13 @@ public class BasicITCase extends AbstractBaseTestITCase {
     entity.getProperties().add(of.newComplexProperty("PropertyCompTwoPrim", of.newComplexValue("CTTwoPrim")
         .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
             .buildString("Must not be null")))
-        .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+            .add(of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties().add(of.newCollectionProperty("CollPropertyString", of.newCollectionValue("Edm.String")
         .add(of.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(of.newComplexProperty("PropertyCompAllPrim",
         of.newComplexValue("CTAllPrim")
-            .add(of.newPrimitiveProperty("PropertyString",
-                    of.newPrimitiveValueBuilder().buildString("Changed")))));
+        .add(of.newPrimitiveProperty("PropertyString",
+                of.newPrimitiveValueBuilder().buildString("Changed")))));
 
     final ODataEntityUpdateResponse<ClientEntity> response = client.getCUDRequestFactory()
         .getEntityUpdateRequest(targetURI, UpdateType.REPLACE, entity)
@@ -858,11 +858,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
         .getEntityRequest(
-                client.newURIBuilder()
-                        .appendEntitySetSegment("ESKeyNav")
-                        .appendKeySegment(1)
-                        .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
-                        .build());
+            client.newURIBuilder()
+                .appendEntitySetSegment("ESKeyNav")
+                .appendKeySegment(1)
+                .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
+                .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> entitytResponse = entityRequest.execute();
 

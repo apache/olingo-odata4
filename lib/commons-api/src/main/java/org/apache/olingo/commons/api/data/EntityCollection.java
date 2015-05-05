@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,7 +34,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Sets number of entries.
-   * 
+   *
    * @param count number of entries
    */
   public void setCount(final Integer count) {
@@ -43,7 +43,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Gets number of entries - if it was required.
-   * 
+   *
    * @return number of entries into the entity set.
    */
   public Integer getCount() {
@@ -52,7 +52,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Gets entities.
-   * 
+   *
    * @return entries.
    */
   public List<Entity> getEntities() {
@@ -61,7 +61,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Sets next link.
-   * 
+   *
    * @param next next link.
    */
   public void setNext(final URI next) {
@@ -70,7 +70,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Gets next link if exists.
-   * 
+   *
    * @return next link if exists; null otherwise.
    */
   public URI getNext() {
@@ -79,7 +79,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Gets delta link if exists.
-   * 
+   *
    * @return delta link if exists; null otherwise.
    */
   public URI getDeltaLink() {
@@ -88,7 +88,7 @@ public class EntityCollection extends AbstractODataObject {
 
   /**
    * Sets delta link.
-   * 
+   *
    * @param deltaLink delta link.
    */
   public void setDeltaLink(final URI deltaLink) {

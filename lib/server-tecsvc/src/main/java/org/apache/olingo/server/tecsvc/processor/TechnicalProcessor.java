@@ -57,8 +57,8 @@ public abstract class TechnicalProcessor implements Processor {
   protected TechnicalProcessor(final DataProvider dataProvider) {
     this.dataProvider = dataProvider;
   }
-  
-  protected TechnicalProcessor(final DataProvider dataProvider, ServiceMetadata serviceMetadata) {
+
+  protected TechnicalProcessor(final DataProvider dataProvider, final ServiceMetadata serviceMetadata) {
     this.dataProvider = dataProvider;
     this.serviceMetadata = serviceMetadata;
   }
@@ -67,8 +67,8 @@ public abstract class TechnicalProcessor implements Processor {
   public void init(final OData odata, final ServiceMetadata serviceMetadata) {
     this.odata = odata;
     this.serviceMetadata = serviceMetadata;
-    this.dataProvider.setOData(odata);
-    this.dataProvider.setEdm(serviceMetadata.getEdm());
+    dataProvider.setOData(odata);
+    dataProvider.setEdm(serviceMetadata.getEdm());
   }
 
   protected EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {
@@ -215,7 +215,7 @@ public abstract class TechnicalProcessor implements Processor {
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
   }
-  
+
   protected EdmAction checkBoundAndExtractAction(final UriInfo uriInfo) throws ODataApplicationException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     List<UriResource> uriResourceParts = resource.getUriResourceParts();

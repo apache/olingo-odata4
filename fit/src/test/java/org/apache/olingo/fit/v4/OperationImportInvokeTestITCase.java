@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
+import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -272,7 +272,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     params.put("count", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(100));
     bossEmailsReq = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).
-            appendOperationCallSegment("GetBossEmails").build(), ClientProperty.class, params);
+        appendOperationCallSegment("GetBossEmails").build(), ClientProperty.class, params);
     bossEmailsReq.setFormat(format);
     final ClientProperty bossEmailsViaGET = bossEmailsReq.execute().getBody();
     assertNotNull(bossEmailsViaGET);

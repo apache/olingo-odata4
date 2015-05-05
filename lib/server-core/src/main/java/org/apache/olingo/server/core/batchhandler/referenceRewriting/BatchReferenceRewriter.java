@@ -38,13 +38,13 @@ public class BatchReferenceRewriter {
 
   private Map<String, String> contentIdMapping = new HashMap<String, String>();
 
-  public String getReferenceInURI(ODataRequest request) {
+  public String getReferenceInURI(final ODataRequest request) {
     Matcher matcher = REFERENCE_PATTERN.matcher(removeSlash(removeSlash(request.getRawODataPath(), true), false));
 
     return (matcher.matches()) ? matcher.group(1) : null;
   }
 
-  public void replaceReference(ODataRequest request) {
+  public void replaceReference(final ODataRequest request) {
     final String reference = getReferenceInURI(request);
 
     if (reference != null) {
@@ -58,13 +58,13 @@ public class BatchReferenceRewriter {
     }
   }
 
-  private void replaceContentIdReference(ODataRequest request, String contentId, String resourceUri) {
+  private void replaceContentIdReference(final ODataRequest request, final String contentId, final String resourceUri) {
     final String newUri = request.getRawODataPath().replace("/$" + contentId, resourceUri);
     request.setRawODataPath(newUri);
     request.setRawRequestUri(request.getRawBaseUri() + "/" + newUri);
   }
 
-  public void addMapping(ODataRequest request, ODataResponse response)
+  public void addMapping(final ODataRequest request, final ODataResponse response)
       throws BatchDeserializerException {
     final String resourceUri = getODataPath(request, response);
     final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
@@ -72,7 +72,8 @@ public class BatchReferenceRewriter {
     contentIdMapping.put(contentId, resourceUri);
   }
 
-  private String getODataPath(ODataRequest request, ODataResponse response) throws BatchDeserializerException {
+  private String getODataPath(final ODataRequest request, final ODataResponse response)
+      throws BatchDeserializerException {
     String resourceUri = null;
 
     if (request.getMethod() == HttpMethod.POST) {
@@ -89,17 +90,17 @@ public class BatchReferenceRewriter {
     return resourceUri;
   }
 
-  private String parseODataPath(String uri, String rawBaseUri) throws BatchDeserializerException {
+  private String parseODataPath(final String uri, final String rawBaseUri) throws BatchDeserializerException {
     int index = uri.indexOf(rawBaseUri);
-    
-    if(index == 0) {
+
+    if (index == 0) {
       return uri.substring(rawBaseUri.length());
     } else {
       throw new BatchDeserializerException("Invalid base uri or uri", MessageKeys.INVALID_URI, 0);
     }
   }
 
-  private String removeSlash(String rawODataPath, boolean first) {
+  private String removeSlash(final String rawODataPath, final boolean first) {
     final int indexOfSlash = rawODataPath.indexOf("/");
     if (first) {
       return (indexOfSlash == 0) ? rawODataPath.substring(1) : rawODataPath;

@@ -192,7 +192,7 @@ public class DataProvider {
     return true;
   }
 
-  private void createProperties(final EdmStructuredType type, List<Property> properties)
+  private void createProperties(final EdmStructuredType type, final List<Property> properties)
       throws DataProviderException {
     final List<String> keyNames = type instanceof EdmEntityType ?
         ((EdmEntityType) type).getKeyPredicateNames() : Collections.<String> emptyList();
@@ -226,7 +226,7 @@ public class DataProvider {
     return newProperty;
   }
 
-  public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
+  public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, final Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
     final EdmEntityType entityType = edmEntitySet.getEntityType();
@@ -258,7 +258,8 @@ public class DataProvider {
     }
   }
 
-  private void handleDeleteSingleNavigationProperties(EdmEntitySet edmEntitySet, Entity entity, Entity changedEntity)
+  private void handleDeleteSingleNavigationProperties(final EdmEntitySet edmEntitySet, final Entity entity,
+      final Entity changedEntity)
       throws DataProviderException {
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final List<String> navigationPropertyNames = entityType.getNavigationPropertyNames();
@@ -343,7 +344,7 @@ public class DataProvider {
     }
   }
 
-  private void removeLink(EdmNavigationProperty navigationProperty, Entity entity) {
+  private void removeLink(final EdmNavigationProperty navigationProperty, final Entity entity) {
     final Link link = entity.getNavigationLink(navigationProperty.getName());
     if (link != null) {
       entity.getNavigationLinks().remove(link);
@@ -380,7 +381,8 @@ public class DataProvider {
     }
   }
 
-  private void setLink(final EdmNavigationProperty navigationProperty, Entity srcEntity, final Entity targetEntity) {
+  private void
+      setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity, final Entity targetEntity) {
     if (navigationProperty.isCollection()) {
       DataCreator.setLinks(srcEntity, navigationProperty.getName(), targetEntity);
     } else {
@@ -389,7 +391,7 @@ public class DataProvider {
   }
 
   @SuppressWarnings({ "unchecked" })
-  public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
+  public void updateProperty(final EdmProperty edmProperty, final Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
     if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
@@ -469,7 +471,7 @@ public class DataProvider {
     return (byte[]) entity.getProperty(MEDIA_PROPERTY_NAME).asPrimitive();
   }
 
-  public void setMedia(Entity entity, byte[] media, String type) {
+  public void setMedia(final Entity entity, final byte[] media, final String type) {
     entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
     entity.addProperty(DataCreator.createPrimitive(MEDIA_PROPERTY_NAME, media));
     entity.setMediaContentType(type);
@@ -490,33 +492,34 @@ public class DataProvider {
     return FunctionData.primitiveComplexFunction(function.getName(), parameters, data);
   }
 
-  public Property processActionPrimitive(String name, Map<String, Parameter> actionParameters)
+  public Property processActionPrimitive(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.primitiveAction(name, actionParameters);
   }
 
-  public Property processActionComplex(String name, Map<String, Parameter> actionParameters)
+  public Property processActionComplex(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexAction(name, actionParameters);
   }
 
-  public Property processActionComplexCollection(String name, Map<String, Parameter> actionParameters)
+  public Property processActionComplexCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexCollectionAction(name, actionParameters);
   }
 
-  public Property processActionPrimitiveCollection(String name, Map<String, Parameter> actionParameters)
+  public Property processActionPrimitiveCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.primitiveCollectionAction(name, actionParameters);
   }
 
-  public EntityActionResult processActionEntity(String name, Map<String, Parameter> actionParameters)
+  public EntityActionResult processActionEntity(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.entityAction(name, actionParameters);
   }
 
-  public EntityCollection processActionEntityCollection(String name, Map<String, Parameter> actionParameters)
-      throws DataProviderException {
+  public EntityCollection
+      processActionEntityCollection(final String name, final Map<String, Parameter> actionParameters)
+          throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters);
   }
 
@@ -539,7 +542,7 @@ public class DataProvider {
       super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
     }
 
-    public DataProviderException(final String message, HttpStatusCode statusCode) {
+    public DataProviderException(final String message, final HttpStatusCode statusCode) {
       super(message, statusCode.getStatusCode(), Locale.ROOT);
     }
   }

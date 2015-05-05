@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,11 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.queryoption;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -29,11 +34,6 @@ import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 //TOOD add getKind check to all
 public class QueryOptionTest {

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,23 +21,22 @@ package org.apache.olingo.fit.v4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.net.URI;
-
-import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
-import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 
 public class OAuth2TestITCase extends AbstractTestITCase {
 

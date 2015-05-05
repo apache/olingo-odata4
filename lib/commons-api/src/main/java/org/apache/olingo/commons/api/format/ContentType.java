@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -199,7 +199,7 @@ public final class ContentType {
     }
   }
 
-  private static void parse(final String format, List<String> typeSubtype, Map<String, String> parameters) {
+  private static void parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -217,11 +217,11 @@ public final class ContentType {
         }
       } else {
         throw new IllegalArgumentException(
-                "Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
+            "Too many '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
     } else {
       throw new IllegalArgumentException("No separator '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR
-              + "' was found in format '" + format + "'.");
+          + "' was found in format '" + format + "'.");
     }
 
     TypeUtil.parseParameters(params, parameters);
@@ -276,7 +276,7 @@ public final class ContentType {
       while (entries.hasNext()) {
         final Entry<String, String> e = entries.next();
         final Entry<String, String> oe = otherEntries.next();
-         if (!areEqual(e.getKey(), oe.getKey())) {
+        if (!areEqual(e.getKey(), oe.getKey())) {
           return false;
         }
         if (!areEqual(e.getValue(), oe.getValue())) {
@@ -325,7 +325,7 @@ public final class ContentType {
 
     for (String key : parameters.keySet()) {
       sb.append(TypeUtil.PARAMETER_SEPARATOR).append(key)
-          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
+      .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
     }
     return sb.toString();
   }

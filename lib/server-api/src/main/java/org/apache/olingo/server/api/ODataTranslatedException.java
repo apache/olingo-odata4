@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -49,14 +49,16 @@ public abstract class ODataTranslatedException extends ODataException {
   private MessageKey messageKey;
   private Object[] parameters;
 
-  protected ODataTranslatedException(String developmentMessage, MessageKey messageKey, String... parameters) {
+  protected ODataTranslatedException(final String developmentMessage, final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage);
     this.messageKey = messageKey;
     this.parameters = parameters;
   }
 
-  protected ODataTranslatedException(String developmentMessage, Throwable cause, MessageKey messageKey,
-      String... parameters) {
+  protected ODataTranslatedException(final String developmentMessage, final Throwable cause,
+      final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage, cause);
     this.messageKey = messageKey;
     this.parameters = parameters;
@@ -112,7 +114,7 @@ public abstract class ODataTranslatedException extends ODataException {
     }
   }
 
-  private ODataErrorMessage buildMessage(ResourceBundle bundle, Locale locale) {
+  private ODataErrorMessage buildMessage(final ResourceBundle bundle, final Locale locale) {
     String message = null;
 
     try {
@@ -141,7 +143,7 @@ public abstract class ODataTranslatedException extends ODataException {
 
     public ODataErrorMessage(final String message, final Locale usedLocale) {
       this.message = message;
-      this.locale = usedLocale;
+      locale = usedLocale;
     }
 
     /** Gets the message text. */

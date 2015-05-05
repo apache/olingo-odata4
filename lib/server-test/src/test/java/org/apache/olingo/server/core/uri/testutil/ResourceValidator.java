@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,12 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.testutil;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
@@ -51,12 +57,6 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 public class ResourceValidator implements TestValidator {
   private Edm edm;
@@ -133,21 +133,21 @@ public class ResourceValidator implements TestValidator {
     UriResourceFunctionImpl function = (UriResourceFunctionImpl) uriPathInfo;
 
     return new FilterValidator()
-        .setEdm(edm)
-        .setExpression(function.getParameters().get(index).getExpression())
-        .setValidator(this);
+    .setEdm(edm)
+    .setExpression(function.getParameters().get(index).getExpression())
+    .setValidator(this);
   }
 
   public FilterValidator goLambdaExpression() {
     if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
       return new FilterValidator()
-          .setEdm(edm)
-          .setExpression(((UriResourceLambdaAllImpl) uriPathInfo).getExpression());
+      .setEdm(edm)
+      .setExpression(((UriResourceLambdaAllImpl) uriPathInfo).getExpression());
 
     } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
       return new FilterValidator()
-          .setEdm(edm)
-          .setExpression(((UriResourceLambdaAnyImpl) uriPathInfo).getExpression());
+      .setEdm(edm)
+      .setExpression(((UriResourceLambdaAnyImpl) uriPathInfo).getExpression());
     } else {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -161,9 +161,9 @@ public class ResourceValidator implements TestValidator {
     UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourcePath();
 
     return new ResourceValidator()
-        .setUpValidator(this)
-        .setEdm(edm)
-        .setUriInfoImplPath(uriInfo1);
+    .setUpValidator(this)
+    .setEdm(edm)
+    .setUriInfoImplPath(uriInfo1);
 
   }
 
@@ -436,7 +436,7 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator
-      isComplexProperty(final String name, final FullQualifiedName type, final boolean isCollection) {
+  isComplexProperty(final String name, final FullQualifiedName type, final boolean isCollection) {
     if (!(uriPathInfo instanceof UriResourceComplexPropertyImpl)) {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }
@@ -586,7 +586,7 @@ public class ResourceValidator implements TestValidator {
     return this;
   }
 
-  public ResourceValidator isInAliasToValueMap(String alias, String value) {
+  public ResourceValidator isInAliasToValueMap(final String alias, final String value) {
     String valueForAlias = uriInfo.getValueForAlias(alias);
     assertEquals(value, valueForAlias);
     return this;

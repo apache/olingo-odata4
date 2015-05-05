@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.fit;
 
+import java.io.IOException;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.rest.ResolvingReferencesInterceptor;
 import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;
@@ -25,13 +30,9 @@ import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-
 @Service
 @Path("/V40/NorthWindExt.svc")
-@InInterceptors(classes = {XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class})
+@InInterceptors(classes = { XHTTPMethodInterceptor.class, ResolvingReferencesInterceptor.class })
 public class V4NorthWindExt extends V4Services {
 
   public V4NorthWindExt() throws IOException {

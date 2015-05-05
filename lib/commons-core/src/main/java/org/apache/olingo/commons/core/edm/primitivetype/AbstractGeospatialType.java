@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,13 @@
  * under the License.
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -31,13 +38,6 @@ import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class AbstractGeospatialType<T extends Geospatial> extends SingletonPrimitiveType {
 
@@ -87,7 +87,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private Point newPoint(final SRID srid, final String point, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final String[] pointCoo = StringUtils.split(point, ' ');
     if (pointCoo == null || pointCoo.length != 2) {
@@ -128,7 +128,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private LineString newLineString(final SRID srid, final String lineString, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final List<Point> points = new ArrayList<Point>();
     for (String pointCoo : StringUtils.split(lineString, ',')) {
@@ -149,7 +149,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   protected MultiLineString stringToMultiLineString(final String value, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
@@ -173,7 +173,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private Polygon newPolygon(final SRID srid, final String polygon, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final String[] first = polygon.split("\\),\\(");
 
@@ -229,7 +229,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   protected GeospatialCollection stringToCollection(final String value, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final Matcher matcher = getMatcher(COLLECTION_PATTERN, value);
 
@@ -294,15 +294,15 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private String point(final Point point, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     return new StringBuilder().
         append(EdmDouble.getInstance().valueToString(point.getX(),
             isNullable, maxLength, precision, scale, isUnicode)).
-        append(' ').
-        append(EdmDouble.getInstance().valueToString(point.getY(),
-            isNullable, maxLength, precision, scale, isUnicode)).
-        toString();
+            append(' ').
+            append(EdmDouble.getInstance().valueToString(point.getY(),
+                isNullable, maxLength, precision, scale, isUnicode)).
+                toString();
   }
 
   protected String toString(final Point point, final Boolean isNullable, final Integer maxLength,
@@ -333,8 +333,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     for (final Iterator<Point> itor = multiPoint.iterator(); itor.hasNext();) {
       result.append('(').
-          append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-          append(')');
+      append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+      append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -345,7 +345,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private String lineString(final LineString lineString, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final StringBuilder result = new StringBuilder();
 
@@ -386,8 +386,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     for (final Iterator<LineString> itor = multiLineString.iterator(); itor.hasNext();) {
       result.append('(').
-          append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-          append(')');
+      append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+      append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -398,7 +398,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
   private String polygon(final Polygon polygon, final Boolean isNullable,
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     final StringBuilder result = new StringBuilder();
 
@@ -447,8 +447,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     for (final Iterator<Polygon> itor = multiPolygon.iterator(); itor.hasNext();) {
       result.append('(').
-          append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-          append(')');
+      append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+      append(')');
       if (itor.hasNext()) {
         result.append(',');
       }
@@ -480,8 +480,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       case GeometryMultiPoint:
         for (final Iterator<Point> itor = ((MultiPoint) item).iterator(); itor.hasNext();) {
           result.append('(').
-              append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(point(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
           if (itor.hasNext()) {
             result.append(',');
           }
@@ -497,8 +497,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       case GeometryMultiLineString:
         for (final Iterator<LineString> itor = ((MultiLineString) item).iterator(); itor.hasNext();) {
           result.append('(').
-              append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(lineString(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
           if (itor.hasNext()) {
             result.append(',');
           }
@@ -514,8 +514,8 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       case GeometryMultiPolygon:
         for (final Iterator<Polygon> itor = ((MultiPolygon) item).iterator(); itor.hasNext();) {
           result.append('(').
-              append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
-              append(')');
+          append(polygon(itor.next(), isNullable, maxLength, precision, scale, isUnicode)).
+          append(')');
           if (itor.hasNext()) {
             result.append(',');
           }

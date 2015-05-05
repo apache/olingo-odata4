@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -71,7 +71,7 @@ public class UriValidatorTest {
   private static final String QO_ID = "$id=Products(0)";
   private static final String QO_COUNT = "$count=true";
   private static final String QO_ORDERBY = "$orderby=true";
-  //  private static final String QO_SEARCH = "$search='bla'";
+  // private static final String QO_SEARCH = "$search='bla'";
   private static final String QO_SELECT = "$select=*";
   private static final String QO_SKIP = "$skip=3";
   private static final String QO_SKIPTOKEN = "$skiptoken=123";
@@ -196,7 +196,7 @@ public class UriValidatorTest {
 
       { URI_MEDIA_STREAM, QO_FILTER }, { URI_MEDIA_STREAM, QO_FORMAT }, { URI_MEDIA_STREAM, QO_ID },
       { URI_MEDIA_STREAM, QO_EXPAND }, { URI_MEDIA_STREAM, QO_COUNT }, { URI_MEDIA_STREAM, QO_ORDERBY },
-      /* { URI_MEDIA_STREAM, QO_SEARCH }, */ { URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP },
+      /* { URI_MEDIA_STREAM, QO_SEARCH }, */{ URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP },
       { URI_MEDIA_STREAM, QO_SKIPTOKEN }, { URI_MEDIA_STREAM, QO_TOP },
 
       { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_COUNT },
@@ -228,7 +228,7 @@ public class UriValidatorTest {
       { URI_PROPERTY_PRIMITIVE, QO_TOP },
 
       { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_ID }, { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_EXPAND },
-      /* { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SEARCH }, */ { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SELECT },
+      /* { URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SEARCH }, */{ URI_PROPERTY_PRIMITIVE_COLLECTION, QO_SELECT },
 
       { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_FORMAT },
       { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_ID }, { URI_PROPERTY_PRIMITIVE_COLLECTION_COUNT, QO_EXPAND },
@@ -256,10 +256,10 @@ public class UriValidatorTest {
       { URI_FI_ENTITY_SET, QO_ID },
 
       { URI_FI_ENTITY, QO_FILTER }, { URI_FI_ENTITY, QO_ID }, { URI_FI_ENTITY, QO_COUNT },
-      { URI_FI_ENTITY, QO_ORDERBY }, /* { URI_FI_ENTITY, QO_SEARCH }, */ { URI_FI_ENTITY, QO_SKIP },
+      { URI_FI_ENTITY, QO_ORDERBY }, /* { URI_FI_ENTITY, QO_SEARCH }, */{ URI_FI_ENTITY, QO_SKIP },
       { URI_FI_ENTITY, QO_SKIPTOKEN }, { URI_FI_ENTITY, QO_TOP },
       { URI_FI_ENTITY_SET_KEY, QO_FILTER }, { URI_FI_ENTITY_SET_KEY, QO_ID }, { URI_FI_ENTITY_SET_KEY, QO_COUNT },
-      { URI_FI_ENTITY_SET_KEY, QO_ORDERBY }, /* { URI_FI_ENTITY_SET_KEY, QO_SEARCH },*/
+      { URI_FI_ENTITY_SET_KEY, QO_ORDERBY }, /* { URI_FI_ENTITY_SET_KEY, QO_SEARCH }, */
       { URI_FI_ENTITY_SET_KEY, QO_SKIP }, { URI_FI_ENTITY_SET_KEY, QO_SKIPTOKEN }, { URI_FI_ENTITY_SET_KEY, QO_TOP }
   };
 
@@ -289,31 +289,31 @@ public class UriValidatorTest {
     testUri.run(URI_ENTITY_SET, "$orderby=PropertyString");
 
     testUri.runEx(URI_ENTITY, "$orderby=XXXX")
-        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
   public void validateCountInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$count=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateTopInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$top=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateSkipInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateDoubleSystemOptions() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=1&$skip=2")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -323,16 +323,16 @@ public class UriValidatorTest {
     testUri.run("ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')");
 
     testUri.runEx("ESTwoKeyNav(xxx=1, yyy='abc')")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESCollAllPrim(null)").isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(PropertyInt16='1')")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(12345678901234567890)")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString=1)")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyInt16=1)")
-        .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
+    .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
   }
 
   @Test
@@ -387,7 +387,7 @@ public class UriValidatorTest {
   private void validateWrong(final String path, final String query, final HttpMethod method,
       final UriValidationException.MessageKeys expectedMessageKey) {
     try {
-        new UriValidator().validate(new Parser().parseUri(path, query, null, edm), method);
+      new UriValidator().validate(new Parser().parseUri(path, query, null, edm), method);
       fail("Validation Exception not thrown: " + method + ' ' + path + '?' + query);
     } catch (final UriParserException e) {
       fail("Wrong Exception thrown: " + method + ' ' + path + '?' + query);

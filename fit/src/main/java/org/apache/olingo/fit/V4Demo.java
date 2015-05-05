@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,16 +18,10 @@
  */
 package org.apache.olingo.fit;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.fit.metadata.Metadata;
-import org.apache.olingo.fit.methods.PATCH;
-import org.apache.olingo.fit.utils.Accept;
-import org.apache.olingo.fit.utils.ConstantKey;
-import org.apache.olingo.fit.utils.Constants;
-import org.apache.olingo.fit.utils.FSManager;
-import org.springframework.stereotype.Service;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -43,10 +37,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.fit.metadata.Metadata;
+import org.apache.olingo.fit.methods.PATCH;
+import org.apache.olingo.fit.utils.Accept;
+import org.apache.olingo.fit.utils.ConstantKey;
+import org.apache.olingo.fit.utils.Constants;
+import org.apache.olingo.fit.utils.FSManager;
+import org.springframework.stereotype.Service;
 
 @Service
 @Path("/V40/Demo.svc")

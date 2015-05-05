@@ -85,7 +85,6 @@ public abstract class ExpandSelectHelper {
     return selectedPaths.isEmpty() ? null : selectedPaths;
   }
 
-
   public static boolean isSelected(final Set<List<String>> selectedPaths, final String propertyName) {
     for (final List<String> path : selectedPaths) {
       if (propertyName.equals(path.get(0))) {

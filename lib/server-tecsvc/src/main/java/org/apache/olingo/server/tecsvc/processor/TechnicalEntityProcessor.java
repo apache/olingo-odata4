@@ -78,12 +78,12 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityProcessor, ActionEntityProcessor, MediaEntityProcessor,
     ActionVoidProcessor {
 
-  public TechnicalEntityProcessor(final DataProvider dataProvider, ServiceMetadata serviceMetadata) {
+  public TechnicalEntityProcessor(final DataProvider dataProvider, final ServiceMetadata serviceMetadata) {
     super(dataProvider, serviceMetadata);
   }
 
   @Override
-  public void readEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntityCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
 
@@ -131,7 +131,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
       // Serialize
       response.setContent(serializer.entityCollection(
-          this.serviceMetadata,
+          serviceMetadata,
           edmEntityType,
           entitySetSerialization,
           EntityCollectionSerializerOptions.with()
@@ -178,7 +178,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void countEntityCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+  public void countEntityCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     getEdmEntitySet(uriInfo); // including checks
@@ -194,7 +194,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
     validateOptions(uriInfo.asUriInfoResource());
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
@@ -215,7 +215,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand);
 
     response.setContent(serializer.entity(
-        this.serviceMetadata,
+        serviceMetadata,
         edmEntitySet.getEntityType(),
         entitySerialization,
         EntitySerializerOptions.with()
@@ -228,7 +228,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readMediaEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType responseFormat) throws ODataApplicationException, SerializerException {
     getEdmEntitySet(uriInfo); // including checks
     final Entity entity = readEntity(uriInfo);
@@ -238,14 +238,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void createMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void createMediaEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     createEntity(request, response, uriInfo, requestFormat, responseFormat);
   }
 
   @Override
-  public void createEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void createEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     if (uriInfo.asUriInfoResource().getUriResourceParts().size() > 1) {
@@ -279,7 +279,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final ODataFormat format = ODataFormat.fromContentType(responseFormat);
     ODataSerializer serializer = odata.createSerializer(format);
-    response.setContent(serializer.entity(this.serviceMetadata, edmEntityType, entity,
+    response.setContent(serializer.entity(serviceMetadata, edmEntityType, entity,
         EntitySerializerOptions.with()
             .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, null, null))
@@ -326,7 +326,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void updateMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void updateMediaEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     getEdmEntitySet(uriInfo); // including checks
@@ -338,7 +338,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void deleteEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+  public void deleteEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     final Entity entity = readEntity(uriInfo);
@@ -347,7 +347,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void processActionEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     EdmAction action = checkBoundAndExtractAction(uriInfo);
@@ -372,9 +372,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat))
           .entity(serviceMetadata, type, entityResult.getEntity(), options);
 
-      if(entityResult.isCreated()){
+      if (entityResult.isCreated()) {
         response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
-      }else{
+      } else {
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       }
       response.setContent(result.getContent());
@@ -383,7 +383,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionVoid(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void processActionVoid(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
     final UriResourceAction resource =
         ((UriResourceAction) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1));
@@ -396,7 +396,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
-  private void setCount(EntityCollection entitySet) {
+  private void setCount(final EntityCollection entitySet) {
     if (entitySet.getCount() == null) {
       entitySet.setCount(entitySet.getEntities().size());
     }

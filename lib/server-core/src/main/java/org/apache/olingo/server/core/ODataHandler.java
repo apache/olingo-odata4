@@ -34,11 +34,11 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
@@ -621,7 +621,7 @@ public class ODataHandler {
     }
   }
 
-  private void checkContentTypeSupport(ContentType requestFormat, RepresentationType representationType)
+  private void checkContentTypeSupport(final ContentType requestFormat, final RepresentationType representationType)
       throws ODataHandlerException, ContentNegotiatorException {
     ContentNegotiator.checkSupport(requestFormat, customContentTypeSupport, representationType);
   }

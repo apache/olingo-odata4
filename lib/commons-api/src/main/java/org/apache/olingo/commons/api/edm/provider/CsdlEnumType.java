@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,9 +34,10 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   private FullQualifiedName underlyingType;
 
   private List<CsdlEnumMember> members = new ArrayList<CsdlEnumMember>();
-  
+
   private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -56,7 +57,7 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   }
 
   public String getUnderlyingType() {
-    if(underlyingType != null){
+    if (underlyingType != null) {
       return underlyingType.getFullQualifiedNameAsString();
     }
     return null;
@@ -66,12 +67,11 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     this.underlyingType = new FullQualifiedName(underlyingType);
     return this;
   }
-  
+
   public CsdlEnumType setUnderlyingType(final FullQualifiedName underlyingType) {
     this.underlyingType = underlyingType;
     return this;
   }
-
 
   public List<CsdlEnumMember> getMembers() {
     return members;
@@ -105,7 +105,7 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     this.members = members;
     return this;
   }
-  
+
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;

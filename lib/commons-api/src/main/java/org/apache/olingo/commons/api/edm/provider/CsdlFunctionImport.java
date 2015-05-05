@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,14 +20,13 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-
 public class CsdlFunctionImport extends CsdlOperationImport {
 
   private static final long serialVersionUID = 8479762299534736719L;
 
   private FullQualifiedName function;
 
-  //Default include in service document is false for function imports
+  // Default include in service document is false for function imports
   private boolean includeInServiceDocument;
 
   @Override
@@ -50,17 +49,16 @@ public class CsdlFunctionImport extends CsdlOperationImport {
   public String getFunction() {
     return function.getFullQualifiedNameAsString();
   }
-  
+
   public FullQualifiedName getFunctionFQN() {
     return function;
   }
-
 
   public CsdlFunctionImport setFunction(final FullQualifiedName function) {
     this.function = function;
     return this;
   }
-  
+
   public CsdlFunctionImport setFunction(final String function) {
     this.function = new FullQualifiedName(function);
     return this;

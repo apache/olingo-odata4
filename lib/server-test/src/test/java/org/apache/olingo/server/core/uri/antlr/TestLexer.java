@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,7 +27,7 @@ public class TestLexer {
   private TokenValidator test = null;
 
   private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";// last two chars are not in
-                                                                         // cPCT_ENCODED_UNESCAPED
+  // cPCT_ENCODED_UNESCAPED
   private static final String cUNRESERVED = "ABCabc123-._~";
   private static final String cOTHER_DELIMS = "!()*+,;";
   private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
@@ -110,7 +110,7 @@ public class TestLexer {
     test.run("$filter=contains(").at(2).isText("contains(").isType(UriLexer.CONTAINS_WORD);
 
     test.run("$filter=containsabc").at(2).isText("containsabc")
-        .isType(UriLexer.ODATAIDENTIFIER); // test that this is a ODI
+    .isType(UriLexer.ODATAIDENTIFIER); // test that this is a ODI
 
     test.run("$filter=startswith(").at(2).isText("startswith(").isType(UriLexer.STARTSWITH_WORD);
     test.run("$filter=endswith(").at(2).isText("endswith(").isType(UriLexer.ENDSWITH_WORD);

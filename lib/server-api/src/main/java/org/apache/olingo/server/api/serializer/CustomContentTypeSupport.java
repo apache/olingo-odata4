@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,7 +38,7 @@ public interface CustomContentTypeSupport {
   /**
    * Returns a list of supported content types.
    * @param defaultContentTypes content types supported by Olingo's (de-)serializer
-   * @param type                the current type of representation
+   * @param type the current type of representation
    * @return modified list of supported content types
    */
   public List<ContentType> modifySupportedContentTypes(

@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Enumeration;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EnumerationImpl extends ExpressionImpl implements Enumeration {
 

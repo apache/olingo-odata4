@@ -93,11 +93,12 @@ public class UriHelperImpl implements UriHelper {
   }
 
   @Override
-  public List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot)
-      throws DeserializerException {
-    
+  public List<UriParameter> getKeyPredicatesFromEntityLink(final Edm edm, final String entityLink,
+      final String rawServiceRoot)
+          throws DeserializerException {
+
     String oDataPath = entityLink;
-    if(rawServiceRoot != null && entityLink.startsWith(rawServiceRoot)) {
+    if (rawServiceRoot != null && entityLink.startsWith(rawServiceRoot)) {
       oDataPath = entityLink.substring(rawServiceRoot.length());
     }
     oDataPath = oDataPath.startsWith("/") ? oDataPath : "/" + oDataPath;
@@ -107,7 +108,7 @@ public class UriHelperImpl implements UriHelper {
           .getUriResourceParts();
       if (uriResourceParts.size() == 1 && uriResourceParts.get(0).getKind() == UriResourceKind.entitySet) {
         final UriResourceEntitySet entityUriResource = (UriResourceEntitySet) uriResourceParts.get(0);
-        
+
         return entityUriResource.getKeyPredicates();
       }
 

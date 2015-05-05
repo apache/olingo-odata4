@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
@@ -31,8 +33,6 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
-
-import java.util.List;
 
 public class ExpandItemImpl implements ExpandItem {
   private LevelsExpandOption levelsExpandOption;

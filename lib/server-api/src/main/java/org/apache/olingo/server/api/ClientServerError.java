@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,7 +46,7 @@ public class ClientServerError extends ODataError {
    * Sets the locale.
    * @return this for method chaining
    */
-  public ClientServerError setLocale(Locale locale) {
+  public ClientServerError setLocale(final Locale locale) {
     this.locale = locale;
     return this;
   }
@@ -63,7 +63,7 @@ public class ClientServerError extends ODataError {
    * Sets the exception.
    * @return this for method chaining
    */
-  public ClientServerError setException(Exception exception) {
+  public ClientServerError setException(final Exception exception) {
     this.exception = exception;
     return this;
   }
@@ -81,7 +81,7 @@ public class ClientServerError extends ODataError {
    * @param statusCode the status code which this error results in
    * @return this for method chaining
    */
-  public ClientServerError setStatusCode(int statusCode) {
+  public ClientServerError setStatusCode(final int statusCode) {
     this.statusCode = statusCode;
     return this;
   }
@@ -92,7 +92,8 @@ public class ClientServerError extends ODataError {
    * for the HTTP error code specified in the response. MAY be null.
    * @return this for method chaining
    */
-  public ClientServerError setCode(String code) {
+  @Override
+  public ClientServerError setCode(final String code) {
     super.setCode(code);
     return this;
   }
@@ -102,7 +103,8 @@ public class ClientServerError extends ODataError {
    * language-dependent representation of the error. MUST not be null.
    * @return this for method chaining
    */
-  public ClientServerError setMessage(String message) {
+  @Override
+  public ClientServerError setMessage(final String message) {
     super.setMessage(message);
     return this;
   }
@@ -112,7 +114,8 @@ public class ClientServerError extends ODataError {
    * property in error). MAY be null.
    * @return this for method chaining
    */
-  public ClientServerError setTarget(String target) {
+  @Override
+  public ClientServerError setTarget(final String target) {
     super.setTarget(target);
     return this;
   }
@@ -121,7 +124,8 @@ public class ClientServerError extends ODataError {
    * Sets error details.
    * @return this for method chaining.
    */
-  public ClientServerError setDetails(List<ODataErrorDetail> details) {
+  @Override
+  public ClientServerError setDetails(final List<ODataErrorDetail> details) {
     super.setDetails(details);
     return this;
   }
@@ -130,7 +134,8 @@ public class ClientServerError extends ODataError {
    * Sets server defined key-value pairs for debug environment only.
    * @return this for method chaining.
    */
-  public ClientServerError setInnerError(Map<String, String> innerError) {
+  @Override
+  public ClientServerError setInnerError(final Map<String, String> innerError) {
     super.setInnerError(innerError);
     return this;
   }

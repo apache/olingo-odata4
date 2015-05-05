@@ -88,7 +88,7 @@ public class ODataHttpHandlerImplTest {
         ODataHttpHandlerImpl.extractMethod(odr, hr);
         fail();
       } catch (ODataTranslatedException e) {
-        //expected
+        // expected
       }
     }
   }
@@ -100,41 +100,41 @@ public class ODataHttpHandlerImplTest {
     //CHECKSTYLE:OFF (Maven checkstyle)
     String [][] uris = {
         /* 0: host                    1: cp         2: sp       3: sr          4: od       5: qp        6: spl  */
-        {  "http://localhost",          "",           "",         "",          "",          "",         "0"},  
-        {  "http://localhost",          "",           "",         "",          "/",         "",         "0"},  
-        {  "http://localhost",          "",           "",         "",          "/od",       "",         "0"},  
-        {  "http://localhost",          "",           "",         "",          "/od/",      "",         "0"},  
+        {  "http://localhost",          "",           "",         "",          "",          "",         "0"},
+        {  "http://localhost",          "",           "",         "",          "/",         "",         "0"},
+        {  "http://localhost",          "",           "",         "",          "/od",       "",         "0"},
+        {  "http://localhost",          "",           "",         "",          "/od/",      "",         "0"},
 
-        {  "http://localhost",          "/cp",        "",         "",          "",          "",         "0"},  
-        {  "http://localhost",          "/cp",        "",         "",          "/",         "",         "0"},  
-        {  "http://localhost",          "/cp",        "",         "",          "/od",       "",         "0"},  
-        {  "http://localhost",          "",           "/sp",      "",          "",          "",         "0"},  
-        {  "http://localhost",          "",           "/sp",      "",          "/",         "",         "0"},  
-        {  "http://localhost",          "",           "/sp",      "",          "/od",       "",         "0"},  
-        {  "http://localhost",          "",           "",         "/sr",       "",          "",         "1"},  
-        {  "http://localhost",          "",           "",         "/sr",       "/",         "",         "1"},  
-        {  "http://localhost",          "",           "",         "/sr",       "/od",       "",         "1"},  
-        {  "http://localhost",          "",           "",         "/sr/sr",    "",          "",         "2"},  
-        {  "http://localhost",          "",           "",         "/sr/sr",    "/",         "",         "2"},  
-        {  "http://localhost",          "",           "",         "/sr/sr",    "/od",       "",         "2"},  
+        {  "http://localhost",          "/cp",        "",         "",          "",          "",         "0"},
+        {  "http://localhost",          "/cp",        "",         "",          "/",         "",         "0"},
+        {  "http://localhost",          "/cp",        "",         "",          "/od",       "",         "0"},
+        {  "http://localhost",          "",           "/sp",      "",          "",          "",         "0"},
+        {  "http://localhost",          "",           "/sp",      "",          "/",         "",         "0"},
+        {  "http://localhost",          "",           "/sp",      "",          "/od",       "",         "0"},
+        {  "http://localhost",          "",           "",         "/sr",       "",          "",         "1"},
+        {  "http://localhost",          "",           "",         "/sr",       "/",         "",         "1"},
+        {  "http://localhost",          "",           "",         "/sr",       "/od",       "",         "1"},
+        {  "http://localhost",          "",           "",         "/sr/sr",    "",          "",         "2"},
+        {  "http://localhost",          "",           "",         "/sr/sr",    "/",         "",         "2"},
+        {  "http://localhost",          "",           "",         "/sr/sr",    "/od",       "",         "2"},
 
-        {  "http://localhost",          "/cp",        "/sp",      "",          "",          "",         "0"},  
-        {  "http://localhost",          "/cp",        "/sp",      "",          "/",         "",         "0"},  
-        {  "http://localhost",          "/cp",        "/sp",      "",          "/od",       "",         "0"},  
-        {  "http://localhost",          "/cp",        "",         "/sr",       "/",         "",         "1"},  
-        {  "http://localhost",          "/cp",        "",         "/sr",       "/od",       "",         "1"},  
-        {  "http://localhost",          "",           "/sp",      "/sr",       "",          "",         "1"},  
-        {  "http://localhost",          "",           "/sp",      "/sr",       "/",         "",         "1"},  
-        {  "http://localhost",          "",           "/sp",      "/sr",       "/od",       "",         "1"},  
-        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "",          "",         "1"},  
-        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/",         "",         "1"},  
-        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "",         "1"},  
-        
-        {  "http://localhost",          "",           "",         "",          "",          "qp",       "0"},  
-        {  "http://localhost",          "",           "",         "",          "/",         "qp",       "0"},  
-        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "qp",       "1"},  
-        
-        {  "http://localhost:8080",     "/c%20p",     "/s%20p",   "/s%20r",    "/o%20d",    "p+q",      "1"},                     
+        {  "http://localhost",          "/cp",        "/sp",      "",          "",          "",         "0"},
+        {  "http://localhost",          "/cp",        "/sp",      "",          "/",         "",         "0"},
+        {  "http://localhost",          "/cp",        "/sp",      "",          "/od",       "",         "0"},
+        {  "http://localhost",          "/cp",        "",         "/sr",       "/",         "",         "1"},
+        {  "http://localhost",          "/cp",        "",         "/sr",       "/od",       "",         "1"},
+        {  "http://localhost",          "",           "/sp",      "/sr",       "",          "",         "1"},
+        {  "http://localhost",          "",           "/sp",      "/sr",       "/",         "",         "1"},
+        {  "http://localhost",          "",           "/sp",      "/sr",       "/od",       "",         "1"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "",          "",         "1"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/",         "",         "1"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "",         "1"},
+
+        {  "http://localhost",          "",           "",         "",          "",          "qp",       "0"},
+        {  "http://localhost",          "",           "",         "",          "/",         "qp",       "0"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "qp",       "1"},
+
+        {  "http://localhost:8080",     "/c%20p",     "/s%20p",   "/s%20r",    "/o%20d",    "p+q",      "1"},
     };
     //@formatter:on
     // CHECKSTYLE:on

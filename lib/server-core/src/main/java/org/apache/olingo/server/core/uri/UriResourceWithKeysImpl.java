@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements UriResourcePartTyped {
 

@@ -91,7 +91,7 @@ public class DataCreator {
     return entitySet;
   }
 
-  private Entity createETTwoKeyTwoPrimEntity(short propertyInt16, String propertyString) {
+  private Entity createETTwoKeyTwoPrimEntity(final short propertyInt16, final String propertyString) {
     return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString));
   }
@@ -118,7 +118,7 @@ public class DataCreator {
   }
 
   @SuppressWarnings("unchecked")
-  private Entity createETKeyNavEntity(int propertyInt16, String propertyString) {
+  private Entity createETKeyNavEntity(final int propertyInt16, final String propertyString) {
     return new Entity().addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
         .addProperty(createComplex("PropertyCompNav", createPrimitive("PropertyInt16", 1)))
@@ -148,7 +148,7 @@ public class DataCreator {
   }
 
   @SuppressWarnings("unchecked")
-  private Entity createESTwoKeyNavEntity(int propertyInt16, String propertyString) {
+  private Entity createESTwoKeyNavEntity(final int propertyInt16, final String propertyString) {
     return new Entity()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
@@ -490,7 +490,7 @@ public class DataCreator {
         + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n" + "  </g>\n" + "</svg>\n").getBytes(Charset.forName("UTF-8"));
   }
 
-  private void linkESTwoPrim(Map<String, EntityCollection> data) {
+  private void linkESTwoPrim(final Map<String, EntityCollection> data) {
     final EntityCollection entitySet = data.get("ESTwoPrim");
     final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();
 
@@ -499,7 +499,7 @@ public class DataCreator {
     setLink(entitySet.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
   }
 
-  private void linkESAllPrim(Map<String, EntityCollection> data) {
+  private void linkESAllPrim(final Map<String, EntityCollection> data) {
     final EntityCollection entitySet = data.get("ESAllPrim");
     final List<Entity> targetEntities = data.get("ESTwoPrim").getEntities();
 
@@ -510,7 +510,7 @@ public class DataCreator {
         targetEntities.get(3));
   }
 
-  private void linkESKeyNav(Map<String, EntityCollection> data) {
+  private void linkESKeyNav(final Map<String, EntityCollection> data) {
     final EntityCollection entitySet = data.get("ESKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
@@ -546,7 +546,7 @@ public class DataCreator {
     setLinks(entitySet.getEntities().get(2), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(1));
   }
 
-  private void linkESTwoKeyNav(Map<String, EntityCollection> data) {
+  private void linkESTwoKeyNav(final Map<String, EntityCollection> data) {
     final EntityCollection entitySet = data.get("ESTwoKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
@@ -624,7 +624,7 @@ public class DataCreator {
     return timestamp;
   }
 
-  protected static void setLink(Entity entity, final String navigationPropertyName, final Entity target) {
+  protected static void setLink(final Entity entity, final String navigationPropertyName, final Entity target) {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
@@ -635,7 +635,7 @@ public class DataCreator {
     link.setInlineEntity(target);
   }
 
-  protected static void setLinks(Entity entity, final String navigationPropertyName, final Entity... targets) {
+  protected static void setLinks(final Entity entity, final String navigationPropertyName, final Entity... targets) {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();

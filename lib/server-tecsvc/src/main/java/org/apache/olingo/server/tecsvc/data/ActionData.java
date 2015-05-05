@@ -39,7 +39,7 @@ import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 public class ActionData {
 
-  protected static Property primitiveAction(String name, Map<String, Parameter> parameters)
+  protected static Property primitiveAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTString".equals(name)) {
       return DataCreator.createPrimitive(null, "UARTString string value");
@@ -47,7 +47,7 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  protected static Property primitiveCollectionAction(String name, Map<String, Parameter> parameters)
+  protected static Property primitiveCollectionAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollStringTwoParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
@@ -75,7 +75,8 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  protected static Property complexAction(String name, Map<String, Parameter> parameters) throws DataProviderException {
+  protected static Property complexAction(final String name, final Map<String, Parameter> parameters)
+      throws DataProviderException {
     if ("UARTCTTwoPrimParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
       Short number;
@@ -90,7 +91,7 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  private static Property createCTTwoPrimComplexProperty(Short number, String text) {
+  private static Property createCTTwoPrimComplexProperty(final Short number, final String text) {
     ComplexValue compValue = new ComplexValue();
     Property propInt = new Property();
     propInt.setName("PropertyInt16");
@@ -106,7 +107,7 @@ public class ActionData {
     return complexProp;
   }
 
-  protected static Property complexCollectionAction(String name, Map<String, Parameter> parameters)
+  protected static Property complexCollectionAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollCTTwoPrimParam".equals(name)) {
       List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
@@ -131,7 +132,7 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  protected static EntityActionResult entityAction(String name, Map<String, Parameter> parameters)
+  protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
       Parameter parameter = parameters.get("ParameterInt16");
@@ -177,7 +178,7 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  private static Entity createAllPrimEntity(Short key, String val, Calendar date) {
+  private static Entity createAllPrimEntity(final Short key, final String val, final Calendar date) {
     return new Entity().addProperty(DataCreator.createPrimitive("PropertyInt16", key))
         .addProperty(DataCreator.createPrimitive("PropertyString", val))
         .addProperty(DataCreator.createPrimitive("PropertyBoolean", false))
@@ -196,7 +197,7 @@ public class ActionData {
         .addProperty(DataCreator.createPrimitive("PropertyTimeOfDay", null));
   }
 
-  protected static EntityCollection entityCollectionAction(String name, Map<String, Parameter> parameters)
+  protected static EntityCollection entityCollectionAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollETKeyNavParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
@@ -229,7 +230,7 @@ public class ActionData {
   }
 
   @SuppressWarnings("unchecked")
-  private static Entity createETKeyNavEntity(Short number) {
+  private static Entity createETKeyNavEntity(final Short number) {
     return new Entity()
         .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
         .addProperty(DataCreator.createPrimitive("PropertyString", "UARTCollETKeyNavParam int16 value: " + number))

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,7 +41,7 @@ public abstract class Linked extends AbstractODataObject {
 
   /**
    * Gets association link with given name, if available, otherwise <tt>null</tt>.
-   * 
+   *
    * @param name candidate link name
    * @return association link with given name, if available, otherwise <tt>null</tt>
    */
@@ -51,7 +51,7 @@ public abstract class Linked extends AbstractODataObject {
 
   /**
    * Gets association links.
-   * 
+   *
    * @return association links.
    */
   public List<Link> getAssociationLinks() {
@@ -60,7 +60,7 @@ public abstract class Linked extends AbstractODataObject {
 
   /**
    * Gets navigation link with given name, if available, otherwise <tt>null</tt>.
-   * 
+   *
    * @param name candidate link name
    * @return navigation link with given name, if available, otherwise <tt>null</tt>
    */
@@ -70,7 +70,7 @@ public abstract class Linked extends AbstractODataObject {
 
   /**
    * Gets navigation links.
-   * 
+   *
    * @return links.
    */
   public List<Link> getNavigationLinks() {
@@ -82,13 +82,13 @@ public abstract class Linked extends AbstractODataObject {
    * @param name candidate link name
    * @return binding link with given name, if available, otherwise <tt>null</tt>
    */
-  public Link getNavigationBinding(String name) {
+  public Link getNavigationBinding(final String name) {
     return getOneByTitle(name, bindingLinks);
   }
 
   /**
    * Gets binding links.
-   * 
+   *
    * @return links.
    */
   public List<Link> getNavigationBindings() {

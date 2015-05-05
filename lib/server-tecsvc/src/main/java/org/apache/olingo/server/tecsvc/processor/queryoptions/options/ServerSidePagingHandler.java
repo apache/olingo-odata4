@@ -86,7 +86,7 @@ public class ServerSidePagingHandler {
     }
   }
 
-  private static int getPage(SkipTokenOption skipTokenOption) throws ODataApplicationException {
+  private static int getPage(final SkipTokenOption skipTokenOption) throws ODataApplicationException {
     if (skipTokenOption != null) {
       try {
         return Integer.parseInt(skipTokenOption.getValue());

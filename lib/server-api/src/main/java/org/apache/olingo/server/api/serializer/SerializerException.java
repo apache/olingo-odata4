@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,16 +28,22 @@ public class SerializerException extends ODataTranslatedException {
   /** Keys for exception texts in the resource bundle. */
   public static enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
-    /** parameter: format */ UNSUPPORTED_FORMAT,
+    /** parameter: format */
+    UNSUPPORTED_FORMAT,
     JSON_METADATA,
     IO_EXCEPTION,
     NULL_INPUT,
     NO_CONTEXT_URL,
-    /** parameter: property name */ UNSUPPORTED_PROPERTY_TYPE,
-    /** parameter: property name */ INCONSISTENT_PROPERTY_TYPE,
-    /** parameter: property name */ MISSING_PROPERTY,
-    /** parameters: property name, property value */ WRONG_PROPERTY_VALUE,
-    /** parameters: primitive-type name, value */ WRONG_PRIMITIVE_VALUE,
+    /** parameter: property name */
+    UNSUPPORTED_PROPERTY_TYPE,
+    /** parameter: property name */
+    INCONSISTENT_PROPERTY_TYPE,
+    /** parameter: property name */
+    MISSING_PROPERTY,
+    /** parameters: property name, property value */
+    WRONG_PROPERTY_VALUE,
+    /** parameters: primitive-type name, value */
+    WRONG_PRIMITIVE_VALUE,
     UNKNOWN_TYPE,
     WRONG_BASE_TYPE;
 
@@ -50,8 +56,8 @@ public class SerializerException extends ODataTranslatedException {
   /**
    * Creates serializer exception.
    * @param developmentMessage message text as fallback and for debugging purposes
-   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
-   * @param parameters         parameters for the exception text
+   * @param messageKey one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters parameters for the exception text
    */
   public SerializerException(final String developmentMessage,
       final MessageKey messageKey, final String... parameters) {
@@ -61,9 +67,9 @@ public class SerializerException extends ODataTranslatedException {
   /**
    * Creates serializer exception.
    * @param developmentMessage message text as fallback and for debugging purposes
-   * @param cause              the cause of this exception
-   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
-   * @param parameters         parameters for the exception text
+   * @param cause the cause of this exception
+   * @param messageKey one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters parameters for the exception text
    */
   public SerializerException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {

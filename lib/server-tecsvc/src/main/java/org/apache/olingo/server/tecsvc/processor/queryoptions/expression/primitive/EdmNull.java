@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -23,20 +23,19 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 
-
 public final class EdmNull implements EdmPrimitiveType {
-  
+
   private static final EdmNull instance = new EdmNull();
-  
+
   public static EdmNull getInstance() {
     return instance;
   }
-  
+
   @Override
   public Class<?> getDefaultType() {
     return Object.class;
   }
-  
+
   protected String uriPrefix = "";
 
   protected String uriSuffix = "";
@@ -118,8 +117,9 @@ public final class EdmNull implements EdmPrimitiveType {
     return new FullQualifiedName(getNamespace(), getName()).getFullQualifiedNameAsString();
   }
 
-  protected <T> T internalValueOfString(String value, Boolean isNullable, Integer maxLength, Integer precision,
-      Integer scale, Boolean isUnicode, Class<T> returnType) throws EdmPrimitiveTypeException {
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
     if (!value.equals("null")) {
       throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
@@ -131,8 +131,9 @@ public final class EdmNull implements EdmPrimitiveType {
     }
   }
 
-  protected <T> String internalValueToString(T value, Boolean isNullable, Integer maxLength, Integer precision,
-      Integer scale, Boolean isUnicode) throws EdmPrimitiveTypeException {
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
     return "null";
   }
 
@@ -160,5 +161,5 @@ public final class EdmNull implements EdmPrimitiveType {
   public EdmTypeKind getKind() {
     return EdmTypeKind.PRIMITIVE;
   }
-  
+
 }

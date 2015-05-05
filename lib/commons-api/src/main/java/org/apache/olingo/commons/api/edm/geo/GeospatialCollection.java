@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-
 import java.util.List;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Wrapper for a collection of geospatials info.
@@ -37,6 +37,6 @@ public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
     return dimension == Dimension.GEOGRAPHY
         ? EdmPrimitiveTypeKind.GeographyCollection
-        : EdmPrimitiveTypeKind.GeometryCollection;
+            : EdmPrimitiveTypeKind.GeometryCollection;
   }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,14 +29,14 @@ public interface Edm {
 
   /**
    * This method <b>DOES NOT</b> support lazy loading. All schemas are loaded completely!
-   * 
+   *
    * @return all schemas defined for this EDM
    */
   List<EdmSchema> getSchemas();
 
   /**
    * Get schema by namespace.
-   * 
+   *
    * @param namespace must not be null
    * @return {@link EdmSchema}
    */
@@ -46,16 +46,16 @@ public interface Edm {
    * Get main entity container.
    * <br/>
    * See {@link EdmEntityContainer} for more information.
-   * 
+   *
    * @return {@link EdmEntityContainer}
    */
   EdmEntityContainer getEntityContainer();
-  
+
   /**
    * Get entity container by full qualified name.
    * <br/>
    * See {@link EdmEntityContainer} for more information.
-   * 
+   *
    * @param name
    * @return {@link EdmEntityContainer}
    */
@@ -65,7 +65,7 @@ public interface Edm {
    * Get enum type by full qualified name.
    * <br/>
    * See {@link EdmEnumType} for more information
-   * 
+   *
    * @param name
    * @return {@link EdmEnumType}
    */
@@ -75,7 +75,7 @@ public interface Edm {
    * Get a type definition by full qualified name.
    * <br/>
    * See {@link EdmTypeDefinition} for more information
-   * 
+   *
    * @param name
    * @return {@link EdmTypeDefinition}
    */
@@ -85,7 +85,7 @@ public interface Edm {
    * Get entity type by full qualified name.
    * <br/>
    * See {@link EdmEntityType} for more information.
-   * 
+   *
    * @param name
    * @return {@link EdmEntityType}
    */
@@ -95,7 +95,7 @@ public interface Edm {
    * Get complex type by full qualified name..
    * <br/>
    * See {@link EdmComplexType} for more information.
-   * 
+   *
    * @param name
    * @return {@link EdmComplexType}
    */
@@ -103,7 +103,7 @@ public interface Edm {
 
   /**
    * Get unbound Action by full qualified name.
-   * 
+   *
    * @param actionName must not be null
    * @return {@link EdmAction}
    */
@@ -111,7 +111,7 @@ public interface Edm {
 
   /**
    * Get Action by full qualified name and binding parameter type.
-   * 
+   *
    * @param actionName must not be null
    * @param bindingParameterTypeName must not be null
    * @param isBindingParameterCollection may be null
@@ -122,7 +122,7 @@ public interface Edm {
 
   /**
    * Get Function by full qualified name.
-   * 
+   *
    * @param functionName must not be null
    * @return {@link EdmFunction}
    */
@@ -130,7 +130,7 @@ public interface Edm {
 
   /**
    * Get Function by full qualified name.
-   * 
+   *
    * @param functionName must not be null
    * @param parameterNames may be null: in this case it is considered as empty
    * @return {@link EdmFunction}
@@ -139,7 +139,7 @@ public interface Edm {
 
   /**
    * Get Function by full qualified name and binding parameter type and binding parameter names.
-   * 
+   *
    * @param functionName must not be null
    * @param bindingParameterTypeName must not be null
    * @param isBindingParameterCollection may be null
@@ -151,7 +151,7 @@ public interface Edm {
 
   /**
    * Get Term full by qualified name.
-   * 
+   *
    * @param termName must not be null
    * @return {@link EdmTerm}
    */
@@ -159,7 +159,7 @@ public interface Edm {
 
   /**
    * Get {@link EdmAnnotations} by target.
-   * 
+   *
    * @param targetName <tt>edm:Annotations</tt> target
    * @return {@link EdmAnnotations}
    */
@@ -167,7 +167,7 @@ public interface Edm {
 
   /**
    * Get all {@link EdmAnnotation} by element FQN.
-   * 
+   *
    * @param annotatableName must not be null
    * @return {@link EdmAnnotation}
    */
@@ -175,7 +175,7 @@ public interface Edm {
 
   /**
    * Get {@link EdmAnnotation} by element FQN and term.
-   * 
+   *
    * @param annotatableName must not be null
    * @param term <tt>edm:Annotation</tt> term
    * @return {@link EdmAnnotation}

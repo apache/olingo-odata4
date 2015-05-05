@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,9 +18,19 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -31,22 +41,12 @@ import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientSingleton;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
@@ -254,7 +254,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     final ODataInvokeRequest<ClientProperty> getActualAmountReq =
         edmClient.getInvokeRequestFactory().getBoundFunctionInvokeRequest(
             edmClient.newURIBuilder().appendEntitySetSegment("Accounts").appendKeySegment(102).
-                appendNavigationSegment("MyGiftCard").build(),
+            appendNavigationSegment("MyGiftCard").build(),
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.GetActualAmount"),
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.GiftCard"),
             false,
@@ -320,7 +320,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
     final ClientCollectionValue<ClientValue> addresses =
         client.getObjectFactory().
-            newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
+        newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
     final ClientComplexValue address = client.getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(client.getObjectFactory().newPrimitiveProperty("Street",
@@ -410,7 +410,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     // ResetAddress
     final ClientCollectionValue<ClientValue> addresses =
         edmClient.getObjectFactory().
-            newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
+        newCollectionValue("Collection(Microsoft.Test.OData.Services.ODataWCFService.Address)");
     final ClientComplexValue address = edmClient.getObjectFactory().
         newComplexValue("Microsoft.Test.OData.Services.ODataWCFService.Address");
     address.add(edmClient.getObjectFactory().newPrimitiveProperty("Street",

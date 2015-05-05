@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,9 +38,9 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -56,7 +56,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final ODataClient client = getClient();
     final ODataMediaRequest request = client.getRetrieveRequestFactory().getMediaRequest(
         client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build());
+        .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build());
     assertNotNull(request);
 
     final ODataRetrieveResponse<InputStream> response = request.execute();
@@ -139,7 +139,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     // This check has to be in the same session in order to access the same data provider.
     ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(
         client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia")
-            .appendKeySegment(5).appendValueSegment().build());
+        .appendKeySegment(5).appendValueSegment().build());
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());

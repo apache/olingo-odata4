@@ -265,7 +265,7 @@ public class EdmSchemaImplTest {
 
     @Override
     public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
-                                                final String functionImportName)
+        final String functionImportName)
         throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }

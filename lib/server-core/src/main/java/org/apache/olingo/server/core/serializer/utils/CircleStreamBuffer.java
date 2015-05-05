@@ -28,8 +28,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Circular stream buffer to write/read into/from one single buffer.
  * With support of {@link InputStream} and {@link OutputStream} access to buffered data.
- * 
- * 
+ *
+ *
  */
 public class CircleStreamBuffer {
 
@@ -59,7 +59,7 @@ public class CircleStreamBuffer {
 
   /**
    * Create a {@link CircleStreamBuffer} with given buffer size in bytes.
-   * 
+   *
    * @param bufferSize
    */
   public CircleStreamBuffer(final int bufferSize) {
@@ -71,7 +71,7 @@ public class CircleStreamBuffer {
 
   /**
    * Get {@link InputStream} for data read access.
-   * 
+   *
    * @return the stream
    */
   public InputStream getInputStream() {
@@ -80,7 +80,7 @@ public class CircleStreamBuffer {
 
   /**
    * Get {@link OutputStream} for write data.
-   * 
+   *
    * @return the stream
    */
   public OutputStream getOutputStream() {
@@ -234,7 +234,7 @@ public class CircleStreamBuffer {
    * Creates a new buffer (per {@link #allocateBuffer(int)}) with the requested capacity as minimum capacity, add the
    * new allocated
    * buffer to the {@link #bufferQueue} and set it as {@link #currentWriteBuffer}.
-   * 
+   *
    * @param requestedCapacity minimum capacity for new allocated buffer
    */
   private void createNewWriteBuffer(final int requestedCapacity) {
@@ -244,7 +244,7 @@ public class CircleStreamBuffer {
   }
 
   /**
-   * 
+   *
    * @param requestedCapacity
    * @return the buffer
    */
@@ -268,7 +268,7 @@ public class CircleStreamBuffer {
   // #############################################
 
   /**
-   * 
+   *
    */
   private static class InternalInputStream extends InputStream {
 
@@ -300,7 +300,7 @@ public class CircleStreamBuffer {
   }
 
   /**
-   * 
+   *
    */
   private static class InternalOutputStream extends OutputStream {
     private final CircleStreamBuffer outBuffer;

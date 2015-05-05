@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.apache.olingo.commons.api.edm;
-
 
 public enum EdmPrimitiveTypeKind {
 
@@ -55,10 +54,9 @@ public enum EdmPrimitiveTypeKind {
   GeometryMultiPolygon,
   GeometryCollection;
 
-
   /**
    * Checks if is a geospatial type.
-   * 
+   *
    * @return <tt>true</tt> if is geospatial type; <tt>false</tt> otherwise.
    */
   public boolean isGeospatial() {
@@ -67,20 +65,20 @@ public enum EdmPrimitiveTypeKind {
 
   /**
    * Returns the {@link FullQualifiedName} for this type kind.
-   * 
+   *
    * @return {@link FullQualifiedName}
    */
   public FullQualifiedName getFullQualifiedName() {
     return new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, toString());
   }
 
-//  public static EdmPrimitiveTypeKind valueOf(final ODataServiceVersion version, final String name) {
-//    return valueOf(name);
-//  }
+  // public static EdmPrimitiveTypeKind valueOf(final ODataServiceVersion version, final String name) {
+  // return valueOf(name);
+  // }
 
   /**
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full-qualified type name, for the given OData protocol version.
-   * 
+   *
    * @param fqn full-qualified type name.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */
@@ -91,7 +89,7 @@ public enum EdmPrimitiveTypeKind {
   /**
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full type expression (as <tt>Edm.Int32</tt>), for the given OData
    * protocol version.
-   * 
+   *
    * @param fqn string value type.
    * @return <tt>EdmPrimitiveTypeKind</tt> object.
    */

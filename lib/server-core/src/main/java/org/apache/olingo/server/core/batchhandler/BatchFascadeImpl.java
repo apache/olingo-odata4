@@ -31,23 +31,24 @@ import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 public class BatchFascadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
 
-  public BatchFascadeImpl(ODataHandler oDataHandler, ODataRequest request, BatchProcessor batchProcessor,
+  public BatchFascadeImpl(final ODataHandler oDataHandler, final ODataRequest request,
+      final BatchProcessor batchProcessor,
       final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
   }
 
   @Override
-  public ODataResponse handleODataRequest(ODataRequest request) throws BatchDeserializerException {
+  public ODataResponse handleODataRequest(final ODataRequest request) throws BatchDeserializerException {
     return partHandler.handleODataRequest(request);
   }
 
   @Override
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws BatchDeserializerException {
     return partHandler.handleBatchRequest(request);
   }
 
   @Override
-  public String extractBoundaryFromContentType(String contentType) throws BatchDeserializerException {
+  public String extractBoundaryFromContentType(final String contentType) throws BatchDeserializerException {
     return BatchParserCommon.getBoundary(contentType, 0);
   }
 }

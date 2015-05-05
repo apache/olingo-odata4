@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,10 +26,10 @@ import java.net.URI;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -256,7 +256,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         assertEquals(
             "http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken="
                 + token,
-            nextLink.toASCIIString());
+                nextLink.toASCIIString());
       }
     }
 
@@ -273,9 +273,9 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .build();
 
     try {
-      ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
-          .getEntitySetRequest(uri)
-          .execute();
+      client.getRetrieveRequestFactory()
+      .getEntitySetRequest(uri)
+      .execute();
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
@@ -291,9 +291,9 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .addQueryOption(QueryOption.TOP, new Integer(-5).toString())
         .build();
     try {
-      ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
-          .getEntitySetRequest(uri)
-          .execute();
+      client.getRetrieveRequestFactory()
+      .getEntitySetRequest(uri)
+      .execute();
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());

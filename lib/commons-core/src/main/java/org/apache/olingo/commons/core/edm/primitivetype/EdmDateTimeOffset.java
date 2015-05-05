@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -27,6 +25,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
  * Implementation of the EDM primitive type DateTimeOffset.
@@ -41,7 +41,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   };
 
   private static final Pattern PATTERN = Pattern.compile(
-          "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
+      "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
           + "T(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,12}?)0*)?)?"
           + "(Z|([-+]\\p{Digit}{2}:\\p{Digit}{2}))?");
 
@@ -58,8 +58,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
@@ -67,7 +67,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     }
 
     final String timeZoneOffset = matcher.group(9) == null || matcher.group(10) == null
-            || matcher.group(10).matches("[-+]0+:0+") ? null : matcher.group(10);
+        || matcher.group(10).matches("[-+]0+:0+") ? null : matcher.group(10);
     final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
     if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
       throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
@@ -75,12 +75,12 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     dateTimeValue.clear();
 
     dateTimeValue.set(
-            Short.parseShort(matcher.group(1)),
-            Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
-            Byte.parseByte(matcher.group(3)),
-            Byte.parseByte(matcher.group(4)),
-            Byte.parseByte(matcher.group(5)),
-            matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
+        Short.parseShort(matcher.group(1)),
+        Byte.parseByte(matcher.group(2)) - 1, // month is zero-based
+        Byte.parseByte(matcher.group(3)),
+        Byte.parseByte(matcher.group(4)),
+        Byte.parseByte(matcher.group(5)),
+        matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
 
     int nanoSeconds = 0;
     if (matcher.group(7) != null) {
@@ -94,13 +94,13 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       if (returnType.isAssignableFrom(Timestamp.class)) {
         if (!decimals.isEmpty()) {
           nanoSeconds = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9)
-                  : decimals + "000000000".substring(decimals.length()));
+              : decimals + "000000000".substring(decimals.length()));
         }
       } else {
         final String milliSeconds = decimals.length() > 3
-                ? decimals.substring(0, 3)
-                : decimals + "000".substring(decimals.length());
-        dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+            ? decimals.substring(0, 3)
+            : decimals + "000".substring(decimals.length());
+            dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
       }
     }
 
@@ -125,7 +125,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @throws ClassCastException if the return type is not allowed
    */
   protected static <T> T convertDateTime(final Calendar dateTimeValue, final int nanoSeconds,
-          final Class<T> returnType) throws IllegalArgumentException, ClassCastException {
+      final Class<T> returnType) throws IllegalArgumentException, ClassCastException {
 
     // The Calendar class does not check any values until a get method is called,
     // so we do just that to validate the fields that may have been set,
@@ -154,8 +154,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Calendar dateTimeValue;
     final int fractionalSecs;
@@ -195,7 +195,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     }
 
     final int offsetInMinutes = (dateTimeValue.get(Calendar.ZONE_OFFSET)
-            + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
+        + dateTimeValue.get(Calendar.DST_OFFSET)) / 60 / 1000;
     final int offsetHours = offsetInMinutes / 60;
     final int offsetMinutes = Math.abs(offsetInMinutes % 60);
     final String offsetString = offsetInMinutes == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);
@@ -252,7 +252,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @throws IllegalArgumentException if precision is not met
    */
   protected static void appendMilliseconds(final StringBuilder result, final int milliseconds,
-          final Integer precision) throws IllegalArgumentException {
+      final Integer precision) throws IllegalArgumentException {
 
     final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
     if (digits > 0) {
@@ -279,7 +279,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @throws IllegalArgumentException if precision is not met
    */
   protected static void appendFractionalSeconds(final StringBuilder result, final int fractionalSeconds,
-          final Integer precision) throws IllegalArgumentException {
+      final Integer precision) throws IllegalArgumentException {
 
     if (fractionalSeconds > 0) {
       String formatted = NANO_FORMAT.get().format(fractionalSeconds);

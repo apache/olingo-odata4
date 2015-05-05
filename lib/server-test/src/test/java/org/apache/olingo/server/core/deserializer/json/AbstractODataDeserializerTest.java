@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,10 +28,10 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class AbstractODataDeserializerTest {
-  
+
   protected static final Edm edm = OData.newInstance().createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
-  
+
   protected InputStream getFileAsStream(final String filename) throws IOException {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
     if (in == null) {

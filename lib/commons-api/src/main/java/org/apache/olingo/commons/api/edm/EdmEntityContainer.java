@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A CSDL EntityContainer element.
- * 
+ *
  * <br/>
  * EdmEntityContainer hold the information of EntitySets, Singletons, ActionImports and FunctionImports contained
  */
@@ -40,7 +40,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained Singleton by name.
-   * 
+   *
    * @param name
    * @return {@link EdmSingleton}
    */
@@ -48,7 +48,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained EntitySet by name.
-   * 
+   *
    * @param name
    * @return {@link EdmEntitySet}
    */
@@ -56,7 +56,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained ActionImport by name.
-   * 
+   *
    * @param name
    * @return {@link EdmActionImport}
    */
@@ -64,7 +64,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * Get contained FunctionImport by name.
-   * 
+   *
    * @param name
    * @return {@link EdmFunctionImport}
    */
@@ -72,28 +72,28 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   * 
+   *
    * @return returns all entity sets for this container.
    */
   List<EdmEntitySet> getEntitySets();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   * 
+   *
    * @return returns all function imports for this container.
    */
   List<EdmFunctionImport> getFunctionImports();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   * 
+   *
    * @return returns all singletons for this container.
    */
   List<EdmSingleton> getSingletons();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading
-   * 
+   *
    * @return returns all action imports for this container.
    */
   List<EdmActionImport> getActionImports();

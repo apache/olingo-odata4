@@ -36,8 +36,6 @@ import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.core.deserializer.batch.BatchParser;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.junit.Test;
 
 public class BatchRequestParserTest {
@@ -188,7 +186,7 @@ public class BatchRequestParserTest {
       }
     }
   }
-  
+
   @Test
   public void testAbsoluteUri() throws Exception {
     final String batch = ""
@@ -199,21 +197,21 @@ public class BatchRequestParserTest {
         + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-    
+
     final List<BatchRequestPart> batchRequestParts = parse(batch);
-    
+
     assertEquals(1, batchRequestParts.size());
     final BatchRequestPart part = batchRequestParts.get(0);
-    
+
     assertEquals(1, part.getRequests().size());
     final ODataRequest request = part.getRequests().get(0);
-    
+
     assertEquals("/Employees('1')/EmployeeName", request.getRawODataPath());
     assertEquals("$top=1", request.getRawQueryPath());
     assertEquals("http://localhost/odata/Employees('1')/EmployeeName?$top=1", request.getRawRequestUri());
     assertEquals("http://localhost/odata", request.getRawBaseUri());
   }
-  
+
   @Test
   public void testBoundaryParameterWithQuotas() throws Exception {
     final String contentType = "multipart/mixed; boundary=\"batch_1.2+34:2j)0?\"";
@@ -552,7 +550,7 @@ public class BatchRequestParserTest {
         + "Content-Id: 1" + CRLF
         + CRLF
         + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF        + "MaxDataServiceVersion: 2.0" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF + "MaxDataServiceVersion: 2.0" + CRLF
         + "Content-Id: 2"
         + CRLF
         + "--changeset_f980-1cb6-94dd--" + CRLF

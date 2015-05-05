@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,13 +33,13 @@ import java.util.TimeZone;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -66,7 +66,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTString").build();
     try {
       getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-          .execute();
+      .execute();
       fail("Expected an ODataClientErrorException");
     } catch (ODataClientErrorException e) {
       assertEquals(400, e.getStatusLine().getStatusCode());
@@ -83,7 +83,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal(1)).build());
     ODataInvokeResponse<ClientProperty> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientCollectionValue<ClientValue> valueArray = response.getBody().getCollectionValue();
     assertEquals(3, valueArray.size());
@@ -101,7 +101,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     parameters.put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
     ODataInvokeResponse<ClientProperty> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientComplexValue complexValue = response.getBody().getComplexValue();
     ClientProperty propInt16 = complexValue.get("PropertyInt16");
@@ -120,7 +120,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     parameters.put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 0));
     ODataInvokeResponse<ClientProperty> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(0, complexValueCollection.size());
@@ -134,7 +134,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     parameters.put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 1));
     ODataInvokeResponse<ClientProperty> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(1, complexValueCollection.size());
@@ -153,7 +153,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     parameters.put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
     ODataInvokeResponse<ClientProperty> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(3, complexValueCollection.size());
@@ -178,10 +178,10 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTETTwoKeyTwoPrimParam").build();
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -365));
+    .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -365));
     ODataInvokeResponse<ClientEntity> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntity.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientEntity entity = response.getBody();
     ClientProperty propInt16 = entity.getProperty("PropertyInt16");
@@ -198,10 +198,10 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTCollETKeyNavParam").build();
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
+    .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
     ODataInvokeResponse<ClientEntitySet> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(3, entitySet.getEntities().size());
@@ -218,10 +218,10 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTCollETKeyNavParam").build();
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 0));
+    .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 0));
     ODataInvokeResponse<ClientEntitySet> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(0, entitySet.getEntities().size());
@@ -233,10 +233,10 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTCollETKeyNavParam").build();
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -10));
+    .put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -10));
     ODataInvokeResponse<ClientEntitySet> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(0, entitySet.getEntities().size());
@@ -253,11 +253,11 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     time.set(Calendar.SECOND, 0);
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterTimeOfDay", getClient().getObjectFactory().newPrimitiveValueBuilder().setType(
-            EdmPrimitiveTypeKind.TimeOfDay).setValue(time).build());
+    .put("ParameterTimeOfDay", getClient().getObjectFactory().newPrimitiveValueBuilder().setType(
+        EdmPrimitiveTypeKind.TimeOfDay).setValue(time).build());
     ODataInvokeResponse<ClientEntitySet> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+        .execute();
     assertEquals(200, response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(3, entitySet.getEntities().size());
@@ -277,11 +277,11 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     dateTime.set(1012, 2, 0, 0, 0, 0);
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters
-        .put("ParameterDate", getClient().getObjectFactory().newPrimitiveValueBuilder().setType(
-            EdmPrimitiveTypeKind.Date).setValue(dateTime).build());
+    .put("ParameterDate", getClient().getObjectFactory().newPrimitiveValueBuilder().setType(
+        EdmPrimitiveTypeKind.Date).setValue(dateTime).build());
     ODataInvokeResponse<ClientEntity> response =
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntity.class, parameters)
-            .execute();
+        .execute();
     // Check 201
     assertEquals(201, response.getStatusCode());
   }

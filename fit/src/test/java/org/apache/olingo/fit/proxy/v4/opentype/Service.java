@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -92,19 +92,19 @@ public class Service<C extends EdmEnabledODataClient> extends AbstractService<C>
     entityTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.Row",
         org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Row.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.OpenTypesServiceV4.IndexedRow",
-            org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow.class);
+    .put(
+        "Microsoft.Test.OData.Services.OpenTypesServiceV4.IndexedRow",
+        org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.IndexedRow.class);
     entityTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.RowIndex",
         org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.RowIndex.class);
     complexTypes
-        .put(
-            "Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo",
-            org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo.class);
+    .put(
+        "Microsoft.Test.OData.Services.OpenTypesServiceV4.AccountInfo",
+        org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.AccountInfo.class);
     complexTypes
-        .put(
-            "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails",
-            org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails.class);
+    .put(
+        "Microsoft.Test.OData.Services.OpenTypesServiceV4.ContactDetails",
+        org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.ContactDetails.class);
     enumTypes.put("Microsoft.Test.OData.Services.OpenTypesServiceV4.Color",
         org.apache.olingo.fit.proxy.v4.opentype.microsoft.test.odata.services.opentypesservicev4.types.Color.class);
     // CHECKSTYLE:ON (Maven checkstyle)

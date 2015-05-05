@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.Formatter;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.UUID;
+
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -25,13 +32,6 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.UUID;
 
 /**
  * Generic test for all exceptions which inherit from ODataTranslatedException
@@ -72,7 +72,7 @@ public class TranslatedExceptionSubclassesTest {
           clazz.getConstructor(String.class, ODataTranslatedException.MessageKey.class, String[].class);
       String[] paras = new String[paraCount];
       for (int i = 0; i < paras.length; i++) {
-          paras[i] = "470" + i;
+        paras[i] = "470" + i;
       }
       String developerMessage = UUID.randomUUID().toString();
       ODataTranslatedException e = ctor.newInstance(developerMessage, messageKey, paras);
@@ -89,12 +89,11 @@ public class TranslatedExceptionSubclassesTest {
     }
   }
 
-
-  private int countParameters(String value) {
+  private int countParameters(final String value) {
     char[] chars = value.toCharArray();
     int count = 0;
     for (char aChar : chars) {
-      if(aChar == '%') {
+      if (aChar == '%') {
         count++;
       }
     }

@@ -54,7 +54,7 @@ public class BatchRequestTransformator {
     return resultList;
   }
 
-  private ODataRequest processQueryOperation(final BatchBodyPart bodyPart, final String baseUri, 
+  private ODataRequest processQueryOperation(final BatchBodyPart bodyPart, final String baseUri,
       final BatchQueryOperation queryOperation) throws BatchDeserializerException {
     if (bodyPart.isChangeSet()) {
       BatchQueryOperation encapsulatedQueryOperation = ((BatchChangeSetPart) queryOperation).getRequest();

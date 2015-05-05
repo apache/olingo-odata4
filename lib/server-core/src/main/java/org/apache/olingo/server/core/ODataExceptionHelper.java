@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,8 +21,8 @@ package org.apache.olingo.server.core;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -34,13 +34,15 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ODataExceptionHelper {
 
-  public static ClientServerError createServerErrorObject(UriValidationException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final UriValidationException e,
+      final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(UriParserSemanticException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final UriParserSemanticException e,
+      final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
@@ -51,28 +53,30 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(UriParserSyntaxException e, Locale requestedLocale) {
+  public static ClientServerError
+  createServerErrorObject(final UriParserSyntaxException e, final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(
         UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT.equals(e.getMessageKey()) ?
             HttpStatusCode.NOT_ACCEPTABLE.getStatusCode() :
-            HttpStatusCode.BAD_REQUEST.getStatusCode());
+              HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(UriParserException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final UriParserException e, final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(ContentNegotiatorException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final ContentNegotiatorException e,
+      final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode());
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(ODataHandlerException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final ODataHandlerException e, final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     if (ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED.equals(e.getMessageKey())) {
@@ -88,7 +92,7 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(SerializerException e, Locale requestedLocale) {
+  public static ClientServerError createServerErrorObject(final SerializerException e, final Locale requestedLocale) {
     ClientServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
@@ -99,11 +103,12 @@ public class ODataExceptionHelper {
         .setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
   }
 
-  public static ClientServerError createServerErrorObject(ODataTranslatedException e, Locale requestedLocale) {
+  public static ClientServerError
+  createServerErrorObject(final ODataTranslatedException e, final Locale requestedLocale) {
     return basicTranslatedError(e, requestedLocale);
   }
 
-  public static ClientServerError createServerErrorObject(ODataApplicationException e) {
+  public static ClientServerError createServerErrorObject(final ODataApplicationException e) {
     ClientServerError serverError = basicServerError(e);
     serverError.setStatusCode(e.getStatusCode());
     serverError.setLocale(e.getLocale());
@@ -111,18 +116,19 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
-  public static ClientServerError createServerErrorObject(Exception e) {
+  public static ClientServerError createServerErrorObject(final Exception e) {
     ClientServerError serverError = basicServerError(e);
     serverError.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     serverError.setLocale(Locale.ENGLISH);
     return serverError;
   }
 
-  private static ClientServerError basicServerError(Exception e) {
+  private static ClientServerError basicServerError(final Exception e) {
     return new ClientServerError().setException(e).setMessage(e.getMessage());
   }
 
-  private static ClientServerError basicTranslatedError(ODataTranslatedException e, Locale requestedLocale) {
+  private static ClientServerError basicTranslatedError(final ODataTranslatedException e,
+      final Locale requestedLocale) {
     ClientServerError serverError = basicServerError(e);
     ODataErrorMessage translatedMessage = e.getTranslatedMessage(requestedLocale);
     serverError.setMessage(translatedMessage.getMessage());

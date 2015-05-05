@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -333,7 +333,7 @@ public abstract class AbstractServices {
 
   protected abstract InputStream exploreMultipart(
       final List<Attachment> attachments, final String boundary, final boolean continueOnError)
-      throws IOException;
+          throws IOException;
 
   protected void addItemIntro(final ByteArrayOutputStream bos) throws IOException {
     addItemIntro(bos, null);
@@ -633,9 +633,9 @@ public abstract class AbstractServices {
           prop.setType(id.getValue().toString());
           prop.setValue(ValueType.PRIMITIVE,
               id.getValue() == EdmPrimitiveTypeKind.Int32
-                  ? Integer.parseInt(entityKey)
+              ? Integer.parseInt(entityKey)
                   : id.getValue() == EdmPrimitiveTypeKind.Guid
-                      ? UUID.fromString(entityKey)
+                  ? UUID.fromString(entityKey)
                       : entityKey);
           entry.getProperties().add(prop);
         }
@@ -677,7 +677,7 @@ public abstract class AbstractServices {
       result = new ResWrap<Entity>(
           URI.create(Constants.get(ConstantKey.ODATA_METADATA_PREFIX)
               + entitySetName + Constants.get(ConstantKey.ODATA_METADATA_ENTITY_SUFFIX)),
-          null, result.getPayload());
+              null, result.getPayload());
 
       final String path = Commons.getEntityBasePath(entitySetName, entityKey);
       FSManager.instance(version).putInMemory(result, path + Constants.get(ConstantKey.ENTITY));
@@ -786,7 +786,7 @@ public abstract class AbstractServices {
 
       path.append(metadata.getEntitySet(name).isSingleton()
           ? Constants.get(ConstantKey.ENTITY)
-          : Constants.get(ConstantKey.FEED));
+              : Constants.get(ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
 
@@ -797,15 +797,15 @@ public abstract class AbstractServices {
       String newContent = new String(copy.toByteArray(), "UTF-8");
       final Pattern salary = Pattern.compile(acceptType == Accept.ATOM
           ? "\\<d:Salary m:type=\"Edm.Int32\"\\>(-?\\d+)\\</d:Salary\\>"
-          : "\"Salary\":(-?\\d+),");
+              : "\"Salary\":(-?\\d+),");
       final Matcher salaryMatcher = salary.matcher(newContent);
       while (salaryMatcher.find()) {
         final Long newSalary = Long.valueOf(salaryMatcher.group(1)) + n;
         newContent = newContent.
             replaceAll("\"Salary\":" + salaryMatcher.group(1) + ",",
                 "\"Salary\":" + newSalary + ",").
-            replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
-                "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
+                replaceAll("\\<d:Salary m:type=\"Edm.Int32\"\\>" + salaryMatcher.group(1) + "</d:Salary\\>",
+                    "<d:Salary m:type=\"Edm.Int32\">" + newSalary + "</d:Salary>");
       }
 
       FSManager.instance(version).putInMemory(IOUtils.toInputStream(newContent, Constants.ENCODING),
@@ -919,7 +919,7 @@ public abstract class AbstractServices {
 
       path.append(metadata.getEntitySet(name).isSingleton()
           ? Constants.get(ConstantKey.ENTITY)
-          : Constants.get(ConstantKey.FEED));
+              : Constants.get(ConstantKey.FEED));
 
       final InputStream feed = FSManager.instance(version).readFile(path.toString(), acceptType);
       return xml.createResponse(null, feed, Commons.getETag(basePath), acceptType);
@@ -927,7 +927,7 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-  
+
   @GET
   @Path("/{name}/{type:[a-zA-Z].*}")
   public Response getEntitySet(@Context final UriInfo uriInfo,
@@ -941,7 +941,7 @@ public abstract class AbstractServices {
       @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
       @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken,
       @PathParam("type") final String type) {
-    
+
     try {
       final Accept acceptType;
       if (StringUtils.isNotBlank(format)) {
@@ -959,32 +959,32 @@ public abstract class AbstractServices {
         if (acceptType == Accept.XML || acceptType == Accept.TEXT) {
           throw new UnsupportedMediaTypeException("Unsupported media type");
         }
-        
+
         // search for entitySet ...
         final String basePath = name + File.separatorChar;
 
         final StringBuilder builder = new StringBuilder();
         builder.append(basePath);
-        
-        if(type != null) {
+
+        if (type != null) {
           builder.append(type).append(File.separatorChar);
         }
-        
+
         if (StringUtils.isNotBlank(orderby)) {
           builder.append(Constants.get(ConstantKey.ORDERBY)).append(File.separatorChar).
-              append(orderby).append(File.separatorChar);
+          append(orderby).append(File.separatorChar);
         }
 
         if (StringUtils.isNotBlank(filter)) {
           builder.append(Constants.get(ConstantKey.FILTER)).append(File.separatorChar).
-              append(filter.replaceAll("/", "."));
+          append(filter.replaceAll("/", "."));
         } else if (StringUtils.isNotBlank(skiptoken)) {
           builder.append(Constants.get(ConstantKey.SKIP_TOKEN)).append(File.separatorChar).
-              append(skiptoken);
+          append(skiptoken);
         } else {
           builder.append(metadata.getEntitySet(name).isSingleton()
               ? Constants.get(ConstantKey.ENTITY)
-              : Constants.get(ConstantKey.FEED));
+                  : Constants.get(ConstantKey.FEED));
         }
 
         final InputStream feed = FSManager.instance(version).readFile(builder.toString(), Accept.ATOM);
@@ -1031,8 +1031,7 @@ public abstract class AbstractServices {
       return xml.createFaultResponse(accept, e);
     }
   }
-  
-  
+
   /**
    * Retrieve entity set or function execution sample.
    *
@@ -1082,7 +1081,7 @@ public abstract class AbstractServices {
         if (utils.getKey() == Accept.JSON_FULLMETA || utils.getKey() == Accept.ATOM) {
           entity = utils.getValue().addOperation(entity, "Sack", "#DefaultContainer.Sack",
               uriInfo.getAbsolutePath().toASCIIString()
-                  + "/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack");
+              + "/Microsoft.Test.OData.Services.AstoriaDefaultService.SpecialEmployee/Sack");
         }
 
         return utils.getValue().createResponse(
@@ -1201,9 +1200,9 @@ public abstract class AbstractServices {
       final String entitySetName,
       final String entityId,
       final String format,
-      String expand,
+      final String expand,
       final String select) {
-    
+
     try {
       final Map.Entry<Accept, AbstractUtilities> utils = getUtilities(accept, format);
 
@@ -1838,9 +1837,9 @@ public abstract class AbstractServices {
     return xml.createResponse(null,
         searchForValue ? IOUtils.toInputStream(
             container.getPayload().isNull() ? StringUtils.EMPTY : stringValue(container.getPayload()),
-            Constants.ENCODING) : utils.writeProperty(acceptType, container),
-        Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId)),
-        acceptType);
+                Constants.ENCODING) : utils.writeProperty(acceptType, container),
+                Commons.getETag(Commons.getEntityBasePath(entitySetName, entityId)),
+                acceptType);
   }
 
   private String stringValue(final Property property) {
@@ -1928,7 +1927,7 @@ public abstract class AbstractServices {
 
         alink.setType(navProperties.get(property.getName()).isEntitySet()
             ? Constants.get(ConstantKey.ATOM_LINK_FEED)
-            : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
+                : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
 
         alink.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getName());
 
@@ -1984,7 +1983,7 @@ public abstract class AbstractServices {
         link.setTitle(property.getKey());
         link.setType(property.getValue().isEntitySet()
             ? Constants.get(ConstantKey.ATOM_LINK_FEED)
-            : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
+                : Constants.get(ConstantKey.ATOM_LINK_ENTRY));
         link.setRel(Constants.get(ConstantKey.ATOM_LINK_REL) + property.getKey());
         link.setHref(entitySetName + "(" + entityKey + ")/" + property.getKey());
         entry.getNavigationLinks().add(link);

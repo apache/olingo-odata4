@@ -40,19 +40,19 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
 public class TechnicalBatchProcessor extends TechnicalProcessor implements BatchProcessor {
   private static final String PREFERENCE_CONTINUE_ON_ERROR = "odata.continue-on-error";
 
-  public TechnicalBatchProcessor(DataProvider dataProvider) {
+  public TechnicalBatchProcessor(final DataProvider dataProvider) {
     super(dataProvider);
   }
 
   @Override
-  public void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
+  public void processBatch(final BatchFacade facade, final ODataRequest request, final ODataResponse response)
       throws BatchSerializerException, BatchDeserializerException {
     boolean continueOnError = isContinueOnError(request);
 
     final String boundary = facade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
     final BatchOptions options = BatchOptions.with()
-                                         .rawBaseUri(request.getRawBaseUri())
-                                         .rawServiceResolutionUri(request.getRawServiceResolutionUri()).build();
+        .rawBaseUri(request.getRawBaseUri())
+        .rawServiceResolutionUri(request.getRawServiceResolutionUri()).build();
     final List<BatchRequestPart> parts = odata.createFixedFormatDeserializer().parseBatchRequest(request.getBody(),
         boundary, options);
     final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
@@ -79,7 +79,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
   }
 
-  private boolean isContinueOnError(ODataRequest request) {
+  private boolean isContinueOnError(final ODataRequest request) {
     final List<String> preferValues = request.getHeaders(HttpHeader.PREFER);
 
     if (preferValues != null) {
@@ -93,8 +93,8 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   }
 
   @Override
-  public ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests)
-          throws BatchDeserializerException {
+  public ODataResponsePart processChangeSet(final BatchFacade facade, final List<ODataRequest> requests)
+      throws BatchDeserializerException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {

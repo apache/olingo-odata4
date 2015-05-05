@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,8 +60,8 @@ public class JSONUtilities extends AbstractUtilities {
 
     mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
         mapper.getSerializationConfig().
-            // withAttribute(ODataServiceVersion.class, version).
-            withAttribute(Boolean.class, Boolean.TRUE),
+        // withAttribute(ODataServiceVersion.class, version).
+        withAttribute(Boolean.class, Boolean.TRUE),
         mapper.getSerializerFactory()));
   }
 
@@ -73,7 +73,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   protected InputStream addLinks(
       final String entitySetName, final String entitykey, final InputStream is, final Set<String> links)
-      throws IOException {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
     IOUtils.closeQuietly(is);
@@ -153,7 +153,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   protected InputStream normalizeLinks(
       final String entitySetName, final String entityKey, final InputStream is, final NavigationLinks links)
-      throws IOException {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(is);
 
@@ -259,7 +259,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   public InputStream readEntities(
       final List<String> links, final String linkName, final String next, final boolean forceFeed)
-      throws IOException {
+          throws IOException {
 
     if (links.isEmpty()) {
       throw new NotFoundException();
@@ -307,7 +307,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   protected InputStream replaceLink(
       final InputStream toBeChanged, final String linkName, final InputStream replacement)
-      throws IOException {
+          throws IOException {
 
     final ObjectNode toBeChangedNode = (ObjectNode) mapper.readTree(toBeChanged);
     final ObjectNode replacementNode = (ObjectNode) mapper.readTree(replacement);
@@ -403,7 +403,7 @@ public class JSONUtilities extends AbstractUtilities {
   @Override
   public InputStream replaceProperty(
       final InputStream src, final InputStream replacement, final List<String> path, final boolean justValue)
-      throws IOException {
+          throws IOException {
 
     final ObjectNode srcNode = (ObjectNode) mapper.readTree(src);
     IOUtils.closeQuietly(src);

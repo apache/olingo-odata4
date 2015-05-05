@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,10 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.testutil;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -34,10 +38,6 @@ import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ExpandValidator implements TestValidator {
   private Edm edm;
@@ -83,9 +83,9 @@ public class ExpandValidator implements TestValidator {
     }
 
     return new ResourceValidator()
-        .setUpValidator(this)
-        .setEdm(edm)
-        .setUriInfoImplPath(uriInfo);
+    .setUpValidator(this)
+    .setEdm(edm)
+    .setUriInfoImplPath(uriInfo);
 
   }
 
@@ -93,9 +93,9 @@ public class ExpandValidator implements TestValidator {
     OrderByOptionImpl orderBy = (OrderByOptionImpl) expandItem.getOrderByOption();
 
     return new FilterValidator()
-        .setValidator(this)
-        .setEdm(edm)
-        .setExpression(orderBy.getOrders().get(index).getExpression());
+    .setValidator(this)
+    .setEdm(edm)
+    .setExpression(orderBy.getOrders().get(index).getExpression());
   }
 
   public ResourceValidator goSelectItem(final int index) {
@@ -105,16 +105,16 @@ public class ExpandValidator implements TestValidator {
     UriInfoImpl uriInfo = (UriInfoImpl) item.getResourcePath();
 
     return new ResourceValidator()
-        .setUpValidator(this)
-        .setEdm(edm)
-        .setUriInfoImplPath(uriInfo);
+    .setUpValidator(this)
+    .setEdm(edm)
+    .setUriInfoImplPath(uriInfo);
 
   }
 
   public ExpandValidator goExpand() {
     return new ExpandValidator()
-        .setExpand((ExpandOptionImpl) expandItem.getExpandOption())
-        .setUpValidator(this);
+    .setExpand((ExpandOptionImpl) expandItem.getExpandOption())
+    .setUpValidator(this);
   }
 
   public ExpandValidator first() {

@@ -81,14 +81,14 @@ public class BatchParserCommon {
         BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, HttpContentType.MULTIPART_MIXED);
   }
 
-  public static String removeEndingSlash(String content) {
+  public static String removeEndingSlash(final String content) {
     String newContent = content.trim();
     int lastSlashIndex = newContent.lastIndexOf('/');
 
     return (lastSlashIndex == newContent.length() - 1) ? newContent.substring(0, newContent.length() - 1) : newContent;
   }
 
-  private static String trimQuota(String boundary) {
+  private static String trimQuota(final String boundary) {
     if (boundary.matches("\".*\"")) {
       return boundary.replace("\"", "");
     }

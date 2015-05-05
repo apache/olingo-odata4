@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,7 +37,7 @@ public class EdmxReference {
    *
    * @param uri of reference
    */
-  public EdmxReference(URI uri) {
+  public EdmxReference(final URI uri) {
     this.uri = uri;
     edmxIncludes = new ArrayList<EdmxReferenceInclude>();
     edmxIncludeAnnotations = new ArrayList<EdmxReferenceIncludeAnnotation>();
@@ -66,7 +66,7 @@ public class EdmxReference {
    * @param include to be added
    * @return this EdmxReference object
    */
-  public EdmxReference addInclude(EdmxReferenceInclude include) {
+  public EdmxReference addInclude(final EdmxReferenceInclude include) {
     edmxIncludes.add(include);
     return this;
   }
@@ -86,7 +86,7 @@ public class EdmxReference {
    * @param includeAnnotation to be added
    * @return this EdmxReference object
    */
-  public EdmxReference addIncludeAnnotation(EdmxReferenceIncludeAnnotation includeAnnotation) {
+  public EdmxReference addIncludeAnnotation(final EdmxReferenceIncludeAnnotation includeAnnotation) {
     edmxIncludeAnnotations.add(includeAnnotation);
     return this;
   }

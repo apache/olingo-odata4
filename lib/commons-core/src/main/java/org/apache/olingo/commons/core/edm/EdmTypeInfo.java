@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -56,7 +56,7 @@ public class EdmTypeInfo {
     public EdmTypeInfo build() {
       return new EdmTypeInfo(edm, typeExpression.indexOf('.') == -1 && StringUtils.isNotBlank(defaultNamespace)
           ? defaultNamespace + "." + typeExpression
-          : typeExpression);
+              : typeExpression);
     }
   }
 
@@ -149,7 +149,7 @@ public class EdmTypeInfo {
 
     if (isPrimitiveType()) {
       serialize.append(getFullQualifiedName().getName());
-    }else{
+    } else {
       serialize.append(getFullQualifiedName().toString());
     }
 
@@ -215,14 +215,14 @@ public class EdmTypeInfo {
   public EdmType getType() {
     return isPrimitiveType()
         ? EdmPrimitiveTypeFactory.getInstance(getPrimitiveTypeKind())
-        : isTypeDefinition()
+            : isTypeDefinition()
             ? getTypeDefinition()
-            : isEnumType()
+                : isEnumType()
                 ? getEnumType()
-                : isComplexType()
+                    : isComplexType()
                     ? getComplexType()
-                    : isEntityType()
+                        : isEntityType()
                         ? getEntityType()
-                        : null;
+                            : null;
   }
 }

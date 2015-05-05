@@ -37,9 +37,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.junit.Test;
 import org.mockito.Mockito;
 

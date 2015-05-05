@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,11 +29,11 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -110,10 +110,10 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     dateTime.set(1977, 8, 8, 0, 0, 0);
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Birthday",
         client.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build()));
+        setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build()));
     customer.getProperties().add(client.getObjectFactory().newPrimitiveProperty("TimeBetweenLastTwoOrders",
         client.getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
 
     final ODataEntityCreateRequest<ClientEntity> createReq = client.getCUDRequestFactory().
         getEntityCreateRequest(

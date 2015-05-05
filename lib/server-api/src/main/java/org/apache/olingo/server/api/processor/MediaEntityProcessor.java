@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,43 +33,43 @@ public interface MediaEntityProcessor extends EntityProcessor {
 
   /**
    * Reads entity media data from persistence and puts content and status into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
+   * @throws SerializerException if serialization failed
    */
   void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 
   /**
    * Creates an entity with send media data in the persistence and puts content, status and Location into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param requestFormat   content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
-   * @throws SerializerException       if serialization failed
+   * @throws DeserializerException if deserialization failed
+   * @throws SerializerException if serialization failed
    */
   void createMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                    ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
    * Updates entity media data in the persistence and puts content and status into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param requestFormat   content type of body sent with request
-   * @param responseFormat  requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
-   * @throws SerializerException       if serialization failed
+   * @throws DeserializerException if deserialization failed
+   * @throws SerializerException if serialization failed
    */
   void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                         ContentType requestFormat, ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException;
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -80,21 +80,21 @@ public class TestUriParserImpl {
 
     // no input
     testRes.run("ESKeyNav(1)/olingo.odata.test1.BFCETKeyNavRTETKeyNav()")
-        .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
-        .at(1).isUriPathInfoKind(UriResourceKind.function);
+    .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
+    .at(1).isUriPathInfoKind(UriResourceKind.function);
 
     // one input
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
-        .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
-        .at(1).isUriPathInfoKind(UriResourceKind.function)
-        .isParameter(0, "ParameterString", "'ABC'");
+    .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
+    .at(1).isUriPathInfoKind(UriResourceKind.function)
+    .isParameter(0, "ParameterString", "'ABC'");
 
     // two input
     testRes.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isParameter(0, "ParameterInt16", "1")
-        .isParameter(1, "ParameterString", "'2'");
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isParameter(0, "ParameterInt16", "1")
+    .isParameter(1, "ParameterString", "'2'");
   }
 
   @Test
@@ -104,39 +104,39 @@ public class TestUriParserImpl {
 
     // returning primitive
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isType(PropertyProvider.nameString, false);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(PropertyProvider.nameString, false);
 
     // returning collection of primitive
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollString()")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isType(PropertyProvider.nameString, true);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(PropertyProvider.nameString, true);
 
     // returning single complex
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isType(ComplexTypeProvider.nameCTTwoPrim, false);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(ComplexTypeProvider.nameCTTwoPrim, false);
 
     // returning collection of complex
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCollCTTwoPrim()")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isType(ComplexTypeProvider.nameCTTwoPrim, true);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
     // returning single entity
     testRes.run(
@@ -151,49 +151,49 @@ public class TestUriParserImpl {
 
     // returning collection of entity (aka entitySet)
     testRes.run(esTwoKeyNav + "/olingo.odata.test1.BFCSINavRTESTwoKeyNav()")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.function)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.function)
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true);
   }
 
   @Test
   public void runActionImport_VarReturnType() {
 
     testRes.run(ContainerProvider.AIRT_STRING).isKind(UriInfoKind.resource)
-        .first()
-        .isActionImport(ContainerProvider.AIRT_STRING)
-        .isAction(ActionProvider.nameUARTString.getName())
-        .isType(PropertyProvider.nameString, false);
+    .first()
+    .isActionImport(ContainerProvider.AIRT_STRING)
+    .isAction(ActionProvider.nameUARTString.getName())
+    .isType(PropertyProvider.nameString, false);
 
     testRes.run(ContainerProvider.AIRT_COLL_STRING_TWO_PARAM).isKind(UriInfoKind.resource)
-            .first()
-            .isActionImport(ContainerProvider.AIRT_COLL_STRING_TWO_PARAM)
-            .isAction(ActionProvider.nameUARTCollStringTwoParam.getName())
-            .isType(PropertyProvider.nameString, true);
+        .first()
+        .isActionImport(ContainerProvider.AIRT_COLL_STRING_TWO_PARAM)
+        .isAction(ActionProvider.nameUARTCollStringTwoParam.getName())
+        .isType(PropertyProvider.nameString, true);
 
     testRes.run(ContainerProvider.AIRTCT_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
-        .first()
-        .isActionImport(ContainerProvider.AIRTCT_TWO_PRIM_PARAM)
-        .isAction(ActionProvider.nameUARTCTTwoPrimParam.getName())
-        .isType(ComplexTypeProvider.nameCTTwoPrim, false);
+    .first()
+    .isActionImport(ContainerProvider.AIRTCT_TWO_PRIM_PARAM)
+    .isAction(ActionProvider.nameUARTCTTwoPrimParam.getName())
+    .isType(ComplexTypeProvider.nameCTTwoPrim, false);
 
     testRes.run(ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
-        .first()
-        .isActionImport(ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM)
-        .isAction(ActionProvider.nameUARTCollCTTwoPrimParam.getName())
-        .isType(ComplexTypeProvider.nameCTTwoPrim, true);
+    .first()
+    .isActionImport(ContainerProvider.AIRT_COLL_CT_TWO_PRIM_PARAM)
+    .isAction(ActionProvider.nameUARTCollCTTwoPrimParam.getName())
+    .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
     testRes.run(ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM).isKind(UriInfoKind.resource)
-        .first()
-        .isActionImport(ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM)
-        .isAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam.getName())
-        .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
+    .first()
+    .isActionImport(ContainerProvider.AIRTET_TWO_KEY_TWO_PRIM_PARAM)
+    .isAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam.getName())
+    .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
     testUri.runEx(ContainerProvider.AIRT_STRING + "/invalidElement")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE);
+    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE);
   }
 
   @Test
@@ -201,46 +201,46 @@ public class TestUriParserImpl {
 
     // count entity set
     testRes.run("ESAllPrim/$count")
-        .at(0)
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETAllPrim, true)
-        .at(1)
-        .isUriPathInfoKind(UriResourceKind.count);
+    .at(0)
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETAllPrim, true)
+    .at(1)
+    .isUriPathInfoKind(UriResourceKind.count);
 
     // count on collection of complex
     testRes.run("ESKeyNav(1)/CollPropertyComp/$count")
-        .at(0)
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .at(1)
-        .isType(ComplexTypeProvider.nameCTPrimComp, true)
-        .at(2)
-        .isUriPathInfoKind(UriResourceKind.count);
+    .at(0)
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .at(1)
+    .isType(ComplexTypeProvider.nameCTPrimComp, true)
+    .at(2)
+    .isUriPathInfoKind(UriResourceKind.count);
 
     // count on collection of primitive
     testRes.run("ESCollAllPrim(1)/CollPropertyString/$count")
-        .at(1)
-        .isType(PropertyProvider.nameString, true)
-        .at(2)
-        .isUriPathInfoKind(UriResourceKind.count);
+    .at(1)
+    .isType(PropertyProvider.nameString, true)
+    .at(2)
+    .isUriPathInfoKind(UriResourceKind.count);
   }
 
   @Test
   public void runCrossJoin() throws Exception {
     testUri.run("$crossjoin(ESAllKey)")
-        .isKind(UriInfoKind.crossjoin)
-        .isCrossJoinEntityList(Arrays.asList("ESAllKey"));
+    .isKind(UriInfoKind.crossjoin)
+    .isCrossJoinEntityList(Arrays.asList("ESAllKey"));
 
     testUri.run("$crossjoin(ESAllKey,ESTwoPrim)")
-        .isKind(UriInfoKind.crossjoin)
-        .isCrossJoinEntityList(Arrays.asList("ESAllKey", "ESTwoPrim"));
+    .isKind(UriInfoKind.crossjoin)
+    .isCrossJoinEntityList(Arrays.asList("ESAllKey", "ESTwoPrim"));
   }
 
   @Test(expected = UriValidationException.class)
   public void testEntityFailOnValidation1() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
     testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllKey")
-        .isIdText("ESAllKey")
-        .goFilter().is("<<PropertyInt16> eq <123>>");
+    .isIdText("ESAllKey")
+    .goFilter().is("<<PropertyInt16> eq <123>>");
   }
 
   @Test(expected = UriParserSyntaxException.class)
@@ -260,68 +260,68 @@ public class TestUriParserImpl {
 
     // simple entity set
     testUri.run("$entity", "$id=ESAllPrim").isKind(UriInfoKind.entityId)
-        .isKind(UriInfoKind.entityId)
-        .isIdText("ESAllPrim");
+    .isKind(UriInfoKind.entityId)
+    .isIdText("ESAllPrim");
 
     // simple entity set; $format before $id
     testUri.run("$entity", "$format=xml&$id=ETAllPrim").isKind(UriInfoKind.entityId)
-        .isFormatText("xml")
-        .isIdText("ETAllPrim");
+    .isFormatText("xml")
+    .isIdText("ETAllPrim");
 
     testUri.run("$entity", "$format=xml&abc=123&$id=ESAllKey").isKind(UriInfoKind.entityId)
-        .isFormatText("xml")
-        .isCustomParameter(0, "abc", "123")
-        .isIdText("ESAllKey");
+    .isFormatText("xml")
+    .isCustomParameter(0, "abc", "123")
+    .isIdText("ESAllKey");
 
     // simple entity set; $format after $id
     testUri.run("$entity", "$id=ETAllPrim&$format=xml").isKind(UriInfoKind.entityId)
-        .isIdText("ETAllPrim")
-        .isFormatText("xml");
+    .isIdText("ETAllPrim")
+    .isFormatText("xml");
 
     // simple entity set; $format and custom parameter after $id
     testUri.run("$entity", "$id=ETAllPrim&$format=xml&abc=123").isKind(UriInfoKind.entityId)
-        .isIdText("ETAllPrim")
-        .isFormatText("xml")
-        .isCustomParameter(0, "abc", "123");
+    .isIdText("ETAllPrim")
+    .isFormatText("xml")
+    .isCustomParameter(0, "abc", "123");
 
     // simple entity set; $format before $id and custom parameter after $id
     testUri.run("$entity", "$format=xml&$id=ETAllPrim&abc=123").isKind(UriInfoKind.entityId)
-        .isFormatText("xml")
-        .isIdText("ETAllPrim")
-        .isCustomParameter(0, "abc", "123");
+    .isFormatText("xml")
+    .isIdText("ETAllPrim")
+    .isCustomParameter(0, "abc", "123");
 
     // simple entity set; with qualifiedentityTypeName
     testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$id=ESBase")
-        .isEntityType(EntityTypeProvider.nameETTwoPrim)
-        .isIdText("ESBase");
+    .isEntityType(EntityTypeProvider.nameETTwoPrim)
+    .isIdText("ESBase");
 
     // simple entity set; with qualifiedentityTypeName;
     testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim")
-        .isEntityType(EntityTypeProvider.nameETBase)
-        .isKind(UriInfoKind.entityId)
-        .isIdText("ESTwoPrim");
+    .isEntityType(EntityTypeProvider.nameETBase)
+    .isKind(UriInfoKind.entityId)
+    .isIdText("ESTwoPrim");
 
     // simple entity set; with qualifiedentityTypeName; with format
     testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$format=atom")
-        .isKind(UriInfoKind.entityId)
-        .isEntityType(EntityTypeProvider.nameETBase)
-        .isIdText("ESTwoPrim")
-        .isFormatText("atom");
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETBase)
+    .isIdText("ESTwoPrim")
+    .isFormatText("atom");
 
     // simple entity set; with qualifiedentityTypeName; with select
     testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$select=*")
-        .isKind(UriInfoKind.entityId)
-        .isEntityType(EntityTypeProvider.nameETBase)
-        .isIdText("ESTwoPrim")
-        .isSelectItemStar(0);
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETBase)
+    .isIdText("ESTwoPrim")
+    .isSelectItemStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with expand
     testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$expand=*")
-        .isKind(UriInfoKind.entityId)
-        .isEntityType(EntityTypeProvider.nameETBase)
-        .isIdText("ESTwoPrim")
-        .isExpandText("*")
-        .goExpand().first().isSegmentStar();
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETBase)
+    .isIdText("ESTwoPrim")
+    .isExpandText("*")
+    .goExpand().first().isSegmentStar();
 
   }
 
@@ -330,42 +330,42 @@ public class TestUriParserImpl {
 
     // plain entity set
     testRes.run("ESAllPrim")
-        .isEntitySet("ESAllPrim")
-        .isType(EntityTypeProvider.nameETAllPrim);
+    .isEntitySet("ESAllPrim")
+    .isType(EntityTypeProvider.nameETAllPrim);
 
     // with one key; simple key notation
     testRes.run("ESAllPrim(1)")
-        .isEntitySet("ESAllPrim")
-        .isType(EntityTypeProvider.nameETAllPrim)
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .isEntitySet("ESAllPrim")
+    .isType(EntityTypeProvider.nameETAllPrim)
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // with one key; name value key notation
     testRes.run("ESAllPrim(PropertyInt16=1)")
-        .isEntitySet("ESAllPrim")
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .isEntitySet("ESAllPrim")
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // with two keys
     testRes.run("ESTwoKeyTwoPrim(PropertyInt16=1, PropertyString='ABC')")
-        .isEntitySet("ESTwoKeyTwoPrim")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'ABC'");
+    .isEntitySet("ESTwoKeyTwoPrim")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // with all keys
     testRes.run("ESAllKey(" + encode(allKeys) + ")")
-        .isEntitySet("ESAllKey")
-        .isKeyPredicate(0, "PropertyString", "'ABC'")
-        .isKeyPredicate(1, "PropertyInt16", "1")
-        .isKeyPredicate(2, "PropertyBoolean", "true")
-        .isKeyPredicate(3, "PropertyByte", "1")
-        .isKeyPredicate(4, "PropertySByte", "1")
-        .isKeyPredicate(5, "PropertyInt32", "12")
-        .isKeyPredicate(6, "PropertyInt64", "64")
-        .isKeyPredicate(7, "PropertyDecimal", "12")
-        .isKeyPredicate(8, "PropertyDate", "2013-09-25")
-        .isKeyPredicate(9, "PropertyDateTimeOffset", "2002-10-10T12:00:00-05:00")
-        .isKeyPredicate(10, "PropertyDuration", "duration'P50903316DT2H25M4S'")
-        .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
-        .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55");
+    .isEntitySet("ESAllKey")
+    .isKeyPredicate(0, "PropertyString", "'ABC'")
+    .isKeyPredicate(1, "PropertyInt16", "1")
+    .isKeyPredicate(2, "PropertyBoolean", "true")
+    .isKeyPredicate(3, "PropertyByte", "1")
+    .isKeyPredicate(4, "PropertySByte", "1")
+    .isKeyPredicate(5, "PropertyInt32", "12")
+    .isKeyPredicate(6, "PropertyInt64", "64")
+    .isKeyPredicate(7, "PropertyDecimal", "12")
+    .isKeyPredicate(8, "PropertyDate", "2013-09-25")
+    .isKeyPredicate(9, "PropertyDateTimeOffset", "2002-10-10T12:00:00-05:00")
+    .isKeyPredicate(10, "PropertyDuration", "duration'P50903316DT2H25M4S'")
+    .isKeyPredicate(11, "PropertyGuid", "12345678-1234-1234-1234-123456789012")
+    .isKeyPredicate(12, "PropertyTimeOfDay", "12:34:55");
   }
 
   @Test
@@ -375,103 +375,103 @@ public class TestUriParserImpl {
 
     // with navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .isType(EntityTypeProvider.nameETTwoKeyNav);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+    .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with navigation property -> property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/PropertyString")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .at(2)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+    .at(2)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with navigation property -> navigation property -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
-        .at(2)
-        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
-        .isType(EntityTypeProvider.nameETKeyNav);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+    .isType(EntityTypeProvider.nameETTwoKeyNav)
+    .at(2)
+    .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+    .isType(EntityTypeProvider.nameETKeyNav);
 
     // with navigation property(key)
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // with navigation property(key) -> property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/PropertyString").at(0)
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(2)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(2)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with navigation property(key) -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavOne")
-        .isEntitySet("ESKeyNav")
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(2)
-        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
+    .isEntitySet("ESKeyNav")
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(2)
+    .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     // with navigation property(key) -> navigation property(key)
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavMany(1)")
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(2)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(2)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // with navigation property(key) -> navigation property -> property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavOne/PropertyString")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(2)
-        .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .at(3)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(2)
+    .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .at(3)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with navigation property(key) -> navigation property(key) -> property
     testRes.run("ESKeyNav(1)/NavPropertyETKeyNavMany(1)/NavPropertyETKeyNavMany(1)/PropertyString")
-        .at(0)
-        .isEntitySet("ESKeyNav")
-        .isType(EntityTypeProvider.nameETKeyNav)
-        .at(1)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(2)
-        .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(3)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESKeyNav")
+    .isType(EntityTypeProvider.nameETKeyNav)
+    .at(1)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(2)
+    .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(3)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
   }
 
@@ -482,29 +482,29 @@ public class TestUriParserImpl {
 
     // with property
     testRes.run("ESAllPrim(1)/PropertyString")
-        .at(0)
-        .isEntitySet("ESAllPrim")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESAllPrim")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with complex property
     testRes.run("ESCompAllPrim(1)/PropertyComp")
-        .at(0)
-        .isEntitySet("ESCompAllPrim")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
+    .at(0)
+    .isEntitySet("ESCompAllPrim")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
     // with two properties
     testRes.run("ESCompAllPrim(1)/PropertyComp/PropertyString")
-        .at(0)
-        .isEntitySet("ESCompAllPrim")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
-        .at(2)
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESCompAllPrim")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+    .at(2)
+    .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
   @Test
@@ -512,59 +512,59 @@ public class TestUriParserImpl {
 
     // filter
     testRes.run("ESTwoPrim/olingo.odata.test1.ETBase")
-        .at(0)
-        .isEntitySet("ESTwoPrim")
-        .isType(EntityTypeProvider.nameETTwoPrim, true)
-        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
-        .isTypeFilterOnEntry(null);
+    .at(0)
+    .isEntitySet("ESTwoPrim")
+    .isType(EntityTypeProvider.nameETTwoPrim, true)
+    .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
+    .isTypeFilterOnEntry(null);
 
     // filter before key predicate
     testRes.run("ESTwoPrim/olingo.odata.test1.ETBase(PropertyInt16=1)")
-        .at(0)
-        .isEntitySet("ESTwoPrim")
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoPrim)
-        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
-        .isTypeFilterOnEntry(null)
-        .at(0)
-        .isType(EntityTypeProvider.nameETTwoPrim, false)
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .at(0)
+    .isEntitySet("ESTwoPrim")
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoPrim)
+    .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
+    .isTypeFilterOnEntry(null)
+    .at(0)
+    .isType(EntityTypeProvider.nameETTwoPrim, false)
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // filter before key predicate; property of sub type
     testRes.run("ESTwoPrim/olingo.odata.test1.ETBase(PropertyInt16=1)/AdditionalPropertyString_5")
-        .at(0)
-        .isEntitySet("ESTwoPrim")
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoPrim)
-        .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
-        .isTypeFilterOnEntry(null)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isType(PropertyProvider.nameString)
-        .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false);
+    .at(0)
+    .isEntitySet("ESTwoPrim")
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoPrim)
+    .isTypeFilterOnCollection(EntityTypeProvider.nameETBase)
+    .isTypeFilterOnEntry(null)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isType(PropertyProvider.nameString)
+    .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false);
 
     // filter after key predicate
     testRes.run("ESTwoPrim(PropertyInt16=1)/olingo.odata.test1.ETBase")
-        .at(0)
-        .isEntitySet("ESTwoPrim")
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoPrim, false)
-        .isTypeFilterOnCollection(null)
-        .isTypeFilterOnEntry(EntityTypeProvider.nameETBase)
-        .isKeyPredicate(0, "PropertyInt16", "1");
+    .at(0)
+    .isEntitySet("ESTwoPrim")
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoPrim, false)
+    .isTypeFilterOnCollection(null)
+    .isTypeFilterOnEntry(EntityTypeProvider.nameETBase)
+    .isKeyPredicate(0, "PropertyInt16", "1");
 
     // filter after key predicate; property of sub type
     testRes.run("ESTwoPrim(PropertyInt16=1)/olingo.odata.test1.ETBase/AdditionalPropertyString_5")
-        .at(0)
-        .isEntitySet("ESTwoPrim")
-        .isUriPathInfoKind(UriResourceKind.entitySet)
-        .isType(EntityTypeProvider.nameETTwoPrim)
-        .isTypeFilterOnCollection(null)
-        .isTypeFilterOnEntry(EntityTypeProvider.nameETBase)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .at(1)
-        .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false)
-        .isType(PropertyProvider.nameString);
+    .at(0)
+    .isEntitySet("ESTwoPrim")
+    .isUriPathInfoKind(UriResourceKind.entitySet)
+    .isType(EntityTypeProvider.nameETTwoPrim)
+    .isTypeFilterOnCollection(null)
+    .isTypeFilterOnEntry(EntityTypeProvider.nameETBase)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .at(1)
+    .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false)
+    .isType(PropertyProvider.nameString);
 
   }
 
@@ -605,60 +605,60 @@ public class TestUriParserImpl {
 
     // no input
     testRes.run("FINRTInt16()")
-        .isFunctionImport("FINRTInt16")
-        .isFunction("UFNRTInt16")
-        .isType(PropertyProvider.nameInt16);
+    .isFunctionImport("FINRTInt16")
+    .isFunction("UFNRTInt16")
+    .isType(PropertyProvider.nameInt16);
 
     // one input
     testRes.run("FICRTETTwoKeyNavParam(ParameterInt16=1)")
-        .isFunctionImport("FICRTETTwoKeyNavParam")
-        .isFunction("UFCRTETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav);
+    .isFunctionImport("FICRTETTwoKeyNavParam")
+    .isFunction("UFCRTETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // two input
     testRes.run("FICRTStringTwoParam(ParameterString='ABC',ParameterInt16=1)")
-        .isFunctionImport("FICRTStringTwoParam")
-        .isFunction("UFCRTStringTwoParam")
-        .isType(PropertyProvider.nameString);
+    .isFunctionImport("FICRTStringTwoParam")
+    .isFunction("UFCRTStringTwoParam")
+    .isType(PropertyProvider.nameString);
   }
 
   @Test
   public void testFunctionImport_VarReturning() {
     // returning primitive
     testRes.run("FINRTInt16()")
-        .isFunctionImport("FINRTInt16")
-        .isFunction("UFNRTInt16")
-        .isType(PropertyProvider.nameInt16, false);
+    .isFunctionImport("FINRTInt16")
+    .isFunction("UFNRTInt16")
+    .isType(PropertyProvider.nameInt16, false);
 
     // returning collection of primitive
     testRes.run("FICRTCollStringTwoParam(ParameterString='ABC',ParameterInt16=1)")
-        .isFunctionImport("FICRTCollStringTwoParam")
-        .isFunction("UFCRTCollStringTwoParam")
-        .isType(PropertyProvider.nameString, true);
+    .isFunctionImport("FICRTCollStringTwoParam")
+    .isFunction("UFCRTCollStringTwoParam")
+    .isType(PropertyProvider.nameString, true);
 
     // returning single complex
     testRes.run("FICRTCTAllPrimTwoParam(ParameterString='ABC',ParameterInt16=1)")
-        .isFunctionImport("FICRTCTAllPrimTwoParam")
-        .isFunction("UFCRTCTAllPrimTwoParam")
-        .isType(ComplexTypeProvider.nameCTAllPrim, false);
+    .isFunctionImport("FICRTCTAllPrimTwoParam")
+    .isFunction("UFCRTCTAllPrimTwoParam")
+    .isType(ComplexTypeProvider.nameCTAllPrim, false);
 
     // returning collection of complex
     testRes.run("FICRTCollCTTwoPrim()")
-        .isFunctionImport("FICRTCollCTTwoPrim")
-        .isFunction("UFCRTCollCTTwoPrim")
-        .isType(ComplexTypeProvider.nameCTTwoPrim, true);
+    .isFunctionImport("FICRTCollCTTwoPrim")
+    .isFunction("UFCRTCollCTTwoPrim")
+    .isType(ComplexTypeProvider.nameCTTwoPrim, true);
 
     // returning single entity
     testRes.run("FICRTETTwoKeyNavParam(ParameterInt16=1)")
-        .isFunctionImport("FICRTETTwoKeyNavParam")
-        .isFunction("UFCRTETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false);
+    .isFunctionImport("FICRTETTwoKeyNavParam")
+    .isFunction("UFCRTETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav, false);
 
     // returning collection of entity (aka entitySet)
     testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)")
-        .isFunctionImport("FICRTCollESTwoKeyNavParam")
-        .isFunction("UFCRTCollETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true);
+    .isFunctionImport("FICRTCollESTwoKeyNavParam")
+    .isFunction("UFCRTCollETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav, true);
   }
 
   @Test
@@ -666,46 +666,46 @@ public class TestUriParserImpl {
 
     // test chain; returning single complex
     testRes.run("FICRTCTAllPrimTwoParam(ParameterString='ABC',ParameterInt16=1)/PropertyInt16")
-        .at(0)
-        .isFunctionImport("FICRTCTAllPrimTwoParam")
-        .isFunction("UFCRTCTAllPrimTwoParam")
-        .isType(ComplexTypeProvider.nameCTAllPrim, false)
-        .isParameter(0, "ParameterString", "'ABC'")
-        .isParameter(1, "ParameterInt16", "1")
-        .at(1)
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .at(0)
+    .isFunctionImport("FICRTCTAllPrimTwoParam")
+    .isFunction("UFCRTCTAllPrimTwoParam")
+    .isType(ComplexTypeProvider.nameCTAllPrim, false)
+    .isParameter(0, "ParameterString", "'ABC'")
+    .isParameter(1, "ParameterInt16", "1")
+    .at(1)
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     // test chains; returning single entity
     testRes.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/PropertyInt16")
-        .at(0)
-        .isFunctionImport("FICRTETTwoKeyNavParam")
-        .isFunction("UFCRTETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .isParameter(0, "ParameterInt16", "1")
-        .at(1)
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .at(0)
+    .isFunctionImport("FICRTETTwoKeyNavParam")
+    .isFunction("UFCRTETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+    .isParameter(0, "ParameterInt16", "1")
+    .at(1)
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     // test chains; returning collection of entity (aka entitySet)
     testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')")
-        .at(0)
-        .isFunctionImport("FICRTCollESTwoKeyNavParam")
-        .isFunction("UFCRTCollETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .isParameter(0, "ParameterInt16", "1")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'ABC'");
+    .at(0)
+    .isFunctionImport("FICRTCollESTwoKeyNavParam")
+    .isFunction("UFCRTCollETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+    .isParameter(0, "ParameterInt16", "1")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // test chains; returning collection of entity (aka entitySet)
     testRes.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='ABC')/PropertyInt16")
-        .at(0)
-        .isFunctionImport("FICRTCollESTwoKeyNavParam")
-        .isFunction("UFCRTCollETTwoKeyNavParam")
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .isParameter(0, "ParameterInt16", "1")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'ABC'")
-        .at(1)
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .at(0)
+    .isFunctionImport("FICRTCollESTwoKeyNavParam")
+    .isFunction("UFCRTCollETTwoKeyNavParam")
+    .isType(EntityTypeProvider.nameETTwoKeyNav, false)
+    .isParameter(0, "ParameterInt16", "1")
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'ABC'")
+    .at(1)
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
   }
 
@@ -717,72 +717,72 @@ public class TestUriParserImpl {
     // part is only available as text.
 
     testUri.run("$metadata")
-        .isKind(UriInfoKind.metadata);
+    .isKind(UriInfoKind.metadata);
 
     testUri.run("$metadata", "$format=atom")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom");
 
     // with context (client usage)
 
     testUri.run("$metadata", null, "$ref")
-        .isKind(UriInfoKind.metadata)
-        .isFragmentText("$ref");
+    .isKind(UriInfoKind.metadata)
+    .isFragmentText("$ref");
 
     testUri.run("$metadata", "$format=atom", "$ref")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("$ref");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("$ref");
 
     testUri.run("$metadata", "$format=atom", "Collection($ref)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("Collection($ref)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("Collection($ref)");
 
     testUri.run("$metadata", "$format=atom", "Collection(Edm.EntityType)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("Collection(Edm.EntityType)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("Collection(Edm.EntityType)");
 
     testUri.run("$metadata", "$format=atom", "Collection(Edm.ComplexType)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("Collection(Edm.ComplexType)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("Collection(Edm.ComplexType)");
 
     testUri.run("$metadata", "$format=atom", "SINav")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav");
 
     testUri.run("$metadata", "$format=atom", "SINav/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavOne")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/NavPropertyETKeyNavOne");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/NavPropertyETKeyNavOne");
 
     testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavMany(1)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/NavPropertyETKeyNavMany(1)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/NavPropertyETKeyNavMany(1)");
 
     testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavOne/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/NavPropertyETKeyNavOne/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/NavPropertyETKeyNavOne/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "SINav/NavPropertyETKeyNavMany(1)/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/NavPropertyETKeyNavMany(1)/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom",
         "SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16")
@@ -791,54 +791,54 @@ public class TestUriParserImpl {
         .isFragmentText("SINav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "olingo.odata.test1.ETAllKey")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("olingo.odata.test1.ETAllKey");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("olingo.odata.test1.ETAllKey");
 
     testUri.run("$metadata", "$format=atom", "ESTwoPrim/$deletedEntity")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESTwoPrim/$deletedEntity");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESTwoPrim/$deletedEntity");
 
     testUri.run("$metadata", "$format=atom", "ESTwoPrim/$link")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESTwoPrim/$link");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESTwoPrim/$link");
 
     testUri.run("$metadata", "$format=atom", "ESTwoPrim/$deletedLink")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESTwoPrim/$deletedLink");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESTwoPrim/$deletedLink");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavOne")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavMany(1)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/NavPropertyETKeyNavOne/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom",
         "ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavOne/PropertyInt16")
@@ -853,24 +853,24 @@ public class TestUriParserImpl {
         .isFragmentText("ESKeyNav/olingo.odata.test1.ETTwoPrim/NavPropertyETKeyNavMany(1)/PropertyInt16");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav(PropertyInt16,PropertyString)")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav(PropertyInt16,PropertyString)");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav(PropertyInt16,PropertyString)");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/$entity")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/$entity");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/$entity");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/$delta")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/$delta");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/$delta");
 
     testUri.run("$metadata", "$format=atom", "ESKeyNav/(PropertyInt16,PropertyString)/$delta")
-        .isKind(UriInfoKind.metadata)
-        .isFormatText("atom")
-        .isFragmentText("ESKeyNav/(PropertyInt16,PropertyString)/$delta");
+    .isKind(UriInfoKind.metadata)
+    .isFormatText("atom")
+    .isFragmentText("ESKeyNav/(PropertyInt16,PropertyString)/$delta");
 
   }
 
@@ -883,8 +883,8 @@ public class TestUriParserImpl {
   public void testSingleton() {
     // plain singleton
     testRes.run("SINav")
-        .isSingleton("SINav")
-        .isType(EntityTypeProvider.nameETTwoKeyNav);
+    .isSingleton("SINav")
+    .isType(EntityTypeProvider.nameETTwoKeyNav);
   }
 
   @Test
@@ -894,43 +894,43 @@ public class TestUriParserImpl {
 
     // with navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
     // with navigation property -> property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/PropertyString")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .at(2).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+    .at(2).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with navigation property -> navigation property -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .at(2).isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+    .at(2).isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     // with navigation property(key)
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'1'");
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'1'");
 
     // with navigation property(key) -> property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')/PropertyString")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'1'")
-        .at(2).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'1'")
+    .at(2).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     // with navigation property(key) -> navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')/NavPropertyETKeyNavOne")
-        .at(0).isEntitySet("ESKeyNav")
-        .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'1'")
-        .at(2).isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
+    .at(0).isEntitySet("ESKeyNav")
+    .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, false)
+    .isKeyPredicate(0, "PropertyInt16", "1")
+    .isKeyPredicate(1, "PropertyString", "'1'")
+    .at(2).isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false);
 
     // with navigation property(key) -> navigation property(key)
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')"
@@ -971,29 +971,29 @@ public class TestUriParserImpl {
 
     // with property
     testRes.run("SINav/PropertyInt16")
-        .at(0)
-        .isSingleton("SINav")
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
-        .at(1)
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .at(0)
+    .isSingleton("SINav")
+    .isType(EntityTypeProvider.nameETTwoKeyNav)
+    .at(1)
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     // with complex property
     testRes.run("SINav/PropertyComp")
-        .at(0)
-        .isSingleton("SINav")
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
-        .at(1)
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
+    .at(0)
+    .isSingleton("SINav")
+    .isType(EntityTypeProvider.nameETTwoKeyNav)
+    .at(1)
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
 
     // with two properties
     testRes.run("SINav/PropertyComp/PropertyInt16")
-        .at(0)
-        .isSingleton("SINav")
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
-        .at(1)
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .at(2)
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .at(0)
+    .isSingleton("SINav")
+    .isType(EntityTypeProvider.nameETTwoKeyNav)
+    .at(1)
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+    .at(2)
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
   }
 
@@ -1034,13 +1034,13 @@ public class TestUriParserImpl {
 
     // on EntityType collection
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
-        .goFilter().root().isMember()
-        .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
-        // .at(0)
-        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
-        .at(0).isType(PropertyProvider.nameDate);
+    .goFilter().root().isMember()
+    .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
+    // .at(0)
+    // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
+    // .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+    // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
+    .at(0).isType(PropertyProvider.nameDate);
 
     // on Complex collection
     testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')",
@@ -1063,107 +1063,107 @@ public class TestUriParserImpl {
   @Test
   public void testAlias() throws Exception {
     testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1)")
-        .goFilter().is("<<PropertyInt16> eq <@p1>>");
+    .goFilter().is("<<PropertyInt16> eq <@p1>>");
   }
 
   @Test
   public void testLambda() throws Exception {
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( l : true )")
-        .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
+    .goFilter().is("<CollPropertyComp/<ALL;<true>>>");
 
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/all( x : x/PropertyInt16 eq 2)")
-    .goFilter().is("<CollPropertyComp/<ALL;<<x/PropertyInt16> eq <2>>>>");
+        .goFilter().is("<CollPropertyComp/<ALL;<<x/PropertyInt16> eq <2>>>>");
 
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/any( l : true )")
-        .goFilter().is("<CollPropertyComp/<ANY;<true>>>");
+    .goFilter().is("<CollPropertyComp/<ANY;<true>>>");
     testUri.run("ESTwoKeyNav", "$filter=CollPropertyComp/any( )")
-        .goFilter().is("<CollPropertyComp/<ANY;>>");
+    .goFilter().is("<CollPropertyComp/<ANY;>>");
 
     testUri.run("ESTwoKeyNav", "$filter=all( l : true )")
-        .goFilter().is("<<ALL;<true>>>");
+    .goFilter().is("<<ALL;<true>>>");
     testUri.run("ESTwoKeyNav", "$filter=any( l : true )")
-        .goFilter().is("<<ANY;<true>>>");
+    .goFilter().is("<<ANY;<true>>>");
     testUri.run("ESTwoKeyNav", "$filter=any( )")
-        .goFilter().is("<<ANY;>>");
+    .goFilter().is("<<ANY;>>");
   }
 
   @Test
   public void testCustomQueryOption() throws Exception {
     testUri.run("ESTwoKeyNav", "custom")
-        .isCustomParameter(0, "custom", "");
+    .isCustomParameter(0, "custom", "");
     testUri.run("ESTwoKeyNav", "custom=ABC")
-        .isCustomParameter(0, "custom", "ABC");
+    .isCustomParameter(0, "custom", "ABC");
   }
 
   @Test
   public void testGeo() throws UriParserException {
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
-        .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodKind.GEODISTANCE, 2);
+    .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
+    .isMethod(MethodKind.GEODISTANCE, 2);
     testFilter.runOnETAllPrim("geo.length(PropertySByte)")
-        .is("<geo.length(<PropertySByte>)>")
-        .isMethod(MethodKind.GEOLENGTH, 1);
+    .is("<geo.length(<PropertySByte>)>")
+    .isMethod(MethodKind.GEOLENGTH, 1);
     testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
-        .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodKind.GEOINTERSECTS, 2);
+    .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
+    .isMethod(MethodKind.GEOINTERSECTS, 2);
   }
 
   @Test
   public void testSelect() throws Exception {
     testUri.run("ESTwoKeyNav", "$select=*")
-        .isSelectItemStar(0);
+    .isSelectItemStar(0);
 
     testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.*")
-        .isSelectItemAllOp(0, new FullQualifiedName("olingo.odata.test1", "*"));
+    .isSelectItemAllOp(0, new FullQualifiedName("olingo.odata.test1", "*"));
 
     testUri.run("ESTwoKeyNav", "$select=PropertyString")
-        .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+    .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESTwoKeyNav", "$select=PropertyComp")
-        .goSelectItemPath(0).isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
+    .goSelectItemPath(0).isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
 
     testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyInt16")
-        .goSelectItemPath(0)
-        .first()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    .goSelectItemPath(0)
+    .first()
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+    .n()
+    .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyComp")
-        .goSelectItemPath(0)
-        .first()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
+    .goSelectItemPath(0)
+    .first()
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+    .n()
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
 
     testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.ETBaseTwoKeyNav")
-        .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
+    .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')/PropertyCompNav",
         "$select=olingo.odata.test1.CTTwoBasePrimCompNav")
         .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
-        .goSelectItemPath(0)
-        .first()
-        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
-        .n()
-        .isTypeFilterOnCollection(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
+    .goSelectItemPath(0)
+    .first()
+    .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
+    .n()
+    .isTypeFilterOnCollection(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
 
     testUri.run("ESAllPrim", "$select=PropertyTimeOfDay,PropertyDate,PropertyTimeOfDay")
-        .isKind(UriInfoKind.resource)
-        .goSelectItemPath(0).first().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
-        .goUpUriValidator()
-        .goSelectItemPath(1).first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
+    .isKind(UriInfoKind.resource)
+    .goSelectItemPath(0).first().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
+    .goUpUriValidator()
+    .goSelectItemPath(1).first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testUri.runEx("ESMixPrimCollComp", "$select=wrong")
-        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp/wrong")
-        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp///PropertyInt16")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESMixPrimCollComp", "$select=/PropertyInt16")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   public static String encode(final String decoded) throws UnsupportedEncodingException {

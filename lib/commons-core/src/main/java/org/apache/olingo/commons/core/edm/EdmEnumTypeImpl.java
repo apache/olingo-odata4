@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -73,8 +73,8 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
 
     this.enumType = enumType;
-    this.uriPrefix = enumName.getFullQualifiedNameAsString() + '\'';
-    this.uriSuffix = "'";
+    uriPrefix = enumName.getFullQualifiedNameAsString() + '\'';
+    uriSuffix = "'";
   }
 
   @Override
@@ -106,7 +106,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
         membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
         memberNamesLocal.add(member.getName());
       }
-      
+
       membersMap = membersMapLocal;
       memberNames = memberNamesLocal;
     }
@@ -154,7 +154,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   @Override
   public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException {
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
@@ -203,7 +203,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
 
   private Collection<EdmMember> getMembers() {
-    if(membersMap == null){
+    if (membersMap == null) {
       createEdmMembers();
     }
     return membersMap.values();

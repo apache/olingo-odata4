@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,7 +46,6 @@ public class Metadata extends AbstractMetadataElement {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Metadata.class);
-
 
   private final Map<String, Schema> schemas;
 
@@ -234,7 +233,7 @@ public class Metadata extends AbstractMetadataElement {
 
       if (event.isStartElement()
           && (event.asStartElement().getName().equals(new QName(DEF_NS, "EntitySet"))
-          || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
+              || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
         final EntitySet entitySet = getEntitySet(event.asStartElement(), reader);
         container.addEntitySet(entitySet.getName(), entitySet);
       } else if (event.isStartElement()
@@ -365,31 +364,31 @@ public class Metadata extends AbstractMetadataElement {
   private EntitySet getEntitySet(final StartElement start, final XMLEventReader reader) throws XMLStreamException {
     final EntitySet entitySet = "Singleton".equals(start.getName().getLocalPart())
         ? new EntitySet(start.getAttributeByName(new QName("Name")).getValue(), true)
-        : new EntitySet(start.getAttributeByName(new QName("Name")).getValue());
+    : new EntitySet(start.getAttributeByName(new QName("Name")).getValue());
 
-    Attribute type = start.getAttributeByName(new QName("EntityType"));
-    if (type == null) {
-      type = start.getAttributeByName(new QName("Type"));
-      entitySet.setType(type == null ? null : type.getValue());
-    } else {
-      entitySet.setType(type.getValue());
-    }
+        Attribute type = start.getAttributeByName(new QName("EntityType"));
+        if (type == null) {
+          type = start.getAttributeByName(new QName("Type"));
+          entitySet.setType(type == null ? null : type.getValue());
+        } else {
+          entitySet.setType(type.getValue());
+        }
 
-    boolean completed = false;
+        boolean completed = false;
 
-    while (!completed && reader.hasNext()) {
-      XMLEvent event = reader.nextEvent();
+        while (!completed && reader.hasNext()) {
+          XMLEvent event = reader.nextEvent();
 
-      if (event.isStartElement()
-          && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationPropertyBinding"))) {
-        final String path = event.asStartElement().getAttributeByName(new QName("Path")).getValue();
-        final String target = event.asStartElement().getAttributeByName(new QName("Target")).getValue();
-        entitySet.addBinding(path, target);
-      } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
-        completed = true;
-      }
-    }
+          if (event.isStartElement()
+              && event.asStartElement().getName().equals(new QName(DEF_NS, "NavigationPropertyBinding"))) {
+            final String path = event.asStartElement().getAttributeByName(new QName("Path")).getValue();
+            final String target = event.asStartElement().getAttributeByName(new QName("Target")).getValue();
+            entitySet.addBinding(path, target);
+          } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
+            completed = true;
+          }
+        }
 
-    return entitySet;
+        return entitySet;
   }
 }

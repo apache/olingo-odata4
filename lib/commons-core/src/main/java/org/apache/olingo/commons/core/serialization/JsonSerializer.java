@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,8 +46,8 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -55,10 +55,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class JsonSerializer implements ODataSerializer {
 
   private static final EdmPrimitiveTypeKind[] NUMBER_TYPES = {
-      EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
-      EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
-      EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
-      EdmPrimitiveTypeKind.Decimal
+    EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
+    EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
+    EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
+    EdmPrimitiveTypeKind.Decimal
   };
 
   private final JsonGeoValueSerializer geoSerializer = new JsonGeoValueSerializer();
@@ -71,7 +71,7 @@ public class JsonSerializer implements ODataSerializer {
     this(serverMode, ODataFormat.JSON_FULL_METADATA);
   }
 
-  public JsonSerializer(final boolean serverMode, ODataFormat format) {
+  public JsonSerializer(final boolean serverMode, final ODataFormat format) {
     this.serverMode = serverMode;
     this.format = format;
   }
@@ -97,7 +97,7 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
-  private void reference(ResWrap<URI> container, JsonGenerator json) throws IOException {
+  private void reference(final ResWrap<URI> container, final JsonGenerator json) throws IOException {
     json.writeStartObject();
 
     json.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
@@ -196,7 +196,7 @@ public class JsonSerializer implements ODataSerializer {
     }
   }
 
-  private boolean isEntitySetNavigation(Link link) {
+  private boolean isEntitySetNavigation(final Link link) {
     return Constants.ENTITY_SET_NAVIGATION_LINK_TYPE.equals(link.getType());
   }
 
@@ -247,14 +247,14 @@ public class JsonSerializer implements ODataSerializer {
 
   private void collection(final JsonGenerator jgen, final EdmTypeInfo typeInfo,
       final ValueType valueType, final List<?> value)
-      throws IOException, EdmPrimitiveTypeException {
+          throws IOException, EdmPrimitiveTypeException {
 
     jgen.writeStartArray();
 
     for (Object item : value) {
       final EdmTypeInfo itemTypeInfo = typeInfo == null
           ? null
-          : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
+              : new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
       switch (valueType) {
       case COLLECTION_PRIMITIVE:
         primitiveValue(jgen, itemTypeInfo, item);
@@ -296,20 +296,20 @@ public class JsonSerializer implements ODataSerializer {
     } else {
       final String serialized = kind == null
           ? value.toString()
-          // TODO: add facets
-          : EdmPrimitiveTypeFactory.getInstance(kind).
+              // TODO: add facets
+              : EdmPrimitiveTypeFactory.getInstance(kind).
               valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
-      if (isNumber) {
-        jgen.writeNumber(serialized);
-      } else {
-        jgen.writeString(serialized);
-      }
+          if (isNumber) {
+            jgen.writeNumber(serialized);
+          } else {
+            jgen.writeString(serialized);
+          }
     }
   }
 
   private void complexValue(final JsonGenerator jgen, final EdmTypeInfo typeInfo,
       final List<Property> value, final Linked linked)
-      throws IOException, EdmPrimitiveTypeException {
+          throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
     if (typeInfo != null && format != ODataFormat.JSON_NO_METADATA) {

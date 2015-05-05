@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import org.apache.olingo.commons.core.Decoder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.olingo.commons.core.Decoder;
 
 public class UriDecoder {
 
@@ -43,7 +43,7 @@ public class UriDecoder {
     return rawUri;
   }
 
-  private static void decode(RawUri rawUri) throws UriParserSyntaxException {
+  private static void decode(final RawUri rawUri) throws UriParserSyntaxException {
     rawUri.pathSegmentListDecoded = new ArrayList<String>();
     for (String segment : rawUri.pathSegmentList) {
       rawUri.pathSegmentListDecoded.add(decode(segment));
@@ -81,7 +81,7 @@ public class UriDecoder {
     }
   }
 
-  private static List<String> splitPath(final String path, int skipSegments) {
+  private static List<String> splitPath(final String path, final int skipSegments) {
     List<String> list = split(path, '/');
 
     // Empty path segments of the resource path are removed.

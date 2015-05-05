@@ -43,7 +43,7 @@ public class ODataJsonSerializerTest {
     col.add(getValues(1));
     col.add(getValues(2));
     final Property complexCollection = new Property(null, "ComplexCol", ValueType.COLLECTION_COMPLEX, col);
-    
+
     final ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.APPLICATION_JSON);
     final ComplexSerializerOptions options = ComplexSerializerOptions.with()
         .contextURL(ContextURL.with().selectList("ComplexCollection").build()).build();
@@ -63,7 +63,7 @@ public class ODataJsonSerializerTest {
 
   }
 
-  private ComplexValue getValues(int i) {
+  private ComplexValue getValues(final int i) {
     ComplexValue value = new ComplexValue();
     value.getValue().add(new Property(null, "prop1", ValueType.PRIMITIVE, "test" + i));
     value.getValue().add(new Property(null, "prop2", ValueType.PRIMITIVE, "test" + i + i));

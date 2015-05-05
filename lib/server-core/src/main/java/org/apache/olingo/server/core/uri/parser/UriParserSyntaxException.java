@@ -24,11 +24,16 @@ public class UriParserSyntaxException extends UriParserException {
   private static final long serialVersionUID = 5887744747812478226L;
 
   public static enum MessageKeys implements MessageKey {
-    /** parameter: segment */ MUST_BE_LAST_SEGMENT,
-    /** parameter: query-option name */ UNKNOWN_SYSTEM_QUERY_OPTION,
-    /** parameter: query-option name */ DOUBLE_SYSTEM_QUERY_OPTION,
-    /** parameters: query-option name, query-option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-    /** parameter: $format option value */ WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT,
+    /** parameter: segment */
+    MUST_BE_LAST_SEGMENT,
+    /** parameter: query-option name */
+    UNKNOWN_SYSTEM_QUERY_OPTION,
+    /** parameter: query-option name */
+    DOUBLE_SYSTEM_QUERY_OPTION,
+    /** parameters: query-option name, query-option value */
+    WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+    /** parameter: $format option value */
+    WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT,
     SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE,
     SYNTAX;
 
@@ -38,12 +43,13 @@ public class UriParserSyntaxException extends UriParserException {
     }
   }
 
-  public UriParserSyntaxException(String developmentMessage, MessageKey messageKey, String... parameters) {
+  public UriParserSyntaxException(final String developmentMessage, final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public UriParserSyntaxException(String developmentMessage, Throwable cause, MessageKey messageKey,
-      String... parameters) {
+  public UriParserSyntaxException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
+      final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
 }

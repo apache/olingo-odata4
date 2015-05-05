@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,21 +17,6 @@
  * under the License.
  ******************************************************************************/
 package org.apache.olingo.fit.server;
-
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleState;
-import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.startup.Tomcat;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +30,21 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Server for integration tests.
  */
@@ -53,11 +53,11 @@ public class TomcatTestServer {
 
   private final Tomcat tomcat;
 
-  private TomcatTestServer(Tomcat tomcat) {
+  private TomcatTestServer(final Tomcat tomcat) {
     this.tomcat = tomcat;
   }
 
-  public static void main(String[] params) {
+  public static void main(final String[] params) {
     try {
       LOG.trace("Start tomcat embedded server from main()");
       TestServerBuilder server = TomcatTestServer.init(9180)
@@ -90,7 +90,7 @@ public class TomcatTestServer {
     }
   }
 
-  public static int extractPortParam(String portParameter) {
+  public static int extractPortParam(final String portParameter) {
     String[] portParam = portParameter.split("=");
     if (portParam.length == 2) {
       try {
@@ -107,13 +107,13 @@ public class TomcatTestServer {
     private final String uri;
     private final String resource;
 
-    public StaticContent(String uri, String resource) {
+    public StaticContent(final String uri, final String resource) {
       this.uri = uri;
       this.resource = resource;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
         throws ServletException, IOException {
 
       String result;
@@ -133,7 +133,7 @@ public class TomcatTestServer {
 
   private static TestServerBuilder builder;
 
-  public static TestServerBuilder init(int port) {
+  public static TestServerBuilder init(final int port) {
     if (builder == null) {
       builder = new TestServerBuilder(port);
     }
@@ -150,9 +150,9 @@ public class TomcatTestServer {
     private TomcatTestServer server;
     private Properties properties;
 
-    private TestServerBuilder(int fixedPort) {
+    private TestServerBuilder(final int fixedPort) {
       initializeProperties();
-      //baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
+      // baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
       baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
       if (!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
@@ -181,7 +181,7 @@ public class TomcatTestServer {
       }
     }
 
-    public void enableLogging(Level level) {
+    public void enableLogging(final Level level) {
       tomcat.setSilent(false);
       try {
         Handler fileHandler = new FileHandler(tomcat.getHost().getAppBase() + "/catalina.out", true);
@@ -193,7 +193,7 @@ public class TomcatTestServer {
       }
     }
 
-    public void atPort(int port) {
+    public void atPort(final int port) {
       tomcat.setPort(port);
     }
 
@@ -201,14 +201,14 @@ public class TomcatTestServer {
       return addWebApp(true);
     }
 
-    public TestServerBuilder addWebApp(boolean copy) throws IOException {
+    public TestServerBuilder addWebApp(final boolean copy) throws IOException {
       if (server != null) {
         return this;
       }
 
       File webAppProjectDir = getFileForDirProperty(PROJECT_WEB_APP_DIR);
       final File webAppDir;
-      if(copy) {
+      if (copy) {
         webAppDir = new File(baseDir, webAppProjectDir.getName());
         FileUtils.deleteDirectory(webAppDir);
         if (!webAppDir.mkdirs()) {
@@ -227,7 +227,7 @@ public class TomcatTestServer {
       return this;
     }
 
-    private File getFileForDirProperty(String propertyName) {
+    private File getFileForDirProperty(final String propertyName) {
       File targetFile = new File(properties.getProperty(propertyName));
       if (targetFile.exists() && targetFile.isDirectory()) {
         return targetFile;
@@ -243,7 +243,7 @@ public class TomcatTestServer {
       return new File(targetURL.getFile());
     }
 
-    public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, String path)
+    public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, final String path)
         throws InstantiationException, IllegalAccessException, ClassNotFoundException {
       if (server != null) {
         return this;
@@ -259,7 +259,7 @@ public class TomcatTestServer {
       return this;
     }
 
-    public TestServerBuilder addStaticContent(String uri, String resourceName) throws IOException {
+    public TestServerBuilder addStaticContent(final String uri, final String resourceName) throws IOException {
       File targetResourcesDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
       String resource = new File(targetResourcesDir, resourceName).getAbsolutePath();
       LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
@@ -267,12 +267,13 @@ public class TomcatTestServer {
       return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
     }
 
-    public TestServerBuilder addServlet(HttpServlet httpServlet, String path) throws IOException {
+    public TestServerBuilder addServlet(final HttpServlet httpServlet, final String path) throws IOException {
       String name = UUID.randomUUID().toString();
       return addServlet(httpServlet, name, path);
     }
 
-    public TestServerBuilder addServlet(HttpServlet httpServlet, String name, String path) throws IOException {
+    public TestServerBuilder addServlet(final HttpServlet httpServlet, final String name, final String path)
+        throws IOException {
       if (server != null) {
         return this;
       }

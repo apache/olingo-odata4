@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,7 +36,7 @@ public interface ODataSerializer {
 
   /**
    * Writes the service document into an InputStream.
-   * @param edm         the Entity Data Model
+   * @param edm the Entity Data Model
    * @param serviceRoot the service-root URI of this OData service
    */
   SerializerResult serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
@@ -58,8 +58,8 @@ public interface ODataSerializer {
    * Writes entity-collection data into an InputStream.
    * @param metadata Metadata for the service
    * @param entityType the {@link EdmEntityType}
-   * @param entitySet  the data of the entity set
-   * @param options    options for the serializer
+   * @param entitySet the data of the entity set
+   * @param options options for the serializer
    */
   SerializerResult entityCollection(ServiceMetadata metadata, EdmEntityType entityType,
       EntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
@@ -68,15 +68,15 @@ public interface ODataSerializer {
    * Writes entity data into an InputStream.
    * @param metadata Metadata for the service
    * @param entityType the {@link EdmEntityType}
-   * @param entity     the data of the entity
-   * @param options    options for the serializer
+   * @param entity the data of the entity
+   * @param options options for the serializer
    */
   SerializerResult entity(ServiceMetadata metadata, EdmEntityType entityType, Entity entity,
       EntitySerializerOptions options) throws SerializerException;
 
   /**
    * Writes primitive-type instance data into an InputStream.
-   * @param type     primitive type
+   * @param type primitive type
    * @param property property value
    * @param options options for the serializer
    */
@@ -86,7 +86,7 @@ public interface ODataSerializer {
   /**
    * Writes complex-type instance data into an InputStream.
    * @param metadata Metadata for the service
-   * @param type     complex type
+   * @param type complex type
    * @param property property value
    * @param options options for the serializer
    */
@@ -95,7 +95,7 @@ public interface ODataSerializer {
 
   /**
    * Writes data of a collection of primitive-type instances into an InputStream.
-   * @param type     primitive type
+   * @param type primitive type
    * @param property property value
    * @param options options for the serializer
    */
@@ -105,7 +105,7 @@ public interface ODataSerializer {
   /**
    * Writes data of a collection of complex-type instances into an InputStream.
    * @param metadata Metadata for the service
-   * @param type     complex type
+   * @param type complex type
    * @param property property value
    * @param options options for the serializer
    */

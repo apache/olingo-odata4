@@ -1,42 +1,42 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.proxy.v4;
 
+// CHECKSTYLE:OFF (Maven checkstyle)
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import org.junit.Test;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfoComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailKey;
-import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
-//CHECKSTYLE:ON (Maven checkstyle)
+import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailKey;
+import org.junit.Test;
+// CHECKSTYLE:ON (Maven checkstyle)
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
@@ -48,7 +48,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void getProductDetails() {
     final ProductDetailCollectionComposableInvoker result =
-            container.getProducts().getByKey(5).operations().getProductDetails(1);
+        container.getProducts().getByKey(5).operations().getProductDetails(1);
     assertEquals(1, result.execute().size());
   }
 
@@ -59,7 +59,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     key.setProductDetailID(1);
 
     final ProductComposableInvoker product =
-            container.getProductDetails().getByKey(key).operations().getRelatedProduct();
+        container.getProductDetails().getByKey(key).operations().getRelatedProduct();
     assertEquals(6, product.execute().getProductID(), 0);
   }
 
@@ -72,14 +72,14 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void getAccountInfo() {
     final AccountInfoComposableInvoker accountInfo =
-            container.getAccounts().getByKey(101).operations().getAccountInfo();
+        container.getAccounts().getByKey(101).operations().getAccountInfo();
     assertNotNull(accountInfo.execute());
   }
 
   @Test
   public void getActualAmount() {
     final Double amount =
-            container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1).execute();
+        container.getAccounts().getByKey(101).getMyGiftCard().operations().getActualAmount(1.1).execute();
     assertEquals(41.79, amount, 0);
   }
 
@@ -92,7 +92,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void addAccessRight() {
     final AccessLevel accessLevel =
-            container.getProducts().getByKey(5).operations().addAccessRight(AccessLevel.Execute).execute();
+        container.getProducts().getByKey(5).operations().addAccessRight(AccessLevel.Execute).execute();
     assertNotNull(accessLevel);
   }
 
@@ -113,7 +113,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void refreshDefaultPI() {
     final PaymentInstrument pi = container.getAccounts().getByKey(101).operations().
-            refreshDefaultPI(new Timestamp(Calendar.getInstance().getTimeInMillis())).execute();
+        refreshDefaultPI(new Timestamp(Calendar.getInstance().getTimeInMillis())).execute();
     assertEquals(101901, pi.getPaymentInstrumentID(), 0);
   }
 }

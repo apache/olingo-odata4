@@ -54,7 +54,7 @@ public class BinaryOperator {
   private static final int EQUALS = 0;
   private static final int LESS_THAN = -1;
   private static final int GREATER_THAN = 1;
-  
+
   protected static final OData oData;
   protected static final EdmPrimitiveType primString;
   protected static final EdmPrimitiveType primBoolean;
@@ -168,7 +168,7 @@ public class BinaryOperator {
     return new TypedOperand(result, primBoolean);
   }
 
-  private boolean binaryComparison(int... expect) {
+  private boolean binaryComparison(final int... expect) {
     int result;
 
     if (left.isNull() && right.isNull()) {
@@ -192,7 +192,7 @@ public class BinaryOperator {
     return false;
   }
 
-  public VisitorOperand arithmeticOperator(BinaryOperatorKind operator) throws ODataApplicationException {
+  public VisitorOperand arithmeticOperator(final BinaryOperatorKind operator) throws ODataApplicationException {
     if (left.isNull() || right.isNull()) {
       return new TypedOperand(new Object(), EdmNull.getInstance());
     } else {
@@ -211,7 +211,7 @@ public class BinaryOperator {
     }
   }
 
-  private EdmType determineResultType(final Number arithmeticResult, TypedOperand leftOperand) {
+  private EdmType determineResultType(final Number arithmeticResult, final TypedOperand leftOperand) {
     // Left and right operand have the same typed, so it is enough to check the type of the left operand
     if (leftOperand.isDecimalType()) {
       final BigDecimal value = (BigDecimal) arithmeticResult;
@@ -243,7 +243,7 @@ public class BinaryOperator {
     }
   }
 
-  private VisitorOperand dateArithmeticOperation(BinaryOperatorKind operator) throws ODataApplicationException {
+  private VisitorOperand dateArithmeticOperation(final BinaryOperatorKind operator) throws ODataApplicationException {
     VisitorOperand result = null;
 
     if (left.is(primDate)) {
@@ -302,7 +302,7 @@ public class BinaryOperator {
     }
   }
 
-  private BigDecimal decimalArithmeticOperation(BinaryOperatorKind operator) throws ODataApplicationException {
+  private BigDecimal decimalArithmeticOperation(final BinaryOperatorKind operator) throws ODataApplicationException {
     final BigDecimal left = this.left.getTypedValue(BigDecimal.class);
     final BigDecimal right = this.right.getTypedValue(BigDecimal.class);
 
@@ -321,7 +321,7 @@ public class BinaryOperator {
     }
   }
 
-  private BigInteger integerArithmeticOperation(BinaryOperatorKind operator) throws ODataApplicationException {
+  private BigInteger integerArithmeticOperation(final BinaryOperatorKind operator) throws ODataApplicationException {
     final BigInteger left = this.left.getTypedValue(BigInteger.class);
     final BigInteger right = this.right.getTypedValue(BigInteger.class);
 

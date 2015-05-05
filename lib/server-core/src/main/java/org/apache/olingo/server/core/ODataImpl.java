@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -76,7 +76,8 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references) {
+  public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider,
+      final List<EdmxReference> references) {
     return new ServiceMetadataImpl(edmProvider, references);
   }
 
@@ -91,7 +92,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException {
+  public ODataDeserializer createDeserializer(final ODataFormat format) throws DeserializerException {
     ODataDeserializer serializer;
     switch (format) {
     case JSON:
@@ -110,7 +111,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind) {
+  public EdmPrimitiveType createPrimitiveTypeInstance(final EdmPrimitiveTypeKind kind) {
     return EdmPrimitiveTypeFactory.getInstance(kind);
   }
 }

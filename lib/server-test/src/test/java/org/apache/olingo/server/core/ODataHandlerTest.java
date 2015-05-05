@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,11 +47,11 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
@@ -224,6 +224,7 @@ public class ODataHandlerTest {
     final OData odata = OData.newInstance();
     final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
         new CsdlAbstractEdmProvider() {
+          @Override
           public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
               throws ODataException {
             throw new ODataException("msg");
@@ -692,7 +693,8 @@ public class ODataHandlerTest {
     ErrorProcessor errorProcessor = mock(ErrorProcessor.class);
     dispatch(HttpMethod.POST, "ESAllPrim", "", HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
     verifyZeroInteractions(processor);
-    verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class), any(ClientServerError.class),
+    verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class),
+        any(ClientServerError.class),
         any(ContentType.class));
   }
 

@@ -33,7 +33,7 @@ import org.apache.olingo.server.core.deserializer.batch.BatchParser;
 public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
 
   @Override
-  public byte[] binary(InputStream content) throws DeserializerException {
+  public byte[] binary(final InputStream content) throws DeserializerException {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
     byte[] buffer = new byte[128];
     int count;
@@ -50,8 +50,9 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
   }
 
   @Override
-  public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
-      throws BatchDeserializerException {
+  public List<BatchRequestPart> parseBatchRequest(final InputStream content, final String boundary,
+      final BatchOptions options)
+          throws BatchDeserializerException {
     final BatchParser parser = new BatchParser();
 
     return parser.parseBatchRequest(content, boundary, options);

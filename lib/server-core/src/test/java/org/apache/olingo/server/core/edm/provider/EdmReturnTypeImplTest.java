@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -28,17 +35,10 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmReturnTypeImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmReturnTypeImplTest {
 
@@ -60,7 +60,7 @@ public class EdmReturnTypeImplTest {
   @Test
   public void primitiveCollectionReturnType() {
     CsdlReturnType providerType = new CsdlReturnType().setType(
-            new FullQualifiedName("Edm", "String")).setCollection(true);
+        new FullQualifiedName("Edm", "String")).setCollection(true);
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
@@ -71,7 +71,7 @@ public class EdmReturnTypeImplTest {
   @Test(expected = EdmException.class)
   public void invalidPrimitiveType() {
     CsdlReturnType providerType = new CsdlReturnType().setType(
-            new FullQualifiedName("Edm", "wrong")).setCollection(true);
+        new FullQualifiedName("Edm", "wrong")).setCollection(true);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
     typeImpl.getType();
   }

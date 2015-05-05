@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,23 +46,23 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
   private static final String CONTENT_TYPE_HEADER_VALUE = " multipart/mixed;boundary=batch_123";
   private static final String CRLF = "\r\n";
   private static final String ACCEPT_HEADER_VALUE = "application/json";
-  
+
   @Test
   public void test() throws IOException {
     final String content = getRequest("ESAllPrim(32767)");
     final HttpURLConnection connection = batch(content);
     final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-   
+
     assertTrue(reader.readLine().contains("batch_"));
     checkMimeHeader(reader);
     blankLine(reader);
-    
+
     assertEquals("HTTP/1.1 200 OK", reader.readLine());
     assertEquals("OData-Version: 4.0", reader.readLine());
     assertEquals("Content-Type: application/json;odata.metadata=minimal", reader.readLine());
     assertEquals("Content-Length: 538", reader.readLine());
     blankLine(reader);
-    
+
     reader.close();
   }
 
@@ -77,44 +77,43 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
     final String content = getRequest(SERVICE_URI + "../ESAllPrim(32767)");
     HttpURLConnection connection = batch(content);
     final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    
+
     assertTrue(reader.readLine().contains("batch_"));
     checkMimeHeader(reader);
     blankLine(reader);
-    
+
     assertEquals("HTTP/1.1 400 Bad Request", reader.readLine());
   }
-  
 
   @Test
   public void testNestedAbsoluteRequest() throws IOException {
     final String content = getRequest(SERVICE_URI + SERVICE_URI + "../ESAllPrim(32767)");
     HttpURLConnection connection = batch(content);
     final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-    
+
     assertTrue(reader.readLine().contains("batch_"));
     checkMimeHeader(reader);
     blankLine(reader);
-    
+
     assertEquals("HTTP/1.1 400 Bad Request", reader.readLine());
   }
-  
+
   @Test
   public void testInvalidHost() throws IOException {
     final String content = getRequest("http://otherhost/odata/odata.svc/ESAllPrim(32767)");
     batchFail(content);
   }
-  
+
   private void checkMimeHeader(final BufferedReader reader) throws IOException {
     assertEquals(HEADER_CONTENT_TYPE_HTTP, reader.readLine());
     assertEquals(HEADER_CONTENT_TRANSFER_ENCODING_BINARY, reader.readLine());
   }
-  
-  private void blankLine(BufferedReader reader) throws IOException {
-    assertEquals("", reader.readLine());  // CRLF becomes to an empty string
+
+  private void blankLine(final BufferedReader reader) throws IOException {
+    assertEquals("", reader.readLine()); // CRLF becomes to an empty string
   }
-  
-  private String getRequest(String uri) {
+
+  private String getRequest(final String uri) {
     return "--batch_123" + CRLF
         + HEADER_CONTENT_TRANSFER_ENCODING_BINARY + CRLF
         + HEADER_CONTENT_TYPE_HTTP + CRLF
@@ -133,14 +132,16 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
     return connection;
   }
 
-  private HttpURLConnection batchFail(String content) throws IOException {
+  private HttpURLConnection batchFail(final String content) throws IOException {
     final HttpURLConnection connection = getConnection(content);
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    return connection;  }
+    return connection;
+  }
 
-  private HttpURLConnection getConnection(String content) throws MalformedURLException, IOException, ProtocolException {
+  private HttpURLConnection getConnection(final String content) throws MalformedURLException, IOException,
+      ProtocolException {
     final URL url = new URL(SERVICE_URI + "$batch");
     final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod(HttpMethod.POST.toString());

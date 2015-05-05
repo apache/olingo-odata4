@@ -65,7 +65,7 @@ public abstract class VisitorOperand {
     primDecimal = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
     primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
     primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
-    
+
     defaultTypeMapping.put(primByte, BigInteger.class);
     defaultTypeMapping.put(primSByte, BigInteger.class);
     defaultTypeMapping.put(primInt16, BigInteger.class);
@@ -77,7 +77,7 @@ public abstract class VisitorOperand {
     defaultTypeMapping.put(primDecimal, BigDecimal.class);
   }
 
-  public VisitorOperand(Object value) {
+  public VisitorOperand(final Object value) {
     this.value = value;
   }
 
@@ -91,7 +91,7 @@ public abstract class VisitorOperand {
     return value;
   }
 
-  protected Object castTo(final String value, EdmPrimitiveType type) throws EdmPrimitiveTypeException {
+  protected Object castTo(final String value, final EdmPrimitiveType type) throws EdmPrimitiveTypeException {
     final EdmProperty edmProperty = getEdmProperty();
 
     if (edmProperty != null) {
@@ -103,7 +103,7 @@ public abstract class VisitorOperand {
     }
   }
 
-  protected Class<?> getDefaultType(EdmPrimitiveType type) {
+  protected Class<?> getDefaultType(final EdmPrimitiveType type) {
     return defaultTypeMapping.get(type) != null ? defaultTypeMapping.get(type) : type.getDefaultType();
   }
 

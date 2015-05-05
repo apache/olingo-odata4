@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
@@ -29,13 +36,6 @@ import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
 public class EdmFunctionImplTest {
 
   private EdmFunction functionImpl1;
@@ -46,7 +46,7 @@ public class EdmFunctionImplTest {
     EdmProviderImpl provider = mock(EdmProviderImpl.class);
 
     CsdlFunction function1 = new CsdlFunction().setReturnType(
-            new CsdlReturnType().setType(new FullQualifiedName("Edm", "String")));
+        new CsdlReturnType().setType(new FullQualifiedName("Edm", "String")));
     functionImpl1 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function1);
     CsdlFunction function2 = new CsdlFunction().setComposable(true);
     functionImpl2 = new EdmFunctionImpl(provider, new FullQualifiedName("namespace", "name"), function2);

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.ODataError;
+import org.apache.olingo.commons.api.ODataPropertyType;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -43,8 +45,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataPropertyType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -103,7 +103,7 @@ public class JsonDeserializer implements ODataDeserializer {
         link.setInlineEntity(entityDeserializer.doDeserialize(inline.traverse(codec)).getPayload());
 
       } else if (inline instanceof ArrayNode) {
-          link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
+        link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
 
         final EntityCollection entitySet = new EntityCollection();
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
@@ -212,24 +212,24 @@ public class JsonDeserializer implements ODataDeserializer {
     }
 
     final EdmTypeInfo typeInfo = typeExpression == null ? null :
-        new EdmTypeInfo.Builder().setTypeExpression(typeExpression).build();
+      new EdmTypeInfo.Builder().setTypeExpression(typeExpression).build();
     return new SimpleEntry<ODataPropertyType, EdmTypeInfo>(type, typeInfo);
   }
 
   private EdmPrimitiveTypeKind guessPrimitiveTypeKind(final JsonNode node) {
     return node.isShort() ? EdmPrimitiveTypeKind.Int16 :
-        node.isInt() ? EdmPrimitiveTypeKind.Int32 :
-            node.isLong() ? EdmPrimitiveTypeKind.Int64 :
-                node.isBoolean() ? EdmPrimitiveTypeKind.Boolean :
-                    node.isFloat() ? EdmPrimitiveTypeKind.Single :
-                        node.isDouble() ? EdmPrimitiveTypeKind.Double :
-                            node.isBigDecimal() ? EdmPrimitiveTypeKind.Decimal :
-                                EdmPrimitiveTypeKind.String;
+      node.isInt() ? EdmPrimitiveTypeKind.Int32 :
+        node.isLong() ? EdmPrimitiveTypeKind.Int64 :
+          node.isBoolean() ? EdmPrimitiveTypeKind.Boolean :
+            node.isFloat() ? EdmPrimitiveTypeKind.Single :
+              node.isDouble() ? EdmPrimitiveTypeKind.Double :
+                node.isBigDecimal() ? EdmPrimitiveTypeKind.Decimal :
+                  EdmPrimitiveTypeKind.String;
   }
 
   protected void populate(final Annotatable annotatable, final List<Property> properties,
       final ObjectNode tree, final ObjectCodec codec)
-      throws IOException, EdmPrimitiveTypeException {
+          throws IOException, EdmPrimitiveTypeException {
 
     String type = null;
     Annotation annotation = null;
@@ -256,7 +256,7 @@ public class JsonDeserializer implements ODataDeserializer {
         property.setName(field.getKey());
         property.setType(type == null
             ? null
-            : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
+                : new EdmTypeInfo.Builder().setTypeExpression(type).build().internal());
         type = null;
 
         value(property, field.getValue(), codec);
@@ -274,11 +274,11 @@ public class JsonDeserializer implements ODataDeserializer {
     return node.isNull() ? null
         : typeInfo == null ? node.asText()
             : typeInfo.getPrimitiveTypeKind().isGeospatial()
-                ? getGeoDeserializer().deserialize(node, typeInfo)
+            ? getGeoDeserializer().deserialize(node, typeInfo)
                 : ((EdmPrimitiveType) typeInfo.getType())
-                    .valueOfString(node.asText(), true, null,
-                        Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
-                        ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
+                .valueOfString(node.asText(), true, null,
+                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+                    ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
   }
 
   private Object fromComplex(final ObjectNode node, final ObjectCodec codec)

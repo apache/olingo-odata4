@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,7 +22,7 @@ import java.net.URI;
 
 /**
  * Outermost response payload wrapper.
- * 
+ *
  * @param <T> the actual response payload
  */
 public class ResWrap<T> {
@@ -46,7 +46,7 @@ public class ResWrap<T> {
    * <br />
    * For details on how the context URL is used to describe a payload, see the relevant sections in the particular
    * format.
-   * 
+   *
    * @return context URL.
    */
   public URI getContextURL() {
@@ -58,7 +58,7 @@ public class ResWrap<T> {
    * subsequently to make a conditional request for the metadata or service document. Clients can also compare the value
    * of the ETag header returned from a metadata document request to the metadata ETag returned in a response in order
    * to verify the version of the metadata used to generate that response.
-   * 
+   *
    * @return metadata ETag.
    */
   public String getMetadataETag() {
@@ -67,7 +67,7 @@ public class ResWrap<T> {
 
   /**
    * Gets contained object.
-   * 
+   *
    * @return contained object.
    */
   public T getPayload() {

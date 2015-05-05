@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -65,9 +65,9 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
     }
     return Collections.unmodifiableList(parameterNames);
   }
-  
+
   private void createParameters() {
-    if(parameters == null) {
+    if (parameters == null) {
       final Map<String, EdmParameter> parametersLocal = new LinkedHashMap<String, EdmParameter>();
       final List<CsdlParameter> providerParameters = operation.getParameters();
       if (providerParameters != null) {
@@ -76,7 +76,7 @@ public abstract class AbstractEdmOperation extends EdmTypeImpl implements EdmOpe
           parametersLocal.put(parameter.getName(), new EdmParameterImpl(edm, parameter));
           parameterNamesLocal.add(parameter.getName());
         }
-        
+
         parameters = parametersLocal;
         parameterNames = parameterNamesLocal;
       } else {

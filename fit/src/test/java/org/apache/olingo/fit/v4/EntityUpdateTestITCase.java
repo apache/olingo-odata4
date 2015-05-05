@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -51,11 +51,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(9)));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder()
-            .setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(
-                Calendar.getInstance(TimeZone.getTimeZone("GMT"))).build()));
+        .setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(
+            Calendar.getInstance(TimeZone.getTimeZone("GMT"))).build()));
     order.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000002")).build()));
 
     final URI upsertURI = getClient().newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Orders").appendKeySegment(9).build();
@@ -82,10 +82,10 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   public void testUpateSingleValuedNavtiogationReference() throws Exception {
     URI targetURI =
         getClient().newURIBuilder(testStaticServiceRootURL)
-            .appendEntitySetSegment("People")
-            .appendKeySegment(1)
-            .appendNavigationSegment("Parent")
-            .build();
+        .appendEntitySetSegment("People")
+        .appendKeySegment(1)
+        .appendNavigationSegment("Parent")
+        .build();
 
     URI reference = getClient().newURIBuilder(testStaticServiceRootURL)
         .appendEntitySetSegment("People")
@@ -150,7 +150,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ClientLink parent = getClient().getObjectFactory().newEntityNavigationLink("Parent",
         getClient().newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("People").appendKeySegment(1).build());
+        appendEntitySetSegment("People").appendKeySegment(1).build());
     changes.getNavigationLinks().add(parent);
 
     final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).

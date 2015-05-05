@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -52,33 +52,33 @@ public final class GeoUtils {
     if (Constants.ELEM_POINT.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyPoint
-          : EdmPrimitiveTypeKind.GeometryPoint;
+              : EdmPrimitiveTypeKind.GeometryPoint;
     } else if (Constants.ELEM_MULTIPOINT.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyMultiPoint
-          : EdmPrimitiveTypeKind.GeometryMultiPoint;
+              : EdmPrimitiveTypeKind.GeometryMultiPoint;
     } else if (Constants.ELEM_LINESTRING.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyLineString
-          : EdmPrimitiveTypeKind.GeometryLineString;
+              : EdmPrimitiveTypeKind.GeometryLineString;
     } else if (Constants.ELEM_MULTILINESTRING.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyMultiLineString
-          : EdmPrimitiveTypeKind.GeometryMultiLineString;
+              : EdmPrimitiveTypeKind.GeometryMultiLineString;
     } else if (Constants.ELEM_POLYGON.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyPolygon
-          : EdmPrimitiveTypeKind.GeometryPolygon;
+              : EdmPrimitiveTypeKind.GeometryPolygon;
     } else if (Constants.ELEM_MULTIPOLYGON.equals(elementName)) {
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyMultiPolygon
-          : EdmPrimitiveTypeKind.GeometryMultiPolygon;
+              : EdmPrimitiveTypeKind.GeometryMultiPolygon;
     } else if (Constants.ELEM_GEOCOLLECTION.equals(elementName)
         || Constants.ELEM_GEOMEMBERS.equals(elementName)) {
 
       type = dimension == Geospatial.Dimension.GEOGRAPHY
           ? EdmPrimitiveTypeKind.GeographyCollection
-          : EdmPrimitiveTypeKind.GeometryCollection;
+              : EdmPrimitiveTypeKind.GeometryCollection;
     }
 
     return type;

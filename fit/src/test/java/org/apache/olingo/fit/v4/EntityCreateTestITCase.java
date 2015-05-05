@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,12 @@
  * under the License.
  */
 package org.apache.olingo.fit.v4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.net.URI;
+import java.util.Calendar;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -31,12 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.net.URI;
-import java.util.Calendar;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
@@ -72,7 +72,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("New one")));
     instrument.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("CreatedDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
+        setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
 
     // 3. create it as contained entity
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
@@ -129,13 +129,13 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildBoolean(false)));
     product.getProperties().add(getClient().getObjectFactory().newEnumProperty("UserAccess",
         getClient().getObjectFactory().
-            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "Execute")));
+        newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.AccessLevel", "Execute")));
     product.getProperties().add(getClient().getObjectFactory().newEnumProperty("SkinColor",
         getClient().getObjectFactory().
-            newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
+        newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Blue")));
     product.getProperties().add(getClient().getObjectFactory().newCollectionProperty("CoverColors",
         getClient().getObjectFactory().
-            newCollectionValue("Microsoft.Test.OData.Services.ODataWCFService.Color")));
+        newCollectionValue("Microsoft.Test.OData.Services.ODataWCFService.Color")));
     product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().
         newEnumValue("Microsoft.Test.OData.Services.ODataWCFService.Color", "Green"));
     product.getProperty("CoverColors").getCollectionValue().add(getClient().getObjectFactory().

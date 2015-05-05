@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,8 +48,8 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 
@@ -72,7 +72,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
   private void collection(final XMLStreamWriter writer,
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final List<?> value)
-      throws XMLStreamException, EdmPrimitiveTypeException {
+          throws XMLStreamException, EdmPrimitiveTypeException {
     for (Object item : value) {
       writer.writeStartElement(Constants.PREFIX_METADATA, Constants.ELEM_ELEMENT, namespaceMetadata);
       value(writer, valueType, kind, item);
@@ -82,7 +82,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
   private void value(final XMLStreamWriter writer,
       final ValueType valueType, final EdmPrimitiveTypeKind kind, final Object value)
-      throws XMLStreamException, EdmPrimitiveTypeException {
+          throws XMLStreamException, EdmPrimitiveTypeException {
     if (value == null) {
       writer.writeAttribute(Constants.PREFIX_METADATA, namespaceMetadata,
           Constants.ATTR_NULL, Boolean.TRUE.toString());
@@ -91,8 +91,8 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
     switch (valueType) {
     case PRIMITIVE:
       writer.writeCharacters(kind == null ? value.toString() :
-          EdmPrimitiveTypeFactory.getInstance(kind) // TODO: add facets
-              .valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
+        EdmPrimitiveTypeFactory.getInstance(kind) // TODO: add facets
+        .valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
       break;
     case ENUM:
       writer.writeCharacters(value.toString());

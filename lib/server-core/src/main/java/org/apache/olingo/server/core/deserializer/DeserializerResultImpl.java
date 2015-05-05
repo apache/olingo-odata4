@@ -38,7 +38,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   private Property property;
   private Map<String, Parameter> actionParametes;
   private List<URI> entityReferences;
-  
+
   private DeserializerResultImpl() {}
 
   @Override
@@ -55,7 +55,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   public ExpandOption getExpandTree() {
     return expandOption;
   }
-  
+
   @Override
   public Map<String, Parameter> getActionParameters() {
     return actionParametes;
@@ -70,11 +70,11 @@ public class DeserializerResultImpl implements DeserializerResult {
   public List<URI> getEntityReferences() {
     return entityReferences;
   }
-  
+
   public static DeserializerResultBuilder with() {
     return new DeserializerResultBuilder();
   }
-  
+
   public static class DeserializerResultBuilder {
     private Entity entity;
     private EntityCollection entitySet;
@@ -82,7 +82,7 @@ public class DeserializerResultImpl implements DeserializerResult {
     private Property property;
     private Map<String, Parameter> actionParametes;
     private List<URI> entityReferences;
-    
+
     public DeserializerResult build() {
       DeserializerResultImpl result = new DeserializerResultImpl();
       result.entity = entity;
@@ -91,7 +91,7 @@ public class DeserializerResultImpl implements DeserializerResult {
       result.property = property;
       result.entityReferences = (entityReferences == null) ? new ArrayList<URI>() : entityReferences;
       result.actionParametes = (actionParametes == null) ? new LinkedHashMap<String, Parameter>() : actionParametes;
-      
+
       return result;
     }
 
@@ -109,19 +109,19 @@ public class DeserializerResultImpl implements DeserializerResult {
       this.expandOption = expandOption;
       return this;
     }
-    
+
     public DeserializerResultBuilder property(final Property property) {
       this.property = property;
       return this;
     }
-    
+
     public DeserializerResultBuilder entityReferences(final List<URI> entityReferences) {
       this.entityReferences = entityReferences;
       return this;
     }
-    
+
     public DeserializerResultBuilder actionParameters(final Map<String, Parameter> actionParameters) {
-      this.actionParametes = actionParameters;
+      actionParametes = actionParameters;
       return this;
     }
   }

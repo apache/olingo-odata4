@@ -1,18 +1,18 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -22,19 +22,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.commons.lang3.RandomStringUtils;
+// CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollectionComposableInvoker;
-//CHECKSTYLE:ON (Maven checkstyle)
+
+// CHECKSTYLE:ON (Maven checkstyle)
+import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 
@@ -78,11 +79,11 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final ProductCollectionComposableInvoker invoker1 = container.operations().getAllProducts();
 
     final Future<ProductCollection> future1 = invoker1.operations().
-            discount(10).
-            filter("Name eq XXXX").
-            select("Name", "ProductDetail").
-            expand("ProductDetail").
-            orderBy("Name").skip(3).top(5).executeAsync();
+        discount(10).
+        filter("Name eq XXXX").
+        select("Name", "ProductDetail").
+        expand("ProductDetail").
+        orderBy("Name").skip(3).top(5).executeAsync();
     while (!future1.isDone()) {
       Thread.sleep(1000L);
     }
@@ -91,7 +92,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
     final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");
 
     final Future<Person> future2 = invoker2.select("Name").
-            expand("Order").executeAsync();
+        expand("Order").executeAsync();
     while (!future2.isDone()) {
       Thread.sleep(1000L);
     }

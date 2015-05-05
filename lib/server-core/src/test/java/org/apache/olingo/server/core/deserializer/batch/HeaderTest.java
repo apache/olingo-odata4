@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.apache.olingo.server.core.deserializer.batch.Header;
 import org.junit.Test;
 
 public class HeaderTest {
@@ -154,7 +155,7 @@ public class HeaderTest {
     assertEquals(HttpContentType.APPLICATION_ATOM_SVC, header.getHeaders(HttpHeader.CONTENT_TYPE).get(1));
     assertEquals(HttpContentType.APPLICATION_ATOM_XML, header.getHeaders(HttpHeader.CONTENT_TYPE).get(2));
   }
-  
+
   @Test
   public void testSplitValues() {
     final String values = "abc, def,123,77,   99, ysd";

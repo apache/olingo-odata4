@@ -24,7 +24,7 @@ public class SystemQueryOptionsRuntimeException extends ODataRuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  public SystemQueryOptionsRuntimeException(Exception cause) {
+  public SystemQueryOptionsRuntimeException(final Exception cause) {
     super(cause);
   }
 }

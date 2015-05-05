@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit.rest;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.olingo.fit.utils.ConstantKey;
 import org.apache.olingo.fit.utils.Constants;
-
-import java.util.List;
-import java.util.Map;
 
 public class XHTTPMethodInterceptor extends AbstractPhaseInterceptor<Message> {
 
@@ -41,7 +41,7 @@ public class XHTTPMethodInterceptor extends AbstractPhaseInterceptor<Message> {
 
     if (headers.containsKey(Constants.get(ConstantKey.XHTTP_HEADER_NAME))) {
       message.put(Message.HTTP_REQUEST_METHOD,
-              headers.get(Constants.get(ConstantKey.XHTTP_HEADER_NAME)).iterator().next());
+          headers.get(Constants.get(ConstantKey.XHTTP_HEADER_NAME)).iterator().next());
     }
   }
 }

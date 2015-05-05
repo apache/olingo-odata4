@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
@@ -25,8 +27,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
-
-import java.util.Arrays;
 
 public class EntityTypeProvider {
 
@@ -55,7 +55,7 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyNav");
   public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyPrimNav");
-  public static final FullQualifiedName nameETKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE, 
+  public static final FullQualifiedName nameETKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyNavCont");
   public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyTwoKeyComp");
@@ -331,17 +331,17 @@ public class EntityTypeProvider {
           .setNavigationProperties(
               Arrays.asList(
                   PropertyProvider.navPropertyETKeyPrimNavOne_ETKeyPrimNav));
-    } else if(entityTypeName.equals(nameETKeyNavCont)) {
+    } else if (entityTypeName.equals(nameETKeyNavCont)) {
       return new CsdlEntityType()
-        .setName("ETKeyNavCont")
-        .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
-        .setProperties(Arrays.asList(
-            PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable, 
-            PropertyProvider.propertyCompNavCont))
-        .setNavigationProperties(Arrays.asList(
-            PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
-            PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
-            ));
+          .setName("ETKeyNavCont")
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
+              PropertyProvider.propertyCompNavCont))
+          .setNavigationProperties(Arrays.asList(
+              PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
+              ));
 
     } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new CsdlEntityType()
@@ -409,8 +409,8 @@ public class EntityTypeProvider {
                   new CsdlPropertyRef().setName("PropertyComp/PropertyString").setAlias("KeyAlias2"),
                   new CsdlPropertyRef().setName("PropertyCompComp/PropertyComp/PropertyString").setAlias("KeyAlias3")))
           .setProperties(
-              Arrays.asList(PropertyProvider.propertyInt16_NotNullable, 
-                  PropertyProvider.propertyComp_CTTwoPrim_NotNullable, 
+              Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
+                  PropertyProvider.propertyComp_CTTwoPrim_NotNullable,
                   PropertyProvider.propertyCompComp_CTCompComp_NotNullable));
     } else if (entityTypeName.equals(nameETCompMixPrimCollComp)) {
       return new CsdlEntityType()

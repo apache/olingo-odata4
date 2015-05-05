@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
@@ -26,9 +29,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SchemaProvider {
 
@@ -46,7 +46,7 @@ public class SchemaProvider {
     schema.setNamespace(NAMESPACE);
     schema.setAlias("Namespace1_Alias");
     schemas.add(schema);
-    
+
     // EnumTypes
     List<CsdlEnumType> enumTypes = new ArrayList<CsdlEnumType>();
     schema.setEnumTypes(enumTypes);
@@ -56,7 +56,7 @@ public class SchemaProvider {
     schema.setTypeDefinitions(typeDefinitions);
     typeDefinitions.add(prov.getTypeDefinition(TypeDefinitionProvider.nameTDString));
     enumTypes.add(prov.getEnumType(EnumTypeProvider.nameENString));
-    
+
     // EntityTypes
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     schema.setEntityTypes(entityTypes);
@@ -87,8 +87,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
-    
-    
+
     // ComplexTypes
     List<CsdlComplexType> complexType = new ArrayList<CsdlComplexType>();
     schema.setComplexTypes(complexType);
@@ -108,8 +107,7 @@ public class SchemaProvider {
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
     complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
-        
-    
+
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     schema.setActions(actions);
@@ -159,7 +157,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTCollCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETKeyNavContParam));
-    
+
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETBaseTwoKeyNavRTETTwoKeyNav));
@@ -183,7 +181,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETTwoKeyNavRTETTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETTwoKeyNavRTCTTwoPrim));
-    //functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam));
+    // functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCollCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTStringParam));
@@ -191,9 +189,8 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTESTwoKeyNav));
 
-
     // functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
-    
+
     // EntityContainer
     schema.setEntityContainer(prov.getEntityContainer());
 

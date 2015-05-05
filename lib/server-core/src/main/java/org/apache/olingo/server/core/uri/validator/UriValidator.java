@@ -48,38 +48,38 @@ public class UriValidator {
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
   private final boolean[][] decisionMatrix =
-      {
-          /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
-          /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
-          /*                            batch  1 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                        crossjoin  2 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
-          /*                         entityId  3 */ { false,   true ,   true ,   true ,   false,   false,    false,   true ,   false,   false,      false },
-          /*                         metadata  4 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                          service  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                        entitySet  6 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
-          /*                   entitySetCount  7 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
-          /*                           entity  8 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
-          /*                      mediaStream  9 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                       references 10 */ { true ,   true ,   false,   true,    false,   true ,    true ,   false,   true ,   true ,      true  },
-          /*                        reference 11 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                  propertyComplex 12 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
-          /*        propertyComplexCollection 13 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   true ,   true ,   true ,      true  },
-          /*   propertyComplexCollectionCount 14 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
-          /*                propertyPrimitive 15 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*      propertyPrimitiveCollection 16 */ { true ,   true ,   false,   false,   true ,   true ,    false,   false,   true ,   true ,      true  },
-          /* propertyPrimitiveCollectionCount 17 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
-          /*           propertyPrimitiveValue 18 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-          /*                             none 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false }
-      };
+    {
+      /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
+      /*                              all  0 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+      /*                            batch  1 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                        crossjoin  2 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+      /*                         entityId  3 */ { false,   true ,   true ,   true ,   false,   false,    false,   true ,   false,   false,      false },
+      /*                         metadata  4 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                          service  5 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                        entitySet  6 */ { true ,   true ,   true ,   false,   true ,   true ,    true ,   true ,   true ,   true ,      true  },
+      /*                   entitySetCount  7 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+      /*                           entity  8 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
+      /*                      mediaStream  9 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                       references 10 */ { true ,   true ,   false,   true,    false,   true ,    true ,   false,   true ,   true ,      true  },
+      /*                        reference 11 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                  propertyComplex 12 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
+      /*        propertyComplexCollection 13 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   true ,   true ,   true ,      true  },
+      /*   propertyComplexCollectionCount 14 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+      /*                propertyPrimitive 15 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*      propertyPrimitiveCollection 16 */ { true ,   true ,   false,   false,   true ,   true ,    false,   false,   true ,   true ,      true  },
+      /* propertyPrimitiveCollectionCount 17 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
+      /*           propertyPrimitiveValue 18 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
+      /*                             none 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false }
+    };
 
   private final boolean[][] decisionMatrixForHttpMethod =
     {
-        /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
-        /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true  },
-        /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     false },
-        /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false },
-        /*                           DELETE  0 */ { false ,  false ,  false ,  true,    false ,  false,    false ,  false,   false ,  false ,     false },
-        /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false }
+      /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
+      /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true  },
+      /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     false },
+      /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false },
+      /*                           DELETE  0 */ { false ,  false ,  false ,  true,    false ,  false,    false ,  false,   false ,  false ,     false },
+      /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false }
     };
   //CHECKSTYLE:ON
   //@formatter:on

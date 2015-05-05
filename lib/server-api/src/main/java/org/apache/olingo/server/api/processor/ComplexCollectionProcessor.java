@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,12 +35,12 @@ public interface ComplexCollectionProcessor extends Processor {
   /**
    * Reads complex-type collection.
    * If it is not available, for example due to permissions, the service responds with 404 Not Found.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
+   * @throws SerializerException if serialization failed
    */
   void readComplexCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
@@ -50,28 +50,28 @@ public interface ComplexCollectionProcessor extends Processor {
    * puts content, status, and Location into the response.
    * Update of complex-type collection is equal to a complete replace
    * of the property (see chapter "11.4.9.4 Update a Collection Property").
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param requestFormat   content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if de-serialization failed
-   * @throws SerializerException       if serialization failed
+   * @throws DeserializerException if de-serialization failed
+   * @throws SerializerException if serialization failed
    */
   void updateComplexCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                                 ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
    * Deletes complex-type collection from an entity and puts the status into the response.
    * Deletion for complex-type collection is equal to
    * set the content to <code>EMPTY</code>.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
+   * @param uriInfo information of a parsed OData URI
    * @throws ODataApplicationException if the service implementation encounters a failure
    */
   void deleteComplexCollection(ODataRequest request, ODataResponse response, UriInfo uriInfo)
-          throws ODataApplicationException;
+      throws ODataApplicationException;
 }

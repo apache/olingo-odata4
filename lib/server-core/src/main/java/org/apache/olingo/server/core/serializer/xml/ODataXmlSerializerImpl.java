@@ -102,7 +102,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult error(ClientServerError error) throws SerializerException {
+  public SerializerResult error(final ClientServerError error) throws SerializerException {
     throw new SerializerException("error serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

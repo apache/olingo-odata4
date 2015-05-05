@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
  * Implementation of the EDM primitive type Decimal.
@@ -106,7 +106,7 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 
   /**
    * Converts a {@link BigDecimal} value into the requested return type if possible.
-   * 
+   *
    * @param value the value
    * @param returnType the class of the returned value; it must be one of {@link BigDecimal}, {@link Double},
    * {@link Float}, {@link BigInteger}, {@link Long}, {@link Integer}, {@link Short}, or {@link Byte}
@@ -179,12 +179,12 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 
       final int digits = bigDecimalValue.scale() >= 0
           ? Math.max(bigDecimalValue.precision(), bigDecimalValue.scale())
-          : bigDecimalValue.precision() - bigDecimalValue.scale();
-      if ((precision == null || precision >= digits) && (bigDecimalValue.scale() <= (scale == null ? 0 : scale))) {
-        result = bigDecimalValue.toPlainString();
-      } else {
-        throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
-      }
+              : bigDecimalValue.precision() - bigDecimalValue.scale();
+          if ((precision == null || precision >= digits) && (bigDecimalValue.scale() <= (scale == null ? 0 : scale))) {
+            result = bigDecimalValue.toPlainString();
+          } else {
+            throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
+          }
 
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");

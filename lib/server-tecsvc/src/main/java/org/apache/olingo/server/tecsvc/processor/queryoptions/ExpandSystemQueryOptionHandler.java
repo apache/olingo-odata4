@@ -59,7 +59,8 @@ public class ExpandSystemQueryOptionHandler {
     }
   }
 
-  public void applyExpandQueryOptions(Entity entity, EdmEntitySet edmEntitySet, ExpandOption expandOption)
+  public void applyExpandQueryOptions(final Entity entity, final EdmEntitySet edmEntitySet,
+      final ExpandOption expandOption)
       throws ODataApplicationException {
     if (expandOption == null) {
       return;
@@ -128,7 +129,7 @@ public class ExpandSystemQueryOptionHandler {
     return newEntitySet;
   }
 
-  public Entity transformEntityGraphToTree(final Entity entity, EdmBindingTarget edmEntitySet,
+  public Entity transformEntityGraphToTree(final Entity entity, final EdmBindingTarget edmEntitySet,
       final ExpandOption expand) throws ODataApplicationException {
     final Entity newEntity = newEntity(entity);
     if (hasExpandItems(expand)) {
@@ -190,7 +191,7 @@ public class ExpandSystemQueryOptionHandler {
     return newEntity;
   }
 
-  private Link newLink(Link link) {
+  private Link newLink(final Link link) {
     final Link newLink = new Link();
     newLink.setMediaETag(link.getMediaETag());
     newLink.setTitle(link.getTitle());
@@ -200,11 +201,11 @@ public class ExpandSystemQueryOptionHandler {
     return newLink;
   }
 
-  private boolean hasExpandItems(ExpandOption expand) {
+  private boolean hasExpandItems(final ExpandOption expand) {
     return expand != null && expand.getExpandItems() != null && !expand.getExpandItems().isEmpty();
   }
 
-  private boolean expandAll(ExpandOption expand) {
+  private boolean expandAll(final ExpandOption expand) {
     for (final ExpandItem item : expand.getExpandItems()) {
       if (item.isStar()) {
         return true;
@@ -213,7 +214,7 @@ public class ExpandSystemQueryOptionHandler {
     return false;
   }
 
-  private Set<String> getExpandedPropertyNames(List<ExpandItem> expandItems) throws ODataApplicationException {
+  private Set<String> getExpandedPropertyNames(final List<ExpandItem> expandItems) throws ODataApplicationException {
     Set<String> expanded = new HashSet<String>();
     for (final ExpandItem item : expandItems) {
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();

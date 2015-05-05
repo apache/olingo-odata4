@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class FunctionProvider {
 
@@ -526,18 +526,18 @@ public class FunctionProvider {
                   .setReturnType(
                       new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
                           .setNullable(false))
-          //              new Function()
-//                  .setName("BFCESTwoKeyNavRTESTwoKeyNav")
-//                  .setBound(true)
-//                  .setParameters(
-//                      Arrays.asList(new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
-//                          .setCollection(true).setNullable(false),
-//                          new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
-//                              .setCollection(false).setNullable(false)))
-//                  .setComposable(true)
-//                  .setReturnType(
-//                      new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
-//                          .setNullable(false))
+          // new Function()
+          // .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+          // .setBound(true)
+          // .setParameters(
+          // Arrays.asList(new Parameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
+          // .setCollection(true).setNullable(false),
+          // new Parameter().setName("ParameterString").setType(PropertyProvider.nameString)
+          // .setCollection(false).setNullable(false)))
+          // .setComposable(true)
+          // .setReturnType(
+          // new ReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+          // .setNullable(false))
           );
 
     } else if (functionName.equals(nameBFCStringRTESTwoKeyNav)) {

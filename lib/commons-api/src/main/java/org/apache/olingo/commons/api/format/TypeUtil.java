@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -43,11 +43,11 @@ class TypeUtil {
    * parameter might be significant to the processing of a media-type,
    * depending on its definition within the media type registry.
    * </p>
-   * 
+   *
    * @param parameters
    * @param parameterMap
    */
-  protected static void parseParameters(final String parameters, Map<String, String> parameterMap) {
+  protected static void parseParameters(final String parameters, final Map<String, String> parameterMap) {
     if (parameters != null) {
       for (String parameter : parameters.split(TypeUtil.PARAMETER_SEPARATOR)) {
         final String[] keyValue = parseParameter(parameter);
@@ -64,7 +64,7 @@ class TypeUtil {
     if (keyValue.length != 2 || keyValue[0].isEmpty()) {
       throw new IllegalArgumentException(
           "Parameter '" + parameter + "' must have exactly one '" + TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR +
-          "' that separates the name and the value.");
+              "' that separates the name and the value.");
     }
     keyValue[0] = keyValue[0].toLowerCase(Locale.ENGLISH);
     if (keyValue[0].indexOf(WHITESPACE_CHAR) >= 0) {

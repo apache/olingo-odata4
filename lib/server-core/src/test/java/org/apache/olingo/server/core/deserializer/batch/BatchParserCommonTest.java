@@ -18,15 +18,13 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.apache.olingo.server.core.deserializer.batch.Header;
-import org.apache.olingo.server.core.deserializer.batch.Line;
 import org.junit.Test;
 
 public class BatchParserCommonTest {
@@ -40,19 +38,19 @@ public class BatchParserCommonTest {
         "Content-Id: 2" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> contentIdHeaders = header.getHeaders(BatchParserCommon.HTTP_CONTENT_ID);
     assertNotNull(contentIdHeaders);
     assertEquals(2, contentIdHeaders.size());
     assertEquals("1", contentIdHeaders.get(0));
     assertEquals("2", contentIdHeaders.get(1));
   }
-  
+
   @Test
   public void testMultipleHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
@@ -60,18 +58,18 @@ public class BatchParserCommonTest {
         "Content-Id: 1" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> contentIdHeaders = header.getHeaders(BatchParserCommon.HTTP_CONTENT_ID);
     assertNotNull(contentIdHeaders);
     assertEquals(1, contentIdHeaders.size());
     assertEquals("1", contentIdHeaders.get(0));
   }
-  
+
   @Test
   public void testHeaderSperatedByComma() throws Exception {
     String[] messageRaw = new String[] {
@@ -79,12 +77,12 @@ public class BatchParserCommonTest {
         "Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> upgradeHeader = header.getHeaders("upgrade");
     assertNotNull(upgradeHeader);
     assertEquals(4, upgradeHeader.size());
@@ -93,7 +91,7 @@ public class BatchParserCommonTest {
     assertEquals("IRC/6.9", upgradeHeader.get(2));
     assertEquals("RTA/x11", upgradeHeader.get(3));
   }
-  
+
   @Test
   public void testMultipleAcceptHeader() throws Exception {
     String[] messageRaw = new String[] {
@@ -102,17 +100,17 @@ public class BatchParserCommonTest {
         "Accept-Language:en-US,en;q=0.7,en-UK;q=0.9" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> acceptHeader = header.getHeaders(HttpHeader.ACCEPT);
     assertNotNull(acceptHeader);
     assertEquals(4, acceptHeader.size());
   }
-  
+
   @Test
   public void testMultipleAcceptHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
@@ -121,17 +119,17 @@ public class BatchParserCommonTest {
         "Accept-Language:en-US,en;q=0.7,en-UK;q=0.9" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> acceptHeader = header.getHeaders(HttpHeader.ACCEPT);
     assertNotNull(acceptHeader);
     assertEquals(3, acceptHeader.size());
   }
-  
+
   @Test
   public void testMultipleAccepLanguagetHeader() throws Exception {
     String[] messageRaw = new String[] {
@@ -139,17 +137,17 @@ public class BatchParserCommonTest {
         "Accept-Language: de-DE;q=0.3" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> acceptLanguageHeader = header.getHeaders(HttpHeader.ACCEPT_LANGUAGE);
     assertNotNull(acceptLanguageHeader);
     assertEquals(4, acceptLanguageHeader.size());
   }
-  
+
   @Test
   public void testMultipleAccepLanguagetHeaderSameValue() throws Exception {
     String[] messageRaw = new String[] {
@@ -157,73 +155,73 @@ public class BatchParserCommonTest {
         "Accept-Language:en-US,en;q=0.7" + CRLF,
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
-      };
+    };
     List<Line> message = toLineList(messageRaw);
-    
+
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
-    
+
     final List<String> acceptLanguageHeader = header.getHeaders(HttpHeader.ACCEPT_LANGUAGE);
     assertNotNull(acceptLanguageHeader);
     assertEquals(3, acceptLanguageHeader.size());
   }
-  
+
   @Test
   public void testRemoveEndingCRLF() {
     String line = "Test\r\n";
-    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLF() {
     String line = "Test\r\n\r\n";
-    assertEquals("Test\r\n", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Test\r\n", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFWithWS() {
     String line = "Test\r\n            ";
-    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFNothingToRemove() {
     String line = "Hallo\r\nBla";
-    assertEquals("Hallo\r\nBla", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Hallo\r\nBla", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFAll() {
     String line = "\r\n";
-    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFSpace() {
     String line = "\r\n                      ";
-    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLFWithWS() {
     String line = "Test            \r\n";
-    assertEquals("Test            ", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Test            ", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLFWithWSLong() {
     String line = "Test            \r\nTest2    \r\n";
-    assertEquals("Test            \r\nTest2    ", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+    assertEquals("Test            \r\nTest2    ", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
   }
-  
-  private List<Line> toLineList(String[] messageRaw) {
+
+  private List<Line> toLineList(final String[] messageRaw) {
     final List<Line> lineList = new ArrayList<Line>();
     int counter = 1;
-    
-    for(final String currentLine : messageRaw) {
+
+    for (final String currentLine : messageRaw) {
       lineList.add(new Line(currentLine, counter++));
     }
-    
+
     return lineList;
   }
 }

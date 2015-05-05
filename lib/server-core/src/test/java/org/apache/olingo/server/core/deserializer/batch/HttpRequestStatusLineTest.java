@@ -18,7 +18,8 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
@@ -41,7 +42,7 @@ public class HttpRequestStatusLineTest {
     assertEquals(baseUri, line.getRawBaseUri());
     assertEquals(serviceResolutionUri, line.getRawServiceResolutionUri());
   }
-  
+
   @Test
   public void testAbsoluteWithRelativePath() throws BatchDeserializerException {
     final HttpRequestStatusLine line = parse("http://localhost/odata/../../Employee?$top=2");
@@ -51,7 +52,7 @@ public class HttpRequestStatusLineTest {
     assertEquals(baseUri, line.getRawBaseUri());
     assertEquals(serviceResolutionUri, line.getRawServiceResolutionUri());
   }
-  
+
   @Test
   public void testRelativeWithDots() throws BatchDeserializerException {
     final HttpRequestStatusLine line = parse("../../Employee?$top=2");
@@ -61,7 +62,7 @@ public class HttpRequestStatusLineTest {
     assertEquals(baseUri, line.getRawBaseUri());
     assertEquals(serviceResolutionUri, line.getRawServiceResolutionUri());
   }
-  
+
   @Test
   public void testRelative() throws BatchDeserializerException {
     final HttpRequestStatusLine line = parse("Employee?$top=2");
@@ -71,7 +72,7 @@ public class HttpRequestStatusLineTest {
     assertEquals(baseUri, line.getRawBaseUri());
     assertEquals(serviceResolutionUri, line.getRawServiceResolutionUri());
   }
-  
+
   @Test
   public void testRelativeMultipleSegements() throws BatchDeserializerException {
     final HttpRequestStatusLine line = parse("Employee/Manager/EmployeeName?$top=2");
@@ -81,23 +82,23 @@ public class HttpRequestStatusLineTest {
     assertEquals(baseUri, line.getRawBaseUri());
     assertEquals(serviceResolutionUri, line.getRawServiceResolutionUri());
   }
-  
+
   @Test
   public void testOtherBaseUri() throws BatchDeserializerException {
     parseFail("http://otherhost/odata/Employee?$top=2", MessageKeys.INVALID_BASE_URI);
   }
-  
+
   @Test
   public void testInvalidRelative() throws BatchDeserializerException {
     parseFail("/Employee?$top=2", MessageKeys.INVALID_URI);
   }
-  
+
   HttpRequestStatusLine parse(final String uri) throws BatchDeserializerException {
     Line statusline = new Line(HttpMethod.GET.toString().toUpperCase() + SPACE + uri + SPACE + HTTP_VERSION, 0);
     return new HttpRequestStatusLine(statusline, baseUri, serviceResolutionUri);
   }
-  
-  void parseFail(final String uri, MessageKeys messageKey) {
+
+  void parseFail(final String uri, final MessageKeys messageKey) {
     try {
       parse(uri);
       fail("Expceted exception");

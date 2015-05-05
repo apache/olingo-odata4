@@ -30,7 +30,7 @@ import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 public class SkipHandler {
   public static void applySkipSystemQueryHandler(final SkipOption skipOption, final EntityCollection entitySet)
       throws ODataApplicationException {
-    
+
     if (skipOption != null) {
       if (skipOption.getValue() >= 0) {
         popAtMost(entitySet, skipOption.getValue());

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.v4;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -108,10 +108,10 @@ public class MetadataTestITCase extends AbstractTestITCase {
 
     final EdmAnnotation description = core.getAnnotation(descriptionTerm);
     assertNotNull(description);
-//    assertEquals("Core terms needed to write vocabularies",
-//        description.getExpression().asConstant().getValue().asPrimitive().toString());
+    // assertEquals("Core terms needed to write vocabularies",
+    // description.getExpression().asConstant().getValue().asPrimitive().toString());
     assertEquals("Core terms needed to write vocabularies",
-            description.getExpression().asConstant().getValueAsString());
+        description.getExpression().asConstant().getValueAsString());
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
     assertNotNull(isLanguageDependent);

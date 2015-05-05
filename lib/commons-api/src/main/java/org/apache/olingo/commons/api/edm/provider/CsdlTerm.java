@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,11 +47,12 @@ public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnno
   private Integer precision;
 
   private Integer scale;
-  
+
   private SRID srid;
 
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -142,6 +143,7 @@ public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnno
     return this;
   }
 
+  @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
@@ -150,7 +152,7 @@ public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnno
     this.annotations = annotations;
     return this;
   }
-  
+
   public SRID getSrid() {
     return srid;
   }

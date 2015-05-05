@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,13 +34,13 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRe
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -82,37 +82,37 @@ public class BindingITCase extends AbstractBaseTestITCase {
     // Create entity (EntitySet: ESKeyNav, Type: ETKeyNav)
     final ClientEntity entity = of.newEntity(ET_KEY_NAV);
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
     entity.getProperties()
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
+    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    entity.getProperties()
+    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
         .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
-    entity.getProperties()
-        .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-            .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-            .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-                .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Bind existing entities via binding synatx
     entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 3109256773218160485L;
 
-              {
-                put(PROPERTY_INT16, 3);
-                put(PROPERTY_STRING, "1");
-              }
-            }).build()));
+          {
+            put(PROPERTY_INT16, 3);
+            put(PROPERTY_STRING, "1");
+          }
+        }).build()));
 
     final ClientLink navLinkOne =
         of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
@@ -254,10 +254,8 @@ public class BindingITCase extends AbstractBaseTestITCase {
             .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(42).build());
     entity.addLink(navLinkOne);
 
-    ODataEntityUpdateResponse<ClientEntity> updateResponse = null;
     try {
-      updateResponse =
-          client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
@@ -271,8 +269,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
     entity.addLink(navLinkMany);
 
     try {
-      updateResponse =
-          client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
     }
@@ -346,30 +343,30 @@ public class BindingITCase extends AbstractBaseTestITCase {
         .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
     innerEntity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 3109256773218160485L;
 
-              {
-                put(PROPERTY_INT16, 3);
-                put(PROPERTY_STRING, "1");
-              }
-            }).build()));
+          {
+            put(PROPERTY_INT16, 3);
+            put(PROPERTY_STRING, "1");
+          }
+        }).build()));
 
     final ClientInlineEntity inlineLink = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineLink);
 
     entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 3109256773218160485L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 3109256773218160485L;
 
-              {
-                put(PROPERTY_INT16, 3);
-                put(PROPERTY_STRING, "1");
-              }
-            }).build()));
+          {
+            put(PROPERTY_INT16, 3);
+            put(PROPERTY_STRING, "1");
+          }
+        }).build()));
 
     final URI bindingURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(3)

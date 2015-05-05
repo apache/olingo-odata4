@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -103,61 +103,61 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
       _expression = new EdmNotImpl(getDynamicExpression(exp.asNot().getExpression()));
     } else if (exp.isTwoParamsOp()) {
       switch (exp.asTwoParamsOp().getType()) {
-        case And:
-          _expression = new EdmAndImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case And:
+        _expression = new EdmAndImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Or:
-          _expression = new EdmOrImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Or:
+        _expression = new EdmOrImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Eq:
-          _expression = new EdmEqImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Eq:
+        _expression = new EdmEqImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Ne:
-          _expression = new EdmNeImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Ne:
+        _expression = new EdmNeImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Ge:
-          _expression = new EdmGeImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Ge:
+        _expression = new EdmGeImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Gt:
-          _expression = new EdmGtImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Gt:
+        _expression = new EdmGtImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Le:
-          _expression = new EdmLeImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Le:
+        _expression = new EdmLeImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        case Lt:
-          _expression = new EdmLtImpl(
-                  getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
-                  getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
-          break;
+      case Lt:
+        _expression = new EdmLtImpl(
+            getDynamicExpression(exp.asTwoParamsOp().getLeftExpression()),
+            getDynamicExpression(exp.asTwoParamsOp().getRightExpression()));
+        break;
 
-        default:
+      default:
       }
     } else if (exp.isAnnotationPath()) {
       _expression = new EdmAnnotationPathImpl(exp.asAnnotationPath().getValue());
     } else if (exp.isApply()) {
       final List<EdmAnnotationExpression> parameters =
-              new ArrayList<EdmAnnotationExpression>(exp.asApply().getParameters().size());
+          new ArrayList<EdmAnnotationExpression>(exp.asApply().getParameters().size());
       for (AnnotationExpression param : exp.asApply().getParameters()) {
         parameters.add(getExpression(param));
       }
@@ -166,21 +166,21 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
       _expression = new EdmCastImpl(edm, exp.asCast(), getDynamicExpression(exp.asCast().getValue()));
     } else if (exp.isCollection()) {
       final List<EdmAnnotationExpression> items =
-              new ArrayList<EdmAnnotationExpression>(exp.asCollection().getItems().size());
+          new ArrayList<EdmAnnotationExpression>(exp.asCollection().getItems().size());
       for (AnnotationExpression param : exp.asCollection().getItems()) {
         items.add(getExpression(param));
       }
       _expression = new EdmCollectionImpl(items);
     } else if (exp.isIf()) {
       _expression = new EdmIfImpl(
-              getExpression(exp.asIf().getGuard()),
-              getExpression(exp.asIf().getThen()),
-              getExpression(exp.asIf().getElse()));
+          getExpression(exp.asIf().getGuard()),
+          getExpression(exp.asIf().getThen()),
+          getExpression(exp.asIf().getElse()));
     } else if (exp.isIsOf()) {
       _expression = new EdmIsOfImpl(edm, exp.asIsOf(), getDynamicExpression(exp.asIsOf().getValue()));
     } else if (exp.isLabeledElement()) {
       _expression = new EdmLabeledElementImpl(
-              exp.asLabeledElement().getName(), getDynamicExpression(exp.asLabeledElement().getValue()));
+          exp.asLabeledElement().getName(), getDynamicExpression(exp.asLabeledElement().getValue()));
     } else if (exp.isLabeledElementReference()) {
       _expression = new EdmLabeledElementReferenceImpl(exp.asLabeledElementReference().getValue());
     } else if (exp.isNull()) {
@@ -193,13 +193,13 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
       _expression = new EdmPropertyPathImpl(exp.asPropertyPath().getValue());
     } else if (exp.isPropertyValue()) {
       _expression = new EdmPropertyValueImpl(
-              exp.asPropertyValue().getProperty(), getExpression(exp.asPropertyValue().getValue()));
+          exp.asPropertyValue().getProperty(), getExpression(exp.asPropertyValue().getValue()));
     } else if (exp.isRecord()) {
       final List<EdmPropertyValue> propertyValues =
-              new ArrayList<EdmPropertyValue>(exp.asRecord().getPropertyValues().size());
+          new ArrayList<EdmPropertyValue>(exp.asRecord().getPropertyValues().size());
       for (PropertyValue propertyValue : exp.asRecord().getPropertyValues()) {
         propertyValues.add(new EdmPropertyValueImpl(
-                propertyValue.getProperty(), getExpression(propertyValue.getValue())));
+            propertyValue.getProperty(), getExpression(propertyValue.getValue())));
       }
       _expression = new EdmRecordImpl(edm, exp.asRecord().getType(), propertyValues);
     } else if (exp.isUrlRef()) {

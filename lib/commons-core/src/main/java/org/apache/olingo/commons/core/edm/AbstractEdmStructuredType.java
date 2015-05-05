@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,12 @@
  * under the License.
  */
 package org.apache.olingo.commons.core.edm;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
@@ -31,17 +37,11 @@ import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlStructuralType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements EdmStructuredType {
 
   protected EdmStructuredType baseType;
   protected FullQualifiedName baseTypeName;
-  
+
   private final CsdlStructuralType providerStructuredType;
 
   private List<String> propertyNames;
@@ -50,14 +50,14 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
   private Map<String, EdmNavigationProperty> navigationProperties;
 
   public AbstractEdmStructuredType(
-          final Edm edm,
-          final FullQualifiedName typeName,
-          final EdmTypeKind kind,
-          final CsdlStructuralType structuredType) {
+      final Edm edm,
+      final FullQualifiedName typeName,
+      final EdmTypeKind kind,
+      final CsdlStructuralType structuredType) {
 
     super(edm, typeName, kind, structuredType);
-    this.baseTypeName = structuredType.getBaseTypeFQN();
-    this.providerStructuredType = structuredType;
+    baseTypeName = structuredType.getBaseTypeFQN();
+    providerStructuredType = structuredType;
   }
 
   protected abstract EdmStructuredType buildBaseType(FullQualifiedName baseTypeName);
@@ -159,8 +159,8 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
     if (properties == null) {
       final Map<String, EdmProperty> localPorperties = new LinkedHashMap<String, EdmProperty>();
       final List<CsdlProperty> structureTypeProperties = providerStructuredType.getProperties();
-        for (CsdlProperty property : structureTypeProperties) {
-          localPorperties.put(property.getName(), new EdmPropertyImpl(edm, typeName, property));
+      for (CsdlProperty property : structureTypeProperties) {
+        localPorperties.put(property.getName(), new EdmPropertyImpl(edm, typeName, property));
       }
       properties = Collections.unmodifiableMap(localPorperties);
     }
@@ -169,7 +169,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
 
   public Map<String, EdmNavigationProperty> getNavigationProperties() {
     if (navigationProperties == null) {
-      final Map<String, EdmNavigationProperty> localNavigationProperties = 
+      final Map<String, EdmNavigationProperty> localNavigationProperties =
           new LinkedHashMap<String, EdmNavigationProperty>();
       final List<CsdlNavigationProperty> structuredTypeNavigationProperties =
           providerStructuredType.getNavigationProperties();
@@ -177,19 +177,21 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
       if (structuredTypeNavigationProperties != null) {
         for (CsdlNavigationProperty navigationProperty : structuredTypeNavigationProperties) {
           localNavigationProperties.put(navigationProperty.getName(),
-                  new EdmNavigationPropertyImpl(edm, typeName, navigationProperty));
+              new EdmNavigationPropertyImpl(edm, typeName, navigationProperty));
         }
       }
-      
+
       navigationProperties = Collections.unmodifiableMap(localNavigationProperties);
     }
     return navigationProperties;
   }
 
+  @Override
   public boolean isOpenType() {
     return providerStructuredType.isOpenType();
   }
 
+  @Override
   public boolean isAbstract() {
     return providerStructuredType.isAbstract();
   }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,8 +25,8 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 public class CsdlEntitySet extends CsdlBindingTarget {
 
   private static final long serialVersionUID = 5291570018480936643L;
-  
-  //Default for EntitySets is true
+
+  // Default for EntitySets is true
   private boolean includeInServiceDocument = true;
 
   @Override
@@ -37,7 +37,7 @@ public class CsdlEntitySet extends CsdlBindingTarget {
 
   @Override
   public CsdlEntitySet setNavigationPropertyBindings(
-          final List<CsdlNavigationPropertyBinding> navigationPropertyBindings) {
+      final List<CsdlNavigationPropertyBinding> navigationPropertyBindings) {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;
   }
@@ -47,7 +47,7 @@ public class CsdlEntitySet extends CsdlBindingTarget {
     this.type = new FullQualifiedName(type);
     return this;
   }
-  
+
   @Override
   public CsdlEntitySet setType(final FullQualifiedName type) {
     this.type = type;

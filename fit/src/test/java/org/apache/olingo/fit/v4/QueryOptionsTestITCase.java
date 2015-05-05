@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,26 +18,26 @@
  */
 package org.apache.olingo.fit.v4;
 
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.junit.Test;
 
 /**
  * This is the unit test class to check for query options.
@@ -74,7 +74,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
   /**
    * Test <tt>$filter</tt> and <tt>$orderby</tt>.
-   * 
+   *
    * @see org.apache.olingo.fit.v4.FilterFactoryTestITCase for more tests.
    */
   @Test

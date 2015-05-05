@@ -88,7 +88,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 3" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -97,7 +97,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 4" + CRLF
         + CRLF
-        + "PUT $3/PropertyInt32 HTTP/1.1" + CRLF 
+        + "PUT $3/PropertyInt32 HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -106,7 +106,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 1" + CRLF
         + CRLF
-        + "POST ESAllPrim HTTP/1.1" + CRLF 
+        + "POST ESAllPrim HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -115,7 +115,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 5" + CRLF
         + CRLF
-        + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF 
+        + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -133,7 +133,7 @@ public class MockedBatchHandlerTest {
         + "Content-Transfer-Encoding: binary" + CRLF
         + "Content-Id: 6" + CRLF
         + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF 
+        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
         + CRLF
         + CRLF
@@ -519,7 +519,7 @@ public class MockedBatchHandlerTest {
   /*
    * Helper methods
    */
-  private String checkChangeSetPartHeader(final List<String> response, int line) {
+  private String checkChangeSetPartHeader(final List<String> response, final int line) {
     int lineNumber = line;
     assertEquals(CRLF, response.get(lineNumber++));
     assertTrue(response.get(lineNumber++).contains("--changeset_"));
@@ -570,12 +570,12 @@ public class MockedBatchHandlerTest {
     private OData odata;
 
     @Override
-    public void init(OData odata, ServiceMetadata serviceMetadata) {
+    public void init(final OData odata, final ServiceMetadata serviceMetadata) {
       this.odata = odata;
     }
 
     @Override
-    public ODataResponsePart processChangeSet(BatchFacade fascade, List<ODataRequest> requests) {
+    public ODataResponsePart processChangeSet(final BatchFacade fascade, final List<ODataRequest> requests) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
@@ -590,7 +590,7 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public void processBatch(BatchFacade fascade, ODataRequest request, ODataResponse response)
+    public void processBatch(final BatchFacade fascade, final ODataRequest request, final ODataResponse response)
         throws BatchDeserializerException, BatchSerializerException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
@@ -603,7 +603,7 @@ public class MockedBatchHandlerTest {
           // Mock the processor for a given requests
           when(oDataHandler.process(oDataRequest)).then(new Answer<ODataResponse>() {
             @Override
-            public ODataResponse answer(InvocationOnMock invocation) throws Throwable {
+            public ODataResponse answer(final InvocationOnMock invocation) throws Throwable {
               Object[] arguments = invocation.getArguments();
 
               return buildResponse((ODataRequest) arguments[0]);
@@ -617,18 +617,18 @@ public class MockedBatchHandlerTest {
       final String responeBoundary = "batch_" + UUID.randomUUID().toString();
       final InputStream responseStream =
           odata.createFixedFormatSerializer().batchResponse(responseParts, responeBoundary);
-      
+
       response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=" + responeBoundary);
       response.setContent(responseStream);
     }
 
-    private String getBoundary(String contentType) throws BatchDeserializerException {
+    private String getBoundary(final String contentType) throws BatchDeserializerException {
       return BatchParserCommon.getBoundary(contentType, 0);
     }
   }
 
-  private ODataResponse buildResponse(ODataRequest request) {
+  private ODataResponse buildResponse(final ODataRequest request) {
     final ODataResponse oDataResponse = new ODataResponse();
 
     if (request.getMethod() == HttpMethod.POST) {

@@ -18,18 +18,18 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
-import org.apache.olingo.server.core.deserializer.batch.Line;
 import org.junit.Test;
 
 public class BufferedReaderIncludingLineEndingsTest {
-
 
   private static final String TEXT_COMBINED = "Test\r" +
       "Test2\r\n" +
@@ -377,18 +377,18 @@ public class BufferedReaderIncludingLineEndingsTest {
     assertEquals(null, reader.readLine());
     assertEquals(-1, reader.read());
   }
-  
+
   @Test
   public void testLineEqualsAndHashCode() {
     Line l1 = new Line("The first line", 1);
     Line l2 = new Line("The first line", 1);
     Line l3 = new Line("The second line", 2);
-    
+
     assertEquals(l1, l2);
     assertFalse(l1.equals(l3));
     assertTrue(l1.hashCode() != l3.hashCode());
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testSkipNegative() throws Exception {
     BufferedReaderIncludingLineEndings reader = create("123");
@@ -473,7 +473,7 @@ public class BufferedReaderIncludingLineEndingsTest {
         .getBytes("UTF-8"))));
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString, int bufferSize) throws Exception {
+  private BufferedReaderIncludingLineEndings create(final String inputString, final int bufferSize) throws Exception {
     return new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(inputString
         .getBytes("UTF-8"))), bufferSize);
   }

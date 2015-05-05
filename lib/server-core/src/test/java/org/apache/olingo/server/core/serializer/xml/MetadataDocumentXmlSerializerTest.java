@@ -411,7 +411,7 @@ public class MetadataDocumentXmlSerializerTest {
 
     @Override
     public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
-                                                final String functionImportName)
+        final String functionImportName)
         throws ODataException {
       if (entityContainer.equals(nameContainer)) {
         if (functionImportName.equals("FINRTInt16")) {

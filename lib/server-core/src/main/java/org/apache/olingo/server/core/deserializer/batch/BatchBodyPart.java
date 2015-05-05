@@ -67,7 +67,7 @@ public class BatchBodyPart implements BatchPart {
     return isChangeSet;
   }
 
-  private List<BatchQueryOperation> consumeRequest(final List<Line> remainingMessage) 
+  private List<BatchQueryOperation> consumeRequest(final List<Line> remainingMessage)
       throws BatchDeserializerException {
     if (isChangeSet) {
       return consumeChangeSet(remainingMessage);

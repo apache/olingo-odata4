@@ -31,7 +31,7 @@ public class EdmxReferenceIncludeAnnotation {
    *
    * @param termNamespace of include annotation
    */
-  public EdmxReferenceIncludeAnnotation(String termNamespace) {
+  public EdmxReferenceIncludeAnnotation(final String termNamespace) {
     this(termNamespace, null, null);
   }
 
@@ -42,22 +42,23 @@ public class EdmxReferenceIncludeAnnotation {
    * @param qualifier of include annotation
    * @param targetNamespace of include annotation
    */
-  public EdmxReferenceIncludeAnnotation(String termNamespace, String qualifier, String targetNamespace) {
+  public EdmxReferenceIncludeAnnotation(final String termNamespace, final String qualifier,
+      final String targetNamespace) {
     this.termNamespace = termNamespace;
     this.qualifier = qualifier;
     this.targetNamespace = targetNamespace;
   }
 
   /**
-	 * @return TermNamespace of the include annotation
-	 */
+   * @return TermNamespace of the include annotation
+   */
   public String getTermNamespace() {
     return termNamespace;
   }
 
-	/**
-	 * @return Qualifier if one defined; null otherwise
-	 */
+  /**
+   * @return Qualifier if one defined; null otherwise
+   */
   public String getQualifier() {
     return qualifier;
   }
@@ -68,14 +69,14 @@ public class EdmxReferenceIncludeAnnotation {
    * @param qualifier for include annotation
    * @return this include annotation
    */
-  public EdmxReferenceIncludeAnnotation setQualifier(String qualifier) {
+  public EdmxReferenceIncludeAnnotation setQualifier(final String qualifier) {
     this.qualifier = qualifier;
     return this;
   }
 
-	/**
-	 * @return targetNamespace if defined; null otherwise
-	 */
+  /**
+   * @return targetNamespace if defined; null otherwise
+   */
   public String getTargetNamespace() {
     return targetNamespace;
   }
@@ -86,7 +87,7 @@ public class EdmxReferenceIncludeAnnotation {
    * @param targetNamespace for include annotation
    * @return this include annotation
    */
-  public EdmxReferenceIncludeAnnotation setTargetNamespace(String targetNamespace) {
+  public EdmxReferenceIncludeAnnotation setTargetNamespace(final String targetNamespace) {
     this.targetNamespace = targetNamespace;
     return this;
   }

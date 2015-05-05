@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -90,103 +90,103 @@ public class Service<C extends EdmEnabledODataClient> extends AbstractService<C>
 
     // CHECKSTYLE:OFF (Maven checkstyle)
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Account",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.ProductDetail",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.ProductDetail",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Order",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.Statement",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.Statement",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Statement.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.Subscription",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.Subscription",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Subscription.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Person",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.GiftCard",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.GiftCard",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.GiftCard.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.OrderDetail",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.OrderDetail",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderDetail.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Product",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.Customer",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.Customer",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Club",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Club.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.ProductReview",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReview.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.ProductReview",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductReview.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.Department",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.Department",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Department.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Asset",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Asset.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.Employee",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.Employee",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.StoredPI",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.StoredPI",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI.class);
     entityTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Company",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecord.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.CreditRecord",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditRecord.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.LabourUnion",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.LabourUnion.class);
     entityTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.PublicCompany",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PublicCompany.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.PublicCompany",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.PublicCompany.class);
     complexTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Address",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address.class);
     complexTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.CompanyAddress",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress.class);
     complexTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.AccountInfo",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccountInfo.class);
     complexTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress.class);
     enumTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel.class);
     enumTypes.put("Microsoft.Test.OData.Services.ODataWCFService.Color",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color.class);
     enumTypes
-        .put(
-            "Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory",
-            org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory.class);
+    .put(
+        "Microsoft.Test.OData.Services.ODataWCFService.CompanyCategory",
+        org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory.class);
     terms.put("Microsoft.Test.OData.Services.ODataWCFService.IsBoss",
         org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.IsBoss.class);
     // CHECKSTYLE:ON (Maven checkstyle)

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -120,7 +120,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
       throw e;
     }
   }
-  
+
   @Test
   public void expandedToOneValidNullValue() throws Exception {
     String entityString =
@@ -130,16 +130,16 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoPrim"));
     final Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType)
-                                                                                  .getEntity();
-  
+        .getEntity();
+
     assertEquals(1, entity.getNavigationLinks().size());
     final Link link = entity.getNavigationLinks().get(0);
-    
+
     assertEquals("NavPropertyETAllPrimOne", link.getTitle());
     assertNull(link.getInlineEntity());
     assertNull(link.getInlineEntitySet());
   }
-  
+
   @Test(expected = DeserializerException.class)
   public void expandedToOneInvalidStringValue() throws Exception {
     String entityString =
@@ -155,7 +155,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
       throw e;
     }
   }
-  
+
   @Test(expected = DeserializerException.class)
   public void expandedToManyInvalidNullValue() throws Exception {
     String entityString =

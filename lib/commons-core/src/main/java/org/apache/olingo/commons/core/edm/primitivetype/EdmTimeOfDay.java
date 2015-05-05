@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
@@ -69,13 +69,13 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
       }
       final String milliSeconds = decimals.length() > 3 ?
           decimals.substring(0, 3) :
-          decimals + "000".substring(decimals.length());
-      final short millis = Short.parseShort(milliSeconds);
-      if (returnType.isAssignableFrom(Timestamp.class)) {
-        nanoSeconds = millis * 1000 * 1000;
-      } else {
-        dateTimeValue.set(Calendar.MILLISECOND, millis);
-      }
+            decimals + "000".substring(decimals.length());
+          final short millis = Short.parseShort(milliSeconds);
+          if (returnType.isAssignableFrom(Timestamp.class)) {
+            nanoSeconds = millis * 1000 * 1000;
+          } else {
+            dateTimeValue.set(Calendar.MILLISECOND, millis);
+          }
     }
 
     try {

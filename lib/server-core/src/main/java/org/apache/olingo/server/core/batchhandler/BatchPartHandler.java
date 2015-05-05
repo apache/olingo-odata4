@@ -38,16 +38,16 @@ public class BatchPartHandler {
   public BatchPartHandler(final ODataHandler oDataHandler, final BatchProcessor processor,
       final BatchFacade batchFascade) {
     this.oDataHandler = oDataHandler;
-    this.batchProcessor = processor;
+    batchProcessor = processor;
     this.batchFascade = batchFascade;
-    this.rewriter = new BatchReferenceRewriter();
+    rewriter = new BatchReferenceRewriter();
   }
 
-  public ODataResponse handleODataRequest(ODataRequest request) throws BatchDeserializerException {
+  public ODataResponse handleODataRequest(final ODataRequest request) throws BatchDeserializerException {
     return handle(request, true);
   }
 
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException {
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws BatchDeserializerException {
     if (request.isChangeSet()) {
       return handleChangeSet(request);
     } else {
@@ -57,7 +57,7 @@ public class BatchPartHandler {
     }
   }
 
-  public ODataResponse handle(ODataRequest request, boolean isChangeSet)
+  public ODataResponse handle(final ODataRequest request, final boolean isChangeSet)
       throws BatchDeserializerException {
     final ODataResponse response;
 
@@ -80,7 +80,7 @@ public class BatchPartHandler {
     return response;
   }
 
-  private ODataResponsePart handleChangeSet(BatchRequestPart request) throws BatchDeserializerException {
+  private ODataResponsePart handleChangeSet(final BatchRequestPart request) throws BatchDeserializerException {
     return batchProcessor.processChangeSet(batchFascade, request.getRequests());
   }
 

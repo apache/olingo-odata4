@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,20 +42,20 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
-import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientDelta;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.domain.ClientEntityImpl;
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
+import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.client.core.domain.ClientEntityImpl;
 import org.junit.Test;
 
 /**
@@ -98,12 +98,12 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     dateTime.set(2011, 2, 4, 16, 3, 57);
     final ClientProperty orderDate = getClient().getObjectFactory().newPrimitiveProperty("OrderDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build());
+        setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(dateTime).build());
     order.getProperties().add(orderDate);
 
     final ClientProperty shelfLife = getClient().getObjectFactory().newPrimitiveProperty("ShelfLife",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
+        setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal("0.0000001")).build());
     order.getProperties().add(shelfLife);
 
     final ClientCollectionValue<ClientValue> orderShelfLifesValue = getClient().getObjectFactory().
@@ -118,7 +118,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).
-            appendEntitySetSegment("Orders").build(), order);
+        appendEntitySetSegment("Orders").build(), order);
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     // check for OData-Version
@@ -142,10 +142,10 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final URI deleteURI = created.getEditLink() == null
         ? getClient().newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("Orders").appendKeySegment(2000).build()
-        : created.getEditLink();
-    final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
-    final ODataDeleteResponse deleteRes = deleteReq.execute();
-    assertEquals(204, deleteRes.getStatusCode());
+            : created.getEditLink();
+            final ODataDeleteRequest deleteReq = getClient().getCUDRequestFactory().getDeleteRequest(deleteURI);
+            final ODataDeleteResponse deleteRes = deleteReq.execute();
+            assertEquals(204, deleteRes.getStatusCode());
   }
 
   /**

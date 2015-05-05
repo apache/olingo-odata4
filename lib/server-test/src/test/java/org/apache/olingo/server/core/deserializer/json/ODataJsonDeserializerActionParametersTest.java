@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -69,7 +69,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
   public void ignoreODataAnnotations() throws Exception {
     final String input =
         "{\"ParameterDuration@odata.type\":\"Edm.Duration\","
-        + "\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
+            + "\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
     final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam");
     assertNotNull(parameters);
     assertEquals(2, parameters.size());

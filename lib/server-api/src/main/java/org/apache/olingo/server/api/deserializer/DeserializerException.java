@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,25 +29,38 @@ public class DeserializerException extends ODataTranslatedException {
   public static enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
     IO_EXCEPTION,
-    /** parameter: format */ UNSUPPORTED_FORMAT, 
-    JSON_SYNTAX_EXCEPTION, 
-    /** parameter: propertyName */ INVALID_NULL_PROPERTY, 
-    /** parameter: keyName */ UNKOWN_CONTENT, 
-    /** parameter: propertyName */ INVALID_VALUE_FOR_PROPERTY, 
-    /** parameter: propertyName */ INVALID_JSON_TYPE_FOR_PROPERTY, 
-    VALUE_ARRAY_NOT_PRESENT, 
-    VALUE_TAG_MUST_BE_AN_ARRAY, 
-    INVALID_ENTITY, 
-    /** parameter: navigationPropertyName */INVALID_VALUE_FOR_NAVIGATION_PROPERTY, 
-    DUPLICATE_PROPERTY, 
-    DUPLICATE_JSON_PROPERTY, 
-    /** parameters: primitiveTypeName, propertyName */ UNKNOWN_PRIMITIVE_TYPE, 
-    /** parameter: navigationPropertyName */NAVIGATION_PROPERTY_NOT_FOUND, 
-    /** parameter: annotationName */INVALID_ANNOTATION_TYPE, 
-    /** parameter: annotationName */INVALID_NULL_ANNOTATION, 
-    /** parameter: binding link */INVALID_ENTITY_BINDING_LINK, 
-    /** parameter: action parameter name */INVALID_ACTION_PARAMETER_TYPE, 
-    /** parameter: parameterName */ INVALID_NULL_PARAMETER;
+    /** parameter: format */
+    UNSUPPORTED_FORMAT,
+    JSON_SYNTAX_EXCEPTION,
+    /** parameter: propertyName */
+    INVALID_NULL_PROPERTY,
+    /** parameter: keyName */
+    UNKOWN_CONTENT,
+    /** parameter: propertyName */
+    INVALID_VALUE_FOR_PROPERTY,
+    /** parameter: propertyName */
+    INVALID_JSON_TYPE_FOR_PROPERTY,
+    VALUE_ARRAY_NOT_PRESENT,
+    VALUE_TAG_MUST_BE_AN_ARRAY,
+    INVALID_ENTITY,
+    /** parameter: navigationPropertyName */
+    INVALID_VALUE_FOR_NAVIGATION_PROPERTY,
+    DUPLICATE_PROPERTY,
+    DUPLICATE_JSON_PROPERTY,
+    /** parameters: primitiveTypeName, propertyName */
+    UNKNOWN_PRIMITIVE_TYPE,
+    /** parameter: navigationPropertyName */
+    NAVIGATION_PROPERTY_NOT_FOUND,
+    /** parameter: annotationName */
+    INVALID_ANNOTATION_TYPE,
+    /** parameter: annotationName */
+    INVALID_NULL_ANNOTATION,
+    /** parameter: binding link */
+    INVALID_ENTITY_BINDING_LINK,
+    /** parameter: action parameter name */
+    INVALID_ACTION_PARAMETER_TYPE,
+    /** parameter: parameterName */
+    INVALID_NULL_PARAMETER;
 
     @Override
     public String getKey() {
@@ -58,8 +71,8 @@ public class DeserializerException extends ODataTranslatedException {
   /**
    * Creates deserializer exception.
    * @param developmentMessage message text as fallback and for debugging purposes
-   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
-   * @param parameters         parameters for the exception text
+   * @param messageKey one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters parameters for the exception text
    */
   public DeserializerException(final String developmentMessage,
       final MessageKey messageKey, final String... parameters) {
@@ -69,9 +82,9 @@ public class DeserializerException extends ODataTranslatedException {
   /**
    * Creates deserializer exception.
    * @param developmentMessage message text as fallback and for debugging purposes
-   * @param cause              the cause of this exception
-   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
-   * @param parameters         parameters for the exception text
+   * @param cause the cause of this exception
+   * @param messageKey one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters parameters for the exception text
    */
   public DeserializerException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {

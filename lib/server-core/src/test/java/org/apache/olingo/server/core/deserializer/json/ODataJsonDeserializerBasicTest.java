@@ -58,7 +58,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
     List<URI> values = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
-                                   .getEntityReferences();
+        .getEntityReferences();
     assertEquals(2, values.size());
     assertEquals("Orders(10643)", values.get(0).toASCIIString());
     assertEquals("Orders(10759)", values.get(1).toASCIIString());

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,17 @@
  * under the License.
  */
 package org.apache.olingo.fit.v4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,26 +45,15 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientValuable;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
@@ -116,7 +116,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
         newEntity(new FullQualifiedName("ODataDemo.Advertisement"));
     changes.getProperties().add(client.getObjectFactory().newPrimitiveProperty("AirDate",
         getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
+        setType(EdmPrimitiveTypeKind.DateTimeOffset).setValue(Calendar.getInstance()).build()));
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(createdLocation, UpdateType.PATCH, changes);

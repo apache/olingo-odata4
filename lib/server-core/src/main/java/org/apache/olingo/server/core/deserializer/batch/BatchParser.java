@@ -33,16 +33,17 @@ public class BatchParser {
 
   private BatchOptions options;
 
-  public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
-      throws BatchDeserializerException {
+  public List<BatchRequestPart> parseBatchRequest(final InputStream content, final String boundary,
+      final BatchOptions options)
+          throws BatchDeserializerException {
     this.options = options;
 
-    BatchRequestTransformator transformator = new BatchRequestTransformator(options.getRawBaseUri(), 
-                                                                            options.getRawServiceResolutionUri());
+    BatchRequestTransformator transformator = new BatchRequestTransformator(options.getRawBaseUri(),
+        options.getRawServiceResolutionUri());
     return parse(content, boundary, transformator);
   }
 
-  private List<BatchRequestPart> parse(final InputStream in, String boundary,
+  private List<BatchRequestPart> parse(final InputStream in, final String boundary,
       final BatchRequestTransformator transformator)
       throws BatchDeserializerException {
     try {

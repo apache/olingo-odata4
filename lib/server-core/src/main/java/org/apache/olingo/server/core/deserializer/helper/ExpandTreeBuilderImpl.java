@@ -17,51 +17,51 @@
  * under the License.
  */
 package org.apache.olingo.server.core.deserializer.helper;
- 
+
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
- 
+
 public class ExpandTreeBuilderImpl extends ExpandTreeBuilder {
-   
+
   private ExpandOptionImpl expandOption = null;
-   
+
   @Override
-  public ExpandTreeBuilder expand(EdmNavigationProperty edmNavigationProperty) {
+  public ExpandTreeBuilder expand(final EdmNavigationProperty edmNavigationProperty) {
     ExpandItemImpl expandItem = buildExpandItem(edmNavigationProperty);
- 
-    if(expandOption == null) {
+
+    if (expandOption == null) {
       expandOption = new ExpandOptionImpl();
     }
     expandOption.addExpandItem(expandItem);
-     
+
     return new ExpandTreeBuilderInner(expandItem);
   }
- 
+
   public ExpandOption build() {
     return expandOption;
   }
-   
+
   private class ExpandTreeBuilderInner extends ExpandTreeBuilder {
     private ExpandItemImpl parent;
-     
-    public ExpandTreeBuilderInner(ExpandItemImpl expandItem) {
+
+    public ExpandTreeBuilderInner(final ExpandItemImpl expandItem) {
       parent = expandItem;
     }
-     
+
     @Override
-    public ExpandTreeBuilder expand(EdmNavigationProperty edmNavigationProperty) {
-      if(parent.getExpandOption() == null) {
+    public ExpandTreeBuilder expand(final EdmNavigationProperty edmNavigationProperty) {
+      if (parent.getExpandOption() == null) {
         final ExpandOptionImpl expandOption = new ExpandOptionImpl();
         parent.setSystemQueryOption(expandOption);
       }
-       
+
       final ExpandItemImpl expandItem = buildExpandItem(edmNavigationProperty);
-      ((ExpandOptionImpl)parent.getExpandOption()).addExpandItem(expandItem);
-       
+      ((ExpandOptionImpl) parent.getExpandOption()).addExpandItem(expandItem);
+
       return new ExpandTreeBuilderInner(expandItem);
     }
-     
+
   }
 }

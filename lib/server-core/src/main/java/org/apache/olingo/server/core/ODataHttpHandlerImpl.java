@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,11 +33,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ClientServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
@@ -63,7 +63,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataResponse odResponse;
     try {
       odRequest = new ODataRequest();
-          fillODataRequest(odRequest, request, split);
+      fillODataRequest(odRequest, request, split);
       odResponse = handler.process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
@@ -74,11 +74,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   @Override
-  public void setSplit(int split) {
+  public void setSplit(final int split) {
     this.split = split;
   }
 
-  private ODataResponse handleException(ODataRequest odRequest, Exception e) {
+  private ODataResponse handleException(final ODataRequest odRequest, final Exception e) {
     ODataResponse resp = new ODataResponse();
     ClientServerError serverError;
     if (e instanceof ODataHandlerException) {
@@ -119,8 +119,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private static void closeStream(Closeable closeable) {
-    if(closeable != null) {
+  private static void closeStream(final Closeable closeable) {
+    if (closeable != null) {
       try {
         closeable.close();
       } catch (IOException e) {
@@ -129,8 +129,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest fillODataRequest(ODataRequest odRequest, final HttpServletRequest httpRequest, final int split)
-      throws ODataTranslatedException {
+  private ODataRequest fillODataRequest(final ODataRequest odRequest, final HttpServletRequest httpRequest,
+      final int split)
+          throws ODataTranslatedException {
     try {
       odRequest.setBody(httpRequest.getInputStream());
       extractHeaders(odRequest, httpRequest);

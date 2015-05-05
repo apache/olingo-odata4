@@ -21,5 +21,5 @@ package org.apache.olingo.server.core.uri.queryoption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 
 public class CustomQueryOptionImpl extends QueryOptionImpl implements CustomQueryOption {
-//No additional methods needed for now.
+  // No additional methods needed for now.
 }

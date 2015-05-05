@@ -85,18 +85,18 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     ComplexCollectionProcessor, ActionComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
-      ServiceMetadata serviceMetadata) {
+      final ServiceMetadata serviceMetadata) {
     super(dataProvider, serviceMetadata);
   }
 
   @Override
-  public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitive(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.PRIMITIVE);
   }
 
   @Override
-  public void updatePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void updatePrimitive(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Not supported yet.",
@@ -104,7 +104,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void deletePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+  public void deletePrimitive(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     deleteProperty(response, uriInfo);
   }
@@ -141,7 +141,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitiveCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
   }
@@ -155,8 +155,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void deletePrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+  public void
+      deletePrimitiveCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
+          throws ODataApplicationException {
     deleteProperty(response, uriInfo);
   }
 
@@ -193,7 +194,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.COMPLEX);
   }
@@ -207,8 +208,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionComplex(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestFormat, ContentType responseFormat)
+  public void processActionComplex(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     EdmAction action = checkBoundAndExtractAction(uriInfo);
     DeserializerResult deserializerResult =
@@ -245,7 +246,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readComplexCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
   }
@@ -259,8 +260,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionComplexCollection(ODataRequest request, ODataResponse response,
-      UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat)
+  public void processActionComplexCollection(final ODataRequest request, final ODataResponse response,
+      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, DeserializerException, SerializerException {
     EdmAction action = checkBoundAndExtractAction(uriInfo);
     DeserializerResult deserializerResult =
@@ -291,7 +292,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void deleteComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+  public void deleteComplexCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     deleteProperty(response, uriInfo);
   }
@@ -345,7 +346,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .build()).getContent());
           break;
         case COMPLEX:
-          response.setContent(serializer.complex(this.serviceMetadata, (EdmComplexType) type, property,
+          response.setContent(serializer.complex(serviceMetadata, (EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()).getContent());
@@ -361,7 +362,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
                   .build()).getContent());
           break;
         case COLLECTION_COMPLEX:
-          response.setContent(serializer.complexCollection(this.serviceMetadata, (EdmComplexType) type, property,
+          response.setContent(serializer.complexCollection(serviceMetadata, (EdmComplexType) type, property,
               ComplexSerializerOptions.with().contextURL(contextURL)
                   .expand(expand).select(select)
                   .build()).getContent());
@@ -454,7 +455,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+  public void readPrimitiveValue(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);

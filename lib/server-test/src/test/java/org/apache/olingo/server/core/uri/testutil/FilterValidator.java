@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,11 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.testutil;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -42,11 +47,6 @@ import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class FilterValidator implements TestValidator {
   private Edm edm;
@@ -112,7 +112,7 @@ public class FilterValidator implements TestValidator {
   public FilterValidator runOrderByOnETTwoKeyNav(final String orderBy) throws UriParserException {
     return runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
-  
+
   public FilterValidator runOrderByOnETMixEnumDefCollComp(final String orderBy) throws UriParserException {
     return runUriOrderBy("ESMixEnumDefCollComp", "$orderby=" + orderBy.trim());
   }
@@ -124,7 +124,7 @@ public class FilterValidator implements TestValidator {
   public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException {
     return runUri("ESTwoKeyNav", "$filter=" + filter.trim());
   }
-  
+
   public FilterValidator runOnETMixEnumDefCollComp(final String filter) throws UriParserException {
     return runUri("ESMixEnumDefCollComp", "$filter=" + filter.trim());
   }
@@ -246,9 +246,9 @@ public class FilterValidator implements TestValidator {
     MemberImpl member = (MemberImpl) curExpression;
 
     return new ResourceValidator()
-        .setEdm(edm)
-        .setUriInfoImplPath((UriInfoImpl) member.getResourcePath())
-        .setUpValidator(this);
+    .setEdm(edm)
+    .setUriInfoImplPath((UriInfoImpl) member.getResourcePath())
+    .setUpValidator(this);
 
   }
 

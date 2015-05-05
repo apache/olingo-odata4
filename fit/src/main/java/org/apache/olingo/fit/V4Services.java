@@ -176,7 +176,6 @@ public class V4Services extends AbstractServices {
 
   @PUT
   @Path("/People(1)/Parent")
-  @SuppressWarnings("unused")
   public Response changeSingleValuedNavigationPropertyReference(
       @Context final UriInfo uriInfo,
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
@@ -187,7 +186,7 @@ public class V4Services extends AbstractServices {
       final Accept contentTypeValue = Accept.parse(contentType);
       assert contentTypeValue == Accept.JSON;
 
-      ResWrap<Entity> entity = jsonDeserializer.toEntity(IOUtils.toInputStream(content, Constants.ENCODING));
+      jsonDeserializer.toEntity(IOUtils.toInputStream(content, Constants.ENCODING));
 
       return Response.noContent().type(MediaType.APPLICATION_JSON).build();
     } catch (Exception e) {
@@ -1074,7 +1073,7 @@ public class V4Services extends AbstractServices {
   public Response getContainedEntitySet(
       @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
       @PathParam("entityId") final String entityId,
-      @PathParam("containedEntitySetName") String containedEntitySetName,
+      @PathParam("containedEntitySetName") final String containedEntitySetName,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format) {
 
     String tempContainedESName = containedEntitySetName;

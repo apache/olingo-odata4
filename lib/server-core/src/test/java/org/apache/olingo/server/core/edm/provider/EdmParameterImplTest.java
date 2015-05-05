@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -33,12 +39,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmParameterImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class EdmParameterImplTest {
 
@@ -94,7 +94,7 @@ public class EdmParameterImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final FullQualifiedName typeName = new FullQualifiedName("ns", "definition");
     CsdlTypeDefinition typeProvider =
-            new CsdlTypeDefinition().setUnderlyingType(new FullQualifiedName("Edm", "String"));
+        new CsdlTypeDefinition().setUnderlyingType(new FullQualifiedName("Edm", "String"));
     when(provider.getTypeDefinition(typeName)).thenReturn(typeProvider);
     CsdlParameter parameterProvider = new CsdlParameter();
     parameterProvider.setType(typeName);

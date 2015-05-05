@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.commons.api;
 
-import org.apache.olingo.commons.api.format.ContentType;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
+
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * Constant values related to the OData protocol.
@@ -36,22 +36,22 @@ public interface Constants {
   public final static Integer DEFAULT_PRECISION = 40;
 
   public final static Integer DEFAULT_SCALE = 25;
-  
+
   // Common Namespaces
   public final static String NS_BASE = "http://docs.oasis-open.org/odata/ns/";
-  
+
   public final static String NS_DATASERVICES = "http://docs.oasis-open.org/odata/ns/data";
-  
+
   public final static String NS_METADATA = "http://docs.oasis-open.org/odata/ns/metadata";
-  
+
   public final static String NS_SCHEME = "http://docs.oasis-open.org/odata/ns/scheme";
-  
+
   public final static String NS_NAVIGATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/related/";
-  
+
   public final static String NS_ASSOCIATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/relatedlinks/";
-  
+
   public final static String NS_MEDIA_EDIT_LINK_REL = "http://docs.oasis-open.org/odata/ns/edit-media/";
-  
+
   public final static String NS_DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
 
   // XML namespaces and prefixes
@@ -72,7 +72,6 @@ public interface Constants {
   public static final String PREFIX_GML = "gml";
 
   public final static String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
-
 
   // Link rel(s)
   public static final String EDIT_LINK_REL = "edit";

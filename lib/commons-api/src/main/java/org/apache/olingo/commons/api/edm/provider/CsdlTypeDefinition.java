@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -45,6 +45,7 @@ public class CsdlTypeDefinition extends CsdlAbstractEdmItem implements CsdlNamed
 
   private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -55,7 +56,7 @@ public class CsdlTypeDefinition extends CsdlAbstractEdmItem implements CsdlNamed
   }
 
   public String getUnderlyingType() {
-    if(underlyingType != null){
+    if (underlyingType != null) {
       return underlyingType.getFullQualifiedNameAsString();
     }
     return null;
@@ -65,7 +66,7 @@ public class CsdlTypeDefinition extends CsdlAbstractEdmItem implements CsdlNamed
     this.underlyingType = new FullQualifiedName(underlyingType);
     return this;
   }
-  
+
   public CsdlTypeDefinition setUnderlyingType(final FullQualifiedName underlyingType) {
     this.underlyingType = underlyingType;
     return this;

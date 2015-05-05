@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,12 +25,12 @@ import java.io.UnsupportedEncodingException;
  * percent-encoded UTF-8 representation according to
  * <a href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a>
  * (with consideration of its predecessor RFC 2396).
- * 
+ *
  */
 public class Encoder {
 
-  //TODO: Should we really copy this class?
-  
+  // TODO: Should we really copy this class?
+
   /**
    * Encodes a Java String (in its internal UTF-16 encoding) into its
    * percent-encoded UTF-8 representation according to

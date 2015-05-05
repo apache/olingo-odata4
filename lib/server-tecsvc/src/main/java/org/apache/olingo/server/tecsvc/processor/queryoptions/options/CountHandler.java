@@ -23,7 +23,7 @@ import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
 public class CountHandler {
   public static void applyCountSystemQueryOption(final CountOption countOption, final EntityCollection entitySet) {
-    if(countOption != null && countOption.getValue()) {
+    if (countOption != null && countOption.getValue()) {
       entitySet.setCount(entitySet.getEntities().size());
     }
   }

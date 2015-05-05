@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,7 +32,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-//CHECKSTYLE:OFF (Maven checkstyle)
+// CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -62,7 +62,7 @@ import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.service
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
 import org.apache.olingo.fit.proxy.v4.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
-//CHECKSTYLE:ON (Maven checkstyle)
+// CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
@@ -110,7 +110,7 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
      * See OData Spec 11.4.6.3
      * Alternatively, a relationship MAY be updated as part of an update to the source entity by including
      * the required binding information for the new target entity.
-     * 
+     *
      * => use PATCH instead of PUT
      */
     final Person person1 = container.getPeople().getByKey(1).load();
@@ -515,10 +515,10 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
     // Complex/Entity collection (available filter, select, expand, orderBy, skip and top)
     invoker1.operations().discount(10). // discount is an operation of ProductCollecton
-        filter("Name eq XXXX").
-        select("Name", "ProductDetail").
-        expand("ProductDetail").
-        orderBy("Name").skip(3).top(5).execute();
+    filter("Name eq XXXX").
+    select("Name", "ProductDetail").
+    expand("ProductDetail").
+    orderBy("Name").skip(3).top(5).execute();
 
     // Complex/Entity
     final PersonComposableInvoker invoker2 = container.operations().getPerson2("London");

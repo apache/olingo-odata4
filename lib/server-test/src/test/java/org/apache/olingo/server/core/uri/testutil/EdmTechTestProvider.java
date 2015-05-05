@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,9 @@
  * under the License.
  */
 package org.apache.olingo.server.core.uri.testutil;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -27,9 +30,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Implement the EdmTechProvider and
@@ -57,11 +57,11 @@ public class EdmTechTestProvider extends EdmTechProvider {
   public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
     if (complexTypeName.equals(nameCTabc)) {
       return new CsdlComplexType()
-          .setName("CTabc")
-          .setProperties(Arrays.asList(
-              propertyAInt16, propertyBInt16, propertyCInt16,
-              propertyDInt16, propertyEInt16, propertyFInt16
-              ));
+      .setName("CTabc")
+      .setProperties(Arrays.asList(
+          propertyAInt16, propertyBInt16, propertyCInt16,
+          propertyDInt16, propertyEInt16, propertyFInt16
+          ));
 
     }
 
@@ -73,8 +73,8 @@ public class EdmTechTestProvider extends EdmTechProvider {
     if (nameContainer.equals(entityContainer)) {
       if (name.equals("ESabc")) {
         return new CsdlEntitySet()
-            .setName("ESabc")
-            .setType(nameETabc);
+        .setName("ESabc")
+        .setType(nameETabc);
       }
     }
 
@@ -87,10 +87,10 @@ public class EdmTechTestProvider extends EdmTechProvider {
 
     if (entityTypeName.equals(nameETabc)) {
       return new CsdlEntityType()
-          .setName("ETabc")
-          .setProperties(Arrays.asList(
-              propertyAInt16, propertyBInt16, propertyCInt16,
-              propertyDInt16, propertyEInt16, propertyFInt16))
+      .setName("ETabc")
+      .setProperties(Arrays.asList(
+          propertyAInt16, propertyBInt16, propertyCInt16,
+          propertyDInt16, propertyEInt16, propertyFInt16))
           .setKey(oneKeyPropertyInt16);
     }
 

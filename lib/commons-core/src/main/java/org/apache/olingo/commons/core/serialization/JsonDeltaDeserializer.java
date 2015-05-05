@@ -74,7 +74,8 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
         item.remove(Constants.JSON_CONTEXT);
 
         if (itemContextURL == null || itemContextURL.isEntity()) {
-          delta.getEntities().add(entityDeserializer.doDeserialize(item.traverse(parser.getCodec())).getPayload());
+          delta.getEntities().add(
+              entityDeserializer.doDeserialize(item.traverse(parser.getCodec())).getPayload());
         } else if (itemContextURL.isDeltaDeletedEntity()) {
           delta.getDeletedEntities().add(parser.getCodec().treeToValue(item, DeletedEntity.class));
         } else if (itemContextURL.isDeltaLink()) {

@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -60,9 +63,6 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Parser {
   int logLevel = 0;

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
+
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -25,10 +29,6 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
-
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
 
 class TestErrorLogger implements ANTLRErrorListener {
 
@@ -56,21 +56,21 @@ class TestErrorLogger implements ANTLRErrorListener {
   public void reportAmbiguity(final Parser recognizer, final DFA dfa, final int startIndex, final int stopIndex,
       final boolean exact,
       final BitSet ambigAlts, final ATNConfigSet configs) {
-    //Test
+    // Test
   }
 
   @Override
   public void reportAttemptingFullContext(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex,
       final BitSet conflictingAlts, final ATNConfigSet configs) {
-    //Test
+    // Test
   }
 
   @Override
   public void reportContextSensitivity(final Parser recognizer, final DFA dfa, final int startIndex,
       final int stopIndex, final int prediction,
       final ATNConfigSet configs) {
-  //Test
+    // Test
   }
 
   private void printStack(final Recognizer<?, ?> recognizer) {

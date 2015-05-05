@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,7 +35,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets title.
-   * 
+   *
    * @return title.
    */
   public String getTitle() {
@@ -44,7 +44,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets title.
-   * 
+   *
    * @param title title.
    */
   public void setTitle(final String title) {
@@ -53,7 +53,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets rel info.
-   * 
+   *
    * @return rel info.
    */
   public String getRel() {
@@ -62,7 +62,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets rel info.
-   * 
+   *
    * @param rel rel info.
    */
   public void setRel(final String rel) {
@@ -71,7 +71,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets href.
-   * 
+   *
    * @return href.
    */
   public String getHref() {
@@ -80,7 +80,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets href.
-   * 
+   *
    * @param href href.
    */
   public void setHref(final String href) {
@@ -89,7 +89,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets type.
-   * 
+   *
    * @return type.
    */
   public String getType() {
@@ -98,7 +98,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets type.
-   * 
+   *
    * @param type type.
    */
   public void setType(final String type) {
@@ -107,7 +107,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets Media ETag.
-   * 
+   *
    * @return media ETag
    */
   public String getMediaETag() {
@@ -116,7 +116,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets Media ETag.
-   * 
+   *
    * @param mediaETag media ETag
    */
   public void setMediaETag(final String mediaETag) {
@@ -125,7 +125,7 @@ public class Link extends Annotatable {
 
   /**
    * Gets in-line entity.
-   * 
+   *
    * @return in-line entity.
    */
   public Entity getInlineEntity() {
@@ -134,17 +134,16 @@ public class Link extends Annotatable {
 
   /**
    * Sets in-line entity.
-   * 
+   *
    * @param entity entity.
    */
   public void setInlineEntity(final Entity entity) {
     this.entity = entity;
   }
 
-
   /**
    * Gets in-line entity set.
-   * 
+   *
    * @return in-line entity set.
    */
   public EntityCollection getInlineEntitySet() {
@@ -153,7 +152,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets in-line entity set.
-   * 
+   *
    * @param entitySet entity set.
    */
   public void setInlineEntitySet(final EntityCollection entitySet) {
@@ -180,7 +179,7 @@ public class Link extends Annotatable {
    * Sets the binding link.
    * @param bindingLink
    */
-  public void setBindingLink(String bindingLink) {
+  public void setBindingLink(final String bindingLink) {
     this.bindingLink = bindingLink;
   }
 
@@ -188,7 +187,7 @@ public class Link extends Annotatable {
    * Sets the binding links. List MUST NOT be <tt>null</tt>.
    * @param bindingLinks
    */
-  public void setBindingLinks(List<String> bindingLinks) {
+  public void setBindingLinks(final List<String> bindingLinks) {
     this.bindingLinks = bindingLinks;
   }
 }

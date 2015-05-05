@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,51 +33,51 @@ public interface EntityProcessor extends Processor {
 
   /**
    * Reads entity data from persistence and puts serialized content and status into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException       if serialization failed
+   * @throws SerializerException if serialization failed
    */
   void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
       throws ODataApplicationException, SerializerException;
 
   /**
    * Creates an entity with send data in the persistence and puts content, status, and Location into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param requestFormat   content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
-   * @throws SerializerException       if serialization failed
+   * @throws DeserializerException if deserialization failed
+   * @throws SerializerException if serialization failed
    */
   void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                    ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
    * Update entity data with send data in the persistence and puts content, status, and Location into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
-   * @param requestFormat   content type of body sent with request
-   * @param responseFormat   requested content type after content negotiation
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException     if deserialization failed
-   * @throws SerializerException       if serialization failed
+   * @throws DeserializerException if deserialization failed
+   * @throws SerializerException if serialization failed
    */
   void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                    ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, DeserializerException, SerializerException;
 
   /**
    * Deletes entity from persistence and puts the status into the response.
-   * @param request  OData request object containing raw HTTP information
+   * @param request OData request object containing raw HTTP information
    * @param response OData response object for collecting response data
-   * @param uriInfo  information of a parsed OData URI
+   * @param uriInfo information of a parsed OData URI
    * @throws ODataApplicationException if the service implementation encounters a failure
    */
   void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException;

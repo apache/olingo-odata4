@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.M
 
 public class BatchTransformatorCommon {
 
-  public static void validateContentType(final Header headers, final Pattern pattern) 
+  public static void validateContentType(final Header headers, final Pattern pattern)
       throws BatchDeserializerException {
     List<String> contentTypes = headers.getHeaders(HttpHeader.CONTENT_TYPE);
 

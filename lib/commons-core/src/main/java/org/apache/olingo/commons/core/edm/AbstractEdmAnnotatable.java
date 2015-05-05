@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,16 +18,16 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
 
@@ -60,7 +60,7 @@ public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
         for (CsdlAnnotation annotation : annotatable.getAnnotations()) {
           annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
         }
-        
+
         annotations = Collections.unmodifiableList(annotationsLocal);
       }
     }

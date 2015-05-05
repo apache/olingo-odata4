@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,10 +23,10 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -42,8 +42,8 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-                .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
-                .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
+            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -60,8 +60,8 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-                .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
-                .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -78,9 +78,9 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
-                .appendNavigationSegment("NavPropertyETAllPrimOne")
-                .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETAllPrimOne")
+            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -97,9 +97,9 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntitySet> response =
         client.getRetrieveRequestFactory().getEntitySetRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
-                .appendNavigationSegment("NavPropertyETAllPrimOne")
-                .appendNavigationSegment("NavPropertyETTwoPrimMany").build())
+            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETAllPrimOne")
+            .appendNavigationSegment("NavPropertyETTwoPrimMany").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -119,10 +119,10 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientProperty> response =
         client.getRetrieveRequestFactory().getPropertyRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-                .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
-                .appendNavigationSegment("NavPropertyETKeyNavOne")
-                .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
-                .appendPropertySegment("PropertyCompNav").appendPropertySegment("PropertyInt16").build())
+            .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
+            .appendNavigationSegment("NavPropertyETKeyNavOne")
+            .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
+            .appendPropertySegment("PropertyCompNav").appendPropertySegment("PropertyInt16").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 

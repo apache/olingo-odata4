@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,8 +20,8 @@ package org.apache.olingo.commons.api.http;
 
 /**
  * HTTP header constants
- * 
- * 
+ *
+ *
  */
 public interface HttpHeader {
 
@@ -169,5 +169,5 @@ public interface HttpHeader {
    * {@link <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part1-protocol/odata-v4.0-errata01-os-part1-protocol-complete.html#_Toc399426728"> OData Version 4.0 Part 1: Protocol Plus Errata 01</a>}
    */
   public static final String PREFER = "Prefer";
-  //CHECKSTYLE:ON
+  // CHECKSTYLE:ON
 }

@@ -1,22 +1,25 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.apache.olingo.fit.rest;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.cxf.rs.security.oauth2.common.AccessTokenRegistration;
 import org.apache.cxf.rs.security.oauth2.common.Client;
@@ -28,9 +31,6 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistrati
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
-
-import java.util.Collections;
-import java.util.List;
 
 public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
@@ -57,8 +57,8 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   @Override
   public ServerAccessToken getPreauthorizedToken(
-          final Client client, final List<String> list, final UserSubject us, final String string)
-          throws OAuthServiceException {
+      final Client client, final List<String> list, final UserSubject us, final String string)
+      throws OAuthServiceException {
 
     return null;
   }
@@ -70,24 +70,24 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   @Override
   public ServerAuthorizationCodeGrant createCodeGrant(final AuthorizationCodeRegistration acr)
-          throws OAuthServiceException {
+      throws OAuthServiceException {
 
     grant = new ServerAuthorizationCodeGrant(client, 3600L);
     grant.setRedirectUri(acr.getRedirectUri());
     grant.setSubject(acr.getSubject());
     final List<String> scope = acr.getApprovedScope().isEmpty()
-            ? acr.getRequestedScope()
-            : acr.getApprovedScope();
-    grant.setApprovedScopes(scope);
+        ? acr.getRequestedScope()
+        : acr.getApprovedScope();
+        grant.setApprovedScopes(scope);
 
-    return grant;
+        return grant;
   }
 
   @Override
   public ServerAuthorizationCodeGrant removeCodeGrant(final String code) throws OAuthServiceException {
     return grant == null || !grant.getCode().equals(code)
-            ? null
-            : grant;
+        ? null
+        : grant;
   }
 
   @Override
@@ -95,13 +95,13 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
     token = new BearerAccessToken(atr.getClient(), 3600L);
 
     final List<String> scope = atr.getApprovedScope().isEmpty()
-            ? atr.getRequestedScope()
-            : atr.getApprovedScope();
-    token.setScopes(convertScopeToPermissions(atr.getClient(), scope));
-    token.setSubject(atr.getSubject());
-    token.setGrantType(atr.getGrantType());
+        ? atr.getRequestedScope()
+        : atr.getApprovedScope();
+        token.setScopes(convertScopeToPermissions(atr.getClient(), scope));
+        token.setSubject(atr.getSubject());
+        token.setGrantType(atr.getGrantType());
 
-    return token;
+        return token;
   }
 
   @Override
@@ -111,8 +111,8 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   @Override
   public ServerAccessToken refreshAccessToken(
-          final Client client, final String string, final List<String> list)
-          throws OAuthServiceException {
+      final Client client, final String string, final List<String> list)
+      throws OAuthServiceException {
 
     throw new UnsupportedOperationException("Not supported yet.");
   }

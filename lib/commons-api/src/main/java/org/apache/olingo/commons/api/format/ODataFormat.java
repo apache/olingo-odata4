@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.apache.olingo.commons.api.format;
-
 
 /**
  * Available formats to be used in various contexts.
@@ -74,7 +73,7 @@ public enum ODataFormat {
 
   /**
    * Gets OData format from a content type.
-   * 
+   *
    * @param contentType content type
    * @return OData format.
    */
@@ -91,11 +90,11 @@ public enum ODataFormat {
     } else if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       String jsonVariant = contentType.getParameters().get("odata.metadata");
       if (jsonVariant != null) {
-        if("none".equals(jsonVariant)){
+        if ("none".equals(jsonVariant)) {
           return JSON_NO_METADATA;
-        }else if("minimal".equals(jsonVariant)){
+        } else if ("minimal".equals(jsonVariant)) {
           return ODataFormat.JSON;
-        }else if("full".equals(jsonVariant)){
+        } else if ("full".equals(jsonVariant)) {
           return ODataFormat.JSON_FULL_METADATA;
         }
       }

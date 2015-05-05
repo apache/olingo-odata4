@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -47,13 +54,6 @@ import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class UriInfoImpl implements UriInfo {
 
@@ -137,7 +137,7 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public String getValueForAlias(String alias) {
+  public String getValueForAlias(final String alias) {
     return aliasToValue.get(alias);
   }
 
@@ -240,11 +240,12 @@ public class UriInfoImpl implements UriInfo {
     }
   }
 
-  /** Adds system query option.
+  /**
+   * Adds system query option.
    * @param systemOption the option to be added
    * @return this object for method chaining
    * @throws ODataRuntimeException if an unsupported option is provided
-   *                               or an option of this kind has been added before
+   * or an option of this kind has been added before
    */
   public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
     final SystemQueryOptionKind kind = systemOption.getKind();

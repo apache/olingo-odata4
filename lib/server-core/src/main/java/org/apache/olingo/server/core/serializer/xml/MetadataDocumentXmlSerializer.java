@@ -228,7 +228,6 @@ public class MetadataDocumentXmlSerializer {
       // EntitySets
       appendEntitySets(writer, container.getEntitySets());
 
-
       // ActionImports
       appendActionImports(writer, container.getActionImports());
 

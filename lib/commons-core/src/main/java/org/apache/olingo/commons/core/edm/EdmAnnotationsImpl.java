@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -55,7 +55,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
     if (structured != null) {
       _target = path == null
           ? structured
-          : structured.getStructuralProperty(path);
+              : structured.getStructuralProperty(path);
       if (_target == null) {
         _target = structured.getNavigationProperty(path);
       }
@@ -68,7 +68,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
     if (enumType != null) {
       _target = path == null
           ? enumType
-          : enumType.getMember(path);
+              : enumType.getMember(path);
     }
     return _target;
   }
@@ -81,13 +81,13 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       final String path = splitted.length > 1 ? splitted[1] : null;
 
       final EdmEntityContainer baseEntityContainer = schema.getEntityContainer();
-      
-      EdmAnnotationsTarget localTarget = baseEntityContainer == null ? null 
-                                                                     : baseEntityContainer.getActionImport(path);
+
+      EdmAnnotationsTarget localTarget = baseEntityContainer == null ? null
+          : baseEntityContainer.getActionImport(path);
       if (localTarget == null) {
         localTarget = getTarget(edm.getComplexType(base), path);
         if (localTarget == null) {
-          if(baseEntityContainer != null && baseEntityContainer.getFullQualifiedName().equals(base)){
+          if (baseEntityContainer != null && baseEntityContainer.getFullQualifiedName().equals(base)) {
             localTarget = baseEntityContainer;
           }
           if (localTarget == null) {
@@ -115,7 +115,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       }
       target = localTarget;
     }
-    
+
     return target;
   }
 
@@ -142,7 +142,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       for (CsdlAnnotation annotation : annotationGroup.getAnnotations()) {
         annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
       }
-      
+
       annotations = Collections.unmodifiableList(annotationsLocal);
     }
     return annotations;

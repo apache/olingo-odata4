@@ -48,15 +48,14 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operati
 public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> {
 
   final private Entity entity;
-  final private EdmBindingTarget bindingTarget;
 
-  public ExpressionVisitorImpl(Entity entity, EdmBindingTarget bindingTarget) {
+  public ExpressionVisitorImpl(final Entity entity, final EdmBindingTarget bindingTarget) {
     this.entity = entity;
-    this.bindingTarget = bindingTarget;
   }
 
   @Override
-  public VisitorOperand visitBinaryOperator(BinaryOperatorKind operator, VisitorOperand left, VisitorOperand right)
+  public VisitorOperand visitBinaryOperator(final BinaryOperatorKind operator, final VisitorOperand left,
+      final VisitorOperand right)
       throws ExpressionVisitException, ODataApplicationException {
 
     final BinaryOperator binaryOperator = new BinaryOperator(left, right);
@@ -90,7 +89,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitUnaryOperator(UnaryOperatorKind operator, VisitorOperand operand)
+  public VisitorOperand visitUnaryOperator(final UnaryOperatorKind operator, final VisitorOperand operand)
       throws ExpressionVisitException, ODataApplicationException {
 
     final UnaryOperator unaryOperator = new UnaryOperator(operand);
@@ -107,7 +106,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitMethodCall(MethodKind methodCall, List<VisitorOperand> parameters)
+  public VisitorOperand visitMethodCall(final MethodKind methodCall, final List<VisitorOperand> parameters)
       throws ExpressionVisitException, ODataApplicationException {
 
     final MethodCallOperator methodCallOperation = new MethodCallOperator(parameters);
@@ -160,20 +159,21 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitLambdaExpression(String lambdaFunction, String lambdaVariable, Expression expression)
+  public VisitorOperand visitLambdaExpression(final String lambdaFunction, final String lambdaVariable,
+      final Expression expression)
       throws ExpressionVisitException, ODataApplicationException {
 
     return throwNotImplemented();
   }
 
   @Override
-  public VisitorOperand visitLiteral(String literal) throws ExpressionVisitException, ODataApplicationException {
+  public VisitorOperand visitLiteral(final String literal) throws ExpressionVisitException, ODataApplicationException {
 
     return new UntypedOperand(literal);
   }
 
   @Override
-  public VisitorOperand visitMember(UriInfoResource member) throws ExpressionVisitException,
+  public VisitorOperand visitMember(final UriInfoResource member) throws ExpressionVisitException,
       ODataApplicationException {
 
     final List<UriResource> uriResourceParts = member.getUriResourceParts();
@@ -203,23 +203,25 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitAlias(String aliasName) throws ExpressionVisitException, ODataApplicationException {
+  public VisitorOperand visitAlias(final String aliasName) throws ExpressionVisitException, ODataApplicationException {
     return throwNotImplemented();
   }
 
   @Override
-  public VisitorOperand visitTypeLiteral(EdmType type) throws ExpressionVisitException, ODataApplicationException {
-    return throwNotImplemented();
-  }
-
-  @Override
-  public VisitorOperand visitLambdaReference(String variableName) throws ExpressionVisitException,
+  public VisitorOperand visitTypeLiteral(final EdmType type) throws ExpressionVisitException, 
       ODataApplicationException {
     return throwNotImplemented();
   }
 
   @Override
-  public VisitorOperand visitEnum(EdmEnumType type, List<String> enumValues) throws ExpressionVisitException,
+  public VisitorOperand visitLambdaReference(final String variableName) throws ExpressionVisitException,
+      ODataApplicationException {
+    return throwNotImplemented();
+  }
+
+  @Override
+  public VisitorOperand visitEnum(final EdmEnumType type, final List<String> enumValues)
+      throws ExpressionVisitException,
       ODataApplicationException {
     return throwNotImplemented();
   }

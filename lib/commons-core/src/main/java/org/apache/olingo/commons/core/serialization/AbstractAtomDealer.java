@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -90,7 +90,7 @@ abstract class AbstractAtomDealer {
     writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
     writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
     writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
-    writer.writeNamespace(Constants.PREFIX_DATASERVICES,        Constants.NS_DATASERVICES);
+    writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);
     writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
     writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
   }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,11 +29,11 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateR
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientValuable;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -292,9 +292,9 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
             .buildInt16((short) 1)));
     entity.addLink(objectFactory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .build()));
+        .appendEntitySetSegment("ESTwoPrim")
+        .appendKeySegment(32766)
+        .build()));
 
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
     ODataEntityCreateResponse<ClientEntity> createResponse =
@@ -302,9 +302,9 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     final URI receiveURI =
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESAllPrim")
-            .filter(filterString)
-            .build();
+        .appendEntitySetSegment("ESAllPrim")
+        .filter(filterString)
+        .build();
 
     ODataEntitySetRequest<ClientEntitySet> filterRequest =
         client.getRetrieveRequestFactory().getEntitySetRequest(receiveURI);
@@ -475,9 +475,8 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   @SuppressWarnings("unused")
   public void testSubstringDouble() {
     try {
-      ODataRetrieveResponse<ClientEntitySet> result =
-          sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First')"
-              + "add 1, 2.0 * 4) eq ('Resource')");
+      sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First')"
+          + "add 1, 2.0 * 4) eq ('Resource')");
     } catch (ODataClientErrorException e) {
       assertEquals(400, e.getStatusLine().getStatusCode());
     }
@@ -941,32 +940,32 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     newEntity.getProperties().add(
         factory.newComplexProperty("PropertyCompAllPrim",
             factory.newComplexValue("CTAllPrim")
-                .add(factory.newPrimitiveProperty(
-                    "PropertyString",
-                    factory.newPrimitiveValueBuilder().buildString("Test 3")))));
+            .add(factory.newPrimitiveProperty(
+                "PropertyString",
+                factory.newPrimitiveValueBuilder().buildString("Test 3")))));
 
     newEntity.getProperties().add(
         factory.newComplexProperty("PropertyCompTwoPrim",
             factory.newComplexValue("CTTwoPrim")
-                .add(factory.newPrimitiveProperty(
-                    "PropertyInt16",
-                    factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(factory.newPrimitiveProperty(
+                "PropertyInt16",
+                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
                 .add(factory.newPrimitiveProperty(
                     "PropertyString",
                     factory.newPrimitiveValueBuilder().buildString("Test2")))));
 
     newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(ES_TWO_KEY_NAV)
-            .appendKeySegment(new LinkedHashMap<String, Object>() {
-              private static final long serialVersionUID = 1L;
+        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+        .appendKeySegment(new LinkedHashMap<String, Object>() {
+          private static final long serialVersionUID = 1L;
 
-              {
-                put("PropertyInt16", 1);
-                put("PropertyString", "1");
-              }
-            })
-            .build()));
+          {
+            put("PropertyInt16", 1);
+            put("PropertyString", "1");
+          }
+        })
+        .build()));
 
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build();
     ODataEntityCreateRequest<ClientEntity> request =
@@ -991,18 +990,19 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     fail("ESServerSidePaging", "filter=contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
   }
 
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(String entitySet, String filterString) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString) {
     return sendRequest(entitySet, filterString, null);
   }
 
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(String entitySet, String filterString, String cookie) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString,
+      final String cookie) {
     final ODataClient client = getClient();
 
     final URI uri =
         client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment(entitySet)
-            .filter(filterString)
-            .build();
+        .appendEntitySetSegment(entitySet)
+        .filter(filterString)
+        .build();
 
     ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
     if (cookie != null) {
@@ -1012,7 +1012,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     return request.execute();
   }
 
-  private void fail(String entitySet, String filterString, HttpStatusCode errorCode) {
+  private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
     try {
       sendRequest(entitySet, filterString);
       Assert.fail();

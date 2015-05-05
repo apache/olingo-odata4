@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,8 +36,8 @@ import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -209,54 +209,54 @@ class JsonGeoValueDeserializer {
 
     final Iterator<JsonNode> cooItor = node.has(Constants.JSON_COORDINATES)
         ? node.get(Constants.JSON_COORDINATES).elements()
-        : Collections.<JsonNode> emptyList().iterator();
+            : Collections.<JsonNode> emptyList().iterator();
 
-    SRID srid = null;
-    if (node.has(Constants.JSON_CRS)) {
-      srid = SRID.valueOf(
-          node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
-    }
+        SRID srid = null;
+        if (node.has(Constants.JSON_CRS)) {
+          srid = SRID.valueOf(
+              node.get(Constants.JSON_CRS).get(Constants.PROPERTIES).get(Constants.JSON_NAME).asText().split(":")[1]);
+        }
 
-    Geospatial value = null;
-    switch (actualType) {
-    case GeographyPoint:
-    case GeometryPoint:
-      value = point(cooItor, actualType, srid);
-      break;
+        Geospatial value = null;
+        switch (actualType) {
+        case GeographyPoint:
+        case GeometryPoint:
+          value = point(cooItor, actualType, srid);
+          break;
 
-    case GeographyMultiPoint:
-    case GeometryMultiPoint:
-      value = multipoint(cooItor, actualType, srid);
-      break;
+        case GeographyMultiPoint:
+        case GeometryMultiPoint:
+          value = multipoint(cooItor, actualType, srid);
+          break;
 
-    case GeographyLineString:
-    case GeometryLineString:
-      value = lineString(cooItor, actualType, srid);
-      break;
+        case GeographyLineString:
+        case GeometryLineString:
+          value = lineString(cooItor, actualType, srid);
+          break;
 
-    case GeographyMultiLineString:
-    case GeometryMultiLineString:
-      value = multiLineString(cooItor, actualType, srid);
-      break;
+        case GeographyMultiLineString:
+        case GeometryMultiLineString:
+          value = multiLineString(cooItor, actualType, srid);
+          break;
 
-    case GeographyPolygon:
-    case GeometryPolygon:
-      value = polygon(cooItor, actualType, srid);
-      break;
+        case GeographyPolygon:
+        case GeometryPolygon:
+          value = polygon(cooItor, actualType, srid);
+          break;
 
-    case GeographyMultiPolygon:
-    case GeometryMultiPolygon:
-      value = multiPolygon(cooItor, actualType, srid);
-      break;
+        case GeographyMultiPolygon:
+        case GeometryMultiPolygon:
+          value = multiPolygon(cooItor, actualType, srid);
+          break;
 
-    case GeographyCollection:
-    case GeometryCollection:
-      value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, srid);
-      break;
+        case GeographyCollection:
+        case GeometryCollection:
+          value = collection(node.get(Constants.JSON_GEOMETRIES).elements(), actualType, srid);
+          break;
 
-    default:
-    }
+        default:
+        }
 
-    return value;
+        return value;
   }
 }

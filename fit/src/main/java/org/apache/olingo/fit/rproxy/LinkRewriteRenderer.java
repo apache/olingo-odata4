@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit.rproxy;
 
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.esigate.Renderer;
-
 import java.io.IOException;
 import java.io.Writer;
+
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.esigate.Renderer;
 
 public class LinkRewriteRenderer implements Renderer {
 
@@ -45,7 +45,7 @@ public class LinkRewriteRenderer implements Renderer {
     final int lastCharPosition = src.length() - 1;
     return src.charAt(lastCharPosition) == SLASH
         ? src.substring(0, lastCharPosition)
-        : src;
+            : src;
   }
 
   @Override

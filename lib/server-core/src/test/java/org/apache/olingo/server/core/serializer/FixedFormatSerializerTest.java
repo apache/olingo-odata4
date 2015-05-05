@@ -40,7 +40,7 @@ public class FixedFormatSerializerTest {
 
   @Test
   public void binary() throws Exception {
-    assertEquals("ABC", IOUtils.toString(serializer.binary(new byte [] { 0x41, 0x42, 0x43 })));
+    assertEquals("ABC", IOUtils.toString(serializer.binary(new byte[] { 0x41, 0x42, 0x43 })));
   }
 
   @Test

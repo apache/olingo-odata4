@@ -34,7 +34,7 @@ import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 public class BatchHandler {
   private final BatchProcessor batchProcessor;
   private final ODataHandler oDataHandler;
-  
+
   public BatchHandler(final ODataHandler oDataHandler, final BatchProcessor batchProcessor) {
 
     this.batchProcessor = batchProcessor;
@@ -44,7 +44,7 @@ public class BatchHandler {
   public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
       throws DeserializerException, SerializerException {
     validateRequest(request);
-    
+
     final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);
     batchProcessor.processBatch(operation, request, response);
   }

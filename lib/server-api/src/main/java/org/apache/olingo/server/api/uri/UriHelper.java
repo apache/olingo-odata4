@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,7 +37,7 @@ public interface UriHelper {
 
   /**
    * Builds the select-list part of a {@link org.apache.olingo.commons.api.data.ContextURL ContextURL}.
-   * @param type   the {@link EdmStructuredType}
+   * @param type the {@link EdmStructuredType}
    * @param expand the $expand option
    * @param select the $select option
    * @return a String with the select list
@@ -55,7 +55,7 @@ public interface UriHelper {
   /**
    * Builds the relative canonical URL for the given entity in the given entity set.
    * @param edmEntitySet the entity set
-   * @param entity       the entity data
+   * @param entity the entity data
    * @return the relative canonical URL
    */
   String buildCanonicalURL(EdmEntitySet edmEntitySet, Entity entity) throws SerializerException;
@@ -63,11 +63,11 @@ public interface UriHelper {
   /**
    * Builds the key predicate for the given entity.
    * @param edmEntityType the entity type of the entity
-   * @param entity        the entity data
+   * @param entity the entity data
    * @return the key predicate
    */
   String buildKeyPredicate(EdmEntityType edmEntityType, Entity entity) throws SerializerException;
-  
+
   /**
    * Retrieves the key predicates from a canonical link to an entity.
    * A canonical link to an entity must follow the pattern
@@ -82,6 +82,6 @@ public interface UriHelper {
    * @return a list of key predicates
    * @throws DeserializerException in case the link is malformed
    */
-  List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot) 
+  List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot)
       throws DeserializerException;
 }

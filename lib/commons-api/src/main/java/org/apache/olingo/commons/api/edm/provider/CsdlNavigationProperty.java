@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -43,9 +43,10 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
   private boolean nullable = true;
 
   private CsdlOnDelete onDelete;
-  
+
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  @Override
   public String getName() {
     return name;
   }
@@ -67,9 +68,9 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
   public FullQualifiedName getTypeFQN() {
     return type;
   }
-  
+
   public String getType() {
-    if(type != null){
+    if (type != null) {
       return type.getFullQualifiedNameAsString();
     }
     return null;
@@ -79,7 +80,7 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
     this.type = type;
     return this;
   }
-  
+
   public CsdlNavigationProperty setType(final String type) {
     this.type = new FullQualifiedName(type);
     return this;
@@ -108,7 +109,7 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
   }
 
   public CsdlNavigationProperty setReferentialConstraints(
-          final List<CsdlReferentialConstraint> referentialConstraints) {
+      final List<CsdlReferentialConstraint> referentialConstraints) {
     this.referentialConstraints = referentialConstraints;
     return this;
   }
@@ -130,7 +131,7 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
     this.onDelete = onDelete;
     return this;
   }
-  
+
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;

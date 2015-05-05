@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 /**
  * Internally used {@link AcceptType} for OData library.
- * 
+ *
  * See RFC 7231, chapter 5.3.2:
  * <pre>
  * Accept = #( media-range [ accept-params ] )
@@ -40,7 +40,7 @@ import java.util.TreeMap;
  * weight = OWS ";" OWS "q=" qvalue
  * qvalue = ( "0" [ "." 0*3DIGIT ] ) / ( "1" [ "." 0*3("0") ] )
  * </pre>
- * 
+ *
  * Once created an {@link AcceptType} is <b>IMMUTABLE</b>.
  */
 public class AcceptType {
@@ -220,27 +220,27 @@ public class AcceptType {
    * as defined in RFC 7231, chapters 3.1.1.1, 5.3.1, and 5.3.2.
    * @param toSort list which is sorted and hence re-arranged
    */
-  private static void sort(List<AcceptType> toSort) {
+  private static void sort(final List<AcceptType> toSort) {
     Collections.sort(toSort,
         new Comparator<AcceptType>() {
-          @Override
-          public int compare(final AcceptType a1, final AcceptType a2) {
-            int compare = a2.getQuality().compareTo(a1.getQuality());
-            if (compare != 0) {
-              return compare;
-            }
-            compare = (a1.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
-                - (a2.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
-            if (compare != 0) {
-              return compare;
-            }
-            compare = (a1.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
-                - (a2.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
-            if (compare != 0) {
-              return compare;
-            }
-            return a2.getParameters().size() - a1.getParameters().size();
-          }
-        });
+      @Override
+      public int compare(final AcceptType a1, final AcceptType a2) {
+        int compare = a2.getQuality().compareTo(a1.getQuality());
+        if (compare != 0) {
+          return compare;
+        }
+        compare = (a1.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
+            - (a2.getType().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
+        if (compare != 0) {
+          return compare;
+        }
+        compare = (a1.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0)
+            - (a2.getSubtype().equals(TypeUtil.MEDIA_TYPE_WILDCARD) ? 1 : 0);
+        if (compare != 0) {
+          return compare;
+        }
+        return a2.getParameters().size() - a1.getParameters().size();
+      }
+    });
   }
 }

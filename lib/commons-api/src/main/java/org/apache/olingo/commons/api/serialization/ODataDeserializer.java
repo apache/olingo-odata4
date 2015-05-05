@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.api.serialization;
 
+import java.io.InputStream;
+
+import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.ODataError;
-
-import java.io.InputStream;
 
 /**
  * Interface for de-serialization.
@@ -33,7 +33,7 @@ public interface ODataDeserializer {
 
   /**
    * Gets an entity set object from the given InputStream.
-   * 
+   *
    * @param input stream to be de-serialized.
    * @return {@link EntityCollection} instance.
    */
@@ -41,7 +41,7 @@ public interface ODataDeserializer {
 
   /**
    * Gets an entity object from the given InputStream.
-   * 
+   *
    * @param input stream to be de-serialized.
    * @return {@link Entity} instance.
    */
@@ -49,7 +49,7 @@ public interface ODataDeserializer {
 
   /**
    * Gets a property object from the given InputStream.
-   * 
+   *
    * @param input stream to be de-serialized.
    * @return Property instance.
    */
@@ -57,7 +57,7 @@ public interface ODataDeserializer {
 
   /**
    * Gets the ODataError object represented by the given InputStream.
-   * 
+   *
    * @param input stream to be parsed and de-serialized.
    * @return parsed ODataError object represented by the given InputStream
    */

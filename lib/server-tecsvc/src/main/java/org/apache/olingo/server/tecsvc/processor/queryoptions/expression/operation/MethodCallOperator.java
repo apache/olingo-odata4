@@ -73,17 +73,17 @@ public class MethodCallOperator {
     primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
     primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
   }
-  
+
   final private List<VisitorOperand> parameters;
 
-  public MethodCallOperator(List<VisitorOperand> parameters) {
+  public MethodCallOperator(final List<VisitorOperand> parameters) {
     this.parameters = parameters;
   }
 
   public VisitorOperand endsWith() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).endsWith(params.get(1));
       }
     }, primBoolean);
@@ -92,7 +92,7 @@ public class MethodCallOperator {
   public VisitorOperand indexOf() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         // If the first string do not contain the second string, return -1. See OASIS JIRA ODATA-780
         return params.get(0).indexOf(params.get(1));
       }
@@ -102,7 +102,7 @@ public class MethodCallOperator {
   public VisitorOperand startsWith() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).startsWith(params.get(1));
       }
     }, primBoolean);
@@ -111,7 +111,7 @@ public class MethodCallOperator {
   public VisitorOperand toLower() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).toLowerCase();
       }
     }, primString);
@@ -120,7 +120,7 @@ public class MethodCallOperator {
   public VisitorOperand toUpper() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).toUpperCase();
       }
     }, primString);
@@ -129,7 +129,7 @@ public class MethodCallOperator {
   public VisitorOperand trim() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).trim();
       }
     }, primString);
@@ -147,7 +147,7 @@ public class MethodCallOperator {
       final String value = valueOperand.getTypedValue(String.class);
       int start = Math.min(startOperand.getTypedValue(BigInteger.class).intValue(), value.length());
       start = start < 0 ? 0 : start;
-      
+
       int end = value.length();
 
       if (parameters.size() == 3) {
@@ -175,7 +175,7 @@ public class MethodCallOperator {
   public VisitorOperand contains() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).contains(params.get(1));
       }
     }, primBoolean);
@@ -184,7 +184,7 @@ public class MethodCallOperator {
   public VisitorOperand concat() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0) + params.get(1);
       }
     }, primString);
@@ -193,7 +193,7 @@ public class MethodCallOperator {
   public VisitorOperand length() throws ODataApplicationException {
     return stringFunction(new StringFunction() {
       @Override
-      public Object perform(List<String> params) {
+      public Object perform(final List<String> params) {
         return params.get(0).length();
       }
     }, primInt32);
@@ -202,7 +202,7 @@ public class MethodCallOperator {
   public VisitorOperand year() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         return calendar.get(Calendar.YEAR);
       }
     }, primInt32, primDateTimeOffset, primDate);
@@ -211,7 +211,7 @@ public class MethodCallOperator {
   public VisitorOperand month() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         // Month is 0-based!
         return calendar.get(Calendar.MONTH) + 1;
       }
@@ -221,7 +221,7 @@ public class MethodCallOperator {
   public VisitorOperand day() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         return calendar.get(Calendar.DAY_OF_MONTH);
       }
     }, primInt32, primDateTimeOffset, primDate);
@@ -230,7 +230,7 @@ public class MethodCallOperator {
   public VisitorOperand hour() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         return calendar.get(Calendar.HOUR_OF_DAY);
       }
     }, primInt32, primDateTimeOffset, primTimeOfDay);
@@ -239,7 +239,7 @@ public class MethodCallOperator {
   public VisitorOperand minute() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         return calendar.get(Calendar.MINUTE);
       }
     }, primInt32, primDateTimeOffset, primTimeOfDay);
@@ -248,7 +248,7 @@ public class MethodCallOperator {
   public VisitorOperand second() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         return calendar.get(Calendar.SECOND);
       }
     }, primInt32, primDateTimeOffset, primTimeOfDay);
@@ -257,7 +257,7 @@ public class MethodCallOperator {
   public VisitorOperand fractionalseconds() throws ODataApplicationException {
     return dateFunction(new DateFunction() {
       @Override
-      public Object perform(Calendar calendar, TypedOperand operand) {
+      public Object perform(final Calendar calendar, final TypedOperand operand) {
         if (operand.getValue() instanceof Timestamp) {
           return new BigDecimal(operand.getTypedValue(Timestamp.class).getNanos()).divide(BigDecimal
               .valueOf(1000 * 1000 * 1000));
@@ -312,7 +312,8 @@ public class MethodCallOperator {
     Object perform(Calendar calendar, TypedOperand operand);
   }
 
-  private VisitorOperand dateFunction(DateFunction f, EdmType returnType, EdmPrimitiveType... expectedTypes)
+  private VisitorOperand dateFunction(final DateFunction f, final EdmType returnType,
+      final EdmPrimitiveType... expectedTypes)
       throws ODataApplicationException {
     final TypedOperand operand = parameters.get(0).asTypedOperand();
 
@@ -340,7 +341,8 @@ public class MethodCallOperator {
     }
   }
 
-  private VisitorOperand stringFunction(StringFunction f, EdmType returnValue) throws ODataApplicationException {
+  private VisitorOperand stringFunction(final StringFunction f, final EdmType returnValue)
+      throws ODataApplicationException {
     List<String> stringParameters = getParametersAsString();
     if (stringParameters.contains(null)) {
       return new TypedOperand(null, returnValue);

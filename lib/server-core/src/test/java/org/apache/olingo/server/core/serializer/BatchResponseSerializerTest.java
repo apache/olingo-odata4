@@ -35,7 +35,6 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
-import org.apache.olingo.server.core.serializer.BatchResponseSerializer;
 import org.junit.Test;
 
 public class BatchResponseSerializerTest {
@@ -68,7 +67,7 @@ public class BatchResponseSerializerTest {
         new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
-    
+
     int line = 0;
     assertEquals(24, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
@@ -123,7 +122,7 @@ public class BatchResponseSerializerTest {
         new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
-    
+
     int line = 0;
     assertEquals(23, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
@@ -150,7 +149,7 @@ public class BatchResponseSerializerTest {
     assertTrue(body.get(line++).contains("--changeset_"));
     assertTrue(body.get(line++).contains("--batch_"));
   }
-  
+
   @Test
   public void testResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
@@ -165,13 +164,13 @@ public class BatchResponseSerializerTest {
 
     final BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
-    
+
     assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
-    
+
     int line = 0;
     assertEquals(10, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
@@ -199,14 +198,14 @@ public class BatchResponseSerializerTest {
 
     BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
-    
+
     assertNotNull(content);
 
     final BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
     final List<String> body = reader.toList();
     reader.close();
-    
+
     int line = 0;
     assertEquals(14, body.size());
     assertTrue(body.get(line++).contains("--batch_"));

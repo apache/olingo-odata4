@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.api.edm.geo;
 
 import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
@@ -54,7 +55,7 @@ public class SRID implements Serializable {
       instance.value = Integer.valueOf(exp);
       if (instance.value < 0) {
         throw new IllegalArgumentException(
-                "The value of the SRID attribute MUST be a non-negative integer or the special value 'variable'");
+            "The value of the SRID attribute MUST be a non-negative integer or the special value 'variable'");
       }
     }
 
@@ -75,10 +76,10 @@ public class SRID implements Serializable {
 
   private String getValue() {
     return value == null
-            ? dimension == Dimension.GEOMETRY
-            ? "0"
+        ? dimension == Dimension.GEOMETRY
+        ? "0"
             : "4326"
-            : value.toString();
+        : value.toString();
   }
 
   private boolean isVariable() {
@@ -102,8 +103,8 @@ public class SRID implements Serializable {
   @Override
   public String toString() {
     return isVariable()
-            ? VARIABLE
-            : getValue();
+        ? VARIABLE
+        : getValue();
   }
 
 }

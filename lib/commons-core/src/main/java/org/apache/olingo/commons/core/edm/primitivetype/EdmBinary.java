@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.nio.charset.Charset;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
@@ -50,13 +51,13 @@ public class EdmBinary extends SingletonPrimitiveType {
    * <b>NOTE</b>: this is provided here from Commons Codec for Android compatibility.
    */
   private static final byte[] DECODE_TABLE = {
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63, 52, 53, 54,
-    55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4,
-    5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-    24, 25, -1, -1, -1, -1, 63, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-    35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63, 52, 53, 54,
+      55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4,
+      5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+      24, 25, -1, -1, -1, -1, 63, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+      35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
   };
 
   private static final EdmBinary INSTANCE = new EdmBinary();
@@ -85,13 +86,13 @@ public class EdmBinary extends SingletonPrimitiveType {
    */
   private static boolean isWhiteSpace(final byte byteToCheck) {
     switch (byteToCheck) {
-      case ' ':
-      case '\n':
-      case '\r':
-      case '\t':
-        return true;
-      default:
-        return false;
+    case ' ':
+    case '\n':
+    case '\r':
+    case '\t':
+      return true;
+    default:
+      return false;
     }
   }
 
@@ -129,22 +130,22 @@ public class EdmBinary extends SingletonPrimitiveType {
 
   @Override
   public boolean validate(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) {
 
     return value == null
-            ? isNullable == null || isNullable
-            : isBase64(value.getBytes(UTF_8)) && validateMaxLength(value, maxLength);
+        ? isNullable == null || isNullable
+        : isBase64(value.getBytes(UTF_8)) && validateMaxLength(value, maxLength);
   }
 
   private static boolean validateMaxLength(final String value, final Integer maxLength) {
     return maxLength == null ? true
-            : // Every three bytes are represented as four base-64 characters.
-            // Additionally, there could be up to two padding "=" characters
-            // if the number of bytes is not a multiple of three,
-            // and there could be line feeds, possibly with carriage returns.
-            maxLength >= (value.length() - lineEndingsLength(value)) * 3 / 4
-            - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
+        : // Every three bytes are represented as four base-64 characters.
+        // Additionally, there could be up to two padding "=" characters
+        // if the number of bytes is not a multiple of three,
+        // and there could be line feeds, possibly with carriage returns.
+        maxLength >= (value.length() - lineEndingsLength(value)) * 3 / 4
+          - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
   }
 
   private static int lineEndingsLength(final String value) {
@@ -159,8 +160,8 @@ public class EdmBinary extends SingletonPrimitiveType {
 
   @Override
   protected <T> T internalValueOfString(final String value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
     if (value == null || !isBase64(value.getBytes(UTF_8))) {
       throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
@@ -186,8 +187,8 @@ public class EdmBinary extends SingletonPrimitiveType {
 
   @Override
   protected <T> String internalValueToString(final T value,
-          final Boolean isNullable, final Integer maxLength, final Integer precision,
-          final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     byte[] byteArrayValue;
     if (value instanceof byte[]) {
