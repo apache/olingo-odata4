@@ -49,6 +49,15 @@ import org.junit.Test;
 public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
+  public void noReturnTypeAction() throws Exception {
+      URI actionURI =
+          getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRT").build();
+      ODataInvokeResponse<ClientProperty> response =
+          getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class).execute();
+      assertEquals(204, response.getStatusCode());
+  }
+  
+  @Test
   public void primitveAction() throws Exception {
     URI actionURI =
         getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment("AIRTString").build();

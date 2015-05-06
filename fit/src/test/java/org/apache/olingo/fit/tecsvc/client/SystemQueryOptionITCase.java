@@ -264,7 +264,6 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void testNegativeSkip() {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
@@ -283,7 +282,6 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void testNegativeTop() {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)

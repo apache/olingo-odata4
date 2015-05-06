@@ -236,7 +236,6 @@ public class BindingITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void testMissingEntity() {
     // Update an existing entity, use a URI to a not existing entity
     // Perform the request to a single navigation property and a collection navigation property as well.

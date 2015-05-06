@@ -472,7 +472,6 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unused")
   public void testSubstringDouble() {
     try {
       sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First')"

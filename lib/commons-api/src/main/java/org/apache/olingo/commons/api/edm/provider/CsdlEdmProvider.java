@@ -154,7 +154,7 @@ public interface CsdlEdmProvider {
   /**
    * This method should return a collection of all {@link CsdlSchema}
    *
-   * @return List<{@link Schema}>
+   * @return List<{@link CsdlSchema}>
    * @throws ODataException
    */
   public List<CsdlSchema> getSchemas() throws ODataException;
