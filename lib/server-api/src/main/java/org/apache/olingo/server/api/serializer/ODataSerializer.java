@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.server.api.serializer;
 
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.server.api.ODataServerError;
@@ -111,4 +113,30 @@ public interface ODataSerializer {
    */
   SerializerResult complexCollection(ServiceMetadata metadata, EdmComplexType type, Property property,
       ComplexSerializerOptions options) throws SerializerException;
+  
+  /**
+   * Writes a single entity reference into an InputStream
+   * 
+   * @param metadata              Metadata for the service
+   * @param edmEntitySet          {@link EdmEntitySet}
+   * @param entity                data of the entity
+   * @param contextUrl            {@link ContextURL}
+   * @return Serialized           entity reference
+   * @throws SerializerException
+   */
+  SerializerResult reference(ServiceMetadata metadata, EdmEntitySet edmEntitySet, Entity entity, 
+      final ContextURL contextUrl) throws SerializerException;
+  
+  /**
+   * Writes entity collection references into an InputStream
+   * 
+   * @param metadata              Metadata for the service
+   * @param edmEntitySet          {@link EdmEntitySet}
+   * @param entityCollection      data of the entity collection
+   * @param contextURL 
+   * @return Serialized           entity reference
+   * @throws SerializerException
+   */
+  SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet, 
+      EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException;
 }

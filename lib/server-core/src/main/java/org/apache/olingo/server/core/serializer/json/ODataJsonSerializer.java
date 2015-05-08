@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -52,6 +53,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -59,6 +61,7 @@ import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
+import org.apache.olingo.server.core.uri.UriHelperImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +148,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
       if (options != null && options.getCount() != null && options.getCount().getValue()
           && entitySet.getCount() != null) {
-        json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
+        writeCount(entitySet, json);
       }
       json.writeFieldName(Constants.VALUE);
       if (options == null) {
@@ -155,7 +158,7 @@ public class ODataJsonSerializer implements ODataSerializer {
             options.getExpand(), options.getSelect(), options.onlyReferences(), json);
       }
       if (entitySet.getNext() != null) {
-        json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
+        writeNextLink(entitySet, json);
       }
       json.close();
     } catch (final IOException e) {
@@ -638,5 +641,88 @@ public class ODataJsonSerializer implements ODataSerializer {
           property.getName(), property.getValue().toString());
     }
     return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+  }
+
+  @Override
+  public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
+      final Entity entity, final ContextURL contextURL) throws SerializerException {
+    
+    final CircleStreamBuffer buffer = new CircleStreamBuffer();
+    final UriHelper uriHelper = new UriHelperImpl();
+    
+    try {
+      final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      writeReference(edmEntitySet, entity, contextURL, uriHelper, json);
+      
+      json.close();
+    } catch (IOException e) {
+      throw new SerializerException("An I/O exception occurred.", e,  SerializerException.MessageKeys.IO_EXCEPTION);
+    }
+    
+    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+  }
+  
+  @Override
+  public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
+      final EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException {
+    
+    final CircleStreamBuffer buffer = new CircleStreamBuffer();
+    final UriHelper uriHelper = new UriHelperImpl();
+    
+    try {
+      final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      json.writeStartObject();
+      
+      if(entityCollection.getCount() != null) {
+        writeCount(entityCollection, json);
+      }
+      
+      json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
+      writeReferenceCollection(metadata, edmEntitySet, entityCollection, uriHelper,json);
+      
+      if(entityCollection.getNext() != null) {
+        writeNextLink(entityCollection, json);
+      }
+      
+      json.writeEndObject();
+      json.close();
+    } catch (IOException e) {
+      throw new SerializerException("An I/O exception occurred.", e,  SerializerException.MessageKeys.IO_EXCEPTION);
+    }
+    
+    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+  }
+
+  protected void writeReferenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
+      final EntityCollection entityCollection, final UriHelper uriHelper, final JsonGenerator json) 
+          throws IOException, SerializerException {
+  
+    json.writeArrayFieldStart(Constants.VALUE);
+
+    for(final Entity entity : entityCollection.getEntities()) {
+      writeReference(edmEntitySet, entity, null, uriHelper, json);
+    }
+
+    json.writeEndArray();
+  }
+  
+  protected void writeReference(final EdmEntitySet edmEntitySet, final Entity entity, final ContextURL contextURL, 
+      final UriHelper uriHelper, final JsonGenerator json) throws IOException, SerializerException {
+    
+    json.writeStartObject();
+    if(contextURL != null) {
+      json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
+    }
+    
+    json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
+    json.writeEndObject();
+  }
+  
+  private void writeCount(final EntityCollection entitySet, JsonGenerator json) throws IOException {
+    json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
+  }
+
+  private void writeNextLink(final EntityCollection entitySet, JsonGenerator json) throws IOException {
+    json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
   }
 }

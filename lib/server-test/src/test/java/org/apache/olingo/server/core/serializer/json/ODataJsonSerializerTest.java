@@ -48,6 +48,7 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -680,5 +681,51 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}",
         resultString);
+  }
+  
+  @Test
+  public void entityReference() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    
+    final SerializerResult serializerResult = serializer.reference(metadata, edmEntitySet, entity,
+        ContextURL.with().suffix(Suffix.REFERENCE).build());
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+    
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#$ref\",\"@odata.id\":\"ESAllPrim(32767)\"}", resultString);
+  }
+  
+  @Test
+  public void entityCollectionReference() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCollection = data.readAll(edmEntitySet);
+
+    final SerializerResult serializerResult = serializer.referenceCollection(metadata, 
+                                                                             edmEntitySet, 
+                                                                             entityCollection,
+                                                                             ContextURL.with().asCollection()
+                                                                                 .suffix(Suffix.REFERENCE).build());
+                                                                                 
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\",\"value\":[{\"@odata.id\":" + 
+                         "\"ESAllPrim(32767)\"},{\"@odata.id\":\"ESAllPrim(-32768)\"},{\"@odata.id\":" + 
+                         "\"ESAllPrim(0)\"}]}", resultString);
+  }
+  
+  @Test
+  public void entityCollectionReferenceEmpty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCollection = new EntityCollection();
+    
+    final SerializerResult serializerResult = serializer.referenceCollection(metadata, 
+                                                                             edmEntitySet, 
+                                                                             entityCollection,
+                                                                             ContextURL.with().asCollection()
+                                                                             .suffix(Suffix.REFERENCE).build());
+    
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\",\"value\":[]}", resultString);
   }
 }
