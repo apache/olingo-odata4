@@ -158,16 +158,17 @@ public class ActionData {
       if (paramDate != null) {
         Calendar date = (Calendar) paramDate.asPrimitive();
         boolean freeKey;
-        Short key = 0;
+        Short key = -1;
         do {
           freeKey = true;
+          key++;
           for (Entity entity : entityCollection.getEntities()) {
-            if (key.equals(entity.getProperty("PropertyInt16"))) {
+            Short entityKey = (Short) entity.getProperty("PropertyInt16").asPrimitive();
+            if (key.equals(entityKey)) {
               freeKey = false;
               break;
             }
           }
-          key++;
         } while (!freeKey);
         return new EntityActionResult().setEntity(createAllPrimEntity(key, "UARTETAllPrimParam string value", date))
             .setCreated(true);
