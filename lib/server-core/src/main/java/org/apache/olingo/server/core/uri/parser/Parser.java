@@ -36,7 +36,10 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceCount;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceRef;
+import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
@@ -144,6 +147,12 @@ public class Parser {
         }
 
         UriResource lastSegment = context.contextUriInfo.getLastResourcePart();
+        if (lastSegment instanceof UriResourceCount
+            || lastSegment instanceof UriResourceRef
+            || lastSegment instanceof UriResourceValue) {
+          final List<UriResource> parts = context.contextUriInfo.getUriResourceParts();
+          lastSegment = parts.get(parts.size() - 2);
+        }
         if (lastSegment instanceof UriResourcePartTyped) {
           UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
 
