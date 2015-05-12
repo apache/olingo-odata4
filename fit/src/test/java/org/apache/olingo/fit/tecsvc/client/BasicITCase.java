@@ -239,15 +239,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.PATCH, patchEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check that the patched properties have changed and the other properties not.
-    // This check has to be in the same session in order to access the same data provider.
-    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    final ClientEntity entity = entityResponse.getBody();
+    final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     final ClientProperty property1 = entity.getProperty("PropertyString");
     assertNotNull(property1);
@@ -276,15 +271,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check that the updated properties have changed and that other properties have their default values.
-    // This check has to be in the same session in order to access the same data provider.
-    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    final ClientEntity entity = entityResponse.getBody();
+    final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     final ClientProperty property1 = entity.getProperty("PropertyInt64");
     assertNotNull(property1);
@@ -309,15 +299,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.PATCH, patchEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check that the patched properties have changed and the other properties not.
-    // This check has to be in the same session in order to access the same data provider.
-    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    final ClientEntity entity = entityResponse.getBody();
+    final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     final ClientComplexValue complex = entity.getProperty("PropertyComp").getComplexValue()
         .get("PropertyComp").getComplexValue();
@@ -353,15 +338,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check that the complex-property hierarchy is still there and that all primitive values are now null.
-    // This check has to be in the same session in order to access the same data provider.
-    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    final ClientEntity entity = entityResponse.getBody();
+    final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     final ClientComplexValue complex = entity.getProperty("PropertyCompCompNav").getComplexValue()
         .get("PropertyCompNav").getComplexValue();
@@ -492,25 +472,14 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .build();
 
     final ODataEntityUpdateResponse<ClientEntity> response = getClient().getCUDRequestFactory()
-        .getEntityUpdateRequest(uri,
-            UpdateType.PATCH,
-            entity)
+        .getEntityUpdateRequest(uri, UpdateType.PATCH, entity)
             .execute();
 
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getBody().getProperty("CollPropertyComp"));
+    assertEquals(2, response.getBody().getProperty("CollPropertyComp").getCollectionValue().size());
 
-    // Check if entity has changed
-    final ODataEntityRequest<ClientEntity> entityRequest =
-        getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    assertNotNull(entityResponse.getBody().getProperty("CollPropertyComp"));
-    assertEquals(2, entityResponse.getBody().getProperty("CollPropertyComp").getCollectionValue().size());
-
-    final Iterator<ClientValue> collectionIterator = entityResponse.getBody()
+    final Iterator<ClientValue> collectionIterator = response.getBody()
         .getProperty("CollPropertyComp")
         .getCollectionValue()
         .iterator();
@@ -632,7 +601,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testComplexPropertyWithNotNullablePrimitiveValue() {
+  public void complexPropertyWithNotNullablePrimitiveValue() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -649,7 +618,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUpsert() throws EdmPrimitiveTypeException {
+  public void upsert() throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -681,7 +650,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUpdatePropertyWithNull() {
+  public void updatePropertyWithNull() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -698,21 +667,13 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity)
         .execute();
 
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), updateResponse.getStatusCode());
-    final String cookie = updateResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
-
-    final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
-        .getEntityRequest(targetURI);
-    entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-
-    assertTrue(entityResponse.getBody().getProperty("PropertyString").hasNullValue());
-    assertEquals(34, entityResponse.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), updateResponse.getStatusCode());
+    assertTrue(updateResponse.getBody().getProperty("PropertyString").hasNullValue());
+    assertEquals(34, updateResponse.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
 
   @Test(expected = ODataClientErrorException.class)
-  public void testUpdatePropertyWithNullNotAllowed() {
+  public void updatePropertyWithNullNotAllowed() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -729,7 +690,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUpdateMerge() {
+  public void updateMerge() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -753,7 +714,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity)
         .execute();
 
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
@@ -823,7 +784,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUpdateReplace() {
+  public void updateReplace() {
     final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -853,7 +814,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getEntityUpdateRequest(targetURI, UpdateType.REPLACE, entity)
         .execute();
 
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()

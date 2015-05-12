@@ -81,6 +81,8 @@ public abstract class TechnicalProcessor implements Processor {
       entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
     } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
       entitySet = ((UriResourceFunction) resourcePaths.get(0)).getFunctionImport().getReturnedEntitySet();
+    } else if (resourcePaths.get(0) instanceof UriResourceAction) {
+      entitySet = ((UriResourceAction) resourcePaths.get(0)).getActionImport().getReturnedEntitySet();
     } else {
       throw new ODataApplicationException("Invalid resource type.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
@@ -217,14 +219,11 @@ public abstract class TechnicalProcessor implements Processor {
   }
 
   protected EdmAction checkBoundAndExtractAction(final UriInfo uriInfo) throws ODataApplicationException {
-    final UriInfoResource resource = uriInfo.asUriInfoResource();
-    List<UriResource> uriResourceParts = resource.getUriResourceParts();
+    final List<UriResource> uriResourceParts = uriInfo.asUriInfoResource().getUriResourceParts();
     if (uriResourceParts.size() > 1) {
-      throw new ODataApplicationException("Bound acctions not supported yet.",
+      throw new ODataApplicationException("Bound actions are not supported yet.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
-    UriResourceAction uriResourceAction = (UriResourceAction) uriResourceParts.get(0);
-    EdmAction action = uriResourceAction.getAction();
-    return action;
+    return ((UriResourceAction) uriResourceParts.get(0)).getAction();
   }
 }

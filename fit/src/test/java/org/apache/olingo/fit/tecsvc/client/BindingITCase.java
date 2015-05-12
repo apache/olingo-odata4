@@ -288,7 +288,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
 
     ODataEntityUpdateResponse<ClientEntity> updateResponse =
         client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), updateResponse.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), updateResponse.getStatusCode());
 
     final ODataEntityRequest<ClientEntity> getRequest =
         client.getRetrieveRequestFactory().getEntityRequest(

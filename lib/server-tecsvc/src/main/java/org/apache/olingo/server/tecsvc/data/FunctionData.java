@@ -55,7 +55,9 @@ public class FunctionData {
   protected static Entity entityFunction(final String name, final List<UriParameter> parameters,
       final Map<String, EntityCollection> data) throws DataProviderException {
     final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
-    if (name.equals("UFCRTETTwoKeyNav")) {
+    if (name.equals("UFCRTETKeyNav")) {
+      return data.get("ESKeyNav").getEntities().get(0);
+    } else if (name.equals("UFCRTETTwoKeyNav")) {
       return esTwoKeyNav.get(0);
     } else if (name.equals("UFCRTETTwoKeyNavParam")) {
       final int index = parameters.isEmpty() ? 0 : Short.valueOf(parameters.get(0).getText());

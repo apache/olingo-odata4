@@ -424,7 +424,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final ODataEntityCreateResponse<ClientEntity> createResponse = ((ODataEntityCreateResponse<ClientEntity>) res);
 
     res = chgitem.next();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), res.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityUpdateResponse);
 
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
@@ -561,7 +561,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Update
     assertTrue(item.hasNext());
     final ODataResponse response2 = item.next();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response2.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response2.getStatusCode());
     assertTrue(response2 instanceof ODataEntityUpdateResponse);
 
     // Upsert

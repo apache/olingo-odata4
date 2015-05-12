@@ -50,8 +50,27 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void entity() throws Exception {
     final ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTESTwoKeyNav").build(), ClientEntity.class);
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTESTwoKeyNav").build(),
+            ClientEntity.class);
+    assertNotNull(request);
+
+    final ODataInvokeResponse<ClientEntity> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ClientEntity entity = response.getBody();
+    assertNotNull(entity);
+    final ClientProperty property = entity.getProperty("PropertyInt16");
+    assertNotNull(property);
+    assertEquals(1, property.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void entityWithoutEntitySet() throws Exception {
+    final ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTETKeyNav").build(),
+            ClientEntity.class);
     assertNotNull(request);
 
     final ODataInvokeResponse<ClientEntity> response = request.execute();
@@ -67,8 +86,10 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void entityCollection() {
     final ODataInvokeRequest<ClientEntitySet> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCollESTwoKeyNavParam").build(), ClientEntitySet.class,
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
+                .appendOperationCallSegment("FICRTCollESTwoKeyNavParam").build(),
+            ClientEntitySet.class,
             Collections.<String, ClientValue> singletonMap("ParameterInt16",
                 getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2)));
     assertNotNull(request);
@@ -93,10 +114,11 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   public void entityCollectionWithAppendedKey() {
     // .../odata.svc/FICRTCollESMedia()(1)
     final ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCollESMedia")
-            .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1))
-            .build(), ClientEntity.class);
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+                .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1))
+                .build(),
+            ClientEntity.class);
     assertNotNull(request);
 
     final ODataInvokeResponse<ClientEntity> response = request.execute();
@@ -114,11 +136,12 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   public void entityCollectionWithAppendedKeyAndProperty() {
     // .../odata.svc/FICRTCollESMedia()(2)/PropertyInt16
     final ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCollESMedia")
-            .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2))
-            .appendPropertySegment("PropertyInt16")
-            .build(), ClientProperty.class);
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+                .appendKeySegment(getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2))
+                .appendPropertySegment("PropertyInt16")
+                .build(),
+            ClientProperty.class);
     assertNotNull(request);
 
     final ODataInvokeResponse<ClientProperty> response = request.execute();
@@ -133,8 +156,8 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void countEntityCollection() throws Exception {
     final ODataRawRequest request = getClient().getRetrieveRequestFactory()
-        .getRawRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCollESMedia").count().build());
+        .getRawRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+            .count().build());
     final ODataRawResponse response = request.execute();
     assertEquals("4", IOUtils.toString(response.getRawResponse()));
   }
@@ -142,8 +165,9 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void complexWithPath() throws Exception {
     final ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCTTwoPrim").appendPropertySegment("PropertyInt16").build(),
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
+                .appendPropertySegment("PropertyInt16").build(),
             ClientProperty.class);
     assertNotNull(request);
 
@@ -158,8 +182,9 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void primitiveCollection() throws Exception {
     final ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCollString").build(), ClientProperty.class);
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollString").build(),
+            ClientProperty.class);
     assertNotNull(request);
 
     final ODataInvokeResponse<ClientProperty> response = request.execute();
@@ -178,8 +203,9 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void primitiveValue() throws Exception {
     final ODataValueRequest request = getClient().getRetrieveRequestFactory()
-        .getPropertyValueRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTString").appendValueSegment().build());
+        .getPropertyValueRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTString")
+                .appendValueSegment().build());
     final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
     assertEquals("UFCRTString string value", response.getBody().toValue());
   }
@@ -187,9 +213,9 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
   @Test
   public void primitiveValueWithPath() throws Exception {
     final ODataValueRequest request = getClient().getRetrieveRequestFactory()
-        .getPropertyValueRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
-            .appendOperationCallSegment("FICRTCTTwoPrim")
-            .appendPropertySegment("PropertyString").appendValueSegment().build());
+        .getPropertyValueRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
+                .appendPropertySegment("PropertyString").appendValueSegment().build());
     final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
     assertEquals("UFCRTCTTwoPrim string value", response.getBody().toValue());
   }
