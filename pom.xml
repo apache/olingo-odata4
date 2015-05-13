@@ -83,8 +83,7 @@
     <maven.bundle.plugin.version>2.3.4</maven.bundle.plugin.version>
     <hc.client.version>4.2.6</hc.client.version>
     <jackson.version>2.4.2</jackson.version>
-    <!-- stay with aalto-xml-0.9.8 because 0.9.9 is not a bundle -->
-    <aalto-xml.version>0.9.8</aalto-xml.version>
+    <aalto-xml.version>0.9.10</aalto-xml.version>
 
     <antlr.version>4.1</antlr.version>
 

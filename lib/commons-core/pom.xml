@@ -87,6 +87,7 @@
           <instructions>
             <Export-Package>
               org.apache.olingo.commons.core,
+              org.apache.olingo.commons.core.edm,
               org.apache.olingo.commons.core.edm.provider,
               org.apache.olingo.commons.core.edm.primitivetype,
             </Export-Package>
