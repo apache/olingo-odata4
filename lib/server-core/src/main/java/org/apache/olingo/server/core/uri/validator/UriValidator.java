@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,7 +60,7 @@ public class UriValidator {
       /*                   entitySetCount  7 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
       /*                           entity  8 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
       /*                      mediaStream  9 */ { false,   false,   false,   false,   false,   false,    false,   false,   false,   false,      false },
-      /*                       references 10 */ { true ,   true ,   false,   true,    false,   true ,    true ,   false,   true ,   true ,      true  },
+      /*                       references 10 */ { true ,   true ,   false,   true,    true ,   true ,    true ,   false,   true ,   true ,      true  },
       /*                        reference 11 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
       /*                  propertyComplex 12 */ { false,   true ,   true ,   false,   false,   false,    false,   true ,   false,   false,      false },
       /*        propertyComplexCollection 13 */ { true ,   true ,   true ,   false,   true ,   true ,    false,   true ,   true ,   true ,      true  },
@@ -70,16 +70,6 @@ public class UriValidator {
       /* propertyPrimitiveCollectionCount 17 */ { true ,   false,   false,   false,   false,   false,    true,    false,   false,   false,      false },
       /*           propertyPrimitiveValue 18 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false },
       /*                             none 19 */ { false,   true ,   false,   false,   false,   false,    false,   false,   false,   false,      false }
-    };
-
-  private final boolean[][] decisionMatrixForHttpMethod =
-    {
-      /*                                          0-FILTER 1-FORMAT 2-EXPAND 3-ID     4-COUNT  5-ORDERBY 6-SEARCH 7-SELECT 8-SKIP   9-SKIPTOKEN 10-TOP */
-      /*                              GET  0 */ { true ,   true ,   true ,   true,    true ,   true ,    true ,   true ,   true ,   true ,      true  },
-      /*                             POST  0 */ { true ,   false ,  true ,   false,   false ,  true ,    false ,  true ,   false ,  false ,     false },
-      /*                              PUT  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false },
-      /*                           DELETE  0 */ { false ,  false ,  false ,  true,    false ,  false,    false ,  false,   false ,  false ,     false },
-      /*                            PATCH  0 */ { false ,  false ,  false ,  false,   false ,  false ,   false ,  false ,  false ,  false ,     false }
     };
   //CHECKSTYLE:ON
   //@formatter:on
@@ -141,30 +131,10 @@ public class UriValidator {
     }
   }
 
-  private enum RowIndexForHttpMethod {
-    GET(0),
-    POST(1),
-    PUT(2),
-    DELETE(3),
-    PATCH(4);
-
-    private int idx;
-
-    RowIndexForHttpMethod(final int i) {
-      idx = i;
-    }
-
-    public int getIndex() {
-      return idx;
-    }
-  }
-
-  public UriValidator() {
-    super();
-  }
-
   public void validate(final UriInfo uriInfo, final HttpMethod httpMethod) throws UriValidationException {
-    validateForHttpMethod(uriInfo, httpMethod);
+    if (HttpMethod.GET != httpMethod) {
+      validateForHttpMethod(uriInfo, httpMethod);
+    }
     validateQueryOptions(uriInfo);
     validateKeyPredicates(uriInfo);
     validatePropertyOperations(uriInfo, httpMethod);
@@ -484,44 +454,70 @@ public class UriValidator {
   }
 
   private void validateForHttpMethod(final UriInfo uriInfo, final HttpMethod httpMethod) throws UriValidationException {
-    RowIndexForHttpMethod row = rowIndexForHttpMethod(httpMethod);
-
-    for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
-      ColumnIndex col = colIndex(option.getKind());
-      if (!decisionMatrixForHttpMethod[row.getIndex()][col.getIndex()]) {
-        throw new UriValidationException("System query option " + option.getName() + " not allowed for method "
-            + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
-            option.getName(), httpMethod.toString());
-      }
-    }
-
-  }
-
-  private RowIndexForHttpMethod rowIndexForHttpMethod(final HttpMethod httpMethod) throws UriValidationException {
-    RowIndexForHttpMethod idx;
-
     switch (httpMethod) {
-    case GET:
-      idx = RowIndexForHttpMethod.GET;
-      break;
     case POST:
-      idx = RowIndexForHttpMethod.POST;
-      break;
-    case PUT:
-      idx = RowIndexForHttpMethod.PUT;
+      if (!isAction(uriInfo)) {
+        // POST and SystemQueryOptions only allowed if addressed resource is an action
+        validateNoQueryOptionsForHttpMethod(uriInfo, httpMethod);
+      }
       break;
     case DELETE:
-      idx = RowIndexForHttpMethod.DELETE;
+      if (!isReferences(uriInfo)) {
+        // DELETE and SystemQueryOptions only allowed if addressed resource is a reference collection
+        validateNoQueryOptionsForHttpMethod(uriInfo, httpMethod);
+      } else {
+        // Only $id allowed as SystemQueryOption for DELETE and references
+        for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
+          if (SystemQueryOptionKind.ID != option.getKind()) {
+            throw new UriValidationException("System query option " + option.getName() + " not allowed for method "
+                + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
+                option.getName(), httpMethod.toString());
+          }
+        }
+      }
       break;
+    case PUT:
     case PATCH:
-      idx = RowIndexForHttpMethod.PATCH;
+      // PUT and PATCH do not allow system query options
+      validateNoQueryOptionsForHttpMethod(uriInfo, httpMethod);
       break;
     default:
       throw new UriValidationException("HTTP method not supported: " + httpMethod,
           UriValidationException.MessageKeys.UNSUPPORTED_HTTP_METHOD, httpMethod.toString());
     }
 
-    return idx;
+  }
+
+  private boolean isReferences(final UriInfo uriInfo) {
+    if (!uriInfo.getSystemQueryOptions().isEmpty()) {
+      List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
+      if (UriResourceKind.ref == uriResourceParts.get(uriResourceParts.size() - 1).getKind()) {
+        UriResourcePartTyped previousSegment = (UriResourcePartTyped) uriResourceParts.get(uriResourceParts.size() - 2);
+        return previousSegment.isCollection();
+      }
+    }
+    return false;
+  }
+
+  private void validateNoQueryOptionsForHttpMethod(final UriInfo uriInfo, final HttpMethod httpMethod)
+      throws UriValidationException {
+    if (!uriInfo.getSystemQueryOptions().isEmpty()) {
+      String options = "";
+      for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
+        options = options + option.getName() + " ";
+      }
+      throw new UriValidationException("System query option " + options + " not allowed for method "
+          + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
+          options, httpMethod.toString());
+    }
+  }
+
+  private boolean isAction(final UriInfo uriInfo) {
+    List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
+    if (!uriResourceParts.isEmpty()) {
+      return UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
+    }
+    return false;
   }
 
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
@@ -589,8 +585,8 @@ public class UriValidator {
     final UriResource previous = parts.size() > 1 ? parts.get(parts.size() - 2) : null;
     if (last != null
         && (last.getKind() == UriResourceKind.primitiveProperty
-        || last.getKind() == UriResourceKind.complexProperty
-        || last.getKind() == UriResourceKind.value && previous.getKind() == UriResourceKind.primitiveProperty)) {
+            || last.getKind() == UriResourceKind.complexProperty
+            || last.getKind() == UriResourceKind.value && previous.getKind() == UriResourceKind.primitiveProperty)) {
       final EdmProperty property = ((UriResourceProperty)
           (last.getKind() == UriResourceKind.value ? previous : last)).getProperty();
       if (method == HttpMethod.PATCH && property.isCollection()) {

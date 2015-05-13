@@ -36,6 +36,13 @@ import org.junit.Test;
 
 public class UriValidatorTest {
 
+  private static final String URI_ACTION_NO_RETURN = "AIRT";
+  private static final String URI_ACTION_PRIM = "AIRTString";
+  private static final String URI_ACTION_COOL_PRIM = "AIRTCollStringTwoParam";
+  private static final String URI_ACTION_CT = "AIRTCTTwoPrimParam";
+  private static final String URI_ACTION_COLL_CT = "AIRTCollCTTwoPrimParam";
+  private static final String URI_ACTION_ENTITY = "AIRTESAllPrimParam";
+  private static final String URI_ACTION_ES = "AIRTCollESAllPrimParam";
   private static final String URI_ALL = "$all";
   private static final String URI_BATCH = "$batch";
   private static final String URI_CROSSJOIN = "$crossjoin(ESAllPrim)";
@@ -105,7 +112,7 @@ public class UriValidatorTest {
 
       { URI_REFERENCES, QO_FILTER }, { URI_REFERENCES, QO_FORMAT }, { URI_REFERENCES, QO_ORDERBY },
       /* { URI_REFERENCES, QO_SEARCH }, */{ URI_REFERENCES, QO_SKIP }, { URI_REFERENCES, QO_SKIPTOKEN },
-      { URI_REFERENCES, QO_TOP }, { URI_REFERENCES, QO_ID },
+      { URI_REFERENCES, QO_TOP }, { URI_REFERENCES, QO_ID }, { URI_REFERENCES, QO_COUNT },
 
       { URI_REFERENCE, QO_FORMAT },
 
@@ -199,8 +206,7 @@ public class UriValidatorTest {
       /* { URI_MEDIA_STREAM, QO_SEARCH }, */{ URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP },
       { URI_MEDIA_STREAM, QO_SKIPTOKEN }, { URI_MEDIA_STREAM, QO_TOP },
 
-      { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_COUNT },
-      { URI_REFERENCES, QO_SELECT },
+      { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_SELECT },
 
       { URI_REFERENCE, QO_FILTER }, { URI_REFERENCE, QO_ID }, { URI_REFERENCE, QO_EXPAND },
       { URI_REFERENCE, QO_COUNT }, { URI_REFERENCE, QO_ORDERBY }, /* { URI_REFERENCE, QO_SEARCH }, */
@@ -263,7 +269,103 @@ public class UriValidatorTest {
       { URI_FI_ENTITY_SET_KEY, QO_SKIP }, { URI_FI_ENTITY_SET_KEY, QO_SKIPTOKEN }, { URI_FI_ENTITY_SET_KEY, QO_TOP }
   };
 
+  private final String[][] actionWithValidSystemQueryOptions = {
+      // NoReturnType
+      { URI_ACTION_NO_RETURN, QO_FORMAT },
+      // PrimReturnType
+      { URI_ACTION_PRIM, QO_FORMAT },
+      // PrimCollectionReturnType
+      { URI_ACTION_COOL_PRIM, QO_FILTER }, { URI_ACTION_COOL_PRIM, QO_FORMAT },
+      { URI_ACTION_COOL_PRIM, QO_COUNT }, { URI_ACTION_COOL_PRIM, QO_ORDERBY },
+      { URI_ACTION_COOL_PRIM, QO_SKIP }, { URI_ACTION_COOL_PRIM, QO_SKIPTOKEN },
+      { URI_ACTION_COOL_PRIM, QO_TOP },
+      // ComplexReturnType
+      { URI_ACTION_CT, QO_FORMAT }, { URI_ACTION_CT, QO_SELECT }, { URI_ACTION_CT, QO_EXPAND },
+      // ComplexCollectionReturnType
+      { URI_ACTION_COLL_CT, QO_FILTER }, { URI_ACTION_COLL_CT, QO_FORMAT },
+      { URI_ACTION_COLL_CT, QO_EXPAND }, { URI_ACTION_COLL_CT, QO_COUNT },
+      { URI_ACTION_COLL_CT, QO_ORDERBY }, { URI_ACTION_COLL_CT, QO_SELECT },
+      { URI_ACTION_COLL_CT, QO_SKIP }, { URI_ACTION_COLL_CT, QO_SKIPTOKEN },
+      { URI_ACTION_COLL_CT, QO_TOP },
+      // EntityReturnType
+      { URI_ACTION_ENTITY, QO_FORMAT }, { URI_ACTION_ENTITY, QO_EXPAND }, { URI_ACTION_ENTITY, QO_SELECT },
+      // EntityCollectionReturnType
+      { URI_ACTION_ES, QO_FORMAT }, { URI_ACTION_ES, QO_FILTER }, { URI_ENTITY_SET, URI_ACTION_ES },
+      { URI_ACTION_ES, QO_COUNT }, { URI_ACTION_ES, QO_ORDERBY }, /* { URI_ACTION_ES, QO_SEARCH }, */
+      { URI_ACTION_ES, QO_SELECT }, { URI_ACTION_ES, QO_SKIP }, { URI_ACTION_ES, QO_SKIPTOKEN },
+      { URI_ACTION_ES, QO_TOP },
+  };
+
+  private final String[][] actionsWithNotValidSystemQueryOptions = {
+      // NoReturnType
+      { URI_ACTION_NO_RETURN, QO_FILTER }, { URI_ACTION_NO_RETURN, QO_ID },
+      { URI_ACTION_NO_RETURN, QO_EXPAND }, { URI_ACTION_NO_RETURN, QO_COUNT },
+      { URI_ACTION_NO_RETURN, QO_ORDERBY },/* { URI_ACTION_NO_RETURN, QO_SEARCH }, */
+      { URI_ACTION_NO_RETURN, QO_SELECT }, { URI_ACTION_NO_RETURN, QO_SKIP },
+      { URI_ACTION_NO_RETURN, QO_SKIPTOKEN }, { URI_ACTION_NO_RETURN, QO_TOP },
+      // PrimReturnType
+      { URI_ACTION_PRIM, QO_FILTER }, { URI_ACTION_PRIM, QO_ID },
+      { URI_ACTION_PRIM, QO_EXPAND }, { URI_ACTION_PRIM, QO_COUNT },
+      { URI_ACTION_PRIM, QO_ORDERBY },/* { URI_ACTION_PRIM, QO_SEARCH }, */
+      { URI_ACTION_PRIM, QO_SELECT }, { URI_ACTION_PRIM, QO_SKIP },
+      { URI_ACTION_PRIM, QO_SKIPTOKEN }, { URI_ACTION_PRIM, QO_TOP },
+      // PrimCollectionReturnType
+      { URI_ACTION_COOL_PRIM, QO_ID }, { URI_ACTION_COOL_PRIM, QO_EXPAND },
+      /* { URI_ACTION_COOL_PRIM, QO_SEARCH }, */{ URI_ACTION_COOL_PRIM, QO_SELECT },
+      // ComplexReturnType
+      { URI_ACTION_CT, QO_FILTER }, { URI_ACTION_CT, QO_ID }, { URI_ACTION_CT, QO_COUNT },
+      { URI_ACTION_CT, QO_ORDERBY }, /* { URI_ACTION_CT, QO_SEARCH }, */
+      { URI_ACTION_CT, QO_SKIP }, { URI_ACTION_CT, QO_SKIPTOKEN }, { URI_ACTION_CT, QO_TOP },
+      // ComplexCollectionReturnType
+      { URI_ACTION_COLL_CT, QO_ID },
+      /* { URI_ACTION_COLL_CT, QO_SEARCH }, */
+      // EntityReturnType
+      { URI_ACTION_ENTITY, QO_FILTER }, { URI_ACTION_ENTITY, QO_ID }, { URI_ACTION_ENTITY, QO_COUNT },
+      /* { URI_ACTION_ENTITY, QO_ORDERBY }, *//* { URI_ACTION_ENTITY, QO_SEARCH }, */
+      { URI_ACTION_ENTITY, QO_SKIP }, { URI_ACTION_ENTITY, QO_SKIPTOKEN }, { URI_ACTION_ENTITY, QO_TOP },
+      // EntityCollectionReturnType
+      { URI_ACTION_ES, QO_ID },
+  };
+
   private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());
+
+  @Test
+  public void validatePostOnActionSystemQueryOptions() throws Exception {
+    for (final String[] uriArray : actionWithValidSystemQueryOptions) {
+      final String[] uri = constructUri(uriArray);
+      try {
+        new UriValidator().validate(
+            new Parser().parseUri(uri[0], uri[1], null, edm),
+            HttpMethod.GET);
+      } catch (final UriParserException e) {
+        fail("Failed for uri: " + uri[0] + '?' + uri[1]);
+      } catch (final UriValidationException e) {
+        fail("Failed for uri: " + uri[0] + '?' + uri[1]);
+      }
+    }
+  }
+
+  @Test
+  public void checkPostOnActionSystemQueryOptionsNotValid() throws Exception {
+    for (final String[] uriArray : actionsWithNotValidSystemQueryOptions) {
+      final String[] uri = constructUri(uriArray);
+      validateWrong(uri[0], uri[1], HttpMethod.POST,
+          UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    }
+  }
+
+  @Test
+  public void serviceDocumentMustNotFailForHttpPostPutPatchDelete() throws Exception {
+    // We must not fail with a nullpointer here as the HTTP method to resource validation happens in the dispatcher
+    final UriInfo uri = new Parser().parseUri(URI_SERVICE, null, null, edm);
+    final UriValidator validator = new UriValidator();
+
+    validator.validate(uri, HttpMethod.GET);
+    validator.validate(uri, HttpMethod.POST);
+    validator.validate(uri, HttpMethod.PUT);
+    validator.validate(uri, HttpMethod.DELETE);
+    validator.validate(uri, HttpMethod.PATCH);
+  }
 
   @Test
   public void validateForHttpMethods() throws Exception {
@@ -278,6 +380,81 @@ public class UriValidatorTest {
   }
 
   @Test
+  public void systemQueryOptionsNotAllowedForHttpPostPutPatchDelete() throws Exception {
+    String[] queryOptions =
+    { QO_FILTER, QO_FORMAT, QO_EXPAND, QO_COUNT, QO_ORDERBY, QO_SELECT, QO_SKIP, QO_TOP, QO_SKIPTOKEN };
+    final UriValidator validator = new UriValidator();
+    for (int i = 0; i < queryOptions.length; i++) {
+      final UriInfo uri = new Parser().parseUri(URI_ENTITY, queryOptions[i], null, edm);
+      try {
+        validator.validate(uri, HttpMethod.POST);
+        fail("UriValidation exception expected for method POST and system query option: " + queryOptions[i]);
+      } catch (UriValidationException e) {
+        assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+            .getMessageKey());
+      }
+      try {
+        validator.validate(uri, HttpMethod.PUT);
+        fail("UriValidation exception expected for method PUT and system query option: " + queryOptions[i]);
+      } catch (UriValidationException e) {
+        assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+            .getMessageKey());
+      }
+      try {
+        validator.validate(uri, HttpMethod.PATCH);
+        fail("UriValidation exception expected for method PATCH and system query option: " + queryOptions[i]);
+      } catch (UriValidationException e) {
+        assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+            .getMessageKey());
+      }
+      try {
+        validator.validate(uri, HttpMethod.DELETE);
+        fail("UriValidation exception expected for method DELETE and system query option: " + queryOptions[i]);
+      } catch (UriValidationException e) {
+        assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+            .getMessageKey());
+      }
+    }
+  }
+
+  @Test
+  public void systemQueryOptionIDAllowedForDELETEReferencesOnly() throws Exception {
+    final UriValidator validator = new UriValidator();
+    final UriInfo uri = new Parser().parseUri(URI_REFERENCES, QO_ID, null, edm);
+    validator.validate(uri, HttpMethod.DELETE);
+    try {
+      validator.validate(uri, HttpMethod.POST);
+      fail("UriValidation exception expected for method POST and system query option: " + QO_ID);
+    } catch (UriValidationException e) {
+      assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+          .getMessageKey());
+    }
+    try {
+      validator.validate(uri, HttpMethod.PUT);
+      fail("UriValidation exception expected for method PUT and system query option: " + QO_ID);
+    } catch (UriValidationException e) {
+      assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+          .getMessageKey());
+    }
+    try {
+      validator.validate(uri, HttpMethod.PATCH);
+      fail("UriValidation exception expected for method PATCH and system query option: " + QO_ID);
+    } catch (UriValidationException e) {
+      assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+          .getMessageKey());
+    }
+
+    final UriInfo newUri = new Parser().parseUri(URI_ENTITY, QO_ID, null, edm);
+    try {
+      validator.validate(newUri, HttpMethod.DELETE);
+      fail("UriValidation exception expected for method DELETE and system query option: " + QO_ID);
+    } catch (UriValidationException e) {
+      assertEquals(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD, e
+          .getMessageKey());
+    }
+  }
+
+  @Test
   public void validateSelect() throws Exception {
     new TestUriValidator().setEdm(edm).run(URI_ENTITY, "$select=PropertyString");
   }
@@ -289,31 +466,31 @@ public class UriValidatorTest {
     testUri.run(URI_ENTITY_SET, "$orderby=PropertyString");
 
     testUri.runEx(URI_ENTITY, "$orderby=XXXX")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
   public void validateCountInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$count=foo")
-    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateTopInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$top=foo")
-    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateSkipInvalid() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=foo")
-    .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
   public void validateDoubleSystemOptions() throws Exception {
     new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=1&$skip=2")
-    .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -323,16 +500,16 @@ public class UriValidatorTest {
     testUri.run("ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')");
 
     testUri.runEx("ESTwoKeyNav(xxx=1, yyy='abc')")
-    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESCollAllPrim(null)").isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(PropertyInt16='1')")
-    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(12345678901234567890)")
-    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString=1)")
-    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyInt16=1)")
-    .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
+        .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
   }
 
   @Test
