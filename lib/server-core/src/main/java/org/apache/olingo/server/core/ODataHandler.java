@@ -34,7 +34,7 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -111,34 +111,34 @@ public class ODataHandler {
       processInternal(request, response);
 
     } catch (final UriValidationException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (final UriParserSemanticException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (final UriParserSyntaxException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (final UriParserException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ContentNegotiatorException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (SerializerException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (DeserializerException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataHandlerException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataApplicationException e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError);
     } catch (Exception e) {
-      ClientServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError);
     }
     return response;
@@ -194,7 +194,7 @@ public class ODataHandler {
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
-      final ClientServerError serverError) {
+      final ODataServerError serverError) {
 
     ErrorProcessor exceptionProcessor;
     try {

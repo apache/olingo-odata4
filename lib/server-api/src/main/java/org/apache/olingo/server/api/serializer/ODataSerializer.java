@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 
 /** OData serializer */
@@ -52,7 +52,7 @@ public interface ODataSerializer {
    * @param error the main error
    * @return inputStream containing the OData-formatted error
    */
-  SerializerResult error(ClientServerError error) throws SerializerException;
+  SerializerResult error(ODataServerError error) throws SerializerException;
 
   /**
    * Writes entity-collection data into an InputStream.

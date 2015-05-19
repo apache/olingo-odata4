@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -102,7 +102,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult error(final ClientServerError error) throws SerializerException {
+  public SerializerResult error(final ODataServerError error) throws SerializerException {
     throw new SerializerException("error serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

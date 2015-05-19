@@ -43,7 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -115,7 +115,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult error(final ClientServerError error) throws SerializerException {
+  public SerializerResult error(final ODataServerError error) throws SerializerException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());

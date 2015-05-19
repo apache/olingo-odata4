@@ -19,7 +19,7 @@
 package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 
@@ -36,6 +36,6 @@ public interface ErrorProcessor extends Processor {
    * @param serverError the server error
    * @param responseFormat requested content type after content negotiation
    */
-  public void processError(ODataRequest request, ODataResponse response, ClientServerError serverError,
+  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType responseFormat);
 }

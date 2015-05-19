@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -72,7 +72,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
 
   @Override
   public void processError(final ODataRequest request, final ODataResponse response,
-      final ClientServerError serverError,
+      final ODataServerError serverError,
       final ContentType requestedContentType) {
     try {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
@@ -82,8 +82,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     } catch (Exception e) {
       // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.
       String responseContent =
-          "{\"error\":{\"code\":null,\"message\":\"An unexpected exception occurred during " +
-              "error processing with message: " + e.getMessage() + "\"}}";
+          "{\"error\":{\"code\":null,\"message\":\"An unexpected exception occurred during error processing\"}}";
       response.setContent(new ByteArrayInputStream(responseContent.getBytes()));
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());

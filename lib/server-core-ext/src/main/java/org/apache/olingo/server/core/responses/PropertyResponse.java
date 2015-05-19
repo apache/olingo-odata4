@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataTranslatedException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -144,7 +144,7 @@ public class PropertyResponse extends ServiceResponse {
     writeNoContent(true);
   }
   
-  public void writeError(ClientServerError error) {
+  public void writeError(ODataServerError error) {
     try {
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
