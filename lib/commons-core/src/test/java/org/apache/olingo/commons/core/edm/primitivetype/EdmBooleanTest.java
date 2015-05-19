@@ -44,10 +44,10 @@ public class EdmBooleanTest extends PrimitiveTypeBaseTest {
   public void valueToString() throws Exception {
     assertEquals("true", instance.valueToString(true, null, null, null, null, null));
     assertEquals("false", instance.valueToString(Boolean.FALSE, null, null, null, null, null));
-
+    
     expectTypeErrorInValueToString(instance, 0);
   }
-
+  
   @Test
   public void valueOfString() throws Exception {
     assertEquals(true, instance.valueOfString("true", null, null, null, null, null, Boolean.class));

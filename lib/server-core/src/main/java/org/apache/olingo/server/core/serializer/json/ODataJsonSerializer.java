@@ -485,7 +485,11 @@ public class ODataJsonSerializer implements ODataSerializer {
     final String value = type.valueToString(primitiveValue,
         isNullable, maxLength, precision, scale, isUnicode);
     if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
-      json.writeBoolean(Boolean.parseBoolean(value));
+      if(value == null) {
+        json.writeNull();
+      } else {
+        json.writeBoolean(Boolean.parseBoolean(value));
+      }
     } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)

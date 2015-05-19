@@ -351,7 +351,33 @@ public class ODataJsonSerializerTest {
         + "{\"@odata.mediaEtag\":\"W/\\\"4\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
-
+  
+  @Test
+  public void primitiveBooleanCollectionWithNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllNullable");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    final String resultString = IOUtils.toString(serializer.entityCollection(metadata,
+        edmEntitySet.getEntityType(), entitySet,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
+    
+    final String expected = "{\"@odata.context\":\"$metadata#ESAllNullable\",\"value\":[{\"PropertyKey\":1," 
+    + "\"PropertyInt16\":0,\"PropertyString\":\"\",\"PropertyBoolean\":null,\"PropertyByte\":0,\"PropertySByte\":0," 
+    + "\"PropertyInt32\":0,\"PropertyInt64\":0,\"PropertySingle\":0,\"PropertyDouble\":0,\"PropertyDecimal\":0," 
+    + "\"PropertyBinary\":\"\",\"PropertyDate\":null,\"PropertyDateTimeOffset\":null,\"PropertyDuration\":\"PT0S\"," 
+    + "\"PropertyGuid\":null,\"PropertyTimeOfDay\":\"00:00:00\",\"CollPropertyString\":[\"spiderman@comic.com\",\"\"," 
+    + "\"spidergirl@comic.com\"],\"CollPropertyBoolean\":[true,null,false],\"CollPropertyByte\":[50,0,249]," 
+    + "\"CollPropertySByte\":[-120,0,126],\"CollPropertyInt16\":[1000,0,30112],\"CollPropertyInt32\":" 
+    + "[23232323,0,10000001],\"CollPropertyInt64\":[929292929292,0,444444444444],\"CollPropertySingle\":" 
+    + "[1790,0,3210],\"CollPropertyDouble\":[-17900,0,3210],\"CollPropertyDecimal\":[12,0,1234]," 
+    + "\"CollPropertyBinary\":[\"q83v\",\"\",\"VGeJ\"],\"CollPropertyDate\":[\"1958-12-03\",null,\"2013-06-25\"]," 
+    + "\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",null,\"1948-02-17T09:09:09Z\"]," 
+    + "\"CollPropertyDuration\":null,\"CollPropertyGuid\":[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",null," 
+    + "\"cccccc67-89ab-cdef-0123-456789cccccc\"],\"CollPropertyTimeOfDay\":[\"04:14:13\",\"00:00:00\",\"00:37:13\"]}]}";
+    
+    Assert.assertEquals(expected, resultString);
+  }
+  
   @Test
   public void select() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");

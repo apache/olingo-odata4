@@ -60,7 +60,7 @@ public class DataCreator {
     data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim());
 
     // No data available but to allow an insert operation create empty EntitySets
-    data.put("ESAllNullable", new EntityCollection());
+    data.put("ESAllNullable", createESAllNullable());
     data.put("ESMixEnumDefCollComp", new EntityCollection());
     data.put("ESTwoBase", new EntityCollection());
     data.put("ESBaseTwoKeyNav", new EntityCollection());
@@ -79,16 +79,73 @@ public class DataCreator {
     linkESTwoKeyNav(data);
   }
 
+  private EntityCollection createESAllNullable() {
+    final EntityCollection entityCollection = new EntityCollection();
+    entityCollection.getEntities().add(
+        new Entity()
+        .addProperty(createPrimitive("PropertyKey", 1))
+        .addProperty(createPrimitive("PropertyInt16", 0))
+        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyBoolean", null))
+        .addProperty(createPrimitive("PropertyByte", 0))
+        .addProperty(createPrimitive("PropertySByte", 0))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0))
+        .addProperty(createPrimitive("PropertySingle", 0))
+        .addProperty(createPrimitive("PropertyDouble", 0))
+        .addProperty(createPrimitive("PropertyDecimal", 0))
+        .addProperty(createPrimitive("PropertyBinary", new byte[0]))
+        .addProperty(createPrimitive("PropertyDate", null))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", null))
+        .addProperty(createPrimitive("PropertyDuration", 0))
+        .addProperty(createPrimitive("PropertyGuid", null))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 0, 0)))
+        .addProperty(createPrimitiveCollection("CollPropertyString", "spiderman@comic.com", "", "spidergirl@comic.com"))
+        .addProperty(createPrimitiveCollection("CollPropertyBoolean", true, null, false))
+        .addProperty(createPrimitiveCollection("CollPropertyByte", 50, 0, 249))
+        .addProperty(createPrimitiveCollection("CollPropertySByte", -120, 0, 126))
+        .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, 0, 30112))
+        .addProperty(createPrimitiveCollection("CollPropertyInt32", 23232323, 0, 10000001))
+        .addProperty(createPrimitiveCollection("CollPropertyInt64", 929292929292L, 0L, 444444444444L))
+        .addProperty(createPrimitiveCollection("CollPropertySingle", 1790, 0, 3210))
+        .addProperty(createPrimitiveCollection("CollPropertyDouble", -17900, 0, 3210))
+        .addProperty(createPrimitiveCollection("CollPropertyDecimal", 12, 0, 1234))
+        .addProperty(createPrimitiveCollection("CollPropertyBinary", 
+            new byte[] { -85, -51, -17 },
+            new byte[0],
+            new byte[] { 84, 103, -119 } ))
+        .addProperty(createPrimitiveCollection("CollPropertyDate", 
+            getDateTime(1958, 12, 3, 0, 0, 0), 
+            null, 
+            getDateTime(2013, 6, 25, 0, 0, 0)))
+        .addProperty(createPrimitiveCollection("CollPropertyDateTimeOffset",
+            getDateTime(2015, 8, 12, 3, 8, 34),
+            null,
+            getDateTime(1948, 2, 17, 9, 9, 9)))
+        .addProperty(createPrimitiveCollection("CollPropertyGuid", 
+            UUID.fromString("ffffff67-89ab-cdef-0123-456789aaaaaa"),
+            null,
+            UUID.fromString("cccccc67-89ab-cdef-0123-456789cccccc")))
+        .addProperty(createPrimitiveCollection("CollPropertyTimeOfDay", 
+            getTime(4, 14, 13),
+            getTime(0, 0, 0),
+            getTime(0, 37, 13))
+        ));
+    
+    
+    return entityCollection;
+  }
+
   protected Map<String, EntityCollection> getData() {
     return data;
   }
 
   private EntityCollection createESTwoKeyTwoPrim() {
-    EntityCollection entitySet = new EntityCollection();
-    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) 32767, "Test String1"));
-    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) -365, "Test String2"));
-    entitySet.getEntities().add(createETTwoKeyTwoPrimEntity((short) -32766, "Test String3"));
-    return entitySet;
+    EntityCollection entityCollection = new EntityCollection();
+    entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) 32767, "Test String1"));
+    entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) -365, "Test String2"));
+    entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) -32766, "Test String3"));
+    return entityCollection;
   }
 
   private Entity createETTwoKeyTwoPrimEntity(final short propertyInt16, final String propertyString) {
@@ -97,24 +154,24 @@ public class DataCreator {
   }
 
   private EntityCollection createESServerSidePaging() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
     for (int i = 1; i <= 503; i++) {
-      entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", i))
+      entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", i))
           .addProperty(createPrimitive("PropertyString", "Number:" + i)));
     }
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESKeyNav() {
-    final EntityCollection entitySet = new EntityCollection();
+    final EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(createETKeyNavEntity(1, "I am String Property 1"));
-    entitySet.getEntities().add(createETKeyNavEntity(2, "I am String Property 2"));
-    entitySet.getEntities().add(createETKeyNavEntity(3, "I am String Property 3"));
+    entityCollection.getEntities().add(createETKeyNavEntity(1, "I am String Property 1"));
+    entityCollection.getEntities().add(createETKeyNavEntity(2, "I am String Property 2"));
+    entityCollection.getEntities().add(createETKeyNavEntity(3, "I am String Property 3"));
 
-    return entitySet;
+    return entityCollection;
   }
 
   @SuppressWarnings("unchecked")
@@ -137,14 +194,14 @@ public class DataCreator {
   }
 
   private EntityCollection createESTwoKeyNav() {
-    final EntityCollection entitySet = new EntityCollection();
+    final EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(createESTwoKeyNavEntity(1, "1"));
-    entitySet.getEntities().add(createESTwoKeyNavEntity(1, "2"));
-    entitySet.getEntities().add(createESTwoKeyNavEntity(2, "1"));
-    entitySet.getEntities().add(createESTwoKeyNavEntity(3, "1"));
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(1, "1"));
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(1, "2"));
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(2, "1"));
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(3, "1"));
 
-    return entitySet;
+    return entityCollection;
   }
 
   @SuppressWarnings("unchecked")
@@ -191,9 +248,9 @@ public class DataCreator {
 
   @SuppressWarnings("unchecked")
   private EntityCollection createESCompCollComp() {
-    final EntityCollection entitySet = new EntityCollection();
+    final EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createComplex("PropertyComp", createComplexCollection("CollPropertyComp", Arrays
             .asList(createPrimitive("PropertyInt16", 555),
                 createPrimitive("PropertyString", "1 Test Complex in Complex Property")), Arrays
@@ -202,7 +259,7 @@ public class DataCreator {
             .asList(createPrimitive("PropertyInt16", 777),
                 createPrimitive("PropertyString", "3 Test Complex in Complex Property"))))));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 12345)).addProperty(
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 12345)).addProperty(
         createComplex("PropertyComp", createComplexCollection("CollPropertyComp", Arrays
             .asList(createPrimitive("PropertyInt16", 888),
                 createPrimitive("PropertyString", "11 Test Complex in Complex Property")), Arrays
@@ -211,31 +268,31 @@ public class DataCreator {
             .asList(createPrimitive("PropertyInt16", 0),
                 createPrimitive("PropertyString", "13 Test Complex in Complex Property"))))));
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESTwoPrim() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 32766))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 32766))
         .addProperty(createPrimitive("PropertyString", "Test String1")));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -365))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -365))
         .addProperty(createPrimitive("PropertyString", "Test String2")));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -32766))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", -32766))
         .addProperty(createPrimitive("PropertyString", null)));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "Test String4")));
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESAllPrim() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 255))
         .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
@@ -250,7 +307,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6)).addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
         .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
         .addProperty(createPrimitive("PropertyBoolean", false)).addProperty(createPrimitive("PropertyByte", 0))
         .addProperty(createPrimitive("PropertySByte", Byte.MIN_VALUE))
@@ -266,7 +323,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", (short) 0))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", (short) 0))
         .addProperty(createPrimitive("PropertyString", "")).addProperty(createPrimitive("PropertyBoolean", false))
         .addProperty(createPrimitive("PropertyByte", 0)).addProperty(createPrimitive("PropertySByte", 0))
         .addProperty(createPrimitive("PropertyInt32", 0)).addProperty(createPrimitive("PropertyInt64", 0))
@@ -279,11 +336,11 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESCompAllPrim() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE));
@@ -299,7 +356,7 @@ public class DataCreator {
         createPrimitive("PropertyInt32", Integer.MAX_VALUE), createPrimitive("PropertyInt64", Long.MAX_VALUE),
         createPrimitive("PropertySByte", Byte.MAX_VALUE), createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1))));
     entity.setETag("W/\"" + Short.MAX_VALUE + '\"');
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 7));
@@ -316,7 +373,7 @@ public class DataCreator {
         createPrimitive("PropertySByte", Byte.MAX_VALUE),
         createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100))));
     entity.setETag("W/\"7\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 0));
@@ -332,15 +389,15 @@ public class DataCreator {
         createPrimitive("PropertyInt32", Integer.MAX_VALUE), createPrimitive("PropertyInt64", Long.MAX_VALUE),
         createPrimitive("PropertySByte", Byte.MAX_VALUE), createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45))));
     entity.setETag("W/\"0\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESCollAllPrim() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 1)).addProperty(
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 1)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createPrimitiveCollection("CollPropertyBoolean", true, false, true))
@@ -368,16 +425,16 @@ public class DataCreator {
                 getTime(1, 12, 33))));
 
     Entity entity = new Entity();
-    entity.getProperties().addAll(entitySet.getEntities().get(0).getProperties());
+    entity.getProperties().addAll(entityCollection.getEntities().get(0).getProperties());
     entity.getProperties().set(0, createPrimitive("PropertyInt16", 2));
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity();
-    entity.getProperties().addAll(entitySet.getEntities().get(0).getProperties());
+    entity.getProperties().addAll(entityCollection.getEntities().get(0).getProperties());
     entity.getProperties().set(0, createPrimitive("PropertyInt16", 3));
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESMixPrimCollComp() {
@@ -387,34 +444,34 @@ public class DataCreator {
         Arrays.asList(createPrimitive("PropertyInt16", 456), createPrimitive("PropertyString", "TEST 2")),
         Arrays.asList(createPrimitive("PropertyInt16", 789), createPrimitive("PropertyString", "TEST 3")));
 
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(
             createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
                 "Employee3@company.example")).addProperty(
             createComplex("PropertyComp", createPrimitive("PropertyInt16", 111),
                 createPrimitive("PropertyString", "TEST A"))).addProperty(complexCollection));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 7)).addProperty(
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 7)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example")).addProperty(
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 222),
             createPrimitive("PropertyString", "TEST B"))).addProperty(complexCollection));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 0)).addProperty(
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyInt16", 0)).addProperty(
         createPrimitiveCollection("CollPropertyString", "Employee1@company.example", "Employee2@company.example",
             "Employee3@company.example")).addProperty(
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 333),
             createPrimitive("PropertyString", "TEST C"))).addProperty(complexCollection));
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESAllKey() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "First"))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "First"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 255))
         .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
@@ -426,7 +483,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6)).addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21))));
 
-    entitySet.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "Second"))
+    entityCollection.getEntities().add(new Entity().addProperty(createPrimitive("PropertyString", "Second"))
         .addProperty(createPrimitive("PropertyBoolean", true)).addProperty(createPrimitive("PropertyByte", 254))
         .addProperty(createPrimitive("PropertySByte", 124)).addProperty(createPrimitive("PropertyInt16", 32764))
         .addProperty(createPrimitive("PropertyInt32", 2147483644))
@@ -437,57 +494,57 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", 6)).addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21))));
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESCompComp() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 1));
     entity.addProperty(createComplex("PropertyComp",
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 123),
             createPrimitive("PropertyString", "String 1"))));
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", 2));
     entity.addProperty(createComplex("PropertyComp",
         createComplex("PropertyComp", createPrimitive("PropertyInt16", 987),
             createPrimitive("PropertyString", "String 2"))));
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
-    return entitySet;
+    return entityCollection;
   }
 
   private EntityCollection createESMedia() {
-    EntityCollection entitySet = new EntityCollection();
+    EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity().addProperty(createPrimitive("PropertyInt16", 1))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"1\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 2))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("royalblue")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"2\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 3))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("crimson")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"3\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 4))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"4\"");
-    entitySet.getEntities().add(entity);
+    entityCollection.getEntities().add(entity);
 
-    return entitySet;
+    return entityCollection;
   }
 
   private byte[] createImage(final String color) {
@@ -498,87 +555,95 @@ public class DataCreator {
   }
 
   private void linkESTwoPrim(final Map<String, EntityCollection> data) {
-    final EntityCollection entitySet = data.get("ESTwoPrim");
+    final EntityCollection entityCollection = data.get("ESTwoPrim");
     final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();
 
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETAllPrimMany", targetEntities.get(1), targetEntities.get(2));
-
-    setLink(entitySet.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETAllPrimMany", targetEntities.get(1), 
+                                                                                targetEntities.get(2));
+    setLink(entityCollection.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
   }
 
   private void linkESAllPrim(final Map<String, EntityCollection> data) {
-    final EntityCollection entitySet = data.get("ESAllPrim");
+    final EntityCollection entityCollection = data.get("ESAllPrim");
     final List<Entity> targetEntities = data.get("ESTwoPrim").getEntities();
 
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
-    setLink(entitySet.getEntities().get(0), "NavPropertyETTwoPrimOne", targetEntities.get(3));
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimOne", targetEntities.get(3));
 
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETTwoPrimMany", targetEntities.get(0), targetEntities.get(2),
-        targetEntities.get(3));
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoPrimMany", targetEntities.get(0), 
+                                                                                targetEntities.get(2),
+                                                                                targetEntities.get(3));
   }
 
   private void linkESKeyNav(final Map<String, EntityCollection> data) {
-    final EntityCollection entitySet = data.get("ESKeyNav");
+    final EntityCollection entityCollection = data.get("ESKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
     final List<Entity> esMediaTargets = data.get("ESMedia").getEntities();
 
     // NavPropertyETKeyNavMany
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), esKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETKeyNavMany", esKeyNavTargets.get(1), esKeyNavTargets.get(2));
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), 
+                                                                               esKeyNavTargets.get(1));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETKeyNavMany", esKeyNavTargets.get(1), 
+                                                                               esKeyNavTargets.get(2));
 
     // NavPropertyETKeyNavOne
-    setLink(entitySet.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(1));
-    setLink(entitySet.getEntities().get(1), "NavPropertyETKeyNavOne", esKeyNavTargets.get(2));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(1));
+    setLink(entityCollection.getEntities().get(1), "NavPropertyETKeyNavOne", esKeyNavTargets.get(2));
 
     // NavPropertyETTwoKeyNavOne
-    setLink(entitySet.getEntities().get(0), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(0));
-    setLink(entitySet.getEntities().get(1), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(1));
-    setLink(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(2));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(0));
+    setLink(entityCollection.getEntities().get(1), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(1));
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(2));
 
     // NavPropertyETTwoKeyNavMany
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
         esTwoKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(2));
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(3));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(2));
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(3));
 
     // NavPropertyETMediaOne
-    setLink(entitySet.getEntities().get(0), "NavPropertyETMediaOne", esMediaTargets.get(0));
-    setLink(entitySet.getEntities().get(1), "NavPropertyETMediaOne", esMediaTargets.get(1));
-    setLink(entitySet.getEntities().get(2), "NavPropertyETMediaOne", esMediaTargets.get(2));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETMediaOne", esMediaTargets.get(0));
+    setLink(entityCollection.getEntities().get(1), "NavPropertyETMediaOne", esMediaTargets.get(1));
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETMediaOne", esMediaTargets.get(2));
 
     // NavPropertyETMediaMany
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(2));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETMediaMany", esMediaTargets.get(2));
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETMediaMany", esMediaTargets.get(0), esMediaTargets.get(1));
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETMediaMany", esMediaTargets.get(0), 
+                                                                              esMediaTargets.get(2));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETMediaMany", esMediaTargets.get(2));
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETMediaMany", esMediaTargets.get(0), 
+                                                                              esMediaTargets.get(1));
   }
 
   private void linkESTwoKeyNav(final Map<String, EntityCollection> data) {
-    final EntityCollection entitySet = data.get("ESTwoKeyNav");
+    final EntityCollection entityCollection = data.get("ESTwoKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
 
     // NavPropertyETKeyNavOne
-    setLink(entitySet.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
-    setLink(entitySet.getEntities().get(1), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
-    setLink(entitySet.getEntities().get(2), "NavPropertyETKeyNavOne", esKeyNavTargets.get(1));
-    setLink(entitySet.getEntities().get(3), "NavPropertyETKeyNavOne", esKeyNavTargets.get(2));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
+    setLink(entityCollection.getEntities().get(1), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETKeyNavOne", esKeyNavTargets.get(1));
+    setLink(entityCollection.getEntities().get(3), "NavPropertyETKeyNavOne", esKeyNavTargets.get(2));
 
     // NavPropertyETKeyNavMany
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), esKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), esKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETKeyNavMany", esKeyNavTargets.get(1), esKeyNavTargets.get(2));
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), 
+                                                                               esKeyNavTargets.get(1));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETKeyNavMany", esKeyNavTargets.get(0), 
+                                                                               esKeyNavTargets.get(1));
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETKeyNavMany", esKeyNavTargets.get(1), 
+                                                                               esKeyNavTargets.get(2));
 
     // NavPropertyETTwoKeyNavOne
-    setLink(entitySet.getEntities().get(0), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(0));
-    setLink(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(1));
-    setLink(entitySet.getEntities().get(3), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(2));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(0));
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(1));
+    setLink(entityCollection.getEntities().get(3), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(2));
 
     // NavPropertyETTwoKeyNavMany
-    setLinks(entitySet.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
         esTwoKeyNavTargets.get(1));
-    setLinks(entitySet.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0));
-    setLinks(entitySet.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(1));
+    setLinks(entityCollection.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0));
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(1));
   }
 
   protected static Property createPrimitive(final String name, final Object value) {
