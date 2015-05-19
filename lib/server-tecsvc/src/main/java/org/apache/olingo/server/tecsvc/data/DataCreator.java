@@ -298,6 +298,7 @@ public class DataCreator {
         createPrimitive("PropertyGuid", GUID), createPrimitive("PropertyInt16", Short.MAX_VALUE),
         createPrimitive("PropertyInt32", Integer.MAX_VALUE), createPrimitive("PropertyInt64", Long.MAX_VALUE),
         createPrimitive("PropertySByte", Byte.MAX_VALUE), createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1))));
+    entity.setETag("W/\"" + Short.MAX_VALUE + '\"');
     entitySet.getEntities().add(entity);
 
     entity = new Entity();
@@ -314,6 +315,7 @@ public class DataCreator {
         createPrimitive("PropertyInt32", Integer.MAX_VALUE), createPrimitive("PropertyInt64", Long.MAX_VALUE),
         createPrimitive("PropertySByte", Byte.MAX_VALUE),
         createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100))));
+    entity.setETag("W/\"7\"");
     entitySet.getEntities().add(entity);
 
     entity = new Entity();
@@ -329,6 +331,7 @@ public class DataCreator {
         createPrimitive("PropertyGuid", GUID), createPrimitive("PropertyInt16", -25),
         createPrimitive("PropertyInt32", Integer.MAX_VALUE), createPrimitive("PropertyInt64", Long.MAX_VALUE),
         createPrimitive("PropertySByte", Byte.MAX_VALUE), createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45))));
+    entity.setETag("W/\"0\"");
     entitySet.getEntities().add(entity);
 
     return entitySet;
@@ -463,21 +466,25 @@ public class DataCreator {
     Entity entity = new Entity().addProperty(createPrimitive("PropertyInt16", 1))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
     entity.setMediaContentType("image/svg+xml");
+    entity.setMediaETag("W/\"1\"");
     entitySet.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 2))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("royalblue")));
     entity.setMediaContentType("image/svg+xml");
+    entity.setMediaETag("W/\"2\"");
     entitySet.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 3))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("crimson")));
     entity.setMediaContentType("image/svg+xml");
+    entity.setMediaETag("W/\"3\"");
     entitySet.getEntities().add(entity);
 
     entity = new Entity().addProperty(createPrimitive("PropertyInt16", 4))
         .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
     entity.setMediaContentType("image/svg+xml");
+    entity.setMediaETag("W/\"4\"");
     entitySet.getEntities().add(entity);
 
     return entitySet;

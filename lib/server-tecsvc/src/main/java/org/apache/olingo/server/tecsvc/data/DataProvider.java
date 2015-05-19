@@ -56,12 +56,20 @@ public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
 
-  final private Map<String, EntityCollection> data;
+  private Map<String, EntityCollection> data;
   private Edm edm;
   private OData odata;
 
   public DataProvider() {
     data = new DataCreator().getData();
+  }
+
+  public void setEdm(final Edm edm) {
+    this.edm = edm;
+  }
+
+  public void setOData(final OData odata) {
+    this.odata = odata;
   }
 
   public EntityCollection readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
@@ -73,9 +81,8 @@ public class DataProvider {
     return entitySet == null ? null : read(edmEntitySet.getEntityType(), entitySet, keys);
   }
 
-  public Entity
-      read(final EdmEntityType edmEntityType, final EntityCollection entitySet, final List<UriParameter> keys)
-          throws DataProviderException {
+  public Entity read(final EdmEntityType edmEntityType, final EntityCollection entitySet,
+      final List<UriParameter> keys) throws DataProviderException {
     try {
       for (final Entity entity : entitySet.getEntities()) {
         boolean found = true;
@@ -134,7 +141,7 @@ public class DataProvider {
     final EntityCollection entitySet = readAll(edmEntitySet);
     final List<Entity> entities = entitySet.getEntities();
     final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
-    final Entity newEntity = new Entity();
+    Entity newEntity = new Entity();
     newEntity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
     for (final String keyName : edmEntityType.getKeyPredicateNames()) {
       newEntity.addProperty(DataCreator.createPrimitive(keyName, newKey.get(keyName)));
@@ -226,7 +233,7 @@ public class DataProvider {
     return newProperty;
   }
 
-  public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, final Entity entity,
+  public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
     final EdmEntityType entityType = edmEntitySet.getEntityType();
@@ -256,11 +263,15 @@ public class DataProvider {
     } else {
       handleDeleteSingleNavigationProperties(edmEntitySet, entity, changedEntity);
     }
+
+    // Update the ETag if present.
+    if (entity.getETag() != null) {
+      entity.setETag("W/\"" + System.nanoTime() + "\"");
+    }
   }
 
   private void handleDeleteSingleNavigationProperties(final EdmEntitySet edmEntitySet, final Entity entity,
-      final Entity changedEntity)
-      throws DataProviderException {
+      final Entity changedEntity) throws DataProviderException {
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final List<String> navigationPropertyNames = entityType.getNavigationPropertyNames();
 
@@ -381,8 +392,8 @@ public class DataProvider {
     }
   }
 
-  private void
-      setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity, final Entity targetEntity) {
+  private void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
+      final Entity targetEntity) {
     if (navigationProperty.isCollection()) {
       DataCreator.setLinks(srcEntity, navigationProperty.getName(), targetEntity);
     } else {
@@ -475,6 +486,7 @@ public class DataProvider {
     entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
     entity.addProperty(DataCreator.createPrimitive(MEDIA_PROPERTY_NAME, media));
     entity.setMediaContentType(type);
+    entity.setMediaETag("W/\"" + System.nanoTime() + "\"");
   }
 
   public EntityCollection readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
@@ -517,18 +529,9 @@ public class DataProvider {
     return ActionData.entityAction(name, actionParameters);
   }
 
-  public EntityCollection
-      processActionEntityCollection(final String name, final Map<String, Parameter> actionParameters)
-          throws DataProviderException {
+  public EntityCollection processActionEntityCollection(final String name,
+      final Map<String, Parameter> actionParameters) throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters);
-  }
-
-  public void setEdm(final Edm edm) {
-    this.edm = edm;
-  }
-
-  public void setOData(final OData odata) {
-    this.odata = odata;
   }
 
   public static class DataProviderException extends ODataApplicationException {

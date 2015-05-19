@@ -220,6 +220,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    if (entity.getETag() != null) {
+      response.setHeader(HttpHeader.ETAG, entity.getETag());
+    }
   }
 
   @Override
@@ -230,6 +233,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readMedia(entity)));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
+    if (entity.getMediaETag() != null) {
+      response.setHeader(HttpHeader.ETAG, entity.getMediaETag());
+    }
   }
 
   @Override
@@ -279,6 +285,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     response.setHeader(HttpHeader.LOCATION,
         request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
+    if (entity.getETag() != null) {
+      response.setHeader(HttpHeader.ETAG, entity.getETag());
+    }
   }
 
   @Override
@@ -319,6 +328,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    if (entity.getETag() != null) {
+      response.setHeader(HttpHeader.ETAG, entity.getETag());
+    }
   }
 
   @Override
@@ -338,6 +350,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    if (entity.getETag() != null) {
+      response.setHeader(HttpHeader.ETAG, entity.getETag());
+    }
   }
 
   @Override
@@ -377,6 +392,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           .getContent());
       response.setStatusCode((entityResult.isCreated() ? HttpStatusCode.CREATED : HttpStatusCode.OK).getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+      if (entityResult.getEntity().getETag() != null) {
+        response.setHeader(HttpHeader.ETAG, entityResult.getEntity().getETag());
+      }
     }
   }
 

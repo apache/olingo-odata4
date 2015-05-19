@@ -232,6 +232,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\","
+        + "\"@odata.etag\":\"W/\\\"32767\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyComp\":{"
         + "\"PropertyString\":\"First Resource - first\","
@@ -322,15 +323,14 @@ public class ODataJsonSerializerTest {
   @Test
   public void entityMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
-    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    entity.setMediaETag("theMediaETag");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(),
         entity,
         EntitySerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
         .build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
-        + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/svg+xml\","
+        + "\"@odata.mediaEtag\":\"W/\\\"1\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
         + "\"PropertyInt16\":1}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -344,10 +344,10 @@ public class ODataJsonSerializerTest {
         EntityCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":3},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
+        + "{\"@odata.mediaEtag\":\"W/\\\"1\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"2\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"3\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":3},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"4\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
 

@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -62,6 +63,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<InputStream> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals("image/svg+xml", response.getContentType());
+    assertEquals("W/\"1\"", response.getETag());
 
     InputStream media = response.getBody();
     assertNotNull(media);
@@ -113,6 +115,8 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());
     assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), mediaResponse.getContentType());
     assertEquals("just a test", IOUtils.toString(mediaResponse.getBody()));
+    assertNotNull(mediaResponse.getETag());
+    assertNotEquals("W/\"4\"", mediaResponse.getETag());
   }
 
   @Test
