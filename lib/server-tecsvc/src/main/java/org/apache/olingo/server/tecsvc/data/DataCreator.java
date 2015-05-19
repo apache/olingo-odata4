@@ -58,25 +58,290 @@ public class DataCreator {
     data.put("ESCompCollComp", createESCompCollComp());
     data.put("ESServerSidePaging", createESServerSidePaging());
     data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim());
-
-    // No data available but to allow an insert operation create empty EntitySets
     data.put("ESAllNullable", createESAllNullable());
-    data.put("ESMixEnumDefCollComp", new EntityCollection());
-    data.put("ESTwoBase", new EntityCollection());
-    data.put("ESBaseTwoKeyNav", new EntityCollection());
-    data.put("ESBaseTwoKeyTwoPrim", new EntityCollection());
-    data.put("ESCompCollAllPrim", new EntityCollection());
-    data.put("ESKeyTwoKeyComp", new EntityCollection());
-    data.put("ESFourKeyAlias", new EntityCollection());
-    data.put("ESBase", new EntityCollection());
-    data.put("ESTwoBaseTwoKeyTwoPrim", new EntityCollection());
-    data.put("ESInvisible", new EntityCollection());
-    data.put("ESCompMixPrimCollComp", new EntityCollection());
+    data.put("ESTwoBase", createESTwoBase());
+    data.put("ESBaseTwoKeyNav", createESBaseTwoKeyNav());
+    data.put("ESCompCollAllPrim", createESCompCollAllPrim());
+    data.put("ESFourKeyAlias", createESFourKeyAlias());
+    data.put("ESBase", createESBase());
+    data.put("ESCompMixPrimCollComp", createESCompMixPrimCollComp());
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
     linkESKeyNav(data);
     linkESTwoKeyNav(data);
+  }
+
+  @SuppressWarnings("unchecked")
+  private EntityCollection createESCompMixPrimCollComp() {
+    final EntityCollection entityCollection = new EntityCollection();
+    
+    entityCollection.getEntities().add(new Entity()
+      .addProperty(createPrimitive("PropertyInt16", 1))
+      .addProperty(createComplex("PropertyMixedPrimCollComp",
+          createPrimitive("PropertyInt16", 1),
+          createPrimitiveCollection("CollPropertyString", 
+              "Employee1@company.example",
+              "Employee2@company.example",
+              "Employee3@company.example"
+          ),
+          createComplex("PropertyComp",
+              createPrimitive("PropertyInt16", 333),
+              createPrimitive("PropertyString", "TEST123")
+          ),
+          createComplexCollection("CollPropertyComp", 
+              Arrays.asList(new Property[] { 
+                  createPrimitive("PropertyInt16", 222),
+                  createPrimitive("PropertyString", "TEST9876")
+              }),
+              Arrays.asList(new Property[] { 
+                  createPrimitive("PropertyInt16", 333),
+                  createPrimitive("PropertyString", "TEST123")
+              })
+          )    
+       ))
+    );
+    
+    entityCollection.getEntities().add(new Entity()
+    .addProperty(createPrimitive("PropertyInt16", 2))
+    .addProperty(createComplex("PropertyMixedPrimCollComp",
+        createPrimitive("PropertyInt16", 1),
+        createPrimitiveCollection("CollPropertyString", 
+            "Employee1@company.example",
+            "Employee2@company.example",
+            "Employee3@company.example"
+        ),
+        createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", 333),
+            createPrimitive("PropertyString", "TEST123")
+        ),
+        createComplexCollection("CollPropertyComp", 
+            Arrays.asList(new Property[] { 
+                createPrimitive("PropertyInt16", 222),
+                createPrimitive("PropertyString", "TEST9876")
+            }),
+            Arrays.asList(new Property[] { 
+                createPrimitive("PropertyInt16", 333),
+                createPrimitive("PropertyString", "TEST123")
+            })
+        )    
+     ))
+    );
+     
+    entityCollection.getEntities().add(new Entity()
+    .addProperty(createPrimitive("PropertyInt16", 3))
+    .addProperty(createComplex("PropertyMixedPrimCollComp",
+        createPrimitive("PropertyInt16", 1),
+        createPrimitiveCollection("CollPropertyString", 
+            "Employee1@company.example",
+            "Employee2@company.example",
+            "Employee3@company.example"
+        ),
+        createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", 333),
+            createPrimitive("PropertyString", "TEST123")
+        ),
+        createComplexCollection("CollPropertyComp", 
+            Arrays.asList(new Property[] { 
+                createPrimitive("PropertyInt16", 222),
+                createPrimitive("PropertyString", "TEST9876")
+            }),
+            Arrays.asList(new Property[] { 
+                createPrimitive("PropertyInt16", 333),
+                createPrimitive("PropertyString", "TEST123")
+            })
+        )    
+     ))
+    );
+    
+    return entityCollection;
+  }
+
+  private EntityCollection createESBase() {
+    final EntityCollection entityCollection = new EntityCollection();
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 111))
+        .addProperty(createPrimitive("PropertyString", "TEST A"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST A 0815")));
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 222))
+        .addProperty(createPrimitive("PropertyString", "TEST B"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST C 0815")));
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 333))
+        .addProperty(createPrimitive("PropertyString", "TEST C"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST E 0815")));
+
+    
+    return entityCollection;
+  }
+
+  private EntityCollection createESFourKeyAlias() {
+    final EntityCollection entityCollection = new EntityCollection();
+    
+    entityCollection.getEntities().add(new Entity()
+      .addProperty(createPrimitive("PropertyInt16", 1))
+      .addProperty(createComplex("PropertyComp",
+          createPrimitive("PropertyInt16", 11),
+          createPrimitive("PropertyString", "Num11")
+      ))
+      .addProperty(createComplex("PropertyCompComp",
+          createComplex("PropertyComp", 
+              createPrimitive("PropertyInt16", 111),
+              createPrimitive("PropertyString", "Num111")
+          )
+        ))
+    );
+    
+    
+    return entityCollection;
+  }
+
+  private EntityCollection createESCompCollAllPrim() {
+    final EntityCollection entityCollection = new EntityCollection();
+    entityCollection.getEntities().add(new Entity() 
+      .addProperty(createPrimitive("PropertyInt16", 5678))
+      .addProperty(createComplex("PropertyComp", 
+          createPrimitiveCollection("CollPropertyString", 
+              "Employee1@company.example",
+              "Employee2@company.example",
+              "Employee3@company.example"),
+           createPrimitiveCollection("CollPropertyBoolean", true, false, true),
+           createPrimitiveCollection("CollPropertyByte", 50, 200, 249),
+           createPrimitiveCollection("CollPropertySByte", -120, 120, 126),
+           createPrimitiveCollection("CollPropertyInt16", 1000, 2000, 30112),
+           createPrimitiveCollection("CollPropertyInt32", 23232323, 11223355, 10000001),
+           createPrimitiveCollection("CollPropertyInt64", 929292929292L, 333333333333L, 444444444444L),
+           createPrimitiveCollection("CollPropertySingle", 1790, 26600, 3210),
+           createPrimitiveCollection("CollPropertyDouble", -17900, -27800000, 3210),
+           createPrimitiveCollection("CollPropertyDecimal", 12, -2, 1234),
+           createPrimitiveCollection("CollPropertyByte", 50, 200, 249),
+           createPrimitiveCollection("CollPropertyBinary", 
+               new byte[] { -85, -51, -17 },
+               new byte[] { 1, 35, 69 },
+               new byte[] { 84, 103, -119 }
+           ),
+           createPrimitiveCollection("CollPropertyDate",
+               getDateTime(1958, 12, 3, 0, 0, 0),
+               getDateTime(1999, 8, 5, 0, 0, 0),
+               getDateTime(2013, 6, 25, 0, 0, 0)
+           ),
+           createPrimitiveCollection("CollPropertyDateTimeOffset",
+               getDateTime(2015, 8, 12, 3, 8, 34),
+               getDateTime(1970, 3, 28, 12, 11, 10),
+               getDateTime(1948, 2, 17, 9, 9, 9)
+           ),
+           createPrimitiveCollection("CollPropertyDuration", 
+               getDurration(0, 0, 0, 13),
+               getDurration(0, 5, 28, 20),
+               getDurration(0, 1, 0, 0)
+           ),
+           createPrimitiveCollection("CollPropertyGuid",
+               UUID.fromString("ffffff67-89ab-cdef-0123-456789aaaaaa"),
+               UUID.fromString("eeeeee67-89ab-cdef-0123-456789bbbbbb"),
+               UUID.fromString("cccccc67-89ab-cdef-0123-456789cccccc")
+           ),
+           createPrimitiveCollection("CollPropertyTimeOfDay",
+               getTime(4, 14, 13),
+               getTime(23, 59, 59),
+               getTime(1, 12, 33)
+           )
+        ))
+    );
+    
+    entityCollection.getEntities().add(new Entity() 
+    .addProperty(createPrimitive("PropertyInt16", 12326))
+    .addProperty(createComplex("PropertyComp", 
+        createPrimitiveCollection("CollPropertyString", 
+            "Employee1@company.example",
+            "Employee2@company.example",
+            "Employee3@company.example"),
+         createPrimitiveCollection("CollPropertyBoolean", true, false, true),
+         createPrimitiveCollection("CollPropertyByte", 50, 200, 249),
+         createPrimitiveCollection("CollPropertySByte", -120, 120, 126),
+         createPrimitiveCollection("CollPropertyInt16", 1000, 2000, 30112),
+         createPrimitiveCollection("CollPropertyInt32", 23232323, 11223355, 10000001),
+         createPrimitiveCollection("CollPropertyInt64", 929292929292L, 333333333333L, 444444444444L),
+         createPrimitiveCollection("CollPropertySingle", 1790, 26600, 3210),
+         createPrimitiveCollection("CollPropertyDouble", -17900, -27800000, 3210),
+         createPrimitiveCollection("CollPropertyDecimal", 12, -2, 1234),
+         createPrimitiveCollection("CollPropertyByte", 50, 200, 249),
+         createPrimitiveCollection("CollPropertyBinary", 
+             new byte[] { -85, -51, -17 },
+             new byte[] { 1, 35, 69 },
+             new byte[] { 84, 103, -119 }
+         ),
+         createPrimitiveCollection("CollPropertyDate",
+             getDateTime(1958, 12, 3, 0, 0, 0),
+             getDateTime(1999, 8, 5, 0, 0, 0),
+             getDateTime(2013, 6, 25, 0, 0, 0)
+         ),
+         createPrimitiveCollection("CollPropertyDateTimeOffset",
+             getDateTime(2015, 8, 12, 3, 8, 34),
+             getDateTime(1970, 3, 28, 12, 11, 10),
+             getDateTime(1948, 2, 17, 9, 9, 9)
+         ),
+         createPrimitiveCollection("CollPropertyDuration", 
+             getDurration(0, 0, 0, 13),
+             getDurration(0, 5, 28, 20),
+             getDurration(0, 1, 0, 0)
+         ),
+         createPrimitiveCollection("CollPropertyGuid",
+             UUID.fromString("ffffff67-89ab-cdef-0123-456789aaaaaa"),
+             UUID.fromString("eeeeee67-89ab-cdef-0123-456789bbbbbb"),
+             UUID.fromString("cccccc67-89ab-cdef-0123-456789cccccc")
+         ),
+         createPrimitiveCollection("CollPropertyTimeOfDay",
+             getTime(4, 14, 13),
+             getTime(23, 59, 59),
+             getTime(1, 12, 33)
+         )
+      ))
+  );
+    
+    return entityCollection;
+  }
+
+  private EntityCollection createESBaseTwoKeyNav() {
+    final EntityCollection entityCollection = new EntityCollection();
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(1, "1")
+                                  .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+    
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(1, "2")
+        .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+    
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(2, "1")
+        .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+    
+    entityCollection.getEntities().add(createESTwoKeyNavEntity(3, "1")
+        .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+    return entityCollection;
+  }
+
+  private EntityCollection createESTwoBase() {
+    final EntityCollection entityCollection = new EntityCollection();
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 111))
+        .addProperty(createPrimitive("PropertyString", "TEST A"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST A 0815"))
+        .addProperty(createPrimitive("AdditionalPropertyString_6", "TEST B 0815")));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 222))
+        .addProperty(createPrimitive("PropertyString", "TEST B"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST C 0815"))
+        .addProperty(createPrimitive("AdditionalPropertyString_6", "TEST D 0815")));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 333))
+        .addProperty(createPrimitive("PropertyString", "TEST C"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST E 0815"))
+        .addProperty(createPrimitive("AdditionalPropertyString_6", "TEST F 0815")));
+
+    return entityCollection;
   }
 
   private EntityCollection createESAllNullable() {
@@ -680,6 +945,13 @@ public class DataCreator {
     return dateTime;
   }
 
+  protected static int getDurration(final int days, int hours, int minutes, int seconds) {
+    return days * 24   * 60 * 60 
+              + hours  * 60 * 60 
+                  + minutes * 60 
+                  + seconds;
+  }
+  
   protected static Calendar getTime(final int hour, final int minute, final int second) {
     Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     time.clear();

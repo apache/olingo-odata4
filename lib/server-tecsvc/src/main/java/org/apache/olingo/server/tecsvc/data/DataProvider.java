@@ -73,7 +73,9 @@ public class DataProvider {
   }
 
   public EntityCollection readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
-    return data.get(edmEntitySet.getName());
+    final EntityCollection entityCollection = data.get(edmEntitySet.getName());
+
+    return (entityCollection == null) ? createEntityCollection(edmEntitySet) : entityCollection;
   }
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
@@ -135,10 +137,10 @@ public class DataProvider {
       }
     }
   }
-
+  
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-    final EntityCollection entitySet = readAll(edmEntitySet);
+    EntityCollection entitySet = readAll(edmEntitySet);
     final List<Entity> entities = entitySet.getEntities();
     final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
     Entity newEntity = new Entity();
@@ -152,7 +154,15 @@ public class DataProvider {
 
     return newEntity;
   }
-
+  
+  private EntityCollection createEntityCollection(final EdmEntitySet edmEntitySet) {
+    if(data.get(edmEntitySet.getName()) == null ) {
+      data.put(edmEntitySet.getName(), new EntityCollection());
+    }
+    
+    return data.get(edmEntitySet.getName());
+  }
+    
   private Map<String, Object> findFreeComposedKey(final List<Entity> entities, final EdmEntityType entityType)
       throws DataProviderException {
     // Weak key construction

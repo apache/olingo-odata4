@@ -132,17 +132,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     validateOptions(uriInfo.asUriInfoResource());
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo); // including checks
     final EntityCollection entitySetInitial = readEntityCollection(uriInfo);
-    if (entitySetInitial == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
-    } else {
-      EntityCollection entitySet = new EntityCollection();
-      entitySet.getEntities().addAll(entitySetInitial.getEntities());
-      FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
-      response.setContent(odata.createFixedFormatSerializer().count(
-          entitySet.getEntities().size()));
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
-    }
+    EntityCollection entitySet = new EntityCollection();
+    
+    entitySet.getEntities().addAll(entitySetInitial.getEntities());
+    FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
+    response.setContent(odata.createFixedFormatSerializer().count(
+        entitySet.getEntities().size()));
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
   }
 
   @Override
@@ -158,6 +155,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType responseFormat) throws ODataApplicationException, SerializerException {
     getEdmEntitySet(uriInfo); // including checks
     final Entity entity = readEntity(uriInfo);
+    
     response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readMedia(entity)));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
@@ -443,6 +441,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntitySet.getEntityType();
 
     EntityCollection entitySetInitial = readEntityCollection(uriInfo);
+    
     if(entitySetInitial == null) {
       entitySetInitial = new EntityCollection();
     }
