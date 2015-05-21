@@ -349,35 +349,38 @@ public class DataCreator {
     entityCollection.getEntities().add(
         new Entity()
         .addProperty(createPrimitive("PropertyKey", 1))
-        .addProperty(createPrimitive("PropertyInt16", 0))
-        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyInt16", null))
+        .addProperty(createPrimitive("PropertyString", null))
         .addProperty(createPrimitive("PropertyBoolean", null))
-        .addProperty(createPrimitive("PropertyByte", 0))
-        .addProperty(createPrimitive("PropertySByte", 0))
-        .addProperty(createPrimitive("PropertyInt32", 0))
-        .addProperty(createPrimitive("PropertyInt64", 0))
-        .addProperty(createPrimitive("PropertySingle", 0))
-        .addProperty(createPrimitive("PropertyDouble", 0))
-        .addProperty(createPrimitive("PropertyDecimal", 0))
-        .addProperty(createPrimitive("PropertyBinary", new byte[0]))
+        .addProperty(createPrimitive("PropertyByte", null))
+        .addProperty(createPrimitive("PropertySByte", null))
+        .addProperty(createPrimitive("PropertyInt32", null))
+        .addProperty(createPrimitive("PropertyInt64", null))
+        .addProperty(createPrimitive("PropertySingle", null))
+        .addProperty(createPrimitive("PropertyDouble", null))
+        .addProperty(createPrimitive("PropertyDecimal", null))
+        .addProperty(createPrimitive("PropertyBinary", null))
         .addProperty(createPrimitive("PropertyDate", null))
         .addProperty(createPrimitive("PropertyDateTimeOffset", null))
-        .addProperty(createPrimitive("PropertyDuration", 0))
+        .addProperty(createPrimitive("PropertyDuration", null))
         .addProperty(createPrimitive("PropertyGuid", null))
-        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 0, 0)))
-        .addProperty(createPrimitiveCollection("CollPropertyString", "spiderman@comic.com", "", "spidergirl@comic.com"))
+        .addProperty(createPrimitive("PropertyTimeOfDay", null))
+        .addProperty(createPrimitiveCollection("CollPropertyString", 
+            "spiderman@comic.com", 
+            null, 
+            "spidergirl@comic.com"))
         .addProperty(createPrimitiveCollection("CollPropertyBoolean", true, null, false))
-        .addProperty(createPrimitiveCollection("CollPropertyByte", 50, 0, 249))
-        .addProperty(createPrimitiveCollection("CollPropertySByte", -120, 0, 126))
-        .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, 0, 30112))
-        .addProperty(createPrimitiveCollection("CollPropertyInt32", 23232323, 0, 10000001))
-        .addProperty(createPrimitiveCollection("CollPropertyInt64", 929292929292L, 0L, 444444444444L))
-        .addProperty(createPrimitiveCollection("CollPropertySingle", 1790, 0, 3210))
-        .addProperty(createPrimitiveCollection("CollPropertyDouble", -17900, 0, 3210))
-        .addProperty(createPrimitiveCollection("CollPropertyDecimal", 12, 0, 1234))
+        .addProperty(createPrimitiveCollection("CollPropertyByte", 50, null, 249))
+        .addProperty(createPrimitiveCollection("CollPropertySByte", -120, null, 126))
+        .addProperty(createPrimitiveCollection("CollPropertyInt16", 1000, null, 30112))
+        .addProperty(createPrimitiveCollection("CollPropertyInt32", 23232323, null, 10000001))
+        .addProperty(createPrimitiveCollection("CollPropertyInt64", 929292929292L, null, 444444444444L))
+        .addProperty(createPrimitiveCollection("CollPropertySingle", 1790, null, 3210))
+        .addProperty(createPrimitiveCollection("CollPropertyDouble", -17900, null, 3210))
+        .addProperty(createPrimitiveCollection("CollPropertyDecimal", 12, null, 1234))
         .addProperty(createPrimitiveCollection("CollPropertyBinary", 
             new byte[] { -85, -51, -17 },
-            new byte[0],
+            null,
             new byte[] { 84, 103, -119 } ))
         .addProperty(createPrimitiveCollection("CollPropertyDate", 
             getDateTime(1958, 12, 3, 0, 0, 0), 
@@ -387,13 +390,17 @@ public class DataCreator {
             getDateTime(2015, 8, 12, 3, 8, 34),
             null,
             getDateTime(1948, 2, 17, 9, 9, 9)))
+        .addProperty(createPrimitiveCollection("CollPropertyDuration",
+            getDurration(0, 0, 0, 13),
+            null,
+            getDurration(0, 1, 0, 0)))
         .addProperty(createPrimitiveCollection("CollPropertyGuid", 
             UUID.fromString("ffffff67-89ab-cdef-0123-456789aaaaaa"),
             null,
             UUID.fromString("cccccc67-89ab-cdef-0123-456789cccccc")))
         .addProperty(createPrimitiveCollection("CollPropertyTimeOfDay", 
             getTime(4, 14, 13),
-            getTime(0, 0, 0),
+            null,
             getTime(0, 37, 13))
         ));
     

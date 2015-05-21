@@ -484,12 +484,10 @@ public class ODataJsonSerializer implements ODataSerializer {
       final JsonGenerator json) throws EdmPrimitiveTypeException, IOException {
     final String value = type.valueToString(primitiveValue,
         isNullable, maxLength, precision, scale, isUnicode);
-    if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
-      if(value == null) {
-        json.writeNull();
-      } else {
+    if (value == null) {
+      json.writeNull();
+    } else if(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
         json.writeBoolean(Boolean.parseBoolean(value));
-      }
     } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
