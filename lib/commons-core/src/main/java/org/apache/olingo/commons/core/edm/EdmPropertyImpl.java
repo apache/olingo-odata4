@@ -124,4 +124,7 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
   public boolean isPrimitive() {
     return typeInfo.isPrimitiveType();
   }
+
+  public EdmTypeInfo getTypeInfo(){return typeInfo; }
+
 }

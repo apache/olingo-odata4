@@ -94,7 +94,6 @@ public class ContentNegotiatorTest {
       { null,                   "a/a;x=y",        null,                  "a/a;v=w"        },
       { null,                   null,             "a/a;x=y",             "a/a;v=w"        },
       { null,                   "atom",           null,                  null             }, // not yet supported
-      { null,                   null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
       { null,                   "a/b;charset=ISO-8859-1", null,          "a/b"            },
       { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         },
       { null,                   null,             null,                  "text/plain"     }
