@@ -111,13 +111,23 @@ public abstract class TechnicalProcessor implements Processor {
 
     return entitySet;
   }
-
+  
   /**
    * Reads an entity as specified in the resource path, including navigation.
    * If there is navigation and the navigation ends on an entity collection,
    * returns the entity before the final navigation segment.
    */
   protected Entity readEntity(final UriInfoResource uriInfo) throws ODataApplicationException {
+    return readEntity(uriInfo, false);
+  }
+  
+  /**
+   * If ignoreLastNavigation is set to false see {@link #readEntity(UriInfoResource)}
+   * otherwise returns the second last entity (Ignores the last navigation) 
+   * If no such entity exists throws an ODataApplicationException
+   */
+  protected Entity readEntity(final UriInfoResource uriInfo, final boolean ignoreLastNavigation) 
+      throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
 
     Entity entity = null;
@@ -147,9 +157,21 @@ public abstract class TechnicalProcessor implements Processor {
     if (entity == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     }
-
+    
+    int readAtMostNavigations = resourcePaths.size();
+    if(ignoreLastNavigation) {
+      readAtMostNavigations = 0;
+      for(int i = 1; i <resourcePaths.size(); i++) {
+        if(resourcePaths.get(i) instanceof UriResourceNavigation) {
+          readAtMostNavigations++;
+        } else {
+          break;
+        }
+      }
+    }
+    
     int navigationCount = 0;
-    while (++navigationCount < resourcePaths.size()
+    while (++navigationCount < readAtMostNavigations
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       final UriResourceNavigation uriNavigationResource = (UriResourceNavigation) resourcePaths.get(navigationCount);
       final EdmNavigationProperty navigationProperty = uriNavigationResource.getProperty();
@@ -185,8 +207,8 @@ public abstract class TechnicalProcessor implements Processor {
       }
     }
   }
-
-  private UriResourceNavigation getLastNavigation(final UriInfoResource uriInfo) {
+  
+  protected UriResourceNavigation getLastNavigation(final UriInfoResource uriInfo) {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     int navigationCount = 1;
     while (navigationCount < resourcePaths.size()

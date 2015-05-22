@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -38,7 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
-import org.apache.olingo.server.api.uri.UriParameter;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 public class RequestValidator {
@@ -175,8 +174,8 @@ public class RequestValidator {
   private void validateLink(final String bindingLink, final EdmBindingTarget edmBindungTarget)
       throws DataProviderException {
     try {
-      final List<UriParameter> keys = uriHelper.getKeyPredicatesFromEntityLink(edm, bindingLink, rawServiceRoot);
-      final Entity entity = provider.read((EdmEntitySet) edmBindungTarget, keys);
+      final UriResourceEntitySet uriInfo = uriHelper.parseEntityId(edm, bindingLink, rawServiceRoot);
+      final Entity entity = provider.read(uriInfo.getEntitySet(), uriInfo.getKeyPredicates());
 
       if (entity == null) {
         throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);

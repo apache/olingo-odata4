@@ -67,21 +67,21 @@ public interface UriHelper {
    * @return the key predicate
    */
   String buildKeyPredicate(EdmEntityType edmEntityType, Entity entity) throws SerializerException;
-
+  
   /**
-   * Retrieves the key predicates from a canonical link to an entity.
-   * A canonical link to an entity must follow the pattern
+   * Parses a given entity-id. Provides the entity set and key predicates.
+   * A canonical entiy-id to an entity must follow the pattern
    * <code>[&lt;service root&gt;][&lt;entityContainer&gt;.]&lt;entitySet&gt;(&lt;key&gt;)</code>, i.e.,
    * it must be a relative or absolute URI consisting of an entity set (qualified
    * with an entity-container name if not in the default entity container) and a
    * syntactically valid key that identifies a single entity; example:
    * <code>http://example.server.com/service.svc/Employees('42')</code>.
+   * 
    * @param edm the edm the entity belongs to
-   * @param entityLink the link as String
-   * @param rawServiceRoot the root URI of the service
-   * @return a list of key predicates
-   * @throws DeserializerException in case the link is malformed
+   * @param entityId URI of the entity-id
+   * @param rawServiceRoot  the root URI of the service
+   * @return {@link UriResourceEntitySet} - contains the entity set and the key predicates
+   * @throws DeserializerException in case the entity-id is malformed
    */
-  List<UriParameter> getKeyPredicatesFromEntityLink(Edm edm, String entityLink, String rawServiceRoot)
-      throws DeserializerException;
+  UriResourceEntitySet parseEntityId(Edm edm, String entityId, String rawServiceRoot) throws DeserializerException;
 }

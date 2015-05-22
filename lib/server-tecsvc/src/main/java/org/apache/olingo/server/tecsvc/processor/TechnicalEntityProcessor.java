@@ -55,9 +55,11 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.data.RequestValidator;
@@ -275,21 +277,69 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void createReference(final ODataRequest request, ODataResponse response, final UriInfo uriInfo, 
+  public void createReference(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
-    throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-  }
+    
+    final ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
+    final DeserializerResult references = deserializer.entityReferences(request.getBody());
 
+    if (references.getEntityReferences().size() != 1) {
+      throw new ODataApplicationException("A post request to a collection navigation property must "
+          + "contain a single entity reference", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    }
+    
+    final Entity entity = readEntity(uriInfo, true);
+    final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0), 
+        request.getRawBaseUri());
+    
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+  
   @Override
   public void updateReference(final ODataRequest request, ODataResponse response, final UriInfo uriInfo, 
       final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
-    throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-  }
 
+    final ODataDeserializer deserializer = odata.createDeserializer(ODataFormat.fromContentType(requestFormat));
+    final DeserializerResult references = deserializer.entityReferences(request.getBody());
+
+    if (references.getEntityReferences().size() != 1) {
+      throw new ODataApplicationException("A post request to a collection navigation property must "
+          + "contain a single entity reference", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    }
+    
+    final Entity entity = readEntity(uriInfo, true);
+    final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0), 
+        request.getRawBaseUri());
+    
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+  
   @Override
   public void deleteReference(final ODataRequest request, ODataResponse response, final UriInfo uriInfo) 
       throws ODataApplicationException {
-    throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+
+    final UriResourceNavigation lastNavigation = getLastNavigation(uriInfo);
+    final IdOption idOption = uriInfo.getIdOption();
+    
+    if(lastNavigation.isCollection() && idOption == null) {
+      throw new ODataApplicationException("Id system query option must be provided", 
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), 
+          Locale.ROOT);
+    } else if(!lastNavigation.isCollection() && idOption != null) {
+      throw new ODataApplicationException("Id system query option must not be provided", 
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), 
+          Locale.ROOT);
+    }
+    
+    final Entity entity = readEntity(uriInfo, true);
+    dataProvider.deleteReference(entity, 
+                                 lastNavigation.getProperty(), 
+                                 (uriInfo.getIdOption() != null) ? uriInfo.getIdOption().getValue() : null, 
+                                 request.getRawBaseUri());
+    
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
   @Override

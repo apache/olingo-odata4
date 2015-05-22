@@ -93,13 +93,12 @@ public class UriHelperImpl implements UriHelper {
   }
 
   @Override
-  public List<UriParameter> getKeyPredicatesFromEntityLink(final Edm edm, final String entityLink,
-      final String rawServiceRoot)
-          throws DeserializerException {
+  public UriResourceEntitySet parseEntityId(Edm edm, String entityId, String rawServiceRoot) 
+      throws DeserializerException {
 
-    String oDataPath = entityLink;
-    if (rawServiceRoot != null && entityLink.startsWith(rawServiceRoot)) {
-      oDataPath = entityLink.substring(rawServiceRoot.length());
+    String oDataPath = entityId;
+    if (rawServiceRoot != null && entityId.startsWith(rawServiceRoot)) {
+      oDataPath = entityId.substring(rawServiceRoot.length());
     }
     oDataPath = oDataPath.startsWith("/") ? oDataPath : "/" + oDataPath;
 
@@ -108,15 +107,15 @@ public class UriHelperImpl implements UriHelper {
           .getUriResourceParts();
       if (uriResourceParts.size() == 1 && uriResourceParts.get(0).getKind() == UriResourceKind.entitySet) {
         final UriResourceEntitySet entityUriResource = (UriResourceEntitySet) uriResourceParts.get(0);
-
-        return entityUriResource.getKeyPredicates();
+        
+        return entityUriResource;
       }
 
       throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
-          entityLink);
+          entityId);
     } catch (UriParserException e) {
       throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
-          entityLink);
+          entityId);
     }
   }
 }

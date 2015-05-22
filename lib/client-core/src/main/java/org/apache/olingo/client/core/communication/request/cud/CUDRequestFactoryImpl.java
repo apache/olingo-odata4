@@ -239,7 +239,8 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   @Override
   public ODataReferenceAddingRequest getReferenceAddingRequest(final URI serviceRoot, final URI targetURI,
       final URI reference) {
-    final URI contextURI = client.newURIBuilder(serviceRoot.toASCIIString()).appendMetadataSegment().build();
+    final URI contextURI = client.newURIBuilder(serviceRoot.toASCIIString()).appendMetadataSegment()
+                                                                            .appendRefSegment().build();
     ResWrap<URI> wrappedPayload = new ResWrap<URI>(contextURI, null, reference);
 
     return new ODataReferenceAddingRequestImpl(client, HttpMethod.POST, targetURI, wrappedPayload);

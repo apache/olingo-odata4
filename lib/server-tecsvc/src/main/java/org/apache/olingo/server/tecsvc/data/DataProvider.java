@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -51,6 +52,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 
 public class DataProvider {
 
@@ -311,33 +313,17 @@ public class DataProvider {
 
     for (final Link link : navigationBindings) {
       final EdmNavigationProperty edmNavProperty = edmEntitySet.getEntityType().getNavigationProperty(link.getTitle());
-      final EdmEntitySet edmTargetEntitySet =
-          (EdmEntitySet) edmEntitySet.getRelatedBindingTarget(edmNavProperty.getName());
 
       if (edmNavProperty.isCollection()) {
         for (final String bindingLink : link.getBindingLinks()) {
-          final Entity destEntity = getEntityByURI(rawBaseUri, edmTargetEntitySet, bindingLink);
+          final Entity destEntity = getEntityByReference(bindingLink, rawBaseUri);
           createLink(edmNavProperty, entity, destEntity);
         }
       } else {
         final String bindingLink = link.getBindingLink();
-        final Entity destEntity = getEntityByURI(rawBaseUri, edmTargetEntitySet, bindingLink);
+        final Entity destEntity = getEntityByReference(bindingLink, rawBaseUri);
         createLink(edmNavProperty, entity, destEntity);
       }
-    }
-  }
-
-  private Entity getEntityByURI(final String rawBaseUri, final EdmEntitySet edmEntitySetTarget,
-      final String bindingLink) throws DataProviderException {
-
-    try {
-      final List<UriParameter> keys = odata.createUriHelper()
-          .getKeyPredicatesFromEntityLink(edm, bindingLink, rawBaseUri);
-      final Entity entity = read(edmEntitySetTarget, keys);
-
-      return entity;
-    } catch (DeserializerException e) {
-      throw new DataProviderException("Invalid entity binding link", HttpStatusCode.BAD_REQUEST);
     }
   }
 
@@ -406,7 +392,7 @@ public class DataProvider {
     }
   }
 
-  private void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
+  public void setLink(final EdmNavigationProperty navigationProperty, final Entity srcEntity,
       final Entity targetEntity) {
     if (navigationProperty.isCollection()) {
       DataCreator.setLinks(srcEntity, navigationProperty.getName(), targetEntity);
@@ -547,7 +533,68 @@ public class DataProvider {
       final Map<String, Parameter> actionParameters) throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters);
   }
+  
+  public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId, 
+      final String rawServiceRoot) throws DataProviderException {
+        setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));
+  }
+  
+  public void deleteReference(final Entity entity, final EdmNavigationProperty navigationProperty, 
+      final String entityId, final String rawServiceRoot) throws DataProviderException {
 
+    if(navigationProperty.isCollection()) {
+      final Entity targetEntity = getEntityByReference(entityId, rawServiceRoot);
+      final Link navigationLink = entity.getNavigationLink(navigationProperty.getName());
+      
+      if(navigationLink != null && navigationLink.getInlineEntitySet() != null 
+          && navigationLink.getInlineEntitySet().getEntities().contains(targetEntity)) {
+        
+        // Remove partner single-valued navigation property
+        if(navigationProperty.getPartner() != null) {
+          final EdmNavigationProperty edmPartnerNavigationProperty = navigationProperty.getPartner();
+          if(!edmPartnerNavigationProperty.isCollection() && !edmPartnerNavigationProperty.isNullable()) {
+            throw new DataProviderException("Navigation property must not be null", HttpStatusCode.BAD_REQUEST);
+          } else if(!edmPartnerNavigationProperty.isCollection()) {
+            removeLink(edmPartnerNavigationProperty, targetEntity);
+          } else if(edmPartnerNavigationProperty.isCollection() && edmPartnerNavigationProperty.getPartner() != null) {
+            // Bidirectional referential constraint
+            final Link partnerNavigationLink = targetEntity.getNavigationLink(edmPartnerNavigationProperty.getName());
+            if(partnerNavigationLink != null && partnerNavigationLink.getInlineEntitySet() != null) {
+              partnerNavigationLink.getInlineEntitySet().getEntities().remove(entity);
+            }
+          }
+        }
+        
+        // Remove target entity from collection-valued navigation property
+        navigationLink.getInlineEntitySet().getEntities().remove(targetEntity);
+      } else {
+        throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);
+      }
+    } else {
+      if(navigationProperty.isNullable()) {
+        removeLink(navigationProperty, entity);
+      } else {
+        throw new DataProviderException("Navigation property must not be null", HttpStatusCode.BAD_REQUEST);
+      }
+    }
+  }
+  
+  private Entity getEntityByReference(final String entityId, final String rawServiceRoot) 
+      throws DataProviderException {
+    try {
+      final UriResourceEntitySet uriResource = odata.createUriHelper().parseEntityId(edm, entityId, rawServiceRoot);
+      final Entity targetEntity = read(uriResource.getEntitySet(), uriResource.getKeyPredicates());
+
+      if (targetEntity != null) {
+        return targetEntity;
+      } else {
+        throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);
+      }
+    } catch (DeserializerException e) {
+      throw new DataProviderException("Invalid entity-id", HttpStatusCode.BAD_REQUEST);
+    }
+  }
+  
   public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 
@@ -563,5 +610,4 @@ public class DataProvider {
       super(message, statusCode.getStatusCode(), Locale.ROOT);
     }
   }
-
 }
