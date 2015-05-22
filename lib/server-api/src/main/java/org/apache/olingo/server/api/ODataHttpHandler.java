@@ -59,4 +59,10 @@ public interface ODataHttpHandler {
    */
   void setSplit(int split);
 
+  /**
+   * Register this interface to support concurrency control for certain entity sets.
+   * @param customETagSupport
+   */
+  void register(CustomETagSupport customConcurrencyControlSupport);
+
 }
