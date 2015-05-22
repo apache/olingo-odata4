@@ -50,6 +50,7 @@ public class ContentNegotiator {
       return Arrays.asList(
           ODataFormat.JSON.getContentType(),
           ODataFormat.JSON_NO_METADATA.getContentType(),
+          ODataFormat.JSON_FULL_METADATA.getContentType(),
           ODataFormat.APPLICATION_JSON.getContentType());
     }
   }
