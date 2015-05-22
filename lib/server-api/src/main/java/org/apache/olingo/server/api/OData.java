@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.api;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
@@ -110,8 +111,18 @@ public abstract class OData {
   public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
 
   /**
-   * @param kind
-   * @return a {@link EdmPrimitiveType} instance for the type kind
+   * Creates a primitive-type instance.
+   * @param kind the kind of the primitive type
+   * @return an {@link EdmPrimitiveType} instance for the type kind
    */
   public abstract EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind);
+
+  /**
+   * Creates Etag information from the values of a HTTP header
+   * containing a list of entity tags or a single star character, i.e.,
+   * <code>If-Match</code> and <code>If-None-Match</code>.
+   * @param values the collection of header values
+   * @return an {@link EtagInformation} instance
+   */
+  public abstract EtagInformation createEtagInformation(final Collection<String> values);
 }

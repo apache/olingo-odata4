@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.EtagInformation;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -408,6 +409,19 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntitySet.getEntityType();
 
     final Entity entity = readEntity(uriInfo);
+
+    if (entity.getETag() != null) {
+      final EtagInformation ifMatch = odata.createEtagInformation(request.getHeaders(HttpHeader.IF_MATCH));
+      if (!ifMatch.isMatchedBy(entity.getETag()) && !ifMatch.getEtags().isEmpty()) {
+        throw new ODataApplicationException("The If-Match precondition is not fulfilled.",
+            HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.ROOT);
+      }
+      if (odata.createEtagInformation(request.getHeaders(HttpHeader.IF_NONE_MATCH))
+          .isMatchedBy(entity.getETag())) {
+        throw new ODataApplicationException("The entity has not been modified.",
+            HttpStatusCode.NOT_MODIFIED.getStatusCode(), Locale.ROOT);
+      }
+    }
 
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
     final ExpandOption expand = uriInfo.getExpandOption();
