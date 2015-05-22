@@ -19,12 +19,13 @@
 package org.apache.olingo.samples.client.core.http;
 
 import java.net.URI;
+
 import org.apache.http.HttpVersion;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Shows how to customize the runtime behavior of HTTP client component.

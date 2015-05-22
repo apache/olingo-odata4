@@ -19,6 +19,7 @@
 package org.apache.olingo.samples.client.core.http;
 
 import java.net.URI;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseFactory;
@@ -39,8 +40,8 @@ import org.apache.http.message.BasicLineParser;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.CharArrayBuffer;
-import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Shows how to use custom client connections.

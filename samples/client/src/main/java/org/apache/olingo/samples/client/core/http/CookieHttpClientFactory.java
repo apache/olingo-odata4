@@ -19,12 +19,13 @@
 package org.apache.olingo.samples.client.core.http;
 
 import java.net.URI;
+
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
+import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Shows how to work with HTTP cookies.
