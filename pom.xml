@@ -565,6 +565,7 @@
                 <exclude>**/nb-configuration.xml</exclude>
                 <exclude>**/.externalToolBuilders/**</exclude>
                 <exclude>**/maven-eclipse.xml</exclude>
+                <exclude>**/*.iml</exclude>
                 <exclude>**/ref/**</exclude>
                 <exclude>**/server-ref/**</exclude>
                 <exclude>**/dependency-reduced-pom.xml</exclude>
