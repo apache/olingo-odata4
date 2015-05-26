@@ -47,7 +47,7 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -694,7 +694,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.POST, "ESAllPrim", "", HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
     verifyZeroInteractions(processor);
     verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class),
-        any(ClientServerError.class),
+        any(ODataServerError.class),
         any(ContentType.class));
   }
 

@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataErrorDetail;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
-public class ClientErrorSerializerTest {
+public class ServerErrorSerializerTest {
 
   ODataSerializer ser;
 
@@ -50,7 +50,7 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void basicODataErrorNoCode() throws Exception {
-    ClientServerError error = new ClientServerError();
+    ODataServerError error = new ODataServerError();
     error.setMessage("ErrorMessage");
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
@@ -59,7 +59,7 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void basicODataErrorWithCode() throws Exception {
-    ClientServerError error = new ClientServerError();
+    ODataServerError error = new ODataServerError();
     error.setCode("Code").setMessage("ErrorMessage");
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
@@ -68,7 +68,7 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void basicODataErrorWithCodeAndTarget() throws Exception {
-    ClientServerError error = new ClientServerError();
+    ODataServerError error = new ODataServerError();
     error.setCode("Code").setMessage("ErrorMessage").setTarget("Target");
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
@@ -82,7 +82,7 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void emptyDetailsList() throws Exception {
-    ClientServerError error = new ClientServerError();
+    ODataServerError error = new ODataServerError();
     error.setMessage("ErrorMessage").setDetails(new ArrayList<ODataErrorDetail>());
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
@@ -91,7 +91,7 @@ public class ClientErrorSerializerTest {
 
   @Test
   public void nothingSetAtODataErrorObject() throws Exception {
-    ClientServerError error = new ClientServerError();
+    ODataServerError error = new ODataServerError();
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":null}}", jsonString);
@@ -101,7 +101,7 @@ public class ClientErrorSerializerTest {
   public void singleDetailNothingSet() throws Exception {
     List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
     details.add(new ODataErrorDetail());
-    ClientServerError error = new ClientServerError().setDetails(details);
+    ODataServerError error = new ODataServerError().setDetails(details);
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("{\"error\":{\"code\":null,\"message\":null,\"details\":[{\"code\":null,\"message\":null}]}}",
@@ -112,8 +112,8 @@ public class ClientErrorSerializerTest {
   public void verifiedWithJacksonParser() throws Exception {
     List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
     details.add(new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget"));
-    ClientServerError error =
-        new ClientServerError().setCode("Code").setMessage("Message").setTarget("Target").setDetails(details);
+    ODataServerError error =
+        new ODataServerError().setCode("Code").setMessage("Message").setTarget("Target").setDetails(details);
     InputStream stream = ser.error(error).getContent();
     JsonNode tree = new ObjectMapper().readTree(stream);
     assertNotNull(tree);

@@ -22,14 +22,16 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.server.api.ClientServerError;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -102,7 +104,7 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult error(final ClientServerError error) throws SerializerException {
+  public SerializerResult error(final ODataServerError error) throws SerializerException {
     throw new SerializerException("error serialization not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
@@ -131,6 +133,20 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   @Override
   public SerializerResult complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
+    throw new SerializerException("Serialization not implemented for XML format.",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
+  }
+
+  @Override
+  public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntotySet, 
+      final Entity entity, final ContextURL contextURL) throws SerializerException {
+    throw new SerializerException("Serialization not implemented for XML format.",
+        SerializerException.MessageKeys.NOT_IMPLEMENTED);
+  }
+
+  @Override
+  public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
+      final EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -25,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.server.api.EtagInformation;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -113,5 +116,13 @@ public class ODataImpl extends OData {
   @Override
   public EdmPrimitiveType createPrimitiveTypeInstance(final EdmPrimitiveTypeKind kind) {
     return EdmPrimitiveTypeFactory.getInstance(kind);
+  }
+
+  @Override
+  public EtagInformation createEtagInformation(final Collection<String> values) {
+    final Collection<String> etags = EtagParser.parse(values);
+    final boolean isAll = etags.size() == 1 && etags.iterator().next().equals("*");
+    return new EtagInformation(isAll,
+        isAll ? Collections.<String> emptySet() : Collections.unmodifiableCollection(etags));
   }
 }

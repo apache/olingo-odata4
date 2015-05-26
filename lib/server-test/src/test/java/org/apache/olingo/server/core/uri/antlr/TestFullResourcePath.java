@@ -4756,8 +4756,9 @@ public class TestFullResourcePath {
             .root().right().goPath()
             .first().isComplex("PropertyCompMixedEnumDef")
             .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator();
-  }
 
+  }
+  
   @Test
   public void filterOnCountAndRef() throws Exception {
     testUri.run("ESKeyNav/$count", "$filter=PropertyInt16 ge 0")
@@ -4771,7 +4772,7 @@ public class TestFullResourcePath {
         .left().goPath().first().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
         .goUpFilterValidator().root().right().isLiteral("0");
   }
-
+  
   @Test
   public void testOrderby() throws UriParserException, UnsupportedEncodingException {
 

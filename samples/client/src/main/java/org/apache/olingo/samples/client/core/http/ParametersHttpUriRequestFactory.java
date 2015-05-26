@@ -23,7 +23,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.olingo.client.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 
 /**

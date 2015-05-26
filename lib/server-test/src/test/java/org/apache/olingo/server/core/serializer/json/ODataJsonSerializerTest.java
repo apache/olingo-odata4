@@ -48,6 +48,7 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -232,6 +233,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\","
+        + "\"@odata.etag\":\"W/\\\"32767\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyComp\":{"
         + "\"PropertyString\":\"First Resource - first\","
@@ -322,15 +324,14 @@ public class ODataJsonSerializerTest {
   @Test
   public void entityMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
-    Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    entity.setMediaETag("theMediaETag");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(),
         entity,
         EntitySerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
         .build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
-        + "\"@odata.mediaEtag\":\"theMediaETag\",\"@odata.mediaContentType\":\"image/svg+xml\","
+        + "\"@odata.mediaEtag\":\"W/\\\"1\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
         + "\"PropertyInt16\":1}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -344,13 +345,41 @@ public class ODataJsonSerializerTest {
         EntityCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\",\"value\":["
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":3},"
-        + "{\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
+        + "{\"@odata.mediaEtag\":\"W/\\\"1\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":1},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"2\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":2},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"3\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":3},"
+        + "{\"@odata.mediaEtag\":\"W/\\\"4\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
-
+  
+  @Test
+  public void primitiveValuesAllNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllNullable");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    final String resultString = IOUtils.toString(serializer.entityCollection(metadata,
+        edmEntitySet.getEntityType(), entitySet,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
+    
+    final String expected = "{\"@odata.context\":\"$metadata#ESAllNullable\",\"value\":[{\"PropertyKey\":1," 
+    + "\"PropertyInt16\":null,\"PropertyString\":null,\"PropertyBoolean\":null,\"PropertyByte\":null," 
+    + "\"PropertySByte\":null,\"PropertyInt32\":null,\"PropertyInt64\":null,\"PropertySingle\":null," 
+    + "\"PropertyDouble\":null,\"PropertyDecimal\":null,\"PropertyBinary\":null,\"PropertyDate\":null," 
+    + "\"PropertyDateTimeOffset\":null,\"PropertyDuration\":null,\"PropertyGuid\":null,\"PropertyTimeOfDay\":null," 
+    + "\"CollPropertyString\":[\"spiderman@comic.com\",null,\"spidergirl@comic.com\"]," 
+    + "\"CollPropertyBoolean\":[true,null,false],\"CollPropertyByte\":[50,null,249]," 
+    + "\"CollPropertySByte\":[-120,null,126],\"CollPropertyInt16\":[1000,null,30112]," 
+    + "\"CollPropertyInt32\":[23232323,null,10000001],\"CollPropertyInt64\":[929292929292,null,444444444444]," 
+    + "\"CollPropertySingle\":[1790,null,3210],\"CollPropertyDouble\":[-17900,null,3210],\"CollPropertyDecimal\":" 
+    + "[12,null,1234],\"CollPropertyBinary\":[\"q83v\",null,\"VGeJ\"],\"CollPropertyDate\":" 
+    + "[\"1958-12-03\",null,\"2013-06-25\"],\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",null," 
+    + "\"1948-02-17T09:09:09Z\"],\"CollPropertyDuration\":[\"PT13S\",null,\"PT1H0S\"],\"CollPropertyGuid\":" 
+    + "[\"ffffff67-89ab-cdef-0123-456789aaaaaa\",null,\"cccccc67-89ab-cdef-0123-456789cccccc\"]," 
+    + "\"CollPropertyTimeOfDay\":[\"04:14:13\",null,\"00:37:13\"]}]}";
+    
+    Assert.assertEquals(expected, resultString);
+  }
+  
   @Test
   public void select() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -680,5 +709,51 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}",
         resultString);
+  }
+  
+  @Test
+  public void entityReference() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    
+    final SerializerResult serializerResult = serializer.reference(metadata, edmEntitySet, entity,
+        ContextURL.with().suffix(Suffix.REFERENCE).build());
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+    
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#$ref\",\"@odata.id\":\"ESAllPrim(32767)\"}", resultString);
+  }
+  
+  @Test
+  public void entityCollectionReference() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCollection = data.readAll(edmEntitySet);
+
+    final SerializerResult serializerResult = serializer.referenceCollection(metadata, 
+                                                                             edmEntitySet, 
+                                                                             entityCollection,
+                                                                             ContextURL.with().asCollection()
+                                                                                 .suffix(Suffix.REFERENCE).build());
+                                                                                 
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\",\"value\":[{\"@odata.id\":" + 
+                         "\"ESAllPrim(32767)\"},{\"@odata.id\":\"ESAllPrim(-32768)\"},{\"@odata.id\":" + 
+                         "\"ESAllPrim(0)\"}]}", resultString);
+  }
+  
+  @Test
+  public void entityCollectionReferenceEmpty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCollection = new EntityCollection();
+    
+    final SerializerResult serializerResult = serializer.referenceCollection(metadata, 
+                                                                             edmEntitySet, 
+                                                                             entityCollection,
+                                                                             ContextURL.with().asCollection()
+                                                                             .suffix(Suffix.REFERENCE).build());
+    
+    final String resultString = IOUtils.toString(serializerResult.getContent());
+
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\",\"value\":[]}", resultString);
   }
 }
