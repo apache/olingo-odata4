@@ -657,7 +657,7 @@ public class ODataBinderImpl implements ODataBinder {
         final EdmElement edmProperty = ((EdmEntityType) edmType).getProperty(property.getName());
         if (edmProperty != null) {
           propertyType = edmProperty.getType();
-          if (edmProperty instanceof EdmNavigationProperty) {
+          if (edmProperty instanceof EdmNavigationProperty && !property.isNull()) {
             final String propertyTypeName = propertyType.getFullQualifiedName().getFullQualifiedNameAsString();
             entity.addLink(createLinkFromNavigationProperty(property, propertyTypeName));
             continue;
