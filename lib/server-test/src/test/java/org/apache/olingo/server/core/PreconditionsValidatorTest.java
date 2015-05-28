@@ -69,7 +69,7 @@ public class PreconditionsValidatorTest {
       new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
       fail("Expected a PreconditionRequiredException but was not thrown");
     } catch (PreconditionRequiredException e) {
-      assertEquals(PreconditionRequiredException.MessageKeys.PRECONDITION_REQUIRED, e.getMessageKey());
+      assertEquals(PreconditionRequiredException.MessageKeys.MISSING_HEADER, e.getMessageKey());
     }
   }
 
@@ -81,7 +81,7 @@ public class PreconditionsValidatorTest {
       new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, null, null).validatePreconditions(false);
       fail("Expected a PreconditionRequiredException but was not thrown");
     } catch (PreconditionRequiredException e) {
-      assertEquals(PreconditionRequiredException.MessageKeys.PRECONDITION_REQUIRED, e.getMessageKey());
+      assertEquals(PreconditionRequiredException.MessageKeys.MISSING_HEADER, e.getMessageKey());
     }
   }
 
@@ -92,7 +92,7 @@ public class PreconditionsValidatorTest {
       new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(true);
       fail("Expected a PreconditionRequiredException but was not thrown");
     } catch (PreconditionRequiredException e) {
-      assertEquals(PreconditionRequiredException.MessageKeys.PRECONDITION_REQUIRED, e.getMessageKey());
+      assertEquals(PreconditionRequiredException.MessageKeys.MISSING_HEADER, e.getMessageKey());
     }
   }
 
@@ -103,7 +103,7 @@ public class PreconditionsValidatorTest {
       new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
       fail("Expected a PreconditionRequiredException but was not thrown");
     } catch (PreconditionRequiredException e) {
-      assertEquals(PreconditionRequiredException.MessageKeys.PRECONDITION_REQUIRED, e.getMessageKey());
+      assertEquals(PreconditionRequiredException.MessageKeys.MISSING_HEADER, e.getMessageKey());
     }
   }
 

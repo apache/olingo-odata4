@@ -24,8 +24,7 @@ public class PreconditionRequiredException extends ODataTranslatedException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {
-    /** parameter: required header */
-    PRECONDITION_REQUIRED;
+    MISSING_HEADER;
 
     @Override
     public String getKey() {

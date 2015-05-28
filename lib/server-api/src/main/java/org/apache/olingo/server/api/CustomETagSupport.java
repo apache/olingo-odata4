@@ -19,7 +19,7 @@
 package org.apache.olingo.server.api;
 
 /**
- * <p>Processors that would like to support concurrency control for certain entity sets can implement this
+ * <p>Processors that would like to support etags for certain entity sets can implement this
  * interface.</p>
  * <p>If implemented this interface can be registered at the ODataHttpHandler. This will result in change request to
  * require an if-match/if-none-match or an if-modified-since/if-unmodified-since header. Otherwise the request will

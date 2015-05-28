@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -54,12 +54,12 @@ public class ODataExceptionHelper {
   }
 
   public static ODataServerError
-  createServerErrorObject(final UriParserSyntaxException e, final Locale requestedLocale) {
+      createServerErrorObject(final UriParserSyntaxException e, final Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(
         UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT.equals(e.getMessageKey()) ?
             HttpStatusCode.NOT_ACCEPTABLE.getStatusCode() :
-              HttpStatusCode.BAD_REQUEST.getStatusCode());
+            HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 
@@ -103,8 +103,14 @@ public class ODataExceptionHelper {
         .setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
   }
 
+  public static ODataServerError createServerErrorObject(final PreconditionRequiredException e,
+      final Locale requestedLocale) {
+    return basicTranslatedError(e, requestedLocale)
+        .setStatusCode(HttpStatusCode.PRECONDITION_REQUIRED.getStatusCode());
+  }
+
   public static ODataServerError
-  createServerErrorObject(final ODataTranslatedException e, final Locale requestedLocale) {
+      createServerErrorObject(final ODataTranslatedException e, final Locale requestedLocale) {
     return basicTranslatedError(e, requestedLocale);
   }
 

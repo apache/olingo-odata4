@@ -93,7 +93,10 @@ public class ODataHandler {
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
-    } catch (ODataHandlerException e) {
+    } catch (PreconditionRequiredException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError);
+    }catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataApplicationException e) {

@@ -60,7 +60,7 @@ public class PreconditionsValidator {
   private void checkETagHeaderPresent() throws PreconditionRequiredException {
     if (ifMatch == null && ifNoneMatch == null) {
       throw new PreconditionRequiredException("Expected an if-match or if-none-match header",
-          PreconditionRequiredException.MessageKeys.PRECONDITION_REQUIRED);
+          PreconditionRequiredException.MessageKeys.MISSING_HEADER);
     }
   }
 
