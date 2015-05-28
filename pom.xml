@@ -82,6 +82,7 @@
     <maven.plugin.tools.version>3.3</maven.plugin.tools.version>
     <maven.bundle.plugin.version>2.3.4</maven.bundle.plugin.version>
     <hc.client.version>4.2.6</hc.client.version>
+    <hc.core.version>4.2.5</hc.core.version>
     <jackson.version>2.4.2</jackson.version>
     <aalto-xml.version>0.9.10</aalto-xml.version>
 
@@ -89,6 +90,7 @@
 
     <android.platform.version>4.1.1.4</android.platform.version>
     <stax.api.version>1.0-2</stax.api.version>
+    <woodstox.stax2-api.version>3.1.4</woodstox.stax2-api.version>
 
     <sl4j.version>1.7.7</sl4j.version>
 

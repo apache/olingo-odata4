@@ -39,5 +39,6 @@
     <module>pojogen-maven-plugin</module>
     <module>client-proxy</module>
     <module>client-android</module>
+    <module>karaf/features</module>
   </modules>
 </project>
