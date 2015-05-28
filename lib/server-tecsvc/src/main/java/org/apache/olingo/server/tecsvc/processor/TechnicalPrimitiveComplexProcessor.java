@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -47,11 +46,6 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.deserializer.DeserializerResult;
-import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
-import org.apache.olingo.server.api.processor.ActionComplexProcessor;
-import org.apache.olingo.server.api.processor.ActionPrimitiveCollectionProcessor;
-import org.apache.olingo.server.api.processor.ActionPrimitiveProcessor;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
@@ -69,7 +63,6 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
@@ -81,10 +74,8 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveProcessor, PrimitiveValueProcessor, ActionPrimitiveProcessor,
-    PrimitiveCollectionProcessor, ActionPrimitiveCollectionProcessor,
-    ComplexProcessor, ActionComplexProcessor,
-    ComplexCollectionProcessor, ActionComplexCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveValueProcessor, PrimitiveCollectionProcessor,
+    ComplexProcessor, ComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
       final ServiceMetadata serviceMetadata) {
@@ -111,40 +102,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionPrimitive(final ODataRequest request, ODataResponse response,
-      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
-
-    Property property = dataProvider.processActionPrimitive(action.getName(), deserializerResult.getActionParameters());
-    EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
-    if (property == null || property.isNull()) {
-      if (action.getReturnType().isNullable()) {
-        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-      } else {
-        // Not nullable return type so we have to give back an Internal Server Error
-        throw new ODataApplicationException("The action could not be executed.",
-            HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-      }
-    } else {
-      ContextURL contextURL = ContextURL.with().type(type).build();
-      PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
-
-      SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat)).primitive(type,
-          property, options);
-
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setContent(result.getContent());
-      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
-    }
-  }
-
-  @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
@@ -161,42 +118,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void deletePrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     deleteProperty(request, response, uriInfo);
-  }
-
-  @Override
-  public void processActionPrimitiveCollection(final ODataRequest request, ODataResponse response,
-      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
-
-    Property property =
-        dataProvider.processActionPrimitiveCollection(action.getName(), deserializerResult.getActionParameters());
-
-    if (property == null || property.isNull()) {
-      // Collection Propertys must never be null
-      throw new ODataApplicationException("The action could not be executed.",
-          HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-    } else if (property.asCollection().contains(null) && !action.getReturnType().isNullable()) {
-      // Not nullable return type but array contains a null value
-      throw new ODataApplicationException("The action could not be executed.",
-          HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-    }
-    EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
-    ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
-    PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
-
-    SerializerResult result =
-        odata.createSerializer(ODataFormat.fromContentType(responseFormat))
-            .primitiveCollection(type, property, options);
-
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setContent(result.getContent());
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
   @Override
@@ -219,41 +140,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void processActionComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
-
-    Property property = dataProvider.processActionComplex(action.getName(), deserializerResult.getActionParameters());
-    EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
-    if (property == null || property.isNull()) {
-      if (action.getReturnType().isNullable()) {
-        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-      } else {
-        // Not nullable return type so we have to give back an Internal Server Error
-        throw new ODataApplicationException("The action could not be executed.",
-            HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-      }
-    } else {
-      ContextURL contextURL = ContextURL.with().type(type).build();
-      ComplexSerializerOptions options = ComplexSerializerOptions.with().contextURL(contextURL).build();
-
-      SerializerResult result =
-          odata.createSerializer(ODataFormat.fromContentType(responseFormat)).complex(serviceMetadata, type, property,
-              options);
-
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setContent(result.getContent());
-      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
-    }
-  }
-
-  @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, SerializerException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
@@ -270,42 +156,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   public void deleteComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException {
     deleteProperty(request, response, uriInfo);
-  }
-
-  @Override
-  public void processActionComplexCollection(final ODataRequest request, ODataResponse response,
-      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
-
-    Property property =
-        dataProvider.processActionComplexCollection(action.getName(), deserializerResult.getActionParameters());
-
-    if (property == null || property.isNull()) {
-      // Collection Propertys must never be null
-      throw new ODataApplicationException("The action could not be executed.",
-          HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-    } else if (property.asCollection().contains(null) && !action.getReturnType().isNullable()) {
-      // Not nullable return type but array contains a null value
-      throw new ODataApplicationException("The action could not be executed.",
-          HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
-    }
-    EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
-    ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
-    ComplexSerializerOptions options = ComplexSerializerOptions.with().contextURL(contextURL).build();
-
-    SerializerResult result =
-        odata.createSerializer(ODataFormat.fromContentType(responseFormat)).complexCollection(serviceMetadata, type,
-            property, options);
-
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setContent(result.getContent());
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
   private void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,

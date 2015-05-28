@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling an action request with a return type of Primitive Collection.
  */
-public interface ActionPrimitiveCollectionProcessor extends PrimitiveCollectionProcessor {
+public interface ActionPrimitiveCollectionProcessor extends Processor {
   /**
    * Process an action which has as return type a primitive-type collection.
    * @param request OData request object containing raw HTTP information

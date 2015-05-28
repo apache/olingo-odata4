@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling an action request with a return type of ComplexCollection.
  */
-public interface ActionComplexCollectionProcessor extends ComplexCollectionProcessor {
+public interface ActionComplexCollectionProcessor extends Processor {
   /**
    * Process an action which has as return type a complex-type collection.
    * @param request OData request object containing raw HTTP information
