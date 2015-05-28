@@ -75,7 +75,8 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
-    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    request.setIfMatch("W/\"4\"");
     assertNotNull(request);
 
     final ODataDeleteResponse response = request.execute();
@@ -102,6 +103,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
         client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri,
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
+    request.setIfMatch("W/\"4\"");
     assertNotNull(request);
 
     final ODataMediaEntityUpdateResponse<ClientEntity> response = request.payloadManager().getResponse();
@@ -143,7 +145,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     // This check has to be in the same session in order to access the same data provider.
     ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(
         client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia")
-        .appendKeySegment(5).appendValueSegment().build());
+            .appendKeySegment(5).appendValueSegment().build());
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());

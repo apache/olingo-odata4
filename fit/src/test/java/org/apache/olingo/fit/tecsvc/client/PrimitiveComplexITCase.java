@@ -20,23 +20,31 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
+import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
@@ -52,13 +60,12 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readSimpleProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
             .build());
-
     assertNotNull(request);
 
     ODataRetrieveResponse<ClientProperty> response = request.execute();
@@ -135,7 +142,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readComplexProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
@@ -153,7 +160,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readComplexPropertyContextURL() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
@@ -185,7 +192,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readUnknownProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
@@ -201,14 +208,112 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readNoContentProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(-32766)
             .appendPropertySegment("PropertyString")
             .build());
-    ODataRetrieveResponse<ClientProperty> response = request.execute();
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+  }
+
+  @Test
+  public void updatePrimitiveProperty() throws Exception {
+    final ODataPropertyUpdateRequest request =
+        getClient().getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+                .appendPropertySegment("PropertyString")
+                .build(),
+            getClient().getObjectFactory().newPrimitiveProperty("PropertyString",
+                getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String1")));
+    assertNotNull(request);
+
+    final ODataPropertyUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+
+    final ClientProperty property = response.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getPrimitiveValue());
+    assertEquals("Test String1", property.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void patchComplexProperty() throws Exception {
+    final ODataPropertyUpdateRequest request =
+        getClient().getCUDRequestFactory().getPropertyComplexValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
+                .appendPropertySegment("PropertyComp")
+                .build(),
+            UpdateType.PATCH,
+            getClient().getObjectFactory().newComplexProperty("PropertyComp",
+                getClient().getObjectFactory().newComplexValue(null).add(
+                    getClient().getObjectFactory().newPrimitiveProperty("PropertyString",
+                        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String42")))));
+    assertNotNull(request);
+
+    final ODataPropertyUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ClientProperty property = response.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getComplexValue());
+    final ClientComplexValue value = property.getComplexValue();
+    assertEquals("Test String42", value.get("PropertyString").getPrimitiveValue().toValue());
+    assertEquals(222, value.get("PropertyInt16").getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void updatePrimitiveCollection() throws Exception {
+    final ODataPropertyUpdateRequest request =
+        getClient().getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
+                .appendPropertySegment("CollPropertyString")
+                .build(),
+            getClient().getObjectFactory().newCollectionProperty("CollPropertyString",
+                getClient().getObjectFactory().newCollectionValue(null)
+                    .add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String1"))
+                    .add(getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String2"))));
+    assertNotNull(request);
+
+    final ODataPropertyUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ClientProperty property = response.getBody();
+    assertNotNull(property);
+    final ClientCollectionValue<ClientValue> value = property.getCollectionValue();
+    assertNotNull(value);
+    Iterator<ClientValue> iterator = value.iterator();
+    assertTrue(iterator.hasNext());
+    assertEquals("Test String1", iterator.next().asPrimitive().toValue());
+    assertEquals("Test String2", iterator.next().asPrimitive().toValue());
+    assertFalse(iterator.hasNext());
+  }
+
+  @Test
+  public void updateComplexCollection() throws Exception {
+    final ODataPropertyUpdateRequest request =
+        getClient().getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
+                .appendPropertySegment("CollPropertyComp")
+                .build(),
+            getClient().getObjectFactory().newCollectionProperty("CollPropertyComp",
+                getClient().getObjectFactory().newCollectionValue(null)));
+    assertNotNull(request);
+
+    final ODataPropertyUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ClientProperty property = response.getBody();
+    assertNotNull(property);
+    final ClientCollectionValue<ClientValue> value = property.getCollectionValue();
+    assertNotNull(value);
+    assertFalse(value.iterator().hasNext());
   }
 
   @Test
@@ -220,7 +325,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyString")
             .appendValueSegment()
             .build());
-    ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
+    final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
     assertEquals("Test String1", response.getBody().toValue());
   }
 

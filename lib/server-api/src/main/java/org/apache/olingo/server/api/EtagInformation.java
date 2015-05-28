@@ -48,7 +48,9 @@ public class EtagInformation {
   }
 
   /**
-   * <p>Checks whether a given ETag value is matched by this ETag information.</p>
+   * <p>Checks whether a given ETag value is matched by this ETag information,
+   * using weak comparison as described in
+   * <a href="https://www.ietf.org/rfc/rfc7232.txt">RFC 7232</a>, section 2.3.2.</p>
    * <p>If the given value is <code>null</code>, or if this ETag information
    * does not contain anything, the result is <code>false</code>.</p>
    * @param etag the ETag value to match

@@ -275,6 +275,10 @@ public class DataProvider {
     }
 
     // Update the ETag if present.
+    updateETag(entity);
+  }
+
+  public void updateETag(Entity entity) {
     if (entity.getETag() != null) {
       entity.setETag("W/\"" + System.nanoTime() + "\"");
     }
@@ -411,8 +415,8 @@ public class DataProvider {
     }
   }
 
-  @SuppressWarnings({ "unchecked" })
-  public void updateProperty(final EdmProperty edmProperty, final Property property, final Property newProperty,
+  @SuppressWarnings("unchecked")
+  public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
     if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
@@ -420,7 +424,7 @@ public class DataProvider {
         property.setValue(property.getValueType(), value);
       }
     } else if (edmProperty.isCollection()) {
-      // Updating collection properties mean replacing all entites with the given ones
+      // Updating collection properties means replacing all entries with the given ones.
       property.asCollection().clear();
 
       if (newProperty != null) {
