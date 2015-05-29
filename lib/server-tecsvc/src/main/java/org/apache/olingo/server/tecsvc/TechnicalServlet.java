@@ -48,7 +48,7 @@ public class TechnicalServlet extends HttpServlet {
   private static final Logger LOG = LoggerFactory.getLogger(TechnicalServlet.class);
 
   @Override
-  protected void service(final HttpServletRequest req, final HttpServletResponse resp)
+  protected void service(final HttpServletRequest request, final HttpServletResponse response)
       throws ServletException, IOException {
     try {
       OData odata = OData.newInstance();
@@ -57,7 +57,7 @@ public class TechnicalServlet extends HttpServlet {
       final List<EdmxReference> references = Arrays.asList(reference);
       final ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmTechProvider(references), references);
 
-      HttpSession session = req.getSession(true);
+      HttpSession session = request.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
       if (dataProvider == null) {
         dataProvider = new DataProvider();
@@ -69,7 +69,8 @@ public class TechnicalServlet extends HttpServlet {
       handler.register(new TechnicalEntityProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalPrimitiveComplexProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalBatchProcessor(dataProvider));
-      handler.process(req, resp);
+      handler.register(new ETagSupport());
+      handler.process(request, response);
     } catch (RuntimeException e) {
       LOG.error("Server Error", e);
       throw new ServletException(e);
