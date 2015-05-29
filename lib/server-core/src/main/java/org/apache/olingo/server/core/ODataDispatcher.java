@@ -273,38 +273,40 @@ public class ODataDispatcher {
       throws ODataHandlerException, ContentNegotiatorException, ODataApplicationException,
       SerializerException, DeserializerException {
     final HttpMethod method = request.getMethod();
-    if (((UriResourcePartTyped) uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1)).isCollection()) {
-      if (method == HttpMethod.GET) {
-        final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-            request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_REFERENCE);
-        handler.selectProcessor(ReferenceCollectionProcessor.class)
-            .readReferenceCollection(request, response, uriInfo, responseFormat);
-      } else if (method == HttpMethod.POST) {
-        final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
-        checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
-        handler.selectProcessor(ReferenceProcessor.class)
-            .createReference(request, response, uriInfo, requestFormat);
-      } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
-      }
+    final boolean isCollection = ((UriResourcePartTyped) uriInfo.getUriResourceParts()
+                                                                .get(lastPathSegmentIndex - 1))
+                                                                .isCollection();
+    
+    if(isCollection && method == HttpMethod.GET) {
+      final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+          request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_REFERENCE);
+      handler.selectProcessor(ReferenceCollectionProcessor.class)
+          .readReferenceCollection(request, response, uriInfo, responseFormat);
+      
+    } else if(isCollection && method == HttpMethod.POST ) {
+      final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
+      handler.selectProcessor(ReferenceProcessor.class)
+          .createReference(request, response, uriInfo, requestFormat);
+      
+    } else if(!isCollection && method == HttpMethod.GET) {
+      final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+          request, handler.getCustomContentTypeSupport(), RepresentationType.REFERENCE);
+      handler.selectProcessor(ReferenceProcessor.class).readReference(request, response, uriInfo, responseFormat);
+      
+    } else if(!isCollection && (method == HttpMethod.PUT || method == HttpMethod.PATCH)) {
+      final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
+      handler.selectProcessor(ReferenceProcessor.class)
+          .updateReference(request, response, uriInfo, requestFormat);
+      
+    } else if(method == HttpMethod.DELETE) {
+      handler.selectProcessor(ReferenceProcessor.class)
+        .deleteReference(request, response, uriInfo);
+      
     } else {
-      if (method == HttpMethod.GET) {
-        final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-            request, handler.getCustomContentTypeSupport(), RepresentationType.REFERENCE);
-        handler.selectProcessor(ReferenceProcessor.class).readReference(request, response, uriInfo, responseFormat);
-      } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
-        final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
-        checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
-        handler.selectProcessor(ReferenceProcessor.class)
-            .updateReference(request, response, uriInfo, requestFormat);
-      } else if (method == HttpMethod.DELETE) {
-        handler.selectProcessor(ReferenceProcessor.class)
-            .deleteReference(request, response, uriInfo);
-      } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
-      }
+      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
     }
   }
 

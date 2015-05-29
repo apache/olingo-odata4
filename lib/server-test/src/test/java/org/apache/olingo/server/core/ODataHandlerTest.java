@@ -29,6 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -649,6 +650,7 @@ public class ODataHandlerTest {
   @Test
   public void dispatchReference() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimOne/$ref";
+    final String uriDeleteMany = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
     final ReferenceProcessor processor = mock(ReferenceProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
@@ -663,28 +665,31 @@ public class ODataHandlerTest {
     verify(processor, times(2)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.DELETE, uri, processor);
-    verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
-
     dispatch(HttpMethod.POST, uri.replace("One", "Many"), processor);
     verify(processor).createReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
-
+    
+    dispatch(HttpMethod.DELETE, uriDeleteMany, "$id=ESTwoPrim(1)", null, Arrays.asList(new Processor[] { processor }));
+    verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
-
+  
   @Test
   public void dispatchReferenceCollection() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
     final ReferenceCollectionProcessor processor = mock(ReferenceCollectionProcessor.class);
-
+    final ReferenceProcessor singleProcessor = mock(ReferenceProcessor.class);
+    
     dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readReferenceCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
+    dispatch(HttpMethod.DELETE, uri, singleProcessor);
+    verify(singleProcessor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
-    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
   }
 
   @Test
