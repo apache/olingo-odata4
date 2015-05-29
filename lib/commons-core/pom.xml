@@ -90,6 +90,7 @@
               org.apache.olingo.commons.core.edm,
               org.apache.olingo.commons.core.edm.provider,
               org.apache.olingo.commons.core.edm.primitivetype,
+              org.apache.olingo.commons.core.serialization
             </Export-Package>
             <Import-Package>
               *
