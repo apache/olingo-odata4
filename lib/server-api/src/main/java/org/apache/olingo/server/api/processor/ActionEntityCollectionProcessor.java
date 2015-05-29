@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling an action request with a return type of Entity Collection.
  */
-public interface ActionEntityCollectionProcessor extends EntityCollectionProcessor {
+public interface ActionEntityCollectionProcessor extends Processor {
   /**
    * Process an action which has as return type a collection of entities.
    * @param request OData request object containing raw HTTP information
