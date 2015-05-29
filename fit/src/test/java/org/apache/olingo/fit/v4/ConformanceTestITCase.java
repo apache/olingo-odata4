@@ -49,7 +49,6 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.domain.ClientEntityImpl;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;
@@ -87,8 +86,8 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    */
   @Test
   public void item2() {
-    final ClientEntity order =
-        new ClientEntityImpl(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
+    final ClientEntity order = getClient().getObjectFactory().newEntity(
+        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     final ClientProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
         getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(2000));

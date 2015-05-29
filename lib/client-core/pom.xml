@@ -83,9 +83,11 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <!-- REVISIT should be restricing the exports? -->
             <Export-Package>
-              org.apache.olingo.client.core*
+              org.apache.olingo.client.core,
+              org.apache.olingo.client.core.http,
+              org.apache.olingo.client.core.uri.URIUtils,
+              org.apache.olingo.client.core.communication.request*
             </Export-Package>
             <Import-Package>
               *

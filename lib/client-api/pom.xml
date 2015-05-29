@@ -58,7 +58,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <!-- REVISIT should be restricing the exports? -->
             <Export-Package>
               org.apache.olingo.client.api*
             </Export-Package>

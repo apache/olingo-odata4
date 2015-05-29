@@ -43,7 +43,6 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.core.domain.ClientEntityImpl;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -115,7 +114,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   }
 
   protected void createAndDeleteOrder(final String serviceRoot, final ODataFormat format, final int id) {
-    final ClientEntity order = new ClientEntityImpl(
+
+    final ClientEntity order = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
     final ClientProperty orderId = getClient().getObjectFactory().newPrimitiveProperty("OrderID",
