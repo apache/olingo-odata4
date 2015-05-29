@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>odata-server-api</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
@@ -51,5 +51,27 @@
       <artifactId>junit</artifactId>
     </dependency>
   </dependencies>
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              org.apache.olingo.server.api*
+            </Export-Package>
+            <Import-Package>
+              *
+            </Import-Package>
+            <!-- workaround due to the current server-api server-core interdependency -->
+            <DynamicImport-Package>
+              org.apache.olingo.server.core
+            </DynamicImport-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>odata-commons-core</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
@@ -77,4 +77,27 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              org.apache.olingo.commons.core,
+              org.apache.olingo.commons.core.edm,
+              org.apache.olingo.commons.core.edm.provider,
+              org.apache.olingo.commons.core.edm.primitivetype,
+              org.apache.olingo.commons.core.serialization
+            </Export-Package>
+            <Import-Package>
+              *
+            </Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
