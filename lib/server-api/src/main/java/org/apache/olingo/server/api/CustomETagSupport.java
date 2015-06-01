@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.api;
 
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+
 /**
  * <p>Processors that would like to support etags for certain entity sets can implement this
  * interface.</p>
@@ -32,19 +34,41 @@ public interface CustomETagSupport {
    * If this method returns true and an header is not specified we will return a "Precondition Required" response.
    * Validation has to be performed inside the processor methods after the dispatching.
    * If this method returns false and an header is specified we will ignore the header.
-   * @param entitySetName
+   * @param entitySetOrSingleton
    * @return true if the entity set specified needs an if-match/if-none-match header
    */
-  boolean hasETag(String entitySetName);
+  boolean hasETag(EdmBindingTarget entitySetOrSingleton);
 
   /**
    * This method will be called for update requests which target a media entity value.
    * If this method returns true and an header is not specified we will return a "Precondition Required" response.
    * Validation has to be performed inside the processor methods after the dispatching.
    * If this method returns false and an header is specified we will ignore the header.
-   * @param entitySetName
+   * @param entitySetOrSingleton
    * @return true if the entity set specified needs an if-match/if-none-match header
    */
-  boolean hasMediaETag(String entitySetName);
+  boolean hasMediaETag(EdmBindingTarget entitySetOrSingleton);
+
+  /**
+   * Since the Olingo library cannot generate a metadata document etag in a generic way we call this method to retrieve
+   * an application specific etag for the metadata document. If this interface is registered applications can return an
+   * etag or null here to provide caching support for clients. If a client sends a GET request to the metadata document
+   * and this method delivers an etag we will match it to the request. If there has been no modification we will return
+   * a 304 NOT MODIFIED status code. If this interface is not registered or delivers null we just send back the usual
+   * metadata response.
+   * @return the application generated etag for the metadata document
+   */
+  String getMetadataETag();
+
+  /**
+   * Since the Olingo library cannot generate a service document etag in a generic way we call this method to retrieve
+   * an application specific etag for the service document. If this interface is registered applications can return an
+   * etag or null here to provide caching support for clients. If a client sends a GET request to the service document
+   * and this method delivers an etag we will match it to the request. If there has been no modification we will return
+   * a 304 NOT MODIFIED status code. If this interface is not registered or delivers null we just send back the usual
+   * service document response.
+   * @return the application generated etag for the service document
+   */
+  String getServiceDocumentETag();
 
 }

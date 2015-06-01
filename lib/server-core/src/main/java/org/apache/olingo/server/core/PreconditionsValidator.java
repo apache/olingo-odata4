@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.List;
-
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.server.api.CustomETagSupport;
@@ -28,8 +26,8 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
-import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class PreconditionsValidator {
 
@@ -48,10 +46,10 @@ public class PreconditionsValidator {
   }
 
   public void validatePreconditions(boolean isMediaValue) throws PreconditionRequiredException {
-    EdmEntitySet affectedEntitySet = extractInformation();
-    if (affectedEntitySet != null) {
-      if ((isMediaValue && customETagSupport.hasMediaETag(affectedEntitySet.getName())) ||
-          (!isMediaValue && customETagSupport.hasETag(affectedEntitySet.getName()))) {
+    EdmBindingTarget affectedEntitySetOrSingleton = extractInformation();
+    if (affectedEntitySetOrSingleton != null) {
+      if ((isMediaValue && customETagSupport.hasMediaETag(affectedEntitySetOrSingleton)) ||
+          (!isMediaValue && customETagSupport.hasETag(affectedEntitySetOrSingleton))) {
         checkETagHeaderPresent();
       }
     }
@@ -64,75 +62,69 @@ public class PreconditionsValidator {
     }
   }
 
-  private EdmEntitySet extractInformation() {
-    EdmEntitySet affectedEntitySet = null;
-    List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
-    if (uriResourceParts.size() > 0) {
-      UriResource uriResourcePart = uriResourceParts.get(uriResourceParts.size() - 1);
+  private EdmBindingTarget extractInformation() throws PreconditionRequiredException {
+    EdmBindingTarget lastFoundEntitySetOrSingleton = null;
+    int counter = 0;
+    for (UriResource uriResourcePart : uriInfo.getUriResourceParts()) {
       switch (uriResourcePart.getKind()) {
+      case function:
+        lastFoundEntitySetOrSingleton = getEnitySetFromFunctionImport(uriResourcePart);
+        break;
+      case singleton:
+        lastFoundEntitySetOrSingleton = ((UriResourceSingleton) uriResourcePart).getSingleton();
+        break;
       case entitySet:
-        affectedEntitySet = ((UriResourceEntitySet) uriResourcePart).getEntitySet();
+        lastFoundEntitySetOrSingleton = getEntitySet(uriResourcePart);
         break;
       case navigationProperty:
-        affectedEntitySet = getEntitySetFromBeginning();
+        lastFoundEntitySetOrSingleton = getEntitySetFromNavigation(lastFoundEntitySetOrSingleton, uriResourcePart);
         break;
       case value:
-        affectedEntitySet = getEntitySetOrNavigationEntitySet(uriResourceParts);
-        break;
       case action:
-        affectedEntitySet = getEntitySetOrNavigationEntitySet(uriResourceParts);
+        // This should not be possible since the URI Parser validates this but to be sure we throw an exception.
+        if (counter != uriInfo.getUriResourceParts().size() - 1) {
+          throw new PreconditionRequiredException("$Value or Action must be the last segment in the URI.",
+              PreconditionRequiredException.MessageKeys.INVALID_URI);
+        }
         break;
       default:
-        // TODO: Cannot happen but should we throw an exception?
+        lastFoundEntitySetOrSingleton = null;
         break;
       }
-    } else {
-      // TODO: Cannot happen but should we throw an exception?
-    }
-    return affectedEntitySet;
-  }
-
-  private EdmEntitySet getEntitySetOrNavigationEntitySet(List<UriResource> uriResourceParts) {
-    EdmEntitySet affectedEntitySet = null;
-    UriResource previousResourcePart = uriResourceParts.get(uriResourceParts.size() - 2);
-    if (previousResourcePart.getKind() == UriResourceKind.entitySet) {
-      affectedEntitySet = ((UriResourceEntitySet) previousResourcePart).getEntitySet();
-    } else if (previousResourcePart.getKind() == UriResourceKind.navigationProperty) {
-      affectedEntitySet = getEntitySetFromBeginning();
-    }
-    return affectedEntitySet;
-  }
-
-  private EdmEntitySet getEntitySetFromBeginning() {
-    EdmEntitySet lastFoundES = null;
-    for (UriResource uriResourcePart : uriInfo.getUriResourceParts()) {
-      if (UriResourceKind.function == uriResourcePart.getKind()) {
-        EdmFunctionImport functionImport = ((UriResourceFunction) uriResourcePart).getFunctionImport();
-        if (functionImport != null && functionImport.getReturnedEntitySet() != null) {
-          lastFoundES = functionImport.getReturnedEntitySet();
-        } else {
-          lastFoundES = null;
-          break;
-        }
-      } else if (UriResourceKind.entitySet == uriResourcePart.getKind()) {
-        lastFoundES = ((UriResourceEntitySet) uriResourcePart).getEntitySet();
-      } else if (UriResourceKind.navigationProperty == uriResourcePart.getKind()) {
-        EdmNavigationProperty navProp = ((UriResourceNavigation) uriResourcePart).getProperty();
-        if (lastFoundES != null) {
-          lastFoundES = (EdmEntitySet) lastFoundES.getRelatedBindingTarget(navProp.getName());
-          if (lastFoundES == null) {
-            break;
-          }
-        }
-      } else if (UriResourceKind.value == uriResourcePart.getKind()
-          || UriResourceKind.action == uriResourcePart.getKind()) {
-        // TODO: Should we validate that we are at the end of the resource path
-        break;
-      } else {
-        lastFoundES = null;
+      if (lastFoundEntitySetOrSingleton == null) {
+        // Once we loose track of the entity set there is no way to retrieve it.
         break;
       }
+      counter++;
     }
-    return lastFoundES;
+    return lastFoundEntitySetOrSingleton;
+  }
+
+  private EdmBindingTarget getEnitySetFromFunctionImport(UriResource uriResourcePart) {
+    UriResourceFunction uriResourceFunction = (UriResourceFunction) uriResourcePart;
+    EdmFunctionImport functionImport = uriResourceFunction.getFunctionImport();
+    if (functionImport != null && functionImport.getReturnedEntitySet() != null
+        && !uriResourceFunction.isCollection()) {
+      return functionImport.getReturnedEntitySet();
+    }
+    return null;
+  }
+
+  private EdmBindingTarget getEntitySet(UriResource uriResourcePart) {
+    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResourcePart;
+    if (!uriResourceEntitySet.isCollection()) {
+      return uriResourceEntitySet.getEntitySet();
+    }
+    return null;
+  }
+
+  private EdmBindingTarget getEntitySetFromNavigation(EdmBindingTarget lastFoundEntitySetOrSingleton,
+      UriResource uriResourcePart) {
+    UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) uriResourcePart;
+    if (lastFoundEntitySetOrSingleton != null && !uriResourceNavigation.isCollection()) {
+      EdmNavigationProperty navProp = uriResourceNavigation.getProperty();
+      return lastFoundEntitySetOrSingleton.getRelatedBindingTarget(navProp.getName());
+    }
+    return null;
   }
 }

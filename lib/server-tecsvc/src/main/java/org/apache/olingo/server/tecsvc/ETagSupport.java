@@ -18,17 +18,28 @@
  */
 package org.apache.olingo.server.tecsvc;
 
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.server.api.CustomETagSupport;
 
 public class ETagSupport implements CustomETagSupport {
 
   @Override
-  public boolean hasETag(final String entitySetName) {
-    return entitySetName.equals("ESCompAllPrim");
+  public boolean hasETag(final EdmBindingTarget entitySetOrSingleton) {
+    return entitySetOrSingleton.getName().equals("ESCompAllPrim");
   }
 
   @Override
-  public boolean hasMediaETag(final String entitySetName) {
-    return entitySetName.equals("ESMedia");
+  public boolean hasMediaETag(final EdmBindingTarget entitySetOrSingleton) {
+    return entitySetOrSingleton.getName().equals("ESMedia");
+  }
+
+  @Override
+  public String getMetadataETag() {
+    return null;
+  }
+
+  @Override
+  public String getServiceDocumentETag() {
+    return null;
   }
 }
