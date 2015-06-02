@@ -29,11 +29,13 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public abstract class VisitorOperand {
   final static private HashMap<EdmType, Class<?>> defaultTypeMapping = new HashMap<EdmType, Class<?>>();
   protected Object value;
   protected static final OData oData;
+  protected static final EdmPrimitiveType primNull = EdmNull.getInstance();
   protected static final EdmPrimitiveType primString;
   protected static final EdmPrimitiveType primBoolean;
   protected static final EdmPrimitiveType primDateTimeOffset;

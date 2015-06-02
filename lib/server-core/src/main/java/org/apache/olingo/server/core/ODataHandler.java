@@ -96,7 +96,7 @@ public class ODataHandler {
     } catch (PreconditionRequiredException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
-    }catch (ODataHandlerException e) {
+    } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataApplicationException e) {
@@ -175,7 +175,7 @@ public class ODataHandler {
   public void register(final CustomContentTypeSupport customContentTypeSupport) {
     this.customContentTypeSupport = customContentTypeSupport;
   }
-  
+
   public CustomContentTypeSupport getCustomContentTypeSupport() {
     return customContentTypeSupport;
   }

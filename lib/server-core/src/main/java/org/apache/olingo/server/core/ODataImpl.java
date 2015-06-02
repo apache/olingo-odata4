@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.EtagInformation;
+import org.apache.olingo.server.api.ETagInformation;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -119,10 +119,10 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public EtagInformation createEtagInformation(final Collection<String> values) {
-    final Collection<String> etags = EtagParser.parse(values);
-    final boolean isAll = etags.size() == 1 && etags.iterator().next().equals("*");
-    return new EtagInformation(isAll,
-        isAll ? Collections.<String> emptySet() : Collections.unmodifiableCollection(etags));
+  public ETagInformation createETagInformation(final Collection<String> values) {
+    final Collection<String> eTags = ETagParser.parse(values);
+    final boolean isAll = eTags.size() == 1 && eTags.iterator().next().equals("*");
+    return new ETagInformation(isAll,
+        isAll ? Collections.<String> emptySet() : Collections.unmodifiableCollection(eTags));
   }
 }

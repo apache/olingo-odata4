@@ -37,6 +37,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class MethodCallOperator {
 
@@ -317,8 +318,10 @@ public class MethodCallOperator {
       throws ODataApplicationException {
     final TypedOperand operand = parameters.get(0).asTypedOperand();
 
-    if (operand.is(expectedTypes)) {
-      if (!operand.isNull()) {
+    if (operand.isNull()) {
+      return new TypedOperand(null, EdmNull.getInstance());
+    } else {
+      if (operand.is(expectedTypes)) {
         Calendar calendar = null;
         if (operand.is(primDate)) {
           calendar = operand.getTypedValue(Calendar.class);
@@ -331,13 +334,10 @@ public class MethodCallOperator {
         } else {
           throw new ODataApplicationException("Invalid type", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
         }
-
         return new TypedOperand(f.perform(calendar, operand), returnType);
       } else {
-        return new TypedOperand(null, returnType);
-      }
-    } else {
       throw new ODataApplicationException("Invalid type", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+      }
     }
   }
 
@@ -345,7 +345,7 @@ public class MethodCallOperator {
       throws ODataApplicationException {
     List<String> stringParameters = getParametersAsString();
     if (stringParameters.contains(null)) {
-      return new TypedOperand(null, returnValue);
+      return new TypedOperand(null, EdmNull.getInstance());
     } else {
       return new TypedOperand(f.perform(stringParameters), returnValue);
     }

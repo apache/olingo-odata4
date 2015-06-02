@@ -159,10 +159,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final DeserializerResult deserializerResult =
           odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
               .entity(request.getBody(), edmEntityType);
-      new RequestValidator(dataProvider,
-          odata.createUriHelper(),
-          serviceMetadata.getEdm(),
-          request.getRawBaseUri()).validate(edmEntitySet, deserializerResult.getEntity());
+      new RequestValidator(dataProvider, request.getRawBaseUri())
+          .validate(edmEntitySet, deserializerResult.getEntity());
 
       entity = dataProvider.create(edmEntitySet);
       dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, deserializerResult.getEntity(), false,
@@ -213,8 +211,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     new RequestValidator(dataProvider,
         true, // Update
         request.getMethod() == HttpMethod.PATCH,
-        odata.createUriHelper(),
-        serviceMetadata.getEdm(),
         request.getRawBaseUri()).validate(edmEntitySet, changedEntity);
 
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,

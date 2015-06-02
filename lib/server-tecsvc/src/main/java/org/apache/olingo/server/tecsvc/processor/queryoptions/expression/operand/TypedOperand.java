@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class TypedOperand extends VisitorOperand {
 
@@ -56,7 +55,7 @@ public class TypedOperand extends VisitorOperand {
 
   @Override
   public TypedOperand asTypedOperand(final EdmPrimitiveType... asTypes) throws ODataApplicationException {
-    if (type.equals(EdmNull.getInstance())) {
+    if (is(primNull)) {
       return this;
     } else if (isNull()) {
       return new TypedOperand(null, asTypes[0]);
@@ -103,7 +102,7 @@ public class TypedOperand extends VisitorOperand {
     if (type == oType && value != null && other.getValue() != null
         && value.getClass() == other.getValue().getClass()) {
       return this;
-    } else if (isNullLiteral() || other.isNullLiteral()) {
+    } else if (is(primNull) || other.is(primNull)) {
       return this;
     }
 
@@ -132,16 +131,12 @@ public class TypedOperand extends VisitorOperand {
     return clazz.cast(value);
   }
 
-  public boolean isNullLiteral() {
-    return type.equals(EdmNull.getInstance());
-  }
-
   public boolean isNull() {
-    return isNullLiteral() || value == null;
+    return is(primNull) || value == null;
   }
 
   public boolean isIntegerType() {
-    return is(
+    return is(primNull,
         primByte,
         primSByte,
         primInt16,
@@ -150,23 +145,18 @@ public class TypedOperand extends VisitorOperand {
   }
 
   public boolean isDecimalType() {
-    return is(
+    return is(primNull,
         primSingle,
         primDouble,
         primDecimal);
   }
 
   public boolean is(final EdmPrimitiveType... types) {
-    if (isNullLiteral()) {
-      return true;
-    }
-
     for (EdmPrimitiveType type : types) {
       if (type.equals(this.type)) {
         return true;
       }
     }
-
     return false;
   }
 

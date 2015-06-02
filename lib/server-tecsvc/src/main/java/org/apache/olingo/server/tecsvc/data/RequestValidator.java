@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -35,35 +34,23 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.uri.UriHelper;
-import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 public class RequestValidator {
-  private DataProvider provider;
-  private boolean isInsert;
-  private boolean isPatch;
-  private UriHelper uriHelper;
-  private Edm edm;
-  private String rawServiceRoot;
+  private final DataProvider provider;
+  private final boolean isInsert;
+  private final boolean isPatch;
+  private final String rawServiceRoot;
 
-  public RequestValidator(final DataProvider provider, final UriHelper uriHelper,
-      final Edm edm, final String rawServiceRoot) {
-    this.provider = provider;
-    isInsert = true;
-    this.uriHelper = uriHelper;
-    this.edm = edm;
-    this.rawServiceRoot = rawServiceRoot;
+  public RequestValidator(final DataProvider provider, final String rawServiceRoot) {
+    this(provider, false, false, rawServiceRoot);
   }
 
   public RequestValidator(final DataProvider provider, final boolean isUpdate, final boolean isPatch,
-      final UriHelper uriHelper, final Edm edm, final String rawServiceRoot) {
+      final String rawServiceRoot) {
     this.provider = provider;
-    isInsert = !isUpdate;
+    this.isInsert = !isUpdate;
     this.isPatch = isPatch;
-    this.uriHelper = uriHelper;
-    this.edm = edm;
     this.rawServiceRoot = rawServiceRoot;
   }
 
@@ -89,15 +76,15 @@ public class RequestValidator {
         newPath.add(edmProperty.getName());
         final EdmBindingTarget target = edmBindingTarget.getRelatedBindingTarget(buildPath(newPath));
 
-        final ValidatioResult bindingResult = validateBinding(navigationBinding, edmProperty, target);
-        final ValidatioResult linkResult = validateNavigationLink(navigationLink,
+        final ValidationResult bindingResult = validateBinding(navigationBinding, edmProperty);
+        final ValidationResult linkResult = validateNavigationLink(navigationLink,
             edmProperty,
             target);
 
         if ((isInsert && !edmProperty.isNullable()
-            && (bindingResult != ValidatioResult.FOUND
-            && linkResult != ValidatioResult.FOUND))
-            || (!(isInsert && isPatch) && !edmProperty.isNullable() && linkResult == ValidatioResult.EMPTY)) {
+            && (bindingResult != ValidationResult.FOUND
+            && linkResult != ValidationResult.FOUND))
+            || (!(isInsert && isPatch) && !edmProperty.isNullable() && linkResult == ValidationResult.EMPTY)) {
           throw new DataProviderException("Navigation property " + navPropertyName + " must not be null",
               HttpStatusCode.BAD_REQUEST);
         }
@@ -119,35 +106,35 @@ public class RequestValidator {
     return builder.toString();
   }
 
-  private ValidatioResult validateBinding(final Link navigationBindung, final EdmNavigationProperty edmProperty,
-      final EdmBindingTarget edmBindingTarget) throws DataProviderException {
-    if (navigationBindung == null) {
-      return ValidatioResult.NOT_FOUND;
+  private ValidationResult validateBinding(final Link navigationBinding, final EdmNavigationProperty edmProperty)
+      throws DataProviderException {
+    if (navigationBinding == null) {
+      return ValidationResult.NOT_FOUND;
     }
 
     if (edmProperty.isCollection()) {
-      if (navigationBindung.getBindingLinks().size() == 0) {
-        return ValidatioResult.EMPTY;
+      if (navigationBinding.getBindingLinks().size() == 0) {
+        return ValidationResult.EMPTY;
       }
 
-      for (final String bindingLink : navigationBindung.getBindingLinks()) {
-        validateLink(bindingLink, edmBindingTarget);
+      for (final String bindingLink : navigationBinding.getBindingLinks()) {
+        validateLink(bindingLink);
       }
     } else {
-      if (navigationBindung.getBindingLink() == null) {
-        return ValidatioResult.EMPTY;
+      if (navigationBinding.getBindingLink() == null) {
+        return ValidationResult.EMPTY;
       }
 
-      validateLink(navigationBindung.getBindingLink(), edmBindingTarget);
+      validateLink(navigationBinding.getBindingLink());
     }
 
-    return ValidatioResult.FOUND;
+    return ValidationResult.FOUND;
   }
 
-  private ValidatioResult validateNavigationLink(final Link navigationLink, final EdmNavigationProperty edmProperty,
+  private ValidationResult validateNavigationLink(final Link navigationLink, final EdmNavigationProperty edmProperty,
       final EdmBindingTarget edmBindingTarget) throws DataProviderException {
     if (navigationLink == null) {
-      return ValidatioResult.NOT_FOUND;
+      return ValidationResult.NOT_FOUND;
     }
 
     if (edmProperty.isCollection()) {
@@ -168,21 +155,11 @@ public class RequestValidator {
       }
     }
 
-    return ValidatioResult.FOUND;
+    return ValidationResult.FOUND;
   }
 
-  private void validateLink(final String bindingLink, final EdmBindingTarget edmBindungTarget)
-      throws DataProviderException {
-    try {
-      final UriResourceEntitySet uriInfo = uriHelper.parseEntityId(edm, bindingLink, rawServiceRoot);
-      final Entity entity = provider.read(uriInfo.getEntitySet(), uriInfo.getKeyPredicates());
-
-      if (entity == null) {
-        throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);
-      }
-    } catch (DeserializerException e) {
-      throw new DataProviderException("Invalid binding link", HttpStatusCode.BAD_REQUEST);
-    }
+  private void validateLink(final String bindingLink) throws DataProviderException {
+    provider.getEntityByReference(bindingLink, rawServiceRoot);
   }
 
   private void validateEntitySetProperties(final List<Property> properties, final EdmBindingTarget edmBindingTarget,
@@ -190,7 +167,7 @@ public class RequestValidator {
     validateProperties(properties, edmBindingTarget, edmType, edmType.getKeyPredicateNames(), path);
   }
 
-  private void validateProperties(final List<Property> properties, final EdmBindingTarget edmBingingTarget,
+  private void validateProperties(final List<Property> properties, final EdmBindingTarget edmBindingTarget,
       final EdmStructuredType edmType, final List<String> keyPredicateNames, final List<String> path)
       throws DataProviderException {
 
@@ -212,7 +189,7 @@ public class RequestValidator {
         }
 
         // Validate property value
-        validatePropertyValue(property, edmProperty, edmBingingTarget, path);
+        validatePropertyValue(property, edmProperty, edmBindingTarget, path);
       }
     }
   }
@@ -259,7 +236,7 @@ public class RequestValidator {
     return null;
   }
 
-  private static enum ValidatioResult {
+  private static enum ValidationResult {
     FOUND,
     NOT_FOUND,
     EMPTY

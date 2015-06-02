@@ -212,8 +212,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals("http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24skiptoken=1", nextLink
-        .toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=1", nextLink.toASCIIString());
 
     // Check subsequent next links
     response = client.getRetrieveRequestFactory()
@@ -221,8 +220,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .execute();
 
     nextLink = response.getBody().getNext();
-    assertEquals("http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24skiptoken=2", nextLink
-        .toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=2", nextLink.toASCIIString());
   }
 
   @Test
@@ -239,7 +237,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals("http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken=1",
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=1",
         nextLink.toASCIIString());
 
     int token = 1;
@@ -253,10 +251,8 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
       nextLink = response.getBody().getNext();
       if (nextLink != null) {
-        assertEquals(
-            "http://localhost:9080/odata-server-tecsvc/odata.svc/ESServerSidePaging?%24count=true&%24skiptoken="
-                + token,
-                nextLink.toASCIIString());
+        assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=" + token,
+            nextLink.toASCIIString());
       }
     }
 

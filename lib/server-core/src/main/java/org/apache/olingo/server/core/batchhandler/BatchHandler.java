@@ -45,7 +45,7 @@ public class BatchHandler {
       throws DeserializerException, SerializerException {
     validateRequest(request);
 
-    final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);
+    final BatchFacade operation = new BatchFacadeImpl(oDataHandler, request, batchProcessor, isStrict);
     batchProcessor.processBatch(operation, request, response);
   }
 

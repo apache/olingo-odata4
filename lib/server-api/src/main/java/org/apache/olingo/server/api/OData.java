@@ -118,11 +118,11 @@ public abstract class OData {
   public abstract EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind);
 
   /**
-   * Creates Etag information from the values of a HTTP header
+   * Creates ETag information from the values of a HTTP header
    * containing a list of entity tags or a single star character, i.e.,
    * <code>If-Match</code> and <code>If-None-Match</code>.
    * @param values the collection of header values
-   * @return an {@link EtagInformation} instance
+   * @return an {@link ETagInformation} instance
    */
-  public abstract EtagInformation createEtagInformation(final Collection<String> values);
+  public abstract ETagInformation createETagInformation(final Collection<String> values);
 }

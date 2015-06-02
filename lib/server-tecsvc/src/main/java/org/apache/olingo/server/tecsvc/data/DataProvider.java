@@ -578,8 +578,8 @@ public class DataProvider {
       }
     }
   }
-  
-  private Entity getEntityByReference(final String entityId, final String rawServiceRoot) 
+
+  protected Entity getEntityByReference(final String entityId, final String rawServiceRoot) 
       throws DataProviderException {
     try {
       final UriResourceEntitySet uriResource = odata.createUriHelper().parseEntityId(edm, entityId, rawServiceRoot);
@@ -594,7 +594,7 @@ public class DataProvider {
       throw new DataProviderException("Invalid entity-id", HttpStatusCode.BAD_REQUEST);
     }
   }
-  
+
   public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 
@@ -603,7 +603,7 @@ public class DataProvider {
     }
 
     public DataProviderException(final String message) {
-      super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+      this(message, HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
 
     public DataProviderException(final String message, final HttpStatusCode statusCode) {

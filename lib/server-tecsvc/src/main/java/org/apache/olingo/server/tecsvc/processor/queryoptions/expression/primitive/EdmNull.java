@@ -32,13 +32,24 @@ public final class EdmNull implements EdmPrimitiveType {
   }
 
   @Override
+  public String getNamespace() {
+    return EDM_NAMESPACE;
+  }
+
+  @Override
+  public String getName() {
+    return getClass().getSimpleName().substring(3);
+  }
+
+  @Override
+  public EdmTypeKind getKind() {
+    return EdmTypeKind.PRIMITIVE;
+  }
+
+  @Override
   public Class<?> getDefaultType() {
     return Object.class;
   }
-
-  protected String uriPrefix = "";
-
-  protected String uriSuffix = "";
 
   @Override
   public FullQualifiedName getFullQualifiedName() {
@@ -54,13 +65,8 @@ public final class EdmNull implements EdmPrimitiveType {
   public boolean validate(final String value,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final Boolean isUnicode) {
-
-    try {
-      valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, getDefaultType());
-      return true;
-    } catch (final EdmPrimitiveTypeException e) {
-      return false;
-    }
+    return value == null && (isNullable == null || isNullable)
+        || value.equals("null");
   }
 
   @Override
@@ -68,14 +74,17 @@ public final class EdmNull implements EdmPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode, final Class<T> returnType)
       throws EdmPrimitiveTypeException {
-
     if (value == null) {
       if (isNullable != null && !isNullable) {
         throw new EdmPrimitiveTypeException("The literal 'null' is not allowed.");
       }
       return null;
     }
-    return internalValueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
+    if (value.equals("null")) {
+      return null;
+    } else {
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+    }
   }
 
   @Override
@@ -88,53 +97,22 @@ public final class EdmNull implements EdmPrimitiveType {
       }
       return null;
     }
-    return internalValueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+    return "null";
   }
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null ? null :
-        uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
+    return literal == null ? null : literal;
   }
 
   @Override
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
-    if (literal == null) {
-      return null;
-    } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
-      return literal;
-    } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-        && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
-
-      return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
-    } else {
-      throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
-    }
+    return literal == null ? null : literal;
   }
 
   @Override
   public String toString() {
     return new FullQualifiedName(getNamespace(), getName()).getFullQualifiedNameAsString();
-  }
-
-  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
-    if (!value.equals("null")) {
-      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
-    }
-
-    if (returnType.isAssignableFrom(Object.class)) {
-      return returnType.cast(new Object());
-    } else {
-      throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
-    }
-  }
-
-  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-    return "null";
   }
 
   @Override
@@ -146,20 +124,4 @@ public final class EdmNull implements EdmPrimitiveType {
   public int hashCode() {
     return getClass().hashCode();
   }
-
-  @Override
-  public String getNamespace() {
-    return EDM_NAMESPACE;
-  }
-
-  @Override
-  public String getName() {
-    return getClass().getSimpleName().substring(3);
-  }
-
-  @Override
-  public EdmTypeKind getKind() {
-    return EdmTypeKind.PRIMITIVE;
-  }
-
 }

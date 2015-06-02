@@ -28,10 +28,10 @@ import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
-public class BatchFascadeImpl implements BatchFacade {
+public class BatchFacadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
 
-  public BatchFascadeImpl(final ODataHandler oDataHandler, final ODataRequest request,
+  public BatchFacadeImpl(final ODataHandler oDataHandler, final ODataRequest request,
       final BatchProcessor batchProcessor,
       final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);

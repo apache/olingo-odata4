@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.EtagInformation;
+import org.apache.olingo.server.api.ETagInformation;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -262,12 +262,12 @@ public abstract class TechnicalProcessor implements Processor {
       final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
           throws ODataApplicationException {
     if (eTag != null) {
-      final EtagInformation ifMatch = odata.createEtagInformation(ifMatchHeaders);
-      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getEtags().isEmpty()) {
+      final ETagInformation ifMatch = odata.createETagInformation(ifMatchHeaders);
+      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getETags().isEmpty()) {
         throw new ODataApplicationException("The If-Match precondition is not fulfilled.",
             HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.ROOT);
       }
-      if (odata.createEtagInformation(ifNoneMatchHeaders).isMatchedBy(eTag)) {
+      if (odata.createETagInformation(ifNoneMatchHeaders).isMatchedBy(eTag)) {
         throw new ODataApplicationException("The entity has not been modified.",
             HttpStatusCode.NOT_MODIFIED.getStatusCode(), Locale.ROOT);
       }
@@ -278,9 +278,9 @@ public abstract class TechnicalProcessor implements Processor {
       final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
           throws ODataApplicationException {
     if (eTag != null) {
-      final EtagInformation ifMatch = odata.createEtagInformation(ifMatchHeaders);
-      final EtagInformation ifNoneMatch = odata.createEtagInformation(ifNoneMatchHeaders);
-      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getEtags().isEmpty()
+      final ETagInformation ifMatch = odata.createETagInformation(ifMatchHeaders);
+      final ETagInformation ifNoneMatch = odata.createETagInformation(ifNoneMatchHeaders);
+      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getETags().isEmpty()
           || ifNoneMatch.isMatchedBy(eTag)) {
         throw new ODataApplicationException("The preconditions are not fulfilled.",
             HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.ROOT);
