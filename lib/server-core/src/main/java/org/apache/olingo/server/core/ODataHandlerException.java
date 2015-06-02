@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
 /** Exception thrown during basic request handling. */
-public class ODataHandlerException extends ODataTranslatedException {
+public class ODataHandlerException extends ODataLibraryException {
   private static final long serialVersionUID = -907752788975531134L;
 
   public static enum MessageKeys implements MessageKey {

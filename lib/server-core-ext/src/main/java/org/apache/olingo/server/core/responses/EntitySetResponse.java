@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -77,7 +77,7 @@ public class EntitySetResponse extends ServiceResponse {
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException {
     visitor.visit(this);
   }

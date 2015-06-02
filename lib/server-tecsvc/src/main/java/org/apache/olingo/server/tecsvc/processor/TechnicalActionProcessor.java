@@ -35,10 +35,10 @@ import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -51,7 +51,6 @@ import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceAction;
@@ -74,7 +73,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionEntityCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -108,7 +107,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -151,7 +150,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionPrimitiveCollection(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -187,7 +186,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionPrimitive(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -221,7 +220,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionComplexCollection(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -257,7 +256,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   @Override
   public void processActionComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
@@ -291,7 +290,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
 
   @Override
   public void processActionVoid(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
+      final ContentType requestFormat) throws ODataApplicationException, ODataLibraryException {
     final UriResourceAction resource =
         ((UriResourceAction) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1));
     final EdmAction action = resource.getAction();
@@ -304,7 +303,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   }
 
   private ContextURL getContextUrl(final EdmEntitySet entitySet, final EdmEntityType entityType,
-      final boolean isSingleEntity) throws SerializerException {
+      final boolean isSingleEntity) throws ODataLibraryException {
     Builder builder = ContextURL.with();
     builder = entitySet == null ?
         isSingleEntity ? builder.type(entityType) : builder.asCollection().type(entityType) :

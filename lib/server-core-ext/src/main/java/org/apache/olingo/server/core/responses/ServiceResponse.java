@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 
 public abstract class ServiceResponse {
@@ -123,6 +123,6 @@ public abstract class ServiceResponse {
     this.strictApplyPreferences = flag;
   }
 
-  public abstract void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public abstract void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException;
 }

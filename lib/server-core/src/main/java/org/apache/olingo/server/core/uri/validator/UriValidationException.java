@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.validator;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
-public class UriValidationException extends ODataTranslatedException {
+public class UriValidationException extends ODataLibraryException {
 
   private static final long serialVersionUID = -3179078078053564742L;
 

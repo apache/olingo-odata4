@@ -35,7 +35,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -105,7 +105,7 @@ public abstract class ServiceRequest {
   }
 
   public abstract void execute(ServiceHandler handler, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException;
+      throws ODataLibraryException, ODataApplicationException;
 
   public abstract ContentType getResponseContentType() throws ContentNegotiatorException;
 

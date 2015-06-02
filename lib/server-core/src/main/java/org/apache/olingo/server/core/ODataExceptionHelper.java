@@ -23,8 +23,8 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataTranslatedException;
-import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
+import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
@@ -110,7 +110,7 @@ public class ODataExceptionHelper {
   }
 
   public static ODataServerError
-      createServerErrorObject(final ODataTranslatedException e, final Locale requestedLocale) {
+      createServerErrorObject(final ODataLibraryException e, final Locale requestedLocale) {
     return basicTranslatedError(e, requestedLocale);
   }
 
@@ -133,7 +133,7 @@ public class ODataExceptionHelper {
     return new ODataServerError().setException(e).setMessage(e.getMessage());
   }
 
-  private static ODataServerError basicTranslatedError(final ODataTranslatedException e,
+  private static ODataServerError basicTranslatedError(final ODataLibraryException e,
       final Locale requestedLocale) {
     ODataServerError serverError = basicServerError(e);
     ODataErrorMessage translatedMessage = e.getTranslatedMessage(requestedLocale);

@@ -32,8 +32,8 @@ public interface DeltaProcessor extends Processor {
   //   * @param uriInfo  information of a parsed OData URI
   //   * @param responseFormat   requested content type after content negotiation
   //   * @throws ODataApplicationException if the service implementation encounters a failure
-  //   * @throws SerializerException       if serialization failed
+  //   * @throws ODataLibraryException
   //   */
   //  void readDelta(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-  //      throws ODataApplicationException, SerializerException;
+  //      throws ODataApplicationException, ODataLibraryException;
 }

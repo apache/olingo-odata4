@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -53,7 +53,7 @@ public class CountResponse extends ServiceResponse {
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException {
     visitor.visit(this);
   }

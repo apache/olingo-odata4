@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.CustomETagSupport;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
@@ -110,8 +111,7 @@ public class ODataHandler {
   }
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
-      throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException, SerializerException, DeserializerException, PreconditionRequiredException {
+      throws ODataApplicationException, ODataLibraryException {
     validateODataVersion(request, response);
 
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,

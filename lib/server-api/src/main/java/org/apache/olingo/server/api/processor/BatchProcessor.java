@@ -20,6 +20,7 @@ package org.apache.olingo.server.api.processor;
 
 import java.util.List;
 
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
@@ -39,9 +40,10 @@ public interface BatchProcessor extends Processor {
    * @param response OData response object for collecting response data
    * @throws BatchSerializerException if the service implementation encounters a failure
    * @throws BatchDeserializerException if de-serialization failed
+   * @throws ODataLibraryException
    */
   void processBatch(BatchFacade facade, ODataRequest request, ODataResponse response)
-      throws BatchSerializerException, BatchDeserializerException;
+      throws BatchSerializerException, BatchDeserializerException, ODataLibraryException;
 
   /**
    * Process a batch change set (containing several batch requests)
@@ -49,7 +51,8 @@ public interface BatchProcessor extends Processor {
    * @param facade BatchFacade which should be used for further batch part handling
    * @param requests List of ODataRequests which are included in the to be processed change set
    * @throws BatchDeserializerException if de-serialization failed
+   * @throws ODataLibraryException
    */
   ODataResponsePart processChangeSet(BatchFacade facade, List<ODataRequest> requests)
-      throws BatchDeserializerException;
+      throws BatchDeserializerException, ODataLibraryException;
 }

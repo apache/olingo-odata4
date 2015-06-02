@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -48,7 +48,7 @@ public class MetadataResponse extends ServiceResponse {
     this.responseContentType = responseContentType;
   }
 
-  public void writeMetadata()throws ODataTranslatedException {
+  public void writeMetadata()throws ODataLibraryException {
     assert (!isClosed());
     this.response.setContent(this.serializer.metadataDocument(this.metadata).getContent());
     writeOK(this.responseContentType.toContentTypeString());
@@ -56,7 +56,7 @@ public class MetadataResponse extends ServiceResponse {
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException {
     visitor.visit(this);
   }

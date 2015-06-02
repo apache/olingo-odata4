@@ -39,7 +39,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -84,8 +84,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataServerError serverError;
     if (e instanceof ODataHandlerException) {
       serverError = ODataExceptionHelper.createServerErrorObject((ODataHandlerException) e, null);
-    } else if (e instanceof ODataTranslatedException) {
-      serverError = ODataExceptionHelper.createServerErrorObject((ODataTranslatedException) e, null);
+    } else if (e instanceof ODataLibraryException) {
+      serverError = ODataExceptionHelper.createServerErrorObject((ODataLibraryException) e, null);
     } else {
       serverError = ODataExceptionHelper.createServerErrorObject(e);
     }
@@ -132,7 +132,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private ODataRequest fillODataRequest(final ODataRequest odRequest, final HttpServletRequest httpRequest,
       final int split)
-          throws ODataTranslatedException {
+          throws ODataLibraryException {
     try {
       odRequest.setBody(httpRequest.getInputStream());
       extractHeaders(odRequest, httpRequest);
@@ -147,7 +147,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   static void extractMethod(final ODataRequest odRequest, final HttpServletRequest httpRequest)
-      throws ODataTranslatedException {
+      throws ODataLibraryException {
     try {
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
 

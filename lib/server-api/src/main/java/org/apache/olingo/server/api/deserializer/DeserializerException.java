@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.api.deserializer;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
 /** Exception thrown by deserializers. */
-public class DeserializerException extends ODataTranslatedException {
+public class DeserializerException extends ODataLibraryException {
 
   private static final long serialVersionUID = 6341270437497060906L;
 

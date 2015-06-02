@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
@@ -56,7 +56,7 @@ public class BatchRequest extends ServiceRequest {
 
   @Override
   public void execute(ServiceHandler handler, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     if (!allowedMethod()) {
       methodNotAllowed();
@@ -85,7 +85,7 @@ public class BatchRequest extends ServiceRequest {
             handler.rollback(txnId);
           }
           handler.commit(txnId);
-        } catch(ODataTranslatedException e) {
+        } catch(ODataLibraryException e) {
           if (txnId != null) {
             handler.rollback(txnId);
           }

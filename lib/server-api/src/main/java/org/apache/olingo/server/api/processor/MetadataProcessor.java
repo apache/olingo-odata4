@@ -20,9 +20,9 @@ package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -37,8 +37,8 @@ public interface MetadataProcessor extends Processor {
    * @param uriInfo information of a parsed OData URI
    * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException if serialization failed
+   * @throws ODataLibraryException
    */
   void readMetadata(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-      throws ODataApplicationException, SerializerException;
+      throws ODataApplicationException, ODataLibraryException;
 }

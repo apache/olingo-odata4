@@ -24,14 +24,14 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -54,7 +54,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
 
   @Override
   public void readServiceDocument(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+      final ContentType requestedContentType) throws ODataApplicationException, ODataLibraryException {
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), null).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -63,7 +63,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
 
   @Override
   public void readMetadata(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, SerializerException {
+      final ContentType requestedContentType) throws ODataApplicationException, ODataLibraryException {
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
     response.setContent(serializer.metadataDocument(serviceMetadata).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());

@@ -19,51 +19,51 @@
 package org.apache.olingo.server.core.responses;
 
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
 public class ServiceResponseVisior {
 
-  public void visit(CountResponse response) throws ODataTranslatedException,
+  public void visit(CountResponse response) throws ODataLibraryException,
     ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(EntityResponse response) throws ODataTranslatedException,
+  public void visit(EntityResponse response) throws ODataLibraryException,
     ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(MetadataResponse response) throws ODataTranslatedException,
+  public void visit(MetadataResponse response) throws ODataLibraryException,
     ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(NoContentResponse response) throws ODataTranslatedException,
+  public void visit(NoContentResponse response) throws ODataLibraryException,
     ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(PrimitiveValueResponse response) throws ODataTranslatedException,
+  public void visit(PrimitiveValueResponse response) throws ODataLibraryException,
       ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(PropertyResponse response) throws ODataTranslatedException,
+  public void visit(PropertyResponse response) throws ODataLibraryException,
     ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(ServiceDocumentResponse response) throws ODataTranslatedException,
+  public void visit(ServiceDocumentResponse response) throws ODataLibraryException,
       ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(StreamResponse response) throws ODataTranslatedException,
+  public void visit(StreamResponse response) throws ODataLibraryException,
       ODataApplicationException {
     response.writeServerError(true);
   }
 
-  public void visit(EntitySetResponse response) throws ODataTranslatedException,
+  public void visit(EntitySetResponse response) throws ODataLibraryException,
       ODataApplicationException {
     response.writeServerError(true);
   }

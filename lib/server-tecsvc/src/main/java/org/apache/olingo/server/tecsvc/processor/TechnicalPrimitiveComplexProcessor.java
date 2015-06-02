@@ -42,10 +42,10 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
@@ -57,7 +57,6 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.RepresentationType;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -84,83 +83,83 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   @Override
   public void readPrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.PRIMITIVE);
   }
 
   @Override
   public void updatePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     updateProperty(request, response, uriInfo, requestFormat, responseFormat, RepresentationType.PRIMITIVE);
   }
 
   @Override
   public void deletePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataApplicationException, ODataLibraryException {
     deleteProperty(request, response, uriInfo);
   }
 
   @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
   }
 
   @Override
   public void updatePrimitiveCollection(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     updateProperty(request, response, uriInfo, requestFormat, responseFormat, RepresentationType.COLLECTION_PRIMITIVE);
   }
 
   @Override
   public void deletePrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataApplicationException, ODataLibraryException {
     deleteProperty(request, response, uriInfo);
   }
 
   @Override
   public void readComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COMPLEX);
   }
 
   @Override
   public void updateComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     updateProperty(request, response, uriInfo, requestFormat, responseFormat, RepresentationType.COMPLEX);
   }
 
   @Override
   public void deleteComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataApplicationException, ODataLibraryException {
     deleteProperty(request, response, uriInfo);
   }
 
   @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
   }
 
   @Override
   public void updateComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     updateProperty(request, response, uriInfo, requestFormat, responseFormat, RepresentationType.COLLECTION_COMPLEX);
   }
 
   @Override
   public void deleteComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataApplicationException, ODataLibraryException {
     deleteProperty(request, response, uriInfo);
   }
 
   private void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType, final RepresentationType representationType)
-          throws ODataApplicationException, SerializerException {
+          throws ODataApplicationException, ODataLibraryException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);
@@ -214,7 +213,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   private void updateProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat, final RepresentationType representationType)
-          throws ODataApplicationException, DeserializerException, SerializerException {
+          throws ODataApplicationException, ODataLibraryException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
     final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
@@ -323,7 +322,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       final List<String> path, final Property property, final EdmProperty edmProperty,
       final EdmType type, final EdmReturnType returnType,
       final RepresentationType representationType, final ODataFormat format,
-      final ExpandOption expand, final SelectOption select) throws SerializerException {
+      final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
     ODataSerializer serializer = odata.createSerializer(format);
     final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
         getContextUrl(edmEntitySet, entity, path, type, representationType, expand, select);
@@ -369,7 +368,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   private ContextURL getContextUrl(final EdmEntitySet entitySet, final Entity entity, final List<String> path,
       final EdmType type, final RepresentationType representationType,
-      final ExpandOption expand, final SelectOption select) throws SerializerException {
+      final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
     final UriHelper helper = odata.createUriHelper();
     Builder builder = ContextURL.with();
     builder = entitySet == null ?
@@ -387,7 +386,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   @Override
   public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, SerializerException {
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validateOptions(resource);
     validatePath(resource);

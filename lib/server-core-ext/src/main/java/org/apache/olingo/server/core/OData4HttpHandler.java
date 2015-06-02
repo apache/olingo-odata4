@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -74,7 +74,7 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
 
 
   ODataRequest createODataRequest(final HttpServletRequest httpRequest, final int split)
-      throws ODataTranslatedException {
+      throws ODataLibraryException {
     try {
       ODataRequest odRequest = new ODataRequest();
 
