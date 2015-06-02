@@ -31,7 +31,8 @@ public class EntityCollectionSerializerOptions {
   private ExpandOption expand;
   private SelectOption select;
   private boolean onlyReferences;
-
+  private boolean isIEEE754Compatible;
+  
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -57,6 +58,11 @@ public class EntityCollectionSerializerOptions {
     return onlyReferences;
   }
 
+  /** Serialize Edm.Int64 and Edm.Durration as strings **/
+  public boolean isIEEE754Compatible() {
+    return isIEEE754Compatible;
+  }
+  
   /** Initializes the options builder. */
   public static Builder with() {
     return new Builder();
@@ -100,7 +106,13 @@ public class EntityCollectionSerializerOptions {
       options.onlyReferences = ref;
       return this;
     }
-
+    
+    /** Set to serialize Edm.Int64 and Edm.Decimal as strings */
+    public Builder setIEEE754Compatible(final boolean isIEEE754Compatible) {
+      options.isIEEE754Compatible = isIEEE754Compatible;
+      return this;
+    }
+    
     /** Builds the OData serializer options. */
     public EntityCollectionSerializerOptions build() {
       return options;

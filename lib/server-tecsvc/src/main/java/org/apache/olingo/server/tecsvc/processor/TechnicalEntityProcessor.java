@@ -48,6 +48,8 @@ import org.apache.olingo.server.api.processor.ReferenceCollectionProcessor;
 import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
@@ -435,8 +437,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final CountOption countOption = uriInfo.getCountOption();
 
     // Serialize
-    final SerializerResult serializerResult = isReference ?
-        serializeReferenceCollection(entitySetSerialization, edmEntitySet, format) :
+    final SerializerResult serializerResult = (isReference) ? 
+        serializeReferenceCollection(entitySetSerialization, edmEntitySet, format, countOption) :
         serializeEntityCollection(entitySetSerialization, edmEntitySet, edmEntityType, format,
             expand, select, countOption);
 
@@ -461,18 +463,23 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
             .build());
   }
 
-  private SerializerResult serializeReferenceCollection(final EntityCollection entityCollection,
-      final EdmEntitySet edmEntitySet, final ODataFormat format) throws ODataLibraryException {
+  private SerializerResult serializeReferenceCollection(final EntityCollection entityCollection, 
+      final EdmEntitySet edmEntitySet, final ODataFormat format, final CountOption countOption) 
+          throws ODataLibraryException {
+
     return odata.createSerializer(format)
-        .referenceCollection(serviceMetadata, edmEntitySet, entityCollection,
-            ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build());
+        .referenceCollection(serviceMetadata, edmEntitySet, entityCollection,ReferenceCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
+            .count(countOption)
+            .setIEEE754Compatible(false).build());
   }
 
   private SerializerResult serializeReference(final Entity entity, final EdmEntitySet edmEntitySet,
       final ODataFormat format) throws ODataLibraryException {
     return odata.createSerializer(format)
-        .reference(serviceMetadata, edmEntitySet, entity,
-            ContextURL.with().suffix(Suffix.REFERENCE).build());
+        .reference(serviceMetadata, edmEntitySet, entity, ReferenceSerializerOptions.with()
+            .contextURL(ContextURL.with().suffix(Suffix.REFERENCE).build()).build());
+            
   }
 
   private SerializerResult serializeEntity(final Entity entity,

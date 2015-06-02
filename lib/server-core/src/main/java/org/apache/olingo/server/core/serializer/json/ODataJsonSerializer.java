@@ -50,6 +50,8 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
@@ -150,14 +152,14 @@ public class ODataJsonSerializer implements ODataSerializer {
 
       if (options != null && options.getCount() != null && options.getCount().getValue()
           && entitySet.getCount() != null) {
-        writeCount(entitySet, json);
+        writeCount(entitySet, options == null ? false : options.isIEEE754Compatible(), json);
       }
       json.writeFieldName(Constants.VALUE);
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, false, json);
+        writeEntitySet(metadata, entityType, entitySet, null, null, false, false, json);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.onlyReferences(), json);
+            options.getExpand(), options.getSelect(), options.onlyReferences(), options.isIEEE754Compatible(), json);
       }
       if (entitySet.getNext() != null) {
         writeNextLink(entitySet, json);
@@ -180,7 +182,8 @@ public class ODataJsonSerializer implements ODataSerializer {
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
           options == null ? null : options.getSelect(),
-          options == null ? false : options.onlyReferences(), json);
+          options == null ? false : options.onlyReferences(), 
+          options == null ? false : options.isIEEE754Compatible(), json);
       json.close();
     } catch (final IOException e) {
       throw new SerializerException("An I/O exception occurred.", e,
@@ -210,7 +213,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
-      final boolean onlyReference, final JsonGenerator json) throws IOException,
+      final boolean onlyReference, final boolean isIEEE754Compatible, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();
     for (final Entity entity : entitySet.getEntities()) {
@@ -219,7 +222,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
         json.writeEndObject();
       } else {
-        writeEntity(metadata, entityType, entity, null, expand, select, false, json);
+        writeEntity(metadata, entityType, entity, null, expand, select, false, isIEEE754Compatible, json);
       }
     }
     json.writeEndArray();
@@ -227,8 +230,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand,
-      final SelectOption select, final boolean onlyReference, final JsonGenerator json)
-      throws IOException, SerializerException {
+      final SelectOption select, final boolean onlyReference, final boolean isIEEE7854Compatible, 
+      final JsonGenerator json) throws IOException, SerializerException {
     json.writeStartObject();
     if (format != ODataFormat.JSON_NO_METADATA) {
       if (contextURL != null) { // top-level entity
@@ -260,8 +263,8 @@ public class ODataJsonSerializer implements ODataSerializer {
       if (!resolvedType.equals(entityType)) {
         json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
       }
-      writeProperties(resolvedType, entity.getProperties(), select, json);
-      writeNavigationProperties(metadata, resolvedType, entity, expand, json);
+      writeProperties(resolvedType, entity.getProperties(), select, isIEEE7854Compatible, json);
+      writeNavigationProperties(metadata, resolvedType, entity, expand, isIEEE7854Compatible, json);
       json.writeEndObject();
     }
   }
@@ -315,7 +318,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeProperties(final EdmStructuredType type, final List<Property> properties,
-      final SelectOption select, final JsonGenerator json) throws IOException, SerializerException {
+      final SelectOption select, final boolean isIEEE754Compatible, final JsonGenerator json) 
+          throws IOException, SerializerException {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? null :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
@@ -325,14 +329,14 @@ public class ODataJsonSerializer implements ODataSerializer {
         final Property property = findProperty(propertyName, properties);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
             ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
-        writeProperty(edmProperty, property, selectedPaths, json);
+        writeProperty(edmProperty, property, selectedPaths, isIEEE754Compatible, json);
       }
     }
   }
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand,
-      final JsonGenerator json) throws SerializerException, IOException {
+      final boolean isIEEE754Compatible, final JsonGenerator json) throws SerializerException, IOException {
     if (ExpandSelectHelper.hasExpand(expand)) {
       final boolean expandAll = ExpandSelectHelper.isExpandAll(expand);
       final Set<String> expanded = expandAll ? null :
@@ -349,9 +353,8 @@ public class ODataJsonSerializer implements ODataSerializer {
           }
           writeExpandedNavigationProperty(metadata, property, navigationLink,
               innerOptions == null ? null : innerOptions.getExpandOption(),
-              innerOptions == null ? null : innerOptions.getSelectOption(), 
-              innerOptions == null ? false: innerOptions.isRef(),
-              json);
+              innerOptions == null ? null : innerOptions.getSelectOption(),
+              isIEEE754Compatible, json);
         }
       }
     }
@@ -359,7 +362,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeExpandedNavigationProperty(final ServiceMetadata metadata,
       final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandOption innerExpand, final SelectOption innerSelect, boolean onlyReference, 
+      final ExpandOption innerExpand, final SelectOption innerSelect, final boolean isIEEE754Compatible, 
       final JsonGenerator json)
       throws IOException, SerializerException {
     json.writeFieldName(property.getName());
@@ -369,20 +372,21 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeEndArray();
       } else {
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, onlyReference, json);
+            innerSelect, false, isIEEE754Compatible, json);
       }
     } else {
       if (navigationLink == null || navigationLink.getInlineEntity() == null) {
         json.writeNull();
       } else {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, onlyReference, json);
+            innerExpand, innerSelect, false, isIEEE754Compatible, json);
       }
     }
   }
 
   protected void writeProperty(final EdmProperty edmProperty, final Property property,
-      final Set<List<String>> selectedPaths, final JsonGenerator json) throws IOException, SerializerException {
+      final Set<List<String>> selectedPaths, final boolean isIEEE754Compatible, final JsonGenerator json) 
+          throws IOException, SerializerException {
     json.writeFieldName(edmProperty.getName());
     if (property == null || property.isNull()) {
       if (edmProperty.isNullable() == Boolean.FALSE) {
@@ -392,36 +396,38 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeNull();
       }
     } else {
-      writePropertyValue(edmProperty, property, selectedPaths, json);
+      writePropertyValue(edmProperty, property, selectedPaths, isIEEE754Compatible, json);
     }
   }
 
   private void writePropertyValue(final EdmProperty edmProperty,
       final Property property, final Set<List<String>> selectedPaths,
-      final JsonGenerator json) throws IOException, SerializerException {
+      final boolean isIEEE754Compatible, final JsonGenerator json) throws IOException, SerializerException {
     try {
       if (edmProperty.isPrimitive()) {
         if (edmProperty.isCollection()) {
           writePrimitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
+              isIEEE754Compatible,
               json);
         } else {
           writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
-              json);
+              isIEEE754Compatible, json);
         }
       } else if (edmProperty.isCollection()) {
-        writeComplexCollection((EdmComplexType) edmProperty.getType(), property, selectedPaths, json);
+        writeComplexCollection((EdmComplexType) edmProperty.getType(), property, 
+                               selectedPaths, isIEEE754Compatible, json);
       } else if (property.isComplex()) {
         writeComplexValue((EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
-            selectedPaths, json);
+            selectedPaths, isIEEE754Compatible, json);
       } else if (property.isEnum()) {
         writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
             edmProperty.isNullable(), edmProperty.getMaxLength(),
             edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
-            json);
+            isIEEE754Compatible, json);
       } else {
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());
@@ -436,12 +442,13 @@ public class ODataJsonSerializer implements ODataSerializer {
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final Boolean isUnicode,
-      final JsonGenerator json) throws IOException, EdmPrimitiveTypeException, SerializerException {
+      final boolean isIEEE754Compatible, final JsonGenerator json) 
+          throws IOException, EdmPrimitiveTypeException, SerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
-        writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, json);
+        writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, isIEEE754Compatible, json);
         break;
       case COLLECTION_GEOSPATIAL:
         throw new SerializerException("Property type not yet supported!",
@@ -458,13 +465,13 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeComplexCollection(final EdmComplexType type, final Property property,
-      final Set<List<String>> selectedPaths, final JsonGenerator json)
+      final Set<List<String>> selectedPaths, final boolean isIEEE754Compatible, final JsonGenerator json)
       throws IOException, EdmPrimitiveTypeException, SerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(type, ((ComplexValue) value).getValue(), selectedPaths, json);
+        writeComplexValue(type, ((ComplexValue) value).getValue(), selectedPaths, isIEEE754Compatible, json);
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
@@ -476,17 +483,17 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   private void writePrimitive(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode, final JsonGenerator json)
+      final Boolean isUnicode, final boolean isIEEE754Compatible, final JsonGenerator json)
       throws EdmPrimitiveTypeException, IOException, SerializerException {
     if (property.isPrimitive()) {
       writePrimitiveValue(type, property.asPrimitive(),
-          isNullable, maxLength, precision, scale, isUnicode, json);
+          isNullable, maxLength, precision, scale, isUnicode, isIEEE754Compatible, json);
     } else if (property.isGeospatial()) {
       throw new SerializerException("Property type not yet supported!",
           SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
     } else if (property.isEnum()) {
       writePrimitiveValue(type, property.asEnum(),
-          isNullable, maxLength, precision, scale, isUnicode, json);
+          isNullable, maxLength, precision, scale, isUnicode, isIEEE754Compatible, json);
     } else {
       throw new SerializerException("Inconsistent property type!",
           SerializerException.MessageKeys.INCONSISTENT_PROPERTY_TYPE, property.getName());
@@ -496,13 +503,17 @@ public class ODataJsonSerializer implements ODataSerializer {
   protected void writePrimitiveValue(final EdmPrimitiveType type, final Object primitiveValue,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final Boolean isUnicode,
-      final JsonGenerator json) throws EdmPrimitiveTypeException, IOException {
+      final boolean isIEEE754Compatible, final JsonGenerator json) throws EdmPrimitiveTypeException, IOException {
     final String value = type.valueToString(primitiveValue,
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
       json.writeNull();
     } else if(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
         json.writeBoolean(Boolean.parseBoolean(value));
+    } else if(isIEEE754Compatible && 
+        (   type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64) 
+         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal))) {
+      json.writeString(value.toString());
     } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
@@ -518,7 +529,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeComplexValue(final EdmComplexType type, final List<Property> properties,
-      final Set<List<String>> selectedPaths, final JsonGenerator json)
+      final Set<List<String>> selectedPaths, final boolean isIEEE754Compatible, final JsonGenerator json)
       throws IOException, EdmPrimitiveTypeException, SerializerException {
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
@@ -526,7 +537,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
         writeProperty((EdmProperty) type.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
-            json);
+            isIEEE754Compatible, json);
       }
     }
     json.writeEndObject();
@@ -559,8 +570,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeFieldName(Constants.VALUE);
         writePrimitive(type, property,
             options.isNullable(), options.getMaxLength(), options.getPrecision(), options.getScale(),
-            options.isUnicode(),
-            json);
+            options.isUnicode(), options.isIEEE754Compatible(), json);
       }
       json.writeEndObject();
       json.close();
@@ -593,10 +603,10 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
       final List<Property> values =
           property.isNull() ? Collections.<Property> emptyList() : property.asComplex().getValue();
-      writeProperties(type, values, options == null ? null : options.getSelect(), json);
+      writeProperties(type, values, options == null ? null : options.getSelect(), options.isIEEE754Compatible(), json);
       if (!property.isNull() && property.isComplex()) {
         writeNavigationProperties(metadata, type, property.asComplex(),
-            options == null ? null : options.getExpand(), json);
+            options == null ? null : options.getExpand(), options.isIEEE754Compatible(), json);
       }
       json.writeEndObject();
       json.close();
@@ -622,8 +632,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeFieldName(Constants.VALUE);
       writePrimitiveCollection(type, property,
           options.isNullable(), options.getMaxLength(), options.getPrecision(), options.getScale(),
-          options.isUnicode(),
-          json);
+          options.isUnicode(), options.isIEEE754Compatible(), json);
       json.writeEndObject();
       json.close();
     } catch (final IOException e) {
@@ -650,7 +659,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       }
       writeMetadataETag(metadata, json);
       json.writeFieldName(Constants.VALUE);
-      writeComplexCollection(type, property, null, json);
+      writeComplexCollection(type, property, null, options.isIEEE754Compatible(), json);
       json.writeEndObject();
       json.close();
     } catch (final IOException e) {
@@ -666,8 +675,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
-      final Entity entity, final ContextURL contextURL) throws SerializerException {
-    
+      final Entity entity, final ReferenceSerializerOptions options) throws SerializerException {
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
     final CircleStreamBuffer buffer = new CircleStreamBuffer();
     final UriHelper uriHelper = new UriHelperImpl();
     
@@ -685,8 +694,9 @@ public class ODataJsonSerializer implements ODataSerializer {
   
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
-      final EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException {
-    
+      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options) 
+          throws SerializerException {
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
     final CircleStreamBuffer buffer = new CircleStreamBuffer();
     final UriHelper uriHelper = new UriHelperImpl();
     
@@ -694,12 +704,12 @@ public class ODataJsonSerializer implements ODataSerializer {
       final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       
-      if(entityCollection.getCount() != null) {
-        writeCount(entityCollection, json);
-      }
-      
       json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, json);
+      if(options != null && options.getCount() != null) {
+        writeCount(entityCollection, (options == null) ? false : options.isIEEE754Compatible(), json);
+      }
+      
       writeReferenceCollection(edmEntitySet, entityCollection, uriHelper,json);
 
       if(entityCollection.getNext() != null) {
@@ -718,7 +728,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   protected void writeReferenceCollection(final EdmEntitySet edmEntitySet, final EntityCollection entityCollection,
       final UriHelper uriHelper, final JsonGenerator json) throws IOException, SerializerException {
     json.writeArrayFieldStart(Constants.VALUE);
-
+    
     for(final Entity entity : entityCollection.getEntities()) {
       writeReference(null, edmEntitySet, entity, null, uriHelper, json);
     }
@@ -739,8 +749,13 @@ public class ODataJsonSerializer implements ODataSerializer {
     json.writeEndObject();
   }
   
-  private void writeCount(final EntityCollection entitySet, JsonGenerator json) throws IOException {
-    json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
+  private void writeCount(final EntityCollection entitySet, final boolean isIEEE754Comptible, final JsonGenerator json) 
+      throws IOException {
+    if(isIEEE754Comptible) {
+      json.writeStringField(Constants.JSON_COUNT, entitySet.getCount().toString());
+    } else {
+      json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
+    }
   }
 
   private void writeNextLink(final EntityCollection entitySet, JsonGenerator json) throws IOException {

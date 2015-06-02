@@ -133,6 +133,18 @@ public class ContentNegotiator {
             throw new IllegalArgumentException("charset not supported: " + acceptedType);
           }
         }
+        
+        if(acceptedType.getParameters().containsKey("ieee754compatible")) {
+          final String value = acceptedType.getParameters().get("ieee754compatible");
+          if("true".equalsIgnoreCase(value)) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE);
+          } else if("false".equalsIgnoreCase(value)) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE_FALSE);
+          } else {
+            throw new IllegalArgumentException("Invalid IEEE754Compatible value " + acceptedType);
+          }
+        }
+        
         if (acceptedType.matches(contentType)) {
           return contentType;
         }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,43 +19,30 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
 /** Options for the OData serializer. */
-public class EntitySerializerOptions {
+public class ReferenceCollectionSerializerOptions {
   private ContextURL contextURL;
-  private ExpandOption expand;
-  private SelectOption select;
-  private boolean onlyReferences;
   private boolean isIEEE754Compatible;
+  private CountOption count;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
   }
-
-  /** Gets the $expand system query option. */
-  public ExpandOption getExpand() {
-    return expand;
+  
+  /** Gets the $count system query option. */
+  public CountOption getCount() {
+    return count;
   }
-
-  /** Gets the $select system query option. */
-  public SelectOption getSelect() {
-    return select;
-  }
-
-  /** only writes the references of the entities */
-  public boolean onlyReferences() {
-    return onlyReferences;
-  }
-
+  
   /** Serialize Edm.Int64 and Edm.Durration as strings **/
   public boolean isIEEE754Compatible() {
     return isIEEE754Compatible;
   }
   
-  private EntitySerializerOptions() {}
+  private ReferenceCollectionSerializerOptions() {}
 
   /** Initializes the options builder. */
   public static Builder with() {
@@ -64,11 +51,10 @@ public class EntitySerializerOptions {
 
   /** Builder of OData serializer options. */
   public static final class Builder {
+    private ReferenceCollectionSerializerOptions options;
 
-    private final EntitySerializerOptions options;
-
-    private Builder() {
-      options = new EntitySerializerOptions();
+    public Builder() {
+      options = new ReferenceCollectionSerializerOptions();
     }
 
     /** Sets the {@link ContextURL}. */
@@ -77,21 +63,9 @@ public class EntitySerializerOptions {
       return this;
     }
 
-    /** Sets the $expand system query option. */
-    public Builder expand(final ExpandOption expand) {
-      options.expand = expand;
-      return this;
-    }
-
-    /** Sets the $select system query option. */
-    public Builder select(final SelectOption select) {
-      options.select = select;
-      return this;
-    }
-
-    /** Sets to serialize only references */
-    public Builder setWriteOnlyReferences(final boolean ref) {
-      options.onlyReferences = ref;
+    /** Sets the $count system query option. */
+    public Builder count(final CountOption count) {
+      options.count = count;
       return this;
     }
     
@@ -100,9 +74,9 @@ public class EntitySerializerOptions {
       options.isIEEE754Compatible = isIEEE754Compatible;
       return this;
     }
-    
+
     /** Builds the OData serializer options. */
-    public EntitySerializerOptions build() {
+    public ReferenceCollectionSerializerOptions build() {
       return options;
     }
   }
