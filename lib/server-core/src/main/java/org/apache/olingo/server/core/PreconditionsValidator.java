@@ -31,7 +31,6 @@ import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class PreconditionsValidator {
 
-  ;
   private final CustomETagSupport customETagSupport;
   private final UriInfo uriInfo;
   private final String ifMatch;
@@ -68,16 +67,17 @@ public class PreconditionsValidator {
     for (UriResource uriResourcePart : uriInfo.getUriResourceParts()) {
       switch (uriResourcePart.getKind()) {
       case function:
-        lastFoundEntitySetOrSingleton = getEnitySetFromFunctionImport(uriResourcePart);
+        lastFoundEntitySetOrSingleton = getEntitySetFromFunctionImport((UriResourceFunction) uriResourcePart);
         break;
       case singleton:
         lastFoundEntitySetOrSingleton = ((UriResourceSingleton) uriResourcePart).getSingleton();
         break;
       case entitySet:
-        lastFoundEntitySetOrSingleton = getEntitySet(uriResourcePart);
+        lastFoundEntitySetOrSingleton = getEntitySet((UriResourceEntitySet) uriResourcePart);
         break;
       case navigationProperty:
-        lastFoundEntitySetOrSingleton = getEntitySetFromNavigation(lastFoundEntitySetOrSingleton, uriResourcePart);
+        lastFoundEntitySetOrSingleton = getEntitySetFromNavigation(lastFoundEntitySetOrSingleton,
+                (UriResourceNavigation) uriResourcePart);
         break;
       case value:
       case action:
@@ -100,8 +100,7 @@ public class PreconditionsValidator {
     return lastFoundEntitySetOrSingleton;
   }
 
-  private EdmBindingTarget getEnitySetFromFunctionImport(UriResource uriResourcePart) {
-    UriResourceFunction uriResourceFunction = (UriResourceFunction) uriResourcePart;
+  private EdmBindingTarget getEntitySetFromFunctionImport(UriResourceFunction uriResourceFunction) {
     EdmFunctionImport functionImport = uriResourceFunction.getFunctionImport();
     if (functionImport != null && functionImport.getReturnedEntitySet() != null
         && !uriResourceFunction.isCollection()) {
@@ -110,8 +109,7 @@ public class PreconditionsValidator {
     return null;
   }
 
-  private EdmBindingTarget getEntitySet(UriResource uriResourcePart) {
-    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResourcePart;
+  private EdmBindingTarget getEntitySet(UriResourceEntitySet uriResourceEntitySet) {
     if (!uriResourceEntitySet.isCollection()) {
       return uriResourceEntitySet.getEntitySet();
     }
@@ -119,8 +117,7 @@ public class PreconditionsValidator {
   }
 
   private EdmBindingTarget getEntitySetFromNavigation(EdmBindingTarget lastFoundEntitySetOrSingleton,
-      UriResource uriResourcePart) {
-    UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) uriResourcePart;
+                                                      UriResourceNavigation uriResourceNavigation) {
     if (lastFoundEntitySetOrSingleton != null && !uriResourceNavigation.isCollection()) {
       EdmNavigationProperty navProp = uriResourceNavigation.getProperty();
       return lastFoundEntitySetOrSingleton.getRelatedBindingTarget(navProp.getName());

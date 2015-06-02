@@ -220,7 +220,7 @@ public class ODataDispatcher {
           .processActionVoid(request, response, uriInfo, requestFormat);
     } else {
       final boolean isCollection = returnType.isCollection();
-      ContentType responseFormat = null;
+      ContentType responseFormat;
       switch (returnType.getType().getKind()) {
       case ENTITY:
         responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -534,8 +534,9 @@ public class ODataDispatcher {
   private void validatePreconditions(ODataRequest request, boolean isMediaValue) throws PreconditionRequiredException {
     // If needed perform preconditions validation
     if (handler.getCustomETagSupport() != null) {
-      new PreconditionsValidator(handler.getCustomETagSupport(), uriInfo, request.getHeader("if-match"), request
-          .getHeader("if-none-match")).validatePreconditions(isMediaValue);
+      new PreconditionsValidator(handler.getCustomETagSupport(), uriInfo,
+              request.getHeader(HttpHeader.IF_MATCH),
+              request.getHeader(HttpHeader.IF_NONE_MATCH)).validatePreconditions(isMediaValue);
     }
   }
 
