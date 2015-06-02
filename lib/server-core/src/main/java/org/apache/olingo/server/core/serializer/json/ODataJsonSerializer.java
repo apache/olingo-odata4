@@ -330,13 +330,14 @@ public class ODataJsonSerializer implements ODataSerializer {
           final Link navigationLink = linked.getNavigationLink(property.getName());
           final ExpandItem innerOptions = expandAll ? null :
               ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
-          if (innerOptions != null && (innerOptions.isRef() || innerOptions.getLevelsOption() != null)) {
-            throw new SerializerException("Expand options $ref and $levels are not supported.",
+          if (innerOptions != null && innerOptions.getLevelsOption() != null) {
+            throw new SerializerException("Expand option $levels is not supported.",
                 SerializerException.MessageKeys.NOT_IMPLEMENTED);
           }
           writeExpandedNavigationProperty(metadata, property, navigationLink,
               innerOptions == null ? null : innerOptions.getExpandOption(),
-              innerOptions == null ? null : innerOptions.getSelectOption(),
+              innerOptions == null ? null : innerOptions.getSelectOption(), 
+              innerOptions == null ? false: innerOptions.isRef(),
               json);
         }
       }
@@ -345,7 +346,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeExpandedNavigationProperty(final ServiceMetadata metadata,
       final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandOption innerExpand, final SelectOption innerSelect, final JsonGenerator json)
+      final ExpandOption innerExpand, final SelectOption innerSelect, boolean onlyReference, 
+      final JsonGenerator json)
       throws IOException, SerializerException {
     json.writeFieldName(property.getName());
     if (property.isCollection()) {
@@ -354,14 +356,14 @@ public class ODataJsonSerializer implements ODataSerializer {
         json.writeEndArray();
       } else {
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, false, json);
+            innerSelect, onlyReference, json);
       }
     } else {
       if (navigationLink == null || navigationLink.getInlineEntity() == null) {
         json.writeNull();
       } else {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, false, json);
+            innerExpand, innerSelect, onlyReference, json);
       }
     }
   }
