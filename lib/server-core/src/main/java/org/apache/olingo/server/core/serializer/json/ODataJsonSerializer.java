@@ -336,7 +336,8 @@ public class ODataJsonSerializer implements ODataSerializer {
           }
           writeExpandedNavigationProperty(metadata, property, navigationLink,
               innerOptions == null ? null : innerOptions.getExpandOption(),
-              innerOptions == null ? null : innerOptions.getSelectOption(), innerOptions.isRef(),
+              innerOptions == null ? null : innerOptions.getSelectOption(), 
+              innerOptions == null ? false: innerOptions.isRef(),
               json);
         }
       }
