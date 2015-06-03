@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -41,7 +42,7 @@ public class BatchHandler {
   }
 
   public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
-      throws ODataLibraryException {
+      throws ODataApplicationException, ODataLibraryException {
     validateRequest(request);
 
     final BatchFacade operation = new BatchFacadeImpl(oDataHandler, request, batchProcessor, isStrict);

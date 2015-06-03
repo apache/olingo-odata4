@@ -26,12 +26,11 @@ import java.util.UUID;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
@@ -47,7 +46,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
 
   @Override
   public void processBatch(final BatchFacade facade, final ODataRequest request, final ODataResponse response)
-      throws BatchSerializerException, BatchDeserializerException, ODataLibraryException {
+      throws ODataApplicationException, ODataLibraryException {
     boolean continueOnError = isContinueOnError(request);
 
     final String boundary = facade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
@@ -95,7 +94,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
 
   @Override
   public ODataResponsePart processChangeSet(final BatchFacade facade, final List<ODataRequest> requests)
-      throws BatchDeserializerException, ODataLibraryException {
+      throws ODataApplicationException, ODataLibraryException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
     for (ODataRequest request : requests) {

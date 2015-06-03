@@ -17,10 +17,10 @@
  * under the License.
  */package org.apache.olingo.server.api.batch;
 
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 
@@ -43,10 +43,10 @@ public interface BatchFacade {
    *
    * @param request ODataRequest to process
    * @return Corresponding ODataResult to the given request
-   * @throws BatchDeserializerException
+   * @throws ODataApplicationException
    * @throws ODataLibraryException
    */
-  public ODataResponse handleODataRequest(ODataRequest request) throws BatchDeserializerException,
+  public ODataResponse handleODataRequest(ODataRequest request) throws ODataApplicationException,
       ODataLibraryException;
 
   /**
@@ -54,10 +54,10 @@ public interface BatchFacade {
    *
    * @param request Request to process
    * @return Corresponding {@link ODataResponsePart}
-   * @throws BatchDeserializerException
+   * @throws ODataApplicationException
    * @throws ODataLibraryException
    */
-  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws BatchDeserializerException,
+  public ODataResponsePart handleBatchRequest(BatchRequestPart request) throws ODataApplicationException,
       ODataLibraryException;
 
   /**
@@ -66,9 +66,9 @@ public interface BatchFacade {
    *
    * @param contentType Content Type
    * @return Boundary
-   * @throws BatchDeserializerException
+   * @throws ODataApplicationException
    * @throws ODataLibraryException
    */
-  public String extractBoundaryFromContentType(String contentType) throws BatchDeserializerException,
+  public String extractBoundaryFromContentType(String contentType) throws ODataApplicationException,
       ODataLibraryException;
 }

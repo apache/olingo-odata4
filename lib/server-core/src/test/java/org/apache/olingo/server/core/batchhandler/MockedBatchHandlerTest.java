@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -592,7 +593,7 @@ public class MockedBatchHandlerTest {
 
     @Override
     public void processBatch(final BatchFacade fascade, final ODataRequest request, final ODataResponse response)
-        throws BatchDeserializerException, BatchSerializerException, ODataLibraryException {
+        throws ODataApplicationException, BatchSerializerException, ODataLibraryException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
       final List<BatchRequestPart> parts =

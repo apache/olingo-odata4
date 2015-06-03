@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -39,12 +40,13 @@ public class BatchFacadeImpl implements BatchFacade {
   }
 
   @Override
-  public ODataResponse handleODataRequest(final ODataRequest request) throws BatchDeserializerException {
+  public ODataResponse handleODataRequest(final ODataRequest request) throws ODataApplicationException,
+      ODataLibraryException {
     return partHandler.handleODataRequest(request);
   }
 
   @Override
-  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws BatchDeserializerException,
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws ODataApplicationException,
       ODataLibraryException {
     return partHandler.handleBatchRequest(request);
   }
