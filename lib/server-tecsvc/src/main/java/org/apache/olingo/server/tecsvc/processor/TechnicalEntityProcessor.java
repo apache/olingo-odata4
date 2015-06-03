@@ -161,9 +161,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           .validate(edmEntitySet, deserializerResult.getEntity());
 
       entity = dataProvider.create(edmEntitySet);
-      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, deserializerResult.getEntity(), false,
-
-          true);
+      dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, deserializerResult.getEntity(), false, true);
       expand = deserializerResult.getExpandTree();
     }
 
@@ -199,7 +197,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       }
     }
 
-    checkChangePreconditions(entity.getETag(),
+    odata.createETagHelper().checkChangePreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
     checkRequestFormat(requestFormat);
@@ -232,7 +230,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
     Entity entity = readEntity(uriInfo);
-    checkChangePreconditions(entity.getMediaETag(),
+    odata.createETagHelper().checkChangePreconditions(entity.getMediaETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
     checkRequestFormat(requestFormat);
@@ -251,13 +249,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
   @Override
   public void deleteEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     final Entity entity = readEntity(uriInfo);
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     final boolean isValue = resourcePaths.get(resourcePaths.size() - 1) instanceof UriResourceValue;
 
-    checkChangePreconditions(isValue ? entity.getMediaETag() : entity.getETag(),
+    odata.createETagHelper().checkChangePreconditions(isValue ? entity.getMediaETag() : entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
     dataProvider.delete(edmEntitySet, entity);
@@ -353,9 +351,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo);
 
-    checkReadPreconditions(entity.getETag(),
+    if (odata.createETagHelper().checkReadPreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
-        request.getHeaders(HttpHeader.IF_NONE_MATCH));
+        request.getHeaders(HttpHeader.IF_NONE_MATCH))) {
+      response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
+      response.setHeader(HttpHeader.ETAG, entity.getETag());
+      return;
+    }
 
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
     final ExpandOption expand = uriInfo.getExpandOption();

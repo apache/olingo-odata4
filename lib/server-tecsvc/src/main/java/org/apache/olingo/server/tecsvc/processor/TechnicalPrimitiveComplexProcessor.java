@@ -171,9 +171,13 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final Entity entity = readEntity(uriInfo);
 
     if (entity != null && entity.getETag() != null) {
-      checkReadPreconditions(entity.getETag(),
+      if (odata.createETagHelper().checkReadPreconditions(entity.getETag(),
           request.getHeaders(HttpHeader.IF_MATCH),
-          request.getHeaders(HttpHeader.IF_NONE_MATCH));
+          request.getHeaders(HttpHeader.IF_NONE_MATCH))) {
+        response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
+        response.setHeader(HttpHeader.ETAG, entity.getETag());
+        return;
+      }
     }
 
     final Property property = entity == null ?
@@ -219,7 +223,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
 
     Entity entity = readEntity(uriInfo);
-    checkChangePreconditions(entity.getETag(),
+    odata.createETagHelper().checkChangePreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
 
@@ -252,13 +256,13 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   private void deleteProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
     getEdmEntitySet(uriInfo); // including checks
 
     Entity entity = readEntity(uriInfo);
-    checkChangePreconditions(entity.getETag(),
+    odata.createETagHelper().checkChangePreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
 
@@ -397,9 +401,13 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo);
     if (entity != null && entity.getETag() != null) {
-      checkReadPreconditions(entity.getETag(),
+      if (odata.createETagHelper().checkReadPreconditions(entity.getETag(),
           request.getHeaders(HttpHeader.IF_MATCH),
-          request.getHeaders(HttpHeader.IF_NONE_MATCH));
+          request.getHeaders(HttpHeader.IF_NONE_MATCH))) {
+        response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
+        response.setHeader(HttpHeader.ETAG, entity.getETag());
+        return;
+      }
     }
 
     final Property property = entity == null ?

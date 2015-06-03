@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.core.etag;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -28,17 +28,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.olingo.server.api.ETagInformation;
-import org.apache.olingo.server.api.OData;
 import org.junit.Test;
 
 public class ETagParserTest {
 
-  private static final OData odata = OData.newInstance();
+  private static final ETagHelperImpl eTagHelper = new ETagHelperImpl();
 
   @Test
   public void empty() {
-    final ETagInformation eTagInformation = odata.createETagInformation(null);
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(null);
     assertFalse(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
     assertTrue(eTagInformation.getETags().isEmpty());
@@ -46,7 +44,7 @@ public class ETagParserTest {
 
   @Test
   public void loneStar() {
-    final ETagInformation eTagInformation = odata.createETagInformation(Collections.singleton("*"));
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(Collections.singleton("*"));
     assertTrue(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
     assertTrue(eTagInformation.getETags().isEmpty());
@@ -54,7 +52,7 @@ public class ETagParserTest {
 
   @Test
   public void starWins() {
-    final ETagInformation eTagInformation = odata.createETagInformation(Arrays.asList("\"ETag\"", "*"));
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(Arrays.asList("\"ETag\"", "*"));
     assertTrue(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
     assertTrue(eTagInformation.getETags().isEmpty());
@@ -62,7 +60,7 @@ public class ETagParserTest {
 
   @Test
   public void starAsEtagAndEmptyEtag() {
-    final ETagInformation eTagInformation = odata.createETagInformation(
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(
         Collections.singleton("\"*\", \"\""));
     assertFalse(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
@@ -72,7 +70,7 @@ public class ETagParserTest {
 
   @Test
   public void severalEtags() {
-    final ETagInformation eTagInformation = odata.createETagInformation(
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(
         Arrays.asList("\"ETag1\"", "\"ETag2\",, , ,W/\"ETag3\", ,"));
     assertFalse(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
@@ -82,7 +80,7 @@ public class ETagParserTest {
 
   @Test
   public void duplicateEtagValues() {
-    final ETagInformation eTagInformation = odata.createETagInformation(
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(
         Arrays.asList("\"ETag1\"", "\"ETag2\", W/\"ETag1\", \"ETag1\""));
     assertFalse(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
@@ -92,7 +90,7 @@ public class ETagParserTest {
 
   @Test
   public void specialCharacters() {
-    final ETagInformation eTagInformation = odata.createETagInformation(
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(
         Collections.singleton("\"!#$%&'()*+,-./:;<=>?@[]^_`{|}~¡\u00FF\", \"ETag2\""));
     assertFalse(eTagInformation.isAll());
     assertNotNull(eTagInformation.getETags());
@@ -103,7 +101,7 @@ public class ETagParserTest {
 
   @Test
   public void wrongFormat() {
-    final ETagInformation eTagInformation = odata.createETagInformation(
+    final ETagInformation eTagInformation = eTagHelper.createETagInformation(
         Arrays.asList("\"ETag1\", ETag2", "w/\"ETag3\"", "W//\"ETag4\"", "W/ETag5",
             "\"\"ETag6\"\"", " \"ETag7\"\"ETag7\" ", "\"ETag8\" \"ETag8\"",
             "\"ETag 9\"", "\"ETag10\""));
@@ -115,17 +113,17 @@ public class ETagParserTest {
 
   @Test
   public void match() {
-    assertFalse(odata.createETagInformation(Collections.<String> emptySet()).isMatchedBy("\"ETag\""));
-    assertFalse(odata.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy(null));
-    assertTrue(odata.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("\"ETag\""));
-    assertTrue(odata.createETagInformation(Collections.singleton("*")).isMatchedBy("\"ETag\""));
-    assertTrue(odata.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("W/\"ETag\""));
-    assertTrue(odata.createETagInformation(Collections.singleton("W/\"ETag\"")).isMatchedBy("\"ETag\""));
-    assertFalse(odata.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("W/\"ETag2\""));
-    assertFalse(odata.createETagInformation(Collections.singleton("W/\"ETag\"")).isMatchedBy("\"ETag2\""));
-    assertTrue(odata.createETagInformation(Arrays.asList("\"ETag1\",\"ETag2\"", "\"ETag3\",\"ETag4\""))
+    assertFalse(eTagHelper.createETagInformation(Collections.<String> emptySet()).isMatchedBy("\"ETag\""));
+    assertFalse(eTagHelper.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy(null));
+    assertTrue(eTagHelper.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("\"ETag\""));
+    assertTrue(eTagHelper.createETagInformation(Collections.singleton("*")).isMatchedBy("\"ETag\""));
+    assertTrue(eTagHelper.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("W/\"ETag\""));
+    assertTrue(eTagHelper.createETagInformation(Collections.singleton("W/\"ETag\"")).isMatchedBy("\"ETag\""));
+    assertFalse(eTagHelper.createETagInformation(Collections.singleton("\"ETag\"")).isMatchedBy("W/\"ETag2\""));
+    assertFalse(eTagHelper.createETagInformation(Collections.singleton("W/\"ETag\"")).isMatchedBy("\"ETag2\""));
+    assertTrue(eTagHelper.createETagInformation(Arrays.asList("\"ETag1\",\"ETag2\"", "\"ETag3\",\"ETag4\""))
         .isMatchedBy("\"ETag4\""));
-    assertFalse(odata.createETagInformation(Arrays.asList("\"ETag1\",\"ETag2\"", "\"ETag3\",\"ETag4\""))
+    assertFalse(eTagHelper.createETagInformation(Arrays.asList("\"ETag1\",\"ETag2\"", "\"ETag3\",\"ETag4\""))
         .isMatchedBy("\"ETag5\""));
   }
 }

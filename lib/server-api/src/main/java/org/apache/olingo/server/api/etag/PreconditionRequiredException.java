@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.api.etag;
 
 import org.apache.olingo.server.api.ODataLibraryException;
 
@@ -25,7 +25,9 @@ public class PreconditionRequiredException extends ODataLibraryException {
 
   public static enum MessageKeys implements MessageKey {
     /** no parameter */
-    MISSING_HEADER, 
+    MISSING_HEADER,
+    /** no parameter */
+    FAILED,
     /** no parameter */
     INVALID_URI;
 

@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.etag.PreconditionRequiredException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
@@ -67,6 +68,7 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.core.batchhandler.BatchHandler;
+import org.apache.olingo.server.core.etag.PreconditionsValidator;
 
 public class ODataDispatcher {
 

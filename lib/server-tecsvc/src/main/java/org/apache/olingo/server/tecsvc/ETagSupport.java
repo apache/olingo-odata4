@@ -19,7 +19,7 @@
 package org.apache.olingo.server.tecsvc;
 
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.server.api.CustomETagSupport;
+import org.apache.olingo.server.api.etag.CustomETagSupport;
 
 public class ETagSupport implements CustomETagSupport {
 

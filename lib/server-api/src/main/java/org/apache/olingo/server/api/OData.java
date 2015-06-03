@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
@@ -30,6 +29,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -118,11 +118,8 @@ public abstract class OData {
   public abstract EdmPrimitiveType createPrimitiveTypeInstance(EdmPrimitiveTypeKind kind);
 
   /**
-   * Creates ETag information from the values of a HTTP header
-   * containing a list of entity tags or a single star character, i.e.,
-   * <code>If-Match</code> and <code>If-None-Match</code>.
-   * @param values the collection of header values
-   * @return an {@link ETagInformation} instance
+   * Creates a new ETag helper object for performing ETag-related tasks.
+   * It can be used in Processor implementations.
    */
-  public abstract ETagInformation createETagInformation(final Collection<String> values);
+  public abstract ETagHelper createETagHelper();
 }
