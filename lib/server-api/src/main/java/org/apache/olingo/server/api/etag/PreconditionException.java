@@ -20,7 +20,7 @@ package org.apache.olingo.server.api.etag;
 
 import org.apache.olingo.server.api.ODataLibraryException;
 
-public class PreconditionRequiredException extends ODataLibraryException {
+public class PreconditionException extends ODataLibraryException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {
@@ -37,12 +37,12 @@ public class PreconditionRequiredException extends ODataLibraryException {
     }
   }
 
-  public PreconditionRequiredException(final String developmentMessage, final MessageKey messageKey,
+  public PreconditionException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public PreconditionRequiredException(final String developmentMessage, final Throwable cause,
+  public PreconditionException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }

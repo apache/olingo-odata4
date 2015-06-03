@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
 import org.apache.olingo.server.api.processor.ActionEntityCollectionProcessor;
@@ -515,7 +515,7 @@ public class ODataDispatcher {
     }
   }
 
-  private void validatePreconditions(ODataRequest request, boolean isMediaValue) throws PreconditionRequiredException {
+  private void validatePreconditions(ODataRequest request, boolean isMediaValue) throws PreconditionException {
     // If needed perform preconditions validation
     if (handler.getCustomETagSupport() != null) {
       new PreconditionsValidator(handler.getCustomETagSupport(), uriInfo,

@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -104,10 +104,15 @@ public class ODataExceptionHelper {
         .setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
   }
 
-  public static ODataServerError createServerErrorObject(final PreconditionRequiredException e,
+  public static ODataServerError createServerErrorObject(final PreconditionException e,
       final Locale requestedLocale) {
-    return basicTranslatedError(e, requestedLocale)
-        .setStatusCode(HttpStatusCode.PRECONDITION_REQUIRED.getStatusCode());
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    if (PreconditionException.MessageKeys.MISSING_HEADER == e.getMessageKey()) {
+      serverError.setStatusCode(HttpStatusCode.PRECONDITION_REQUIRED.getStatusCode());
+    } else if (PreconditionException.MessageKeys.FAILED == e.getMessageKey()) {
+      serverError.setStatusCode(HttpStatusCode.PRECONDITION_FAILED.getStatusCode());
+    }
+    return serverError;
   }
 
   public static ODataServerError

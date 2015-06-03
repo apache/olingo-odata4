@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ETagHelper;
+import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -80,7 +81,13 @@ public class ODataImpl extends OData {
   @Override
   public ServiceMetadata createServiceMetadata(final CsdlEdmProvider edmProvider,
       final List<EdmxReference> references) {
-    return new ServiceMetadataImpl(edmProvider, references);
+    return createServiceMetadata(edmProvider, references, null);
+  }
+
+  @Override
+  public ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references,
+      ServiceMetadataETagSupport serviceMetadataETagSupport) {
+    return new ServiceMetadataImpl(edmProvider, references, serviceMetadataETagSupport);
   }
 
   @Override
@@ -120,4 +127,5 @@ public class ODataImpl extends OData {
   public ETagHelper createETagHelper() {
     return new ETagHelperImpl();
   }
+
 }

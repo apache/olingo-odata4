@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,6 +30,7 @@ import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ETagHelper;
+import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -93,8 +94,20 @@ public abstract class OData {
    *
    * @param edmProvider a custom or default implementation for creating metadata
    * @param references list of edmx references
+   * @return a service metadata implementation
    */
   public abstract ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references);
+
+  /**
+   * Creates a metadata object for this service.
+   *
+   * @param edmProvider a custom or default implementation for creating metadata
+   * @param references list of edmx references
+   * @param serviceMetadataETagSupport
+   * @return a service metadata implementation
+   */
+  public abstract ServiceMetadata createServiceMetadata(CsdlEdmProvider edmProvider, List<EdmxReference> references,
+      ServiceMetadataETagSupport serviceMetadataETagSupport);
 
   /**
    * Creates a new URI helper object for performing URI-related tasks.

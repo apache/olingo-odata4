@@ -22,19 +22,19 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.olingo.server.api.etag.ETagHelper;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 
 public class ETagHelperImpl implements ETagHelper {
 
   @Override
   public boolean checkReadPreconditions(final String eTag,
       final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
-      throws PreconditionRequiredException {
+      throws PreconditionException {
     if (eTag != null) {
       final ETagInformation ifMatch = createETagInformation(ifMatchHeaders);
       if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getETags().isEmpty()) {
-        throw new PreconditionRequiredException("The If-Match precondition is not fulfilled.",
-            PreconditionRequiredException.MessageKeys.FAILED);
+        throw new PreconditionException("The If-Match precondition is not fulfilled.",
+            PreconditionException.MessageKeys.FAILED);
       }
       return createETagInformation(ifNoneMatchHeaders).isMatchedBy(eTag);
     }
@@ -44,14 +44,14 @@ public class ETagHelperImpl implements ETagHelper {
   @Override
   public void checkChangePreconditions(final String eTag,
       final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
-      throws PreconditionRequiredException {
+      throws PreconditionException {
     if (eTag != null) {
       final ETagInformation ifMatch = createETagInformation(ifMatchHeaders);
       final ETagInformation ifNoneMatch = createETagInformation(ifNoneMatchHeaders);
       if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getETags().isEmpty()
           || ifNoneMatch.isMatchedBy(eTag)) {
-        throw new PreconditionRequiredException("The preconditions are not fulfilled.",
-            PreconditionRequiredException.MessageKeys.FAILED);
+        throw new PreconditionException("The preconditions are not fulfilled.",
+            PreconditionException.MessageKeys.FAILED);
       }
     }
   }

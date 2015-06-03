@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 
 /**
  * Metadata of an OData service like the Entity Data Model.
@@ -45,4 +46,7 @@ public interface ServiceMetadata {
    * @return list of defined emdx references of this service
    */
   List<EdmxReference> getReferences();
+  
+  ServiceMetadataETagSupport getServiceMetadataETagSupport();
+  
 }

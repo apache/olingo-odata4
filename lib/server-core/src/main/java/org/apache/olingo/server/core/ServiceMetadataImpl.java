@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 
 /**
  */
@@ -35,10 +36,13 @@ public class ServiceMetadataImpl implements ServiceMetadata {
 
   private final EdmProviderImpl edm;
   private final List<EdmxReference> references = new ArrayList<EdmxReference>();
+  private final ServiceMetadataETagSupport serviceMetadataETagSupport;
 
-  public ServiceMetadataImpl(final CsdlEdmProvider edmProvider, final List<EdmxReference> references) {
+  public ServiceMetadataImpl(CsdlEdmProvider edmProvider, List<EdmxReference> references,
+      ServiceMetadataETagSupport serviceMetadataETagSupport) {
     edm = new EdmProviderImpl(edmProvider);
     this.references.addAll(references);
+    this.serviceMetadataETagSupport = serviceMetadataETagSupport;
   }
 
   @Override
@@ -54,5 +58,10 @@ public class ServiceMetadataImpl implements ServiceMetadata {
   @Override
   public List<EdmxReference> getReferences() {
     return Collections.unmodifiableList(references);
+  }
+
+  @Override
+  public ServiceMetadataETagSupport getServiceMetadataETagSupport() {
+    return serviceMetadataETagSupport;
   }
 }

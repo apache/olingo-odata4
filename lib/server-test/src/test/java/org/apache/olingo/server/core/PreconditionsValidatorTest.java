@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.etag.PreconditionsValidator;
 import org.apache.olingo.server.core.uri.parser.Parser;
@@ -198,7 +198,7 @@ public class PreconditionsValidatorTest {
   @Ignore
   @Test
   public void resourceSegmentAfterActionMustLeadToUriParserException() throws Exception {
-    //TODO: Check with URI Parser
+    // TODO: Check with URI Parser
     UriInfo uriInfo =
         new Parser().parseUri("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", null, null,
             getEdm());
@@ -219,8 +219,8 @@ public class PreconditionsValidatorTest {
       boolean isMedia = uri.endsWith("$value");
       new PreconditionsValidator(etagSupport, uriInfo, null, null).validatePreconditions(isMedia);
       fail("Expected a PreconditionRequiredException but was not thrown");
-    } catch (PreconditionRequiredException e) {
-      assertEquals(PreconditionRequiredException.MessageKeys.MISSING_HEADER, e.getMessageKey());
+    } catch (PreconditionException e) {
+      assertEquals(PreconditionException.MessageKeys.MISSING_HEADER, e.getMessageKey());
     }
   }
 
@@ -259,16 +259,6 @@ public class PreconditionsValidatorTest {
         assertEquals(this.entitySetName, entitySetOrSingelton.getName());
       }
       return mediaETag;
-    }
-
-    @Override
-    public String getMetadataETag() {
-      return null;
-    }
-
-    @Override
-    public String getServiceDocumentETag() {
-      return null;
     }
   }
 }

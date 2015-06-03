@@ -44,7 +44,7 @@ public interface ETagHelper {
    */
   public boolean checkReadPreconditions(String eTag,
       Collection<String> ifMatchHeaders, Collection<String> ifNoneMatchHeaders)
-      throws PreconditionRequiredException;
+      throws PreconditionException;
 
   /**
    * <p>Checks the preconditions of a change request (with HTTP methods PUT, PATCH, or DELETE)
@@ -62,5 +62,5 @@ public interface ETagHelper {
    */
   public void checkChangePreconditions(String eTag,
       Collection<String> ifMatchHeaders, Collection<String> ifNoneMatchHeaders)
-      throws PreconditionRequiredException;
+      throws PreconditionException;
 }

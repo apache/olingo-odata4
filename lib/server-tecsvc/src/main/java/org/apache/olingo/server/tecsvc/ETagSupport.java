@@ -32,14 +32,4 @@ public class ETagSupport implements CustomETagSupport {
   public boolean hasMediaETag(final EdmBindingTarget entitySetOrSingleton) {
     return entitySetOrSingleton.getName().equals("ESMedia");
   }
-
-  @Override
-  public String getMetadataETag() {
-    return null;
-  }
-
-  @Override
-  public String getServiceDocumentETag() {
-    return null;
-  }
 }

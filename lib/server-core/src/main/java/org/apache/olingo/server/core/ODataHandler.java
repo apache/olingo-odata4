@@ -35,7 +35,7 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.ErrorProcessor;
 import org.apache.olingo.server.api.processor.Processor;
@@ -95,7 +95,7 @@ public class ODataHandler {
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
-    } catch (PreconditionRequiredException e) {
+    } catch (PreconditionException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataHandlerException e) {

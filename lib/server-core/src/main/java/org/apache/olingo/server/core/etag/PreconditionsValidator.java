@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
-import org.apache.olingo.server.api.etag.PreconditionRequiredException;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
@@ -45,7 +45,7 @@ public class PreconditionsValidator {
     this.ifNoneMatch = ifNoneMatch;
   }
 
-  public void validatePreconditions(boolean isMediaValue) throws PreconditionRequiredException {
+  public void validatePreconditions(boolean isMediaValue) throws PreconditionException {
     EdmBindingTarget affectedEntitySetOrSingleton = extractInformation();
     if (affectedEntitySetOrSingleton != null) {
       if ((isMediaValue && customETagSupport.hasMediaETag(affectedEntitySetOrSingleton)) ||
@@ -55,14 +55,14 @@ public class PreconditionsValidator {
     }
   }
 
-  private void checkETagHeaderPresent() throws PreconditionRequiredException {
+  private void checkETagHeaderPresent() throws PreconditionException {
     if (ifMatch == null && ifNoneMatch == null) {
-      throw new PreconditionRequiredException("Expected an if-match or if-none-match header",
-          PreconditionRequiredException.MessageKeys.MISSING_HEADER);
+      throw new PreconditionException("Expected an if-match or if-none-match header",
+          PreconditionException.MessageKeys.MISSING_HEADER);
     }
   }
 
-  private EdmBindingTarget extractInformation() throws PreconditionRequiredException {
+  private EdmBindingTarget extractInformation() throws PreconditionException {
     EdmBindingTarget lastFoundEntitySetOrSingleton = null;
     int counter = 0;
     for (UriResource uriResourcePart : uriInfo.getUriResourceParts()) {
@@ -84,8 +84,8 @@ public class PreconditionsValidator {
       case action:
         // This should not be possible since the URI Parser validates this but to be sure we throw an exception.
         if (counter != uriInfo.getUriResourceParts().size() - 1) {
-          throw new PreconditionRequiredException("$Value or Action must be the last segment in the URI.",
-              PreconditionRequiredException.MessageKeys.INVALID_URI);
+          throw new PreconditionException("$Value or Action must be the last segment in the URI.",
+              PreconditionException.MessageKeys.INVALID_URI);
         }
         break;
       default:
