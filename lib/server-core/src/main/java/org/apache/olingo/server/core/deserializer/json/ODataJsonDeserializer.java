@@ -816,16 +816,23 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           ArrayNode arrayNode = (ArrayNode) jsonNode;
           Iterator<JsonNode> it = arrayNode.iterator();
           while (it.hasNext()) {
-            parsedValues.add(new URI(it.next().get(key).asText()));
+            final JsonNode next = it.next();
+            if(next.has(key)) {
+              parsedValues.add(new URI(next.get(key).asText()));
+            }
           }
         } else {
-          parsedValues.add(new URI(jsonNode.asText()));
+          throw new DeserializerException("Value must be an array", DeserializerException.MessageKeys.UNKOWN_CONTENT);
         }
         tree.remove(Constants.VALUE);
         // if this is value there can be only one property
         return DeserializerResultImpl.with().entityReferences(parsedValues).build();
       }
-      parsedValues.add(new URI(tree.get(key).asText()));
+      if(tree.get(key) != null) {
+        parsedValues.add(new URI(tree.get(key).asText()));
+      } else {
+        throw new DeserializerException("Missing entity reference", DeserializerException.MessageKeys.UNKOWN_CONTENT);
+      }
       return DeserializerResultImpl.with().entityReferences(parsedValues).build();
     } catch (JsonParseException e) {
       throw new DeserializerException("An JsonParseException occurred", e,
