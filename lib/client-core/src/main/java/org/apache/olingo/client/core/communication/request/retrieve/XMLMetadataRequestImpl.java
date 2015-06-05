@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 public class XMLMetadataRequestImpl
     extends AbstractMetadataRequestImpl<XMLMetadata>
@@ -46,9 +47,21 @@ public class XMLMetadataRequestImpl
 
   @Override
   public ODataRetrieveResponse<XMLMetadata> execute() {
-    final SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl(odataClient, uri, null);
+    SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl(odataClient, uri, null);
+    if (getPrefer() != null) {
+      rootReq.setPrefer(getPrefer());
+    }
+    if (getIfMatch() != null) {
+      rootReq.setIfMatch(getIfMatch());
+    }
+    if (getIfNoneMatch() != null) {
+      rootReq.setIfNoneMatch(getIfNoneMatch());
+    }
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
+    if (rootRes.getStatusCode() != HttpStatusCode.OK.getStatusCode()) {
+      return rootRes;
+    }
     final XMLMetadataResponseImpl response =
         new XMLMetadataResponseImpl(odataClient, httpClient, rootReq.getHttpResponse(), rootRes.getBody());
 
@@ -176,12 +189,8 @@ public class XMLMetadataRequestImpl
         final HttpResponse res, final XMLMetadata metadata) {
 
       super(odataClient, httpClient, null);
+      initFromHttpResponse(res);
       this.metadata = metadata;
-
-      statusCode = res.getStatusLine().getStatusCode();
-      statusMessage = res.getStatusLine().getReasonPhrase();
-
-      hasBeenInitialized = true;
     }
 
     @Override

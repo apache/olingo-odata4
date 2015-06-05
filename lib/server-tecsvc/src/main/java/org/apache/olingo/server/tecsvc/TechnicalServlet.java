@@ -20,7 +20,7 @@ package org.apache.olingo.server.tecsvc;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -47,6 +47,16 @@ public class TechnicalServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LoggerFactory.getLogger(TechnicalServlet.class);
+  /**
+   * <p>ETag for the service document and the metadata document</p>
+   * <p>We use the same field for service-document and metadata-document ETags.
+   * It must change whenever the corresponding document changes.
+   * We don't know when someone changed the EDM in a way that changes one of these
+   * documents, but we do know that the EDM is defined completely in code and that
+   * therefore any change must be deployed, resulting in re-loading of this class,
+   * giving this field a new and hopefully unique value.</p>
+   */
+  private static final String metadataETag = "W/\"" + System.nanoTime() + "\"";
 
   @Override
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
@@ -55,8 +65,9 @@ public class TechnicalServlet extends HttpServlet {
       OData odata = OData.newInstance();
       EdmxReference reference = new EdmxReference(URI.create("../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
       reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));
-      final List<EdmxReference> references = Arrays.asList(reference);
-      final ServiceMetadata serviceMetadata = odata.createServiceMetadata(new EdmTechProvider(references), references);
+      final List<EdmxReference> references = Collections.singletonList(reference);
+      final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
+          new EdmTechProvider(references), references, new MetadataETagSupport(metadataETag));
 
       HttpSession session = request.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());

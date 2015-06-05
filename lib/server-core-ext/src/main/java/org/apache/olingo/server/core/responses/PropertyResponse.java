@@ -120,9 +120,11 @@ public class PropertyResponse extends ServiceResponse {
   private void writePrimitiveProperty(EdmPrimitiveType type, Property property)
       throws SerializerException {
     if(this.collection) {
-      this.response.setContent(this.serializer.primitiveCollection(type, property, this.primitiveOptions).getContent());
+      this.response.setContent(
+          this.serializer.primitiveCollection(metadata, type, property, this.primitiveOptions).getContent());
     } else {
-      this.response.setContent(this.serializer.primitive(type, property, this.primitiveOptions).getContent());
+      this.response.setContent(
+          this.serializer.primitive(metadata, type, property, this.primitiveOptions).getContent());
     }
     writeOK(this.responseContentType.toContentTypeString());
     close();

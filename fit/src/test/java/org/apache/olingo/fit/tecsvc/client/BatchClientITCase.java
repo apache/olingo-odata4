@@ -170,7 +170,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(1, oDataResonse.getHeader("OData-Version").size());
     assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
     assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("538", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("582", oDataResonse.getHeader("Content-Length").toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
   }
 
@@ -202,7 +202,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(1, oDataResonse.getHeader("OData-Version").size());
     assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
     assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("538", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("582", oDataResonse.getHeader("Content-Length").toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
   }
 
@@ -234,7 +234,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(1, oDataResonse.getHeader("OData-Version").size());
     assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
     assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("538", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("582", oDataResonse.getHeader("Content-Length").toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
 
     // Check second get request
@@ -334,7 +334,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(1, oDataResonse.getHeader("OData-Version").size());
     assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
     assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("538", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("582", oDataResonse.getHeader("Content-Length").toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
 
     // Check second get request
@@ -357,7 +357,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertEquals(1, oDataResonse.getHeader("OData-Version").size());
     assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
     assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("446", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals("490", oDataResonse.getHeader("Content-Length").toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
   }
 

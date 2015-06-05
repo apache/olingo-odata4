@@ -51,7 +51,7 @@ public class ServiceDocumentResponse extends ServiceResponse {
   public void writeServiceDocument(String serviceRoot)
       throws ODataLibraryException {
     assert (!isClosed());
-    this.response.setContent(this.serializer.serviceDocument(this.metadata.getEdm(), serviceRoot).getContent());
+    this.response.setContent(this.serializer.serviceDocument(metadata, serviceRoot).getContent());
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }

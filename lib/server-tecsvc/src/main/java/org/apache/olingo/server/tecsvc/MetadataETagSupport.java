@@ -16,39 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.tecsvc;
 
-import java.util.List;
-
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 
-/**
- * Metadata of an OData service like the Entity Data Model.
- */
-public interface ServiceMetadata {
-  /**
-   *
-   * @return entity data model of this service
-   */
-  Edm getEdm();
+public class MetadataETagSupport implements ServiceMetadataETagSupport {
 
-  /**
-   *
-   * @return data service version of this service
-   */
-  ODataServiceVersion getDataServiceVersion();
+  private final String metadataETag;
 
-  /**
-   *
-   * @return list of defined emdx references of this service
-   */
-  List<EdmxReference> getReferences();
+  public MetadataETagSupport(final String metadataETag) {
+    this.metadataETag = metadataETag;
+  }
 
-  /**
-   * @return metadata ETag support
-   */
-  ServiceMetadataETagSupport getServiceMetadataETagSupport();
+  @Override
+  public String getMetadataETag() {
+    return metadataETag;
+  }
+
+  @Override
+  public String getServiceDocumentETag() {
+    return metadataETag;
+  }
 }

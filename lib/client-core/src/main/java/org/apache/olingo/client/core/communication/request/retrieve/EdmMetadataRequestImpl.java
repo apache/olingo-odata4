@@ -19,10 +19,13 @@
 package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
+import java.util.Collection;
 
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -43,8 +46,17 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
   private EdmMetadataResponseImpl getPrivateResponse() {
     if (privateResponse == null) {
-      final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse =
-              odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot).execute();
+      XMLMetadataRequest request = odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot);
+      if (getPrefer() != null) {
+        request.setPrefer(getPrefer());
+      }
+      if (getIfMatch() != null) {
+        request.setIfMatch(getIfMatch());
+      }
+      if (getIfNoneMatch() != null) {
+        request.setIfNoneMatch(getIfNoneMatch());
+      }
+      final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse = request.execute();
 
       privateResponse = new EdmMetadataResponseImpl(odataClient, httpClient, xmlMetadataResponse);
     }
@@ -88,6 +100,21 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
     @Override
     public String getStatusMessage() {
       return xmlMetadataResponse.getStatusMessage();
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+      return xmlMetadataResponse.getHeaderNames();
+    }
+
+    @Override
+    public Collection<String> getHeader(final String name) {
+      return xmlMetadataResponse.getHeader(name);
+    }
+
+    @Override
+    public Collection<String> getHeader(final HeaderName name) {
+      return xmlMetadataResponse.getHeader(name);
     }
 
     public XMLMetadata getXMLMetadata() {

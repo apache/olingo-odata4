@@ -176,7 +176,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
 
     SerializerResult result =
         odata.createSerializer(ODataFormat.fromContentType(responseFormat))
-            .primitiveCollection(type, property, options);
+            .primitiveCollection(serviceMetadata, type, property, options);
 
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setContent(result.getContent());
@@ -208,8 +208,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       ContextURL contextURL = ContextURL.with().type(type).build();
       PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
 
-      SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat)).primitive(type,
-          property, options);
+      SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat))
+          .primitive(serviceMetadata, type, property, options);
 
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setContent(result.getContent());

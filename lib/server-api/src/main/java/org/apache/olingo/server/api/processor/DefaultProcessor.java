@@ -73,7 +73,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
       response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     } else {
       ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
-      response.setContent(serializer.serviceDocument(serviceMetadata.getEdm(), null).getContent());
+      response.setContent(serializer.serviceDocument(serviceMetadata, null).getContent());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     }

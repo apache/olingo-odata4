@@ -278,6 +278,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       property.setValue(property.getValueType(), edmProperty.isCollection() ? Collections.emptyList() : null);
       dataProvider.updateETag(entity);
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      if (entity.getETag() != null) {
+        response.setHeader(HttpHeader.ETAG, entity.getETag());
+      }
     } else {
       throw new ODataApplicationException("Not nullable.", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
     }
@@ -333,7 +336,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     SerializerResult result = null;
     switch (representationType) {
     case PRIMITIVE:
-      result = serializer.primitive((EdmPrimitiveType) type, property,
+      result = serializer.primitive(serviceMetadata, (EdmPrimitiveType) type, property,
           PrimitiveSerializerOptions.with().contextURL(contextURL)
               .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
               .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
@@ -349,7 +352,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
               .build());
       break;
     case COLLECTION_PRIMITIVE:
-      result = serializer.primitiveCollection((EdmPrimitiveType) type, property,
+      result = serializer.primitiveCollection(serviceMetadata, (EdmPrimitiveType) type, property,
           PrimitiveSerializerOptions.with().contextURL(contextURL)
               .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
               .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
