@@ -56,7 +56,7 @@ public class TechnicalServlet extends HttpServlet {
    * therefore any change must be deployed, resulting in re-loading of this class,
    * giving this field a new and hopefully unique value.</p>
    */
-  private static final String metadataETag = "W/\"" + System.nanoTime() + "\"";
+  private static final String metadataETag = getETag();
 
   @Override
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
@@ -88,5 +88,17 @@ public class TechnicalServlet extends HttpServlet {
       LOG.error("Server Error", e);
       throw new ServletException(e);
     }
+  }
+
+  private static String getETag() {
+    String time = "" + System.nanoTime();
+    if (time.length() > 14) {
+      time = time.substring(0, 14);
+    } else {
+      while (time.length() < 14) {
+        time = "0" + time;
+      }
+    }
+    return "W/\"" + time + "\"";
   }
 }

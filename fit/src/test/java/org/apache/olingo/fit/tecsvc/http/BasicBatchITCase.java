@@ -60,7 +60,7 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
     assertEquals("HTTP/1.1 200 OK", reader.readLine());
     assertEquals("OData-Version: 4.0", reader.readLine());
     assertEquals("Content-Type: application/json;odata.metadata=minimal", reader.readLine());
-    assertEquals("Content-Length: 582", reader.readLine());
+    assertEquals("Content-Length: 583", reader.readLine());
     blankLine(reader);
 
     reader.close();
