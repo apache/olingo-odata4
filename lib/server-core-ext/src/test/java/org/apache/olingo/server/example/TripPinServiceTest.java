@@ -728,7 +728,8 @@ public class TripPinServiceTest {
 
   @Test
   public void testCrossJoin() throws Exception {
-    String editUrl = baseURL + "/$crossjoin(People,Airlines)";
+    String editUrl = baseURL + "/$crossjoin(People,Airlines)?$filter="+
+        Encoder.encode("People/UserName eq Airlines/AirlineCode");
     HttpResponse response = httpGET(editUrl, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }

@@ -110,6 +110,41 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
 
   @Override
   public void visit(UriInfoCrossjoin info) {
+    if (info.getFilterOption() != null) {
+      visit(info.getFilterOption());
+    }
+
+    if (info.getCountOption() != null) {
+      visit(info.getCountOption());
+    }
+
+    if(info.getOrderByOption() != null) {
+      visit(info.getOrderByOption());
+    }
+
+    if (info.getSkipOption() != null) {
+      visit(info.getSkipOption());
+    }
+
+    if (info.getTopOption() != null) {
+      visit(info.getTopOption());
+    }
+
+    if (info.getExpandOption() != null) {
+      visit(info.getExpandOption());
+    }
+    
+    if(info.getSelectOption() != null) {
+      visit(info.getSelectOption());
+    }
+
+    if (info.getFormatOption() != null) {
+      visit(info.getFormatOption());
+    }
+
+    if (info.getSkipTokenOption() != null) {
+      visit(info.getSkipTokenOption());
+    }    
   }
 
   @Override
