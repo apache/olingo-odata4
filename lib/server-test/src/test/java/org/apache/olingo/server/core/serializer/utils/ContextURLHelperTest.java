@@ -117,6 +117,21 @@ public class ContextURLHelperTest {
   }
 
   @Test
+  public void buildExpandWithNavigationProperty() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+            ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne", "PropertyString")));
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(entitySet, "PropertyInt16");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+            selectItem1));
+
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+            .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, select)).build();
+    assertEquals("$metadata#ESTwoPrim(PropertyInt16,NavPropertyETAllPrimOne/PropertyString)",
+            ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  @Test
   public void buildExpandSelect() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
     final ExpandItem expandItem1 = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne");

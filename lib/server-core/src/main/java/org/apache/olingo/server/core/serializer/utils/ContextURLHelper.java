@@ -29,6 +29,8 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -117,11 +119,39 @@ public final class ContextURLHelper {
             }
             result.append(Encoder.encode(propertyName)).append('(').append(innerSelectList).append(')');
           }
+        } else {
+          final List<UriResource> resourceParts = expandItem.getResourcePath().getUriResourceParts();
+          if(resourceParts.size() > 1) {
+            if (result.length() > 0) {
+              result.append(',');
+            }
+            final List<String> path = getPropertyPath(resourceParts);
+            String propertyPath = buildPropertyPath(path);
+            result.append(Encoder.encode(propertyName));
+            result.append("/").append(propertyPath);
+          }
         }
       }
     }
   }
 
+  private static List<String> getPropertyPath(final List<UriResource> path) {
+    List<String> result = new LinkedList<String>();
+    int index = 1;
+    while (index < path.size() && path.get(index) instanceof UriResourceProperty) {
+      result.add(((UriResourceProperty) path.get(index)).getProperty().getName());
+      index++;
+    }
+    return result;
+  }
+
+  private static String buildPropertyPath(final List<String> path) {
+    StringBuilder result = new StringBuilder();
+    for (final String segment : path) {
+      result.append(result.length() == 0 ? "" : '/').append(Encoder.encode(segment)); //$NON-NLS-1$
+    }
+    return result.length() == 0?null:result.toString();
+  }
   private static List<List<String>> getComplexSelectedPaths(final EdmProperty edmProperty,
       final Set<List<String>> selectedPaths) {
     List<List<String>> result = new ArrayList<List<String>>();
