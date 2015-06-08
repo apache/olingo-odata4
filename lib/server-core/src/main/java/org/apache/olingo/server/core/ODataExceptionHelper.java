@@ -54,8 +54,8 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
-  public static ODataServerError
-      createServerErrorObject(final UriParserSyntaxException e, final Locale requestedLocale) {
+  public static ODataServerError createServerErrorObject(final UriParserSyntaxException e,
+      final Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     serverError.setStatusCode(
         UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT.equals(e.getMessageKey()) ?
@@ -115,8 +115,7 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
-  public static ODataServerError
-      createServerErrorObject(final ODataLibraryException e, final Locale requestedLocale) {
+  public static ODataServerError createServerErrorObject(final ODataLibraryException e, final Locale requestedLocale) {
     return basicTranslatedError(e, requestedLocale);
   }
 
@@ -136,7 +135,11 @@ public class ODataExceptionHelper {
   }
 
   private static ODataServerError basicServerError(final Exception e) {
-    return new ODataServerError().setException(e).setMessage(e.getMessage());
+    ODataServerError serverError = new ODataServerError().setException(e).setMessage(e.getMessage());
+    if (serverError.getMessage() == null) {
+      serverError.setMessage("OData Library: An exception without message text was thrown.");
+    }
+    return serverError;
   }
 
   private static ODataServerError basicTranslatedError(final ODataLibraryException e,
