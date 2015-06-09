@@ -97,6 +97,11 @@
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>7.0.55</tomcat.version>
 
+    <!-- for osgi integration testing -->
+    <osgi.version>4.2.0</osgi.version>
+    <karaf.version>3.0.3</karaf.version>
+    <pax.exam.version>4.5.0</pax.exam.version>
+
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.source>1.6</project.build.source>
