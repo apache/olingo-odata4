@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -66,9 +66,9 @@ public abstract class OData {
    * Creates a new serializer object for rendering content in the specified format.
    * Serializers are used in Processor implementations.
    *
-   * @param format any format supported by Olingo (XML, JSON ...)
+   * @param contentType any format supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataSerializer createSerializer(ODataFormat format) throws SerializerException;
+  public abstract ODataSerializer createSerializer(ContentType contentType) throws SerializerException;
 
   /**
    * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output.
@@ -119,9 +119,9 @@ public abstract class OData {
    * Creates a new deserializer object for reading content in the specified format.
    * Deserializer are used in Processor implementations.
    *
-   * @param format any format supported by Olingo (XML, JSON ...)
+   * @param format any content type supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
+  public abstract ODataDeserializer createDeserializer(ContentType contentType) throws DeserializerException;
 
   /**
    * Creates a primitive-type instance.

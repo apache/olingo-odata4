@@ -45,12 +45,10 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -63,7 +61,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   public void emptyEntity() throws Exception {
     String entityString = "{}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -93,7 +91,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -140,7 +138,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -161,7 +159,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyString\":\"First Resource - positive values\"" +
             "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -191,7 +189,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -226,7 +224,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         "\"PropertySByte\":127," +
         "\"PropertyTimeOfDay\":\"01:00:01\"}}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim")))
             .getEntity();
@@ -268,7 +266,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")))
             .getEntity();
@@ -306,7 +304,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")))
             .getEntity();
@@ -339,7 +337,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "{\"PropertyInt16\":789}]}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")))
             .getEntity();
@@ -388,7 +386,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -406,7 +404,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"PropertyString\":\"First Resource - positive values\""
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
   }
 
@@ -425,7 +423,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
   }
 
@@ -446,7 +444,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"PropertyString\":\"First Resource - positive values\""
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -465,7 +463,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":[\"ESTwoPrim(2)\",\"ESTwoPrim(3)\"]"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -499,7 +497,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":[]"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")))
             .getEntity();
@@ -511,7 +509,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void eTMixEnumDefCollCompTest() throws Exception {
     InputStream stream = getFileAsStream("EntityETMixEnumDefCollComp.json");
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, edm
             .getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")))
@@ -558,7 +556,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"CollPropertyTimeOfDay\":[\"04:14:13\",\"23:59:59\",\"01:12:33\"]"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim"))).getEntity();
 
@@ -573,7 +571,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\":null"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity = deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias",
         "ETMixPrimCollComp"))).getEntity();
 
@@ -587,7 +585,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "null,"
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
 
     Entity entity = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp"))).getEntity();
@@ -604,7 +602,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\":{\"PropertyString\":\"TEST A\",\"PropertyInt16\":null}"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETCompAllPrim"))).getEntity();
 
@@ -621,7 +619,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp"))).getEntity();
 
@@ -637,7 +635,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity e = deserializer.entity(stream, edm.getEntityType(
         new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp"))).getEntity();
 
@@ -673,7 +671,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         "{\"PropertyDate\":\"2012-12-03\","
             + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     Entity entity =
         deserializer.entity(stream, entityType).getEntity();
     assertNotNull(entity);
@@ -710,7 +708,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
@@ -725,7 +723,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoPrim")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_PROPERTY, e.getMessageKey());
@@ -748,7 +746,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_PROPERTY, e.getMessageKey());
@@ -775,7 +773,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_PROPERTY, e.getMessageKey());
@@ -799,7 +797,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_PROPERTY, e.getMessageKey());
@@ -822,7 +820,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
@@ -845,7 +843,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
@@ -867,7 +865,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
@@ -890,7 +888,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
@@ -912,7 +910,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
@@ -934,7 +932,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     try {
-      ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+      ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
@@ -1046,7 +1044,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimOne@odata.bind\":[\"ESTwoPrim(2)\"]"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1063,7 +1061,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":\"ESTwoPrim(2)\""
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1080,7 +1078,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":[123,456]"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1097,7 +1095,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"@odata.bind\":\"ESTwoPrim(2)\""
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1114,7 +1112,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimOne@odata.bind\":null"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1131,7 +1129,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":null"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1148,7 +1146,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             + "\"NavPropertyETTwoPrimMany@odata.bind\":[null]"
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1162,7 +1160,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString =
         "{\"PropertyInt16\":32767,}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1176,7 +1174,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString =
         "{\"PropertyInt16\":[]}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1190,7 +1188,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     String entityString =
         "{\"PropertyInt16\":{}}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
     } catch (DeserializerException e) {
@@ -1206,7 +1204,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "{\"Employee1@company.example\":1234}"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
@@ -1221,7 +1219,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\":\"InvalidString\""
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
@@ -1236,7 +1234,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\":null"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
     } catch (DeserializerException e) {
@@ -1253,7 +1251,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyComp\": {\"PropertyString\":\"StringValue\"}}"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoKeyNav")));
     } catch (DeserializerException e) {
@@ -1269,7 +1267,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyCompTwoPrim\":{\"PropertyInt16\": null, \"PropertyString\":\"StringValue\"}"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETKeyNav")));
     } catch (DeserializerException e) {
@@ -1285,7 +1283,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "null,"
         + "\"StringValue_1\",\"TEST 3\"]}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
     } catch (DeserializerException e) {
@@ -1300,7 +1298,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"CollPropertyInt16\":[123,\"null\",4711]"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCollAllPrim")));
     } catch (DeserializerException e) {
@@ -1315,7 +1313,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "\"PropertyInt16\":32767000000000000000000000000000000000000"
         + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
@@ -1333,7 +1331,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(
           new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
@@ -1352,7 +1350,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
@@ -1370,7 +1368,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
@@ -1388,7 +1386,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
@@ -1406,7 +1404,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "}}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixEnumDefCollComp")));
     } catch (DeserializerException e) {
@@ -1418,7 +1416,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   @Ignore
   public void ieee754Compatible() throws Exception {
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     String entityString =
         "{\"PropertyInt16\":32767," +
             "\"PropertyString\":\"First Resource - positive values\"," +
@@ -1447,7 +1445,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   
   private void checkPropertyJsonType(final String entityString) throws DeserializerException {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
     try {
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
       fail("Expected an exception but was not thrown: " + this.getClass().getName());

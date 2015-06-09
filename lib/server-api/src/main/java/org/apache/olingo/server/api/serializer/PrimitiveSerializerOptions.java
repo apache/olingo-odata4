@@ -30,7 +30,6 @@ public class PrimitiveSerializerOptions {
   private Integer precision;
   private Integer scale;
   private Boolean isUnicode;
-  private boolean isIEEE754Compatible;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -60,11 +59,6 @@ public class PrimitiveSerializerOptions {
   /** Gets the unicode facet. */
   public Boolean isUnicode() {
     return isUnicode;
-  }
-  
-  /** Serialize Edm.Int64 and Edm.Durration as strings **/
-  public boolean isIEEE754Compatible() {
-    return isIEEE754Compatible;
   }
   
   private PrimitiveSerializerOptions() {}
@@ -116,12 +110,6 @@ public class PrimitiveSerializerOptions {
     /** Sets the unicode facet. */
     public Builder unicode(final Boolean isUnicode) {
       options.isUnicode = isUnicode;
-      return this;
-    }
-    
-    /** Set to serialize Edm.Int64 and Edm.Decimal as strings */
-    public Builder setIEEE754Compatible(final boolean isIEEE754Compatible) {
-      options.isIEEE754Compatible = isIEEE754Compatible;
       return this;
     }
     

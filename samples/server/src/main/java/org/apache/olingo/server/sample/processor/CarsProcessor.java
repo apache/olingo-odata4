@@ -103,7 +103,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     // Next we create a serializer based on the requested format. This could also be a custom format but we do not
     // support them in this example
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-    ODataSerializer serializer = odata.createSerializer(format);
+    ODataSerializer serializer = odata.createSerializer(requestedContentType);
 
     // Now the content is serialized using the serializer.
     final ExpandOption expand = uriInfo.getExpandOption();
@@ -143,7 +143,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     } else {
       // If an entity was found we proceed by serializing it and sending it to the client.
       final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-      ODataSerializer serializer = odata.createSerializer(format);
+      ODataSerializer serializer = odata.createSerializer(requestedContentType);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
       InputStream serializedContent = serializer.entity(edm, edmEntitySet.getEntityType(), entity,
@@ -255,7 +255,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
         } else {
           final ODataFormat format = ODataFormat.fromContentType(contentType);
-          ODataSerializer serializer = odata.createSerializer(format);
+          ODataSerializer serializer = odata.createSerializer(contentType);
           final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
               getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?

@@ -106,8 +106,7 @@ public class ErrorHandler {
   void processError(ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
     try {
-      ODataSerializer serializer = this.odata.createSerializer(ODataFormat
-          .fromContentType(requestedContentType));
+      ODataSerializer serializer = this.odata.createSerializer(requestedContentType);
       response.setContent(serializer.error(serverError).getContent());
       response.setStatusCode(serverError.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());

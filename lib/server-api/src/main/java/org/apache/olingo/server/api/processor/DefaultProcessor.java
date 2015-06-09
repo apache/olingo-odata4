@@ -21,7 +21,6 @@ package org.apache.olingo.server.api.processor;
 import java.io.ByteArrayInputStream;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -72,7 +71,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     if (isNotModified) {
       response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     } else {
-      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+      ODataSerializer serializer = odata.createSerializer(requestedContentType);
       response.setContent(serializer.serviceDocument(serviceMetadata, null).getContent());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -97,7 +96,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     if (isNotModified) {
       response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     } else {
-      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+      ODataSerializer serializer = odata.createSerializer(requestedContentType);
       response.setContent(serializer.metadataDocument(serviceMetadata).getContent());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -109,7 +108,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
       final ODataServerError serverError,
       final ContentType requestedContentType) {
     try {
-      ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(requestedContentType));
+      ODataSerializer serializer = odata.createSerializer(requestedContentType);
       response.setContent(serializer.error(serverError).getContent());
       response.setStatusCode(serverError.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());

@@ -45,7 +45,7 @@ public class ServerErrorSerializerTest {
 
   @Before
   public void before() throws Exception {
-    ser = OData.newInstance().createSerializer(ODataFormat.JSON);
+    ser = OData.newInstance().createSerializer(ODataFormat.JSON.getContentType());
   }
 
   @Test

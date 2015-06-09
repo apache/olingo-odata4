@@ -24,7 +24,6 @@ import org.apache.olingo.server.api.uri.queryoption.CountOption;
 /** Options for the OData serializer. */
 public class ReferenceCollectionSerializerOptions {
   private ContextURL contextURL;
-  private boolean isIEEE754Compatible;
   private CountOption count;
   
   /** Gets the {@link ContextURL}. */
@@ -35,11 +34,6 @@ public class ReferenceCollectionSerializerOptions {
   /** Gets the $count system query option. */
   public CountOption getCount() {
     return count;
-  }
-  
-  /** Serialize Edm.Int64 and Edm.Durration as strings **/
-  public boolean isIEEE754Compatible() {
-    return isIEEE754Compatible;
   }
   
   private ReferenceCollectionSerializerOptions() {}
@@ -69,12 +63,6 @@ public class ReferenceCollectionSerializerOptions {
       return this;
     }
     
-    /** Set to serialize Edm.Int64 and Edm.Decimal as strings */
-    public Builder setIEEE754Compatible(final boolean isIEEE754Compatible) {
-      options.isIEEE754Compatible = isIEEE754Compatible;
-      return this;
-    }
-
     /** Builds the OData serializer options. */
     public ReferenceCollectionSerializerOptions build() {
       return options;

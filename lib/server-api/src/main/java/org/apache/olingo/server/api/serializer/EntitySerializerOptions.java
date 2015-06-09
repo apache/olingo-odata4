@@ -28,7 +28,6 @@ public class EntitySerializerOptions {
   private ExpandOption expand;
   private SelectOption select;
   private boolean onlyReferences;
-  private boolean isIEEE754Compatible;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -50,11 +49,6 @@ public class EntitySerializerOptions {
     return onlyReferences;
   }
 
-  /** Serialize Edm.Int64 and Edm.Durration as strings **/
-  public boolean isIEEE754Compatible() {
-    return isIEEE754Compatible;
-  }
-  
   private EntitySerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -92,12 +86,6 @@ public class EntitySerializerOptions {
     /** Sets to serialize only references */
     public Builder setWriteOnlyReferences(final boolean ref) {
       options.onlyReferences = ref;
-      return this;
-    }
-    
-    /** Set to serialize Edm.Int64 and Edm.Decimal as strings */
-    public Builder setIEEE754Compatible(final boolean isIEEE754Compatible) {
-      options.isIEEE754Compatible = isIEEE754Compatible;
       return this;
     }
     

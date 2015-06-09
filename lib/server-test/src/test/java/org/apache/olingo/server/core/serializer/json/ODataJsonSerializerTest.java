@@ -36,6 +36,11 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+<<<<<<< HEAD
+=======
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ContentType;
+>>>>>>> [OLINGO-690] ODataSerializer and ODataDeserializer are created by contentType instead of ODataFormat
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -70,7 +75,9 @@ public class ODataJsonSerializerTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
   private final DataProvider data = new DataProvider();
-  private final ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON);
+  private final ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON.getContentType());
+  private final ODataSerializer serializerIEEECompatible = 
+      new ODataJsonSerializer(ContentType.parse("application/json;odata.metadata=minimal;IEEE754Compatible=true"));
   private final UriHelper helper = new UriHelperImpl();
 
   @Test
@@ -304,8 +311,8 @@ public class ODataJsonSerializerTest {
   public void entityTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
-        .entity(metadata, edmEntitySet.getEntityType(), entity, null).getContent();
+    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA.getContentType())
+                                      .entity(metadata, edmEntitySet.getEntityType(), entity, null).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
     Assert.assertEquals(expectedResult, resultString);
@@ -315,10 +322,10 @@ public class ODataJsonSerializerTest {
   public void entitySetTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
-    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA)
-        .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
-            EntityCollectionSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent();
+    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA.getContentType())
+    .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"value\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -761,7 +768,7 @@ public class ODataJsonSerializerTest {
                                        entityCollection,
                                        ReferenceCollectionSerializerOptions.with()
                                          .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
-                                         .setIEEE754Compatible(false).build());
+                                         .build());
                                                                                  
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
@@ -782,7 +789,7 @@ public class ODataJsonSerializerTest {
                                     edmEntitySet, entityCollection,
                                      ReferenceCollectionSerializerOptions.with()
                                         .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
-                                         .setIEEE754Compatible(false).build());
+                                        .build());
     
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
@@ -795,10 +802,9 @@ public class ODataJsonSerializerTest {
   public void entityIEE754Compatible() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+    InputStream result = serializerIEEECompatible.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-        .setIEEE754Compatible(true)
         .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
@@ -827,11 +833,10 @@ public class ODataJsonSerializerTest {
   public void entityCollAllPrimIEEE754Compatible() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+    InputStream result = serializerIEEECompatible.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
         .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/service/"))
             .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .setIEEE754Compatible(true)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
@@ -866,12 +871,11 @@ public class ODataJsonSerializerTest {
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyInt64");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
 
-    final String resultString = IOUtils.toString(serializer
+    final String resultString = IOUtils.toString(serializerIEEECompatible
         .primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
-                .setIEEE754Compatible(true)
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyInt64\","
@@ -885,12 +889,11 @@ public class ODataJsonSerializerTest {
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyDecimal");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
 
-    final String resultString = IOUtils.toString(serializer
+    final String resultString = IOUtils.toString(serializerIEEECompatible
         .primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
-                .setIEEE754Compatible(true)
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyDecimal\","
@@ -903,12 +906,11 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyInt64");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
-    final String resultString = IOUtils.toString(serializer
+    final String resultString = IOUtils.toString(serializerIEEECompatible
         .primitive((EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
-                .setIEEE754Compatible(true)
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyInt64\","
@@ -921,12 +923,11 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyDecimal");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
-    final String resultString = IOUtils.toString(serializer
+    final String resultString = IOUtils.toString(serializerIEEECompatible
         .primitive((EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
-                .setIEEE754Compatible(true)
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyDecimal\","
@@ -942,9 +943,8 @@ public class ODataJsonSerializerTest {
     entitySet.setNext(URI.create("/next"));
     CountOption countOption = Mockito.mock(CountOption.class);
     Mockito.when(countOption.getValue()).thenReturn(true);
-    InputStream result = serializer.entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+    InputStream result = serializerIEEECompatible.entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
-            .setIEEE754Compatible(true)
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
             .count(countOption)
             .build()).getContent();
@@ -972,9 +972,8 @@ public class ODataJsonSerializerTest {
     entitySet.setNext(URI.create("/next"));
     CountOption countOption = Mockito.mock(CountOption.class);
     Mockito.when(countOption.getValue()).thenReturn(true);
-    InputStream result = serializer.referenceCollection(metadata, edmEntitySet, entitySet,
+    InputStream result = serializerIEEECompatible.referenceCollection(metadata, edmEntitySet, entitySet,
         ReferenceCollectionSerializerOptions.with()
-            .setIEEE754Compatible(true)
             .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
             .count(countOption)
             .build()).getContent();

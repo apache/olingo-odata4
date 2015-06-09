@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
@@ -49,13 +50,15 @@ import org.apache.olingo.server.core.uri.UriHelperImpl;
 public class ODataImpl extends OData {
 
   @Override
-  public ODataSerializer createSerializer(final ODataFormat format) throws SerializerException {
+  public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
+    final ODataFormat format = ODataFormat.fromContentType(contentType);
     ODataSerializer serializer;
+
     switch (format) {
     case JSON:
     case JSON_NO_METADATA:
     case JSON_FULL_METADATA:
-      serializer = new ODataJsonSerializer(format);
+      serializer = new ODataJsonSerializer(contentType);
       break;
     case XML:
       serializer = new ODataXmlSerializerImpl();
@@ -101,13 +104,15 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataDeserializer createDeserializer(final ODataFormat format) throws DeserializerException {
+  public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
+    final ODataFormat format = ODataFormat.fromContentType(contentType);
     ODataDeserializer deserializer;
+
     switch (format) {
     case JSON:
     case JSON_NO_METADATA:
     case JSON_FULL_METADATA:
-      deserializer = new ODataJsonDeserializer();
+      deserializer = new ODataJsonDeserializer(contentType);
       break;
     case XML:
       // We do not support XML deserialization right now so this must lead to an error.

@@ -331,8 +331,7 @@ public class DataRequest extends ServiceRequest {
     }
 
     private Entity getEntityFromClient() throws DeserializerException {
-      ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-          .fromContentType(getRequestContentType()));
+      ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
       return deserializer.entity(getODataRequest().getBody(), getEntitySet().getEntityType()).getEntity();
     }
 
@@ -441,7 +440,7 @@ public class DataRequest extends ServiceRequest {
             handler.deleteReference(DataRequest.this, new URI(id), getETag(), new NoContentResponse(
                 getServiceMetaData(), response));
           } catch (URISyntaxException e) {
-            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKNOWN_CONTENT);
+            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKOWN_CONTENT);
           }
         }
       } else if (isPUT()) {
@@ -459,8 +458,7 @@ public class DataRequest extends ServiceRequest {
     // /odata-json-format-v4.0-errata02-os-complete.html#_Toc403940643
     // The below code reads as property and converts to an URI
     private List<URI> getPayload() throws DeserializerException {
-      ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-          .fromContentType(getRequestContentType()));
+      ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
       return deserializer.entityReferences(getODataRequest().getBody()).getEntityReferences();
     }
 
@@ -700,8 +698,7 @@ public class DataRequest extends ServiceRequest {
 
   private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(
       EdmProperty edmProperty) throws DeserializerException {
-    ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-        .fromContentType(getRequestContentType()));
+    ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
     return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
   

@@ -74,9 +74,8 @@ public final class ContentType {
 
   public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
 
-  public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";
-  public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible=true";
-  public static final String PARAMETER_IEEE754_COMPATIBLE_FALSE = "IEEE754Compatible=false";
+  public static final String PARAMETER_CHARSET= "charset";
+  public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
   
   private final String type;
   private final String subtype;

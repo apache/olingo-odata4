@@ -45,6 +45,7 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -115,7 +116,7 @@ public class TripPinDataModel {
 
   private EntityCollection loadEnities(String entitySetName, EdmEntityType type) {
     try {
-      ODataJsonDeserializer deserializer = new ODataJsonDeserializer();
+      ODataJsonDeserializer deserializer = new ODataJsonDeserializer(ODataFormat.JSON.getContentType());
 
       EntityCollection set = deserializer.entityCollection(new FileInputStream(new File(
           "src/test/resources/" + entitySetName.toLowerCase() + ".json")), type).getEntityCollection();

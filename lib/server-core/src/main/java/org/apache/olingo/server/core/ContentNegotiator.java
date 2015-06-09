@@ -128,7 +128,7 @@ public class ContentNegotiator {
         if (acceptedType.getParameters().containsKey("charset")) {
           final String value = acceptedType.getParameters().get("charset");
           if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET_UTF8);
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET + "=utf-8");
           } else {
             throw new IllegalArgumentException("charset not supported: " + acceptedType);
           }
@@ -137,9 +137,9 @@ public class ContentNegotiator {
         if(acceptedType.getParameters().containsKey("ieee754compatible")) {
           final String value = acceptedType.getParameters().get("ieee754compatible");
           if("true".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE);
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE + "=true");
           } else if("false".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE_FALSE);
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE + "=false");
           } else {
             throw new IllegalArgumentException("Invalid IEEE754Compatible value " + acceptedType);
           }

@@ -76,7 +76,7 @@ public class MetadataDocumentXmlSerializerTest {
 
   @BeforeClass
   public static void init() throws SerializerException {
-    serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+    serializer = OData.newInstance().createSerializer(ODataFormat.XML.getContentType());
   }
 
   @Test

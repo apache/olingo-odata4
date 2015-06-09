@@ -44,7 +44,7 @@ public class ODataJsonSerializerTest {
     col.add(getValues(2));
     final Property complexCollection = new Property(null, "ComplexCol", ValueType.COLLECTION_COMPLEX, col);
 
-    final ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.APPLICATION_JSON);
+    final ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.APPLICATION_JSON.getContentType());
     final ComplexSerializerOptions options = ComplexSerializerOptions.with()
         .contextURL(ContextURL.with().selectList("ComplexCollection").build()).build();
     final InputStream in = serializer.complexCollection(null, ComplexTypeHelper.createType(),

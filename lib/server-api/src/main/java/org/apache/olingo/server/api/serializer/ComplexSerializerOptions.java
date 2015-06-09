@@ -28,7 +28,6 @@ public class ComplexSerializerOptions {
   private ContextURL contextURL;
   private ExpandOption expand;
   private SelectOption select;
-  private boolean isIEEE754Compatible;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -43,11 +42,6 @@ public class ComplexSerializerOptions {
   /** Gets the $select system query option. */
   public SelectOption getSelect() {
     return select;
-  }
-  
-  /** Serialize Edm.Int64 and Edm.Durration as strings **/
-  public boolean isIEEE754Compatible() {
-    return isIEEE754Compatible;
   }
   
   private ComplexSerializerOptions() {}
@@ -81,12 +75,6 @@ public class ComplexSerializerOptions {
     /** Sets the $select system query option. */
     public Builder select(final SelectOption select) {
       options.select = select;
-      return this;
-    }
-    
-    /** Set to serialize Edm.Int64 and Edm.Decimal as strings */
-    public Builder setIEEE754Compatible(final boolean isIEEE754Compatible) {
-      options.isIEEE754Compatible = isIEEE754Compatible;
       return this;
     }
     

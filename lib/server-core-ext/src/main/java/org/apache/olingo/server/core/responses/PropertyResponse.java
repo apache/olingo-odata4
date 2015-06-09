@@ -121,10 +121,10 @@ public class PropertyResponse extends ServiceResponse {
       throws SerializerException {
     if(this.collection) {
       this.response.setContent(
-          this.serializer.primitiveCollection(metadata, type, property, this.primitiveOptions).getContent());
+          this.serializer.primitiveCollection(type, property, this.primitiveOptions).getContent());
     } else {
       this.response.setContent(
-          this.serializer.primitive(metadata, type, property, this.primitiveOptions).getContent());
+          this.serializer.primitive(type, property, this.primitiveOptions).getContent());
     }
     writeOK(this.responseContentType.toContentTypeString());
     close();

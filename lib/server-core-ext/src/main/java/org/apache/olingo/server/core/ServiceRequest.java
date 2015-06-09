@@ -191,8 +191,7 @@ public abstract class ServiceRequest {
 
   public ODataSerializer getSerializer() throws ContentNegotiatorException,
       SerializerException {
-    ODataFormat format = ODataFormat.fromContentType(getResponseContentType());
-    return this.odata.createSerializer(format);
+    return this.odata.createSerializer(getResponseContentType());
   }
 
   public Map<String, String> getPreferences(){
