@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
@@ -282,7 +283,7 @@ public class DataProvider {
 
   public void updateETag(Entity entity) {
     if (entity.getETag() != null) {
-      entity.setETag("W/\"" + System.nanoTime() + "\"");
+      entity.setETag("W/\"" + UUID.randomUUID() + "\"");
     }
   }
 
@@ -407,7 +408,7 @@ public class DataProvider {
     if (edmProperty.isPrimitive()) {
       if (newProperty != null || !patch) {
         final Object value = newProperty == null ? null : newProperty.getValue();
-        property.setValue(property.getValueType(), value);
+        updatePropertyValue(property, value);
       }
     } else if (edmProperty.isCollection()) {
       // Updating collection properties means replacing all entries with the given ones.
@@ -439,6 +440,10 @@ public class DataProvider {
             patch);
       }
     }
+  }
+
+  public void updatePropertyValue(Property property, final Object value) {
+    property.setValue(property.getValueType(), value);
   }
 
   private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
@@ -486,7 +491,7 @@ public class DataProvider {
     entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
     entity.addProperty(DataCreator.createPrimitive(MEDIA_PROPERTY_NAME, media));
     entity.setMediaContentType(type);
-    entity.setMediaETag("W/\"" + System.nanoTime() + "\"");
+    entity.setMediaETag("W/\"" + UUID.randomUUID() + "\"");
   }
 
   public EntityCollection readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
