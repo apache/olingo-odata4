@@ -23,21 +23,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>odata-karaf-itests</artifactId>
+  <artifactId>odata-karaf-fit</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>odata-ext</artifactId>
+    <artifactId>odata-karaf</artifactId>
     <version>4.0.0-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <relativePath>..</relativePath>
   </parent>
   <dependencies>
     <!-- Karaf features -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>odata-karaf-features</artifactId>
+      <artifactId>odata-karaf-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>

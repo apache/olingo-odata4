@@ -19,7 +19,6 @@
 
 package org.apache.olingo.osgi.itests;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
