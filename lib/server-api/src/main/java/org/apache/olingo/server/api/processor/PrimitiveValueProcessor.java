@@ -38,9 +38,36 @@ public interface PrimitiveValueProcessor extends PrimitiveProcessor {
    * @param response OData response object for collecting response data
    * @param uriInfo information of a parsed OData URI
    * @param responseFormat requested content type after content negotiation
-   * @throws org.apache.olingo.server.api.ODataApplicationException if the service implementation encounters a failure
+   * @throws ODataApplicationException if the service implementation encounters a failure
    * @throws ODataLibraryException
    */
   void readPrimitiveValue(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException;
+
+  /**
+   * Update primitive-type instance with sent raw data in the persistence and
+   * puts content, status, and Location into the response.
+   * @param request OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
+   * @param uriInfo information of a parsed OData URI
+   * @param requestFormat content type of body sent with request
+   * @param responseFormat requested content type after content negotiation
+   * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws ODataLibraryException
+   */
+  void updatePrimitiveValue(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException;
+
+  /**
+   * Deletes primitive-type raw value from an entity and puts the status into the response.
+   * Deletion of a primitive-type value is equivalent to setting the value to <code>null</code>.
+   * @param request OData request object containing raw HTTP information
+   * @param response OData response object for collecting response data
+   * @param uriInfo information of a parsed OData URI
+   * @throws ODataApplicationException if the service implementation encounters a failure
+   * @throws ODataLibraryException
+   */
+  void deletePrimitiveValue(ODataRequest request, ODataResponse response, UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException;
 }

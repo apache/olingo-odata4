@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,8 +47,11 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
+import org.apache.olingo.server.api.processor.CountComplexCollectionProcessor;
+import org.apache.olingo.server.api.processor.CountPrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveCollectionProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveProcessor;
 import org.apache.olingo.server.api.processor.PrimitiveValueProcessor;
@@ -57,6 +61,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.RepresentationType;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -73,8 +78,9 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
  */
 public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
-    implements PrimitiveProcessor, PrimitiveValueProcessor, PrimitiveCollectionProcessor,
-    ComplexProcessor, ComplexCollectionProcessor {
+    implements PrimitiveProcessor, PrimitiveValueProcessor,
+    PrimitiveCollectionProcessor, CountPrimitiveCollectionProcessor,
+    ComplexProcessor, ComplexCollectionProcessor, CountComplexCollectionProcessor {
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
       final ServiceMetadata serviceMetadata) {
@@ -88,6 +94,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
+  public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
+    readProperty(request, response, uriInfo, contentType, RepresentationType.VALUE);
+  }
+
+  @Override
   public void updatePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
@@ -95,15 +107,34 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   }
 
   @Override
+  public void updatePrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final ContentType requestFormat, final ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException {
+    updateProperty(request, response, uriInfo, requestFormat, responseFormat, RepresentationType.VALUE);
+  }
+
+  @Override
   public void deletePrimitive(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException {
-    deleteProperty(request, response, uriInfo);
+    deleteProperty(request, response, uriInfo, false);
+  }
+
+  @Override
+  public void deletePrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    deleteProperty(request, response, uriInfo, true);
   }
 
   @Override
   public void readPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_PRIMITIVE);
+  }
+
+  @Override
+  public void countPrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    readProperty(request, response, uriInfo, ContentType.TEXT_PLAIN, RepresentationType.COUNT);
   }
 
   @Override
@@ -116,7 +147,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void deletePrimitiveCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException {
-    deleteProperty(request, response, uriInfo);
+    deleteProperty(request, response, uriInfo, false);
   }
 
   @Override
@@ -135,13 +166,19 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void deleteComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException {
-    deleteProperty(request, response, uriInfo);
+    deleteProperty(request, response, uriInfo, false);
   }
 
   @Override
   public void readComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
     readProperty(request, response, uriInfo, contentType, RepresentationType.COLLECTION_COMPLEX);
+  }
+
+  @Override
+  public void countComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    readProperty(request, response, uriInfo, ContentType.TEXT_PLAIN, RepresentationType.COUNT);
   }
 
   @Override
@@ -154,7 +191,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   @Override
   public void deleteComplexCollection(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException {
-    deleteProperty(request, response, uriInfo);
+    deleteProperty(request, response, uriInfo, false);
   }
 
   private void readProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
@@ -166,7 +203,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final List<String> path = getPropertyPath(resourceParts, 0);
+    final int trailing =
+        representationType == RepresentationType.COUNT || representationType == RepresentationType.VALUE ? 1 : 0;
+    final List<String> path = getPropertyPath(resourceParts, trailing);
 
     final Entity entity = readEntity(uriInfo);
 
@@ -186,27 +225,40 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
             ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
         getPropertyData(entity, path);
 
-    if (property == null) {
-      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    if (property == null && representationType != RepresentationType.COUNT) {
+      if (representationType == RepresentationType.VALUE) {
+        response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      } else {
+        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+      }
     } else {
-      if (property.getValue() == null) {
+      if (property.getValue() == null && representationType != RepresentationType.COUNT) {
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
       } else {
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        final EdmProperty edmProperty = path.isEmpty() ? null :
-            ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1)).getProperty();
-        final EdmType type = edmProperty == null ?
-            ((UriResourceFunction) resourceParts.get(0)).getType() :
-            edmProperty.getType();
-        final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
-            ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
+        if (representationType == RepresentationType.COUNT) {
+          response.setContent(odata.createFixedFormatSerializer().count(
+              property.asCollection().size()));
+        } else {
+          final EdmProperty edmProperty = path.isEmpty() ? null :
+              ((UriResourceProperty) resourceParts.get(resourceParts.size() - trailing - 1)).getProperty();
+          final EdmType type = edmProperty == null ?
+              ((UriResourceFunction) resourceParts.get(0)).getType() :
+              edmProperty.getType();
+          final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
+              ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
 
-        final ExpandOption expand = uriInfo.getExpandOption();
-        final SelectOption select = uriInfo.getSelectOption();
-        final ODataFormat format = ODataFormat.fromContentType(contentType);
-        final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
-            type, returnType, representationType, format, expand, select);
-        response.setContent(result.getContent());
+          if (representationType == RepresentationType.VALUE) {
+            response.setContent(serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) type, returnType));
+          } else {
+            final ExpandOption expand = uriInfo.getExpandOption();
+            final SelectOption select = uriInfo.getSelectOption();
+            final ODataFormat format = ODataFormat.fromContentType(contentType);
+            final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
+                type, returnType, representationType, format, expand, select);
+            response.setContent(result.getContent());
+          }
+        }
         response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
       }
       if (entity != null && entity.getETag() != null) {
@@ -217,7 +269,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
   private void updateProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat, final RepresentationType representationType)
-          throws ODataApplicationException, ODataLibraryException {
+      throws ODataApplicationException, ODataLibraryException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
     final EdmEntitySet edmEntitySet = getEdmEntitySet(resource);
@@ -228,35 +280,49 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final List<String> path = getPropertyPath(resourceParts, 0);
-    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
+    final int trailing = representationType == RepresentationType.VALUE ? 1 : 0;
+    final List<String> path = getPropertyPath(resourceParts, trailing);
+    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - trailing - 1))
         .getProperty();
-
-    checkRequestFormat(requestFormat);
-    final Property changedProperty = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-        .property(request.getBody(), edmProperty).getProperty();
-    if (changedProperty.isNull() && !edmProperty.isNullable()) {
-      throw new ODataApplicationException("Not nullable.", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
-    }
 
     Property property = getPropertyData(entity, path);
 
-    dataProvider.updateProperty(edmProperty, property, changedProperty, request.getMethod() == HttpMethod.PATCH);
+    checkRequestFormat(requestFormat);
+    if (representationType == RepresentationType.VALUE) {
+      final FixedFormatDeserializer deserializer = odata.createFixedFormatDeserializer();
+      final Object value = edmProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
+          deserializer.binary(request.getBody()) :
+          deserializer.primitiveValue(request.getBody(), edmProperty);
+      dataProvider.updatePropertyValue(property, value);
+    } else {
+      final Property changedProperty = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+          .property(request.getBody(), edmProperty).getProperty();
+      if (changedProperty.isNull() && !edmProperty.isNullable()) {
+        throw new ODataApplicationException("Not nullable.", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+      }
+      dataProvider.updateProperty(edmProperty, property, changedProperty, request.getMethod() == HttpMethod.PATCH);
+    }
+
     dataProvider.updateETag(entity);
 
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
-    final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
-        edmProperty.getType(), null, representationType, format, null, null);
-    response.setContent(result.getContent());
+    if (representationType == RepresentationType.VALUE) {
+      response.setContent(
+          serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) edmProperty.getType(), null));
+    } else {
+      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
+      final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
+          edmProperty.getType(), null, representationType, format, null, null);
+      response.setContent(result.getContent());
+    }
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }
   }
 
-  private void deleteProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
-      throws ODataLibraryException, ODataApplicationException {
+  private void deleteProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
+      final boolean isValue) throws ODataLibraryException, ODataApplicationException {
     final UriInfoResource resource = uriInfo.asUriInfoResource();
     validatePath(resource);
     getEdmEntitySet(uriInfo); // including checks
@@ -267,11 +333,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
 
     final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final List<String> path = getPropertyPath(resourceParts, 0);
+    final int trailing = isValue ? 1 : 0;
+    final List<String> path = getPropertyPath(resourceParts, trailing);
 
     Property property = getPropertyData(entity, path);
 
-    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - 1))
+    final EdmProperty edmProperty = ((UriResourceProperty) resourceParts.get(resourceParts.size() - trailing - 1))
         .getProperty();
 
     if (edmProperty.isNullable()) {
@@ -391,61 +458,19 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     return builder.build();
   }
 
-  @Override
-  public void readPrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
-      final ContentType contentType) throws ODataApplicationException, ODataLibraryException {
-    final UriInfoResource resource = uriInfo.asUriInfoResource();
-    validateOptions(resource);
-    validatePath(resource);
-    getEdmEntitySet(uriInfo); // including checks
-
-    final List<UriResource> resourceParts = resource.getUriResourceParts();
-    final List<String> path = getPropertyPath(resourceParts, 1);
-
-    final Entity entity = readEntity(uriInfo);
-    if (entity != null && entity.getETag() != null) {
-      if (odata.createETagHelper().checkReadPreconditions(entity.getETag(),
-          request.getHeaders(HttpHeader.IF_MATCH),
-          request.getHeaders(HttpHeader.IF_NONE_MATCH))) {
-        response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
-        response.setHeader(HttpHeader.ETAG, entity.getETag());
-        return;
-      }
-    }
-
-    final Property property = entity == null ?
-        getPropertyData(dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0))
-            .getFunction(),
-            ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
-        getPropertyData(entity, path);
-
-    if (property == null || property.getValue() == null) {
-      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-    } else {
-      final EdmProperty edmProperty = path.isEmpty() ? null :
-          ((UriResourceProperty) resourceParts.get(resourceParts.size() - 2)).getProperty();
-      final EdmPrimitiveType type = (EdmPrimitiveType) (edmProperty == null ?
-          ((UriResourceFunction) resourceParts.get(0)).getType() :
-          edmProperty.getType());
-      final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
-          ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
-      final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
-      response.setContent(type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
-          serializer.binary((byte[]) property.getValue()) :
-          serializer.primitiveValue(type, property.getValue(),
-              PrimitiveValueSerializerOptions.with()
-                  .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
-                  .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
-                  .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
-                  .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
-                  .unicode(edmProperty == null ? null : edmProperty.isUnicode())
-                  .build()));
-      response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    }
-    if (entity != null && entity.getETag() != null) {
-      response.setHeader(HttpHeader.ETAG, entity.getETag());
-    }
+  private InputStream serializePrimitiveValue(final Property property, final EdmProperty edmProperty,
+      final EdmPrimitiveType type, final EdmReturnType returnType) throws SerializerException {
+    final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
+    return type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
+      serializer.binary((byte[]) property.getValue()) :
+      serializer.primitiveValue(type, property.getValue(),
+          PrimitiveValueSerializerOptions.with()
+              .nullable(edmProperty == null ? returnType.isNullable() : edmProperty.isNullable())
+              .maxLength(edmProperty == null ? returnType.getMaxLength() : edmProperty.getMaxLength())
+              .precision(edmProperty == null ? returnType.getPrecision() : edmProperty.getPrecision())
+              .scale(edmProperty == null ? returnType.getScale() : edmProperty.getScale())
+              .unicode(edmProperty == null ? null : edmProperty.isUnicode())
+              .build());
   }
 
   private void validatePath(final UriInfoResource uriInfo) throws ODataApplicationException {

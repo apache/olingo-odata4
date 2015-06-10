@@ -180,6 +180,12 @@ public class URIBuilderImpl implements URIBuilder {
   }
 
   @Override
+  public URIBuilder appendCountSegment() {
+    segments.add(new Segment(SegmentType.COUNT, SegmentType.COUNT.getValue()));
+    return this;
+  }
+
+  @Override
   public URIBuilder appendActionCallSegment(final String action) {
     segments.add(new Segment(
         segments.size() == 1 ? SegmentType.UNBOUND_ACTION : SegmentType.BOUND_ACTION, action));

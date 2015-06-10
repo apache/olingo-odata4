@@ -35,7 +35,7 @@ public class DeserializerException extends ODataLibraryException {
     /** parameter: propertyName */
     INVALID_NULL_PROPERTY,
     /** parameter: keyName */
-    UNKOWN_CONTENT,
+    UNKNOWN_CONTENT,
     /** parameter: propertyName */
     INVALID_VALUE_FOR_PROPERTY,
     /** parameter: propertyName */

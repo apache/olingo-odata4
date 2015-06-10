@@ -22,17 +22,21 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class FixedFormatDeserializerTest {
 
+  private static final OData oData = OData.newInstance();
   private final FixedFormatDeserializer deserializer;
 
   public FixedFormatDeserializerTest() throws SerializerException {
-    deserializer = OData.newInstance().createFixedFormatDeserializer();
+    deserializer = oData.createFixedFormatDeserializer();
   }
 
   @Test
@@ -49,5 +53,26 @@ public class FixedFormatDeserializerTest {
                 + "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ")).length);
+  }
+
+  @Test
+  public void primitiveValue() throws Exception {
+    EdmProperty property = Mockito.mock(EdmProperty.class);
+    Mockito.when(property.getType()).thenReturn(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64));
+    Mockito.when(property.isPrimitive()).thenReturn(true);
+    assertEquals(42L, deserializer.primitiveValue(IOUtils.toInputStream("42"), property));
+  }
+
+  @Test
+  public void primitiveValueLong() throws Exception {
+    EdmProperty property = Mockito.mock(EdmProperty.class);
+    Mockito.when(property.getType()).thenReturn(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    Mockito.when(property.isPrimitive()).thenReturn(true);
+    Mockito.when(property.isUnicode()).thenReturn(true);
+    Mockito.when(property.getMaxLength()).thenReturn(61);
+    final String value = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
+        + "ÄÖÜ€\uFDFC\n"
+        + String.valueOf(Character.toChars(0x1F603));
+    assertEquals(value, deserializer.primitiveValue(IOUtils.toInputStream(value), property));
   }
 }

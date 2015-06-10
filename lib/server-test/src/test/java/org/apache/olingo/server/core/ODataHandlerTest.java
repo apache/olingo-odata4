@@ -493,7 +493,7 @@ public class ODataHandlerTest {
         any(ContentType.class), any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
-    verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).deleteMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
@@ -543,12 +543,12 @@ public class ODataHandlerTest {
 
     dispatch(HttpMethod.PUT, uri, null, HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString(),
         processor);
-    verify(processor).updatePrimitive(
+    verify(processor).updatePrimitiveValue(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
-    verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    verify(processor).deletePrimitiveValue(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);

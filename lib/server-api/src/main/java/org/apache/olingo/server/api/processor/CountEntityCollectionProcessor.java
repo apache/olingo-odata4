@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling counting a collection of entities, e.g. an Entity Set.
  */
-public interface CountEntityCollectionProcessor extends Processor {
+public interface CountEntityCollectionProcessor extends EntityCollectionProcessor {
 
   /**
    * Counts entities from persistence and puts serialized content and status into the response.

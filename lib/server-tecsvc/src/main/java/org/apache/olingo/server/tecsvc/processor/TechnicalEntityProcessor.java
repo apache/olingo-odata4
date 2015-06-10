@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -51,11 +50,9 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
-import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
-import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
@@ -252,10 +249,21 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       throws ODataLibraryException, ODataApplicationException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     final Entity entity = readEntity(uriInfo);
-    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    final boolean isValue = resourcePaths.get(resourcePaths.size() - 1) instanceof UriResourceValue;
 
-    odata.createETagHelper().checkChangePreconditions(isValue ? entity.getMediaETag() : entity.getETag(),
+    odata.createETagHelper().checkChangePreconditions(entity.getETag(),
+        request.getHeaders(HttpHeader.IF_MATCH),
+        request.getHeaders(HttpHeader.IF_NONE_MATCH));
+    dataProvider.delete(edmEntitySet, entity);
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+
+  @Override
+  public void deleteMediaEntity(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataLibraryException, ODataApplicationException {
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
+    final Entity entity = readEntity(uriInfo);
+
+    odata.createETagHelper().checkChangePreconditions(entity.getMediaETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
     dataProvider.delete(edmEntitySet, entity);

@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -322,10 +323,25 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   }
 
   @Override
+  public void updatePrimitiveValue(final ODataRequest request, ODataResponse response,
+      final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException {
+    throw new ODataApplicationException("Primitive property update is not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
+  }
+
+  @Override
   public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws
           ODataApplicationException {
     throw new ODataApplicationException("Primitive property delete is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
+  }
+
+  @Override
+  public void deletePrimitiveValue(final ODataRequest request, ODataResponse response, final UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    throw new ODataApplicationException("Primitive property update is not supported yet.",
+        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
   }
 
   @Override

@@ -709,7 +709,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (node.size() != 0) {
       final String unknownField = node.fieldNames().next();
       throw new DeserializerException("Tree should be empty but still has content left: " + unknownField,
-          DeserializerException.MessageKeys.UNKOWN_CONTENT, unknownField);
+          DeserializerException.MessageKeys.UNKNOWN_CONTENT, unknownField);
     }
   }
 
@@ -822,7 +822,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             }
           }
         } else {
-          throw new DeserializerException("Value must be an array", DeserializerException.MessageKeys.UNKOWN_CONTENT);
+          throw new DeserializerException("Value must be an array", DeserializerException.MessageKeys.UNKNOWN_CONTENT);
         }
         tree.remove(Constants.VALUE);
         // if this is value there can be only one property
@@ -831,7 +831,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       if(tree.get(key) != null) {
         parsedValues.add(new URI(tree.get(key).asText()));
       } else {
-        throw new DeserializerException("Missing entity reference", DeserializerException.MessageKeys.UNKOWN_CONTENT);
+        throw new DeserializerException("Missing entity reference", DeserializerException.MessageKeys.UNKNOWN_CONTENT);
       }
       return DeserializerResultImpl.with().entityReferences(parsedValues).build();
     } catch (JsonParseException e) {
@@ -845,7 +845,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           DeserializerException.MessageKeys.IO_EXCEPTION);
     } catch (URISyntaxException e) {
       throw new DeserializerException("failed to read @odata.id", e,
-          DeserializerException.MessageKeys.UNKOWN_CONTENT);
+          DeserializerException.MessageKeys.UNKNOWN_CONTENT);
     }
   }
 }

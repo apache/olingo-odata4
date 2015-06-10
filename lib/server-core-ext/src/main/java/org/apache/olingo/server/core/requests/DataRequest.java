@@ -441,7 +441,7 @@ public class DataRequest extends ServiceRequest {
             handler.deleteReference(DataRequest.this, new URI(id), getETag(), new NoContentResponse(
                 getServiceMetaData(), response));
           } catch (URISyntaxException e) {
-            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKOWN_CONTENT);
+            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKNOWN_CONTENT);
           }
         }
       } else if (isPUT()) {

@@ -45,6 +45,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
@@ -57,6 +58,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
@@ -160,6 +162,22 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertEquals(0, property.getPrimitiveValue().toValue());
+  }
+
+  @Test
+  public void readEntityCollectionCount() {
+    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESServerSidePaging").appendCountSegment().build());
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), response.getContentType());
+
+    final ClientPrimitiveValue value = response.getBody();
+    assertNotNull(value);
+    assertEquals("503", value.toValue());
   }
 
   @Test
