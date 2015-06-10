@@ -431,7 +431,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     final Delta delta = new Delta();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
-      delta.setBaseURI(xmlBase.getValue());
+      delta.setBaseURI(URI.create(xmlBase.getValue()));
     }
 
     boolean foundEndFeed = false;
@@ -579,7 +579,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       entity = new Entity();
       final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
       if (xmlBase != null) {
-        entity.setBaseURI(xmlBase.getValue());
+        entity.setBaseURI(URI.create(xmlBase.getValue()));
       }
 
       final Attribute etag = start.getAttributeByName(etagQName);
@@ -737,7 +737,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     final EntityCollection entitySet = new EntityCollection();
     final Attribute xmlBase = start.getAttributeByName(Constants.QNAME_ATTR_XML_BASE);
     if (xmlBase != null) {
-      entitySet.setBaseURI(xmlBase.getValue());
+      entitySet.setBaseURI(URI.create(xmlBase.getValue()));
     }
 
     boolean foundEndFeed = false;

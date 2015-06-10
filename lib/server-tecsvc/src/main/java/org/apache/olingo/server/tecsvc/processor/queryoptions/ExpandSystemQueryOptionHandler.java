@@ -41,6 +41,7 @@ import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.FilterHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.OrderByHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandler;
@@ -105,7 +106,7 @@ public class ExpandSystemQueryOptionHandler {
 
     FilterHandler.applyFilterSystemQuery(filterOption, entitySet, edmBindingTarget);
     OrderByHandler.applyOrderByOption(orderByOption, entitySet, edmBindingTarget);
-    // TODO Add CountHandler
+    CountHandler.applyCountSystemQueryOption(countOption, entitySet);
     SkipHandler.applySkipSystemQueryHandler(skipOption, entitySet);
     TopHandler.applyTopSystemQueryOption(topOption, entitySet);
 
@@ -168,25 +169,29 @@ public class ExpandSystemQueryOptionHandler {
     newEntitySet.setCount(entitySet.getCount());
     newEntitySet.setDeltaLink(entitySet.getDeltaLink());
     newEntitySet.setNext(entitySet.getNext());
+    newEntitySet.setId(entitySet.getId());
+    newEntitySet.setBaseURI(entitySet.getBaseURI());
 
     return newEntitySet;
   }
 
   private Entity newEntity(final Entity entity) {
-    final Entity newEntity = new Entity();
+    Entity newEntity = new Entity();
 
     newEntity.getProperties().addAll(entity.getProperties());
     newEntity.getAnnotations().addAll(entity.getAnnotations());
-    newEntity.getAssociationLinks().addAll(entity.getAssociationLinks());
-    newEntity.setEditLink(entity.getEditLink());
     newEntity.setId(entity.getId());
+    newEntity.setBaseURI(entity.getBaseURI());
+    newEntity.setType(entity.getType());
+    newEntity.setETag(entity.getETag());
     newEntity.setMediaContentSource(entity.getMediaContentSource());
     newEntity.setMediaContentType(entity.getMediaContentType());
     newEntity.setMediaETag(entity.getMediaETag());
-    newEntity.getOperations().addAll(entity.getOperations());
     newEntity.setSelfLink(entity.getSelfLink());
-    newEntity.setType(entity.getType());
+    newEntity.setEditLink(entity.getEditLink());
+    newEntity.getAssociationLinks().addAll(entity.getAssociationLinks());
     newEntity.getNavigationBindings().addAll(entity.getNavigationBindings());
+    newEntity.getOperations().addAll(entity.getOperations());
 
     return newEntity;
   }

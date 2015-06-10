@@ -435,7 +435,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final CountOption countOption = uriInfo.getCountOption();
 
     // Serialize
-    final SerializerResult serializerResult = (isReference) ?
+    final SerializerResult serializerResult = isReference ?
         serializeReferenceCollection(entitySetSerialization, edmEntitySet, format) :
         serializeEntityCollection(entitySetSerialization, edmEntitySet, edmEntityType, format,
             expand, select, countOption);

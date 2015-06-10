@@ -550,7 +550,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
     if (container.getContextURL() != null) {
       final ContextURL contextURL = ContextURLParser.parse(container.getContextURL());
-      String base = contextURL.getServiceRoot().toASCIIString();
+      final URI base = contextURL.getServiceRoot();
       if (container.getPayload() instanceof EntityCollection) {
         ((EntityCollection) container.getPayload()).setBaseURI(base);
       }

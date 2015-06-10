@@ -52,7 +52,7 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
     final URI contextURL = tree.hasNonNull(Constants.JSON_CONTEXT) ?
         URI.create(tree.get(Constants.JSON_CONTEXT).textValue()) : null;
     if (contextURL != null) {
-      delta.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
+      delta.setBaseURI(URI.create(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA)));
     }
 
     if (tree.hasNonNull(Constants.JSON_COUNT)) {

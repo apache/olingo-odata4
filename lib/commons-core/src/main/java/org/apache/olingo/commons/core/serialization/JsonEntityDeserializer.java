@@ -76,7 +76,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       contextURL = null;
     }
     if (contextURL != null) {
-      entity.setBaseURI(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA));
+      entity.setBaseURI(URI.create(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA)));
     }
 
     final String metadataETag;
