@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.api;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
@@ -31,6 +32,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
+import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -135,4 +137,10 @@ public abstract class OData {
    * It can be used in Processor implementations.
    */
   public abstract ETagHelper createETagHelper();
+
+  /**
+   * Creates a new Preferences object out of Prefer HTTP request headers.
+   * It can be used in Processor implementations.
+   */
+  public abstract Preferences createPreferences(Collection<String> preferHeaders);
 }
