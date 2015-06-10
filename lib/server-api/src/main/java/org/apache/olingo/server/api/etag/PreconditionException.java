@@ -16,15 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.api.etag;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
-public class PreconditionRequiredException extends ODataTranslatedException {
+public class PreconditionException extends ODataLibraryException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {
-    MISSING_HEADER;
+    /** no parameter */
+    MISSING_HEADER,
+    /** no parameter */
+    FAILED,
+    /** no parameter */
+    INVALID_URI;
 
     @Override
     public String getKey() {
@@ -32,14 +37,13 @@ public class PreconditionRequiredException extends ODataTranslatedException {
     }
   }
 
-  public PreconditionRequiredException(final String developmentMessage, final MessageKey messageKey,
+  public PreconditionException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public PreconditionRequiredException(final String developmentMessage, final Throwable cause,
-      final MessageKey messageKey,
-      final String... parameters) {
+  public PreconditionException(final String developmentMessage, final Throwable cause,
+      final MessageKey messageKey, final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
 

@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.api.etag;
+
+import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 
 /**
  * <p>Processors that would like to support etags for certain entity sets can implement this
@@ -32,19 +34,18 @@ public interface CustomETagSupport {
    * If this method returns true and an header is not specified we will return a "Precondition Required" response.
    * Validation has to be performed inside the processor methods after the dispatching.
    * If this method returns false and an header is specified we will ignore the header.
-   * @param entitySetName
+   * @param entitySetOrSingleton
    * @return true if the entity set specified needs an if-match/if-none-match header
    */
-  boolean hasETag(String entitySetName);
+  boolean hasETag(EdmBindingTarget entitySetOrSingleton);
 
   /**
    * This method will be called for update requests which target a media entity value.
    * If this method returns true and an header is not specified we will return a "Precondition Required" response.
    * Validation has to be performed inside the processor methods after the dispatching.
    * If this method returns false and an header is specified we will ignore the header.
-   * @param entitySetName
+   * @param entitySetOrSingleton
    * @return true if the entity set specified needs an if-match/if-none-match header
    */
-  boolean hasMediaETag(String entitySetName);
-
+  boolean hasMediaETag(EdmBindingTarget entitySetOrSingleton);
 }

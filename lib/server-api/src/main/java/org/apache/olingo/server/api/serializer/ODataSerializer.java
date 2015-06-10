@@ -22,7 +22,6 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -38,10 +37,10 @@ public interface ODataSerializer {
 
   /**
    * Writes the service document into an InputStream.
-   * @param edm the Entity Data Model
-   * @param serviceRoot the service-root URI of this OData service
+   * @param serviceMetadata the metadata information for the service
+   * @param serviceRoot     the service-root URI of this OData service
    */
-  SerializerResult serviceDocument(Edm edm, String serviceRoot) throws SerializerException;
+  SerializerResult serviceDocument(ServiceMetadata serviceMetadata, String serviceRoot) throws SerializerException;
 
   /**
    * Writes the metadata document into an InputStream.
@@ -52,91 +51,86 @@ public interface ODataSerializer {
   /**
    * Writes an ODataError into an InputStream.
    * @param error the main error
-   * @return inputStream containing the OData-formatted error
    */
   SerializerResult error(ODataServerError error) throws SerializerException;
 
   /**
    * Writes entity-collection data into an InputStream.
-   * @param metadata Metadata for the service
+   * @param metadata   metadata for the service
    * @param entityType the {@link EdmEntityType}
-   * @param entitySet the data of the entity set
-   * @param options options for the serializer
+   * @param entitySet  the data of the entity set
+   * @param options    options for the serializer
    */
   SerializerResult entityCollection(ServiceMetadata metadata, EdmEntityType entityType,
       EntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.
-   * @param metadata Metadata for the service
+   * @param metadata   metadata for the service
    * @param entityType the {@link EdmEntityType}
-   * @param entity the data of the entity
-   * @param options options for the serializer
+   * @param entity     the data of the entity
+   * @param options    options for the serializer
    */
   SerializerResult entity(ServiceMetadata metadata, EdmEntityType entityType, Entity entity,
       EntitySerializerOptions options) throws SerializerException;
 
   /**
    * Writes primitive-type instance data into an InputStream.
-   * @param type primitive type
+   * @param metadata metadata for the service
+   * @param type     primitive type
    * @param property property value
-   * @param options options for the serializer
+   * @param options  options for the serializer
    */
-  SerializerResult primitive(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
-      throws SerializerException;
+  SerializerResult primitive(ServiceMetadata metadata, EdmPrimitiveType type, Property property,
+      PrimitiveSerializerOptions options) throws SerializerException;
 
   /**
    * Writes complex-type instance data into an InputStream.
-   * @param metadata Metadata for the service
-   * @param type complex type
+   * @param metadata metadata for the service
+   * @param type     complex type
    * @param property property value
-   * @param options options for the serializer
+   * @param options  options for the serializer
    */
   SerializerResult complex(ServiceMetadata metadata, EdmComplexType type, Property property,
       ComplexSerializerOptions options) throws SerializerException;
 
   /**
    * Writes data of a collection of primitive-type instances into an InputStream.
-   * @param type primitive type
+   * @param metadata metadata for the service
+   * @param type     primitive type
    * @param property property value
-   * @param options options for the serializer
+   * @param options  options for the serializer
    */
-  SerializerResult primitiveCollection(EdmPrimitiveType type, Property property, PrimitiveSerializerOptions options)
-      throws SerializerException;
+  SerializerResult primitiveCollection(ServiceMetadata metadata, EdmPrimitiveType type, Property property,
+      PrimitiveSerializerOptions options) throws SerializerException;
 
   /**
    * Writes data of a collection of complex-type instances into an InputStream.
-   * @param metadata Metadata for the service
-   * @param type complex type
+   * @param metadata metadata for the service
+   * @param type     complex type
    * @param property property value
-   * @param options options for the serializer
+   * @param options  options for the serializer
    */
   SerializerResult complexCollection(ServiceMetadata metadata, EdmComplexType type, Property property,
       ComplexSerializerOptions options) throws SerializerException;
-  
+
   /**
-   * Writes a single entity reference into an InputStream
-   * 
-   * @param metadata              Metadata for the service
-   * @param edmEntitySet          {@link EdmEntitySet}
-   * @param entity                data of the entity
-   * @param contextUrl            {@link ContextURL}
-   * @return Serialized           entity reference
-   * @throws SerializerException
+   * Writes a single entity reference into an InputStream.
+   * @param metadata     metadata for the service
+   * @param edmEntitySet {@link EdmEntitySet}
+   * @param entity       data of the entity
+   * @param contextURL   {@link ContextURL}
    */
-  SerializerResult reference(ServiceMetadata metadata, EdmEntitySet edmEntitySet, Entity entity, 
-      final ContextURL contextUrl) throws SerializerException;
-  
+  SerializerResult reference(ServiceMetadata metadata, EdmEntitySet edmEntitySet, Entity entity,
+      ContextURL contextURL) throws SerializerException;
+
   /**
-   * Writes entity collection references into an InputStream
-   * 
-   * @param metadata              Metadata for the service
-   * @param edmEntitySet          {@link EdmEntitySet}
-   * @param entityCollection      data of the entity collection
-   * @param contextURL 
-   * @return Serialized           entity reference
-   * @throws SerializerException
+   * Writes entity-collection references into an InputStream.
+   * @param metadata         metadata for the service
+   * @param edmEntitySet     {@link EdmEntitySet}
+   * @param entityCollection data of the entity collection
+   * @param contextURL       {@link ContextURL}
    */
-  SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet, 
-      EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException;
+  SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet,
+      EntityCollection entityCollection, ContextURL contextURL) throws SerializerException;
 }

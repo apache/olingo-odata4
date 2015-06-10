@@ -260,7 +260,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           InputStream serializerContent = complex ?
               serializer.complex(edm, (EdmComplexType) edmProperty.getType(), property,
                   ComplexSerializerOptions.with().contextURL(contextURL).build()).getContent() :
-              serializer.primitive((EdmPrimitiveType) edmProperty.getType(), property,
+              serializer.primitive(edm, (EdmPrimitiveType) edmProperty.getType(), property,
                                     PrimitiveSerializerOptions.with()
                                     .contextURL(contextURL)
                                     .scale(edmProperty.getScale())

@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
@@ -47,7 +49,8 @@ public class BatchPartHandler {
     return handle(request, true);
   }
 
-  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws BatchDeserializerException {
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws ODataApplicationException,
+      ODataLibraryException {
     if (request.isChangeSet()) {
       return handleChangeSet(request);
     } else {
@@ -80,7 +83,8 @@ public class BatchPartHandler {
     return response;
   }
 
-  private ODataResponsePart handleChangeSet(final BatchRequestPart request) throws BatchDeserializerException {
+  private ODataResponsePart handleChangeSet(final BatchRequestPart request) throws ODataApplicationException,
+      ODataLibraryException {
     return batchProcessor.processChangeSet(batchFascade, request.getRequests());
   }
 

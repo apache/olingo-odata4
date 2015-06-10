@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -120,16 +120,18 @@ public class PropertyResponse extends ServiceResponse {
   private void writePrimitiveProperty(EdmPrimitiveType type, Property property)
       throws SerializerException {
     if(this.collection) {
-      this.response.setContent(this.serializer.primitiveCollection(type, property, this.primitiveOptions).getContent());
+      this.response.setContent(
+          this.serializer.primitiveCollection(metadata, type, property, this.primitiveOptions).getContent());
     } else {
-      this.response.setContent(this.serializer.primitive(type, property, this.primitiveOptions).getContent());
+      this.response.setContent(
+          this.serializer.primitive(metadata, type, property, this.primitiveOptions).getContent());
     }
     writeOK(this.responseContentType.toContentTypeString());
     close();
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException {
     visitor.visit(this);
   }

@@ -25,7 +25,7 @@ import java.util.Collections;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 
 public class StreamResponse extends ServiceResponse {
@@ -47,7 +47,7 @@ public class StreamResponse extends ServiceResponse {
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataTranslatedException,
+  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
       ODataApplicationException {
     visitor.visit(this);
   }

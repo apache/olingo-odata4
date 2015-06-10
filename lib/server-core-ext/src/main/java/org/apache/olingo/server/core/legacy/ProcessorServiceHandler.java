@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -97,24 +97,24 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void readMetadata(MetadataRequest request, MetadataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     selectProcessor(MetadataProcessor.class).readMetadata(request.getODataRequest(),
         response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
   }
 
   @Override
   public void readServiceDocument(ServiceDocumentRequest request, ServiceDocumentResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     selectProcessor(ServiceDocumentProcessor.class).readServiceDocument(request.getODataRequest(),
         response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
   }
 
   @Override
   public <T extends ServiceResponse> void read(final DataRequest request, final T response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     response.accepts(new ServiceResponseVisior() {
       @Override
-      public void visit(CountResponse response) throws ODataTranslatedException, ODataApplicationException {
+      public void visit(CountResponse response) throws ODataLibraryException, ODataApplicationException {
         if (request.getUriResourceProperty() != null) {
           EdmProperty edmProperty = request.getUriResourceProperty().getProperty();
           if (edmProperty.isPrimitive()) {
@@ -131,14 +131,14 @@ public class ProcessorServiceHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(EntityResponse response) throws ODataTranslatedException,
+      public void visit(EntityResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityProcessor.class).readEntity(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
       }
 
       @Override
-      public void visit(PrimitiveValueResponse response) throws ODataTranslatedException,
+      public void visit(PrimitiveValueResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(PrimitiveValueProcessor.class).readPrimitiveValue(
             request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
@@ -146,7 +146,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(PropertyResponse response) throws ODataTranslatedException,
+      public void visit(PropertyResponse response) throws ODataLibraryException,
           ODataApplicationException {
         EdmProperty edmProperty = request.getUriResourceProperty().getProperty();
         if (edmProperty.isPrimitive()) {
@@ -176,13 +176,13 @@ public class ProcessorServiceHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(StreamResponse response) throws ODataTranslatedException,
+      public void visit(StreamResponse response) throws ODataLibraryException,
           ODataApplicationException {
         response.writeServerError(true);
       }
 
       @Override
-      public void visit(EntitySetResponse response) throws ODataTranslatedException,
+      public void visit(EntitySetResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityCollectionProcessor.class).readEntityCollection(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
@@ -192,7 +192,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void createEntity(DataRequest request, Entity entity, EntityResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     if (request.getEntitySet().getEntityType().hasStream()) {
       selectProcessor(MediaEntityProcessor.class).createMediaEntity(
           request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
@@ -206,7 +206,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void updateEntity(DataRequest request, Entity entity, boolean merge, String entityETag,
-      EntityResponse response) throws ODataTranslatedException, ODataApplicationException {
+      EntityResponse response) throws ODataLibraryException, ODataApplicationException {
     if (request.getEntitySet().getEntityType().hasStream()) {
       selectProcessor(MediaEntityProcessor.class).updateMediaEntity(
           request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
@@ -220,14 +220,14 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void deleteEntity(DataRequest request, String entityETag, EntityResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     selectProcessor(EntityProcessor.class).deleteEntity(request.getODataRequest(),
         response.getODataResponse(), request.getUriInfo());
   }
 
   @Override
   public void updateProperty(DataRequest request, Property property, boolean merge,
-      String entityETag, PropertyResponse response) throws ODataTranslatedException,
+      String entityETag, PropertyResponse response) throws ODataLibraryException,
       ODataApplicationException {
     if (property.isPrimitive()) {
       if (property.isCollection()) {
@@ -254,7 +254,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void upsertStreamProperty(DataRequest request, String entityETag,
-      InputStream streamContent, NoContentResponse response) throws ODataTranslatedException,
+      InputStream streamContent, NoContentResponse response) throws ODataLibraryException,
       ODataApplicationException {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
@@ -262,7 +262,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public <T extends ServiceResponse> void invoke(final FunctionRequest request, HttpMethod method,
-      final T response) throws ODataTranslatedException, ODataApplicationException {
+      final T response) throws ODataLibraryException, ODataApplicationException {
     if (method != HttpMethod.GET) {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
           ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
@@ -270,14 +270,14 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
     response.accepts(new ServiceResponseVisior() {
       @Override
-      public void visit(EntityResponse response) throws ODataTranslatedException,
+      public void visit(EntityResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityProcessor.class).readEntity(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
       }
 
       @Override
-      public void visit(PropertyResponse response) throws ODataTranslatedException,
+      public void visit(PropertyResponse response) throws ODataLibraryException,
           ODataApplicationException {
         if (request.isReturnTypePrimitive()) {
           if(request.isCollection()) {
@@ -304,7 +304,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
         }
       }
       @Override
-      public void visit(EntitySetResponse response) throws ODataTranslatedException,
+      public void visit(EntitySetResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityCollectionProcessor.class).readEntityCollection(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
@@ -314,7 +314,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public <T extends ServiceResponse> void invoke(final ActionRequest request, String eTag, final T response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     final HttpMethod method = request.getODataRequest().getMethod();
     if (method != HttpMethod.POST) {
       throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
@@ -322,14 +322,14 @@ public class ProcessorServiceHandler implements ServiceHandler {
     }
     response.accepts(new ServiceResponseVisior() {
       @Override
-      public void visit(EntityResponse response) throws ODataTranslatedException,
+      public void visit(EntityResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityProcessor.class).readEntity(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
       }
 
       @Override
-      public void visit(PropertyResponse response) throws ODataTranslatedException,
+      public void visit(PropertyResponse response) throws ODataLibraryException,
           ODataApplicationException {
         if (request.isReturnTypePrimitive()) {
           if(request.isCollection()) {
@@ -356,7 +356,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
         }
       }
       @Override
-      public void visit(EntitySetResponse response) throws ODataTranslatedException,
+      public void visit(EntitySetResponse response) throws ODataLibraryException,
           ODataApplicationException {
         selectProcessor(EntityCollectionProcessor.class).readEntityCollection(request.getODataRequest(),
             response.getODataResponse(), request.getUriInfo(), request.getResponseContentType());
@@ -367,7 +367,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void readMediaStream(MediaRequest request, StreamResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     selectProcessor(MediaEntityProcessor.class).readMediaEntity(
         request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
         request.getResponseContentType());
@@ -375,7 +375,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void upsertMediaStream(MediaRequest request, String entityETag, InputStream mediaContent,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     selectProcessor(MediaEntityProcessor.class).updateMediaEntity(
         request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
         request.getRequestContentType(), request.getResponseContentType());
@@ -383,14 +383,14 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void anyUnsupported(ODataRequest request, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
   }
 
   @Override
   public void addReference(DataRequest request, String entityETag, URI referenceId,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
       selectProcessor(ReferenceProcessor.class).createReference(
           request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
           request.getResponseContentType());
@@ -398,7 +398,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void updateReference(DataRequest request, String entityETag, URI referenceId,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     selectProcessor(ReferenceProcessor.class).updateReference(
         request.getODataRequest(), response.getODataResponse(), request.getUriInfo(),
         request.getResponseContentType());
@@ -406,7 +406,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void deleteReference(DataRequest request, URI deleteId, String entityETag,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     selectProcessor(ReferenceProcessor.class).deleteReference(
         request.getODataRequest(), response.getODataResponse(), request.getUriInfo());
   }
@@ -426,7 +426,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
 
   @Override
   public void crossJoin(DataRequest dataRequest, List<String> entitySetNames, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
   }

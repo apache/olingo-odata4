@@ -20,14 +20,14 @@ package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
-import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
@@ -42,10 +42,10 @@ public class BatchHandler {
   }
 
   public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
-      throws DeserializerException, SerializerException {
+      throws ODataApplicationException, ODataLibraryException {
     validateRequest(request);
 
-    final BatchFacade operation = new BatchFascadeImpl(oDataHandler, request, batchProcessor, isStrict);
+    final BatchFacade operation = new BatchFacadeImpl(oDataHandler, request, batchProcessor, isStrict);
     batchProcessor.processBatch(operation, request, response);
   }
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -87,10 +87,9 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyString")
             .build());
     ODataRetrieveResponse<ClientProperty> response = request.execute();
-    String expectedResult =
-        "{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\"," +
-            "\"value\":\"Test String1\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
+    String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
+    assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\","));
+    assertTrue(actualResult.endsWith("\"value\":\"Test String1\"}"));
   }
 
   @Test
@@ -167,10 +166,9 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyComp")
             .build());
     ODataRetrieveResponse<ClientProperty> response = request.execute();
-    String expectedResult =
-        "{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\"," +
-            "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}";
-    assertEquals(expectedResult, IOUtils.toString(response.getRawResponse(), "UTF-8"));
+    String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
+    assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\","));
+    assertTrue(actualResult.endsWith("\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}"));
   }
 
   @Test

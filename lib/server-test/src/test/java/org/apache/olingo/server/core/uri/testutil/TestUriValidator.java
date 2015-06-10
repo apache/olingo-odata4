@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
@@ -49,7 +49,7 @@ public class TestUriValidator implements TestValidator {
   private Edm edm;
 
   private UriInfo uriInfo;
-  private ODataTranslatedException exception;
+  private ODataLibraryException exception;
 
   // Setup
   public TestUriValidator setEdm(final Edm edm) {

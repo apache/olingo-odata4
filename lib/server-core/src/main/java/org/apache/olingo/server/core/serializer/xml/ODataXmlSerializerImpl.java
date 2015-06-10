@@ -26,7 +26,6 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -53,7 +52,8 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   private static final Logger log = LoggerFactory.getLogger(ODataXmlSerializerImpl.class);
 
   @Override
-  public SerializerResultImpl serviceDocument(final Edm edm, final String serviceRoot) throws SerializerException {
+  public SerializerResultImpl serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
+      throws SerializerException {
     throw new SerializerException("Service Document not implemented for XML format",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
@@ -110,8 +110,8 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult primitive(final EdmPrimitiveType type, final Property property,
-      final PrimitiveSerializerOptions options) throws SerializerException {
+  public SerializerResult primitive(final ServiceMetadata metadata, final EdmPrimitiveType type,
+      final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
@@ -124,8 +124,8 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult primitiveCollection(final EdmPrimitiveType type, final Property property,
-      final PrimitiveSerializerOptions options) throws SerializerException {
+  public SerializerResult primitiveCollection(final ServiceMetadata metadata, final EdmPrimitiveType type,
+      final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

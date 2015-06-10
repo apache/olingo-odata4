@@ -213,7 +213,7 @@ public class MetadataDocumentXmlSerializerTest {
   @Test
   public void aliasTest() throws Exception {
     CsdlEdmProvider provider = new LocalProvider();
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList());
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList(), null);
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
     assertNotNull(metadata);

@@ -1063,7 +1063,22 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     UriInfoImpl crossJoin = new UriInfoImpl().setKind(UriInfoKind.crossjoin);
 
     for (OdataIdentifierContext obj : ctx.vlODI) {
-      crossJoin.addEntitySetName(obj.getText());
+      String odi = obj.getText();            
+      crossJoin.addEntitySetName(odi);
+      
+      EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
+      if (edmEntitySet == null) {
+        throw wrap(new UriParserSemanticException("Expected EntityTypeName",
+            UriParserSemanticException.MessageKeys.UNKNOWN_PART, odi));        
+      }
+      
+      EdmEntityType type = edmEntitySet.getEntityType();
+      if (type == null) {
+        throw wrap(new UriParserSemanticException("Expected EntityTypeName",
+            UriParserSemanticException.MessageKeys.UNKNOWN_ENTITY_TYPE, odi));
+      }
+      // contextUriInfo = uriInfo;
+      context.contextTypes.push(new TypeInformation(type, true));    
     }
 
     context.contextUriInfo = crossJoin;

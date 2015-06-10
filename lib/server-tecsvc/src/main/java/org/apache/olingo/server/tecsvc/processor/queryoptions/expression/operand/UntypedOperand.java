@@ -24,7 +24,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class UntypedOperand extends VisitorOperand {
 
@@ -43,8 +42,8 @@ public class UntypedOperand extends VisitorOperand {
     Object newValue = null;
 
     // First try the null literal
-    if ((newValue = tryCast(literal, EdmNull.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmNull.getInstance());
+    if ((newValue = tryCast(literal, primNull)) != null) {
+      return new TypedOperand(newValue, primNull);
     }
 
     // Than try the given types
@@ -65,8 +64,8 @@ public class UntypedOperand extends VisitorOperand {
     Object newValue = null;
 
     // Null literal
-    if ((newValue = tryCast(literal, EdmNull.getInstance())) != null) {
-      return new TypedOperand(newValue, EdmNull.getInstance());
+    if (primNull.validate(literal, null, null, null, null, null)) {
+      return new TypedOperand(newValue, primNull);
     }
 
     // String

@@ -26,6 +26,8 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.server.api.ServiceMetadata;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -36,32 +38,37 @@ public class ServiceDocumentJsonSerializer {
   public static final String SINGLETON = "Singleton";
   public static final String SERVICE_DOCUMENT = "ServiceDocument";
 
-  private final Edm edm;
+  private final ServiceMetadata metadata;
   private final String serviceRoot;
+  private final ODataFormat format;
 
-  public ServiceDocumentJsonSerializer(final Edm edm, final String serviceRoot) {
-    this.edm = edm;
+  public ServiceDocumentJsonSerializer(final ServiceMetadata metadata, final String serviceRoot,
+      final ODataFormat format) {
+    this.metadata = metadata;
     this.serviceRoot = serviceRoot;
+    this.format = format;
   }
 
   public void writeServiceDocument(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
 
-    Object metadataUri;
+    final String metadataUri =
+        (serviceRoot == null ? "" :
+            serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
+        + Constants.METADATA;
+    gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
 
-    if (serviceRoot == null) {
-      metadataUri = Constants.METADATA;
-    } else {
-      if (serviceRoot.endsWith("/")) {
-        metadataUri = serviceRoot + Constants.METADATA;
-      } else {
-        metadataUri = serviceRoot + "/" + Constants.METADATA;
-      }
+    if (format != ODataFormat.JSON_NO_METADATA
+        && metadata != null
+        && metadata.getServiceMetadataETagSupport() != null
+        && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
+      gen.writeStringField(Constants.JSON_METADATA_ETAG,
+          metadata.getServiceMetadataETagSupport().getMetadataETag());
     }
 
-    gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
     gen.writeArrayFieldStart(Constants.VALUE);
 
+    final Edm edm = metadata.getEdm();
     writeEntitySets(gen, edm);
     writeFunctionImports(gen, edm);
     writeSingletons(gen, edm);

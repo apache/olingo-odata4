@@ -21,92 +21,28 @@ package org.apache.olingo.server.core.serializer.json;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.junit.Before;
+import org.apache.olingo.server.tecsvc.MetadataETagSupport;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class ServiceDocumentTest {
 
-  private Edm edm;
-
-  @Before
-  public void before() {
-
-    EdmEntitySet edmEntitySet1 = mock(EdmEntitySet.class);
-    when(edmEntitySet1.getName()).thenReturn("entitySetName1");
-    when(edmEntitySet1.isIncludeInServiceDocument()).thenReturn(true);
-
-    EdmEntitySet edmEntitySet2 = mock(EdmEntitySet.class);
-    when(edmEntitySet2.getName()).thenReturn("entitySetName2");
-    when(edmEntitySet2.isIncludeInServiceDocument()).thenReturn(true);
-
-    EdmEntitySet edmEntitySet3 = mock(EdmEntitySet.class);
-    when(edmEntitySet3.getName()).thenReturn("entitySetName3");
-    when(edmEntitySet3.isIncludeInServiceDocument()).thenReturn(false);
-
-    List<EdmEntitySet> entitySets = new ArrayList<EdmEntitySet>();
-    entitySets.add(edmEntitySet1);
-    entitySets.add(edmEntitySet2);
-    entitySets.add(edmEntitySet3);
-
-    EdmFunctionImport functionImport1 = mock(EdmFunctionImport.class);
-    when(functionImport1.getName()).thenReturn("functionImport1");
-    when(functionImport1.isIncludeInServiceDocument()).thenReturn(true);
-
-    EdmFunctionImport functionImport2 = mock(EdmFunctionImport.class);
-    when(functionImport2.getName()).thenReturn("functionImport2");
-    when(functionImport2.isIncludeInServiceDocument()).thenReturn(true);
-
-    EdmFunctionImport functionImport3 = mock(EdmFunctionImport.class);
-    when(functionImport3.getName()).thenReturn("functionImport3");
-    when(functionImport3.isIncludeInServiceDocument()).thenReturn(false);
-
-    List<EdmFunctionImport> functionImports = new ArrayList<EdmFunctionImport>();
-    functionImports.add(functionImport1);
-    functionImports.add(functionImport2);
-    functionImports.add(functionImport3);
-
-    EdmSingleton singleton1 = mock(EdmSingleton.class);
-    when(singleton1.getName()).thenReturn("singleton1");
-
-    EdmSingleton singleton2 = mock(EdmSingleton.class);
-    when(singleton2.getName()).thenReturn("singleton2");
-
-    EdmSingleton singleton3 = mock(EdmSingleton.class);
-    when(singleton3.getName()).thenReturn("singleton3");
-
-    List<EdmSingleton> singletons = new ArrayList<EdmSingleton>();
-    singletons.add(singleton1);
-    singletons.add(singleton2);
-    singletons.add(singleton3);
-
-    EdmEntityContainer edmEntityContainer = mock(EdmEntityContainer.class);
-    when(edmEntityContainer.getEntitySets()).thenReturn(entitySets);
-    when(edmEntityContainer.getFunctionImports()).thenReturn(functionImports);
-    when(edmEntityContainer.getSingletons()).thenReturn(singletons);
-
-    edm = mock(Edm.class);
-    when(edm.getEntityContainer(null)).thenReturn(edmEntityContainer);
-  }
+  private static final ServiceMetadata metadata = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
 
   @Test
   public void writeServiceDocumentJson() throws Exception {
-    String serviceRoot = "http://localhost:8080/odata.svc";
+    final String serviceRoot = "http://localhost:8080/odata.svc";
 
     OData server = OData.newInstance();
     assertNotNull(server);
@@ -114,20 +50,26 @@ public class ServiceDocumentTest {
     ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
     assertNotNull(serializer);
 
-    InputStream result = serializer.serviceDocument(edm, serviceRoot).getContent();
+    InputStream result = serializer.serviceDocument(metadata, serviceRoot).getContent();
     assertNotNull(result);
-    String jsonString = IOUtils.toString(result);
+    final String jsonString = IOUtils.toString(result);
 
-    assertTrue(jsonString.contains("entitySetName1"));
-    assertTrue(jsonString.contains("entitySetName2"));
-    assertFalse(jsonString.contains("entitySetName3"));
+    assertTrue(jsonString.contains(metadata.getServiceMetadataETagSupport().getMetadataETag().replace("\"", "\\\"")));
 
-    assertTrue(jsonString.contains("functionImport1"));
-    assertTrue(jsonString.contains("functionImport2"));
-    assertFalse(jsonString.contains("functionImport3"));
+    assertTrue(jsonString.contains("ESAllPrim"));
+    assertTrue(jsonString.contains("ESCollAllPrim"));
+    assertTrue(jsonString.contains("ESKeyNavCont"));
+    assertFalse(jsonString.contains("ESInvisible"));
 
-    assertTrue(jsonString.contains("singleton1"));
-    assertTrue(jsonString.contains("singleton2"));
-    assertTrue(jsonString.contains("singleton3"));
+    assertTrue(jsonString.contains("FINRTInt16"));
+    assertTrue(jsonString.contains("FINRTCollETMixPrimCollCompTwoParam"));
+    assertTrue(jsonString.contains("FICRTCollESKeyNavContParam"));
+    assertFalse(jsonString.contains("FINInvisibleRTInt16"));
+    assertTrue(jsonString.contains("FunctionImport"));
+
+    assertTrue(jsonString.contains("SI"));
+    assertTrue(jsonString.contains("SINav"));
+    assertTrue(jsonString.contains("SIMedia"));
+    assertTrue(jsonString.contains("Singleton"));
   }
 }

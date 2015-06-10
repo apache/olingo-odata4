@@ -26,14 +26,16 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.CustomETagSupport;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.etag.CustomETagSupport;
+import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.processor.DefaultProcessor;
 import org.apache.olingo.server.api.processor.ErrorProcessor;
 import org.apache.olingo.server.api.processor.Processor;
@@ -93,10 +95,10 @@ public class ODataHandler {
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
-    } catch (PreconditionRequiredException e) {
+    } catch (PreconditionException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
-    }catch (ODataHandlerException e) {
+    } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError);
     } catch (ODataApplicationException e) {
@@ -110,8 +112,7 @@ public class ODataHandler {
   }
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
-      throws ODataHandlerException, UriParserException, UriValidationException, ContentNegotiatorException,
-      ODataApplicationException, SerializerException, DeserializerException, PreconditionRequiredException {
+      throws ODataApplicationException, ODataLibraryException {
     validateODataVersion(request, response);
 
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
@@ -175,7 +176,7 @@ public class ODataHandler {
   public void register(final CustomContentTypeSupport customContentTypeSupport) {
     this.customContentTypeSupport = customContentTypeSupport;
   }
-  
+
   public CustomContentTypeSupport getCustomContentTypeSupport() {
     return customContentTypeSupport;
   }

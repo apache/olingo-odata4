@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,10 +20,9 @@ package org.apache.olingo.server.api.processor;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 
 /**
@@ -38,10 +37,10 @@ public interface MediaEntityProcessor extends EntityProcessor {
    * @param uriInfo information of a parsed OData URI
    * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws SerializerException if serialization failed
+   * @throws ODataLibraryException
    */
   void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-      throws ODataApplicationException, SerializerException;
+      throws ODataApplicationException, ODataLibraryException;
 
   /**
    * Creates an entity with send media data in the persistence and puts content, status and Location into the response.
@@ -51,12 +50,10 @@ public interface MediaEntityProcessor extends EntityProcessor {
    * @param requestFormat content type of body sent with request
    * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException if deserialization failed
-   * @throws SerializerException if serialization failed
+   * @throws ODataLibraryException
    */
   void createMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestFormat, ContentType responseFormat)
-      throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException;
 
   /**
    * Updates entity media data in the persistence and puts content and status into the response.
@@ -66,10 +63,8 @@ public interface MediaEntityProcessor extends EntityProcessor {
    * @param requestFormat content type of body sent with request
    * @param responseFormat requested content type after content negotiation
    * @throws ODataApplicationException if the service implementation encounters a failure
-   * @throws DeserializerException if deserialization failed
-   * @throws SerializerException if serialization failed
+   * @throws ODataLibraryException
    */
   void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-      ContentType requestFormat, ContentType responseFormat)
-          throws ODataApplicationException, DeserializerException, SerializerException;
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException;
 }

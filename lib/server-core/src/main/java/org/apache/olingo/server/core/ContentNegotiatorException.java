@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 
-public class ContentNegotiatorException extends ODataTranslatedException {
+public class ContentNegotiatorException extends ODataLibraryException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {

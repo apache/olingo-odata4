@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.core.etag;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * </pre>
  * <p>Values with illegal syntax do not contribute to the result but no exception is thrown.</p>
  */
-public class EtagParser {
+public class ETagParser {
 
   private static final Pattern ETAG = Pattern.compile("\\s*(,\\s*)+|((?:W/)?\"[!#-~\\x80-\\xFF]*\")");
 

@@ -16,20 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api;
+package org.apache.olingo.server.core.etag;
 
 import java.util.Collection;
 
 /**
  * Information about the values of an ETag-relevant HTTP header.
  */
-public class EtagInformation {
+public class ETagInformation {
   private final boolean all;
-  private final Collection<String> etags;
+  private final Collection<String> eTags;
 
-  public EtagInformation(final boolean all, final Collection<String> etags) {
+  public ETagInformation(final boolean all, final Collection<String> eTags) {
     this.all = all;
-    this.etags = etags;
+    this.eTags = eTags;
   }
 
   /**
@@ -43,8 +43,8 @@ public class EtagInformation {
    * Gets the collection of ETag values found.
    * It is empty if {@link #isAll()} returns <code>true</code>.
    */
-  public Collection<String> getEtags() {
-    return etags;
+  public Collection<String> getETags() {
+    return eTags;
   }
 
   /**
@@ -53,17 +53,17 @@ public class EtagInformation {
    * <a href="https://www.ietf.org/rfc/rfc7232.txt">RFC 7232</a>, section 2.3.2.</p>
    * <p>If the given value is <code>null</code>, or if this ETag information
    * does not contain anything, the result is <code>false</code>.</p>
-   * @param etag the ETag value to match
+   * @param eTag the ETag value to match
    * @return a boolean match result
    */
-  public boolean isMatchedBy(final String etag) {
-    if (etag == null) {
+  public boolean isMatchedBy(final String eTag) {
+    if (eTag == null) {
       return false;
     } else if (all) {
       return true;
     } else {
-      for (final String candidate : etags) {
-        if ((etag.startsWith("W/") ? etag.substring(2) : etag)
+      for (final String candidate : eTags) {
+        if ((eTag.startsWith("W/") ? eTag.substring(2) : eTag)
             .equals(candidate.startsWith("W/") ? candidate.substring(2) : candidate)) {
           return true;
         }

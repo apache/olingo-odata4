@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -74,7 +74,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   }
 
   public void execute(ODataRequest odRequest, ODataResponse odResponse)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     UriInfo uriInfo = new Parser().parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null,
         this.metadata.getEdm());
@@ -93,7 +93,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
 
         @Override
         public void execute(ServiceHandler handler, ODataResponse response)
-            throws ODataTranslatedException, ODataApplicationException {
+            throws ODataLibraryException, ODataApplicationException {
           handler.anyUnsupported(getODataRequest(), response);
         }
       };

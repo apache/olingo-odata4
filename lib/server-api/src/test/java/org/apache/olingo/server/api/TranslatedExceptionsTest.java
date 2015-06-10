@@ -25,14 +25,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Locale;
 
-import org.apache.olingo.server.api.ODataTranslatedException.ODataErrorMessage;
+import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
 import org.junit.Test;
 
 public class TranslatedExceptionsTest {
 
   private static final String DEV = "devMessage";
 
-  private static class TestException extends ODataTranslatedException {
+  private static class TestException extends ODataLibraryException {
     private static final long serialVersionUID = -7199975861656921724L;
 
     public static enum Keys implements MessageKey {

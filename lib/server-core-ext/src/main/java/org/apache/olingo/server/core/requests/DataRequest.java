@@ -48,7 +48,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmStream;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
@@ -104,7 +104,7 @@ public class DataRequest extends ServiceRequest {
     public ContextURL getContextURL(OData odata) throws SerializerException;
 
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException;
+        throws ODataLibraryException, ODataApplicationException;
   }
 
   public DataRequest(OData odata, ServiceMetadata serviceMetadata) {
@@ -234,7 +234,7 @@ public class DataRequest extends ServiceRequest {
 
   @Override
   public void execute(ServiceHandler handler, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     if (!this.type.allowedMethod()) {
       methodNotAllowed();
@@ -290,7 +290,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
 
       EntityResponse entityResponse = EntityResponse.getInstance(DataRequest.this,
           getContextURL(odata), false, response);
@@ -364,7 +364,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
       handler.read(DataRequest.this, CountResponse.getInstance(DataRequest.this, response));
     }
 
@@ -417,7 +417,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
       if (isGET()) {
         if (isCollection()) {
           handler.read(DataRequest.this,
@@ -513,7 +513,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
 
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
 
@@ -608,7 +608,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
       EdmProperty edmProperty = getUriResourceProperty().getProperty();
       if (isGET()) {
         handler.read(DataRequest.this, PrimitiveValueResponse.getInstance(DataRequest.this,
@@ -661,7 +661,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
       handler.read(DataRequest.this,
           EntityResponse.getInstance(DataRequest.this, getContextURL(odata), false, response));
     }
@@ -687,7 +687,7 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public void execute(ServiceHandler handler, ODataResponse response)
-        throws ODataTranslatedException, ODataApplicationException {
+        throws ODataLibraryException, ODataApplicationException {
       handler.crossJoin(DataRequest.this, this.entitySetNames, response);
     }
 

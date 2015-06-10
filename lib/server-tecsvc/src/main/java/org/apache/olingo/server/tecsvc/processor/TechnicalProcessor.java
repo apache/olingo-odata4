@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.EtagInformation;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -111,7 +109,7 @@ public abstract class TechnicalProcessor implements Processor {
 
     return entitySet;
   }
-  
+
   /**
    * Reads an entity as specified in the resource path, including navigation.
    * If there is navigation and the navigation ends on an entity collection,
@@ -120,13 +118,13 @@ public abstract class TechnicalProcessor implements Processor {
   protected Entity readEntity(final UriInfoResource uriInfo) throws ODataApplicationException {
     return readEntity(uriInfo, false);
   }
-  
+
   /**
    * If ignoreLastNavigation is set to false see {@link #readEntity(UriInfoResource)}
    * otherwise returns the second last entity (Ignores the last navigation) 
    * If no such entity exists throws an ODataApplicationException
    */
-  protected Entity readEntity(final UriInfoResource uriInfo, final boolean ignoreLastNavigation) 
+  protected Entity readEntity(final UriInfoResource uriInfo, final boolean ignoreLastNavigation)
       throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
 
@@ -157,19 +155,19 @@ public abstract class TechnicalProcessor implements Processor {
     if (entity == null) {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     }
-    
+
     int readAtMostNavigations = resourcePaths.size();
-    if(ignoreLastNavigation) {
+    if (ignoreLastNavigation) {
       readAtMostNavigations = 0;
-      for(int i = 1; i <resourcePaths.size(); i++) {
-        if(resourcePaths.get(i) instanceof UriResourceNavigation) {
+      for (int i = 1; i < resourcePaths.size(); i++) {
+        if (resourcePaths.get(i) instanceof UriResourceNavigation) {
           readAtMostNavigations++;
         } else {
           break;
         }
       }
     }
-    
+
     int navigationCount = 0;
     while (++navigationCount < readAtMostNavigations
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
@@ -207,7 +205,7 @@ public abstract class TechnicalProcessor implements Processor {
       }
     }
   }
-  
+
   protected UriResourceNavigation getLastNavigation(final UriInfoResource uriInfo) {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     int navigationCount = 1;
@@ -255,36 +253,6 @@ public abstract class TechnicalProcessor implements Processor {
     if (requestFormat == null) {
       throw new ODataApplicationException("The content type has not been set in the request.",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
-    }
-  }
-
-  protected void checkReadPreconditions(final String eTag,
-      final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
-          throws ODataApplicationException {
-    if (eTag != null) {
-      final EtagInformation ifMatch = odata.createEtagInformation(ifMatchHeaders);
-      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getEtags().isEmpty()) {
-        throw new ODataApplicationException("The If-Match precondition is not fulfilled.",
-            HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.ROOT);
-      }
-      if (odata.createEtagInformation(ifNoneMatchHeaders).isMatchedBy(eTag)) {
-        throw new ODataApplicationException("The entity has not been modified.",
-            HttpStatusCode.NOT_MODIFIED.getStatusCode(), Locale.ROOT);
-      }
-    }
-  }
-
-  protected void checkChangePreconditions(final String eTag,
-      final Collection<String> ifMatchHeaders, final Collection<String> ifNoneMatchHeaders)
-          throws ODataApplicationException {
-    if (eTag != null) {
-      final EtagInformation ifMatch = odata.createEtagInformation(ifMatchHeaders);
-      final EtagInformation ifNoneMatch = odata.createEtagInformation(ifNoneMatchHeaders);
-      if (!ifMatch.isMatchedBy(eTag) && !ifMatch.getEtags().isEmpty()
-          || ifNoneMatch.isMatchedBy(eTag)) {
-        throw new ODataApplicationException("The preconditions are not fulfilled.",
-            HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.ROOT);
-      }
     }
   }
 }

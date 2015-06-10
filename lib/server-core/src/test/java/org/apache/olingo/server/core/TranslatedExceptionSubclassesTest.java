@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.UUID;
 
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
@@ -59,26 +59,26 @@ public class TranslatedExceptionSubclassesTest {
     testException(UriParserSyntaxException.class, UriParserSyntaxException.MessageKeys.values());
   }
 
-  private void testException(final Class<? extends ODataTranslatedException> clazz,
-      final ODataTranslatedException.MessageKey[] messageKeys) throws Exception {
+  private void testException(final Class<? extends ODataLibraryException> clazz,
+      final ODataLibraryException.MessageKey[] messageKeys) throws Exception {
 
-    for (ODataTranslatedException.MessageKey messageKey : messageKeys) {
+    for (ODataLibraryException.MessageKey messageKey : messageKeys) {
       String propKey = clazz.getSimpleName() + "." + messageKey.toString();
       String value = properties.getProperty(propKey);
       Assert.assertNotNull("No value found for message key '" + propKey + "'", value);
       //
       int paraCount = countParameters(value);
-      Constructor<? extends ODataTranslatedException> ctor =
-          clazz.getConstructor(String.class, ODataTranslatedException.MessageKey.class, String[].class);
+      Constructor<? extends ODataLibraryException> ctor =
+          clazz.getConstructor(String.class, ODataLibraryException.MessageKey.class, String[].class);
       String[] paras = new String[paraCount];
       for (int i = 0; i < paras.length; i++) {
         paras[i] = "470" + i;
       }
       String developerMessage = UUID.randomUUID().toString();
-      ODataTranslatedException e = ctor.newInstance(developerMessage, messageKey, paras);
+      ODataLibraryException e = ctor.newInstance(developerMessage, messageKey, paras);
       try {
         throw e;
-      } catch (ODataTranslatedException translatedException) {
+      } catch (ODataLibraryException translatedException) {
         Formatter formatter = new Formatter();
         String formattedValue = formatter.format(value, (Object[]) paras).toString();
         formatter.close();

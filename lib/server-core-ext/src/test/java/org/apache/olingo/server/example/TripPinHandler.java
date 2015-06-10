@@ -42,7 +42,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataTranslatedException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -82,13 +82,13 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void readMetadata(MetadataRequest request, MetadataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     response.writeMetadata();
   }
 
   @Override
   public void readServiceDocument(ServiceDocumentRequest request, ServiceDocumentResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     response.writeServiceDocument(request.getODataRequest().getRawBaseUri());
   }
 
@@ -164,18 +164,18 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public <T extends ServiceResponse> void read(final DataRequest request, final T response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     final EntityDetails details = process(request);
 
     response.accepts(new ServiceResponseVisior() {
       @Override
-      public void visit(CountResponse response) throws ODataTranslatedException, ODataApplicationException {
+      public void visit(CountResponse response) throws ODataLibraryException, ODataApplicationException {
         response.writeCount(details.entitySet.getCount());
       }
 
       @Override
-      public void visit(PrimitiveValueResponse response) throws ODataTranslatedException,
+      public void visit(PrimitiveValueResponse response) throws ODataLibraryException,
           ODataApplicationException {
         EdmProperty edmProperty = request.getUriResourceProperty().getProperty();
         Property property = details.entity.getProperty(edmProperty.getName());
@@ -183,7 +183,7 @@ public class TripPinHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(PropertyResponse response) throws ODataTranslatedException,
+      public void visit(PropertyResponse response) throws ODataLibraryException,
           ODataApplicationException {
         EdmProperty edmProperty = request.getUriResourceProperty().getProperty();
         Property property = details.entity.getProperty(edmProperty.getName());
@@ -191,7 +191,7 @@ public class TripPinHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(StreamResponse response) throws ODataTranslatedException,
+      public void visit(StreamResponse response) throws ODataLibraryException,
           ODataApplicationException {
         // stream property response
         response.writeStreamResponse(new ByteArrayInputStream("dummy".getBytes()),
@@ -199,7 +199,7 @@ public class TripPinHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(EntitySetResponse response) throws ODataTranslatedException,
+      public void visit(EntitySetResponse response) throws ODataLibraryException,
           ODataApplicationException {
         if (request.getPreference("odata.maxpagesize") != null) {
           response.writeHeader("Preference-Applied", "odata.maxpagesize="+request.getPreference("odata.maxpagesize"));
@@ -212,7 +212,7 @@ public class TripPinHandler implements ServiceHandler {
       }
 
       @Override
-      public void visit(EntityResponse response) throws ODataTranslatedException,
+      public void visit(EntityResponse response) throws ODataLibraryException,
           ODataApplicationException {
         if (details.entity == null && !request.getNavigations().isEmpty()) {
           response.writeNoContent(true);
@@ -233,7 +233,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void createEntity(DataRequest request, Entity entity, EntityResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     EdmEntitySet edmEntitySet = request.getEntitySet();
 
     Entity created = this.dataModel.createEntity(edmEntitySet, entity, request.getODataRequest().getRawBaseUri());
@@ -274,7 +274,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void updateEntity(DataRequest request, Entity entity, boolean merge, String eTag,
-      EntityResponse response) throws ODataTranslatedException, ODataApplicationException {
+      EntityResponse response) throws ODataLibraryException, ODataApplicationException {
     EdmEntitySet edmEntitySet = request.getEntitySet();
     
     Entity currentEntity = this.dataModel.getEntity(edmEntitySet.getName(), request.getKeyPredicates());
@@ -296,7 +296,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void deleteEntity(DataRequest request, String eTag, EntityResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     EdmEntitySet edmEntitySet = request.getEntitySet();
     Entity entity = this.dataModel.getEntity(edmEntitySet.getName(), request.getKeyPredicates());
@@ -317,7 +317,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void updateProperty(DataRequest request, final Property property, boolean merge,
-      String entityETag, PropertyResponse response) throws ODataTranslatedException,
+      String entityETag, PropertyResponse response) throws ODataLibraryException,
       ODataApplicationException {
 
     EdmEntitySet edmEntitySet = request.getEntitySet();
@@ -344,7 +344,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public <T extends ServiceResponse> void invoke(FunctionRequest request, HttpMethod method,
-      T response) throws ODataTranslatedException, ODataApplicationException {
+      T response) throws ODataLibraryException, ODataApplicationException {
     EdmFunction function = request.getFunction();
     if (function.getName().equals("GetNearestAirport")) {
 
@@ -357,7 +357,7 @@ public class TripPinHandler implements ServiceHandler {
 
       response.accepts(new ServiceResponseVisior() {
         @Override
-        public void visit(EntityResponse response) throws ODataTranslatedException,
+        public void visit(EntityResponse response) throws ODataLibraryException,
             ODataApplicationException {
           response.writeReadEntity(type, entity);
         }
@@ -367,14 +367,14 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public <T extends ServiceResponse> void invoke(ActionRequest request, String eTag, T response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     EdmAction action = request.getAction();
     if (action.getName().equals("ResetDataSource")) {
       try {
         this.dataModel.loadData();
         response.accepts(new ServiceResponseVisior() {
           @Override
-          public void visit(NoContentResponse response) throws ODataTranslatedException,
+          public void visit(NoContentResponse response) throws ODataLibraryException,
               ODataApplicationException {
             response.writeNoContent();
           }
@@ -389,7 +389,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void readMediaStream(MediaRequest request, StreamResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
 
     final EdmEntitySet edmEntitySet = request.getEntitySet();
     List<UriParameter> keys = request.getKeyPredicates();
@@ -401,7 +401,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void upsertMediaStream(MediaRequest request, String entityETag, InputStream mediaContent,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     final EdmEntitySet edmEntitySet = request.getEntitySet();
     List<UriParameter> keys = request.getKeyPredicates();
     Entity entity = this.dataModel.getEntity(edmEntitySet.getName(), keys);
@@ -425,7 +425,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void upsertStreamProperty(DataRequest request, String entityETag, InputStream streamContent,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     final EdmEntitySet edmEntitySet = request.getEntitySet();
     List<UriParameter> keys = request.getKeyPredicates();
     Entity entity = this.dataModel.getEntity(edmEntitySet.getName(), keys);
@@ -451,7 +451,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void addReference(DataRequest request, String entityETag, URI referenceId,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
 
     final EntityDetails details = process(request);
 
@@ -468,7 +468,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void updateReference(DataRequest request, String entityETag, URI updateId,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     // this single valued navigation.
     boolean updated = false;
     try {
@@ -493,7 +493,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void deleteReference(DataRequest request, URI deleteId, String entityETag,
-      NoContentResponse response) throws ODataTranslatedException, ODataApplicationException {
+      NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     boolean removed = false;
     if (deleteId != null) {
       try {
@@ -523,7 +523,7 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void anyUnsupported(ODataRequest request, ODataResponse response)
-      throws ODataTranslatedException, ODataApplicationException {
+      throws ODataLibraryException, ODataApplicationException {
     response.setStatusCode(500);
   }
 

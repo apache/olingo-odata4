@@ -35,16 +35,20 @@ import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
+import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -63,6 +67,37 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
   private final URI uriPropertyValue = client.newURIBuilder(uriProperty.toASCIIString()).appendValueSegment().build();
   private final URI uriMedia = client.newURIBuilder(TecSvcConst.BASE_URI)
       .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build();
+
+  @Test
+  public void readServiceDocument() throws Exception {
+    ODataServiceDocumentRequest request = client.getRetrieveRequestFactory()
+        .getServiceDocumentRequest(TecSvcConst.BASE_URI);
+    ODataRetrieveResponse<ClientServiceDocument> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    request = client.getRetrieveRequestFactory().getServiceDocumentRequest(TecSvcConst.BASE_URI);
+    request.setIfNoneMatch(response.getETag());
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+
+    request = client.getRetrieveRequestFactory().getServiceDocumentRequest(TecSvcConst.BASE_URI);
+    request.setIfMatch("W/\"0\"");
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
+  }
+
+  @Test
+  public void readMetadataDocument() throws Exception {
+    EdmMetadataRequest request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
+    ODataRetrieveResponse<Edm> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
+    request.setIfNoneMatch(response.getETag());
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+
+    request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
+    request.setIfMatch("W/\"0\"");
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
+  }
 
   @Test
   public void readWithWrongIfMatch() throws Exception {

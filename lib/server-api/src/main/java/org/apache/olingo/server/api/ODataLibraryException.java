@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract superclass of all translatable server exceptions.
  */
-public abstract class ODataTranslatedException extends ODataException {
+public abstract class ODataLibraryException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
-  private static final Logger LOG = LoggerFactory.getLogger(ODataTranslatedException.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ODataLibraryException.class);
   private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
   protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
@@ -49,14 +49,14 @@ public abstract class ODataTranslatedException extends ODataException {
   private MessageKey messageKey;
   private Object[] parameters;
 
-  protected ODataTranslatedException(final String developmentMessage, final MessageKey messageKey,
+  protected ODataLibraryException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage);
     this.messageKey = messageKey;
     this.parameters = parameters;
   }
 
-  protected ODataTranslatedException(final String developmentMessage, final Throwable cause,
+  protected ODataLibraryException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, cause);
