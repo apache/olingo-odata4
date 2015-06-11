@@ -19,15 +19,20 @@
 package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
 import org.junit.Test;
 
 public class BasicHttpITCase extends AbstractBaseTestITCase {
@@ -116,7 +121,54 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
     String v = connection.getHeaderField(HttpHeader.ODATA_VERSION);
     assertEquals("4.0", v);
   }
-
+  
+  @Test
+  public void testIEEE754ParameterContentNegotiation() throws Exception {
+    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)?$format=application/json;IEEE754Compatible=true");
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=false");
+    connection.connect();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.create("application/json;IEEE754Compatible=true;odata.metadata=minimal"), 
+                 ContentType.create(connection.getContentType()));
+    final String content = inputStreamToString(connection.getInputStream());
+    
+    assertTrue(content.contains("\"PropertyDecimal\":\"34\""));
+    assertTrue(content.contains("\"PropertyInt64\":\"9223372036854775807\""));
+  }
+  
+  @Test
+  public void testIEEE754ParameterViaAcceptHeader() throws Exception {
+    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)");
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=true");
+    connection.connect();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.create("application/json;IEEE754Compatible=true;odata.metadata=minimal"), 
+                 ContentType.create(connection.getContentType()));
+    final String content = inputStreamToString(connection.getInputStream());
+    
+    assertTrue(content.contains("\"PropertyDecimal\":\"34\""));
+    assertTrue(content.contains("\"PropertyInt64\":\"9223372036854775807\""));
+  }
+  
+  private String inputStreamToString(final InputStream in) throws Exception {
+    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
+    final StringBuffer buffer = new StringBuffer();
+    String current;
+    
+    while((current = reader.readLine()) != null) {
+      buffer.append(current);
+    }
+    
+    reader.close();
+    return buffer.toString();
+  }
+  
   @Override
   protected ODataClient getClient() {
     return null;

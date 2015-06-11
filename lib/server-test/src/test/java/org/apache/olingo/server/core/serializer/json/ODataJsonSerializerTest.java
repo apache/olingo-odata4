@@ -36,11 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-<<<<<<< HEAD
-=======
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
->>>>>>> [OLINGO-690] ODataSerializer and ODataDeserializer are created by contentType instead of ODataFormat
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -326,6 +322,7 @@ public class ODataJsonSerializerTest {
     .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent();
+
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"value\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -809,6 +806,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"First Resource - positive values\","
         + "\"PropertyBoolean\":true,"
@@ -841,6 +839,7 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
         + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":1,"
         + "\"CollPropertyString\":"
         + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
@@ -872,13 +871,14 @@ public class ODataJsonSerializerTest {
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
 
     final String resultString = IOUtils.toString(serializerIEEECompatible
-        .primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
+        .primitiveCollection(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyInt64\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[\"929292929292\",\"333333333333\",\"444444444444\"]}",
         resultString);
   }
@@ -890,13 +890,14 @@ public class ODataJsonSerializerTest {
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
 
     final String resultString = IOUtils.toString(serializerIEEECompatible
-        .primitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
+        .primitiveCollection(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyDecimal\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[\"12\",\"-2\",\"1234\"]}",
         resultString);
   }
@@ -907,13 +908,14 @@ public class ODataJsonSerializerTest {
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyInt64");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
     final String resultString = IOUtils.toString(serializerIEEECompatible
-        .primitive((EdmPrimitiveType) edmProperty.getType(), property,
+        .primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyInt64\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":\"" + Long.MAX_VALUE + "\"}",
         resultString);
   }
@@ -924,13 +926,14 @@ public class ODataJsonSerializerTest {
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyDecimal");
     final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
     final String resultString = IOUtils.toString(serializerIEEECompatible
-        .primitive((EdmPrimitiveType) edmProperty.getType(), property,
+        .primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
             PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyDecimal\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":\"34\"}",
         resultString);
   }
@@ -952,6 +955,7 @@ public class ODataJsonSerializerTest {
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
         + "\"@odata.nextLink\":\"/next\"}"));
@@ -981,6 +985,7 @@ public class ODataJsonSerializerTest {
     
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#Collection($ref)\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
         + "\"@odata.nextLink\":\"/next\"}"));

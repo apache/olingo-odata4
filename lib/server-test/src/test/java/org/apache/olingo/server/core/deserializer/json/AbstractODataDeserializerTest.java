@@ -31,6 +31,9 @@ import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class AbstractODataDeserializerTest {
   protected static final ContentType CONTENT_TYPE_JSON = ODataFormat.JSON.getContentType();
+  protected static final ContentType CONTENT_TYPE_JSON_IEEE754Compatible = 
+      ContentType.parse("application/json;odata.format=minimal;IEEE754Compatible=true");
+  
   protected static final Edm edm = OData.newInstance().createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 

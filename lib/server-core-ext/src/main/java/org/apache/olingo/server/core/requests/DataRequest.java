@@ -41,14 +41,13 @@ import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmStream;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
@@ -440,7 +439,7 @@ public class DataRequest extends ServiceRequest {
             handler.deleteReference(DataRequest.this, new URI(id), getETag(), new NoContentResponse(
                 getServiceMetaData(), response));
           } catch (URISyntaxException e) {
-            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKOWN_CONTENT);
+            throw new DeserializerException("failed to read $id", e, MessageKeys.UNKNOWN_CONTENT);
           }
         }
       } else if (isPUT()) {

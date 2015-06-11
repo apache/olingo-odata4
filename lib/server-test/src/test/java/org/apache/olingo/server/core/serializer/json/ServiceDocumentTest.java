@@ -50,7 +50,7 @@ public class ServiceDocumentTest {
     ODataSerializer serializer = server.createSerializer(ODataFormat.JSON.getContentType());
     assertNotNull(serializer);
 
-    InputStream result = serializer.serviceDocument(metadata.getEdm(), serviceRoot).getContent();
+    InputStream result = serializer.serviceDocument(metadata, serviceRoot).getContent();
     assertNotNull(result);
     final String jsonString = IOUtils.toString(result);
 
