@@ -29,7 +29,6 @@ import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 public class ConfigurationImpl implements Configuration {
 
@@ -96,39 +95,39 @@ public class ConfigurationImpl implements Configuration {
   }
 
   @Override
-  public ODataFormat getDefaultPubFormat() {
-    return (ODataFormat) getProperty(DEFAULT_PUB_FORMAT, ODataFormat.JSON_FULL_METADATA);
+  public ContentType getDefaultPubFormat() {
+    return (ContentType) getProperty(DEFAULT_PUB_FORMAT, ContentType.JSON_FULL_METADATA);
   }
 
   @Override
-  public void setDefaultPubFormat(final ODataFormat format) {
-    setProperty(DEFAULT_PUB_FORMAT, format);
+  public void setDefaultPubFormat(final ContentType contentType) {
+    setProperty(DEFAULT_PUB_FORMAT, contentType);
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
-    final ODataFormat format = getDefaultPubFormat();
-    return format == ODataFormat.ATOM ? ODataFormat.XML : format;
+  public ContentType getDefaultFormat() {
+    final ContentType contenType = getDefaultPubFormat();
+    return contenType == ContentType.APPLICATION_ATOM_XML ? ContentType.APPLICATION_XML : contenType;
   }
 
   @Override
-  public ODataFormat getDefaultValueFormat() {
-    return (ODataFormat) getProperty(DEFAULT_VALUE_FORMAT, ODataFormat.TEXT_PLAIN);
+  public ContentType getDefaultValueFormat() {
+    return (ContentType) getProperty(DEFAULT_VALUE_FORMAT, ContentType.TEXT_PLAIN);
   }
 
   @Override
-  public void setDefaultValueFormat(final ODataFormat format) {
-    setProperty(DEFAULT_VALUE_FORMAT, format);
+  public void setDefaultValueFormat(final ContentType contentType) {
+    setProperty(DEFAULT_VALUE_FORMAT, contentType);
   }
 
   @Override
-  public ODataFormat getDefaultMediaFormat() {
-    return (ODataFormat) getProperty(DEFAULT_VALUE_FORMAT, ODataFormat.APPLICATION_OCTET_STREAM);
+  public ContentType getDefaultMediaFormat() {
+    return (ContentType) getProperty(DEFAULT_VALUE_FORMAT, ContentType.APPLICATION_OCTET_STREAM);
   }
 
   @Override
-  public void setDefaultMediaFormat(final ODataFormat format) {
-    setProperty(DEFAULT_MEDIA_FORMAT, format);
+  public void setDefaultMediaFormat(final ContentType contentType) {
+    setProperty(DEFAULT_MEDIA_FORMAT, contentType);
   }
 
   @Override

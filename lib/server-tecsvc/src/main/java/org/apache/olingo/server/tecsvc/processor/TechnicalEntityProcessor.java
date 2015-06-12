@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -451,7 +451,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntityType,
         entityCollection,
         EntityCollectionSerializerOptions.with()
-            .contextURL(ODataFormat.fromContentType(requestedFormat) == ODataFormat.JSON_NO_METADATA ? null :
+            .contextURL(requestedFormat.getODataFormat() == Format.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
             .count(countOption)
             .expand(expand).select(select)
@@ -484,7 +484,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntityType,
         entity,
         EntitySerializerOptions.with()
-            .contextURL(ODataFormat.fromContentType(requestedFormat) == ODataFormat.JSON_NO_METADATA ? null :
+            .contextURL(requestedFormat.getODataFormat() == Format.JSON_NO_METADATA ? null :
                 getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
             .expand(expand).select(select)
             .build());

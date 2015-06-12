@@ -26,7 +26,8 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.server.api.ServiceMetadata;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -40,13 +41,13 @@ public class ServiceDocumentJsonSerializer {
 
   private final ServiceMetadata metadata;
   private final String serviceRoot;
-  private final ODataFormat format;
+  private final ContentType contentType;
 
   public ServiceDocumentJsonSerializer(final ServiceMetadata metadata, final String serviceRoot,
-      final ODataFormat format) {
+      final ContentType contentType) {
     this.metadata = metadata;
     this.serviceRoot = serviceRoot;
-    this.format = format;
+    this.contentType = contentType;
   }
 
   public void writeServiceDocument(final JsonGenerator gen) throws IOException {
@@ -58,7 +59,7 @@ public class ServiceDocumentJsonSerializer {
         + Constants.METADATA;
     gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
 
-    if (format != ODataFormat.JSON_NO_METADATA
+    if (contentType.getODataFormat() != Format.JSON_NO_METADATA
         && metadata != null
         && metadata.getServiceMetadataETagSupport() != null
         && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {

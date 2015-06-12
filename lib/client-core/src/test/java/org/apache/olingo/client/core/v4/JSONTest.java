@@ -31,16 +31,16 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,12 +56,12 @@ public class JSONTest extends AbstractTest {
     return v4Client;
   }
 
-  protected ODataFormat getODataPubFormat() {
-    return ODataFormat.JSON;
+  protected ContentType getODataPubFormat() {
+    return ContentType.JSON;
   }
 
-  protected ODataFormat getODataFormat() {
-    return ODataFormat.JSON;
+  protected ContentType getODataFormat() {
+    return ContentType.JSON;
   }
 
   private void cleanup(final ObjectNode node) {
@@ -128,12 +128,12 @@ public class JSONTest extends AbstractTest {
     assertEquals(expected, actualNode);
   }
 
-  protected void entitySet(final String filename, final ODataFormat format) throws Exception {
+  protected void entitySet(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntitySet(
-        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
-    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
   }
 
   @Test
@@ -142,12 +142,12 @@ public class JSONTest extends AbstractTest {
     entitySet("collectionOfEntityReferences", getODataPubFormat());
   }
 
-  protected void entity(final String filename, final ODataFormat format) throws Exception {
+  protected void entity(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).toEntity(
-        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
     
-    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
   }
 
   @Test
@@ -169,12 +169,12 @@ public class JSONTest extends AbstractTest {
     entity("annotated", getODataPubFormat());
   }
 
-  protected void property(final String filename, final ODataFormat format) throws Exception {
+  protected void property(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(format).write(writer, getClient().getDeserializer(format).
-        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload());
+    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
-    assertSimilar(filename + "." + getSuffix(format), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
   }
 
   @Test
@@ -187,13 +187,13 @@ public class JSONTest extends AbstractTest {
 
   @Test
   public void crossjoin() throws Exception {
-    assertNotNull(getClient().getDeserializer(ODataFormat.JSON_FULL_METADATA).toEntitySet(
+    assertNotNull(getClient().getDeserializer(ContentType.JSON_FULL_METADATA).toEntitySet(
         getClass().getResourceAsStream("crossjoin.json")));
   }
 
-  protected void delta(final String filename, final ODataFormat format) throws Exception {
-    final Delta delta = getClient().getDeserializer(format).toDelta(
-        getClass().getResourceAsStream(filename + "." + getSuffix(format))).getPayload();
+  protected void delta(final String filename, final ContentType contentType) throws Exception {
+    final Delta delta = getClient().getDeserializer(contentType).toDelta(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload();
     assertNotNull(delta);
     assertNotNull(delta.getDeltaLink());
     assertEquals(5, delta.getCount(), 0);
@@ -248,7 +248,7 @@ public class JSONTest extends AbstractTest {
         getClient().getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
     message.getProperties().add(getClient().getObjectFactory().newComplexProperty("Body", body));
 
-    final String actual = IOUtils.toString(getClient().getWriter().writeEntity(message, ODataFormat.JSON));
+    final String actual = IOUtils.toString(getClient().getWriter().writeEntity(message, ContentType.JSON));
     final JsonNode expected =
         OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
             replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));

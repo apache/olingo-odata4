@@ -34,7 +34,7 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 public class XMLMetadataRequestImpl
@@ -170,7 +170,7 @@ public class XMLMetadataRequestImpl
         public XMLMetadata getBody() {
           if (metadata == null) {
             try {
-              metadata = odataClient.getDeserializer(ODataFormat.XML).toMetadata(getRawResponse());
+              metadata = odataClient.getDeserializer(ContentType.APPLICATION_XML).toMetadata(getRawResponse());
             } finally {
               this.close();
             }

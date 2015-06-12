@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -36,15 +36,15 @@ public class ODataJsonDeserializerBasicTest {
   
   @Test
   public void checkSupportedJsonFormats() throws Exception {
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     assertNotNull(deserializer);
     deserializer = null;
 
-    deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON_NO_METADATA.getContentType());
+    deserializer = OData.newInstance().createDeserializer(ContentType.JSON_NO_METADATA);
     assertNotNull(deserializer);
     deserializer = null;
 
-    deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON_FULL_METADATA.getContentType());
+    deserializer = OData.newInstance().createDeserializer(ContentType.JSON_FULL_METADATA);
     assertNotNull(deserializer);
     deserializer = null;
   }
@@ -58,7 +58,7 @@ public class ODataJsonDeserializerBasicTest {
         "    { \"@odata.id\": \"Orders(10759)\" }\n" +
         "  ]\n" +
         "}";
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     List<URI> values = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();
     assertEquals(2, values.size());
@@ -72,7 +72,7 @@ public class ODataJsonDeserializerBasicTest {
         "  \"@odata.context\": \"http://host/service/$metadata#$ref\",\n" +
         "  \"@odata.id\": \"Orders(10643)\"\n" +
         "}";
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     List<URI> values = deserializer.entityReferences(new ByteArrayInputStream(payload
         .getBytes())).getEntityReferences();
     assertEquals(1, values.size());
@@ -87,7 +87,7 @@ public class ODataJsonDeserializerBasicTest {
         + "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(1, entityReferences.size());
@@ -105,7 +105,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(2, entityReferences.size());
@@ -124,7 +124,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(1, entityReferences.size());
@@ -142,7 +142,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(1, entityReferences.size());
@@ -158,7 +158,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(0, entityReferences.size());
@@ -173,7 +173,7 @@ public class ODataJsonDeserializerBasicTest {
     String entityString = "{ }";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
     
     assertEquals(0, entityReferences.size());
@@ -187,7 +187,7 @@ public class ODataJsonDeserializerBasicTest {
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON.getContentType());
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     deserializer.entityReferences(stream);
   }
 }

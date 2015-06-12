@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.communication.request;
 import java.util.concurrent.Future;
 
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * Basic OData request.
@@ -45,9 +45,9 @@ public interface ODataBasicRequest<T extends ODataResponse> extends ODataRequest
   Future<T> asyncExecute();
 
   /**
-   * Override configured request format.
+   * Override configured request Content-Type.
    *
-   * @param format request format.
+   * @param contentType request Content-Type.
    */
-  void setFormat(ODataFormat format);
+  void setFormat(ContentType contentType);
 }

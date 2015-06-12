@@ -26,9 +26,9 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
@@ -48,7 +48,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultFormat();
   }
 
@@ -76,7 +76,7 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
       if (serviceDocument == null) {
         try {
           final ResWrap<ServiceDocument> resource = odataClient.
-                  getDeserializer(ODataFormat.fromString(getContentType())).toServiceDocument(getRawResponse());
+                  getDeserializer(ContentType.parse(getContentType())).toServiceDocument(getRawResponse());
 
           serviceDocument = odataClient.getBinder().getODataServiceDocument(resource.getPayload());
         } catch (final ODataDeserializerException e) {

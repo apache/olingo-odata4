@@ -42,7 +42,7 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -75,12 +75,12 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   private static final Logger log = LoggerFactory.getLogger(ODataJsonSerializer.class);
 
-  private final ODataFormat format;
+  private final ContentType contentType;
   private final boolean isIEEE754Compatible;
   
   public ODataJsonSerializer(final ContentType contentType) {
     this.isIEEE754Compatible = isODataIEEE754Compatible(contentType);
-    this.format = ODataFormat.fromContentType(contentType);
+    this.contentType = contentType;
   }
 
   @Override
@@ -94,7 +94,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       gen = new JsonFactory().createGenerator(buffer.getOutputStream())
           .setPrettyPrinter(new DefaultPrettyPrinter());
 
-      new ServiceDocumentJsonSerializer(metadata, serviceRoot, format).writeServiceDocument(gen);
+      new ServiceDocumentJsonSerializer(metadata, serviceRoot, contentType).writeServiceDocument(gen);
 
       gen.close();
 
@@ -196,7 +196,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
-    if (format == ODataFormat.JSON_NO_METADATA) {
+    if (contentType.getODataFormat() == Format.JSON_NO_METADATA) {
       return null;
     } else if (contextURL == null) {
       throw new SerializerException("ContextURL null!", SerializerException.MessageKeys.NO_CONTEXT_URL);
@@ -205,7 +205,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
-    if (format != ODataFormat.JSON_NO_METADATA
+    if (contentType.getODataFormat() != Format.JSON_NO_METADATA
         && metadata != null
         && metadata.getServiceMetadataETagSupport() != null
         && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
@@ -236,7 +236,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       final SelectOption select, final boolean onlyReference, final JsonGenerator json) 
           throws IOException, SerializerException {
     json.writeStartObject();
-    if (format != ODataFormat.JSON_NO_METADATA) {
+    if (contentType.getODataFormat() != Format.JSON_NO_METADATA) {
       if (contextURL != null) { // top-level entity
         json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
         writeMetadataETag(metadata, json);

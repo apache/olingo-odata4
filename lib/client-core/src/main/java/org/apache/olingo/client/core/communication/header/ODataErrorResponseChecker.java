@@ -24,9 +24,9 @@ import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
-import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +51,11 @@ public final class ODataErrorResponseChecker {
     if (entity == null) {
       result = new ODataClientErrorException(statusLine);
     } else {
-      final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
+      final ContentType contentType = accept.contains("xml") ? ContentType.APPLICATION_ATOM_XML : ContentType.JSON;
 
       ODataError error;
       try {
-        error = odataClient.getReader().readError(entity, format);
+        error = odataClient.getReader().readError(entity, contentType);
       } catch (final RuntimeException e) {
         LOG.warn("Error deserializing error response", e);
         error = getGenericError(

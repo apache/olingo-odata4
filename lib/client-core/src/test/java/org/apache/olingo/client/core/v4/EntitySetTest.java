@@ -18,23 +18,23 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {
 
@@ -43,10 +43,10 @@ public class EntitySetTest extends AbstractTest {
     return v4Client;
   }
 
-  private void read(final ODataFormat format) throws IOException, ODataDeserializerException {
-    final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(format));
+  private void read(final ContentType contentType) throws IOException, ODataDeserializerException {
+    final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(contentType));
     final ClientEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-        getClient().getDeserializer(format).toEntitySet(input));
+        getClient().getDeserializer(contentType).toEntitySet(input));
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());
@@ -60,18 +60,18 @@ public class EntitySetTest extends AbstractTest {
 
   @Test
   public void fromAtom() throws Exception {
-    read(ODataFormat.ATOM);
+    read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void fromJSON() throws Exception {
-    read(ODataFormat.JSON);
+    read(ContentType.JSON);
   }
 
-  private void ref(final ODataFormat format) throws ODataDeserializerException {
-    final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(format));
+  private void ref(final ContentType contentType) throws ODataDeserializerException {
+    final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(contentType));
     final ClientEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-        getClient().getDeserializer(format).toEntitySet(input));
+        getClient().getDeserializer(contentType).toEntitySet(input));
     assertNotNull(entitySet);
 
     for (ClientEntity entity : entitySet.getEntities()) {
@@ -87,11 +87,11 @@ public class EntitySetTest extends AbstractTest {
 
   @Test
   public void atomRef() throws Exception {
-    ref(ODataFormat.ATOM);
+    ref(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonRef() throws Exception {
-    ref(ODataFormat.JSON);
+    ref(ContentType.JSON);
   }
 }

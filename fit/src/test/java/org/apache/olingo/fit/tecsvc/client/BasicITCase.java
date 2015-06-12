@@ -72,7 +72,6 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -421,7 +420,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   public void readEntityWithExpandedNavigationProperty() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
 
     final URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
@@ -938,7 +937,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   public void createEntityWithIEEE754CompatibleParameter() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
     final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
@@ -965,7 +964,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   public void createEntityInt64AndDecimalAsStringWithoutIEEE754ComaptibleParameter() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
     final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
@@ -1104,7 +1103,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 }

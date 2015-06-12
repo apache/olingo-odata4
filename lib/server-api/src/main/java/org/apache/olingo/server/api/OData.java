@@ -119,7 +119,7 @@ public abstract class OData {
    * Creates a new deserializer object for reading content in the specified format.
    * Deserializer are used in Processor implementations.
    *
-   * @param format any content type supported by Olingo (XML, JSON ...)
+   * @param contentType any content type supported by Olingo (XML, JSON ...)
    */
   public abstract ODataDeserializer createDeserializer(ContentType contentType) throws DeserializerException;
 

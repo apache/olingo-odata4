@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -71,7 +70,7 @@ public class ODataJsonSerializerTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
   private final DataProvider data = new DataProvider();
-  private final ODataSerializer serializer = new ODataJsonSerializer(ODataFormat.JSON.getContentType());
+  private final ODataSerializer serializer = new ODataJsonSerializer(ContentType.JSON);
   private final ODataSerializer serializerIEEECompatible = 
       new ODataJsonSerializer(ContentType.parse("application/json;odata.metadata=minimal;IEEE754Compatible=true"));
   private final UriHelper helper = new UriHelperImpl();
@@ -307,7 +306,7 @@ public class ODataJsonSerializerTest {
   public void entityTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA.getContentType())
+    InputStream result = new ODataJsonSerializer(ContentType.JSON_NO_METADATA)
                                       .entity(metadata, edmEntitySet.getEntityType(), entity, null).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
@@ -318,7 +317,7 @@ public class ODataJsonSerializerTest {
   public void entitySetTwoPrimNoMetadata() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
-    InputStream result = new ODataJsonSerializer(ODataFormat.JSON_NO_METADATA.getContentType())
+    InputStream result = new ODataJsonSerializer(ContentType.JSON_NO_METADATA)
     .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent();

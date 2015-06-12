@@ -31,7 +31,7 @@ import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
@@ -51,7 +51,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 

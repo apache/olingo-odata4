@@ -19,7 +19,8 @@
 package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 
@@ -43,7 +44,8 @@ public abstract class AbstractTest {
     v4Client = ODataClientFactory.getClient();
   }
 
-  protected String getSuffix(final ODataFormat format) {
-    return format == ODataFormat.ATOM || format == ODataFormat.XML ? "xml" : "json";
+  protected String getSuffix(final ContentType contentType) {
+    return contentType.getODataFormat() == Format.ATOM 
+        || contentType.getODataFormat() == Format.XML ? "xml" : "json";
   }
 }

@@ -18,20 +18,21 @@
  */
 package org.apache.olingo.client.core.v4;
 
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.data.ServiceDocument;
-import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.junit.Test;
-
-import java.net.URI;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URI;
+
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
+import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {
 
@@ -40,13 +41,13 @@ public class ServiceDocumentTest extends AbstractTest {
     return v4Client;
   }
 
-  private String getFileExtension(final ODataFormat format) {
-    return format == ODataFormat.XML ? "xml" : "json";
+  private String getFileExtension(final ContentType contentType) {
+    return contentType.getODataFormat() == Format.XML ? "xml" : "json";
   }
 
-  private ClientServiceDocument parse(final ODataFormat format) throws ODataDeserializerException {
-    ResWrap<ServiceDocument> service = getClient().getDeserializer(format).toServiceDocument(
-            getClass().getResourceAsStream("serviceDocument." + getFileExtension(format)));
+  private ClientServiceDocument parse(final ContentType contentType) throws ODataDeserializerException {
+    ResWrap<ServiceDocument> service = getClient().getDeserializer(contentType).toServiceDocument(
+        getClass().getResourceAsStream("serviceDocument." + getFileExtension(contentType)));
 
     assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL());
     assertEquals("W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"", service.getMetadataETag());
@@ -56,20 +57,20 @@ public class ServiceDocumentTest extends AbstractTest {
 
     assertTrue(serviceDocument.getEntitySetNames().contains("Order Details"));
     assertEquals(URI.create("http://host/service/TopProducts"),
-            serviceDocument.getFunctionImportURI("TopProducts"));
+        serviceDocument.getFunctionImportURI("TopProducts"));
     assertEquals(URI.create("http://host/HR/"),
-            serviceDocument.getRelatedServiceDocumentsURIs().iterator().next());
+        serviceDocument.getRelatedServiceDocumentsURIs().iterator().next());
 
     return serviceDocument;
   }
 
   @Test
   public void json() throws Exception {
-    parse(ODataFormat.JSON);
+    parse(ContentType.JSON);
   }
 
   @Test
   public void xml() throws Exception {
-    parse(ODataFormat.XML);
+    parse(ContentType.APPLICATION_XML);
   }
 }

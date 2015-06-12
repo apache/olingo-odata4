@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -143,16 +143,16 @@ public abstract class ServiceRequest {
   @SuppressWarnings("unchecked")
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl,
       boolean references) throws ContentNegotiatorException {
-    final ODataFormat format = ODataFormat.fromContentType(getResponseContentType());
+    final Format format = getResponseContentType().getODataFormat();
 
     if (serilizerOptions.isAssignableFrom(EntitySerializerOptions.class)) {
       return (T) EntitySerializerOptions.with()
-          .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : contextUrl)
+          .contextURL(format == Format.JSON_NO_METADATA ? null : contextUrl)
           .expand(uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
           .setWriteOnlyReferences(references).build();
     } else if (serilizerOptions.isAssignableFrom(EntityCollectionSerializerOptions.class)) {
       return (T) EntityCollectionSerializerOptions.with()
-          .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : contextUrl)
+          .contextURL(format == Format.JSON_NO_METADATA ? null : contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
           .select(uriInfo.getSelectOption()).setWriteOnlyReferences(references).build();
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {

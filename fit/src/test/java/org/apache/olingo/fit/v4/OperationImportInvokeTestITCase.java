@@ -37,17 +37,17 @@ import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
-  private void functionImports(final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void functionImports(final ContentType contentType) throws EdmPrimitiveTypeException {
     // GetDefaultColor
     final ODataInvokeRequest<ClientProperty> defaultColorReq = getClient().getInvokeRequestFactory().
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetDefaultColor").build(), ClientProperty.class);
-    defaultColorReq.setFormat(format);
+    defaultColorReq.setFormat(contentType);
     final ClientProperty defaultColor = defaultColorReq.execute().getBody();
     assertNotNull(defaultColor);
     assertTrue(defaultColor.hasEnumValue());
@@ -61,7 +61,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetPerson2").build(), ClientEntity.class,
             Collections.<String, ClientValue> singletonMap("city", city));
-    person2Req.setFormat(format);
+    person2Req.setFormat(contentType);
     final ClientEntity person2 = person2Req.execute().getBody();
     assertNotNull(person2);
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", person2.getTypeName().toString());
@@ -81,7 +81,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetPerson").build(), ClientEntity.class,
             Collections.<String, ClientValue> singletonMap("address", address));
-    personReq.setFormat(format);
+    personReq.setFormat(contentType);
     final ClientEntity person = personReq.execute().getBody();
     assertNotNull(person);
     assertEquals(person2, person);
@@ -90,7 +90,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     final ODataInvokeRequest<ClientEntitySet> productsReq = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetAllProducts").build(), ClientEntitySet.class);
-    productsReq.setFormat(format);
+    productsReq.setFormat(contentType);
     final ClientEntitySet products = productsReq.execute().getBody();
     assertNotNull(products);
     assertEquals(5, products.getEntities().size());
@@ -103,7 +103,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getFunctionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("GetProductsByAccessLevel").build(), ClientProperty.class,
             Collections.<String, ClientValue> singletonMap("accessLevel", accessLevel));
-    prodByALReq.setFormat(format);
+    prodByALReq.setFormat(contentType);
     final ClientProperty prodByAL = prodByALReq.execute().getBody();
     assertNotNull(prodByAL);
     assertTrue(prodByAL.hasCollectionValue());
@@ -113,12 +113,12 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomFunctionImports() throws EdmPrimitiveTypeException {
-    functionImports(ODataFormat.ATOM);
+    functionImports(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonFunctionImports() throws EdmPrimitiveTypeException {
-    functionImports(ODataFormat.JSON_FULL_METADATA);
+    functionImports(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
@@ -182,14 +182,14 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertTrue(prodByAL.getCollectionValue().asJavaCollection().contains("Car"));
   }
 
-  private void actionImports(final ODataFormat format) {
+  private void actionImports(final ContentType contentType) {
     // Discount
     final ClientPrimitiveValue percentage = getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(22);
     final ODataInvokeRequest<ClientNoContent> discountReq = getClient().getInvokeRequestFactory().
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("Discount").build(), ClientNoContent.class,
             Collections.<String, ClientValue> singletonMap("percentage", percentage));
-    discountReq.setFormat(format);
+    discountReq.setFormat(contentType);
     final ClientNoContent discount = discountReq.execute().getBody();
     assertNotNull(discount);
 
@@ -207,7 +207,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("ResetBossAddress").build(), ClientProperty.class,
             Collections.<String, ClientValue> singletonMap("address", address));
-    resetBossAddressReq.setFormat(format);
+    resetBossAddressReq.setFormat(contentType);
     final ClientProperty resetBossAddress = resetBossAddressReq.execute().getBody();
     assertNotNull(resetBossAddress);
     assertEquals(address, resetBossAddress.getComplexValue());
@@ -215,12 +215,12 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomActionImports() {
-    actionImports(ODataFormat.ATOM);
+    actionImports(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonActionImports() {
-    actionImports(ODataFormat.JSON_FULL_METADATA);
+    actionImports(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
@@ -251,7 +251,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     assertEquals(address.getTypeName(), resetBossAddress.getComplexValue().getTypeName());
   }
 
-  private void bossEmails(final ODataFormat format) {
+  private void bossEmails(final ContentType contentType) {
     // ResetBossEmail
     final ClientCollectionValue<ClientValue> emails =
         getClient().getObjectFactory().newCollectionValue("Collection(Edm.String)");
@@ -261,7 +261,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
         getActionInvokeRequest(getClient().newURIBuilder(testStaticServiceRootURL).
             appendOperationCallSegment("ResetBossEmail").build(), ClientProperty.class,
             Collections.<String, ClientValue> singletonMap("emails", emails));
-    bossEmailsReq.setFormat(format);
+    bossEmailsReq.setFormat(contentType);
     final ClientProperty bossEmails = bossEmailsReq.execute().getBody();
     assertNotNull(bossEmails);
     assertTrue(bossEmails.hasCollectionValue());
@@ -273,7 +273,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
     bossEmailsReq = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).
         appendOperationCallSegment("GetBossEmails").build(), ClientProperty.class, params);
-    bossEmailsReq.setFormat(format);
+    bossEmailsReq.setFormat(contentType);
     final ClientProperty bossEmailsViaGET = bossEmailsReq.execute().getBody();
     assertNotNull(bossEmailsViaGET);
     assertTrue(bossEmailsViaGET.hasCollectionValue());
@@ -284,11 +284,11 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomBossEmails() throws EdmPrimitiveTypeException {
-    bossEmails(ODataFormat.ATOM);
+    bossEmails(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonBossEmails() throws EdmPrimitiveTypeException {
-    bossEmails(ODataFormat.JSON_FULL_METADATA);
+    bossEmails(ContentType.JSON_FULL_METADATA);
   }
 }

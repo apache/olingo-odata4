@@ -49,14 +49,20 @@ public final class ContentType {
   private static final String APPLICATION = "application";
   private static final String TEXT = "text";
   private static final String MULTIPART = "multipart";
-
+  
+  public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
+  public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
+  public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON, 
+                                                                        "odata.metadata=none");
+  public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON, 
+                                                                          "odata.metadata=full");
+  
   public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
   public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
 
-  public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
 
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);
 
@@ -74,9 +80,9 @@ public final class ContentType {
 
   public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
 
-  public static final String PARAMETER_CHARSET= "charset";
+  public static final String PARAMETER_CHARSET = "charset";
   public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
-  
+
   private final String type;
   private final String subtype;
   private final Map<String, String> parameters;
@@ -132,12 +138,12 @@ public final class ContentType {
   /**
    * Creates a content type from format and key-value pairs for parameters.
    *
-   * @param format for example "application/json"
+   * @param contentType for example "application/json"
    * @param parameters for example "a=b", "c=d"
    * @return a new <code>ContentType</code> object
    */
-  public static ContentType create(final String format, final String... parameters) {
-    ContentType ct = parse(format);
+  public static ContentType create(final String contentType, final String... parameters) {
+    ContentType ct = parse(contentType);
 
     for (String p : parameters) {
       final String[] keyvalue = TypeUtil.parseParameter(p);
@@ -326,9 +332,52 @@ public final class ContentType {
 
     for (String key : parameters.keySet()) {
       sb.append(TypeUtil.PARAMETER_SEPARATOR).append(key)
-      .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
+          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
     }
     return sb.toString();
+  }
+
+  /**
+   * Returns the {@link Format} of the current Content-Type
+   * 
+   * @return {@link Format}
+   */
+  public Format getODataFormat() {
+    if (isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || isCompatible(ContentType.APPLICATION_ATOM_SVC)) {
+      return Format.ATOM;
+    } else if (isCompatible(ContentType.APPLICATION_XML)) {
+      return Format.XML;
+    } else if (isCompatible(ContentType.APPLICATION_JSON)) {
+      String jsonVariant = getParameters().get("odata.metadata");
+      if (jsonVariant != null) {
+        if ("none".equals(jsonVariant)) {
+          return Format.JSON_NO_METADATA;
+        } else if ("minimal".equals(jsonVariant)) {
+          return Format.JSON;
+        } else if ("full".equals(jsonVariant)) {
+          return Format.JSON_FULL_METADATA;
+        }
+      }
+      return Format.JSON;
+    } else if (isCompatible(ContentType.APPLICATION_OCTET_STREAM)) {
+      return Format.APPLICATION_OCTET_STREAM;
+    } else if (isCompatible(ContentType.TEXT_PLAIN)) {
+      return Format.TEXT_PLAIN;
+    } else if (isCompatible(ContentType.APPLICATION_XHTML_XML)) {
+      return Format.APPLICATION_XHTML_XML;
+    } else if (isCompatible(ContentType.APPLICATION_SVG_XML)) {
+      return Format.APPLICATION_SVG_XML;
+    } else if (isCompatible(ContentType.APPLICATION_FORM_URLENCODED)) {
+      return Format.APPLICATION_FORM_URLENCODED;
+    } else if (isCompatible(ContentType.MULTIPART_FORM_DATA)) {
+      return Format.MULTIPART_FORM_DATA;
+    } else if (isCompatible(ContentType.TEXT_XML)) {
+      return Format.TEXT_XML;
+    } else if (isCompatible(ContentType.TEXT_HTML)) {
+      return Format.TEXT_HTML;
+    }
+    return null;
   }
 
   @Override

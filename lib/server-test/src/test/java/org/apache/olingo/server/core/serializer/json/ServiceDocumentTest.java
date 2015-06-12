@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -47,7 +47,7 @@ public class ServiceDocumentTest {
     OData server = OData.newInstance();
     assertNotNull(server);
 
-    ODataSerializer serializer = server.createSerializer(ODataFormat.JSON.getContentType());
+    ODataSerializer serializer = server.createSerializer(ContentType.JSON);
     assertNotNull(serializer);
 
     InputStream result = serializer.serviceDocument(metadata, serviceRoot).getContent();

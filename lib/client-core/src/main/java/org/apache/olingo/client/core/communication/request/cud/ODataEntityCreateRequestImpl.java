@@ -28,13 +28,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -66,14 +66,14 @@ public class ODataEntityCreateRequestImpl<E extends ClientEntity>
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
   @Override
   protected InputStream getPayload() {
     try {
-      return odataClient.getWriter().writeEntity(entity, ODataFormat.fromString(getContentType()));
+      return odataClient.getWriter().writeEntity(entity, ContentType.parse(getContentType()));
     } catch (final ODataSerializerException e) {
       throw new IllegalArgumentException(e);
     }
@@ -112,7 +112,7 @@ public class ODataEntityCreateRequestImpl<E extends ClientEntity>
     public E getBody() {
       if (resEntity == null) {
         try {
-          final ResWrap<Entity> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).
+          final ResWrap<Entity> resource = odataClient.getDeserializer(ContentType.parse(getAccept())).
                   toEntity(getRawResponse());
 
           resEntity = (E) odataClient.getBinder().getODataEntity(resource);

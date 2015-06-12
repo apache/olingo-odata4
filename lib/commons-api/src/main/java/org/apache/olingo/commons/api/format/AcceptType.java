@@ -122,14 +122,14 @@ public class AcceptType {
 
   /**
    * Creates a list of {@link AcceptType} objects based on given input string (<code>format</code>).
-   * @param format accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
+   * @param contentType accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
    * @return a list of <code>AcceptType</code> objects
    * @throws IllegalArgumentException if input string is not parseable
    */
-  public static List<AcceptType> create(final String format) {
+  public static List<AcceptType> create(final String contentType) {
     List<AcceptType> result = new ArrayList<AcceptType>();
 
-    String[] values = format.split(",");
+    String[] values = contentType.split(",");
     for (String value : values) {
       result.add(new AcceptType(value.trim()));
     }

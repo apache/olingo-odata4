@@ -37,7 +37,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 /**
@@ -45,11 +45,11 @@ import org.junit.Test;
  */
 public class EntitySetTestITCase extends AbstractTestITCase {
 
-  private void rawRequest(final ODataFormat format) {
+  private void rawRequest(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.getContentType().toContentTypeString());
+    req.setFormat(contentType.toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -61,20 +61,20 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void rawRequestAsAtom() throws IOException {
-    rawRequest(ODataFormat.ATOM);
+    rawRequest(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void rawRequestAsJSON() throws IOException {
-    rawRequest(ODataFormat.JSON);
+    rawRequest(ContentType.JSON);
   }
 
-  private void readWithInlineCount(final ODataClient client, final ODataFormat format) {
+  private void readWithInlineCount(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").count(true);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.getContentType().toContentTypeString());
+    req.setFormat(contentType.toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -88,25 +88,25 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWithInlineCountAsJSON() throws IOException {
-    readWithInlineCount(edmClient, ODataFormat.JSON);
+    readWithInlineCount(edmClient, ContentType.JSON);
   }
 
   @Test
   public void readWithInlineCountAsFullJSON() throws IOException {
-    readWithInlineCount(client, ODataFormat.JSON_FULL_METADATA);
+    readWithInlineCount(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void readWithInlineCountAsAtom() throws IOException {
-    readWithInlineCount(client, ODataFormat.ATOM);
+    readWithInlineCount(client, ContentType.APPLICATION_ATOM_XML);
   }
 
-  private void readODataEntitySetIterator(final ODataFormat format) {
+  private void readODataEntitySetIterator(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> req =
         client.getRetrieveRequestFactory().getEntitySetIteratorRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntitySetIterator<ClientEntitySet, ClientEntity>> res = req.execute();
     final ClientEntitySetIterator<ClientEntitySet, ClientEntity> feedIterator = res.getBody();
@@ -125,25 +125,25 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readODataEntitySetIteratorFromAtom() {
-    readODataEntitySetIterator(ODataFormat.ATOM);
+    readODataEntitySetIterator(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSON() {
-    readODataEntitySetIterator(ODataFormat.JSON);
+    readODataEntitySetIterator(ContentType.JSON);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONFull() {
-    readODataEntitySetIterator(ODataFormat.JSON_FULL_METADATA);
+    readODataEntitySetIterator(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void readODataEntitySetIteratorFromJSONNo() {
-    readODataEntitySetIterator(ODataFormat.JSON_NO_METADATA);
+    readODataEntitySetIterator(ContentType.JSON_NO_METADATA);
   }
 
-  private void readWithNext(final ODataFormat format) {
+  private void readWithNext(final ContentType format) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
@@ -167,12 +167,12 @@ public class EntitySetTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWithNextFromAtom() {
-    readWithNext(ODataFormat.ATOM);
+    readWithNext(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readWithNextFromJSON() {
-    readWithNext(ODataFormat.JSON_FULL_METADATA);
+    readWithNext(ContentType.JSON_FULL_METADATA);
   }
 
 }

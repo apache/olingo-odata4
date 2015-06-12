@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientLink;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
@@ -42,54 +42,54 @@ public interface ODataWriter {
    * Writes a collection of OData entities.
    *
    * @param entities entities to be serialized.
-   * @param format serialization format.
+   * @param contentType serialization format.
    * @return stream of serialized objects.
    * @throws ODataSerializerException
    */
-  InputStream writeEntities(Collection<ClientEntity> entities, ODataFormat format)
+  InputStream writeEntities(Collection<ClientEntity> entities, ContentType contentType)
       throws ODataSerializerException;
 
   /**
    * Serializes a single OData entity.
    *
    * @param entity entity to be serialized.
-   * @param format serialization format.
+   * @param contentType serialization format.
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeEntity(ClientEntity entity, ODataFormat format)
+  InputStream writeEntity(ClientEntity entity, ContentType format)
       throws ODataSerializerException;
 
   /**
    * Writes a single OData entity property.
    *
    * @param property entity property to be serialized.
-   * @param format serialization format.
+   * @param contentType serialization format.
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeProperty(ClientProperty property, ODataFormat format)
+  InputStream writeProperty(ClientProperty property, ContentType format)
       throws ODataSerializerException;
 
   /**
    * Writes an OData link.
    *
    * @param link link to be serialized.
-   * @param format serialization format.
+   * @param contentType serialization format.
    * @return stream of serialized object.
    * @throws ODataSerializerException
    */
-  InputStream writeLink(ClientLink link, ODataFormat format)
+  InputStream writeLink(ClientLink link, ContentType format)
       throws ODataSerializerException;
   
   /**
    * Writes a entity reference
    * 
    * @param reference reference to be serialized
-   * @param format  serialization format
+   * @param contentType  serialization format
    * @return stream of serialized objects 
    * @throws ODataSerializerException
    */
-  InputStream writeReference(ResWrap<URI> reference, ODataFormat format)
+  InputStream writeReference(ResWrap<URI> reference, ContentType format)
     throws ODataSerializerException;
 }

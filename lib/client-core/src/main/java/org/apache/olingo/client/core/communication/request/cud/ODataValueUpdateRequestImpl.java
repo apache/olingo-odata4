@@ -28,13 +28,14 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -65,7 +66,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultValueFormat();
   }
 
@@ -105,11 +106,11 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
     @Override
     public ClientPrimitiveValue getBody() {
       if (resValue == null) {
-        final ODataFormat format = ODataFormat.fromString(getAccept());
-
+        final ContentType contentType = ContentType.parse(getAccept());
+        
         try {
           resValue = odataClient.getObjectFactory().newPrimitiveValueBuilder().
-                  setType(format == ODataFormat.TEXT_PLAIN
+                  setType(contentType.getODataFormat() == Format.TEXT_PLAIN
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(getRawResponse()).
                   build();

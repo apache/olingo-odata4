@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -48,9 +48,9 @@ public class ContentNegotiator {
       return Arrays.asList(ContentType.MULTIPART_MIXED);
     default:
       return Arrays.asList(
-          ODataFormat.JSON.getContentType(),
-          ODataFormat.JSON_NO_METADATA.getContentType(),
-          ODataFormat.APPLICATION_JSON.getContentType());
+          ContentType.JSON,
+          ContentType.JSON_NO_METADATA,
+          ContentType.APPLICATION_JSON);
     }
   }
 
@@ -78,14 +78,14 @@ public class ContentNegotiator {
 
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
-      final ODataFormat format =
-          ODataFormat.JSON.name().equalsIgnoreCase(formatString) ? ODataFormat.JSON :
-              ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
-                  ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
+      final ContentType contentType =
+          Format.JSON.name().equalsIgnoreCase(formatString) ? ContentType.JSON :
+            Format.XML.name().equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+              Format.ATOM.name().equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
       try {
         result = getAcceptedType(
-            AcceptType.fromContentType(format == null ?
-                ContentType.create(formatOption.getFormat()) : format.getContentType()),
+            AcceptType.fromContentType(contentType == null ?
+                ContentType.create(formatOption.getFormat()) : contentType),
             supportedContentTypes);
       } catch (final IllegalArgumentException e) {
         // Exception results in result = null for next check.

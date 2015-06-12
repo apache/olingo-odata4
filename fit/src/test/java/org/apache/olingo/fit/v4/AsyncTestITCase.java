@@ -39,7 +39,7 @@ import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
@@ -62,13 +62,13 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertFalse(res.getBody().getEntities().isEmpty());
   }
 
-  private void withInlineEntry(final ODataFormat format) {
+  private void withInlineEntry(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ClientEntity>> async =
         client.getAsyncRequestFactory().<ODataRetrieveResponse<ClientEntity>> getAsyncRequestWrapper(req);
@@ -86,7 +86,7 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
     assertEquals(3, entity.getNavigationLinks().size());
 
-    if (ODataFormat.ATOM == format) {
+    if (ContentType.APPLICATION_ATOM_XML.equals(contentType)) {
       assertTrue(entity.getAssociationLinks().isEmpty());
       // In JSON, association links for each $ref link will exist.
     }
@@ -121,22 +121,22 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineEntryAsAtom() {
-    withInlineEntry(ODataFormat.ATOM);
+    withInlineEntry(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void withInlineEntryAsJSON() {
     // this needs to be full, otherwise there is no mean to recognize links
-    withInlineEntry(ODataFormat.JSON_FULL_METADATA);
+    withInlineEntry(ContentType.JSON_FULL_METADATA);
   }
 
-  private void asyncOrders(final ODataFormat format) {
+  private void asyncOrders(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
     final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ClientEntitySet>> async =
         client.getAsyncRequestFactory().<ODataRetrieveResponse<ClientEntitySet>> getAsyncRequestWrapper(req);
@@ -155,11 +155,11 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Test
   public void asyncOrdersAsAtom() {
-    asyncOrders(ODataFormat.ATOM);
+    asyncOrders(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void asyncOrdersAsJSON() {
-    asyncOrders(ODataFormat.JSON);
+    asyncOrders(ContentType.JSON);
   }
 }

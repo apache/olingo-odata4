@@ -52,18 +52,18 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ODataFormat format) throws IOException {
+  private void read(final ODataClient client, final ContentType contentType) throws IOException {
     final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
     final ODataEntityRequest<ClientEntity> entityReq =
         client.getRetrieveRequestFactory().getEntityRequest(builder.build());
-    entityReq.setFormat(format);
+    entityReq.setFormat(contentType);
 
     final ClientEntity entity = entityReq.execute().getBody();
     assertNotNull(entity);
@@ -83,20 +83,20 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void readAsAtom() throws IOException {
-    read(client, ODataFormat.ATOM);
+    read(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readAsJSON() throws IOException {
-    read(ODataClientFactory.getEdmEnabledClient(testDemoServiceRootURL), ODataFormat.JSON);
+    read(ODataClientFactory.getEdmEnabledClient(testDemoServiceRootURL), ContentType.JSON);
   }
 
   @Test
   public void readAsJSONFull() throws IOException {
-    read(client, ODataFormat.JSON_FULL_METADATA);
+    read(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void create(final ODataFormat format) throws IOException {
+  private void create(final ContentType contentType) throws IOException {
     final String random = RandomStringUtils.random(110);
     final InputStream input = IOUtils.toInputStream(random);
 
@@ -120,7 +120,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(createdLocation, UpdateType.PATCH, changes);
-    updateReq.setFormat(format);
+    updateReq.setFormat(contentType);
 
     final ODataEntityUpdateResponse<ClientEntity> updateRes = updateReq.execute();
     assertEquals(204, updateRes.getStatusCode());
@@ -137,15 +137,15 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void createAsAtom() throws IOException {
-    create(ODataFormat.ATOM);
+    create(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void createAsJSON() throws IOException {
-    create(ODataFormat.JSON);
+    create(ContentType.JSON);
   }
 
-  private void update(final ODataFormat format) throws IOException, EdmPrimitiveTypeException {
+  private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
@@ -155,7 +155,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     // 1. update providing media content
     final ODataMediaEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().
         getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
-    updateReq.setFormat(format);
+    updateReq.setFormat(contentType);
 
     final MediaEntityUpdateStreamManager<ClientEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ClientEntity> createRes = streamManager.getResponse();
@@ -173,11 +173,11 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
 
   @Test
   public void updateAsAtom() throws IOException, EdmPrimitiveTypeException {
-    update(ODataFormat.ATOM);
+    update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void updateAsJSON() throws IOException, EdmPrimitiveTypeException {
-    update(ODataFormat.JSON);
+    update(ContentType.JSON);
   }
 }

@@ -36,7 +36,7 @@ import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 /**
@@ -128,12 +128,12 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.ATOM);
+    req.setFormat(ContentType.APPLICATION_ATOM_XML);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertNotNull(res);
     assertTrue(res.getContentType().replaceAll(" ", "").
-        startsWith(ODataFormat.JSON.getContentType().toContentTypeString()));
+        startsWith(ContentType.JSON.toContentTypeString()));
   }
 
   /**

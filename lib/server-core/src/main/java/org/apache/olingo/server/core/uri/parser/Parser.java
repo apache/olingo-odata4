@@ -32,7 +32,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -177,9 +177,9 @@ public class Parser {
             FormatOptionImpl formatOption = new FormatOptionImpl();
             formatOption.setName(option.name);
             formatOption.setText(option.value);
-            if (option.value.equalsIgnoreCase(ODataFormat.JSON.name())
-                || option.value.equalsIgnoreCase(ODataFormat.XML.name())
-                || option.value.equalsIgnoreCase(ODataFormat.ATOM.name())
+            if (option.value.equalsIgnoreCase(Format.JSON.name())
+                || option.value.equalsIgnoreCase(Format.XML.name())
+                || option.value.equalsIgnoreCase(Format.ATOM.name())
                 || isFormatSyntaxValid(option.value)) {
               formatOption.setFormat(option.value);
             } else {

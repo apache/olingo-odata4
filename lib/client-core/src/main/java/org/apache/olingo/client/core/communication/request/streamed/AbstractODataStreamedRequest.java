@@ -39,7 +39,6 @@ import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.request.Wrapper;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -78,7 +77,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultMediaFormat();
   }
 

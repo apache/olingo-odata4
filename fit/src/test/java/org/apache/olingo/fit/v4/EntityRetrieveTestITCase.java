@@ -45,7 +45,8 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
 import org.junit.Test;
 
 /**
@@ -53,13 +54,13 @@ import org.junit.Test;
  */
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
-  private void withInlineEntity(final ODataClient client, final ODataFormat format) {
+  private void withInlineEntity(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().
         getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
@@ -70,11 +71,12 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals("Edm.GeographyPoint", entity.getProperty("Home").getPrimitiveValue().getTypeName());
 
     // In JSON with minimal metadata, links are not provided
-    if (format == ODataFormat.ATOM || format == ODataFormat.JSON_FULL_METADATA) {
+    if (contentType.getODataFormat() == Format.ATOM 
+        || contentType.getODataFormat() == Format.JSON_FULL_METADATA) {
       assertEquals(testStaticServiceRootURL + "/Customers(1)", entity.getEditLink().toASCIIString());
       assertEquals(3, entity.getNavigationLinks().size());
 
-      if (ODataFormat.ATOM == format) {
+      if (ContentType.APPLICATION_ATOM_XML == contentType) {
         assertTrue(entity.getAssociationLinks().isEmpty());
         // In JSON, association links for each $ref link will exist.
       }
@@ -110,26 +112,26 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineEntityFromAtom() {
-    withInlineEntity(client, ODataFormat.ATOM);
+    withInlineEntity(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void withInlineEntityFromFullJSON() {
-    withInlineEntity(client, ODataFormat.JSON_FULL_METADATA);
+    withInlineEntity(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void withInlineEntityFromJSON() {
-    withInlineEntity(edmClient, ODataFormat.JSON);
+    withInlineEntity(edmClient, ContentType.JSON);
   }
 
-  private void withInlineEntitySet(final ODataClient client, final ODataFormat format) {
+  private void withInlineEntitySet(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Orders");
 
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().
         getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
@@ -137,7 +139,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", entity.getTypeName().toString());
 
     // In JSON with minimal metadata, links are not provided
-    if (format == ODataFormat.ATOM || format == ODataFormat.JSON_FULL_METADATA) {
+    if (contentType.equals(ContentType.APPLICATION_ATOM_XML) || contentType.equals(ContentType.JSON_FULL_METADATA)) {
       boolean found = false;
       for (ClientLink link : entity.getNavigationLinks()) {
         if (link instanceof ClientInlineEntitySet) {
@@ -153,25 +155,25 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void withInlineEntitySetFromAtom() {
-    withInlineEntitySet(client, ODataFormat.ATOM);
+    withInlineEntitySet(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void withInlineEntitySetFromFullJSON() {
-    withInlineEntitySet(client, ODataFormat.JSON_FULL_METADATA);
+    withInlineEntitySet(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void withInlineEntitySetFromJSON() {
-    withInlineEntitySet(edmClient, ODataFormat.JSON);
+    withInlineEntitySet(edmClient, ContentType.JSON);
   }
 
-  private void rawRequest(final ODataFormat format) {
+  private void rawRequest(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5);
 
     final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(format.getContentType().toContentTypeString());
+    req.setFormat(contentType.toContentTypeString());
 
     final ODataRawResponse res = req.execute();
     assertNotNull(res);
@@ -185,16 +187,16 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void rawRequestAsAtom() {
-    rawRequest(ODataFormat.ATOM);
+    rawRequest(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void rawRequestAsJSON() {
     // this needs to be full, otherwise reference will not be provided
-    rawRequest(ODataFormat.JSON_FULL_METADATA);
+    rawRequest(ContentType.JSON_FULL_METADATA);
   }
 
-  private void multiKey(final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void multiKey(final ContentType contentType) throws EdmPrimitiveTypeException {
     final LinkedHashMap<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("ProductID", "6");
     multiKey.put("ProductDetailID", 1);
@@ -204,7 +206,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
@@ -215,21 +217,21 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void multiKeyAsAtom() throws EdmPrimitiveTypeException {
-    multiKey(ODataFormat.ATOM);
+    multiKey(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void multiKeyAsJSON() throws EdmPrimitiveTypeException {
-    multiKey(ODataFormat.JSON_FULL_METADATA);
+    multiKey(ContentType.JSON_FULL_METADATA);
   }
 
-  private void checkForETag(final ODataClient client, final ODataFormat format) {
+  private void checkForETag(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder =
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
@@ -248,17 +250,17 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void checkForETagAsAtom() {
-    checkForETag(client, ODataFormat.ATOM);
+    checkForETag(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void checkForETagAsFullJSON() {
-    checkForETag(client, ODataFormat.JSON_FULL_METADATA);
+    checkForETag(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void checkForETagAsJSON() {
-    checkForETag(edmClient, ODataFormat.JSON);
+    checkForETag(edmClient, ContentType.JSON);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -267,20 +269,20 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON);
+    req.setFormat(ContentType.JSON);
 
     // this statement should cause an IllegalArgumentException bearing JsonParseException
     // since we are attempting to parse an EntitySet as if it was an Entity
     req.execute().getBody();
   }
 
-  private void reference(final ODataFormat format) {
+  private void reference(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Orders").appendKeySegment(8).appendNavigationSegment("CustomerForOrder").
         appendRefSegment();
 
     ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertNotNull(res);
@@ -293,7 +295,7 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
         appendEntityIdSegment(entity.getId().toASCIIString()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     res = req.execute();
     assertNotNull(res);
@@ -302,20 +304,20 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomReference() {
-    reference(ODataFormat.ATOM);
+    reference(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonReference() {
-    reference(ODataFormat.JSON_FULL_METADATA);
+    reference(ContentType.JSON_FULL_METADATA);
   }
 
-  private void contained(final ODataClient client, final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void contained(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).
         appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101902).build();
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ClientEntity contained = req.execute().getBody();
     assertNotNull(contained);
@@ -328,30 +330,30 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void containedFromAtom() throws EdmPrimitiveTypeException {
-    contained(client, ODataFormat.ATOM);
+    contained(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void containedFromFullJSON() throws EdmPrimitiveTypeException {
-    contained(client, ODataFormat.JSON_FULL_METADATA);
+    contained(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
   public void containedFromJSON() throws EdmPrimitiveTypeException {
-    contained(edmClient, ODataFormat.JSON);
+    contained(edmClient, ContentType.JSON);
   }
 
-  private void entitySetNavigationLink(final ODataClient client, final ODataFormat format) {
+  private void entitySetNavigationLink(final ODataClient client, final ContentType contentType) {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).build();
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ClientEntity entity = req.execute().getBody();
     assertNotNull(entity);
 
     // With JSON, entity set navigation links are only recognizable via Edm
-    if (format == ODataFormat.ATOM || client instanceof EdmEnabledODataClient) {
+    if (contentType.equals(ContentType.APPLICATION_ATOM_XML) || client instanceof EdmEnabledODataClient) {
       assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("MyPaymentInstruments").getType());
       assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, entity.getNavigationLink("ActiveSubscriptions").getType());
     }
@@ -359,13 +361,13 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
   @Test
   public void entitySetNavigationLinkFromAtom() {
-    entitySetNavigationLink(client, ODataFormat.ATOM);
+    entitySetNavigationLink(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void entitySetNavigationLinkFromJSON() {
     // only JSON_FULL_METADATA has links, only Edm can recognize entity set navigation
-    entitySetNavigationLink(edmClient, ODataFormat.JSON_FULL_METADATA);
+    entitySetNavigationLink(edmClient, ContentType.JSON_FULL_METADATA);
   }
 
 }

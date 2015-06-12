@@ -21,7 +21,6 @@ package org.apache.olingo.server.core;
 import java.io.ByteArrayInputStream;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -96,9 +95,9 @@ public class ErrorHandler {
       requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, this.customContent, RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
-      requestedContentType = ODataFormat.JSON.getContentType();
+      requestedContentType = ContentType.JSON;
     } catch (UriParserException e) {
-      requestedContentType = ODataFormat.JSON.getContentType();
+      requestedContentType = ContentType.JSON;
     }
     processError(response, serverError, requestedContentType);
   }

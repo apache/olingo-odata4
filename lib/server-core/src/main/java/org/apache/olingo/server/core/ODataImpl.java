@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -51,7 +51,7 @@ public class ODataImpl extends OData {
 
   @Override
   public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
-    final ODataFormat format = ODataFormat.fromContentType(contentType);
+    final Format format = contentType.getODataFormat();
     ODataSerializer serializer;
 
     switch (format) {
@@ -105,7 +105,7 @@ public class ODataImpl extends OData {
 
   @Override
   public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
-    final ODataFormat format = ODataFormat.fromContentType(contentType);
+    final Format format = contentType.getODataFormat();
     ODataDeserializer deserializer;
 
     switch (format) {

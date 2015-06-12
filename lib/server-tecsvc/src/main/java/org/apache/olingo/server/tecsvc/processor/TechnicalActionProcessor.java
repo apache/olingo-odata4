@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -93,10 +93,9 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     }
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
-    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
     EntityCollectionSerializerOptions options = EntityCollectionSerializerOptions.with()
-        .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : getContextUrl(edmEntitySet, type, false))
-        .build();
+        .contextURL(responseFormat.getODataFormat() == Format.JSON_NO_METADATA ? null : 
+          getContextUrl(edmEntitySet, type, false)).build();
     response.setContent(odata.createSerializer(requestFormat)
         .entityCollection(serviceMetadata, type, collection, options).getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -127,14 +126,13 @@ public class TechnicalActionProcessor extends TechnicalProcessor
             HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
       }
     } else {
-      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
       response.setContent(odata.createSerializer(requestFormat).entity(
           serviceMetadata,
           type,
           entityResult.getEntity(),
           EntitySerializerOptions.with()
-              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : getContextUrl(edmEntitySet, type, true))
-              .build())
+              .contextURL(responseFormat.getODataFormat() == Format.JSON_NO_METADATA ? null : 
+                getContextUrl(edmEntitySet, type, true)).build())
           .getContent());
       response.setStatusCode((entityResult.isCreated() ? HttpStatusCode.CREATED : HttpStatusCode.OK)
           .getStatusCode());

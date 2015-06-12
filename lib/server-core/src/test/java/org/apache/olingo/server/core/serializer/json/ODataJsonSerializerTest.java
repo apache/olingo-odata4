@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class ODataJsonSerializerTest {
     col.add(getValues(2));
     final Property complexCollection = new Property(null, "ComplexCol", ValueType.COLLECTION_COMPLEX, col);
 
-    final ODataJsonSerializer serializer = new ODataJsonSerializer(ODataFormat.APPLICATION_JSON.getContentType());
+    final ODataJsonSerializer serializer = new ODataJsonSerializer(ContentType.APPLICATION_JSON);
     final ComplexSerializerOptions options = ComplexSerializerOptions.with()
         .contextURL(ContextURL.with().selectList("ComplexCollection").build()).build();
     final InputStream in = serializer.complexCollection(null, ComplexTypeHelper.createType(),

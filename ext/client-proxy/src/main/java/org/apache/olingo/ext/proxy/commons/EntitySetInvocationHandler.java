@@ -29,11 +29,11 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.AbstractSingleton;
@@ -95,7 +95,7 @@ public class EntitySetInvocationHandler<
   public Long count() {
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().
             getValueRequest(getClient().newURIBuilder(this.uri.build().toASCIIString()).count().build());
-    req.setFormat(ODataFormat.TEXT_PLAIN);
+    req.setFormat(ContentType.TEXT_PLAIN);
     return Long.valueOf(req.execute().getBody().asPrimitive().toString());
   }
 

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -48,7 +48,7 @@ public class MetadataDocumentTest {
         new EdmTechProvider(references), references);
 
     final String metadata = IOUtils.toString(
-        odata.createSerializer(ODataFormat.XML.getContentType()).metadataDocument(serviceMetadata).getContent());
+        odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());
     assertNotNull(metadata);
     assertThat(metadata,
         containsString("<edmx:Reference Uri=\"" + CORE_VOCABULARY + "\">"

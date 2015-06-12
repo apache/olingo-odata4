@@ -33,7 +33,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,20 +50,20 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     client.getConfiguration().setKeyAsSegment(false);
   }
 
-  private void read(final ODataFormat format) {
+  private void read(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101);
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
     assertNotNull(entity);
 
     // In JSON with minimal metadata, links are not provided
-    if (format == ODataFormat.ATOM || format == ODataFormat.JSON_FULL_METADATA) {
+    if (contentType.equals(ContentType.APPLICATION_ATOM_XML) || contentType.equals(ContentType.JSON_FULL_METADATA)) {
       assertFalse(entity.getEditLink().toASCIIString().contains("("));
       assertFalse(entity.getEditLink().toASCIIString().contains(")"));
     }
@@ -71,25 +71,25 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomRead() {
-    read(ODataFormat.ATOM);
+    read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonRead() {
-    read(ODataFormat.JSON);
+    read(ContentType.JSON);
   }
 
   @Test
   public void atomCreateAndDelete() {
-    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ODataFormat.ATOM, 1000);
+    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ContentType.APPLICATION_ATOM_XML, 1000);
   }
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ODataFormat.JSON_FULL_METADATA, 1001);
+    createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ContentType.JSON_FULL_METADATA, 1001);
   }
 
-  private void update(final ODataFormat format) {
+  private void update(final ContentType contentType) {
     final ClientEntity changes = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ClientProperty middleName = getClient().getObjectFactory().newPrimitiveProperty("MiddleName",
@@ -100,7 +100,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("People").appendKeySegment(5).build();
     final ODataEntityUpdateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataEntityUpdateResponse<ClientEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
@@ -117,11 +117,11 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomUpdate() {
-    update(ODataFormat.ATOM);
+    update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonUpdate() {
-    update(ODataFormat.JSON);
+    update(ContentType.JSON);
   }
 }

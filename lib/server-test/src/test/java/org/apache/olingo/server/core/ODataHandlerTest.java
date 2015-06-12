@@ -43,16 +43,15 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
@@ -736,7 +735,7 @@ public class ODataHandlerTest {
 
     if (request.getHeaders(HttpHeader.CONTENT_TYPE) == null) {
       request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
-          ODataFormat.JSON.getContentType().toContentTypeString()));
+          ContentType.JSON.toContentTypeString()));
     }
 
     final OData odata = OData.newInstance();

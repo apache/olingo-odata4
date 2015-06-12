@@ -25,24 +25,24 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
+import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
+import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.slf4j.Logger;
@@ -63,7 +63,7 @@ public class ODataReaderImpl implements ODataReader {
 
   @Override
   public Edm readMetadata(final InputStream input) {
-    return readMetadata(client.getDeserializer(ODataFormat.XML).toMetadata(input).getSchemaByNsOrAlias());
+    return readMetadata(client.getDeserializer(ContentType.APPLICATION_XML).toMetadata(input).getSchemaByNsOrAlias());
   }
 
   @Override
@@ -73,16 +73,16 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public ClientServiceDocument readServiceDocument(final InputStream input, final ODataFormat format)
+  public ClientServiceDocument readServiceDocument(final InputStream input, final ContentType contentType)
       throws ODataDeserializerException {
     return client.getBinder().getODataServiceDocument(
-        client.getDeserializer(format).toServiceDocument(input).getPayload());
+        client.getDeserializer(contentType).toServiceDocument(input).getPayload());
   }
 
   @Override
-  public ODataError readError(final InputStream inputStream, final ODataFormat format)
+  public ODataError readError(final InputStream inputStream, final ContentType contentType)
       throws ODataDeserializerException {
-    return client.getDeserializer(format).toError(inputStream);
+    return client.getDeserializer(contentType).toError(inputStream);
   }
 
   @Override
@@ -96,22 +96,22 @@ public class ODataReaderImpl implements ODataReader {
             (URI) null,
             null,
             reference.cast(new ClientEntitySetIterator<ClientEntitySet, ClientEntity>(
-                client, src, ODataFormat.fromString(format))));
+                client, src, ContentType.parse(format))));
       } else if (ClientEntitySet.class.isAssignableFrom(reference)) {
-        final ResWrap<EntityCollection> resource = client.getDeserializer(ODataFormat.fromString(format))
+        final ResWrap<EntityCollection> resource = client.getDeserializer(ContentType.parse(format))
             .toEntitySet(src);
         res = new ResWrap<T>(
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntitySet(resource)));
       } else if (ClientEntity.class.isAssignableFrom(reference)) {
-        final ResWrap<Entity> container = client.getDeserializer(ODataFormat.fromString(format)).toEntity(src);
+        final ResWrap<Entity> container = client.getDeserializer(ContentType.parse(format)).toEntity(src);
         res = new ResWrap<T>(
             container.getContextURL(),
             container.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntity(container)));
       } else if (ClientProperty.class.isAssignableFrom(reference)) {
-        final ResWrap<Property> container = client.getDeserializer(ODataFormat.fromString(format)).toProperty(src);
+        final ResWrap<Property> container = client.getDeserializer(ContentType.parse(format)).toProperty(src);
         res = new ResWrap<T>(
             container.getContextURL(),
             container.getMetadataETag(),
@@ -121,7 +121,7 @@ public class ODataReaderImpl implements ODataReader {
             (URI) null,
             null,
             reference.cast(client.getObjectFactory().newPrimitiveValueBuilder().
-                setType(ODataFormat.fromString(format) == ODataFormat.TEXT_PLAIN
+                setType(ContentType.parse(format).equals(ContentType.TEXT_PLAIN)
                     ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                 setValue(IOUtils.toString(src)) // TODO: set correct value
                 .build()));
@@ -132,7 +132,7 @@ public class ODataReaderImpl implements ODataReader {
             reference.cast(readMetadata(src)));
       } else if (ClientServiceDocument.class.isAssignableFrom(reference)) {
         final ResWrap<ServiceDocument> resource =
-            client.getDeserializer(ODataFormat.fromString(format)).toServiceDocument(src);
+            client.getDeserializer(ContentType.parse(format)).toServiceDocument(src);
         res = new ResWrap<T>(
             resource.getContextURL(),
             resource.getMetadataETag(),
@@ -141,7 +141,7 @@ public class ODataReaderImpl implements ODataReader {
         res = new ResWrap<T>(
             (URI) null,
             null,
-            reference.cast(readError(src, ODataFormat.fromString(format))));
+            reference.cast(readError(src, ContentType.parse(format))));
       } else {
         throw new IllegalArgumentException("Invalid reference type " + reference);
       }
@@ -158,20 +158,20 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public ClientEntitySet readEntitySet(final InputStream input, final ODataFormat format)
+  public ClientEntitySet readEntitySet(final InputStream input, final ContentType contentType)
       throws ODataDeserializerException {
-    return client.getBinder().getODataEntitySet(client.getDeserializer(format).toEntitySet(input));
+    return client.getBinder().getODataEntitySet(client.getDeserializer(contentType).toEntitySet(input));
   }
 
   @Override
-  public ClientEntity readEntity(final InputStream input, final ODataFormat format)
+  public ClientEntity readEntity(final InputStream input, final ContentType contentType)
       throws ODataDeserializerException {
-    return client.getBinder().getODataEntity(client.getDeserializer(format).toEntity(input));
+    return client.getBinder().getODataEntity(client.getDeserializer(contentType).toEntity(input));
   }
 
   @Override
-  public ClientProperty readProperty(final InputStream input, final ODataFormat format)
+  public ClientProperty readProperty(final InputStream input, final ContentType contentType)
       throws ODataDeserializerException {
-    return client.getBinder().getODataProperty(client.getDeserializer(format).toProperty(input));
+    return client.getBinder().getODataProperty(client.getDeserializer(contentType).toProperty(input));
   }
 }

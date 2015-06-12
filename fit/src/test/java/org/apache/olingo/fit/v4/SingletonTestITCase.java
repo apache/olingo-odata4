@@ -36,16 +36,16 @@ import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class SingletonTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void read(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ClientSingleton> singleton =
         client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
-    singleton.setFormat(format);
+    singleton.setFormat(contentType);
     final ClientSingleton company = singleton.execute().getBody();
     assertNotNull(company);
 
@@ -58,26 +58,26 @@ public class SingletonTestITCase extends AbstractTestITCase {
 
   @Test
   public void readFromAtom() throws EdmPrimitiveTypeException {
-    read(client, ODataFormat.ATOM);
+    read(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readFromJSON() throws EdmPrimitiveTypeException {
-    read(edmClient, ODataFormat.JSON);
+    read(edmClient, ContentType.JSON);
   }
 
   @Test
   public void readfromJSONFull() throws EdmPrimitiveTypeException {
-    read(client, ODataFormat.JSON_FULL_METADATA);
+    read(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void readWithAnnotations(final ODataClient client, final ODataFormat format)
+  private void readWithAnnotations(final ODataClient client, final ContentType contentType)
       throws EdmPrimitiveTypeException {
 
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");
     final ODataEntityRequest<ClientSingleton> singleton =
         client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
-    singleton.setFormat(format);
+    singleton.setFormat(contentType);
     singleton.setPrefer(client.newPreferences().includeAnnotations("*"));
     final ClientSingleton boss = singleton.execute().getBody();
     assertNotNull(boss);
@@ -89,20 +89,20 @@ public class SingletonTestITCase extends AbstractTestITCase {
 
   @Test
   public void readWithAnnotationsFromAtom() throws EdmPrimitiveTypeException {
-    readWithAnnotations(client, ODataFormat.ATOM);
+    readWithAnnotations(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readWithAnnotationsFromJSON() throws EdmPrimitiveTypeException {
-    readWithAnnotations(edmClient, ODataFormat.JSON);
+    readWithAnnotations(edmClient, ContentType.JSON);
   }
 
   @Test
   public void readWithAnnotationsFromJSONFull() throws EdmPrimitiveTypeException {
-    readWithAnnotations(client, ODataFormat.JSON_FULL_METADATA);
+    readWithAnnotations(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void update(final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void update(final ContentType contentType) throws EdmPrimitiveTypeException {
     final ClientSingleton changes = getClient().getObjectFactory().newSingleton(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Company"));
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Revenue",
@@ -111,7 +111,7 @@ public class SingletonTestITCase extends AbstractTestITCase {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company").build();
     final ODataEntityUpdateRequest<ClientSingleton> req = getClient().getCUDRequestFactory().
         getSingletonUpdateRequest(uri, UpdateType.PATCH, changes);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataEntityUpdateResponse<ClientSingleton> res = req.execute();
     assertEquals(204, res.getStatusCode());
@@ -124,12 +124,12 @@ public class SingletonTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomUpdate() throws EdmPrimitiveTypeException {
-    update(ODataFormat.ATOM);
+    update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonUpdate() throws EdmPrimitiveTypeException {
-    update(ODataFormat.JSON);
+    update(ContentType.JSON);
   }
 
 }

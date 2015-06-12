@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class OpenTypeTestITCase extends AbstractTestITCase {
@@ -53,32 +53,32 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
-  private ClientEntity readRow(final ODataFormat format, final String uuid) {
+  private ClientEntity readRow(final ContentType contentType, final String uuid) {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
         appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
-    return read(format, builder.build());
+    return read(contentType, builder.build());
   }
 
-  private void read(final ODataFormat format) {
-    ClientEntity row = readRow(format, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
+  private void read(final ContentType contentType) {
+    ClientEntity row = readRow(contentType, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
     assertEquals(EdmPrimitiveTypeKind.Double, row.getProperty("Double").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.Guid, row.getProperty("Id").getPrimitiveValue().getTypeKind());
 
-    row = readRow(format, "672b8250-1e6e-4785-80cf-b94b572e42b3");
+    row = readRow(contentType, "672b8250-1e6e-4785-80cf-b94b572e42b3");
     assertEquals(EdmPrimitiveTypeKind.Decimal, row.getProperty("Decimal").getPrimitiveValue().getTypeKind());
   }
 
   @Test
   public void readAsAtom() {
-    read(ODataFormat.ATOM);
+    read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readAsJSON() {
-    read(ODataFormat.JSON_FULL_METADATA);
+    read(ContentType.JSON_FULL_METADATA);
   }
 
-  private void cud(final ODataFormat format) {
+  private void cud(final ContentType contentType) {
     final Integer id = 1426;
 
     ClientEntity rowIndex = getClient().getObjectFactory().newEntity(
@@ -154,13 +154,13 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     final ODataEntityCreateRequest<ClientEntity> createReq = getClient().getCUDRequestFactory().
         getEntityCreateRequest(getClient().newURIBuilder(testOpenTypeServiceRootURL).
             appendEntitySetSegment("RowIndex").build(), rowIndex);
-    createReq.setFormat(format);
+    createReq.setFormat(contentType);
     final ODataEntityCreateResponse<ClientEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
 
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
         appendEntitySetSegment("RowIndex").appendKeySegment(id);
-    rowIndex = read(format, builder.build());
+    rowIndex = read(contentType, builder.build());
     assertNotNull(rowIndex);
     assertEquals(EdmPrimitiveTypeKind.Int32, rowIndex.getProperty("Id").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.String, rowIndex.getProperty("aString").getPrimitiveValue().getTypeKind());
@@ -179,12 +179,12 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void cudAsAtom() {
-    cud(ODataFormat.ATOM);
+    cud(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void cudAsJSON() {
-    cud(ODataFormat.JSON_FULL_METADATA);
+    cud(ContentType.JSON_FULL_METADATA);
   }
 
 }

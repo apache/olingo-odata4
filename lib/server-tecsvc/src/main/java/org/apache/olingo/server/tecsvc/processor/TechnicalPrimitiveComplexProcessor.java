@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -396,7 +396,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
       final RepresentationType representationType, final ContentType responseFormat,
       final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
     ODataSerializer serializer = odata.createSerializer(responseFormat);
-    final ContextURL contextURL = ODataFormat.fromContentType(responseFormat) == ODataFormat.JSON_NO_METADATA ? null :
+    final ContextURL contextURL = responseFormat.getODataFormat() == Format.JSON_NO_METADATA ? null :
         getContextUrl(edmEntitySet, entity, path, type, representationType, expand, select);
     SerializerResult result = null;
     switch (representationType) {

@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
@@ -154,7 +153,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void checkSupport() throws Exception {
-    ContentNegotiator.checkSupport(ODataFormat.JSON.getContentType(), null,
+    ContentNegotiator.checkSupport(ContentType.JSON, null,
         RepresentationType.ENTITY);
     ContentNegotiator.checkSupport(ContentType.TEXT_PLAIN, null, RepresentationType.VALUE);
     try {

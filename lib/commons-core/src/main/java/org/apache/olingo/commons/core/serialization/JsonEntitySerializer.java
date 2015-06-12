@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -43,8 +43,8 @@ public class JsonEntitySerializer extends JsonSerializer {
     super(serverMode);
   }
 
-  public JsonEntitySerializer(final boolean serverMode, final ODataFormat format) {
-    super(serverMode, format);
+  public JsonEntitySerializer(final boolean serverMode, final ContentType contentType) {
+    super(serverMode, contentType);
   }
 
   protected void doSerialize(final Entity entity, final JsonGenerator jgen)
@@ -73,12 +73,12 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (StringUtils.isNotBlank(entity.getType()) && format != ODataFormat.JSON_NO_METADATA) {
+    if (StringUtils.isNotBlank(entity.getType()) && contentType != ContentType.JSON_NO_METADATA) {
       jgen.writeStringField(Constants.JSON_TYPE,
           new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external());
     }
 
-    if (entity.getId() != null && format != ODataFormat.JSON_NO_METADATA) {
+    if (entity.getId() != null && contentType != ContentType.JSON_NO_METADATA) {
       jgen.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
     }
 
@@ -100,7 +100,7 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (format != ODataFormat.JSON_NO_METADATA) {
+    if (contentType != ContentType.JSON_NO_METADATA) {
       links(entity, jgen);
     }
 
