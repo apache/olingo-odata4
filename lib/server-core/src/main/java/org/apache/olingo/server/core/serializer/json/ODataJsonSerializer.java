@@ -113,8 +113,29 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public SerializerResult metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
-    throw new SerializerException("Metadata in JSON format not supported!",
-        SerializerException.MessageKeys.JSON_METADATA);
+    CircleStreamBuffer buffer;
+    JsonGenerator gen = null;
+    try {
+      buffer = new CircleStreamBuffer();
+      gen = new JsonFactory().createGenerator(buffer.getOutputStream())
+                  .setPrettyPrinter(new DefaultPrettyPrinter());
+      new MetadataDocumentJsonSerializer(serviceMetadata).writeMetadataDocument(gen);
+      gen.close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+    } catch (final IOException e) {
+      log.error(e.getMessage(), e);
+      throw new SerializerException("An I/O exception occurred.", e,
+                                           SerializerException.MessageKeys.IO_EXCEPTION);
+    } finally {
+      if (gen != null) {
+        try {
+          gen.close();
+        } catch (IOException e) {
+          throw new SerializerException("An I/O exception occurred.", e,
+                                           SerializerException.MessageKeys.IO_EXCEPTION);
+        }
+      }
+    }
   }
 
   @Override
