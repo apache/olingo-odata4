@@ -19,10 +19,10 @@
 package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

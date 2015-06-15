@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.serialization;
+package org.apache.olingo.client.api.serialization;
 
 import java.io.Writer;
 

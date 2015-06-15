@@ -24,8 +24,6 @@ import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.serialization.ODataDeserializer;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 public interface ClientODataDeserializer extends ODataDeserializer {
 

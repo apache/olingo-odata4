@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.serialization;
+package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 
