@@ -50,7 +50,7 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
   }
 
   @Override
-  public String getLamdaVariable() {
+  public String getLambdaVariable() {
     return lambdaVariable;
   }
 

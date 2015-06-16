@@ -31,22 +31,21 @@ public interface UriInfo extends
 UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
 UriInfoEntityId, UriInfoMetadata, UriInfoResource {
 
-  public UriInfoKind getKind();
+  UriInfoKind getKind();
 
-  public UriInfoService asUriInfoService();
+  UriInfoService asUriInfoService();
 
-  public UriInfoAll asUriInfoAll();
+  UriInfoAll asUriInfoAll();
 
-  public UriInfoBatch asUriInfoBatch();
+  UriInfoBatch asUriInfoBatch();
 
-  public UriInfoCrossjoin asUriInfoCrossjoin();
+  UriInfoCrossjoin asUriInfoCrossjoin();
 
-  public UriInfoEntityId asUriInfoEntityId();
+  UriInfoEntityId asUriInfoEntityId();
 
-  public UriInfoMetadata asUriInfoMetadata();
+  UriInfoMetadata asUriInfoMetadata();
 
-  public UriInfoResource asUriInfoResource();
+  UriInfoResource asUriInfoResource();
 
-  public Collection<SystemQueryOption> getSystemQueryOptions();
-
+  Collection<SystemQueryOption> getSystemQueryOptions();
 }

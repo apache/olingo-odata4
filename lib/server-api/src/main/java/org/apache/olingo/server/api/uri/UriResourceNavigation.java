@@ -35,7 +35,7 @@ public interface UriResourceNavigation extends UriResourcePartTyped {
   EdmNavigationProperty getProperty();
 
   /**
-   * @return Key predicates if used, otherwise null
+   * @return Key predicates if used, otherwise an empty list
    */
   List<UriParameter> getKeyPredicates();
 

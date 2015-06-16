@@ -73,29 +73,30 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
   @Override
   public String toString(final boolean includeFilters) {
 
-    if (includeFilters == true) {
-      String tmp = "";
+    if (includeFilters) {
+      StringBuilder tmp = new StringBuilder();
       if (collectionTypeFilter != null) {
-        tmp += getFQN(collectionTypeFilter).toString();
+        tmp.append(getFQN(collectionTypeFilter));
       }
 
       if (entryTypeFilter != null) {
         if (tmp.length() == 0) {
-          tmp = getFQN(entryTypeFilter).toString();
+          tmp.append(getFQN(entryTypeFilter));
         } else {
-          tmp += "/()" + getFQN(entryTypeFilter).toString();
+          tmp.append("/()").append(getFQN(entryTypeFilter));
         }
       }
+
       if (tmp.length() != 0) {
-        return toString() + "/" + tmp;
+        return toString() + "/" + tmp.toString();
       }
     }
 
     return toString();
   }
 
-  private FullQualifiedName getFQN(final EdmType type) {
-    return new FullQualifiedName(type.getNamespace(), type.getName());
+  private String getFQN(final EdmType type) {
+    return new FullQualifiedName(type.getNamespace(), type.getName()).getFullQualifiedNameAsString();
   }
 
 }
