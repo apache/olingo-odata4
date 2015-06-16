@@ -40,4 +40,13 @@
     <module>client-proxy</module>
     <module>client-android</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>spring</id>
+      <modules>
+        <module>spring</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:olingo="http://olingo.apache.org/schema/olingo/spring-olingo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://olingo.apache.org/schema/olingo/spring-olingo
+                http://olingo.apache.org/schema/olingo/spring-olingo.xsd">
+
+  <bean id="conversionService"
+        class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+      <set>
+        <bean class="org.apache.olingo.ext.spring.editor.FullQualifiedNameConverter"/>
+        <bean class="org.apache.olingo.ext.spring.editor.ToFullQualifiedNameConverter"/>
+      </set>
+    </property>
+  </bean>
+
+	<olingo:edm-provider id="edmProvider">
+		<olingo:schema namespace="test" alias="">
+			<olingo:entityContainer>
+				<olingo:entitySet name="sources1" type="sources1"/>
+			</olingo:entityContainer>
+			<!-- EnumType -->
+			<!-- getTypeDefinition -->
+			<olingo:entityType name="sources1">
+				<olingo:key property-name="field1"/>
+
+				<olingo:property name="field1" type="Edm.String"/>
+				<olingo:property name="field2" type="Edm.Int32"/>
+				<olingo:property name="field3" type="Edm.Int64"/>
+				<olingo:property name="field4" type="Edm.Double"/>
+				<olingo:property name="field5" type="Edm.Double"/>
+				<olingo:property name="field6" type="Edm.Boolean"/>
+			</olingo:entityType>
+
+<!-- 			<edm:complexType name="test"> -->
+<!-- 			</edm:complexType> -->
+
+			<!-- getActions -->
+			<!-- getFunctions -->
+			<!-- getTerm -->
+			<!-- getEntitySet -->
+			<!-- getSingleton -->
+			<!-- getActionImport -->
+			<!-- getFunctionImport -->
+			<!-- getEntityContainerInfo -->
+			<!-- getAliasInfos -->
+			<!-- getSchemas -->
+			<!-- getEntityContainer -->
+		</olingo:schema>
+	</olingo:edm-provider>
+</beans>
