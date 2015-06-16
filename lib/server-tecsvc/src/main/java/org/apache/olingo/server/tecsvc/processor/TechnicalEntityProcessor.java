@@ -40,6 +40,8 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
+import org.apache.olingo.server.api.prefer.PreferencesApplied;
+import org.apache.olingo.server.api.prefer.Preferences.Return;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -162,11 +164,20 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       expand = deserializerResult.getExpandTree();
     }
 
-    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
-    response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, expand, null)
-        .getContent());
-    response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
+    if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
+      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
+      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, expand, null)
+          .getContent());
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+      response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
+    } else {
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    }
+    if (returnPreference != null) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+    }
     response.setHeader(HttpHeader.LOCATION,
         request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
     if (entity.getETag() != null) {
@@ -209,11 +220,20 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
         request.getMethod() == HttpMethod.PATCH, false);
 
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
-    response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, null, null)
-        .getContent());
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
+    if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
+      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, null, null)
+          .getContent());
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    } else {
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    }
+    if (returnPreference != null) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+    }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }
@@ -234,11 +254,20 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
         requestFormat.toContentTypeString());
 
-    final ODataFormat format = ODataFormat.fromContentType(responseFormat);
-    response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, null, null)
-        .getContent());
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
+    if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
+      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
+      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, format, null, null)
+          .getContent());
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    } else {
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    }
+    if (returnPreference != null) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+    }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }
@@ -414,10 +443,12 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     SkipHandler.applySkipSystemQueryHandler(uriInfo.getSkipOption(), entitySet);
     TopHandler.applyTopSystemQueryOption(uriInfo.getTopOption(), entitySet);
 
-    ServerSidePagingHandler.applyServerSidePaging(uriInfo.getSkipTokenOption(),
+    final Integer pageSize = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getMaxPageSize();
+    final Integer serverPageSize = ServerSidePagingHandler.applyServerSidePaging(uriInfo.getSkipTokenOption(),
         entitySet,
         edmEntitySet,
-        request.getRawRequestUri());
+        request.getRawRequestUri(),
+        pageSize);
 
     // Apply expand system query option
     final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
@@ -443,6 +474,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+    if (pageSize != null) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().maxPageSize(serverPageSize).build().toString());
+    }
   }
 
   private SerializerResult serializeEntityCollection(final EntityCollection entityCollection,

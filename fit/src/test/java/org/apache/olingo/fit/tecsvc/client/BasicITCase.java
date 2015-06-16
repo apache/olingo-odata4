@@ -37,6 +37,7 @@ import java.util.List;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -401,6 +402,24 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
 
   @Test
+  public void createEntityMinimalResponse() throws Exception {
+    final ODataClient client = getClient();
+    final ClientObjectFactory factory = client.getObjectFactory();
+    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
+    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
+        factory.newPrimitiveValueBuilder().buildString("new")));
+    ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityCreateRequest(
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").build(),
+        newEntity);
+    request.setPrefer(getClient().newPreferences().returnMinimal());
+
+    final ODataEntityCreateResponse<ClientEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals(SERVICE_URI + "/ESTwoPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
+  }
+
+  @Test
   public void readEntityWithExpandedNavigationProperty() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
@@ -459,30 +478,20 @@ public class BasicITCase extends AbstractBaseTestITCase {
     entity.getProperties().add(
         of.newCollectionProperty("CollPropertyComp",
             of.newCollectionValue("CTPrimComp")
-            .add(
-                of.newComplexValue("CTPrimComp")
-                .add(
-                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                .buildInt16(
-                                    (short) 42)))
-                            .add(
-                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                .add(
-                                    of.newPrimitiveProperty("PropertyString", of
-                                        .newPrimitiveValueBuilder()
-                                        .buildString("42"))))))
-                                            .add(
-                                                of.newComplexValue("CTPrimComp")
-                                                .add(
-                            of.newPrimitiveProperty("PropertyInt16", of.newPrimitiveValueBuilder()
-                                .buildInt16(
-                                    (short) 43)))
-                                                            .add(
-                            of.newComplexProperty("PropertyComp", of.newComplexValue("CTAllPrim")
-                                .add(
-                                    of.newPrimitiveProperty("PropertyString", of
-                                        .newPrimitiveValueBuilder()
-                                        .buildString("43"))))))));
+                .add(of.newComplexValue("CTPrimComp")
+                    .add(of.newPrimitiveProperty("PropertyInt16",
+                        of.newPrimitiveValueBuilder().buildInt16((short) 42)))
+                    .add(of.newComplexProperty("PropertyComp",
+                        of.newComplexValue("CTAllPrim")
+                            .add(of.newPrimitiveProperty("PropertyString",
+                                of.newPrimitiveValueBuilder().buildString("42"))))))
+                .add(of.newComplexValue("CTPrimComp")
+                    .add(of.newPrimitiveProperty("PropertyInt16",
+                        of.newPrimitiveValueBuilder().buildInt16((short) 43)))
+                    .add(of.newComplexProperty("PropertyComp",
+                        of.newComplexValue("CTAllPrim")
+                            .add(of.newPrimitiveProperty("PropertyString",
+                                of.newPrimitiveValueBuilder().buildString("43"))))))));
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
@@ -681,13 +690,15 @@ public class BasicITCase extends AbstractBaseTestITCase {
     entity.getProperties().add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder()
         .buildString(null)));
 
-    final ODataEntityUpdateResponse<ClientEntity> updateResponse = client.getCUDRequestFactory()
-        .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity)
-        .execute();
+    ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory()
+        .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity);
+    request.setPrefer(getClient().newPreferences().returnRepresentation());
+    final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
 
-    assertEquals(HttpStatusCode.OK.getStatusCode(), updateResponse.getStatusCode());
-    assertTrue(updateResponse.getBody().getProperty("PropertyString").hasNullValue());
-    assertEquals(34, updateResponse.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("return=\"representation\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertTrue(response.getBody().getProperty("PropertyString").hasNullValue());
+    assertEquals(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
 
   @Test(expected = ODataClientErrorException.class)
@@ -743,23 +754,23 @@ public class BasicITCase extends AbstractBaseTestITCase {
                 .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
                 .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ClientEntity> entitytResponse = entityRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entitytResponse.getStatusCode());
-    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
         .asInlineEntity()
         .getEntity()
         .getProperty("PropertyInt16")
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
         .size());
 
-    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -768,7 +779,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(2, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -777,7 +788,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -786,7 +797,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    final Iterator<ClientValue> collectionIterator = entitytResponse.getBody()
+    final Iterator<ClientValue> collectionIterator = entityResponse.getBody()
         .getProperty("CollPropertyString")
         .getCollectionValue()
         .iterator();
@@ -794,7 +805,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals("Single entry!", collectionIterator.next().asPrimitive().toValue());
     assertFalse(collectionIterator.hasNext());
 
-    final ClientComplexValue complexValue = entitytResponse.getBody()
+    final ClientComplexValue complexValue = entityResponse.getBody()
         .getProperty("PropertyCompAllPrim")
         .getComplexValue();
 
@@ -825,14 +836,14 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .add(of.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(of.newComplexProperty("PropertyCompAllPrim",
         of.newComplexValue("CTAllPrim")
-        .add(of.newPrimitiveProperty("PropertyString",
-                of.newPrimitiveValueBuilder().buildString("Changed")))));
+        .add(of.newPrimitiveProperty("PropertyString", of.newPrimitiveValueBuilder().buildString("Changed")))));
 
-    final ODataEntityUpdateResponse<ClientEntity> response = client.getCUDRequestFactory()
-        .getEntityUpdateRequest(targetURI, UpdateType.REPLACE, entity)
-        .execute();
-
-    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory()
+        .getEntityUpdateRequest(targetURI, UpdateType.REPLACE, entity);
+    request.setPrefer(getClient().newPreferences().returnMinimal());
+    final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
@@ -843,23 +854,23 @@ public class BasicITCase extends AbstractBaseTestITCase {
                 .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
                 .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
-    final ODataRetrieveResponse<ClientEntity> entitytResponse = entityRequest.execute();
+    final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
-    assertEquals(HttpStatusCode.OK.getStatusCode(), entitytResponse.getStatusCode());
-    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+    assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
+    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
         .asInlineEntity()
         .getEntity()
         .getProperty("PropertyInt16")
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
         .size());
 
-    assertEquals(1, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -868,7 +879,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(2, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -877,7 +888,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entitytResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -886,7 +897,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    final Iterator<ClientValue> collectionIterator = entitytResponse.getBody()
+    final Iterator<ClientValue> collectionIterator = entityResponse.getBody()
         .getProperty("CollPropertyString")
         .getCollectionValue()
         .iterator();
@@ -894,7 +905,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals("Single entry!", collectionIterator.next().asPrimitive().toValue());
     assertFalse(collectionIterator.hasNext());
 
-    final ClientComplexValue propCompAllPrim = entitytResponse.getBody()
+    final ClientComplexValue propCompAllPrim = entityResponse.getBody()
         .getProperty("PropertyCompAllPrim")
         .getComplexValue();
 
@@ -902,15 +913,15 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertTrue(propCompAllPrim.get("PropertyInt16").hasNullValue());
     assertTrue(propCompAllPrim.get("PropertyDate").hasNullValue());
 
-    final ClientComplexValue propCompTwoPrim = entitytResponse.getBody()
+    final ClientComplexValue propCompTwoPrim = entityResponse.getBody()
         .getProperty("PropertyCompTwoPrim")
         .getComplexValue();
 
     assertEquals("Must not be null", propCompTwoPrim.get("PropertyString").getPrimitiveValue().toValue());
     assertEquals(42, propCompTwoPrim.get("PropertyInt16").getPrimitiveValue().toValue());
 
-    assertNotNull(entitytResponse.getBody().getProperty("PropertyCompNav").getComplexValue());
-    assertTrue(entitytResponse.getBody()
+    assertNotNull(entityResponse.getBody().getProperty("PropertyCompNav").getComplexValue());
+    assertTrue(entityResponse.getBody()
         .getProperty("PropertyCompNav")
         .getComplexValue()
         .get("PropertyInt16")
