@@ -80,32 +80,14 @@ Alternatively, you can edit this property in file etc/org.ops4j.pax.url.mvn.cfg.
 
 For further details, please refer to [Karaf User Guide](http://karaf.apache.org/manual/latest/users-guide/index.html).
 
-#### Install Olingo libs and other depdenent libs
+#### Install Olingo libs and other dependent libs
 
-For now, we install the individual bundles one by one. We can define feature olingo-server to install all the bundles at once in the future.
-
-First, to install the depending bundles of olingo, run the following karaf console commands.
-
-```
-feature:install war
-bundle:install -s mvn:commons-codec/commons-codec/1.9
-bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2
-bundle:install -s mvn:org.codehaus.woodstox/stax2-api/3.1.4
-bundle:install -s mvn:com.fasterxml/aalto-xml/0.9.10
-bundle:install -s 'wrap:mvn:org.antlr/antlr4-runtime/4.1/$Bundle-SymbolicName=antlr4-runtime&Bundle-Version=4.1&Export-Package=org.antlr.v4.runtime*'
-bundle:install -s mvn:com.fasterxml.jackson.core/jackson-core/2.4.1
-bundle:install -s mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.1
-bundle:install -s mvn:com.fasterxml.jackson.core/jackson-databind/2.4.1
-```
-
-Now, install the olingo bundles by running the following commands. Note that
-we assume we are using the patched version regarding OLINGO-632.
+To install the required bundles, you can simply install the Karaf olingo-server feature.
+The following commands will install the olingo-server feature.
 
 ```
-bundle:install -s mvn:org.apache.olingo/odata-commons-api/4.0.0-SNAPSHOT
-bundle:install -s mvn:org.apache.olingo/odata-commons-core/4.0.0-SNAPSHOT
-bundle:install -s mvn:org.apache.olingo/odata-server-api/4.0.0-SNAPSHOT
-bundle:install -s mvn:org.apache.olingo/odata-server-core/4.0.0-SNAPSHOT
+feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.0.0-SNAPSHOT/xml/features
+feature:install olingo-server
 ```
 
 #### Install this sample bundle
@@ -119,34 +101,11 @@ bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.0.0-SNAPSHOT
 Shown below is the output from running the above Karaf console commands.
 
 ```
-karaf@root()> feature:install war
-karaf@root()> bundle:install -s mvn:commons-codec/commons-codec/1.9
-Bundle ID: 97
-karaf@root()> bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2
-Bundle ID: 98
-karaf@root()> bundle:install -s mvn:org.codehaus.woodstox/stax2-api/3.1.4
-Bundle ID: 99
-karaf@root()> bundle:install -s mvn:com.fasterxml/aalto-xml/0.9.10
-Bundle ID: 100
-karaf@root()> bundle:install -s 'wrap:mvn:org.antlr/antlr4-runtime/4.1/$Bundle-SymbolicName=antlr4-runtime&Bundle-Version=4.1&Export-Package=org.antlr.v4.runtime*'
-Bundle ID: 101
-karaf@root()> bundle:install -s mvn:com.fasterxml.jackson.core/jackson-core/2.4.1
-Bundle ID: 102
-karaf@root()> bundle:install -s mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.1
-Bundle ID: 103
-karaf@root()> bundle:install -s mvn:com.fasterxml.jackson.core/jackson-databind/2.4.1
-Bundle ID: 104
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-commons-api/4.0.0-SNAPSHOT
-Bundle ID: 105
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-commons-core/4.0.0-SNAPSHOT
-Bundle ID: 106
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-api/4.0.0-SNAPSHOT
-Bundle ID: 107
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-core/4.0.0-SNAPSHOT
-Bundle ID: 108
+karaf@root()> feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.0.0-SNAPSHOT/xml/features
+Adding feature url mvn:org.apache.olingo/odata-karaf-features/4.0.0-SNAPSHOT/xml/features
+karaf@root()> feature:install olingo-server
 karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.0.0-SNAPSHOT
 Bundle ID: 109
-karaf@root()> 
 ```
 
 To verify if the sample is correctly installed and running, use list and web:list to see its bundle status and its web context is registered.
@@ -156,18 +115,18 @@ karaf@root()> list
 START LEVEL 100 , List Threshold: 50
  ID | State  | Lvl | Version        | Name                    
 --------------------------------------------------------------
- 97 | Active |  80 | 1.9.0          | Apache Commons Codec    
- 98 | Active |  80 | 3.3.2          | Apache Commons Lang     
- 99 | Active |  80 | 3.1.4          | Stax2 API               
-100 | Active |  80 | 0.9.10         | aalto-xml               
-101 | Active |  80 | 4.1            | antlr4-runtime          
-102 | Active |  80 | 2.4.1          | Jackson-core            
-103 | Active |  80 | 2.4.1          | Jackson-annotations     
-104 | Active |  80 | 2.4.1          | jackson-databind        
-105 | Active |  80 | 4.0.0.SNAPSHOT | odata-commons-api       
-106 | Active |  80 | 4.0.0.SNAPSHOT | odata-commons-core      
-107 | Active |  80 | 4.0.0.SNAPSHOT | odata-server-api        
-108 | Active |  80 | 4.0.0.SNAPSHOT | odata-server-core       
+ 97 | Active |  50 | 1.9.0          | Apache Commons Codec    
+ 98 | Active |  50 | 3.3.2          | Apache Commons Lang     
+ 99 | Active |  50 | 3.1.4          | Stax2 API               
+100 | Active |  50 | 0.9.10         | aalto-xml               
+101 | Active |  50 | 4.1            | antlr4-runtime          
+102 | Active |  50 | 2.4.2          | Jackson-core            
+103 | Active |  50 | 2.4.2          | Jackson-annotations     
+104 | Active |  50 | 2.4.2          | jackson-databind        
+105 | Active |  50 | 4.0.0.SNAPSHOT | odata-commons-api       
+106 | Active |  50 | 4.0.0.SNAPSHOT | odata-commons-core      
+107 | Active |  50 | 4.0.0.SNAPSHOT | odata-server-api        
+108 | Active |  50 | 4.0.0.SNAPSHOT | odata-server-core       
 109 | Active |  80 | 4.0.0.SNAPSHOT | odata-server-osgi-sample
 karaf@root()> web:list
 ID  | State       | Web-State   | Level | Web-ContextPath | Name                                     
