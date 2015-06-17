@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.apache.olingo.server.tecsvc.Encoder;
 
 public class ServerSidePagingHandler {
   private static final int MAX_PAGE_SIZE = 10;
@@ -45,7 +44,7 @@ public class ServerSidePagingHandler {
    * @param rawRequestUri     the request URI (used to construct the next link)
    * @param preferredPageSize the client's preference for page size
    * @return the chosen page size (or <code>null</code> if no paging has been done);
-   *        could be used in the Preference-Applied HTTP header
+   *         could be used in the Preference-Applied HTTP header
    * @throws ODataApplicationException
    */
   public static Integer applyServerSidePaging(final SkipTokenOption skipTokenOption, EntityCollection entityCollection,
@@ -74,7 +73,7 @@ public class ServerSidePagingHandler {
     return null;
   }
 
-  private static URI createNextLink(final String rawRequestUri, final Integer page, final int pageSize)
+  private static URI createNextLink(final String rawRequestUri, final int page, final int pageSize)
       throws ODataApplicationException {
     // Remove a maybe existing skiptoken, making sure that the query part is not empty.
     String nextlink = rawRequestUri.contains("?") ?
@@ -85,9 +84,12 @@ public class ServerSidePagingHandler {
     nextlink += nextlink.contains("?") ? '&' : '?';
 
     // Append the new skiptoken.
+    nextlink += SystemQueryOptionKind.SKIPTOKEN.toString().replace("$", "%24")  // poor man's percent encoding
+        + '='
+        + page + "%2A" + pageSize;  // "%2A" is a percent-encoded asterisk
+
     try {
-      return new URI(nextlink + Encoder.encode(SystemQueryOptionKind.SKIPTOKEN.toString()) + '='
-          + Encoder.encode(page.toString() + '*' + pageSize));
+      return new URI(nextlink);
     } catch (final URISyntaxException e) {
       throw new ODataApplicationException("Exception while constructing next link",
           HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, e);
