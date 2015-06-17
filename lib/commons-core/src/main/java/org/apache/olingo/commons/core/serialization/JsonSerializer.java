@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -64,16 +65,13 @@ public class JsonSerializer implements ODataSerializer {
   private final JsonGeoValueSerializer geoSerializer = new JsonGeoValueSerializer();
 
   protected boolean serverMode;
-
+  protected final boolean isIEEE754Compatible;
   protected ContentType contentType;
-
-  public JsonSerializer(final boolean serverMode) {
-    this(serverMode, ContentType.JSON_FULL_METADATA);
-  }
 
   public JsonSerializer(final boolean serverMode, final ContentType contentType) {
     this.serverMode = serverMode;
     this.contentType = contentType;
+    this.isIEEE754Compatible = isIEEE754Compatible();
   }
 
   @Override
@@ -81,11 +79,11 @@ public class JsonSerializer implements ODataSerializer {
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(writer);
       if (obj instanceof EntityCollection) {
-        new JsonEntitySetSerializer(serverMode).doSerialize((EntityCollection) obj, json);
+        new JsonEntitySetSerializer(serverMode, contentType).doSerialize((EntityCollection) obj, json);
       } else if (obj instanceof Entity) {
         new JsonEntitySerializer(serverMode, contentType).doSerialize((Entity) obj, json);
       } else if (obj instanceof Property) {
-        new JsonPropertySerializer(serverMode).doSerialize((Property) obj, json);
+        new JsonPropertySerializer(serverMode, contentType).doSerialize((Property) obj, json);
       } else if (obj instanceof Link) {
         link((Link) obj, json);
       }
@@ -113,11 +111,12 @@ public class JsonSerializer implements ODataSerializer {
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(writer);
       if (obj instanceof EntityCollection) {
-        new JsonEntitySetSerializer(serverMode).doContainerSerialize((ResWrap<EntityCollection>) container, json);
+        new JsonEntitySetSerializer(serverMode, contentType).doContainerSerialize(
+            (ResWrap<EntityCollection>) container, json);
       } else if (obj instanceof Entity) {
-        new JsonEntitySerializer(serverMode).doContainerSerialize((ResWrap<Entity>) container, json);
+        new JsonEntitySerializer(serverMode, contentType).doContainerSerialize((ResWrap<Entity>) container, json);
       } else if (obj instanceof Property) {
-        new JsonPropertySerializer(serverMode).doContainerSerialize((ResWrap<Property>) container, json);
+        new JsonPropertySerializer(serverMode, contentType).doContainerSerialize((ResWrap<Property>) container, json);
       } else if (obj instanceof Link) {
         link((Link) obj, json);
       } else if (obj instanceof URI) {
@@ -175,10 +174,10 @@ public class JsonSerializer implements ODataSerializer {
 
       if (link.getInlineEntity() != null) {
         jgen.writeFieldName(link.getTitle());
-        new JsonEntitySerializer(serverMode).doSerialize(link.getInlineEntity(), jgen);
+        new JsonEntitySerializer(serverMode, contentType).doSerialize(link.getInlineEntity(), jgen);
       } else if (link.getInlineEntitySet() != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
+        final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode, contentType);
         for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
           entitySerializer.doSerialize(subEntry, jgen);
         }
@@ -233,10 +232,10 @@ public class JsonSerializer implements ODataSerializer {
 
       if (link.getInlineEntity() != null) {
         jgen.writeFieldName(link.getTitle());
-        new JsonEntitySerializer(serverMode).doSerialize(link.getInlineEntity(), jgen);
+        new JsonEntitySerializer(serverMode, contentType).doSerialize(link.getInlineEntity(), jgen);
       } else if (link.getInlineEntitySet() != null) {
         jgen.writeArrayFieldStart(link.getTitle());
-        JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
+        JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode, contentType);
         for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
           entitySerializer.doSerialize(subEntry, jgen);
         }
@@ -294,12 +293,15 @@ public class JsonSerializer implements ODataSerializer {
     } else if (isBoolean) {
       jgen.writeBoolean((Boolean) value);
     } else {
-      final String serialized = kind == null
+        String serialized = kind == null
           ? value.toString()
               // TODO: add facets
               : EdmPrimitiveTypeFactory.getInstance(kind).
               valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
-          if (isNumber) {
+          
+          if(isIEEE754Compatible && (kind == EdmPrimitiveTypeKind.Int64 || kind == EdmPrimitiveTypeKind.Decimal)) {
+            jgen.writeString(serialized);
+          } else if(isNumber) {
             jgen.writeNumber(serialized);
           } else {
             jgen.writeString(serialized);
@@ -312,7 +314,7 @@ public class JsonSerializer implements ODataSerializer {
           throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
-    if (typeInfo != null && contentType != ContentType.JSON_NO_METADATA) {
+    if (typeInfo != null && contentType.getODataFormat() != Format.JSON_NO_METADATA) {
       jgen.writeStringField(Constants.JSON_TYPE, typeInfo.external());
     }
 
@@ -359,7 +361,7 @@ public class JsonSerializer implements ODataSerializer {
           valuable.isPrimitive()) || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
-      if (StringUtils.isNotBlank(type) && contentType != ContentType.JSON_NO_METADATA) {
+      if (StringUtils.isNotBlank(type) && contentType.getODataFormat() != Format.JSON_NO_METADATA) {
         jgen.writeFieldName(
             name + StringUtils.prependIfMissing(Constants.JSON_TYPE, "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external());
@@ -372,5 +374,10 @@ public class JsonSerializer implements ODataSerializer {
 
     jgen.writeFieldName(name);
     value(jgen, valuable.getType(), valuable);
+  }
+  
+  private boolean isIEEE754Compatible() {
+    final String parameter = contentType.getParameters().get(ContentType.PARAMETER_IEEE754_COMPATIBLE);
+    return parameter == null ? false : "true".equals(parameter.toLowerCase());
   }
 }

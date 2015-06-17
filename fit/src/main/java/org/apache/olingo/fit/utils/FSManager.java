@@ -41,6 +41,7 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
@@ -125,7 +126,7 @@ public class FSManager {
     putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.ATOM));
     content.reset();
 
-    new JsonSerializer(true).write(writer, container);
+    new JsonSerializer(true, ContentType.JSON_FULL_METADATA).write(writer, container);
     writer.flush();
 
     putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));

@@ -48,6 +48,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
@@ -104,7 +105,7 @@ public abstract class AbstractUtilities {
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);
-    jsonSerializer = new JsonSerializer(true);
+    jsonSerializer = new JsonSerializer(true, ContentType.JSON_FULL_METADATA);
   }
 
   public boolean isMediaContent(final String entityName) {
