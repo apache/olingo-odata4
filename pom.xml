@@ -552,6 +552,7 @@
             </goals>
             <configuration>
               <excludes>
+                <exclude>**/target/**</exclude>
                 <exclude>**/META-INF/**</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.ini</exclude>
