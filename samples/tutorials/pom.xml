@@ -36,6 +36,8 @@
 
   <modules>
     <module>p1_read</module>
+    <module>p2_readep</module>
+    <module>p3_write</module>
   </modules>
 
   <build>
