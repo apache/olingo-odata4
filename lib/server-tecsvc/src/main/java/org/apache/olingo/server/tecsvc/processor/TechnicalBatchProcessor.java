@@ -80,7 +80,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
     if (continueOnError) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().continueOnError().build().toString());
+          PreferencesApplied.with().continueOnError().build().toValueString());
     }
   }
 

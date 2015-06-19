@@ -176,7 +176,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
     response.setHeader(HttpHeader.LOCATION,
         request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
@@ -232,7 +232,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
@@ -266,7 +266,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
@@ -476,7 +476,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     if (pageSize != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().maxPageSize(serverPageSize).build().toString());
+          PreferencesApplied.with().maxPageSize(serverPageSize).build().toValueString());
     }
   }
 

@@ -268,7 +268,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().maxPageSize(7));
 
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    assertEquals("odata.maxpagesize=\"7\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("odata.maxpagesize=7", response.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertEquals(SERVICE_URI + '/' + ES_SERVER_SIDE_PAGING + "?%24skiptoken=1%2A" + 7,
         response.getBody().getNext().toASCIIString());
   }

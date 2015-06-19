@@ -20,245 +20,204 @@ package org.apache.olingo.server.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.core.etag.PreconditionsValidator;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
-import org.apache.olingo.server.core.uri.validator.UriValidator;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class PreconditionsValidatorTest {
+
+  private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());
 
   // -------------- POSITIVE TESTS --------------------------------------------------------------------------------
 
   @Test
   public void simpleEntity() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESAllPrim(1)", null, "*", "*");
   }
 
   @Test
   public void simpleEntityValue() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, "*", "*").validatePreconditions(true);
+    validate("ESMedia(1)/$value", null, "*", "*");
   }
 
   @Test
   public void EntityAndToOneNavigation() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/NavPropertyETTwoPrimOne", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESTwoPrim"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESAllPrim(1)/NavPropertyETTwoPrimOne", "ESTwoPrim", "*", "*");
   }
 
   @Test
   public void EntityAndToManyNavigationWithKey() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESTwoPrim"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)", "ESTwoPrim", "*", "*");
   }
 
   @Test
   public void EntityAndToOneNavigationValue() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESKeyNav(1)/NavPropertyETMediaOne/$value", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESMedia"), uriInfo, "*", "*").validatePreconditions(true);
+    validate("ESKeyNav(1)/NavPropertyETMediaOne/$value", "ESMedia", "*", "*");
   }
 
   @Test
   public void boundActionOnEsKeyNav() throws Exception {
-    UriInfo uriInfo =
-        new Parser().parseUri("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav", "*", "*");
   }
 
   @Test
   public void boundActionOnEsKeyNavWithNavigation() throws Exception {
-    UriInfo uriInfo =
-        new Parser().parseUri("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null,
-            null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav",
+        "ESKeyNav", "*", "*");
   }
 
   @Test
   public void singleton() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("SI", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("SI"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("SI", "SI", "*", "*");
   }
 
   @Test
   public void singletonWithNavigation() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("SINav/NavPropertyETKeyNavOne", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("SINav/NavPropertyETKeyNavOne", "ESKeyNav", "*", "*");
   }
 
   @Test
   public void singletonWithNavigationValue() throws Exception {
-    UriInfo uriInfo =
-        new Parser().parseUri("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("ESMedia"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value", "ESMedia", "*", "*");
   }
 
   @Test
   public void singletonWithAction() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport("SINav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "SINav", "*", "*");
   }
 
   @Test
   public void singletonWithActionAndNavigation() throws Exception {
-    UriInfo uriInfo =
-        new Parser().parseUri("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null, null,
-            getEdm());
-    new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav", "*", "*");
   }
 
   @Test
   public void simpleEntityValueValidationNotActiveForMedia() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(true, false), uriInfo, null, null).validatePreconditions(true);
+    CustomETagSupport support = mock(CustomETagSupport.class);
+    when(support.hasETag(any(EdmBindingTarget.class))).thenReturn(true);
+    when(support.hasMediaETag(any(EdmBindingTarget.class))).thenReturn(false);
+
+    final UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, edm);
+    new PreconditionsValidator(support, uriInfo, null, null).validatePreconditions(true);
   }
 
   // -------------- IGNORE VALIDATION TESTS -----------------------------------------------------------------------
 
   @Test
   public void entitySetMustNotLeadToException() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+    validate("ESAllPrim", null, null, null);
   }
 
   @Test
   public void propertyMustNotLeadToException() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/PropertyInt16", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+    validate("ESAllPrim(1)/PropertyInt16", null, null, null);
   }
 
   @Test
   public void propertyValueMustNotLeadToException() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/PropertyInt16/$value", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(true);
+    validate("ESAllPrim(1)/PropertyInt16/$value", null, null, null);
   }
 
   @Test
   public void navigationToManyMustNotLeadToException() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/NavPropertyETTwoPrimMany", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+    validate("ESAllPrim(1)/NavPropertyETTwoPrimMany", null, null, null);
   }
 
   @Test
   public void navigationOnPropertyMustNotLeadToException() throws Exception {
-    UriInfo uriInfo = new Parser().parseUri("ESAllPrim(1)/NavPropertyETTwoPrimOne/PropertyInt16", null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+    validate("ESAllPrim(1)/NavPropertyETTwoPrimOne/PropertyInt16", null, null, null);
   }
 
   @Test
   public void navigationToManyOnActionMustNotLeadToException() throws Exception {
-    UriInfo uriInfo =
-        new Parser().parseUri("ESTwoPrim(1)/NavPropertyETAllPrimMany/Namespace1_Alias.BAESAllPrimRTETAllPrim", null,
-            null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+    validate("ESTwoPrim(1)/NavPropertyETAllPrimMany/Namespace1_Alias.BAESAllPrimRTETAllPrim", null, null, null);
   }
 
   @Test
-  public void navigationWithoutBindingMustNotLeadToAnException() throws Exception {
-    UriInfo uriInfo =
-        new Parser()
-            .parseUri(
-                "ESTwoBaseTwoKeyNav(PropertyInt16=1,PropertyString='test')"
-                    + "/NavPropertyETBaseTwoKeyNavMany(PropertyInt16=1,PropertyString='test')",
-                null, null, getEdm());
-    new PreconditionsValidator(new ETagSupport(), uriInfo, null, null).validatePreconditions(false);
+  public void navigationWithoutBindingMustNotLeadToException() throws Exception {
+    validate("ESTwoBaseTwoKeyNav(PropertyInt16=1,PropertyString='test')"
+        + "/NavPropertyETBaseTwoKeyNavMany(PropertyInt16=1,PropertyString='test')",
+        null, null, null);
   }
 
   // -------------- NEGATIVE TESTS --------------------------------------------------------------------------------
 
   @Test
   public void positiveTestsMustLeadToAnExceptionIfNoHeaderIsPresent() throws Exception {
-    runException("ESAllPrim(1)", null);
-    runException("ESMedia(1)/$value", null);
-    runException("ESAllPrim(1)/NavPropertyETTwoPrimOne", null);
-    runException("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)", null);
-    runException("ESKeyNav(1)/NavPropertyETMediaOne/$value", null);
-    runException("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null);
-    runException("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null);
+    runException("ESAllPrim(1)");
+    runException("ESMedia(1)/$value");
+    runException("ESAllPrim(1)/NavPropertyETTwoPrimOne");
+    runException("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)");
+    runException("ESKeyNav(1)/NavPropertyETMediaOne/$value");
+    runException("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
+    runException("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
 
-    runException("SI", null);
-    runException("SINav/NavPropertyETKeyNavOne", null);
-    runException("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value", null);
-    runException("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null);
-    runException("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", null);
+    runException("SI");
+    runException("SINav/NavPropertyETKeyNavOne");
+    runException("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value");
+    runException("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
+    runException("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
   }
 
   @Ignore
-  @Test
+  @Test(expected = UriParserSemanticException.class)
   public void resourceSegmentAfterActionMustLeadToUriParserException() throws Exception {
-    // TODO: Check with URI Parser
-    UriInfo uriInfo =
-        new Parser().parseUri("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", null, null,
-            getEdm());
-    new UriValidator().validate(uriInfo, HttpMethod.GET);
-    new PreconditionsValidator(new ETagSupport("ESKeyNav"), uriInfo, "*", "*").validatePreconditions(false);
+    validate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", "ESKeyNav", "*", "*");
   }
 
   @Test(expected = UriParserSemanticException.class)
   public void valueMustBeLastSegment() throws Exception {
-    new Parser().parseUri("ESMedia(1)/$value/PropertyInt16", null, null, getEdm());
+    validate("ESMedia(1)/$value/PropertyInt16", null, null, null);
   }
 
-  private void runException(String uri, String expectedEntitySet) throws UriParserException {
-    UriInfo uriInfo = new Parser().parseUri(uri, null, null, getEdm());
+  private void validate(final String uri, final String entitySetName, final String ifMatch, final String ifNoneMatch)
+      throws UriParserException, PreconditionException {
+    final UriInfo uriInfo = new Parser().parseUri(uri, null, null, edm);
+    final List<UriResource> parts = uriInfo.getUriResourceParts();
+    final boolean isMedia = parts.get(parts.size() - 1) instanceof UriResourceValue
+        && parts.get(parts.size() - 2) instanceof UriResourceEntitySet;
+
+    CustomETagSupport support = mock(CustomETagSupport.class);
+    final Answer<Boolean> answer = new Answer<Boolean>() {
+      public Boolean answer(final InvocationOnMock invocation) throws Throwable {
+        if (entitySetName != null) {
+          assertEquals(entitySetName, ((EdmBindingTarget) invocation.getArguments()[0]).getName());
+        }
+        return true;
+      }};
+    when(support.hasETag(any(EdmBindingTarget.class))).thenAnswer(answer);
+    when(support.hasMediaETag(any(EdmBindingTarget.class))).thenAnswer(answer);
+
+    new PreconditionsValidator(support, uriInfo, ifMatch, ifNoneMatch).validatePreconditions(isMedia);
+  }
+
+  private void runException(final String uri) throws UriParserException {
     try {
-      CustomETagSupport etagSupport =
-          expectedEntitySet == null ? new ETagSupport() : new ETagSupport(expectedEntitySet);
-      boolean isMedia = uri.endsWith("$value");
-      new PreconditionsValidator(etagSupport, uriInfo, null, null).validatePreconditions(isMedia);
+      validate(uri, null, null, null);
       fail("Expected a PreconditionRequiredException but was not thrown");
-    } catch (PreconditionException e) {
+    } catch (final PreconditionException e) {
       assertEquals(PreconditionException.MessageKeys.MISSING_HEADER, e.getMessageKey());
-    }
-  }
-
-  private Edm getEdm() {
-    return new EdmProviderImpl(new EdmTechProvider());
-  }
-
-  public class ETagSupport implements CustomETagSupport {
-
-    private boolean eTag = true;
-    private boolean mediaETag = true;
-    private String entitySetName;
-
-    public ETagSupport() {}
-
-    public ETagSupport(String entitySetName) {
-      this.entitySetName = entitySetName;
-    }
-
-    public ETagSupport(boolean eTag, boolean mediaETag) {
-      this.eTag = eTag;
-      this.mediaETag = mediaETag;
-    }
-
-    @Override
-    public boolean hasETag(EdmBindingTarget entitySetOrSingeton) {
-      if (this.entitySetName != null) {
-        assertEquals(this.entitySetName, entitySetOrSingeton.getName());
-      }
-      return eTag;
-    }
-
-    @Override
-    public boolean hasMediaETag(EdmBindingTarget entitySetOrSingelton) {
-      if (this.entitySetName != null) {
-        assertEquals(this.entitySetName, entitySetOrSingelton.getName());
-      }
-      return mediaETag;
     }
   }
 }

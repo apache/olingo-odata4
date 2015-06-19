@@ -325,7 +325,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
