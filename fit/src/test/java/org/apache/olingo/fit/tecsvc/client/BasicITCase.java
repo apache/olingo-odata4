@@ -1105,6 +1105,43 @@ public class BasicITCase extends AbstractBaseTestITCase {
   }
   
   @Test
+  public void updateComplexPropertyWithIEEE754CompatibleParamter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendPropertySegment(PROPERTY_COMP_ALL_PRIM).build();
+    
+    final ODataPropertyUpdateRequest requestUpdate = client.getCUDRequestFactory()
+        .getPropertyComplexValueUpdateRequest(uri, UpdateType.PATCH,
+            of.newComplexProperty(PROPERTY_COMP_ALL_PRIM,
+                of.newComplexValue("CTAllPrim")
+                    .add(of.newPrimitiveProperty(PROPERTY_INT64,
+                        of.newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
+                    .add(of.newPrimitiveProperty(PROPERTY_DECIMAL,
+                        of.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(12345678912L))))
+                    .add(of.newPrimitiveProperty(PROPERTY_INT16,
+                        of.newPrimitiveValueBuilder().buildInt16((short) 2)))));
+                                                         
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataPropertyRequest<ClientProperty> requestGet = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> responseGet = requestGet.execute();
+    
+    final ClientComplexValue complexValue = responseGet.getBody().getComplexValue();
+    
+    assertEquals(Long.MIN_VALUE, complexValue.get(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(12345678912L), complexValue.get(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    assertEquals(2, complexValue.get(PROPERTY_INT16).getPrimitiveValue().toValue());
+  }
+  
+  @Test
   public void updateProperyEdmDecimaltWithIEE754CompatibleParameter() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
