@@ -45,7 +45,6 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.junit.Ignore;
@@ -103,7 +102,7 @@ public class EntityTest extends AbstractTest {
       }
       if ("Orders".equals(link.getName())) {
         checked++;
-        if (contentType.getODataFormat() == Format.ATOM) {
+        if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
           assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, link.getType());
         }
       }

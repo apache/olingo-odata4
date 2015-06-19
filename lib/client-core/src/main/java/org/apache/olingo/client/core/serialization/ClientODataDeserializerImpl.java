@@ -38,7 +38,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataDeserializer;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.core.serialization.AtomDeserializer;
@@ -64,7 +63,8 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   public ClientODataDeserializerImpl(final boolean serverMode, final ContentType contentType) {
     this.contentType = contentType;
-    if (contentType.getODataFormat() == Format.XML || contentType.getODataFormat() == Format.ATOM) {
+    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
+        ContentType.APPLICATION_XML )) {
       deserializer = new AtomDeserializer();
     } else {
       deserializer = new JsonDeserializer(serverMode);
@@ -123,7 +123,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   @Override
   public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
-    return contentType.getODataFormat() == Format.XML ?
+    return contentType.isCompatible(ContentType.APPLICATION_XML) ?
         new XMLServiceDocumentDeserializer(false).toServiceDocument(input) :
         new JSONServiceDocumentDeserializer(false).toServiceDocument(input);
   }
@@ -131,7 +131,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {
     try {
-      return contentType.getODataFormat() == Format.ATOM ?
+      return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML) ?
           new AtomDeserializer().delta(input) :
           new JsonDeltaDeserializer(false).toDelta(input);
     } catch (XMLStreamException e) {

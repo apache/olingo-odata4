@@ -28,7 +28,6 @@ import java.util.StringTokenizer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -143,16 +142,15 @@ public abstract class ServiceRequest {
   @SuppressWarnings("unchecked")
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl,
       boolean references) throws ContentNegotiatorException {
-    final Format format = getResponseContentType().getODataFormat();
-
+    
     if (serilizerOptions.isAssignableFrom(EntitySerializerOptions.class)) {
       return (T) EntitySerializerOptions.with()
-          .contextURL(format == Format.JSON_NO_METADATA ? null : contextUrl)
+          .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .expand(uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
           .setWriteOnlyReferences(references).build();
     } else if (serilizerOptions.isAssignableFrom(EntityCollectionSerializerOptions.class)) {
       return (T) EntityCollectionSerializerOptions.with()
-          .contextURL(format == Format.JSON_NO_METADATA ? null : contextUrl)
+          .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
           .select(uriInfo.getSelectOption()).setWriteOnlyReferences(references).build();
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {
@@ -259,5 +257,10 @@ public abstract class ServiceRequest {
     ServiceDispatcher dispatcher = new ServiceDispatcher(odata, serviceMetadata, null, customContentType);
     dispatcher.visit(uriInfo);
     return (DataRequest)dispatcher.request;
+  }
+  
+  private boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.JSON) 
+        && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

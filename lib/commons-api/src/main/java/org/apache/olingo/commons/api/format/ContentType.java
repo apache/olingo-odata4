@@ -82,7 +82,12 @@ public final class ContentType {
 
   public static final String PARAMETER_CHARSET = "charset";
   public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
-
+  public static final String PARAMETER_ODATA_METADATA = "odata.metadata";
+  
+  public static final String VALUE_ODATA_METADATA_NONE = "none";
+  public static final String VALUE_ODATA_METADATA_MINIMAL = "minimal";
+  public static final String VALUE_ODATA_METADATA_FULL = "full";
+  
   private final String type;
   private final String subtype;
   private final Map<String, String> parameters;
@@ -249,7 +254,18 @@ public final class ContentType {
   public Map<String, String> getParameters() {
     return Collections.unmodifiableMap(parameters);
   }
-
+  
+  /**
+   * Returns the value of a given parameter.
+   * If the parameter does not exists the method returns null
+   * 
+   * @param name The parameter to get
+   * @return the value of the parameter or null if the parameter is not present
+   */
+  public String getParameter(final String name) {
+    return parameters.get(name);
+  }
+  
   @Override
   public int hashCode() {
     return 1;
@@ -306,7 +322,24 @@ public final class ContentType {
   public boolean isCompatible(final ContentType other) {
     return type.equalsIgnoreCase(other.type) && subtype.equalsIgnoreCase(other.subtype);
   }
-
+  
+  /**
+   * <p>{@link ContentType}s are <b>compatible</b>
+   * if <code>type</code> and <code>subtype</code> have the same value.</p>
+   * <p>The set <code>parameters</code> are <b>always</b> ignored
+   * (for compare with parameters see {@link #equals(Object)}).</p>
+   * @return <code>true</code> if both instances are compatible (see definition above), otherwise <code>false</code>.
+   */
+  public boolean isCompatible(final ContentType...otherTypes) {
+    for(final ContentType otherType : otherTypes) {
+      if(isCompatible(otherType)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
   /**
    * Checks whether both strings are equal ignoring the case of the strings.
    *
@@ -335,49 +368,6 @@ public final class ContentType {
           .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
     }
     return sb.toString();
-  }
-
-  /**
-   * Returns the {@link Format} of the current Content-Type
-   * 
-   * @return {@link Format}
-   */
-  public Format getODataFormat() {
-    if (isCompatible(ContentType.APPLICATION_ATOM_XML)
-        || isCompatible(ContentType.APPLICATION_ATOM_SVC)) {
-      return Format.ATOM;
-    } else if (isCompatible(ContentType.APPLICATION_XML)) {
-      return Format.XML;
-    } else if (isCompatible(ContentType.APPLICATION_JSON)) {
-      String jsonVariant = getParameters().get("odata.metadata");
-      if (jsonVariant != null) {
-        if ("none".equals(jsonVariant)) {
-          return Format.JSON_NO_METADATA;
-        } else if ("minimal".equals(jsonVariant)) {
-          return Format.JSON;
-        } else if ("full".equals(jsonVariant)) {
-          return Format.JSON_FULL_METADATA;
-        }
-      }
-      return Format.JSON;
-    } else if (isCompatible(ContentType.APPLICATION_OCTET_STREAM)) {
-      return Format.APPLICATION_OCTET_STREAM;
-    } else if (isCompatible(ContentType.TEXT_PLAIN)) {
-      return Format.TEXT_PLAIN;
-    } else if (isCompatible(ContentType.APPLICATION_XHTML_XML)) {
-      return Format.APPLICATION_XHTML_XML;
-    } else if (isCompatible(ContentType.APPLICATION_SVG_XML)) {
-      return Format.APPLICATION_SVG_XML;
-    } else if (isCompatible(ContentType.APPLICATION_FORM_URLENCODED)) {
-      return Format.APPLICATION_FORM_URLENCODED;
-    } else if (isCompatible(ContentType.MULTIPART_FORM_DATA)) {
-      return Format.MULTIPART_FORM_DATA;
-    } else if (isCompatible(ContentType.TEXT_XML)) {
-      return Format.TEXT_XML;
-    } else if (isCompatible(ContentType.TEXT_HTML)) {
-      return Format.TEXT_HTML;
-    }
-    return null;
   }
 
   @Override

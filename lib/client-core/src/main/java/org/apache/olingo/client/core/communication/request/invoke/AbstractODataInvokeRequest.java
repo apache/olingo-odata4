@@ -44,7 +44,6 @@ import org.apache.olingo.client.core.communication.request.AbstractODataBasicReq
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
@@ -97,7 +96,8 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
   }
 
   private String getActualFormat(final ContentType contentType) {
-    return ((ClientProperty.class.isAssignableFrom(reference) && contentType.getODataFormat() == Format.ATOM)
+    return ((ClientProperty.class.isAssignableFrom(reference) 
+        && contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML))
         ? ContentType.APPLICATION_XML : contentType).toContentTypeString();
   }
 

@@ -32,7 +32,6 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class PropertyTest extends AbstractTest {
     final ClientProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, contentType), contentType);
     // This is needed because type information gets lost with serialization
-    if (contentType.getODataFormat() == Format.APPLICATION_XML) {
+    if (contentType.isCompatible(ContentType.APPLICATION_XML)) {
       final ClientProperty comparable = getClient().getObjectFactory().newEnumProperty(property.getName(),
               getClient().getObjectFactory().
               newEnumValue(property.getEnumValue().getTypeName(), written.getEnumValue().getValue()));
@@ -114,7 +113,7 @@ public class PropertyTest extends AbstractTest {
     final ClientProperty written = getClient().getReader().readProperty(
             getClient().getWriter().writeProperty(property, contentType), contentType);
     // This is needed because type information gets lost with JSON serialization
-    if (contentType.getODataFormat() == Format.APPLICATION_XML) {
+    if(contentType.isCompatible(ContentType.APPLICATION_XML)) {
       final ClientCollectionValue<ClientValue> typedValue = getClient().getObjectFactory().
               newCollectionValue(property.getCollectionValue().getTypeName());
       for (final Iterator<ClientValue> itor = written.getCollectionValue().iterator(); itor.hasNext();) {

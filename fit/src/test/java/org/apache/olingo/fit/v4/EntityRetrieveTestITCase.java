@@ -46,7 +46,6 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.junit.Test;
 
 /**
@@ -71,8 +70,10 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals("Edm.GeographyPoint", entity.getProperty("Home").getPrimitiveValue().getTypeName());
 
     // In JSON with minimal metadata, links are not provided
-    if (contentType.getODataFormat() == Format.ATOM 
-        || contentType.getODataFormat() == Format.JSON_FULL_METADATA) {
+    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML) 
+        || (contentType.isCompatible(ContentType.JSON) 
+              && ContentType.VALUE_ODATA_METADATA_FULL
+              .equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA)))) {
       assertEquals(testStaticServiceRootURL + "/Customers(1)", entity.getEditLink().toASCIIString());
       assertEquals(3, entity.getNavigationLinks().size());
 

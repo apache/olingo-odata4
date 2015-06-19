@@ -51,7 +51,6 @@ import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.serialization.AtomSerializer;
 import org.apache.olingo.commons.core.serialization.JsonSerializer;
@@ -132,9 +131,10 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public ODataSerializer getSerializer(final ContentType contentType) {
-    return contentType.getODataFormat() == Format.ATOM || contentType.getODataFormat() == Format.XML ?
-        new AtomSerializer() :
-        new JsonSerializer(false, contentType);
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
+                                    ContentType.APPLICATION_XML) ?  
+                                        new AtomSerializer() : new JsonSerializer(false, contentType);
+       
   }
 
   @Override

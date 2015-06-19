@@ -42,7 +42,6 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -61,6 +60,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
+import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
@@ -196,7 +196,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
-    if (contentType.getODataFormat() == Format.JSON_NO_METADATA) {
+    if(ContentTypeHelper.isODataMetadataNone(contentType)) {
       return null;
     } else if (contextURL == null) {
       throw new SerializerException("ContextURL null!", SerializerException.MessageKeys.NO_CONTEXT_URL);
@@ -205,7 +205,7 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
-    if (contentType.getODataFormat() != Format.JSON_NO_METADATA
+    if (!ContentTypeHelper.isODataMetadataNone(contentType)
         && metadata != null
         && metadata.getServiceMetadataETagSupport() != null
         && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
@@ -236,7 +236,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       final SelectOption select, final boolean onlyReference, final JsonGenerator json) 
           throws IOException, SerializerException {
     json.writeStartObject();
-    if (contentType.getODataFormat() != Format.JSON_NO_METADATA) {
+    if(!ContentTypeHelper.isODataMetadataNone(contentType)) {
       if (contextURL != null) { // top-level entity
         json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
         writeMetadataETag(metadata, json);
@@ -754,8 +754,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
   
   private boolean isODataIEEE754Compatible(final ContentType contentType) {
-    return contentType.getParameters().containsKey("ieee754compatible") 
+    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE) 
         && Boolean.TRUE.toString().toLowerCase().equals(
-            contentType.getParameters().get("ieee754compatible").toLowerCase());
+            contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE).toLowerCase());
   }
 }

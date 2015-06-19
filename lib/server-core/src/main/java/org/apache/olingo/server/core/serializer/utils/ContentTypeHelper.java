@@ -16,26 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api.format;
+package org.apache.olingo.server.core.serializer.utils;
 
-/**
- * Available formats to be used in various contexts.
- */
-public enum Format {
-  JSON_NO_METADATA,
-  JSON,
-  JSON_FULL_METADATA,
-  ATOM,
-  XML,
-  APPLICATION_XML,
-  APPLICATION_XHTML_XML,
-  APPLICATION_SVG_XML,
-  APPLICATION_JSON,
-  APPLICATION_FORM_URLENCODED,
-  MULTIPART_FORM_DATA,
-  APPLICATION_OCTET_STREAM,
-  TEXT_PLAIN,
-  TEXT_XML,
-  TEXT_HTML
+import org.apache.olingo.commons.api.format.ContentType;
+
+public class ContentTypeHelper {
+  public static boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+  }
 }
-

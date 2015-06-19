@@ -30,7 +30,6 @@ import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.junit.Test;
 
@@ -42,7 +41,7 @@ public class ServiceDocumentTest extends AbstractTest {
   }
 
   private String getFileExtension(final ContentType contentType) {
-    return contentType.getODataFormat() == Format.XML ? "xml" : "json";
+    return contentType.isCompatible(ContentType.APPLICATION_XML) ? "xml" : "json";
   }
 
   private ClientServiceDocument parse(final ContentType contentType) throws ODataDeserializerException {

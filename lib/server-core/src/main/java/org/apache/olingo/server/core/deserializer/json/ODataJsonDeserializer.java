@@ -882,8 +882,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
   
   private boolean isODataIEEE754Compatible(final ContentType contentType) {
-    return contentType.getParameters().containsKey("ieee754compatible") 
+    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE) 
         && Boolean.TRUE.toString().toLowerCase().equals(
-            contentType.getParameters().get("ieee754compatible").toLowerCase());
+            contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE).toLowerCase());
   }
 }

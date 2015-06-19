@@ -20,7 +20,6 @@ package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 
@@ -45,7 +44,7 @@ public abstract class AbstractTest {
   }
 
   protected String getSuffix(final ContentType contentType) {
-    return contentType.getODataFormat() == Format.ATOM 
-        || contentType.getODataFormat() == Format.XML ? "xml" : "json";
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
+                                    ContentType.APPLICATION_XML) ? "xml": "json";
   }
 }

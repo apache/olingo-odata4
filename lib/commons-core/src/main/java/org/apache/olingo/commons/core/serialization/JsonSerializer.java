@@ -44,7 +44,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -314,7 +313,7 @@ public class JsonSerializer implements ODataSerializer {
           throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
-    if (typeInfo != null && contentType.getODataFormat() != Format.JSON_NO_METADATA) {
+    if (typeInfo != null && !isODataMetadataNone(contentType)) {
       jgen.writeStringField(Constants.JSON_TYPE, typeInfo.external());
     }
 
@@ -361,7 +360,7 @@ public class JsonSerializer implements ODataSerializer {
           valuable.isPrimitive()) || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
-      if (StringUtils.isNotBlank(type) && contentType.getODataFormat() != Format.JSON_NO_METADATA) {
+      if (StringUtils.isNotBlank(type) && !isODataMetadataNone(contentType)) {
         jgen.writeFieldName(
             name + StringUtils.prependIfMissing(Constants.JSON_TYPE, "@"));
         jgen.writeString(new EdmTypeInfo.Builder().setTypeExpression(type).build().external());
@@ -379,5 +378,10 @@ public class JsonSerializer implements ODataSerializer {
   private boolean isIEEE754Compatible() {
     final String parameter = contentType.getParameters().get(ContentType.PARAMETER_IEEE754_COMPATIBLE);
     return parameter == null ? false : "true".equals(parameter.toLowerCase());
+  }
+  
+  protected boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

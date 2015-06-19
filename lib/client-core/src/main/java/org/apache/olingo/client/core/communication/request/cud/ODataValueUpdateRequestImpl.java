@@ -35,7 +35,6 @@ import org.apache.olingo.client.core.communication.response.AbstractODataRespons
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -110,7 +109,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
         
         try {
           resValue = odataClient.getObjectFactory().newPrimitiveValueBuilder().
-                  setType(contentType.getODataFormat() == Format.TEXT_PLAIN
+                  setType(contentType.isCompatible(ContentType.TEXT_PLAIN)
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(getRawResponse()).
                   build();

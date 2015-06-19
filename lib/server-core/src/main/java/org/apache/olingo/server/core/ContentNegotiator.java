@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -31,6 +30,10 @@ import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 
 public class ContentNegotiator {
+
+  private static final String ATOM = "atom";
+  private static final String JSON = "json";
+  private static final String XML = "xml";
 
   private ContentNegotiator() {}
 
@@ -79,9 +82,9 @@ public class ContentNegotiator {
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
       final ContentType contentType =
-          Format.JSON.name().equalsIgnoreCase(formatString) ? ContentType.JSON :
-            Format.XML.name().equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
-              Format.ATOM.name().equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+          JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
+            XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+              ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
       try {
         result = getAcceptedType(
             AcceptType.fromContentType(contentType == null ?

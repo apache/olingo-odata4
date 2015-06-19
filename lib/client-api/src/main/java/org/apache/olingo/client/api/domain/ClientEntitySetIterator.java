@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,8 +84,8 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     this.stream = stream;
     this.contentType = contentType;
     this.osEntitySet = new ByteArrayOutputStream();
-
-    if (contentType.getODataFormat() == Format.ATOM) {
+    
+    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
       namespaces = getAllElementAttributes(stream, "feed", osEntitySet);
     } else {
       namespaces = null;
@@ -111,7 +110,7 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
   @SuppressWarnings("unchecked")
   public boolean hasNext() {
     if (available && cached == null) {
-      if (contentType.getODataFormat() == Format.ATOM) {
+      if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
         cached = nextAtomEntityFromEntitySet(stream, osEntitySet, namespaces);
       } else {
         cached = nextJSONEntityFromEntitySet(stream, osEntitySet);

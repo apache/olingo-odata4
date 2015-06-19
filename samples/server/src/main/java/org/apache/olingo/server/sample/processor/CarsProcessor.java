@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.Format;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -109,7 +108,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     final SelectOption select = uriInfo.getSelectOption();
     InputStream serializedContent = serializer.entityCollection(edm, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
-            .contextURL(requestedContentType.getODataFormat() == Format.JSON_NO_METADATA ? null :
+            .contextURL(isODataMetadataNone(requestedContentType) ? null :
                 getContextUrl(edmEntitySet, false, expand, select, null))
             .count(uriInfo.getCountOption())
             .expand(expand).select(select)
@@ -146,7 +145,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
       final SelectOption select = uriInfo.getSelectOption();
       InputStream serializedContent = serializer.entity(edm, edmEntitySet.getEntityType(), entity,
           EntitySerializerOptions.with()
-              .contextURL(requestedContentType.getODataFormat() == Format.JSON_NO_METADATA ? null :
+              .contextURL(isODataMetadataNone(requestedContentType) ? null :
                   getContextUrl(edmEntitySet, true, expand, select, null))
               .expand(expand).select(select)
               .build()).getContent();
@@ -253,7 +252,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
         } else {
           ODataSerializer serializer = odata.createSerializer(contentType);
-          final ContextURL contextURL = contentType.getODataFormat() == Format.JSON_NO_METADATA ? null :
+          final ContextURL contextURL = isODataMetadataNone(contentType) ? null :
               getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?
               serializer.complex(edm, (EdmComplexType) edmProperty.getType(), property,
@@ -364,5 +363,10 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Entity update is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
+  }
+  
+  public static boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }
