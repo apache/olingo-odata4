@@ -40,8 +40,8 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
+import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.processor.CountEntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.apache.olingo.server.api.processor.EntityProcessor;
@@ -53,8 +53,8 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
-import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
+import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
@@ -382,7 +382,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       throws ODataApplicationException, ODataLibraryException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     final EdmEntityType edmEntityType = edmEntitySet == null ?
-        (EdmEntityType) ((UriResourceFunction) uriInfo.getUriResourceParts()
+        (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()
             .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
         edmEntitySet.getEntityType();
 
@@ -421,7 +421,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       throws ODataApplicationException, ODataLibraryException {
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EdmEntityType edmEntityType = edmEntitySet == null ?
-        (EdmEntityType) ((UriResourceFunction) uriInfo.getUriResourceParts()
+        (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()
             .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
         edmEntitySet.getEntityType();
 
