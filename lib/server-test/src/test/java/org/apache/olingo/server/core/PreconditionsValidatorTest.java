@@ -19,7 +19,8 @@
 package org.apache.olingo.server.core;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,144 +53,146 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void simpleEntity() throws Exception {
-    validate("ESAllPrim(1)", null, "*", "*");
+    assertTrue(mustValidate("ESAllPrim(1)", "ESAllPrim"));
   }
 
   @Test
   public void simpleEntityValue() throws Exception {
-    validate("ESMedia(1)/$value", null, "*", "*");
+    assertTrue(mustValidate("ESMedia(1)/$value", "ESMedia"));
+  }
+
+  @Test
+  public void property() throws Exception {
+    assertTrue(mustValidate("ESAllPrim(1)/PropertyInt16", "ESAllPrim"));
+    assertTrue(mustValidate("ESMixPrimCollComp(0)/PropertyComp", "ESMixPrimCollComp"));
+    assertTrue(mustValidate("ESMixPrimCollComp(0)/PropertyComp/PropertyString", "ESMixPrimCollComp"));
+  }
+
+  @Test
+  public void propertyValue() throws Exception {
+    assertTrue(mustValidate("ESAllPrim(1)/PropertyInt16/$value", "ESAllPrim"));
+    assertTrue(mustValidate("ESMixPrimCollComp(0)/PropertyComp/PropertyString/$value", "ESMixPrimCollComp"));
   }
 
   @Test
   public void EntityAndToOneNavigation() throws Exception {
-    validate("ESAllPrim(1)/NavPropertyETTwoPrimOne", "ESTwoPrim", "*", "*");
+    assertTrue(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimOne", "ESTwoPrim"));
   }
 
   @Test
   public void EntityAndToManyNavigationWithKey() throws Exception {
-    validate("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)", "ESTwoPrim", "*", "*");
+    assertTrue(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)", "ESTwoPrim"));
   }
 
   @Test
   public void EntityAndToOneNavigationValue() throws Exception {
-    validate("ESKeyNav(1)/NavPropertyETMediaOne/$value", "ESMedia", "*", "*");
+    assertTrue(mustValidate("ESKeyNav(1)/NavPropertyETMediaOne/$value", "ESMedia"));
+  }
+
+  @Test
+  public void navigationOnProperty() throws Exception {
+    assertTrue(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimOne/PropertyInt16", "ESTwoPrim"));
+  }
+
+  @Test
+  public void navigationOnFunction() throws Exception {
+    assertTrue(mustValidate("FICRTESTwoKeyNav()(PropertyInt16=1,PropertyString='1')/NavPropertySINav", "SINav"));
   }
 
   @Test
   public void boundActionOnEsKeyNav() throws Exception {
-    validate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav", "*", "*");
+    assertTrue(mustValidate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test
   public void boundActionOnEsKeyNavWithNavigation() throws Exception {
-    validate("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav",
-        "ESKeyNav", "*", "*");
+    assertTrue(
+        mustValidate("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test
   public void singleton() throws Exception {
-    validate("SI", "SI", "*", "*");
+    assertTrue(mustValidate("SI", "SI"));
   }
 
   @Test
   public void singletonWithNavigation() throws Exception {
-    validate("SINav/NavPropertyETKeyNavOne", "ESKeyNav", "*", "*");
+    assertTrue(mustValidate("SINav/NavPropertyETKeyNavOne", "ESKeyNav"));
   }
 
   @Test
   public void singletonWithNavigationValue() throws Exception {
-    validate("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value", "ESMedia", "*", "*");
+    assertTrue(mustValidate("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value", "ESMedia"));
   }
 
   @Test
   public void singletonWithAction() throws Exception {
-    validate("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "SINav", "*", "*");
+    assertTrue(mustValidate("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "SINav"));
   }
 
   @Test
   public void singletonWithActionAndNavigation() throws Exception {
-    validate("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav", "*", "*");
+    assertTrue(mustValidate("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test
   public void simpleEntityValueValidationNotActiveForMedia() throws Exception {
+    final UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, edm);
+
     CustomETagSupport support = mock(CustomETagSupport.class);
     when(support.hasETag(any(EdmBindingTarget.class))).thenReturn(true);
     when(support.hasMediaETag(any(EdmBindingTarget.class))).thenReturn(false);
 
-    final UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, edm);
-    new PreconditionsValidator(support, uriInfo, null, null).validatePreconditions(true);
+    assertFalse(new PreconditionsValidator(uriInfo).mustValidatePreconditions(support, true));
   }
 
   // -------------- IGNORE VALIDATION TESTS -----------------------------------------------------------------------
 
   @Test
-  public void entitySetMustNotLeadToException() throws Exception {
-    validate("ESAllPrim", null, null, null);
+  public void entitySetMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("ESAllPrim", "ESAllPrim"));
   }
 
   @Test
-  public void propertyMustNotLeadToException() throws Exception {
-    validate("ESAllPrim(1)/PropertyInt16", null, null, null);
+  public void navigationToManyMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimMany", "ESTwoPrim"));
   }
 
   @Test
-  public void propertyValueMustNotLeadToException() throws Exception {
-    validate("ESAllPrim(1)/PropertyInt16/$value", null, null, null);
+  public void navigationOnFunctionWithoutEntitySetMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("FICRTETTwoKeyNavParam(ParameterInt16=1)/NavPropertyETKeyNavOne", null));
   }
 
   @Test
-  public void navigationToManyMustNotLeadToException() throws Exception {
-    validate("ESAllPrim(1)/NavPropertyETTwoPrimMany", null, null, null);
+  public void navigationToManyToActionMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("ESTwoPrim(1)/NavPropertyETAllPrimMany/Namespace1_Alias.BAESAllPrimRTETAllPrim", null));
   }
 
   @Test
-  public void navigationOnPropertyMustNotLeadToException() throws Exception {
-    validate("ESAllPrim(1)/NavPropertyETTwoPrimOne/PropertyInt16", null, null, null);
-  }
-
-  @Test
-  public void navigationToManyOnActionMustNotLeadToException() throws Exception {
-    validate("ESTwoPrim(1)/NavPropertyETAllPrimMany/Namespace1_Alias.BAESAllPrimRTETAllPrim", null, null, null);
-  }
-
-  @Test
-  public void navigationWithoutBindingMustNotLeadToException() throws Exception {
-    validate("ESTwoBaseTwoKeyNav(PropertyInt16=1,PropertyString='test')"
+  public void navigationWithoutBindingMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("ESTwoBaseTwoKeyNav(PropertyInt16=1,PropertyString='test')"
         + "/NavPropertyETBaseTwoKeyNavMany(PropertyInt16=1,PropertyString='test')",
-        null, null, null);
+        null));
   }
 
-  // -------------- NEGATIVE TESTS --------------------------------------------------------------------------------
-
   @Test
-  public void positiveTestsMustLeadToAnExceptionIfNoHeaderIsPresent() throws Exception {
-    runException("ESAllPrim(1)");
-    runException("ESMedia(1)/$value");
-    runException("ESAllPrim(1)/NavPropertyETTwoPrimOne");
-    runException("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)");
-    runException("ESKeyNav(1)/NavPropertyETMediaOne/$value");
-    runException("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
-    runException("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
-
-    runException("SI");
-    runException("SINav/NavPropertyETKeyNavOne");
-    runException("SINav/NavPropertyETKeyNavOne/NavPropertyETMediaOne/$value");
-    runException("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
-    runException("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
+  public void referencesMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimOne/$ref", "ESTwoPrim"));
+    assertFalse(mustValidate("ESAllPrim(1)/NavPropertyETTwoPrimMany(1)/$ref", "ESTwoPrim"));
+    assertFalse(mustValidate("SINav/NavPropertyETKeyNavOne/$ref", "ESKeyNav"));
   }
 
   @Test(expected = UriParserSemanticException.class)
   public void resourceSegmentAfterActionMustLeadToUriParserException() throws Exception {
-    validate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", "ESKeyNav", "*", "*");
+    mustValidate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", "ESKeyNav");
   }
 
   @Test(expected = UriParserSemanticException.class)
   public void valueMustBeLastSegment() throws Exception {
-    validate("ESMedia(1)/$value/PropertyInt16", null, null, null);
+    mustValidate("ESMedia(1)/$value/PropertyInt16", "ESMedia");
   }
 
-  private void validate(final String uri, final String entitySetName, final String ifMatch, final String ifNoneMatch)
+  private boolean mustValidate(final String uri, final String entitySetName)
       throws UriParserException, PreconditionException {
     final UriInfo uriInfo = new Parser().parseUri(uri, null, null, edm);
     final List<UriResource> parts = uriInfo.getUriResourceParts();
@@ -207,15 +210,6 @@ public class PreconditionsValidatorTest {
     when(support.hasETag(any(EdmBindingTarget.class))).thenAnswer(answer);
     when(support.hasMediaETag(any(EdmBindingTarget.class))).thenAnswer(answer);
 
-    new PreconditionsValidator(support, uriInfo, ifMatch, ifNoneMatch).validatePreconditions(isMedia);
-  }
-
-  private void runException(final String uri) throws UriParserException {
-    try {
-      validate(uri, null, null, null);
-      fail("Expected a PreconditionRequiredException but was not thrown");
-    } catch (final PreconditionException e) {
-      assertEquals(PreconditionException.MessageKeys.MISSING_HEADER, e.getMessageKey());
-    }
+    return new PreconditionsValidator(uriInfo).mustValidatePreconditions(support, isMedia);
   }
 }

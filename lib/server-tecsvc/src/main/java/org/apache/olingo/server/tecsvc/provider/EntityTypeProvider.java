@@ -371,7 +371,7 @@ public class EntityTypeProvider {
               PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
               PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav,
               PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertySINav));
+              PropertyProvider.navPropertySINav));
 
     } else if (entityTypeName.equals(nameETBaseTwoKeyNav)) {
       return new CsdlEntityType()

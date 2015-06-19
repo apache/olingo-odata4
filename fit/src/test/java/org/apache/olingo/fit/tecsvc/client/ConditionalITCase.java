@@ -195,6 +195,15 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
   }
 
   @Test
+  public void updatePropertyWithoutIfMatch() throws Exception {
+    final ODataPropertyUpdateRequest request = client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
+        uriProperty,
+        client.getObjectFactory().newPrimitiveProperty("PropertyDuration",
+            client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S")));
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
+  }
+
+  @Test
   public void updatePropertyWithWrongIfMatch() throws Exception {
     ODataPropertyUpdateRequest request = client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
         uriProperty,
@@ -205,6 +214,15 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
   }
 
   @Test
+  public void updatePropertyValueWithoutIfMatch() throws Exception {
+    final ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
+        uriPropertyValue,
+        UpdateType.REPLACE,
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S"));
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
+  }
+
+  @Test
   public void updatePropertyValueWithWrongIfMatch() throws Exception {
     ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
         uriPropertyValue,
@@ -212,6 +230,12 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
         client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S"));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
+  }
+
+  @Test
+  public void deletePropertyWithoutIfMatch() throws Exception {
+    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uriProperty);
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
   @Test
@@ -229,6 +253,12 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getETag());
     assertNotEquals(request.getIfMatch(), response.getETag());
+  }
+
+  @Test
+  public void deletePropertyValueWithoutIfMatch() throws Exception {
+    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uriPropertyValue);
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
   @Test
