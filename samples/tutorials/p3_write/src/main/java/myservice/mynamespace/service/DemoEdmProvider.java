@@ -42,7 +42,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
  */
 public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
-
   // Service Namespace
   public static final String NAMESPACE = "OData.Demo";
 
@@ -87,9 +86,12 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
     if(entityTypeName.equals(ET_PRODUCT_FQN)){
 
       //create EntityType properties
-      CsdlProperty id = new CsdlProperty().setName("ID").setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
-      CsdlProperty name = new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
-      CsdlProperty  description = new CsdlProperty().setName("Description").setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+      CsdlProperty id = new CsdlProperty().setName("ID")
+              .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+      CsdlProperty name = new CsdlProperty().setName("Name")
+              .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+      CsdlProperty  description = new CsdlProperty().setName("Description")
+              .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
 
       // create CsdlPropertyRef for Key element
       CsdlPropertyRef propertyRef = new CsdlPropertyRef();

@@ -71,8 +71,7 @@ public class Util {
     return null;
   }
 
-  public static boolean
-      entityMatchesAllKeys(EdmEntityType edmEntityType, Entity entity, List<UriParameter> keyParams)
+  public static boolean entityMatchesAllKeys(EdmEntityType edmEntityType, Entity entity, List<UriParameter> keyParams)
           throws ODataApplicationException {
 
     // loop over all keys

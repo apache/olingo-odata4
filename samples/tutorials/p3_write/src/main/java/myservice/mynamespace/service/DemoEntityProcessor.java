@@ -56,13 +56,11 @@ public class DemoEntityProcessor implements EntityProcessor {
 	private OData odata;
 	private Storage storage;
 	private ServiceMetadata serviceMetadata;
-	
-	
+
 	public DemoEntityProcessor(Storage storage) {
 		this.storage = storage;
 	}
 
-	
 	public void init(OData odata, ServiceMetadata serviceMetadata) {
 		this.odata = odata;
 		this.serviceMetadata = serviceMetadata;
@@ -111,7 +109,8 @@ public class DemoEntityProcessor implements EntityProcessor {
 			"Description":"17 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"
 		}
 	 * */
-	public void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat) 
+	public void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+													 ContentType requestFormat, ContentType responseFormat)
 				throws ODataApplicationException, DeserializerException, SerializerException {
 		
 		// 1. Retrieve the entity type from the URI 
@@ -143,7 +142,8 @@ public class DemoEntityProcessor implements EntityProcessor {
 	}
 
 	
-	public void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat) 
+	public void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                           ContentType requestFormat, ContentType responseFormat)
 							throws ODataApplicationException, DeserializerException, SerializerException {
 		
 		// 1. Retrieve the entity set which belongs to the requested entity 
@@ -171,7 +171,8 @@ public class DemoEntityProcessor implements EntityProcessor {
 	}
 
 	
-	public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException {
+	public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+          throws ODataApplicationException {
 		
 		// 1. Retrieve the entity set which belongs to the requested entity 
 		List<UriResource> resourcePaths = uriInfo.getUriResourceParts();

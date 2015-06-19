@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,39 +37,25 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 
 public class Util {
+  
+  public static Entity findEntity(EdmEntityType edmEntityType, EntityCollection entitySet,
+                                  List<UriParameter> keyParams) throws ODataApplicationException {
 
-	public static EdmEntitySet getEdmEntitySet(UriInfoResource uriInfo) throws ODataApplicationException {
-		List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-		 // To get the entity set we have to interpret all URI segments
-		if (!(resourcePaths.get(0) instanceof UriResourceEntitySet)) {
-			// Here we should interpret the whole URI but in this example we do not support navigation so we throw an exception
-			throw new ODataApplicationException("Invalid resource type for first segment.", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),Locale.ENGLISH);
-		}
-		
-		UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
-		
-		return uriResource.getEntitySet();
-	}
+    List<Entity> entityList = entitySet.getEntities();
 
-	
-	public static Entity findEntity(EdmEntityType edmEntityType, EntityCollection entitySet, List<UriParameter> keyParams) throws ODataApplicationException {
-		
-		List<Entity> entityList = entitySet.getEntities();
-		
-		// loop over all entities in order to find that one that matches all keys in request e.g. contacts(ContactID=1, CompanyID=1) 
-		for(Entity entity : entityList){
-			boolean foundEntity = entityMatchesAllKeys(edmEntityType, entity, keyParams);
-			if(foundEntity) {
-				return entity;
-			}
-		}
-		
-		return null;
-	}
-	
-	
-  public static boolean
-      entityMatchesAllKeys(EdmEntityType edmEntityType, Entity rt_entity, List<UriParameter> keyParams)
+    // loop over all entities in order to find that one that matches all keys in request
+    // e.g. contacts(ContactID=1, CompanyID=1)
+    for (Entity entity: entityList) {
+      boolean foundEntity = entityMatchesAllKeys(edmEntityType, entity, keyParams);
+      if (foundEntity) {
+        return entity;
+      }
+    }
+
+    return null;
+  }
+
+  public static boolean entityMatchesAllKeys(EdmEntityType edmEntityType, Entity entity, List<UriParameter> keyParams)
           throws ODataApplicationException {
 
     // loop over all keys
@@ -87,21 +73,20 @@ public class Util {
       Integer scale = edmKeyProperty.getScale();
       // get the EdmType in order to compare
       EdmType edmType = edmKeyProperty.getType();
-      // if(EdmType instanceof EdmPrimitiveType) // do we need this?
       EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) edmType;
 
       // Runtime data: the value of the current entity
       // don't need to check for null, this is done in olingo library
-      Object valueObject = rt_entity.getProperty(keyName).getValue();
+      Object valueObject = entity.getProperty(keyName).getValue();
 
       // now need to compare the valueObject with the keyText String
-      // this is done using type.valueToString
-      String valueAsString = null;
+      // this is done using the type.valueToString
+      String valueAsString;
       try {
         valueAsString = edmPrimitiveType.valueToString(valueObject, isNullable, maxLength, precision, scale, isUnicode);
       } catch (EdmPrimitiveTypeException e) {
-        throw new ODataApplicationException("Failed to retrieve String value",
-						HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH, e);
+        throw new ODataApplicationException("Failed to retrieve String value", HttpStatusCode.INTERNAL_SERVER_ERROR
+                .getStatusCode(), Locale.ENGLISH, e);
       }
 
       if (valueAsString == null) {

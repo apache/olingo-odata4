@@ -63,7 +63,6 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 		this.odata = odata;
 	}
 	
-
 	/*
 	 * In our example, the URL would be: http://localhost:8080/DemoService/DemoService.svc/Products(1)/Name
 	 * and the response:
@@ -97,13 +96,15 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 		// 2.1. retrieve the entity data, for which the property has to be read
 		Entity entity = storage.readEntityData(edmEntitySet, keyPredicates);
 		if (entity == null) { // Bad request
-			throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
+			throw new ODataApplicationException("Entity not found",
+							HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
 		} 
 		
 		// 2.2. retrieve the property data from the entity
 		Property property = entity.getProperty(edmPropertyName);
 		if (property == null) {
-			throw new ODataApplicationException("Property not found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
+			throw new ODataApplicationException("Property not found",
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
 		}		
 		
 		// 3. serialize
@@ -132,12 +133,14 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 	 * These processor methods are not handled in this tutorial 
 	 *
 	 * */
-	public void updatePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat)
+	public void updatePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+                              ContentType requestFormat, ContentType responseFormat)
 								throws ODataApplicationException, DeserializerException, SerializerException {
 		throw new ODataApplicationException("Not supported.", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
 	}
 
-	public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException {
+	public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+          throws ODataApplicationException {
 		throw new ODataApplicationException("Not supported.", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
 	}
 }
