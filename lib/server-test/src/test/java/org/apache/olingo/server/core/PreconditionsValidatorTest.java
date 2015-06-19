@@ -40,7 +40,6 @@ import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -180,7 +179,6 @@ public class PreconditionsValidatorTest {
     runException("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav");
   }
 
-  @Ignore
   @Test(expected = UriParserSemanticException.class)
   public void resourceSegmentAfterActionMustLeadToUriParserException() throws Exception {
     validate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", "ESKeyNav", "*", "*");

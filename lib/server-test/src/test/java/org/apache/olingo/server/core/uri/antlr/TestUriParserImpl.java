@@ -193,7 +193,7 @@ public class TestUriParserImpl {
     .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
     testUri.runEx(ContainerProvider.AIRT_STRING + "/invalidElement")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_MUST_BE_PRECEDED_BY_STRUCTURAL_TYPE);
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
   }
 
   @Test

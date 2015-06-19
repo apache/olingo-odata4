@@ -38,6 +38,7 @@ import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
@@ -5201,6 +5202,17 @@ public class TestFullResourcePath {
     .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_ENTITY_TYPES);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$count")
     .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_COLLECTIONS);
+
+    // Actions must not be followed by anything.
+    testUri.runEx(ContainerProvider.AIRT_STRING + "/$value")
+        .isExValidation(UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE);
+    testUri.runEx(ContainerProvider.AIRTCT_TWO_PRIM_PARAM + "/PropertyInt16")
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/"
+        + "olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav/olingo.odata.test1.ETTwoKeyNav")
+        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav/$count")
+        .isExValidation(UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_COUNT);
   }
 
   @Test
