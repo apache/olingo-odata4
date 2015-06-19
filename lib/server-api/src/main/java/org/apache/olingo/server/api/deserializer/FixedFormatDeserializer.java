@@ -21,6 +21,7 @@ package org.apache.olingo.server.api.deserializer;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
@@ -32,7 +33,14 @@ public interface FixedFormatDeserializer {
    * @param content the binary data as input stream
    * @return the binary data
    */
-  byte[] binary(InputStream content) throws DeserializerException;
+  public byte[] binary(InputStream content) throws DeserializerException;
+
+  /**
+   * Reads primitive-type data from an InputStream.
+   * @param content  the textual value as input stream
+   * @param property EDM property
+   */
+  public Object primitiveValue(InputStream content, EdmProperty property) throws DeserializerException;
 
   public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
       throws BatchDeserializerException;

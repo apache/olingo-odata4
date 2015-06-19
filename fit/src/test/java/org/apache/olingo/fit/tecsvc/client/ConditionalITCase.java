@@ -21,6 +21,7 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -34,6 +35,7 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -203,10 +205,30 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
   }
 
   @Test
+  public void updatePropertyValueWithWrongIfMatch() throws Exception {
+    ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
+        uriPropertyValue,
+        UpdateType.REPLACE,
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S"));
+    request.setIfMatch("W/\"1\"");
+    executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
+  }
+
+  @Test
   public void deletePropertyWithWrongIfMatch() throws Exception {
     ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uriProperty);
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
+  }
+
+  @Test
+  public void deletePropertyValue() throws Exception {
+    ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uriPropertyValue);
+    request.setIfMatch("W/\"0\"");
+    final ODataDeleteResponse response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getETag());
+    assertNotEquals(request.getIfMatch(), response.getETag());
   }
 
   @Test

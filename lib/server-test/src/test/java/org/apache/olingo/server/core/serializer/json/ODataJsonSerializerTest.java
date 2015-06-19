@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -53,6 +52,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
@@ -64,7 +64,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class ODataJsonSerializerTest {
-  private static final ServiceMetadata metadata = OData.newInstance().createServiceMetadata(
+  private static final ServiceMetadata metadata = new ServiceMetadataImpl(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
   private final DataProvider data = new DataProvider();
@@ -157,8 +157,8 @@ public class ODataJsonSerializerTest {
   }
 
   @Test
-  public void entitySetAllPrim() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+  public void entitySetCompAllPrim() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompAllPrim");
     EntityCollection entitySet = data.readAll(edmEntitySet);
     entitySet.setCount(entitySet.getEntities().size());
     entitySet.setNext(URI.create("/next"));
@@ -172,10 +172,11 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim\","
+        + "\"@odata.context\":\"$metadata#ESCompAllPrim\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.count\":3,\"value\":["));
-    Assert.assertThat(resultString, CoreMatchers.endsWith("],"
+        + "\"@odata.count\":3,\"value\":["
+        + "{\"@odata.etag\":\"W/\\\"32767\\\"\","));
+    Assert.assertThat(resultString, CoreMatchers.endsWith("\"}}],"
         + "\"@odata.nextLink\":\"/next\"}"));
 
     int count = 0;
@@ -183,7 +184,7 @@ public class ODataJsonSerializerTest {
     while ((index = resultString.indexOf("PropertyInt16\":", ++index)) > 0) {
       count++;
     }
-    Assert.assertEquals(3, count);
+    Assert.assertEquals(6, count);
   }
 
   @Test

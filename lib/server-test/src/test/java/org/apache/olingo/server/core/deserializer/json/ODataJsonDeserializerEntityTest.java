@@ -891,7 +891,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
       throw e;
     }
   }
@@ -913,7 +913,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
       throw e;
     }
   }
@@ -935,7 +935,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       ODataDeserializer deserializer = OData.newInstance().createDeserializer(ODataFormat.JSON);
       deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETMixPrimCollComp")));
     } catch (DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
       throw e;
     }
   }

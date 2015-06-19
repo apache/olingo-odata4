@@ -327,9 +327,10 @@ public class ODataDispatcher {
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), valueRepresentationType);
         handler.selectProcessor(PrimitiveValueProcessor.class)
-            .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
+            .updatePrimitiveValue(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE && resource instanceof UriResourceProperty) {
-        handler.selectProcessor(PrimitiveValueProcessor.class).deletePrimitive(request, response, uriInfo);
+        handler.selectProcessor(PrimitiveValueProcessor.class)
+            .deletePrimitiveValue(request, response, uriInfo);
       } else {
         throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
@@ -349,7 +350,8 @@ public class ODataDispatcher {
             .updateMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE && resource instanceof UriResourceEntitySet) {
         validatePreconditions(request, true);
-        handler.selectProcessor(MediaEntityProcessor.class).deleteEntity(request, response, uriInfo);
+        handler.selectProcessor(MediaEntityProcessor.class)
+            .deleteMediaEntity(request, response, uriInfo);
       } else {
         throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());

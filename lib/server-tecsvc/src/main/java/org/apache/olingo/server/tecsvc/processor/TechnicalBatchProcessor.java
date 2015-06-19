@@ -34,11 +34,11 @@ import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
+import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 public class TechnicalBatchProcessor extends TechnicalProcessor implements BatchProcessor {
-  private static final String PREFERENCE_CONTINUE_ON_ERROR = "odata.continue-on-error";
 
   public TechnicalBatchProcessor(final DataProvider dataProvider) {
     super(dataProvider);
@@ -47,7 +47,8 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
   @Override
   public void processBatch(final BatchFacade facade, final ODataRequest request, final ODataResponse response)
       throws ODataApplicationException, ODataLibraryException {
-    boolean continueOnError = isContinueOnError(request);
+    final boolean continueOnError =
+        odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasContinueOnError();
 
     final String boundary = facade.extractBoundaryFromContentType(request.getHeader(HttpHeader.CONTENT_TYPE));
     final BatchOptions options = BatchOptions.with()
@@ -59,15 +60,15 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
 
     for (BatchRequestPart part : parts) {
       final ODataResponsePart responsePart = facade.handleBatchRequest(part);
-      responseParts.add(responsePart); // Also add failed responses
+      responseParts.add(responsePart); // Also add failed responses.
       final int statusCode = responsePart.getResponses().get(0).getStatusCode();
 
       if ((statusCode >= 400 && statusCode <= 600) && !continueOnError) {
 
-        // Perform some additions actions
+        // Perform some additional actions.
         // ...
 
-        break; // Stop processing, but serialize all recent requests
+        break; // Stop processing, but serialize responses to all recent requests.
       }
     }
 
@@ -77,19 +78,10 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responseBoundary);
     response.setContent(responseContent);
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
-  }
-
-  private boolean isContinueOnError(final ODataRequest request) {
-    final List<String> preferValues = request.getHeaders(HttpHeader.PREFER);
-
-    if (preferValues != null) {
-      for (final String preference : preferValues) {
-        if (PREFERENCE_CONTINUE_ON_ERROR.equals(preference)) {
-          return true;
-        }
-      }
+    if (continueOnError) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().continueOnError().build().toString());
     }
-    return false;
   }
 
   @Override

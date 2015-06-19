@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling counting a collection of primitive properties, e.g. an collection of EdmString.
  */
-public interface CountPrimitiveCollectionProcessor extends Processor {
+public interface CountPrimitiveCollectionProcessor extends PrimitiveCollectionProcessor {
 
   /**
    * Counts primitive properties from persistence and puts serialized content and status into the response.

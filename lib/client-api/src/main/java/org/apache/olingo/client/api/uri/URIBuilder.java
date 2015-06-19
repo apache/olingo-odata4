@@ -121,6 +121,12 @@ public interface URIBuilder {
   URIBuilder appendValueSegment();
 
   /**
+   * Appends count segment to the URI.
+   * @return current URIBuilder instance
+   */
+  URIBuilder appendCountSegment();
+
+  /**
    * Appends operation (action or function) segment to the URI.
    *
    * @param operation Operation (action or function) name

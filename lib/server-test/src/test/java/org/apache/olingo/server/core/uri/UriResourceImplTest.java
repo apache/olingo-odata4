@@ -125,7 +125,7 @@ public class UriResourceImplTest {
 
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
-    assertEquals("A", impl.getLamdaVariable());
+    assertEquals("A", impl.getLambdaVariable());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("any", impl.toString());
   }

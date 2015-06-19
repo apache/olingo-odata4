@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 /**
  * Processor interface for handling counting a collection of complex properties, e.g. an EdmComplexType.
  */
-public interface CountComplexCollectionProcessor extends Processor {
+public interface CountComplexCollectionProcessor extends ComplexCollectionProcessor {
 
   /**
    * Counts complex properties from persistence and puts serialized content and status into the response.

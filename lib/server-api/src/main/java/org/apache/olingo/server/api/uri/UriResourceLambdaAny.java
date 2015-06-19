@@ -29,11 +29,11 @@ public interface UriResourceLambdaAny extends UriResourcePartTyped {
   /**
    * @return Name of the lambda variable
    */
-  public String getLamdaVariable();
+  String getLambdaVariable();
 
   /**
    * @return Lambda expression
    */
-  public Expression getExpression();
+  Expression getExpression();
 
 }

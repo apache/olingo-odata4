@@ -26,20 +26,24 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
@@ -318,13 +322,100 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
   public void readPropertyValue() throws Exception {
     final ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getPropertyValueRequest(getClient().newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .appendPropertySegment("PropertyString")
-            .appendValueSegment()
+            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+            .appendPropertySegment("PropertyString").appendValueSegment()
             .build());
     final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
     assertEquals("Test String1", response.getBody().toValue());
+  }
+
+  @Test
+  public void deletePropertyValue() throws Exception {
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
+        .appendPropertySegment("PropertyCompAllPrim").appendPropertySegment("PropertyString")
+        .appendValueSegment()
+        .build();
+    final ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
+    final ODataDeleteResponse response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the property is really gone.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataValueRequest valueRequest = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uri);
+    valueRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), valueRequest.execute().getStatusCode());
+  }
+
+  @Test
+  public void updatePropertyValue() throws Exception {
+    final ODataValueUpdateRequest request =
+        getClient().getCUDRequestFactory().getValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+                .appendPropertySegment("PropertyString")
+                .build(),
+            UpdateType.REPLACE,
+            getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String1"));
+    assertNotNull(request);
+
+    final ODataValueUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), response.getContentType());
+
+    final ClientPrimitiveValue value = response.getBody();
+    assertNotNull(value);
+    assertEquals("Test String1", IOUtils.toString((InputStream) value.toValue(), "UTF-8"));
+  }
+
+  @Test
+  public void updatePropertyValueMinimalResponse() throws Exception {
+    ODataValueUpdateRequest request = getClient().getCUDRequestFactory().getValueUpdateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+            .appendPropertySegment("PropertyString")
+            .build(),
+        UpdateType.REPLACE,
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String1"));
+    request.setPrefer(getClient().newPreferences().returnMinimal());
+
+    final ODataValueUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+  }
+
+  @Test
+  public void readPrimitiveCollectionCount() {
+    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1)
+            .appendPropertySegment("CollPropertyBoolean").appendCountSegment().build());
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), response.getContentType());
+
+    final ClientPrimitiveValue value = response.getBody();
+    assertNotNull(value);
+    assertEquals("3", value.toValue());
+  }
+
+  @Test
+  public void readComplexCollectionCount() {
+    final ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESCompCollAllPrim").appendKeySegment(5678)
+            .appendPropertySegment("PropertyComp").appendPropertySegment("CollPropertyBoolean").appendCountSegment()
+            .build());
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), response.getContentType());
+
+    final ClientPrimitiveValue value = response.getBody();
+    assertNotNull(value);
+    assertEquals("3", value.toValue());
   }
 
   @Override

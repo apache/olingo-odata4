@@ -36,8 +36,8 @@ public abstract class AbstractODataObject extends Annotatable {
     return baseURI;
   }
 
-  public void setBaseURI(final String baseURI) {
-    this.baseURI = baseURI == null ? null : URI.create(baseURI);
+  public void setBaseURI(final URI baseURI) {
+    this.baseURI = baseURI;
   }
 
   /**

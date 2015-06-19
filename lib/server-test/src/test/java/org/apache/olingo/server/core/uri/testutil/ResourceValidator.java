@@ -224,7 +224,7 @@ public class ResourceValidator implements TestValidator {
     if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
       actualVar = ((UriResourceLambdaAllImpl) uriPathInfo).getLambdaVariable();
     } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
-      actualVar = ((UriResourceLambdaAnyImpl) uriPathInfo).getLamdaVariable();
+      actualVar = ((UriResourceLambdaAnyImpl) uriPathInfo).getLambdaVariable();
     } else {
       fail("invalid resource kind: " + uriPathInfo.getKind().toString());
     }

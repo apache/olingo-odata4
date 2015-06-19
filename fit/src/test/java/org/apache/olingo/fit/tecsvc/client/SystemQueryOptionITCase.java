@@ -25,10 +25,11 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.header.HeaderName;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -47,7 +48,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
-        .addQueryOption(QueryOption.COUNT, "true")
+        .count(true)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -63,7 +64,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.COUNT, "true")
+        .count(true)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -79,7 +80,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.TOP, new Integer(5).toString())
+        .top(5)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -99,7 +100,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.SKIP, new Integer(5).toString())
+        .skip(5)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -119,8 +120,8 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.TOP, new Integer(20).toString())
-        .addQueryOption(QueryOption.SKIP, new Integer(503).toString())
+        .top(20)
+        .skip(503)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -135,7 +136,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.SKIP, new Integer(10000).toString())
+        .skip(10000)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -152,9 +153,9 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
         .filter("PropertyInt16 le 105") // 1, 2, ... , 105
         .orderBy("PropertyInt16 desc") // 105, 104, ..., 2, 1
-        .addQueryOption(QueryOption.COUNT, Boolean.TRUE.toString()) // 105
-        .addQueryOption(QueryOption.SKIP, new Integer(3).toString()) // 102, 101, ..., 2, 1
-        .addQueryOption(QueryOption.TOP, new Integer(43).toString()) // 102, 101, ...., 59
+        .count(true) // 105
+        .skip(3) // 102, 101, ..., 2, 1
+        .top(43) // 102, 101, ...., 59
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -212,7 +213,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=1", nextLink.toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=1%2A10", nextLink.toASCIIString());
 
     // Check subsequent next links
     response = client.getRetrieveRequestFactory()
@@ -220,7 +221,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .execute();
 
     nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=2", nextLink.toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=2%2A10", nextLink.toASCIIString());
   }
 
   @Test
@@ -228,7 +229,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-        .addQueryOption(QueryOption.COUNT, Boolean.TRUE.toString())
+        .count(true)
         .build();
 
     ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
@@ -237,7 +238,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=1",
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=1%2A10",
         nextLink.toASCIIString());
 
     int token = 1;
@@ -251,7 +252,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
       nextLink = response.getBody().getNext();
       if (nextLink != null) {
-        assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=" + token,
+        assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=" + token + "%2A10",
             nextLink.toASCIIString());
       }
     }
@@ -260,11 +261,24 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
   }
 
   @Test
+  public void nextLinkFormatWithClientPageSize() {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_SERVER_SIDE_PAGING).build();
+    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    request.setPrefer(getClient().newPreferences().maxPageSize(7));
+
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    assertEquals("odata.maxpagesize=\"7\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals(SERVICE_URI + '/' + ES_SERVER_SIDE_PAGING + "?%24skiptoken=1%2A" + 7,
+        response.getBody().getNext().toASCIIString());
+  }
+
+  @Test
   public void testNegativeSkip() {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
-        .addQueryOption(QueryOption.SKIP, new Integer(-5).toString())
+        .skip(-5)
         .build();
 
     try {
@@ -282,7 +296,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
-        .addQueryOption(QueryOption.TOP, new Integer(-5).toString())
+        .top(-5)
         .build();
     try {
       client.getRetrieveRequestFactory()

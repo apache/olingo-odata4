@@ -232,7 +232,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     try {
       OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.UNKOWN_CONTENT, e.getMessageKey());
+      assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
       throw e;
     }
   }

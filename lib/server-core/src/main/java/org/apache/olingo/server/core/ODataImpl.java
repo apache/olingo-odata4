@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -34,6 +35,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
+import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -41,6 +43,7 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 import org.apache.olingo.server.core.etag.ETagHelperImpl;
+import org.apache.olingo.server.core.prefer.PreferencesImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
@@ -126,6 +129,11 @@ public class ODataImpl extends OData {
   @Override
   public ETagHelper createETagHelper() {
     return new ETagHelperImpl();
+  }
+
+  @Override
+  public Preferences createPreferences(final Collection<String> preferHeaders) {
+    return new PreferencesImpl(preferHeaders);
   }
 
 }
