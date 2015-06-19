@@ -29,12 +29,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataException;
@@ -48,12 +44,13 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -247,8 +244,9 @@ public class ODataHandlerTest {
     final String uri = "$batch";
     final BatchProcessor processor = mock(BatchProcessor.class);
 
-    dispatch(HttpMethod.POST, uri, processor);
-    // TODO: Verify that batch processing has been called.
+    dispatch(HttpMethod.POST, uri, null, HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(),
+        processor);
+    verify(processor).processBatch(any(BatchFacade.class), any(ODataRequest.class), any(ODataResponse.class));
 
     dispatchMethodNotAllowed(HttpMethod.GET, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
@@ -650,7 +648,7 @@ public class ODataHandlerTest {
   @Test
   public void dispatchReference() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimOne/$ref";
-    final String uriDeleteMany = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
+    final String uriMany = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
     final ReferenceProcessor processor = mock(ReferenceProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
@@ -665,29 +663,25 @@ public class ODataHandlerTest {
     verify(processor, times(2)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.POST, uri.replace("One", "Many"), processor);
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+
+    dispatch(HttpMethod.POST, uriMany, processor);
     verify(processor).createReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
-    
-    dispatch(HttpMethod.DELETE, uriDeleteMany, "$id=ESTwoPrim(1)", null, Arrays.asList(new Processor[] { processor }));
+
+    dispatch(HttpMethod.DELETE, uriMany, "$id=ESTwoPrim(1)", null, null, processor);
     verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
-    
-    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
-  
+
   @Test
   public void dispatchReferenceCollection() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
     final ReferenceCollectionProcessor processor = mock(ReferenceCollectionProcessor.class);
-    final ReferenceProcessor singleProcessor = mock(ReferenceProcessor.class);
-    
+
     dispatch(HttpMethod.GET, uri, processor);
     verify(processor).readReferenceCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class));
 
-    dispatch(HttpMethod.DELETE, uri, singleProcessor);
-    verify(singleProcessor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
-    
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
   }
@@ -696,7 +690,7 @@ public class ODataHandlerTest {
   public void unsupportedRequestContentType() throws Exception {
     EntityProcessor processor = mock(EntityProcessor.class);
     ErrorProcessor errorProcessor = mock(ErrorProcessor.class);
-    dispatch(HttpMethod.POST, "ESAllPrim", "", HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
+    dispatch(HttpMethod.POST, "ESAllPrim", null, HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
     verifyZeroInteractions(processor);
     verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class),
         any(ODataServerError.class),
@@ -705,19 +699,6 @@ public class ODataHandlerTest {
 
   private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
       final String headerName, final String headerValue, final Processor processor) {
-    Map<String, List<String>> headers = null;
-    if (headerName != null) {
-      headers = Collections.singletonMap(headerName, Collections.singletonList(headerValue));
-    }
-    List<Processor> processors = null;
-    if (processor != null) {
-      processors = Collections.singletonList(processor);
-    }
-    return dispatch(method, path, query, headers, processors);
-  }
-
-  private ODataResponse dispatch(final HttpMethod method, final String path, final String query,
-      final Map<String, List<String>> headers, final List<Processor> processors) {
     ODataRequest request = new ODataRequest();
     request.setMethod(method);
     request.setRawBaseUri(BASE_URI);
@@ -727,14 +708,11 @@ public class ODataHandlerTest {
     request.setRawODataPath(path);
     request.setRawQueryPath(query);
 
-    if (headers != null) {
-      Set<Map.Entry<String, List<String>>> headerSet = headers.entrySet();
-      for (Map.Entry<String, List<String>> headerItem : headerSet) {
-        request.addHeader(headerItem.getKey(), headerItem.getValue());
-      }
+    if (headerName != null) {
+      request.addHeader(headerName, Collections.singletonList(headerValue));
     }
 
-    if (request.getHeaders(HttpHeader.CONTENT_TYPE) == null) {
+    if (headerName != HttpHeader.CONTENT_TYPE) {
       request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
           ODataFormat.JSON.getContentType().toContentTypeString()));
     }
@@ -745,10 +723,8 @@ public class ODataHandlerTest {
 
     ODataHandler handler = new ODataHandler(odata, metadata);
 
-    if (processors != null && !processors.isEmpty()) {
-      for (Processor p : processors) {
-        handler.register(p);
-      }
+    if (processor != null) {
+      handler.register(processor);
     }
 
     final ODataResponse response = handler.process(request);
