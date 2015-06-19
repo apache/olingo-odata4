@@ -29,6 +29,10 @@
 
 	<name>${project.artifactId}-Webapp</name>
 
+	<build>
+		<finalName>DemoService</finalName>
+	</build>
+
 	<properties>
 		<javax.version>2.5</javax.version>
 		<odata.version>4.0.0-beta-03</odata.version>
