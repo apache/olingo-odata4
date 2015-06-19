@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.ODataPreferenceNames;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
 
 /**
@@ -46,8 +47,8 @@ public class PreferencesApplied {
     return Collections.unmodifiableMap(applied);
   }
 
-  @Override
-  public String toString() {
+  /** Returns a string representation that can be used as value of a Preference-Applied HTTP response header. */
+  public String toValueString() {
     StringBuilder result = new StringBuilder();
     for (final String name : applied.keySet()) {
       if (result.length() > 0) {
@@ -55,12 +56,26 @@ public class PreferencesApplied {
       }
       result.append(name);
       if (applied.get(name) != null) {
-        result.append('=').append('"')
+        final boolean safe = ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString().equals(name)
+            || ODataPreferenceNames.CALLBACK.toString().equals(name)
+            || ODataPreferenceNames.CONTINUE_ON_ERROR.toString().equals(name)
+            || ODataPreferenceNames.MAX_PAGE_SIZE.toString().equals(name)
+            || ODataPreferenceNames.TRACK_CHANGES.toString().equals(name)
+            || ODataPreferenceNames.RETURN.toString().equals(name)
+            || ODataPreferenceNames.RESPOND_ASYNC.toString().equals(name)
+            || ODataPreferenceNames.WAIT.toString().equals(name);
+        result.append('=')
+            .append(safe ? "" : '"')
             .append(applied.get(name).replaceAll("\\\\|\"", "\\\\$0"))
-            .append('"');
+            .append(safe ? "" : '"');
       }
     }
     return result.toString();
+  }
+
+  @Override
+  public String toString() {
+    return toValueString();
   }
 
   /** Initializes the builder. */
@@ -71,16 +86,6 @@ public class PreferencesApplied {
   /** Builder of OData serializer options. */
   public static final class Builder {
 
-    private static final String ALLOW_ENTITY_REFERENCES = "odata.allow-entityreferences";
-    private static final String CALLBACK = "odata.callback";
-    private static final String CONTINUE_ON_ERROR = "odata.continue-on-error";
-    // private static final String INCLUDE_ANNOTATIONS = "odata.include-annotations";
-    private static final String MAX_PAGE_SIZE = "odata.maxpagesize";
-    private static final String TRACK_CHANGES = "odata.track-changes";
-    private static final String RETURN = "return";
-    private static final String RESPOND_ASYNC = "respond-async";
-    private static final String WAIT = "wait";
-
     private final PreferencesApplied preferencesApplied;
 
     private Builder() {
@@ -89,49 +94,49 @@ public class PreferencesApplied {
 
     /** Sets <code>odata.allow-entityreferences</code>. */
     public Builder allowEntityReferences() {
-      add(ALLOW_ENTITY_REFERENCES, null);
+      add(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString(), null);
       return this;
     }
 
     /** Sets <code>odata.callback</code>. */
     public Builder callback() {
-      add(CALLBACK, null);
+      add(ODataPreferenceNames.CALLBACK.toString(), null);
       return this;
     }
 
     /** Sets <code>odata.continue-on-error</code>. */
     public Builder continueOnError() {
-      add(CONTINUE_ON_ERROR, null);
+      add(ODataPreferenceNames.CONTINUE_ON_ERROR.toString(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>odata.maxpagesize</code>. */
     public Builder maxPageSize(final Integer maxPageSize) {
-      add(MAX_PAGE_SIZE, Integer.toString(maxPageSize));
+      add(ODataPreferenceNames.MAX_PAGE_SIZE.toString(), Integer.toString(maxPageSize));
       return this;
     }
 
     /** Sets <code>odata.track-changes</code>. */
     public Builder trackChanges() {
-      add(TRACK_CHANGES, null);
+      add(ODataPreferenceNames.TRACK_CHANGES.toString(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>return</code>. */
     public Builder returnRepresentation(final Return returnRepresentation) {
-      add(RETURN, returnRepresentation.name().toLowerCase(Locale.ROOT));
+      add(ODataPreferenceNames.RETURN.toString(), returnRepresentation.name().toLowerCase(Locale.ROOT));
       return this;
     }
 
     /** Sets <code>odata.respond-async</code>. */
     public Builder respondAsync() {
-      add(RESPOND_ASYNC, null);
+      add(ODataPreferenceNames.RESPOND_ASYNC.toString(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>wait</code>. */
     public Builder waitPreference(final Integer wait) {
-      add(WAIT, Integer.toString(wait));
+      add(ODataPreferenceNames.WAIT.toString(), Integer.toString(wait));
       return this;
     }
 

@@ -24,7 +24,12 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 
-public class UriResourceActionImpl extends UriResourceTypedImpl implements UriResourceAction {
+/**
+ * Implementation of the {@link UriResourceAction} interface. This class does not extend
+ * {@link org.apache.olingo.server.core.uri.UriResourceTypedImpl UriResourceTypedImpl}
+ * since that would allow type filters and subsequent path segments.
+ */
+public class UriResourceActionImpl extends UriResourceImpl implements UriResourceAction {
 
   protected EdmAction action;
   protected EdmActionImport actionImport;
@@ -71,8 +76,12 @@ public class UriResourceActionImpl extends UriResourceTypedImpl implements UriRe
   }
 
   @Override
-  public String toString() {
+  public String toString(final boolean includeFilters) {
     return actionImport == null ? (action == null ? "" : action.getName()) : actionImport.getName();
   }
 
+  @Override
+  public String toString() {
+    return toString(false);
+  }
 }

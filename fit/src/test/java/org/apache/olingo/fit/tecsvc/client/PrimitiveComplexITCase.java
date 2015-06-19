@@ -380,7 +380,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     final ODataValueUpdateResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
   }
 
   @Test

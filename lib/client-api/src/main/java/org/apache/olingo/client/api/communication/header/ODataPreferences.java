@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
+import org.apache.olingo.commons.api.ODataPreferenceNames;
 
 /**
  * Values of the Prefer header.
@@ -67,7 +68,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String allowEntityReferences() {
-    return PreferenceNames.allowEntityReferences.toString();
+    return ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString();
   }
 
   /**
@@ -130,7 +131,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String callback(final String url) {
-    return PreferenceNames.callback.toString() + ";url=\"" + url + "\"";
+    return ODataPreferenceNames.CALLBACK.toString() + ";url=\"" + url + "\"";
   }
 
   /**
@@ -151,7 +152,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String continueOnError() {
-    return PreferenceNames.continueOnError.toString();
+    return ODataPreferenceNames.CONTINUE_ON_ERROR.toString();
   }
 
   /**
@@ -198,7 +199,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String includeAnnotations(final String value) {
-    return PreferenceNames.includeAnnotations.toString() + "=" + value;
+    return ODataPreferenceNames.INCLUDE_ANNOTATIONS.toString() + "=" + value;
   }
 
   /**
@@ -231,7 +232,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String maxPageSize(final int size) {
-    return PreferenceNames.maxPageSize.toString() + "=" + size;
+    return ODataPreferenceNames.MAX_PAGE_SIZE.toString() + "=" + size;
   }
 
   /**
@@ -256,7 +257,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String trackChanges() {
-    return PreferenceNames.trackChanges.toString();
+    return ODataPreferenceNames.TRACK_CHANGES.toString();
   }
 
   /**
@@ -291,7 +292,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String respondAsync() {
-    return PreferenceNames.respondAsync.toString();
+    return ODataPreferenceNames.RESPOND_ASYNC.toString();
   }
 
   /**
@@ -311,7 +312,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String wait(final int value) {
-    return PreferenceNames.wait.toString() + "=" + value;
+    return ODataPreferenceNames.WAIT.toString() + "=" + value;
   }
 
   /**
@@ -341,7 +342,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnMinimal() {
-    return PreferenceNames.odataReturn.toString() + "=minimal";
+    return ODataPreferenceNames.RETURN.toString() + "=minimal";
   }
 
   /**
@@ -371,23 +372,15 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnRepresentation() {
-    return PreferenceNames.odataReturn.toString() + "=representation";
+    return ODataPreferenceNames.RETURN.toString() + "=representation";
   }
 
+  /** Preferences not in the OData 4.0 standard. */
   private static enum PreferenceNames {
 
     returnContent("return-content"),
     returnNoContent("return-no-content"),
-    keyAsSegment("KeyAsSegment"),
-    allowEntityReferences("odata.allow-entityreferences"),
-    callback("odata.callback"),
-    continueOnError("odata.continue-on-error"),
-    includeAnnotations("odata.include-annotations"),
-    maxPageSize("odata.maxpagesize"),
-    trackChanges("odata.track-changes"),
-    respondAsync("respond-async"),
-    wait("wait"),
-    odataReturn("return");
+    keyAsSegment("KeyAsSegment");
 
     private final String preferenceName;
 

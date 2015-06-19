@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.uri;
 
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 
@@ -45,16 +44,11 @@ public abstract class UriResourceTypedImpl extends UriResourceImpl implements Ur
   public String toString(final boolean includeFilters) {
     if (includeFilters) {
       if (typeFilter != null) {
-        return toString() + "/" + getFQN(typeFilter).toString();
+        return toString() + "/" + typeFilter.getFullQualifiedName().toString();
       } else {
         return toString();
       }
     }
     return toString();
   }
-
-  private FullQualifiedName getFQN(final EdmType type) {
-    return new FullQualifiedName(type.getNamespace(), type.getName());
-  }
-
 }

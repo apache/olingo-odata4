@@ -80,7 +80,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().returnMinimal());
     final ODataInvokeResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
   }
 
   @Test

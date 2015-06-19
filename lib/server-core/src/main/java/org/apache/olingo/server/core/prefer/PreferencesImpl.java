@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.ODataPreferenceNames;
 import org.apache.olingo.server.api.prefer.Preferences;
 
 /**
@@ -31,16 +32,6 @@ import org.apache.olingo.server.api.prefer.Preferences;
  * Preferences defined in the OData standard can be accessed with named methods.
  */
 public class PreferencesImpl implements Preferences {
-
-  private static final String ALLOW_ENTITY_REFERENCES = "odata.allow-entityreferences";
-  private static final String CALLBACK = "odata.callback";
-  private static final String CONTINUE_ON_ERROR = "odata.continue-on-error";
-  // private static final String INCLUDE_ANNOTATIONS = "odata.include-annotations";
-  private static final String MAX_PAGE_SIZE = "odata.maxpagesize";
-  private static final String TRACK_CHANGES = "odata.track-changes";
-  private static final String RETURN = "return";
-  private static final String RESPOND_ASYNC = "respond-async";
-  private static final String WAIT = "wait";
 
   private static final String URL = "url"; // parameter name for odata.callback
 
@@ -55,15 +46,15 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasAllowEntityReferences() {
-    return preferences.containsKey(ALLOW_ENTITY_REFERENCES);
+    return preferences.containsKey(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString());
   }
 
   public URI getCallback() {
-    if (preferences.containsKey(CALLBACK)
-        && preferences.get(CALLBACK).getParameters() != null
-        && preferences.get(CALLBACK).getParameters().get(URL) != null) {
+    if (preferences.containsKey(ODataPreferenceNames.CALLBACK.toString())
+        && preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters() != null
+        && preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters().get(URL) != null) {
       try {
-        return URI.create(preferences.get(CALLBACK).getParameters().get(URL));
+        return URI.create(preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters().get(URL));
       } catch (final IllegalArgumentException e) {
         return null;
       }
@@ -72,20 +63,20 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasContinueOnError() {
-    return preferences.containsKey(CONTINUE_ON_ERROR);
+    return preferences.containsKey(ODataPreferenceNames.CONTINUE_ON_ERROR.toString());
   }
 
   public Integer getMaxPageSize() {
-    return getNonNegativeIntegerPreference(MAX_PAGE_SIZE);
+    return getNonNegativeIntegerPreference(ODataPreferenceNames.MAX_PAGE_SIZE.toString());
   }
 
   public boolean hasTrackChanges() {
-    return preferences.containsKey(TRACK_CHANGES);
+    return preferences.containsKey(ODataPreferenceNames.TRACK_CHANGES.toString());
   }
 
   public Return getReturn() {
-    if (preferences.containsKey(RETURN)) {
-      final String value = preferences.get(RETURN).getValue();
+    if (preferences.containsKey(ODataPreferenceNames.RETURN.toString())) {
+      final String value = preferences.get(ODataPreferenceNames.RETURN.toString()).getValue();
       if (Return.REPRESENTATION.toString().toLowerCase(Locale.ROOT).equals(value)) {
         return Return.REPRESENTATION;
       } else if (Return.MINIMAL.toString().toLowerCase(Locale.ROOT).equals(value)) {
@@ -96,11 +87,11 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasRespondAsync() {
-    return preferences.containsKey(RESPOND_ASYNC);
+    return preferences.containsKey(ODataPreferenceNames.RESPOND_ASYNC.toString());
   }
 
   public Integer getWait() {
-    return getNonNegativeIntegerPreference(WAIT);
+    return getNonNegativeIntegerPreference(ODataPreferenceNames.WAIT.toString());
   }
 
   private Integer getNonNegativeIntegerPreference(final String name) {

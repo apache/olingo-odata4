@@ -112,7 +112,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
   }
 
@@ -160,7 +160,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       }
       if (returnPreference != null) {
         response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-            PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+            PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
       }
       if (entityResult.isCreated()) {
         response.setHeader(HttpHeader.LOCATION,
@@ -213,7 +213,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
   }
 
@@ -253,7 +253,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       }
       if (returnPreference != null) {
         response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-            PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+            PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
       }
     }
   }
@@ -298,7 +298,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-          PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
   }
 
@@ -339,7 +339,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       }
       if (returnPreference != null) {
         response.setHeader(HttpHeader.PREFERENCE_APPLIED,
-            PreferencesApplied.with().returnRepresentation(returnPreference).build().toString());
+            PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
       }
     }
   }

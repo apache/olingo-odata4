@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.prefer;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -101,7 +102,9 @@ public interface Preferences {
      * @return a map from parameter names to parameter values
      */
     public Map<String, String> getParameters() {
-      return parameters;
+      return parameters == null ?
+          Collections.<String, String> emptyMap() :
+          Collections.unmodifiableMap(parameters);
     }
   }
 }

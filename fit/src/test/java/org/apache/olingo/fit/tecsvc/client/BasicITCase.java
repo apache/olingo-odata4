@@ -415,7 +415,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertEquals(SERVICE_URI + "/ESTwoPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
   }
 
@@ -696,7 +696,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("return=\"representation\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=representation", response.getHeader(HeaderName.preferenceApplied).iterator().next());
     assertTrue(response.getBody().getProperty("PropertyString").hasNullValue());
     assertEquals(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
@@ -843,7 +843,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().returnMinimal());
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=\"minimal\"", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()

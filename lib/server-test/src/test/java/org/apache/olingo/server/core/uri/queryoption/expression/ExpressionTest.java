@@ -19,7 +19,9 @@
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -134,7 +136,7 @@ public class ExpressionTest {
     MemberImpl expression = new MemberImpl();
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
 
-    // UriResourceImplTyped
+    // UriResourceImpl
     EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTString);
     UriInfoResource uriInfo = new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceActionImpl().setAction(action)).asUriInfoResource();
@@ -146,24 +148,24 @@ public class ExpressionTest {
     assertEquals("<UARTString>", expression.accept(new FilterTreeToText()));
 
     // UriResourceImplTyped check collection = false case
-    assertEquals(false, expression.isCollection());
+    assertFalse(expression.isCollection());
 
     // UriResourceImplTyped check collection = true case
     action = edm.getUnboundAction(ActionProvider.nameUARTCollStringTwoParam);
-    expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
-        new UriResourceActionImpl().setAction(action))
+    expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource)
+        .addResourcePart(new UriResourceActionImpl().setAction(action))
         .asUriInfoResource());
-    assertEquals(true, expression.isCollection());
+    assertTrue(expression.isCollection());
 
     // UriResourceImplTyped with filter
-    action = edm.getUnboundAction(ActionProvider.nameUARTString);
+    EdmFunction function = edm.getUnboundFunction(FunctionProvider.nameUFCRTETKeyNav, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
-        new UriResourceActionImpl().setAction(action).setTypeFilter(entityType))
+        new UriResourceFunctionImpl().setFunction(function).setEntryTypeFilter(entityType))
         .asUriInfoResource());
     assertEquals(entityType, expression.getType());
 
     // UriResourceImplKeyPred
-    EdmFunction function = edm.getUnboundFunction(FunctionProvider.nameUFCRTETKeyNav, null);
+    function = edm.getUnboundFunction(FunctionProvider.nameUFCRTETKeyNav, null);
     expression.setResourcePath(new UriInfoImpl().setKind(UriInfoKind.resource).addResourcePart(
         new UriResourceFunctionImpl().setFunction(function))
         .asUriInfoResource());
@@ -192,7 +194,7 @@ public class ExpressionTest {
     assertEquals(null, expression.getType());
 
     // no typed collection else case
-    assertEquals(false, expression.isCollection());
+    assertFalse(expression.isCollection());
   }
 
   @Test
