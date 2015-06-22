@@ -530,6 +530,7 @@
         <configuration>
           <instrumentation>
             <excludes>
+              <exclude>org/apache/olingo/**/sample/**/*.class</exclude>
               <exclude>org/apache/olingo/**/tecsvc/**/*.class</exclude>
               <exclude>org/apache/olingo/**/fit/**/*.class</exclude>
               <exclude>org/apache/olingo/**/testutil/**/*.class</exclude>
