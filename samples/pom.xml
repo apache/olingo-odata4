@@ -23,7 +23,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.olingo</groupId>
   <artifactId>odata-samples</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
@@ -38,4 +37,20 @@
   <modules>
     <module>server</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>samples</id>
+      <modules>
+        <module>osgi/server</module>
+        <module>client</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>tutorials</id>
+      <modules>
+        <module>tutorials</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

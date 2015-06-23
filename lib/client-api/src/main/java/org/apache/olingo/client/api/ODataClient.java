@@ -29,13 +29,14 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
+import org.apache.olingo.client.api.serialization.ODataSerializer;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataSerializer;
+
 
 public interface ODataClient {
 

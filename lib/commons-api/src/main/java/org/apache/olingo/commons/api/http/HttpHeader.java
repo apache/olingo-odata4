@@ -162,12 +162,17 @@ public interface HttpHeader {
    */
   public static final String ODATA_MAX_VERSION = "OData-MaxVersion";
 
-  // CHECKSTYLE:OFF
   /**
-   * OData Prefer Header
-   * See
-   * {@link <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part1-protocol/odata-v4.0-errata01-os-part1-protocol-complete.html#_Toc399426728"> OData Version 4.0 Part 1: Protocol Plus Errata 01</a>}
+   * OData Prefer Header.
+   * See <a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc406398233">
+   * OData Version 4.0 Part 1: Protocol</a> and <a href="https://www.ietf.org/rfc/rfc7240.txt">RFC 7240</a>.
    */
   public static final String PREFER = "Prefer";
-  // CHECKSTYLE:ON
+
+  /**
+   * OData Preference-Applied Header.
+   * See <a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc406398247">
+   * OData Version 4.0 Part 1: Protocol</a> and <a href="https://www.ietf.org/rfc/rfc7240.txt">RFC 7240</a>.
+   */
+  public static final String PREFERENCE_APPLIED = "Preference-Applied";
 }

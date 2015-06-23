@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -203,7 +204,7 @@ public class ODataDispatcher {
       final UriResourceAction uriResourceAction) throws ODataApplicationException, ODataLibraryException {
     final EdmAction action = uriResourceAction.getAction();
     if (action.isBound()) {
-      // Only bound actions can have etag control for the binding parameter
+      // Only bound actions can have ETag control for the binding parameter.
       validatePreconditions(request, false);
     }
     final EdmReturnType returnType = action.getReturnType();
@@ -322,6 +323,7 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .readPrimitiveValue(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.PUT && resource instanceof UriResourceProperty) {
+        validatePreconditions(request, false);
         final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
         checkContentTypeSupport(requestFormat, valueRepresentationType);
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -329,6 +331,7 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .updatePrimitiveValue(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE && resource instanceof UriResourceProperty) {
+        validatePreconditions(request, false);
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .deletePrimitiveValue(request, response, uriInfo);
       } else {
@@ -375,6 +378,7 @@ public class ODataDispatcher {
             .readComplex(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+      validatePreconditions(request, false);
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, complexRepresentationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -387,6 +391,7 @@ public class ODataDispatcher {
             .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
             .deleteComplexCollection(request, response, uriInfo);
@@ -416,6 +421,7 @@ public class ODataDispatcher {
             .readPrimitive(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+      validatePreconditions(request, false);
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, representationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -428,6 +434,7 @@ public class ODataDispatcher {
             .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
             .deletePrimitiveCollection(request, response, uriInfo);
@@ -443,27 +450,21 @@ public class ODataDispatcher {
 
   private void handleCountDispatching(final ODataRequest request, final ODataResponse response,
       final int lastPathSegmentIndex) throws ODataApplicationException, ODataLibraryException {
-    final HttpMethod method = request.getMethod();
-    if (method == HttpMethod.GET) {
-      final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
-      if (resource instanceof UriResourceEntitySet
-          || resource instanceof UriResourceNavigation
-          || resource instanceof UriResourceFunction
-          && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.ENTITY) {
-        handler.selectProcessor(CountEntityCollectionProcessor.class)
-            .countEntityCollection(request, response, uriInfo);
-      } else if (resource instanceof UriResourcePrimitiveProperty
-          || resource instanceof UriResourceFunction
-          && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.PRIMITIVE) {
-        handler.selectProcessor(CountPrimitiveCollectionProcessor.class)
-            .countPrimitiveCollection(request, response, uriInfo);
-      } else {
-        handler.selectProcessor(CountComplexCollectionProcessor.class)
-            .countComplexCollection(request, response, uriInfo);
-      }
+    final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
+    if (resource instanceof UriResourceEntitySet
+        || resource instanceof UriResourceNavigation
+        || resource instanceof UriResourceFunction
+        && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.ENTITY) {
+      handler.selectProcessor(CountEntityCollectionProcessor.class)
+          .countEntityCollection(request, response, uriInfo);
+    } else if (resource instanceof UriResourcePrimitiveProperty
+        || resource instanceof UriResourceFunction
+        && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.PRIMITIVE) {
+      handler.selectProcessor(CountPrimitiveCollectionProcessor.class)
+          .countPrimitiveCollection(request, response, uriInfo);
     } else {
-      throw new ODataHandlerException("HTTP method " + method + " is not allowed for count.",
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+      handler.selectProcessor(CountComplexCollectionProcessor.class)
+          .countComplexCollection(request, response, uriInfo);
     }
   }
 
@@ -517,12 +518,16 @@ public class ODataDispatcher {
     }
   }
 
-  private void validatePreconditions(ODataRequest request, boolean isMediaValue) throws PreconditionException {
-    // If needed perform preconditions validation
-    if (handler.getCustomETagSupport() != null) {
-      new PreconditionsValidator(handler.getCustomETagSupport(), uriInfo,
-          request.getHeader(HttpHeader.IF_MATCH),
-          request.getHeader(HttpHeader.IF_NONE_MATCH)).validatePreconditions(isMediaValue);
+  private void validatePreconditions(final ODataRequest request, final boolean isMediaValue)
+      throws PreconditionException {
+    // If needed perform preconditions validation.
+    final CustomETagSupport eTagSupport = handler.getCustomETagSupport();
+    if (eTagSupport != null
+        && new PreconditionsValidator(uriInfo).mustValidatePreconditions(eTagSupport, isMediaValue)
+        && request.getHeader(HttpHeader.IF_MATCH) == null
+        && request.getHeader(HttpHeader.IF_NONE_MATCH) == null) {
+      throw new PreconditionException("Expected an if-match or if-none-match header.",
+          PreconditionException.MessageKeys.MISSING_HEADER);
     }
   }
 

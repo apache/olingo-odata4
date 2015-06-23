@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+
 
 /**
  * OData reader.

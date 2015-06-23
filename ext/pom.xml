@@ -40,4 +40,13 @@
     <module>client-proxy</module>
     <module>client-android</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>karaf</id>
+      <modules>
+        <module>karaf</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

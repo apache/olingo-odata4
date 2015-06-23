@@ -36,7 +36,7 @@ import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
 
 public class ODataWriterImpl implements ODataWriter {
 

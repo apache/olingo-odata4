@@ -59,7 +59,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class BatchClientITCase extends AbstractTestITCase {
-  private final static String ACCEPT = ContentType.APPLICATION_OCTET_STREAM.toContentTypeString();
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_NOT_AVAILABLE_NAME = "ESNotAvailable";
@@ -69,6 +68,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
   @Before
   public void setup() {
+    client.getConfiguration().setDefaultBatchAcceptFormat(ContentType.APPLICATION_OCTET_STREAM);
     client.getConfiguration().setContinueOnError(false);
   }
 
@@ -97,7 +97,6 @@ public class BatchClientITCase extends AbstractTestITCase {
     entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
         .buildString("1")));
     final ODataBatchRequest batchRequest = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    batchRequest.setAccept(ACCEPT);
     final BatchManager payloadManager = batchRequest.payloadManager();
     final ODataChangeset changeset = payloadManager.addChangeset();
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
@@ -129,12 +128,11 @@ public class BatchClientITCase extends AbstractTestITCase {
   public void emptyBatchRequest() {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
     final ODataBatchResponse response = payload.getResponse();
 
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
@@ -144,7 +142,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void getBatchRequestWithRelativeUris() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
@@ -154,7 +151,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
 
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
@@ -176,7 +173,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void getBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
@@ -186,7 +182,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
 
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
@@ -208,7 +204,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void testErrorWithoutContinueOnErrorPreferHeader() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
@@ -218,7 +213,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
 
@@ -252,7 +247,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void testInvalidAbsoluteUri() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI(SERVICE_URI + "/../ESAllPrim(32767)");
@@ -262,7 +256,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
     assertTrue(bodyIterator.hasNext());
@@ -271,13 +265,12 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertFalse(item.isChangeset());
 
     final ODataResponse oDataResponse = item.next();
-    assertEquals(400, oDataResponse.getStatusCode());
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), oDataResponse.getStatusCode());
   }
 
   @Test(expected = HttpClientException.class)
   public void testInvalidHost() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI("http://otherhost/odata/ESAllPrim(32767)");
@@ -292,7 +285,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test(expected = HttpClientException.class)
   public void testInvalidAbsoluteRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI("/ESAllPrim(32767)");
@@ -305,10 +297,9 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testErrorWithContinueOnErrorPreferHeader() throws URISyntaxException {
+  public void errorWithContinueOnErrorPreferHeader() throws Exception {
     client.getConfiguration().setContinueOnError(true);
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
 
@@ -318,7 +309,8 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals("odata.continue-on-error", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
 
@@ -330,10 +322,10 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataResponse oDataResonse = item.next();
     assertNotNull(oDataResonse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals(1, oDataResonse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResonse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals(1, oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals("605", oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
 
     // Check second get request
@@ -353,20 +345,18 @@ public class BatchClientITCase extends AbstractTestITCase {
     oDataResonse = item.next();
     assertNotNull(oDataResonse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("513", oDataResonse.getHeader("Content-Length").toArray()[0]);
+    assertEquals(1, oDataResonse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResonse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals(1, oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals("513", oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
     assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void changesetWithReferences() throws EdmPrimitiveTypeException, URISyntaxException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
-    request.setAccept(ACCEPT);
     final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
@@ -420,7 +410,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataResponse res = chgitem.next();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityCreateResponse);
-    final ODataEntityCreateResponse<ClientEntity> createResponse = ((ODataEntityCreateResponse<ClientEntity>) res);
+    final ODataEntityCreateResponse<?> createResponse = ((ODataEntityCreateResponse<?>) res);
 
     res = chgitem.next();
     assertEquals(HttpStatusCode.OK.getStatusCode(), res.getStatusCode());
@@ -441,11 +431,9 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void changesetBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
-    request.setAccept(ACCEPT);
 
     final BatchManager payload = request.payloadManager();
     // -----------------------------
@@ -529,7 +517,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // - Fetch result
     // -----------------------------
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(202, response.getStatusCode());
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
 
     // Check first get request
@@ -539,7 +527,9 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertTrue(item.hasNext());
     final ODataResponse response0 = item.next();
     assertTrue(response0 instanceof ODataRetrieveResponse);
-    assertEquals(34, ((ODataRetrieveResponse<ClientEntity>) response0).getBody()
+    @SuppressWarnings("unchecked")
+    ODataRetrieveResponse<ClientEntity> retrieveResponse = (ODataRetrieveResponse<ClientEntity>) response0;
+    assertEquals(34, retrieveResponse.getBody()
         .getProperty("PropertyDecimal")
         .getPrimitiveValue()
         .toValue());
@@ -554,7 +544,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final ODataResponse response1 = item.next();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response1.getStatusCode());
     assertTrue(response1 instanceof ODataEntityCreateResponse);
-    assertEquals(3.1415, ((ODataEntityCreateResponse<ClientEntity>) response1).getBody().getProperty("PropertyDouble")
+    assertEquals(3.1415, ((ODataEntityCreateResponse<?>) response1).getBody().getProperty("PropertyDouble")
         .getPrimitiveValue()
         .toValue());
     // Update
@@ -568,7 +558,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final ODataResponse response3 = item.next();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response3.getStatusCode());
     assertTrue(response3 instanceof ODataEntityUpdateResponse);
-    assertEquals(3.1415, ((ODataEntityUpdateResponse<ClientEntity>) response3).getBody().getProperty("PropertyDouble")
+    assertEquals(3.1415, ((ODataEntityUpdateResponse<?>) response3).getBody().getProperty("PropertyDouble")
         .getPrimitiveValue()
         .toValue());
 
@@ -579,7 +569,9 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertTrue(item.hasNext());
     final ODataResponse response4 = item.next();
     assertTrue(response4 instanceof ODataRetrieveResponse);
-    assertEquals(3.1415, ((ODataRetrieveResponse<ClientEntity>) response4).getBody()
+    @SuppressWarnings("unchecked")
+    final ODataRetrieveResponse<ClientEntity> retrieveResponse2 = (ODataRetrieveResponse<ClientEntity>) response4;
+    assertEquals(3.1415, retrieveResponse2.getBody()
         .getProperty("PropertyDouble")
         .getPrimitiveValue()
         .toValue());

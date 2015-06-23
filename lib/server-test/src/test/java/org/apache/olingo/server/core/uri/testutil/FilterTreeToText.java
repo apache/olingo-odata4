@@ -97,7 +97,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
         tmp = visitLambdaExpression("ALL", all.getLambdaVariable(), all.getExpression());
       } else if (item instanceof UriResourceLambdaAny) {
         UriResourceLambdaAny any = (UriResourceLambdaAny) item;
-        tmp = visitLambdaExpression("ANY", any.getLamdaVariable(), any.getExpression());
+        tmp = visitLambdaExpression("ANY", any.getLambdaVariable(), any.getExpression());
       } else if (item instanceof UriResourcePartTyped) {
         UriResourcePartTyped typed = (UriResourcePartTyped) item;
         tmp = typed.toString(true);

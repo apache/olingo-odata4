@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * OData writer.

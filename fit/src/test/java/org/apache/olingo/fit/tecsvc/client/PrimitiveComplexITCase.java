@@ -33,6 +33,7 @@ import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
@@ -364,6 +365,21 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
     final ClientPrimitiveValue value = response.getBody();
     assertNotNull(value);
     assertEquals("Test String1", IOUtils.toString((InputStream) value.toValue(), "UTF-8"));
+  }
+
+  @Test
+  public void updatePropertyValueMinimalResponse() throws Exception {
+    ODataValueUpdateRequest request = getClient().getCUDRequestFactory().getValueUpdateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+            .appendPropertySegment("PropertyString")
+            .build(),
+        UpdateType.REPLACE,
+        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("Test String1"));
+    request.setPrefer(getClient().newPreferences().returnMinimal());
+
+    final ODataValueUpdateResponse response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
   }
 
   @Test

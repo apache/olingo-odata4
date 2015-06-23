@@ -47,6 +47,8 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
+import org.apache.olingo.server.api.prefer.PreferencesApplied;
+import org.apache.olingo.server.api.prefer.Preferences.Return;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.CountComplexCollectionProcessor;
@@ -303,16 +305,25 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
     dataProvider.updateETag(entity);
 
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    if (representationType == RepresentationType.VALUE) {
-      response.setContent(
-          serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) edmProperty.getType(), null));
+    final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
+    if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      if (representationType == RepresentationType.VALUE) {
+        response.setContent(
+            serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) edmProperty.getType(), null));
+      } else {
+        final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
+            edmProperty.getType(), null, representationType, responseFormat, null, null);
+        response.setContent(result.getContent());
+      }
+      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     } else {
-      final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
-          edmProperty.getType(), null, representationType, responseFormat, null, null);
-      response.setContent(result.getContent());
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     }
-    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+    if (returnPreference != null) {
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED,
+          PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
+    }
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }

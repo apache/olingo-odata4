@@ -28,12 +28,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements a generic OData request.

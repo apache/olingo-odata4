@@ -32,6 +32,7 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
+import org.apache.olingo.client.api.serialization.ODataSerializer;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.SearchFactory;
@@ -43,7 +44,9 @@ import org.apache.olingo.client.core.communication.request.cud.CUDRequestFactory
 import org.apache.olingo.client.core.communication.request.invoke.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.RetrieveRequestFactoryImpl;
 import org.apache.olingo.client.core.domain.ClientObjectFactoryImpl;
+import org.apache.olingo.client.core.serialization.AtomSerializer;
 import org.apache.olingo.client.core.serialization.ClientODataDeserializerImpl;
+import org.apache.olingo.client.core.serialization.JsonSerializer;
 import org.apache.olingo.client.core.serialization.ODataBinderImpl;
 import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.client.core.serialization.ODataWriterImpl;
@@ -51,9 +54,6 @@ import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataSerializer;
-import org.apache.olingo.commons.core.serialization.AtomSerializer;
-import org.apache.olingo.commons.core.serialization.JsonSerializer;
 
 public class ODataClientImpl implements ODataClient {
 

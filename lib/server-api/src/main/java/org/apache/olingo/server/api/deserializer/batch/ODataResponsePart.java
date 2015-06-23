@@ -24,23 +24,23 @@ import java.util.List;
 import org.apache.olingo.server.api.ODataResponse;
 
 /**
- * An ODataResponsePart represents a collections of ODataResponses.
+ * An ODataResponsePart represents a collection of ODataResponses.
  * A list of ODataResponseParts can be combined by the BatchSerializer to a single
  * OData batch response.
  */
 public class ODataResponsePart {
-  private List<ODataResponse> responses;
-  private boolean isChangeSet;
+  private final List<ODataResponse> responses;
+  private final boolean isChangeSet;
 
   /**
    * Creates a new ODataResponsePart.
    *
-   * An ODataResponsePart represents a collections of ODataResponses.
+   * An ODataResponsePart represents a collection of ODataResponses.
    * A list of ODataResponseParts can be combined by the BatchSerializer to a single
    * OData batch response.
    * 
    * @param responses A list of {@link ODataResponse}
-   * @param isChangeSet True this ODataResponsePart represents a change set, otherwise false
+   * @param isChangeSet whether this ODataResponsePart represents a change set
    */
   public ODataResponsePart(final List<ODataResponse> responses, final boolean isChangeSet) {
     this.responses = responses;
@@ -50,12 +50,12 @@ public class ODataResponsePart {
   /**
    * Creates a new ODataResponsePart.
    *
-   * An ODataResponsePart represents a collections of ODataResponses.
+   * An ODataResponsePart represents a collection of ODataResponses.
    * A list of ODataResponseParts can be combined by the BatchSerializer to a single
    * OData batch response.
    * 
    * @param response A single {@link ODataResponse}
-   * @param isChangeSet True this ODataResponsePart represents a change set, otherwise false
+   * @param isChangeSet whether this ODataResponsePart represents a change set
    */
   public ODataResponsePart(final ODataResponse response, final boolean isChangeSet) {
     responses = Arrays.asList(response);
@@ -63,21 +63,18 @@ public class ODataResponsePart {
   }
 
   /**
-   * Returns true if the current instance represents a change set.
-   *
-   * @return true or false
+   * Returns a collection of ODataResponses.
+   * Each collection contains at least one {@link ODataResponse}.
+   * If this instance represents a change set, there may be many ODataResponses.
+   * @return a list of {@link ODataResponse}
    */
   public List<ODataResponse> getResponses() {
     return responses;
   }
 
   /**
-   * Returns a collection of ODataResponses.
-   * Each collections contains at least one {@link ODataResponse}.
-   *
-   * If this instance represents a change set, there are may many ODataResponses
-   * 
-   * @return a list of {@link ODataResponse}
+   * Returns true if the current instance represents a change set.
+   * @return true or false
    */
   public boolean isChangeSet() {
     return isChangeSet;

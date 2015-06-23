@@ -36,9 +36,9 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * This class implements an OData update request.
