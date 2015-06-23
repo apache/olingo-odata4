@@ -34,11 +34,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +48,11 @@ import org.slf4j.LoggerFactory;
 public class ODataBatchUtilities {
 
   public static enum BatchItemType {
-
     NONE,
     CHANGESET,
     RETRIEVE
-
   }
+
   /**
    * Logger.
    */
@@ -300,8 +299,9 @@ public class ODataBatchUtilities {
 
     final BatchItemType nextItemType;
 
-    final String contentType = headers.containsKey(HeaderName.contentType.toString())
-            ? headers.get(HeaderName.contentType.toString()).toString() : StringUtils.EMPTY;
+    final String contentType = headers.containsKey(HttpHeader.CONTENT_TYPE) ?
+        headers.get(HttpHeader.CONTENT_TYPE).toString() :
+        StringUtils.EMPTY;
 
     if (contentType.contains(ContentType.MULTIPART_MIXED.toContentTypeString())) {
       nextItemType = BatchItemType.CHANGESET;

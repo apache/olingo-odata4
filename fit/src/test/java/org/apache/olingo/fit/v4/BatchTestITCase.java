@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
@@ -68,6 +67,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
@@ -570,7 +570,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(202, res.getStatusCode());
     assertEquals("Accepted", res.getStatusMessage());
 
-    final Collection<String> newMonitorLocation = res.getHeader(HeaderName.location);
+    final Collection<String> newMonitorLocation = res.getHeader(HttpHeader.LOCATION);
     if (newMonitorLocation != null && !newMonitorLocation.isEmpty()) {
       responseWrapper.forceNextMonitorCheck(URI.create(newMonitorLocation.iterator().next()));
       // .... now you can start again with isDone() and getODataResponse().

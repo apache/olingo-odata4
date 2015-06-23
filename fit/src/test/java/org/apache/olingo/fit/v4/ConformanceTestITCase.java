@@ -28,7 +28,6 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -55,6 +54,7 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 /**
@@ -75,8 +75,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    assertEquals("4.0", req.getHeader("OData-MaxVersion"));
-    assertEquals("4.0", req.getHeader(HeaderName.odataMaxVersion.toString()));
+    assertEquals("4.0", req.getHeader(HttpHeader.ODATA_MAX_VERSION));
 
     assertNotNull(req.execute().getBody());
   }
@@ -121,16 +120,12 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     req.setFormat(ODataFormat.JSON_FULL_METADATA);
 
     // check for OData-Version
-    assertEquals("4.0", req.getHeader("OData-Version"));
-    assertEquals("4.0", req.getHeader(HeaderName.odataVersion.toString()));
+    assertEquals("4.0", req.getHeader(HttpHeader.ODATA_VERSION));
 
     // check for Content-Type
     assertEquals(
         ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
-        req.getHeader("Content-Type"));
-    assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
-        req.getHeader(HeaderName.contentType.toString()));
+        req.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(
         ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
         req.getContentType());
@@ -158,8 +153,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
 
-    assertEquals("4.0", req.getHeader("OData-MaxVersion"));
-    assertEquals("4.0", req.getHeader(HeaderName.odataMaxVersion.toString()));
+    assertEquals("4.0", req.getHeader(HttpHeader.ODATA_MAX_VERSION));
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
@@ -411,7 +405,6 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     req.setFormat(ODataFormat.JSON);
 
     assertEquals("application/json;odata.metadata=minimal", req.getHeader("Accept"));
-    assertEquals("application/json;odata.metadata=minimal", req.getHeader(HeaderName.accept.toString()));
     assertEquals("application/json;odata.metadata=minimal", req.getAccept());
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();

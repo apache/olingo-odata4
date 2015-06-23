@@ -34,7 +34,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
@@ -42,6 +41,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -128,37 +128,37 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
   @Override
   public ODataRequest setAccept(final String value) {
-    odataHeaders.setHeader(HeaderName.accept, value);
+    odataHeaders.setHeader(HttpHeader.ACCEPT, value);
     return this;
   }
 
   @Override
   public ODataRequest setIfMatch(final String value) {
-    odataHeaders.setHeader(HeaderName.ifMatch, value);
+    odataHeaders.setHeader(HttpHeader.IF_MATCH, value);
     return this;
   }
 
   @Override
   public ODataRequest setIfNoneMatch(final String value) {
-    odataHeaders.setHeader(HeaderName.ifNoneMatch, value);
+    odataHeaders.setHeader(HttpHeader.IF_NONE_MATCH, value);
     return this;
   }
 
   @Override
   public ODataRequest setPrefer(final String value) {
-    odataHeaders.setHeader(HeaderName.prefer, value);
+    odataHeaders.setHeader(HttpHeader.PREFER, value);
     return this;
   }
 
   @Override
   public ODataRequest setXHTTPMethod(final String value) {
-    odataHeaders.setHeader(HeaderName.xHttpMethod, value);
+    odataHeaders.setHeader(HttpHeader.X_HTTP_METHOD, value);
     return this;
   }
 
   @Override
   public ODataRequest setContentType(final String value) {
-    odataHeaders.setHeader(HeaderName.contentType, value);
+    odataHeaders.setHeader(HttpHeader.CONTENT_TYPE, value);
     return this;
   }
 
@@ -169,40 +169,34 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   }
 
   @Override
-  public ODataRequest addCustomHeader(final HeaderName name, final String value) {
-    odataHeaders.setHeader(name, value);
-    return this;
-  }
-
-  @Override
   public String getAccept() {
-    final String acceptHead = odataHeaders.getHeader(HeaderName.accept);
-    return StringUtils.isBlank(acceptHead)
-            ? getDefaultFormat().getContentType().toContentTypeString()
-            : acceptHead;
+    final String acceptHead = odataHeaders.getHeader(HttpHeader.ACCEPT);
+    return StringUtils.isBlank(acceptHead) ?
+        getDefaultFormat().getContentType().toContentTypeString() :
+        acceptHead;
   }
 
   @Override
   public String getIfMatch() {
-    return odataHeaders.getHeader(HeaderName.ifMatch);
+    return odataHeaders.getHeader(HttpHeader.IF_MATCH);
   }
 
   @Override
   public String getIfNoneMatch() {
-    return odataHeaders.getHeader(HeaderName.ifNoneMatch);
+    return odataHeaders.getHeader(HttpHeader.IF_NONE_MATCH);
   }
 
   @Override
   public String getPrefer() {
-    return odataHeaders.getHeader(HeaderName.prefer);
+    return odataHeaders.getHeader(HttpHeader.PREFER);
   }
 
   @Override
   public String getContentType() {
-    final String contentTypeHead = odataHeaders.getHeader(HeaderName.contentType);
-    return StringUtils.isBlank(contentTypeHead)
-            ? getDefaultFormat().getContentType().toContentTypeString()
-            : contentTypeHead;
+    final String contentTypeHead = odataHeaders.getHeader(HttpHeader.CONTENT_TYPE);
+    return StringUtils.isBlank(contentTypeHead) ?
+        getDefaultFormat().getContentType().toContentTypeString() :
+        contentTypeHead;
   }
 
   @Override
@@ -231,10 +225,10 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       baos.write(ODataStreamer.CRLF);
 
       // Set Content-Type and Accept headers with default values, if not yet set
-      if (StringUtils.isBlank(odataHeaders.getHeader(HeaderName.contentType))) {
+      if (StringUtils.isBlank(odataHeaders.getHeader(HttpHeader.CONTENT_TYPE))) {
         setContentType(getContentType());
       }
-      if (StringUtils.isBlank(odataHeaders.getHeader(HeaderName.accept))) {
+      if (StringUtils.isBlank(odataHeaders.getHeader(HttpHeader.ACCEPT))) {
         setAccept(getAccept());
       }
 
@@ -277,18 +271,16 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     checkRequest(odataClient, request);
 
     // Set Content-Type and Accept headers with default values, if not yet set
-    if (StringUtils.isBlank(odataHeaders.getHeader(HeaderName.contentType))) {
+    if (StringUtils.isBlank(odataHeaders.getHeader(HttpHeader.CONTENT_TYPE))) {
       setContentType(getContentType());
     }
-    if (StringUtils.isBlank(odataHeaders.getHeader(HeaderName.accept))) {
+    if (StringUtils.isBlank(odataHeaders.getHeader(HttpHeader.ACCEPT))) {
       setAccept(getAccept());
     }
 
     // Add header for KeyAsSegment management
     if (odataClient.getConfiguration().isKeyAsSegment()) {
-      addCustomHeader(
-              HeaderName.dataServiceUrlConventions.toString(),
-              odataClient.newPreferences().keyAsSegment());
+      addCustomHeader("DataServiceUrlConventions", odataClient.newPreferences().keyAsSegment());
     }
 
     // Add all available headers

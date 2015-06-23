@@ -25,13 +25,13 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -268,7 +268,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().maxPageSize(7));
 
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    assertEquals("odata.maxpagesize=7", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("odata.maxpagesize=7", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     assertEquals(SERVICE_URI + '/' + ES_SERVER_SIDE_PAGING + "?%24skiptoken=1%2A" + 7,
         response.getBody().getNext().toASCIIString());
   }

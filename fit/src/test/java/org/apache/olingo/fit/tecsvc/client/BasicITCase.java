@@ -37,7 +37,6 @@ import java.util.List;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -415,7 +414,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     assertEquals(SERVICE_URI + "/ESTwoPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
   }
 
@@ -696,7 +695,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("return=representation", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=representation", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     assertTrue(response.getBody().getProperty("PropertyString").hasNullValue());
     assertEquals(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
@@ -843,7 +842,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().returnMinimal());
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()

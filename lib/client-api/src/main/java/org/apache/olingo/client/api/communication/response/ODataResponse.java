@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 
 /**
@@ -45,14 +44,6 @@ public interface ODataResponse {
    * @return response header value.
    */
   Collection<String> getHeader(final String name);
-
-  /**
-   * Gets header value of the given header.
-   *
-   * @param name header to be retrieved.
-   * @return response header value.
-   */
-  Collection<String> getHeader(final HeaderName name);
 
   /**
    * Gets 'ETag' header value.

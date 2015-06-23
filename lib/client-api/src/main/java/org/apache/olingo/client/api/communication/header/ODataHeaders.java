@@ -36,16 +36,6 @@ public interface ODataHeaders {
    * @param name name of the header to be retrieved.
    * @return header value.
    */
-  String getHeader(final HeaderName name);
-
-  /**
-   * Gets the value of the header identified by the given name.
-   * <br/>
-   * Please note that header name is case-insensitive.
-   *
-   * @param name name of the header to be retrieved.
-   * @return header value.
-   */
   String getHeader(final String name);
 
   /**
@@ -67,15 +57,6 @@ public interface ODataHeaders {
   ODataHeaders setHeader(String name, String value);
 
   /**
-   * Add the specified header.
-   *
-   * @param name header key.
-   * @param value header value.
-   * @return the current updated header instance.
-   */
-  ODataHeaders setHeader(HeaderName name, String value);
-
-  /**
    * Removes the header identified by the given name.
    * <br/>
    * Please note that header name is case-insensitive.
@@ -83,8 +64,6 @@ public interface ODataHeaders {
    * @param name name of the header to be retrieved.
    * @return header name (if found).
    */
-  String removeHeader(HeaderName name);
-
   String removeHeader(String name);
 
 }

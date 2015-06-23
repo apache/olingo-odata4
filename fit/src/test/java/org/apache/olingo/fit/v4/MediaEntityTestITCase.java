@@ -32,7 +32,6 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -53,6 +52,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
@@ -108,7 +108,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataMediaEntityCreateResponse<ClientEntity> createRes = streamManager.getResponse();
     assertEquals(201, createRes.getStatusCode());
 
-    final Collection<String> location = createRes.getHeader(HeaderName.location);
+    final Collection<String> location = createRes.getHeader(HttpHeader.LOCATION);
     assertNotNull(location);
     final URI createdLocation = URI.create(location.iterator().next());
 

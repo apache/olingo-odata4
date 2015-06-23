@@ -33,7 +33,6 @@ import java.util.TimeZone;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -45,6 +44,7 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -80,7 +80,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().returnMinimal());
     final ODataInvokeResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
   }
 
   @Test
