@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.batch.exception;
+package org.apache.olingo.server.api.serializer;
 
-import org.apache.olingo.server.api.serializer.SerializerException;
 
 public class BatchSerializerException extends SerializerException {
 

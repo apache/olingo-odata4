@@ -31,9 +31,9 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
+import org.apache.olingo.server.api.serializer.BatchSerializerException;
+import org.apache.olingo.server.api.serializer.BatchSerializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchResponseSerializer {
@@ -149,7 +149,7 @@ public class BatchResponseSerializer {
 
     for (final String key : header.keySet()) {
       // Requests do never has a content id header
-      if (!key.equalsIgnoreCase(BatchParserCommon.HTTP_CONTENT_ID)) {
+      if (!key.equalsIgnoreCase(HttpHeader.CONTENT_ID)) {
         appendHeader(key, header.get(key), builder);
       }
     }
@@ -157,16 +157,14 @@ public class BatchResponseSerializer {
     appendHeader(HttpHeader.CONTENT_LENGTH, "" + contentLength, builder);
   }
 
-  private void
-  appendBodyPartHeader(final ODataResponse response, final StringBuilder builder, final boolean isChangeSet)
-      throws BatchSerializerException {
+  private void appendBodyPartHeader(final ODataResponse response, final StringBuilder builder,
+      final boolean isChangeSet) throws BatchSerializerException {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, builder);
-    appendHeader(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
+    appendHeader(BatchParserCommon.CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
 
     if (isChangeSet) {
-      if (response.getHeaders().get(BatchParserCommon.HTTP_CONTENT_ID) != null) {
-        appendHeader(BatchParserCommon.HTTP_CONTENT_ID, response.getHeaders().get(BatchParserCommon.HTTP_CONTENT_ID),
-            builder);
+      if (response.getHeaders().get(HttpHeader.CONTENT_ID) != null) {
+        appendHeader(HttpHeader.CONTENT_ID, response.getHeaders().get(HttpHeader.CONTENT_ID), builder);
       } else {
         throw new BatchSerializerException("Missing content id", MessageKeys.MISSING_CONTENT_ID);
       }

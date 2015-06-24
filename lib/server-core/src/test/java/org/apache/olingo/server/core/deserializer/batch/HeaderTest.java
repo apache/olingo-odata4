@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.deserializer.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -73,14 +72,6 @@ public class HeaderTest {
   }
 
   @Test
-  public void testMatcher() {
-    Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=123", 1);
-
-    assertTrue(header.isHeaderMatching(HttpHeader.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY));
-  }
-
-  @Test
   public void testFieldName() {
     Header header = new Header(0);
     header.addHeader("MyFieldNamE", "myValue", 1);
@@ -105,13 +96,6 @@ public class HeaderTest {
 
     assertTrue(header.getHeaders(HttpHeader.CONTENT_TYPE) != copy.getHeaders(HttpHeader.CONTENT_TYPE));
     assertTrue(header.getHeaderField(HttpHeader.CONTENT_TYPE) != copy.getHeaderField(HttpHeader.CONTENT_TYPE));
-  }
-
-  @Test
-  public void testMatcherNoHeader() {
-    Header header = new Header(1);
-
-    assertFalse(header.isHeaderMatching(HttpHeader.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY));
   }
 
   @Test

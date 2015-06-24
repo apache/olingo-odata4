@@ -70,8 +70,9 @@ public final class ContentType {
   public static final ContentType APPLICATION_FORM_URLENCODED =
       new ContentType(APPLICATION, "x-www-form-urlencoded", null);
 
-  public static final ContentType MULTIPART_MIXED = new ContentType(MULTIPART, "mixed", null);
+  public static final ContentType APPLICATION_HTTP = new ContentType(APPLICATION, "http", null);
 
+  public static final ContentType MULTIPART_MIXED = new ContentType(MULTIPART, "mixed", null);
   public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
 
   public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";

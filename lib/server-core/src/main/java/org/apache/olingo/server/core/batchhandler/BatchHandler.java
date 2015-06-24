@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -25,8 +26,8 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
@@ -55,16 +56,13 @@ public class BatchHandler {
   }
 
   private void validateContentType(final ODataRequest request) throws BatchDeserializerException {
-    final String contentType = request.getHeader(HttpHeader.CONTENT_TYPE);
-
-    if (contentType == null || !BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches()) {
-      throw new BatchDeserializerException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE, 0);
-    }
+    // This method does validation.
+    BatchParserCommon.getContentType(request.getHeader(HttpHeader.CONTENT_TYPE), ContentType.MULTIPART_MIXED, 0);
   }
 
   private void validateHttpMethod(final ODataRequest request) throws BatchDeserializerException {
     if (request.getMethod() != HttpMethod.POST) {
-      throw new BatchDeserializerException("Invalid HTTP method", MessageKeys.INVALID_METHOD, 0);
+      throw new BatchDeserializerException("Invalid HTTP method", MessageKeys.INVALID_METHOD, "0");
     }
   }
 }

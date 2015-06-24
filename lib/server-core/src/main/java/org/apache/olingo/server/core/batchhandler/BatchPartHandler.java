@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
@@ -75,9 +76,9 @@ public class BatchPartHandler {
     }
 
     // Add content id to response
-    final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
+    final String contentId = request.getHeader(HttpHeader.CONTENT_ID);
     if (contentId != null) {
-      response.setHeader(BatchParserCommon.HTTP_CONTENT_ID, contentId);
+      response.setHeader(HttpHeader.CONTENT_ID, contentId);
     }
 
     return response;

@@ -32,10 +32,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.junit.Test;
 
 public class BatchRequestParserTest {
@@ -143,7 +143,7 @@ public class BatchRequestParserTest {
         for (ODataRequest request : requests) {
           assertEquals(HttpMethod.POST, request.getMethod());
           assertEquals("100000", request.getHeader(HttpHeader.CONTENT_LENGTH));
-          assertEquals("1", request.getHeader(BatchParserCommon.HTTP_CONTENT_ID));
+          assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
           assertEquals("application/octet-stream", request.getHeader(HttpHeader.CONTENT_TYPE));
 
           final InputStream body = request.getBody();
@@ -213,7 +213,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testBoundaryParameterWithQuotas() throws Exception {
+  public void boundaryParameterWithQuotes() throws Exception {
     final String contentType = "multipart/mixed; boundary=\"batch_1.2+34:2j)0?\"";
     final String boundary = BatchParserCommon.getBoundary(contentType, 0);
     final String batch = ""
@@ -250,19 +250,19 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testBatchWithoutBoundaryParameter() throws Exception {
+  public void batchWithoutBoundaryParameter() throws Exception {
     final String invalidContentType = "multipart/mixed";
 
     try {
       BatchParserCommon.getBoundary(invalidContentType, 0);
       fail();
     } catch (BatchDeserializerException e) {
-      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
+      assertMessageKey(e, BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
     }
   }
 
   @Test
-  public void testBoundaryParameterWithoutQuota() throws Exception {
+  public void boundaryParameterWithoutQuote() throws Exception {
     final String invalidContentType = "multipart/mixed;boundary=batch_1740-bb:84-2f7f";
 
     try {
@@ -917,13 +917,13 @@ public class BatchRequestParserTest {
         assertEquals(1, multipart.getRequests().size());
         final ODataRequest retrieveRequest = multipart.getRequests().get(0);
 
-        assertEquals("BBB", retrieveRequest.getHeader(BatchParserCommon.HTTP_CONTENT_ID));
+        assertEquals("BBB", retrieveRequest.getHeader(HttpHeader.CONTENT_ID));
       } else {
         for (ODataRequest request : multipart.getRequests()) {
           if (HttpMethod.POST.equals(request.getMethod())) {
-            assertEquals("1", request.getHeader(BatchParserCommon.HTTP_CONTENT_ID));
+            assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
           } else if (HttpMethod.PUT.equals(request.getMethod())) {
-            assertEquals("2", request.getHeader(BatchParserCommon.HTTP_CONTENT_ID));
+            assertEquals("2", request.getHeader(HttpHeader.CONTENT_ID));
             assertEquals("/$1/EmployeeName", request.getRawODataPath());
             assertEquals("http://localhost/odata/$1/EmployeeName", request.getRawRequestUri());
           }
@@ -1147,7 +1147,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderAuthorisation() throws Exception {
+  public void forbiddenHeaderAuthorization() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1162,7 +1162,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderExpect() throws Exception {
+  public void forbiddenHeaderExpect() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1177,7 +1177,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderFrom() throws Exception {
+  public void forbiddenHeaderFrom() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1192,7 +1192,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderRange() throws Exception {
+  public void forbiddenHeaderRange() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1207,7 +1207,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderMaxForwards() throws Exception {
+  public void forbiddenHeaderMaxForwards() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -1222,7 +1222,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testForddenHeaderTE() throws Exception {
+  public void forbiddenHeaderTE() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS

@@ -23,7 +23,7 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
@@ -34,8 +34,7 @@ public class BatchFacadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
 
   public BatchFacadeImpl(final ODataHandler oDataHandler, final ODataRequest request,
-      final BatchProcessor batchProcessor,
-      final boolean isStrict) {
+      final BatchProcessor batchProcessor, final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
   }
 

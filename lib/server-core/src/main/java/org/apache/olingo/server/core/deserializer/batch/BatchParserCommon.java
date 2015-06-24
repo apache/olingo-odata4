@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.olingo.commons.api.http.HttpContentType;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 
 public class BatchParserCommon {
 
@@ -38,47 +38,55 @@ public class BatchParserCommon {
           "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
   private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
-  private static final String REG_EX_APPLICATION_HTTP = "application/http";
 
-  public static final Pattern PATTERN_MULTIPART_BOUNDARY = Pattern.compile("multipart/mixed(.*)",
-      Pattern.CASE_INSENSITIVE);
-  public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
-      Pattern.CASE_INSENSITIVE);
+  protected static final String HTTP_RANGE = "Range";
+  protected static final String HTTP_TE = "TE";
+
+  public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+
+  protected static final String BOUNDARY = "boundary";
   public static final String BINARY_ENCODING = "binary";
-  public static final String HTTP_CONTENT_ID = "Content-Id";
-  public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-
-  public static final String HTTP_EXPECT = "Expect";
-  public static final String HTTP_FROM = "From";
-  public static final String HTTP_MAX_FORWARDS = "Max-Forwards";
-  public static final String HTTP_RANGE = "Range";
-  public static final String HTTP_TE = "TE";
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
-    if (contentType == null) {
-      throw new BatchDeserializerException("Missing content type",
-          BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE, line);
-    }
+    final ContentType type = getContentType(contentType, ContentType.MULTIPART_MIXED, line);
 
-    if (contentType.toLowerCase(Locale.ENGLISH).startsWith("multipart/mixed")) {
-      final String[] parameter = contentType.split(";");
-
-      for (final String pair : parameter) {
-
-        final String[] attrValue = pair.split("=");
-        if (attrValue.length == 2 && "boundary".equals(attrValue[0].trim().toLowerCase(Locale.ENGLISH))) {
-          if (attrValue[1].matches(REG_EX_BOUNDARY)) {
-            return trimQuota(attrValue[1].trim());
-          } else {
-            throw new BatchDeserializerException("Invalid boundary format",
-                BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, "" + line);
-          }
+    String boundary;
+    final Map<String, String> parameters = type.getParameters();
+    for (final String parameterName : parameters.keySet()) {
+      if (BOUNDARY.equalsIgnoreCase(parameterName)) {
+        boundary = parameters.get(parameterName).trim();
+        if (boundary.matches(REG_EX_BOUNDARY)) {
+          return trimQuotes(boundary);
+        } else {
+          throw new BatchDeserializerException("Invalid boundary format",
+              BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, Integer.toString(line));
         }
-
       }
     }
-    throw new BatchDeserializerException("Content type is not multipart mixed",
-        BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, HttpContentType.MULTIPART_MIXED);
+    throw new BatchDeserializerException("Missing boundary.",
+        BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER, Integer.toString(line));
+  }
+
+  public static ContentType getContentType(final String contentType, final ContentType expected, final int line)
+      throws BatchDeserializerException {
+    ContentType type = null;
+    try {
+      type = ContentType.create(contentType);
+    } catch (final IllegalArgumentException e) {
+      if (contentType == null) {
+        throw new BatchDeserializerException("Missing content type", e,
+            BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE, Integer.toString(line));
+      } else {
+        throw new BatchDeserializerException("Invalid content type.", e,
+            BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, Integer.toString(line));
+      }
+    }
+    if (type.isCompatible(expected)) {
+      return type;
+    } else {
+      throw new BatchDeserializerException("Content type is not the expected content type",
+          BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, expected.toContentTypeString());
+    }
   }
 
   public static String removeEndingSlash(final String content) {
@@ -88,11 +96,10 @@ public class BatchParserCommon {
     return (lastSlashIndex == newContent.length() - 1) ? newContent.substring(0, newContent.length() - 1) : newContent;
   }
 
-  private static String trimQuota(final String boundary) {
-    if (boundary.matches("\".*\"")) {
-      return boundary.replace("\"", "");
+  private static String trimQuotes(final String boundary) {
+    if (boundary != null && boundary.length() >= 2 && boundary.startsWith("\"") && boundary.endsWith("\"")) {
+      return boundary.substring(1, boundary.length() - 1);
     }
-
     return boundary;
   }
 
@@ -124,22 +131,21 @@ public class BatchParserCommon {
       }
     }
 
-    final int lineNumer = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
     }
 
     if (!isEndReached) {
+      final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
       throw new BatchDeserializerException("Missing close boundary delimiter",
-          BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER,
-          "" + lineNumer);
+          BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER, Integer.toString(lineNumber));
     }
 
     return messageParts;
   }
 
-  private static void removeEndingCRLFFromList(final List<Line> list) {
+  private static void removeEndingCRLFFromList(List<Line> list) {
     if (list.size() > 0) {
       Line lastLine = list.remove(list.size() - 1);
       list.add(removeEndingCRLF(lastLine));
@@ -157,7 +163,7 @@ public class BatchParserCommon {
     }
   }
 
-  public static Header consumeHeaders(final List<Line> remainingMessage) {
+  public static Header consumeHeaders(List<Line> remainingMessage) {
     final int headerLineNumber = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
     final Header headers = new Header(headerLineNumber);
     final Iterator<Line> iter = remainingMessage.iterator();
@@ -183,7 +189,7 @@ public class BatchParserCommon {
     return headers;
   }
 
-  public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
+  public static void consumeBlankLine(List<Line> remainingMessage, final boolean isStrict)
       throws BatchDeserializerException {
     if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*(\r\n|\n)\\s*")) {
       remainingMessage.remove(0);
@@ -191,8 +197,7 @@ public class BatchParserCommon {
       if (isStrict) {
         final int lineNumber = (remainingMessage.size() > 0) ? remainingMessage.get(0).getLineNumber() : 0;
         throw new BatchDeserializerException("Missing blank line",
-            BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE, "[None]", ""
-                + lineNumber);
+            BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE, "[None]", Integer.toString(lineNumber));
       }
     }
   }
