@@ -309,7 +309,7 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON_NO_METADATA);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 
