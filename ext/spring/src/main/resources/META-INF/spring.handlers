@@ -1,1 +1,1 @@
-http\://olingo.apache.org/schema/olingo/spring-olingo=org.apache.olingo.ext.spring.config.OlingoNamespaceHandler
+http\://olingo.apache.org/schema/olingo4=org.apache.olingo.ext.config.spring.OlingoNamespaceHandler

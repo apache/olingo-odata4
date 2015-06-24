@@ -1,1 +1,1 @@
-http\://olingo.apache.org/schema/olingo/spring-olingo.xsd=org/apache/olingo/ext/spring/config/spring-olingo.xsd
+http\://olingo.apache.org/schema/configuration/olingo4.xsd=schemas/configuration/olingo4.xsd

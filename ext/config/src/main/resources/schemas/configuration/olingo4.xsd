@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<xsd:schema xmlns="http://olingo.apache.org/schema/olingo4"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://olingo.apache.org/schema/olingo4"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<!-- Edm provider -->
+
+	<xsd:attributeGroup name="configurationAttributes">
+		<xsd:attribute name="id" type="xsd:string" use="required" />
+	</xsd:attributeGroup>
+	
+	<xsd:element name="edm-provider" type="edmProviderBeanType">
+	</xsd:element>
+
+	<xsd:complexType name="edmProviderBeanType">
+		<xsd:sequence>
+			<xsd:element name="schema" maxOccurs="unbounded" type="schemaBeanType"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="schemaBeanType">
+		<xsd:sequence>
+			<xsd:element name="entityContainer" minOccurs="1" maxOccurs="1" type="entityContainerBeanType"/>
+			<xsd:element name="entityType" minOccurs="0" maxOccurs="unbounded" type="entityTypeBeanType"/>
+			<xsd:element name="complexType" minOccurs="0" maxOccurs="unbounded" type="complexTypeBeanType"/>
+		</xsd:sequence>
+		<xsd:attribute name="namespace" type="xsd:string" use="required"/>
+		<xsd:attribute name="alias" type="xsd:string"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="entityContainerBeanType">
+		<xsd:sequence>
+			<xsd:element name="entitySet" minOccurs="0" maxOccurs="unbounded" type="entitySetBeanType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="entitySetBeanType">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="type" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="entityTypeBeanType">
+		<xsd:sequence>
+			<xsd:element name="key" minOccurs="1" maxOccurs="unbounded" type="entityTypeKeyBeanType"/>
+			<xsd:element name="property" minOccurs="1" maxOccurs="unbounded" type="entityTypePropertyBeanType"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="entityTypeKeyBeanType">
+		<xsd:attribute name="property-name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="entityTypePropertyBeanType">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="type" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="complexTypeBeanType">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<!-- Http handler -->
+
+	<xsd:element name="http-handler" type="httpHandlerBeanType">
+	</xsd:element>
+
+	<xsd:complexType name="httpHandlerBeanType">
+		<xsd:sequence>
+			<xsd:element name="reference" minOccurs="1" maxOccurs="unbounded" type="referenceBeanType"/>
+			<xsd:element name="processor" maxOccurs="unbounded" type="processorBeanType"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+		<xsd:attribute name="edm-provider" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="referenceBeanType">
+		<xsd:sequence>
+			<xsd:element name="include" maxOccurs="unbounded" type="referenceIncludeBeanType"/>
+		</xsd:sequence>
+		<xsd:attribute name="uri" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="referenceIncludeBeanType">
+		<xsd:attribute name="key" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="processorBeanType">
+		<xsd:attribute name="ref" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+</xsd:schema>

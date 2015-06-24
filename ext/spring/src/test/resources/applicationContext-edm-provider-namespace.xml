@@ -21,18 +21,18 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:olingo="http://olingo.apache.org/schema/olingo/spring-olingo"
+    xmlns:olingo="http://olingo.apache.org/schema/olingo4"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://olingo.apache.org/schema/olingo/spring-olingo
-                http://olingo.apache.org/schema/olingo/spring-olingo.xsd">
+            http://olingo.apache.org/schema/olingo4
+                http://olingo.apache.org/schema/configuration/olingo4.xsd">
 
   <bean id="conversionService"
         class="org.springframework.context.support.ConversionServiceFactoryBean">
     <property name="converters">
       <set>
-        <bean class="org.apache.olingo.ext.spring.editor.FullQualifiedNameConverter"/>
-        <bean class="org.apache.olingo.ext.spring.editor.ToFullQualifiedNameConverter"/>
+        <bean class="org.apache.olingo.ext.config.spring.editor.FullQualifiedNameConverter"/>
+        <bean class="org.apache.olingo.ext.config.spring.editor.ToFullQualifiedNameConverter"/>
       </set>
     </property>
   </bean>

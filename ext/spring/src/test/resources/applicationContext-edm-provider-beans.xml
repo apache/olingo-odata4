@@ -20,18 +20,18 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:olingo="http://olingo.apache.org/schema/spring-olingo"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:olingo="http://olingo.apache.org/schema/olingo4"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://olingo.apache.org/schema/spring-olingo
-                http://olingo.apache.org/schema/olingo/spring-olingo.xsd">
+            http://olingo.apache.org/schema/olingo4
+                http://olingo.apache.org/schema/configuration/olingo4.xsd">
 
 	<!--
 	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
 			<map>
 				<entry key="org.apache.olingo.commons.api.edm.FullQualifiedName"
-					value="org.apache.olingo.ext.spring.editor.FullQualifiedNameEditor" />
+					value="org.apache.olingo.ext.config.spring.editor.FullQualifiedNameEditor" />
 			</map>
 		</property>
 	</bean>
@@ -41,13 +41,13 @@
 				class="org.springframework.context.support.ConversionServiceFactoryBean">
 		<property name="converters">
 			<set>
-				<bean class="org.apache.olingo.ext.spring.editor.FullQualifiedNameConverter"/>
-				<bean class="org.apache.olingo.ext.spring.editor.ToFullQualifiedNameConverter"/>
+				<bean class="org.apache.olingo.ext.config.spring.editor.FullQualifiedNameConverter"/>
+				<bean class="org.apache.olingo.ext.config.spring.editor.ToFullQualifiedNameConverter"/>
 			</set>
 		</property>
 	</bean>
 
-	<bean id="edmProvider" class="org.apache.olingo.ext.spring.edm.GenericEdmProvider">
+	<bean id="edmProvider" class="org.apache.olingo.ext.config.edm.GenericEdmProvider">
 		<property name="schemas">
 			<list>
 				<bean class="org.apache.olingo.commons.api.edm.provider.CsdlSchema">
