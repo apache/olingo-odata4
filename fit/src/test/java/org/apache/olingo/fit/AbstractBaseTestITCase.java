@@ -36,7 +36,7 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.server.TomcatTestServer;
 import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.junit.BeforeClass;
@@ -72,7 +72,7 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, entity);
+        getClient().getSerializer(ContentType.JSON).write(writer, entity);
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -85,7 +85,7 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, entitySet);
+        getClient().getSerializer(ContentType.JSON).write(writer, entitySet);
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -106,7 +106,8 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.ATOM).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ContentType.APPLICATION_ATOM_XML).write(writer, getClient().getBinder()
+            .getEntity(entity));
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -115,7 +116,7 @@ public abstract class AbstractBaseTestITCase {
 
       writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ContentType.JSON).write(writer, getClient().getBinder().getEntity(entity));
       } catch (final ODataSerializerException e) {
         // Debug
       }

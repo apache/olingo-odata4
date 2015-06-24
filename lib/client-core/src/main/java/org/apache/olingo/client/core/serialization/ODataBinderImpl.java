@@ -69,6 +69,10 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
+import org.apache.olingo.client.core.domain.ClientDeletedEntityImpl;
+import org.apache.olingo.client.core.domain.ClientDeltaLinkImpl;
+import org.apache.olingo.client.core.domain.ClientPropertyImpl;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -87,13 +91,9 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
-import org.apache.olingo.client.core.domain.ClientDeletedEntityImpl;
-import org.apache.olingo.client.core.domain.ClientDeltaLinkImpl;
-import org.apache.olingo.client.core.domain.ClientPropertyImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -391,7 +391,7 @@ public class ODataBinderImpl implements ODataBinder {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
+        client.getSerializer(ContentType.JSON).write(writer, resource.getPayload());
       } catch (final ODataSerializerException e) {
         LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
       }
@@ -588,7 +588,7 @@ public class ODataBinderImpl implements ODataBinder {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
+        client.getSerializer(ContentType.JSON).write(writer, resource.getPayload());
       } catch (final ODataSerializerException e) {
         LOG.debug("EntityResource -> ODataEntity:\n{}", writer.toString());
       }

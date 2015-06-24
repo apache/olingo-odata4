@@ -37,18 +37,18 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;
 
 public class PropertyTestITCase extends AbstractTestITCase {
 
-  private void _enum(final ODataClient client, final ODataFormat format) {
+  private void _enum(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
@@ -59,25 +59,25 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void enumFromXML() {
-    _enum(client, ODataFormat.XML);
+    _enum(client, ContentType.APPLICATION_XML);
   }
 
   @Test
   public void enumFromJSON() {
-    _enum(edmClient, ODataFormat.JSON);
+    _enum(edmClient, ContentType.JSON);
   }
 
   @Test
   public void enumFromFullJSON() {
-    _enum(client, ODataFormat.JSON_FULL_METADATA);
+    _enum(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void geospatial(final ODataClient client, final ODataFormat format) {
+  private void geospatial(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
@@ -87,25 +87,25 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void geospatialFromXML() {
-    geospatial(client, ODataFormat.XML);
+    geospatial(client, ContentType.APPLICATION_XML);
   }
 
   @Test
   public void geospatialFromJSON() {
-    geospatial(edmClient, ODataFormat.JSON);
+    geospatial(edmClient, ContentType.JSON);
   }
 
   @Test
   public void geospatialFromFullJSON() {
-    geospatial(client, ODataFormat.JSON_FULL_METADATA);
+    geospatial(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void complex(final ODataClient client, final ODataFormat format) {
+  private void complex(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(2).appendPropertySegment("HomeAddress");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
         getPropertyRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ClientProperty prop = req.execute().getBody();
     assertNotNull(prop);
@@ -116,26 +116,26 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void complexFromXML() {
-    complex(client, ODataFormat.XML);
+    complex(client, ContentType.APPLICATION_XML);
   }
 
   @Test
   public void complexFromJSON() {
-    complex(edmClient, ODataFormat.JSON);
+    complex(edmClient, ContentType.JSON);
   }
 
   @Test
   public void complexFromFullJSON() {
-    complex(client, ODataFormat.JSON_FULL_METADATA);
+    complex(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void updateComplexProperty(final ODataFormat format, final UpdateType type) throws IOException {
+  private void updateComplexProperty(final ContentType contentType, final UpdateType type) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).appendPropertySegment("HomeAddress");
 
     ODataPropertyRequest<ClientProperty> retrieveReq =
         client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
-    retrieveReq.setFormat(format);
+    retrieveReq.setFormat(contentType);
 
     ODataRetrieveResponse<ClientProperty> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -153,13 +153,13 @@ public class PropertyTestITCase extends AbstractTestITCase {
     } else {
       assertEquals(type.getMethod(), updateReq.getMethod());
     }
-    updateReq.setFormat(format);
+    updateReq.setFormat(contentType);
 
     final ODataPropertyUpdateResponse updateRes = updateReq.execute();
     assertEquals(204, updateRes.getStatusCode());
 
     retrieveReq = client.getRetrieveRequestFactory().getPropertyRequest(uriBuilder.build());
-    retrieveReq.setFormat(format);
+    retrieveReq.setFormat(contentType);
 
     retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
@@ -170,7 +170,7 @@ public class PropertyTestITCase extends AbstractTestITCase {
 
   @Test
   public void patchComplexPropertyAsJSON() throws IOException {
-    updateComplexProperty(ODataFormat.JSON_FULL_METADATA, UpdateType.PATCH);
+    updateComplexProperty(ContentType.JSON_FULL_METADATA, UpdateType.PATCH);
   }
 
   @Test

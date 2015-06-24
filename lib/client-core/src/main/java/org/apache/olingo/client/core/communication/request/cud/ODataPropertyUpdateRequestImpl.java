@@ -28,15 +28,15 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -67,7 +67,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultFormat();
   }
 
@@ -86,7 +86,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   @Override
   protected InputStream getPayload() {
     try {
-      return odataClient.getWriter().writeProperty(property, ODataFormat.fromString(getContentType()));
+      return odataClient.getWriter().writeProperty(property, ContentType.parse(getContentType()));
     } catch (final ODataSerializerException e) {
       throw new IllegalArgumentException(e);
     }
@@ -109,7 +109,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
     public ClientProperty getBody() {
       if (resProperty == null) {
         try {
-          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getAccept())).
+          final ResWrap<Property> resource = odataClient.getDeserializer(ContentType.parse(getAccept())).
                   toProperty(getRawResponse());
 
           resProperty = odataClient.getBinder().getODataProperty(resource);

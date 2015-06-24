@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.domain;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.Constants;
@@ -131,6 +132,11 @@ public class ClientPrimitiveValueImpl extends AbstractClientValue implements Cli
     @Override
     public ClientPrimitiveValue buildBinary(final byte[] value) {
       return setType(EdmPrimitiveTypeKind.Binary).setValue(value).build();
+    }
+
+    @Override
+    public ClientPrimitiveValue buildDecimal(BigDecimal value) {
+      return setType(EdmPrimitiveTypeKind.Decimal).setValue(value).build();
     }
 
   }

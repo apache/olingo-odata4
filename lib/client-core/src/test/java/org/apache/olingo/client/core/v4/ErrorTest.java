@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.client.core.v4;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ErrorTest extends AbstractTest {
 
@@ -35,15 +35,15 @@ public class ErrorTest extends AbstractTest {
     return v4Client;
   }
 
-  private ODataError error(final String name, final ODataFormat format) throws ODataDeserializerException {
-    final ODataError error = getClient().getDeserializer(format).toError(
-            getClass().getResourceAsStream(name + "." + getSuffix(format)));
+  private ODataError error(final String name, final ContentType contentType) throws ODataDeserializerException {
+    final ODataError error = getClient().getDeserializer(contentType).toError(
+            getClass().getResourceAsStream(name + "." + getSuffix(contentType)));
     assertNotNull(error);
     return error;
   }
 
-  private void simple(final ODataFormat format) throws ODataDeserializerException {
-    final ODataError error = error("error", format);
+  private void simple(final ContentType contentType) throws ODataDeserializerException {
+    final ODataError error = error("error", contentType);
     assertEquals("501", error.getCode());
     assertEquals("Unsupported functionality", error.getMessage());
     assertEquals("query", error.getTarget());
@@ -51,12 +51,12 @@ public class ErrorTest extends AbstractTest {
 
   @Test
   public void jsonSimple() throws Exception {
-    simple(ODataFormat.JSON);
+    simple(ContentType.JSON);
   }
 
   @Test
   public void atomSimple() throws Exception {
-    simple(ODataFormat.ATOM);
+    simple(ContentType.APPLICATION_ATOM_XML);
   }
 
 }

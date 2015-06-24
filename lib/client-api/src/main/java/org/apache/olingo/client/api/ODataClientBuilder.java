@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.api;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * <p>
@@ -142,7 +142,7 @@ public final class ODataClientBuilder {
         loadClass(EdmEnabledODataClient.class, clientImplClassName,
             new Class[] { String.class, Edm.class, String.class },
             new Object[] { serviceRoot, edm, metadataETag });
-    instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    instance.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return instance;
   }
 

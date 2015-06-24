@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -102,15 +101,14 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
 
     // Next we create a serializer based on the requested format. This could also be a custom format but we do not
     // support them in this example
-    final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-    ODataSerializer serializer = odata.createSerializer(format);
+    ODataSerializer serializer = odata.createSerializer(requestedContentType);
 
     // Now the content is serialized using the serializer.
     final ExpandOption expand = uriInfo.getExpandOption();
     final SelectOption select = uriInfo.getSelectOption();
     InputStream serializedContent = serializer.entityCollection(edm, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
-            .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+            .contextURL(isODataMetadataNone(requestedContentType) ? null :
                 getContextUrl(edmEntitySet, false, expand, select, null))
             .count(uriInfo.getCountOption())
             .expand(expand).select(select)
@@ -142,13 +140,12 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           .getStatusCode(), Locale.ENGLISH);
     } else {
       // If an entity was found we proceed by serializing it and sending it to the client.
-      final ODataFormat format = ODataFormat.fromContentType(requestedContentType);
-      ODataSerializer serializer = odata.createSerializer(format);
+      ODataSerializer serializer = odata.createSerializer(requestedContentType);
       final ExpandOption expand = uriInfo.getExpandOption();
       final SelectOption select = uriInfo.getSelectOption();
       InputStream serializedContent = serializer.entity(edm, edmEntitySet.getEntityType(), entity,
           EntitySerializerOptions.with()
-              .contextURL(format == ODataFormat.JSON_NO_METADATA ? null :
+              .contextURL(isODataMetadataNone(requestedContentType) ? null :
                   getContextUrl(edmEntitySet, true, expand, select, null))
               .expand(expand).select(select)
               .build()).getContent();
@@ -254,9 +251,8 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
         if (property.getValue() == null) {
           response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
         } else {
-          final ODataFormat format = ODataFormat.fromContentType(contentType);
-          ODataSerializer serializer = odata.createSerializer(format);
-          final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
+          ODataSerializer serializer = odata.createSerializer(contentType);
+          final ContextURL contextURL = isODataMetadataNone(contentType) ? null :
               getContextUrl(edmEntitySet, true, null, null, edmProperty.getName());
           InputStream serializerContent = complex ?
               serializer.complex(edm, (EdmComplexType) edmProperty.getType(), property,
@@ -367,5 +363,10 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
           throws ODataApplicationException, DeserializerException, SerializerException {
     throw new ODataApplicationException("Entity update is not supported yet.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
+  }
+  
+  public static boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

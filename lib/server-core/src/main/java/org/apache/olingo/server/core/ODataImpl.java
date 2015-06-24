@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -52,20 +52,17 @@ import org.apache.olingo.server.core.uri.UriHelperImpl;
 public class ODataImpl extends OData {
 
   @Override
-  public ODataSerializer createSerializer(final ODataFormat format) throws SerializerException {
+  public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
     ODataSerializer serializer;
-    switch (format) {
-    case JSON:
-    case JSON_NO_METADATA:
-    case JSON_FULL_METADATA:
-      serializer = new ODataJsonSerializer(format);
-      break;
-    case XML:
+    
+    // odata.metadata=none, odata.metadata=minimal, odata.metadata=full
+    if(contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+      serializer = new ODataJsonSerializer(contentType);
+    } else if(contentType.isCompatible(ContentType.APPLICATION_XML)) {
       serializer = new ODataXmlSerializerImpl();
-      break;
-    default:
-      throw new SerializerException("Unsupported format: " + format,
-          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, format.toString());
+    } else {
+      throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
+          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     }
 
     return serializer;
@@ -104,20 +101,19 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataDeserializer createDeserializer(final ODataFormat format) throws DeserializerException {
+  public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
     ODataDeserializer deserializer;
-    switch (format) {
-    case JSON:
-    case JSON_NO_METADATA:
-    case JSON_FULL_METADATA:
-      deserializer = new ODataJsonDeserializer();
-      break;
-    case XML:
+    
+    // odata.metadata=none, odata.metadata=minimal, odata.metadata=full
+    if(contentType.isCompatible(ContentType.JSON)) {
+      deserializer = new ODataJsonDeserializer(contentType);
+      //} else if(contentType.isCompatible(ContentType.APPLICATION_XML)) {
       // We do not support XML deserialization right now so this must lead to an error.
-    default:
-      throw new DeserializerException("Unsupported format: " + format,
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, format.toString());
+    } else  {
+      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     }
+    
     return deserializer;
   }
 

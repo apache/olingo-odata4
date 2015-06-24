@@ -19,32 +19,16 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
-/** Options for the OData serializer. */
-public class ComplexSerializerOptions {
-
+public class ReferenceSerializerOptions {
   private ContextURL contextURL;
-  private ExpandOption expand;
-  private SelectOption select;
-  
+
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
   }
 
-  /** Gets the $expand system query option. */
-  public ExpandOption getExpand() {
-    return expand;
-  }
-
-  /** Gets the $select system query option. */
-  public SelectOption getSelect() {
-    return select;
-  }
-  
-  private ComplexSerializerOptions() {}
+  private ReferenceSerializerOptions() {}
 
   /** Initializes the options builder. */
   public static Builder with() {
@@ -53,11 +37,10 @@ public class ComplexSerializerOptions {
 
   /** Builder of OData serializer options. */
   public static final class Builder {
+    private ReferenceSerializerOptions options;
 
-    private ComplexSerializerOptions options;
-
-    private Builder() {
-      options = new ComplexSerializerOptions();
+    public Builder() {
+      options = new ReferenceSerializerOptions();
     }
 
     /** Sets the {@link ContextURL}. */
@@ -66,20 +49,8 @@ public class ComplexSerializerOptions {
       return this;
     }
 
-    /** Sets the $expand system query option. */
-    public Builder expand(final ExpandOption expand) {
-      options.expand = expand;
-      return this;
-    }
-
-    /** Sets the $select system query option. */
-    public Builder select(final SelectOption select) {
-      options.select = select;
-      return this;
-    }
-    
     /** Builds the OData serializer options. */
-    public ComplexSerializerOptions build() {
+    public ReferenceSerializerOptions build() {
       return options;
     }
   }

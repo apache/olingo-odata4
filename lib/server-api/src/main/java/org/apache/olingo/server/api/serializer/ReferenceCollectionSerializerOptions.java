@@ -19,32 +19,24 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
 /** Options for the OData serializer. */
-public class ComplexSerializerOptions {
-
+public class ReferenceCollectionSerializerOptions {
   private ContextURL contextURL;
-  private ExpandOption expand;
-  private SelectOption select;
+  private CountOption count;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
   }
-
-  /** Gets the $expand system query option. */
-  public ExpandOption getExpand() {
-    return expand;
-  }
-
-  /** Gets the $select system query option. */
-  public SelectOption getSelect() {
-    return select;
+  
+  /** Gets the $count system query option. */
+  public CountOption getCount() {
+    return count;
   }
   
-  private ComplexSerializerOptions() {}
+  private ReferenceCollectionSerializerOptions() {}
 
   /** Initializes the options builder. */
   public static Builder with() {
@@ -53,11 +45,10 @@ public class ComplexSerializerOptions {
 
   /** Builder of OData serializer options. */
   public static final class Builder {
+    private ReferenceCollectionSerializerOptions options;
 
-    private ComplexSerializerOptions options;
-
-    private Builder() {
-      options = new ComplexSerializerOptions();
+    public Builder() {
+      options = new ReferenceCollectionSerializerOptions();
     }
 
     /** Sets the {@link ContextURL}. */
@@ -66,20 +57,14 @@ public class ComplexSerializerOptions {
       return this;
     }
 
-    /** Sets the $expand system query option. */
-    public Builder expand(final ExpandOption expand) {
-      options.expand = expand;
-      return this;
-    }
-
-    /** Sets the $select system query option. */
-    public Builder select(final SelectOption select) {
-      options.select = select;
+    /** Sets the $count system query option. */
+    public Builder count(final CountOption count) {
+      options.count = count;
       return this;
     }
     
     /** Builds the OData serializer options. */
-    public ComplexSerializerOptions build() {
+    public ReferenceCollectionSerializerOptions build() {
       return options;
     }
   }

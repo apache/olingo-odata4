@@ -255,4 +255,9 @@ public abstract class TechnicalProcessor implements Processor {
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
     }
   }
+  
+  protected boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+  }
 }

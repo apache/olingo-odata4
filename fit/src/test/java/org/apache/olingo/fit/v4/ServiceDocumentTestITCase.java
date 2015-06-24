@@ -25,15 +25,15 @@ import java.net.URI;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class ServiceDocumentTestITCase extends AbstractTestITCase {
 
-  private void retrieveServiceDocument(final ODataFormat format) {
+  private void retrieveServiceDocument(final ContentType contentType) {
     final ODataServiceDocumentRequest req =
         client.getRetrieveRequestFactory().getServiceDocumentRequest(testStaticServiceRootURL);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientServiceDocument> res = req.execute();
     assertEquals(200, res.getStatusCode());
@@ -53,11 +53,11 @@ public class ServiceDocumentTestITCase extends AbstractTestITCase {
 
   @Test
   public void retrieveServiceDocumentAsXML() {
-    retrieveServiceDocument(ODataFormat.XML);
+    retrieveServiceDocument(ContentType.APPLICATION_XML);
   }
 
   @Test
   public void retrieveServiceDocumentAsJSON() {
-    retrieveServiceDocument(ODataFormat.JSON);
+    retrieveServiceDocument(ContentType.JSON);
   }
 }

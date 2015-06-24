@@ -35,24 +35,24 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomCreateAndDelete() {
-    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.ATOM, 1000);
+    createAndDeleteOrder(testStaticServiceRootURL, ContentType.APPLICATION_ATOM_XML, 1000);
   }
 
   @Test
   public void jsonCreateAndDelete() {
-    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.JSON, 1001);
-    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.JSON_NO_METADATA, 1001);
-    createAndDeleteOrder(testStaticServiceRootURL, ODataFormat.JSON_FULL_METADATA, 1001);
+    createAndDeleteOrder(testStaticServiceRootURL, ContentType.JSON, 1001);
+    createAndDeleteOrder(testStaticServiceRootURL, ContentType.JSON_NO_METADATA, 1001);
+    createAndDeleteOrder(testStaticServiceRootURL, ContentType.JSON_FULL_METADATA, 1001);
   }
 
-  private void onContained(final ODataFormat format) {
+  private void onContained(final ContentType contentType) {
     final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
         appendKeySegment(101).appendNavigationSegment("MyPaymentInstruments").build();
 
@@ -77,7 +77,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
     // 3. create it as contained entity
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
         getEntityCreateRequest(uri, instrument);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataEntityCreateResponse<ClientEntity> res = req.execute();
     assertEquals(201, res.getStatusCode());
@@ -102,15 +102,15 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomOnContained() {
-    onContained(ODataFormat.ATOM);
+    onContained(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonOnContained() {
-    onContained(ODataFormat.JSON);
+    onContained(ContentType.JSON);
   }
 
-  private void deepInsert(final ODataFormat format, final int productId, final int productDetailId)
+  private void deepInsert(final ContentType contentType, final int productId, final int productDetailId)
       throws EdmPrimitiveTypeException {
 
     final ClientEntity product = getClient().getObjectFactory().
@@ -161,7 +161,7 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Products").build(), product);
-    req.setFormat(format);
+    req.setFormat(contentType);
     final ODataEntityCreateResponse<ClientEntity> res = req.execute();
     assertEquals(201, res.getStatusCode());
 
@@ -181,11 +181,11 @@ public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataFormat.ATOM, 10, 10);
+    deepInsert(ContentType.APPLICATION_ATOM_XML, 10, 10);
   }
 
   @Test
   public void jsonDeepInsert() throws EdmPrimitiveTypeException {
-    deepInsert(ODataFormat.JSON_FULL_METADATA, 11, 11);
+    deepInsert(ContentType.JSON_FULL_METADATA, 11, 11);
   }
 }

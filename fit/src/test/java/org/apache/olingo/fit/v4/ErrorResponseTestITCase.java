@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.ODataErrorDetail;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class ErrorResponseTestITCase extends AbstractTestITCase {
@@ -39,7 +39,7 @@ public class ErrorResponseTestITCase extends AbstractTestITCase {
         build();
 
     try {
-      read(ODataFormat.JSON, readURI);
+      read(ContentType.JSON, readURI);
       fail("should have got exception");
     } catch (Exception ex) {
       final ODataError err = ((ODataClientErrorException) ex).getODataError();

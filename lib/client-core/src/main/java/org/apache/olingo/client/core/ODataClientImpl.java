@@ -28,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.batch.BatchRequestFact
 import org.apache.olingo.client.api.communication.request.cud.CUDRequestFactory;
 import org.apache.olingo.client.api.communication.request.invoke.InvokeRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
 import org.apache.olingo.client.api.serialization.ODataReader;
@@ -42,6 +43,7 @@ import org.apache.olingo.client.core.communication.request.batch.BatchRequestFac
 import org.apache.olingo.client.core.communication.request.cud.CUDRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.invoke.InvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.communication.request.retrieve.RetrieveRequestFactoryImpl;
+import org.apache.olingo.client.core.domain.ClientObjectFactoryImpl;
 import org.apache.olingo.client.core.serialization.AtomSerializer;
 import org.apache.olingo.client.core.serialization.ClientODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.JsonSerializer;
@@ -50,10 +52,8 @@ import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.client.core.domain.ClientObjectFactoryImpl;
+import org.apache.olingo.commons.api.format.ContentType;
 
 public class ODataClientImpl implements ODataClient {
 
@@ -125,15 +125,16 @@ public class ODataClientImpl implements ODataClient {
   }
 
   @Override
-  public ClientODataDeserializer getDeserializer(final ODataFormat format) {
-    return new ClientODataDeserializerImpl(false, format);
+  public ClientODataDeserializer getDeserializer(final ContentType contentType) {
+    return new ClientODataDeserializerImpl(false, contentType);
   }
 
   @Override
-  public ODataSerializer getSerializer(final ODataFormat format) {
-    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
-        new AtomSerializer() :
-        new JsonSerializer(false, format);
+  public ODataSerializer getSerializer(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
+                                    ContentType.APPLICATION_XML) ?  
+                                        new AtomSerializer() : new JsonSerializer(false, contentType);
+       
   }
 
   @Override

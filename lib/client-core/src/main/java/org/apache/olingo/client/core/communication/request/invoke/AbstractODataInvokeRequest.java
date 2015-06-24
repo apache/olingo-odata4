@@ -31,8 +31,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
-import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
+import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
@@ -45,7 +45,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -91,23 +91,24 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
-  private String getActualFormat(final ODataFormat format) {
-    return ((ClientProperty.class.isAssignableFrom(reference) && format == ODataFormat.ATOM)
-        ? ODataFormat.XML : format).getContentType().toContentTypeString();
+  private String getActualFormat(final ContentType contentType) {
+    return ((ClientProperty.class.isAssignableFrom(reference) 
+        && contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML))
+        ? ContentType.APPLICATION_XML : contentType).toContentTypeString();
   }
 
   @Override
-  public void setFormat(final ODataFormat format) {
-    final String _format = getActualFormat(format);
-    setAccept(_format);
-    setContentType(_format);
+  public void setFormat(final ContentType contentType) {
+    final String _contentType = getActualFormat(contentType);
+    setAccept(_contentType);
+    setContentType(_contentType);
   }
 
-  protected abstract ODataFormat getPOSTParameterFormat();
+  protected abstract ContentType getPOSTParameterFormat();
 
   @Override
   protected InputStream getPayload() {
@@ -197,13 +198,13 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
             final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
             if (ClientEntitySet.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
-                  ODataFormat.fromString(getContentType())));
+                  ContentType.parse(getContentType())));
             } else if (ClientEntity.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntity(responseStream,
-                  ODataFormat.fromString(getContentType())));
+                  ContentType.parse(getContentType())));
             } else if (ClientProperty.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readProperty(responseStream,
-                  ODataFormat.fromString(getContentType())));
+                  ContentType.parse(getContentType())));
             }
           }
         } catch (IOException e) {

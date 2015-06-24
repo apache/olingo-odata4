@@ -37,13 +37,13 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
-  private void upsert(final UpdateType updateType, final ODataFormat format) {
+  private void upsert(final UpdateType updateType, final ContentType contentType) {
     final ClientEntity order = getClient().getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
 
@@ -61,11 +61,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("Orders").appendKeySegment(9).build();
     final ODataEntityUpdateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(upsertURI, updateType, order);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     req.execute();
     try {
-      final ClientEntity read = read(format, upsertURI);
+      final ClientEntity read = read(contentType, upsertURI);
       assertNotNull(read);
       assertEquals(order.getProperty("OrderID"), read.getProperty("OrderID"));
       assertEquals(order.getProperty("OrderDate").getPrimitiveValue().toString(),
@@ -103,17 +103,17 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomUpsert() {
-    upsert(UpdateType.PATCH, ODataFormat.ATOM);
-    upsert(UpdateType.REPLACE, ODataFormat.ATOM);
+    upsert(UpdateType.PATCH, ContentType.APPLICATION_ATOM_XML);
+    upsert(UpdateType.REPLACE, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonUpsert() {
-    upsert(UpdateType.PATCH, ODataFormat.JSON);
-    upsert(UpdateType.REPLACE, ODataFormat.JSON);
+    upsert(UpdateType.PATCH, ContentType.JSON);
+    upsert(UpdateType.REPLACE, ContentType.JSON);
   }
 
-  private void onContained(final ODataFormat format) {
+  private void onContained(final ContentType contentType) {
     final String newName = UUID.randomUUID().toString();
     final ClientEntity changes = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument"));
@@ -125,7 +125,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
         appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101901).build();
     final ODataEntityUpdateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataEntityUpdateResponse<ClientEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
@@ -137,15 +137,15 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomOnContained() {
-    onContained(ODataFormat.ATOM);
+    onContained(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonOnContained() {
-    onContained(ODataFormat.JSON);
+    onContained(ContentType.JSON);
   }
 
-  private void bindOperation(final ODataFormat format) throws EdmPrimitiveTypeException {
+  private void bindOperation(final ContentType contentType) throws EdmPrimitiveTypeException {
     final ClientEntity changes = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ClientLink parent = getClient().getObjectFactory().newEntityNavigationLink("Parent",
@@ -157,7 +157,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
         appendEntitySetSegment("People").appendKeySegment(5).build();
     final ODataEntityUpdateRequest<ClientEntity> req = getClient().getCUDRequestFactory().
         getEntityUpdateRequest(uri, UpdateType.PATCH, changes);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataEntityUpdateResponse<ClientEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
@@ -175,11 +175,11 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   public void atomBindOperation() throws EdmPrimitiveTypeException {
-    bindOperation(ODataFormat.ATOM);
+    bindOperation(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void jsonBindOperation() throws EdmPrimitiveTypeException {
-    bindOperation(ODataFormat.JSON);
+    bindOperation(ContentType.JSON);
   }
 }

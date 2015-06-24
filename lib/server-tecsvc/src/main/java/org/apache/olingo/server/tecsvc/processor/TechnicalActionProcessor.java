@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -81,8 +80,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
         .getAction();
 
     DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     EntityCollection collection =
         dataProvider.processActionEntityCollection(action.getName(), deserializerResult.getActionParameters());
@@ -99,11 +97,10 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
       final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
-      final ODataFormat format = ODataFormat.fromContentType(responseFormat);
       final EntityCollectionSerializerOptions options = EntityCollectionSerializerOptions.with()
-          .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : getContextUrl(edmEntitySet, type, false))
+          .contextURL(isODataMetadataNone(responseFormat) ? null : getContextUrl(edmEntitySet, type, false))
           .build();
-      response.setContent(odata.createSerializer(format)
+      response.setContent(odata.createSerializer(responseFormat)
           .entityCollection(serviceMetadata, type, collection, options).getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -127,8 +124,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
 
     final DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     final EntityActionResult entityResult =
         dataProvider.processActionEntity(action.getName(), deserializerResult.getActionParameters());
@@ -143,13 +139,12 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     } else {
       final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
       if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
-        final ODataFormat format = ODataFormat.fromContentType(responseFormat);
-        response.setContent(odata.createSerializer(format).entity(
+        response.setContent(odata.createSerializer(responseFormat).entity(
             serviceMetadata,
             type,
             entityResult.getEntity(),
             EntitySerializerOptions.with()
-                .contextURL(format == ODataFormat.JSON_NO_METADATA ? null : getContextUrl(edmEntitySet, type, true))
+                .contextURL(isODataMetadataNone(responseFormat) ? null : getContextUrl(edmEntitySet, type, true))
                 .build())
             .getContent());
         response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
@@ -165,7 +160,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       if (entityResult.isCreated()) {
         response.setHeader(HttpHeader.LOCATION,
             request.getRawBaseUri() + '/'
-            + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entityResult.getEntity()));
+                + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entityResult.getEntity()));
       }
       if (entityResult.getEntity().getETag() != null) {
         response.setHeader(HttpHeader.ETAG, entityResult.getEntity().getETag());
@@ -181,8 +176,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
     DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     Property property =
         dataProvider.processActionPrimitiveCollection(action.getName(), deserializerResult.getActionParameters());
@@ -203,8 +197,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       final ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
       final PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
       final SerializerResult result =
-          odata.createSerializer(ODataFormat.fromContentType(responseFormat))
-              .primitiveCollection(serviceMetadata, type, property, options);
+          odata.createSerializer(responseFormat).primitiveCollection(serviceMetadata, type, property, options);
       response.setContent(result.getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -225,8 +218,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
     DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     Property property = dataProvider.processActionPrimitive(action.getName(), deserializerResult.getActionParameters());
     EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
@@ -243,7 +235,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
         final ContextURL contextURL = ContextURL.with().type(type).build();
         final PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
-        final SerializerResult result = odata.createSerializer(ODataFormat.fromContentType(responseFormat))
+        final SerializerResult result = odata.createSerializer(responseFormat)
             .primitive(serviceMetadata, type, property, options);
         response.setContent(result.getContent());
         response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
@@ -266,8 +258,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
     DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     Property property =
         dataProvider.processActionComplexCollection(action.getName(), deserializerResult.getActionParameters());
@@ -281,15 +272,13 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       throw new ODataApplicationException("The action could not be executed.",
           HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
     }
-
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       final EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
       final ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
       final ComplexSerializerOptions options = ComplexSerializerOptions.with().contextURL(contextURL).build();
       final SerializerResult result =
-          odata.createSerializer(ODataFormat.fromContentType(responseFormat)).complexCollection(serviceMetadata, type,
-              property, options);
+          odata.createSerializer(responseFormat).complexCollection(serviceMetadata, type, property, options);
       response.setContent(result.getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -310,8 +299,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
     DeserializerResult deserializerResult =
-        odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-            .actionParameters(request.getBody(), action);
+        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
 
     Property property = dataProvider.processActionComplex(action.getName(), deserializerResult.getActionParameters());
     EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
@@ -329,8 +317,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
         final ContextURL contextURL = ContextURL.with().type(type).build();
         final ComplexSerializerOptions options = ComplexSerializerOptions.with().contextURL(contextURL).build();
         final SerializerResult result =
-            odata.createSerializer(ODataFormat.fromContentType(responseFormat)).complex(serviceMetadata, type, property,
-                options);
+            odata.createSerializer(responseFormat).complex(serviceMetadata, type, property, options);
         response.setContent(result.getContent());
         response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -352,8 +339,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmAction action = resource.getAction();
     if (action.getParameterNames().size() - (action.isBound() ? 1 : 0) > 0) {
       checkRequestFormat(requestFormat);
-      odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
-          .actionParameters(request.getBody(), action);
+      odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
     }
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }

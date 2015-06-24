@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
@@ -41,16 +42,19 @@ import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
+import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
+import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
@@ -71,16 +75,31 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
-
+  
+  private static final String CONTENT_TYPE_JSON_IEEE754_COMPATIBLE = "application/json;odata.metadata=minimal;" 
+                                                                   + "IEEE754Compatible=true";
+  private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
+  private static final String ET_ALL_PRIM_NAME = "ETAllPrim";
+  private static final FullQualifiedName ET_ALL_PRIM = new FullQualifiedName(SERVICE_NAMESPACE, ET_ALL_PRIM_NAME);
+  
+  private static final String PROPERTY_INT16 = "PropertyInt16";
+  private static final String PROPERTY_INT64 = "PropertyInt64";
+  private static final String PROPERTY_DECIMAL = "PropertyDecimal";
+  private static final String PROPERTY_COMP_ALL_PRIM = "PropertyCompAllPrim";
+  private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
+  
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
+  private static final String ES_ALL_PRIM = "ESAllPrim";
+  private static final String ES_TWO_PRIM = "ESTwoPrim";
+  private static final String ES_KEY_NAV = "ESKeyNav";
 
   @Test
   public void readServiceDocument() {
@@ -377,7 +396,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
         factory.newPrimitiveValueBuilder().buildInt32(42)));
-    newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
+    newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
         .appendKeySegment(32766)
@@ -422,7 +441,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   public void readEntityWithExpandedNavigationProperty() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
 
     final URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
@@ -927,11 +946,356 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .get("PropertyInt16")
         .hasNullValue());
   }
+  
+  @Test
+  public void createEntityWithIEEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
+    final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
+                                                         .appendKeySegment(32767).build();
+    
+    final ClientEntity newEntity = of.newEntity(ET_ALL_PRIM);
+    newEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_INT64, 
+        of.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    newEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+        of.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(34))));
+    newEntity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
+    
+    final ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory()
+                                                                 .getEntityCreateRequest(uri, newEntity);
+    request.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataEntityCreateResponse<ClientEntity> response = request.execute();
+    
+    assertEquals(Long.MAX_VALUE, response.getBody().getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(34), response.getBody().getProperty(PROPERTY_DECIMAL)
+                                                           .getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void createEntityWithIEEE754CompatibleParameterNull() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
+    final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
+                                                         .appendKeySegment(32767).build();
+    
+    final ClientEntity newEntity = of.newEntity(ET_ALL_PRIM);
+    newEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_INT64, 
+        of.newPrimitiveValueBuilder().buildInt64(null)));
+    newEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+        of.newPrimitiveValueBuilder().buildDecimal(null)));
+    newEntity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
+    
+    final ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory()
+                                                                 .getEntityCreateRequest(uri, newEntity);
+    request.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataEntityCreateResponse<ClientEntity> response = request.execute();
+    
+    assertTrue(response.getBody().getProperty(PROPERTY_INT64).hasNullValue());
+    assertTrue(response.getBody().getProperty(PROPERTY_DECIMAL).hasNullValue());
+  }
+  
+  @Test
+  public void updateEntityWithIEEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    
+    final ClientEntity entity = of.newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_INT64, 
+        of.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+        of.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(Long.MAX_VALUE))));
 
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = client.getCUDRequestFactory()
+                                                                 .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataEntityUpdateResponse<ClientEntity> responseUpdate = requestUpdate.execute();
+    
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataEntityRequest<ClientEntity> requestGet = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
+    
+    assertEquals(Long.MAX_VALUE, responseGet.getBody().getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(Long.MAX_VALUE), responseGet.getBody().getProperty(PROPERTY_DECIMAL)
+                                                                          .getPrimitiveValue()
+                                                                          .toValue());
+  }
+  
+  @Test
+  public void updateEntityWithIEEE754CompatibleParameterNull() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    
+    final ClientEntity entity = of.newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_INT64, 
+        of.newPrimitiveValueBuilder().buildInt64(null)));
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+        of.newPrimitiveValueBuilder().buildDecimal(null)));
+
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = client.getCUDRequestFactory()
+                                                                 .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataEntityUpdateResponse<ClientEntity> responseUpdate = requestUpdate.execute();
+    
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataEntityRequest<ClientEntity> requestGet = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
+    
+    assertTrue(responseGet.getBody().getProperty(PROPERTY_INT64).hasNullValue());
+    assertTrue(responseGet.getBody().getProperty(PROPERTY_DECIMAL).hasNullValue());
+  }
+  
+  @Test
+  public void updateEntityWithIEEE754CompatibleParameterWithNullString() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    
+    final ClientEntity entity = of.newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_INT64, 
+        of.newPrimitiveValueBuilder().buildString("null")));
+    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+        of.newPrimitiveValueBuilder().buildString("null")));
+
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = client.getCUDRequestFactory()
+                                                                 .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    
+    try {
+      requestUpdate.execute();
+      fail();
+    } catch(ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void updateEdmInt64PropertyWithIEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+                                                     .appendKeySegment(0)
+                                                     .appendPropertySegment(PROPERTY_INT64).build();
+    
+    final ODataPropertyUpdateRequest requestUpdate = client.getCUDRequestFactory()
+                                                     .getPropertyPrimitiveValueUpdateRequest(uri, 
+                                                         of.newPrimitiveProperty(PROPERTY_INT64, 
+                                                            of.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataPropertyRequest<ClientProperty> requestGet = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> responseGet = requestGet.execute();
+    
+    assertEquals(Long.MAX_VALUE, responseGet.getBody().getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void updateComplexPropertyWithIEEE754CompatibleParamter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendPropertySegment(PROPERTY_COMP_ALL_PRIM).build();
+    
+    final ODataPropertyUpdateRequest requestUpdate = client.getCUDRequestFactory()
+        .getPropertyComplexValueUpdateRequest(uri, UpdateType.PATCH,
+            of.newComplexProperty(PROPERTY_COMP_ALL_PRIM,
+                of.newComplexValue("CTAllPrim")
+                    .add(of.newPrimitiveProperty(PROPERTY_INT64,
+                        of.newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
+                    .add(of.newPrimitiveProperty(PROPERTY_DECIMAL,
+                        of.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(12345678912L))))
+                    .add(of.newPrimitiveProperty(PROPERTY_INT16,
+                        of.newPrimitiveValueBuilder().buildInt16((short) 2)))));
+                                                         
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataPropertyRequest<ClientProperty> requestGet = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> responseGet = requestGet.execute();
+    
+    final ClientComplexValue complexValue = responseGet.getBody().getComplexValue();
+    
+    assertEquals(Long.MIN_VALUE, complexValue.get(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(12345678912L), complexValue.get(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    assertEquals(2, complexValue.get(PROPERTY_INT16).getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void updateProperyEdmDecimaltWithIEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    final ClientObjectFactory of = client.getObjectFactory();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+                                                     .appendKeySegment(0)
+                                                     .appendPropertySegment(PROPERTY_DECIMAL).build();
+    
+    final ODataPropertyUpdateRequest requestUpdate = client.getCUDRequestFactory()
+                                                     .getPropertyPrimitiveValueUpdateRequest(uri, 
+                                                         of.newPrimitiveProperty(PROPERTY_DECIMAL, 
+                                                            of.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    
+    requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
+    String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
+    
+    final ODataPropertyRequest<ClientProperty> requestGet = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
+    requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> responseGet = requestGet.execute();
+    
+    assertEquals(BigDecimal.valueOf(Long.MAX_VALUE), responseGet.getBody().getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void readESAllPrimCollectionWithIEEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+                                                     .orderBy(PROPERTY_INT16)
+                                                     .build();
+    
+    final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    final List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(3, entities.size());
+    
+    ClientEntity entity = entities.get(0);
+    assertEquals(-32768, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals(Long.MIN_VALUE, entity.getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(-34), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    
+    entity = entities.get(1);
+    assertEquals(0, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals(0L, entity.getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(0), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    
+    entity = entities.get(2);
+    assertEquals(32767, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals(Long.MAX_VALUE, entity.getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(34), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void readESKeyNavCheckComplexPropertyWithIEEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    final ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(1, response.getBody().getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    
+    assertEquals(BigDecimal.valueOf(34), response.getBody().getProperty(PROPERTY_COMP_ALL_PRIM)
+                                                           .getComplexValue()
+                                                           .get(PROPERTY_DECIMAL)
+                                                           .getPrimitiveValue()
+                                                           .toValue());
+    
+    assertEquals(Long.MAX_VALUE, response.getBody().getProperty(PROPERTY_COMP_ALL_PRIM)
+                                                   .getComplexValue()
+                                                   .get(PROPERTY_INT64)
+                                                   .getPrimitiveValue()
+                                                   .toValue());
+  }
+  
+  @Test
+  public void readESKEyNavComplexPropertyWithIEEE754CompatibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendNavigationSegment(PROPERTY_COMP_ALL_PRIM)
+                                                     .build();
+    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    
+    assertEquals(BigDecimal.valueOf(34), response.getBody().getComplexValue()
+                                                           .get(PROPERTY_DECIMAL)
+                                                           .getPrimitiveValue()
+                                                           .toValue());
+
+    assertEquals(Long.MAX_VALUE, response.getBody().getComplexValue()
+                                                   .get(PROPERTY_INT64)
+                                                   .getPrimitiveValue()
+                                                   .toValue());
+  }
+  
+  @Test
+  @Ignore
+  public void readEdmInt64PropertyWithIEEE754ComaptibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
+                                                     .appendPropertySegment(PROPERTY_INT64)
+                                                     .build();
+    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    
+    assertEquals(Long.MAX_VALUE, response.getBody().getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  @Ignore
+  public void readEdmDecimalPropertyWithIEEE754ComaptibleParameter() {
+    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
+                                                     .appendPropertySegment(PROPERTY_DECIMAL)
+                                                     .build();
+    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory().getPropertyRequest(uri);
+    request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    
+    assertEquals(BigDecimal.valueOf(34), response.getBody().getPrimitiveValue().toValue());
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 }

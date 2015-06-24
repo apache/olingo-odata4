@@ -46,7 +46,6 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.junit.BeforeClass;
 
@@ -97,23 +96,23 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     return client;
   }
 
-  protected ClientEntity read(final ODataFormat format, final URI editLink) {
+  protected ClientEntity read(final ContentType contentType, final URI editLink) {
     final ODataEntityRequest<ClientEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     final ClientEntity entity = res.getBody();
 
     assertNotNull(entity);
 
-    if (ODataFormat.JSON_FULL_METADATA == format || ODataFormat.ATOM == format) {
+    if (ContentType.JSON_FULL_METADATA == contentType || ContentType.APPLICATION_ATOM_XML == contentType) {
       assertEquals(req.getURI(), entity.getEditLink());
     }
 
     return entity;
   }
 
-  protected void createAndDeleteOrder(final String serviceRoot, final ODataFormat format, final int id) {
+  protected void createAndDeleteOrder(final String serviceRoot, final ContentType contentType, final int id) {
 
     final ClientEntity order = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));
@@ -147,19 +146,19 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(serviceRoot).
         appendEntitySetSegment("Orders").build(), order);
-    req.setFormat(format);
+    req.setFormat(contentType);
     final ClientEntity created = req.execute().getBody();
     assertNotNull(created);
     assertEquals(2, created.getProperty("OrderShelfLifes").getCollectionValue().size());
 
-    if (format == ODataFormat.JSON_NO_METADATA) {
+    if (contentType.equals(ContentType.JSON_NO_METADATA)) {
       assertEquals(0, created.getNavigationLinks().size());
       assertNull(created.getEditLink());
-    } else if (format == ODataFormat.JSON_FULL_METADATA) {
+    } else if (contentType.equals(ContentType.JSON_FULL_METADATA)) {
       assertEquals(3, created.getNavigationLinks().size());
       assertThat(created.getTypeName().getNamespace(), is("Microsoft.Test.OData.Services.ODataWCFService"));
       assertThat(created.getEditLink().toASCIIString(), startsWith("http://localhost:9080/stub/StaticService"));
-    } else if (format == ODataFormat.JSON || format == ODataFormat.APPLICATION_JSON) {
+    } else if (contentType.equals(ContentType.JSON) || contentType.equals(ContentType.APPLICATION_JSON)) {
       assertEquals(0, created.getNavigationLinks().size());
       assertNull(created.getEditLink());
     }

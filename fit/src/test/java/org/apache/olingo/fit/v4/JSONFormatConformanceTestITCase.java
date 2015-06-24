@@ -40,7 +40,7 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 /**
@@ -91,7 +91,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
     final URI uri = edmClient.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(102).build();
     final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     // request format (via Accept header) is set to full metadata
     assertEquals("application/json;odata.metadata=full", req.getAccept());
@@ -148,7 +148,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
         + "\"GeographyPoint\": {\"type\": \"Point\",\"coordinates\":[142.1,64.1]}"
         + "}";
 
-    final ClientEntity entity = client.getReader().readEntity(IOUtils.toInputStream(fromSection71), ODataFormat.JSON);
+    final ClientEntity entity = client.getReader().readEntity(IOUtils.toInputStream(fromSection71), ContentType.JSON);
 
     assertTrue(entity.getProperty("NullValue").hasNullValue());
 
@@ -219,7 +219,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
         + "}";
 
     final ResWrap<Entity> entity =
-        client.getDeserializer(ODataFormat.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
+        client.getDeserializer(ContentType.JSON).toEntity(IOUtils.toInputStream(fromSection45_1));
 
     assertEquals("http://host/service/$metadata#Customers/$entity", entity.getContextURL().toASCIIString());
     assertEquals("W/\"A1FF3E230954908F\"", entity.getMetadataETag());
@@ -241,7 +241,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
         + "}";
 
     final ResWrap<EntityCollection> entitySet =
-        client.getDeserializer(ODataFormat.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
+        client.getDeserializer(ContentType.JSON).toEntitySet(IOUtils.toInputStream(fromSection45_2));
 
     assertEquals(5, entitySet.getPayload().getCount(), 0);
     assertEquals("Customers?$expand=Orders&$skipToken=5", entitySet.getPayload().getNext().toASCIIString());
@@ -271,7 +271,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
         + "}";
 
     final ClientEntitySet entitySet = client.getReader().
-        readEntitySet(IOUtils.toInputStream(sample), ODataFormat.JSON);
+        readEntitySet(IOUtils.toInputStream(sample), ContentType.JSON);
 
     assertEquals(2, entitySet.getAnnotations().size());
 

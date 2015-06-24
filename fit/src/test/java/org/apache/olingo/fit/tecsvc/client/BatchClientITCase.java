@@ -51,7 +51,6 @@ import org.apache.olingo.client.core.communication.request.batch.ODataChangesetR
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -122,7 +121,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertTrue(changeSetResponse.isBreaking());
 
     assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), updateResponse.getStatusCode());
-    assertEquals(ODataFormat.JSON.toString(), updateResponse.getContentType());
+    assertEquals(ContentType.JSON.toContentTypeString(), updateResponse.getContentType());
   }
 
   @Test
@@ -252,7 +251,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI(SERVICE_URI + "/../ESAllPrim(32767)");
     final ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ODataFormat.JSON);
+    queryReq.setFormat(ContentType.JSON);
     payload.addRequest(queryReq);
 
     // Fetch result
@@ -276,7 +275,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI("http://otherhost/odata/ESAllPrim(32767)");
     final ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ODataFormat.JSON);
+    queryReq.setFormat(ContentType.JSON);
     payload.addRequest(queryReq);
 
     // Fetch result
@@ -290,7 +289,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final BatchManager payload = request.payloadManager();
     final URI uri = new URI("/ESAllPrim(32767)");
     final ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ODataFormat.JSON);
+    queryReq.setFormat(ContentType.JSON);
     payload.addRequest(queryReq);
 
     // Fetch result
@@ -379,7 +378,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // add create request
     final ODataEntityCreateRequest<ClientEntity> createReq =
         client.getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), entityESAllPrim);
-    createReq.setFormat(ODataFormat.JSON);
+    createReq.setFormat(ContentType.JSON);
     changeset.addRequest(createReq);
 
     // retrieve request reference
@@ -393,7 +392,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
         URI.create("$" + createRequestRef), UpdateType.PATCH, entityUpdate);
-    updateReq.setFormat(ODataFormat.JSON);
+    updateReq.setFormat(ContentType.JSON);
 
     changeset.addRequest(updateReq);
 
@@ -419,7 +418,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
         new URI(createResponse.getHeader(HttpHeader.LOCATION).iterator().next() + "/NavPropertyETTwoPrimMany"));
-    req.setFormat(ODataFormat.JSON);
+    req.setFormat(ContentType.JSON);
     req.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntitySet> getResponse = req.execute();
 
@@ -466,7 +465,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
         client.getCUDRequestFactory().getEntityCreateRequest(editLink, postEntity);
-    createRequest.setFormat(ODataFormat.JSON);
+    createRequest.setFormat(ContentType.JSON);
 
     changeset.addRequest(createRequest);
 
@@ -485,7 +484,7 @@ public class BatchClientITCase extends AbstractTestITCase {
 
     ODataEntityUpdateRequest<ClientEntity> changeReq =
         client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
-    changeReq.setFormat(ODataFormat.JSON);
+    changeReq.setFormat(ContentType.JSON);
     changeset.addRequest(changeReq);
 
     // ------------------------
@@ -506,7 +505,7 @@ public class BatchClientITCase extends AbstractTestITCase {
         .build()));
 
     changeReq = client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
-    changeReq.setFormat(ODataFormat.JSON);
+    changeReq.setFormat(ContentType.JSON);
     changeset.addRequest(changeReq);
 
     // -----------------------------
@@ -586,7 +585,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
 
     ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ODataFormat.JSON);
+    queryReq.setFormat(ContentType.JSON);
     manager.addRequest(queryReq);
   }
 }

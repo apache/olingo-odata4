@@ -34,7 +34,7 @@ import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.PersistenceManager;
@@ -96,7 +96,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
     }
 
     this.client = ODataClientFactory.getEdmEnabledClient(serviceRoot, edm, metadataETag);
-    this.client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_FULL_METADATA);
+    this.client.getConfiguration().setDefaultPubFormat(ContentType.JSON_FULL_METADATA);
     this.transactional = transactional;
     this.context = new Context();
   }
