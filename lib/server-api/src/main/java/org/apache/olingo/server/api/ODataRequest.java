@@ -20,6 +20,7 @@ package org.apache.olingo.server.api;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,15 @@ public class ODataRequest {
     final List<String> values = getHeaders(name);
     return values == null ? null : values.get(0);
   }
+
+  /**
+   * Gets all headers.
+   * @return an unmodifiable Map of header names/values
+   */
+  public Map<String, List<String>> getAllHeaders() {
+    return Collections.unmodifiableMap(headers);
+  }
+
 
   /**
    * Gets the body of the request.

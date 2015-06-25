@@ -60,6 +60,7 @@ import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.data.RequestValidator;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.ExpandSystemQueryOptionHandler;
@@ -143,6 +144,25 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
     checkRequestFormat(requestFormat);
+
+    //
+    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+      TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
+      TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
+      processor.init(odata, serviceMetadata);
+      TechnicalAsyncService.AsyncProcessor<EntityProcessor> asyncProcessor =
+              asyncService.register(processor, EntityProcessor.class);
+      asyncProcessor.prepareFor().createEntity(request, response, uriInfo, requestFormat, responseFormat);
+      String location = asyncProcessor.processAsync();
+      //
+      response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
+      response.setHeader(HttpHeader.LOCATION, location);
+      //
+      return;
+    }
+    //
+
+
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
@@ -167,7 +187,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, expand, null)
-          .getContent());
+              .getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
       response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     } else {
@@ -217,13 +237,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         request.getRawBaseUri()).validate(edmEntitySet, changedEntity);
 
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
-        request.getMethod() == HttpMethod.PATCH, false);
+            request.getMethod() == HttpMethod.PATCH, false);
 
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, null, null)
-          .getContent());
+              .getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     } else {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -337,7 +357,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final Entity entity = readEntity(uriInfo, true);
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
-        request.getRawBaseUri());
+            request.getRawBaseUri());
 
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
@@ -377,6 +397,23 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   private void readEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestedFormat, final boolean isReference)
       throws ODataApplicationException, ODataLibraryException {
+    //
+    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+      TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
+      TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
+      processor.init(odata, serviceMetadata);
+      TechnicalAsyncService.AsyncProcessor<EntityProcessor> asyncProcessor =
+              asyncService.register(processor, EntityProcessor.class);
+      asyncProcessor.prepareFor().readEntity(request, response, uriInfo, requestedFormat);
+      String location = asyncProcessor.processAsync();
+      //
+      response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
+      response.setHeader(HttpHeader.LOCATION, location);
+      //
+      return;
+    }
+    //
+
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
     final EdmEntityType edmEntityType = edmEntitySet == null ?
         (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()

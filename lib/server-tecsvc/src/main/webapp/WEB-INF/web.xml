@@ -39,4 +39,7 @@
 		<url-pattern>/odata.svc/*</url-pattern>
 	</servlet-mapping>
 
+	<listener>
+		<listener-class>org.apache.olingo.server.tecsvc.TechnicalServletContextListener</listener-class>
+	</listener>
 </web-app>
