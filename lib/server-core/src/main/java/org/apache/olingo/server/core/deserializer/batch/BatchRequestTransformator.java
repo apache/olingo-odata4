@@ -129,7 +129,7 @@ public class BatchRequestTransformator {
 
     if (header.exists(HttpHeader.AUTHORIZATION) || header.exists(HttpHeader.EXPECT)
         || header.exists(HttpHeader.FROM) || header.exists(HttpHeader.MAX_FORWARDS)
-        || header.exists(BatchParserCommon.HTTP_RANGE) || header.exists(BatchParserCommon.HTTP_TE)) {
+        || header.exists(HttpHeader.RANGE) || header.exists(HttpHeader.TE)) {
       throw new BatchDeserializerException("Forbidden header", MessageKeys.FORBIDDEN_HEADER,
           Integer.toString(header.getLineNumber()));
     }

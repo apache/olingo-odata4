@@ -1411,7 +1411,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       throw e;
     }
   }
-  
+
   @Test
   public void ieee754Compatible() throws Exception {
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON_IEEE754Compatible);
@@ -1432,15 +1432,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyDuration\":\"PT6S\"," +
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
-    
+
     final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     final Entity entity = deserializer
         .entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
-    
+
     assertEquals(9223372036854775807L, entity.getProperty("PropertyInt64").asPrimitive());
     assertEquals(BigDecimal.valueOf(34), entity.getProperty("PropertyDecimal").asPrimitive());
   }
-  
+
   @Test
   public void ieee754CompatibleNull() throws Exception {
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON_IEEE754Compatible);
@@ -1461,16 +1461,16 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyDuration\":\"PT6S\"," +
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
-    
+
     final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     final Entity entity = deserializer
         .entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
-    
+
     assertTrue(entity.getProperty("PropertyInt64").isNull());
     assertTrue(entity.getProperty("PropertyDecimal").isNull());
   }
-  
-  @Test(expected=DeserializerException.class)
+
+  @Test(expected = DeserializerException.class)
   public void ieee754CompatibleEmptyString() throws Exception {
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON_IEEE754Compatible);
     String entityString =
@@ -1490,12 +1490,12 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyDuration\":\"PT6S\"," +
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
-    
+
     final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
   }
-  
-  @Test(expected=DeserializerException.class)
+
+  @Test(expected = DeserializerException.class)
   public void ieee754CompatibleNullAsString() throws Exception {
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON_IEEE754Compatible);
     String entityString =
@@ -1515,11 +1515,11 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyDuration\":\"PT6S\"," +
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
-    
+
     final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
   }
-  
+
   private void checkPropertyJsonType(final String entityString) throws DeserializerException {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);

@@ -78,21 +78,23 @@ public class ContentTypeTest {
 
   @Test
   public void testCreateWithParameter() {
-    assertEquals(ContentType.create("a/b;c=d"), ContentType.create("a/b", "c=d"));
-    assertEquals(ContentType.create("a/b;e=f;c=d"), ContentType.create("a/b", "c=d", "e=f"));
-    assertEquals(ContentType.create("a/b;e=f;c=d"), ContentType.create("A/B", "C=D", "E=F"));
+    assertEquals(ContentType.create("a/b;c=d"), ContentType.create(ContentType.create("a/b"), "c", "d"));
+    assertEquals(ContentType.create("a/b;e=f;c=d"), ContentType.create(
+        ContentType.create(ContentType.create("a/b"), "c", "d"), "e", "f"));
+    assertEquals(ContentType.create("a/b;e=f;c=d"), ContentType.create(
+        ContentType.create(ContentType.create("A/B"), "C", "D"), "E", "F"));
   }
 
   @Test
   public void testCreateAndModify() {
     ContentType ct1 = ContentType.create("a/b");
-    assertEquals(ContentType.create("a/b;c=d"), ContentType.create(ct1, "c=d"));
+    assertEquals(ContentType.create("a/b;c=d"), ContentType.create(ct1, "c", "d"));
 
     ContentType ct2 = ContentType.create("a/b;c=d");
-    assertEquals(ContentType.create("a/b;c=d;e=f"), ContentType.create(ct2, "e=f"));
-    assertEquals(ContentType.create("a/b;c=g"), ContentType.create(ct2, "c=g"));
+    assertEquals(ContentType.create("a/b;c=d;e=f"), ContentType.create(ct2, "e", "f"));
+    assertEquals(ContentType.create("a/b;c=g"), ContentType.create(ct2, "c", "g"));
 
-    assertFalse(ContentType.create(ct2, "c=g").equals(ct2));
+    assertFalse(ContentType.create(ct2, "c", "g").equals(ct2));
   }
 
   @Test

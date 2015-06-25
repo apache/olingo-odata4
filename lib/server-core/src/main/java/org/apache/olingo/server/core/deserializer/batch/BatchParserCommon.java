@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.deserializer.batch;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,14 +32,11 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 
 public class BatchParserCommon {
 
-  private static final String REG_EX_BOUNDARY =
-      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
-          "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
-  private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
+  private static final String PATTERN_BOUNDARY =
+      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|"
+      + "\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
+  private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)\\r\\n\\s*", Pattern.DOTALL);
   private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
-
-  protected static final String HTTP_RANGE = "Range";
-  protected static final String HTTP_TE = "TE";
 
   public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 
@@ -49,13 +45,11 @@ public class BatchParserCommon {
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
     final ContentType type = getContentType(contentType, ContentType.MULTIPART_MIXED, line);
-
-    String boundary;
     final Map<String, String> parameters = type.getParameters();
     for (final String parameterName : parameters.keySet()) {
       if (BOUNDARY.equalsIgnoreCase(parameterName)) {
-        boundary = parameters.get(parameterName).trim();
-        if (boundary.matches(REG_EX_BOUNDARY)) {
+        final String boundary = parameters.get(parameterName).trim();
+        if (boundary.matches(PATTERN_BOUNDARY)) {
           return trimQuotes(boundary);
         } else {
           throw new BatchDeserializerException("Invalid boundary format",
@@ -91,9 +85,7 @@ public class BatchParserCommon {
 
   public static String removeEndingSlash(final String content) {
     String newContent = content.trim();
-    int lastSlashIndex = newContent.lastIndexOf('/');
-
-    return (lastSlashIndex == newContent.length() - 1) ? newContent.substring(0, newContent.length() - 1) : newContent;
+    return newContent.endsWith("/") ? newContent.substring(0, newContent.length() - 1) : newContent;
   }
 
   private static String trimQuotes(final String boundary) {
@@ -106,12 +98,12 @@ public class BatchParserCommon {
   public static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
       throws BatchDeserializerException {
     final List<List<Line>> messageParts = new LinkedList<List<Line>>();
-    List<Line> currentPart = new ArrayList<Line>();
+    List<Line> currentPart = new LinkedList<Line>();
     boolean isEndReached = false;
 
     final String quotedBoundary = Pattern.quote(boundary);
-    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary + "--[\\s ]*");
-    final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
+    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary + "--\\s*");
+    final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "\\s*");
 
     for (Line currentLine : message) {
       if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
@@ -153,9 +145,7 @@ public class BatchParserCommon {
   }
 
   public static Line removeEndingCRLF(final Line line) {
-    Pattern pattern = PATTERN_LAST_CRLF;
-    Matcher matcher = pattern.matcher(line.toString());
-
+    Matcher matcher = PATTERN_LAST_CRLF.matcher(line.toString());
     if (matcher.matches()) {
       return new Line(matcher.group(1), line.getLineNumber());
     } else {
@@ -191,7 +181,7 @@ public class BatchParserCommon {
 
   public static void consumeBlankLine(List<Line> remainingMessage, final boolean isStrict)
       throws BatchDeserializerException {
-    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*(\r\n|\n)\\s*")) {
+    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r?\n\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {

@@ -165,7 +165,8 @@ public class ContentNegotiatorTest {
 
     ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b"),
         RepresentationType.ENTITY);
-    ContentNegotiator.checkSupport(ContentType.create("a/b", "c=d"), createCustomContentTypeSupport("a/b"),
+    ContentNegotiator.checkSupport(ContentType.create(ContentType.create("a/b"), "c", "d"),
+        createCustomContentTypeSupport("a/b"),
         RepresentationType.ENTITY);
     try {
       ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b;c=d"),

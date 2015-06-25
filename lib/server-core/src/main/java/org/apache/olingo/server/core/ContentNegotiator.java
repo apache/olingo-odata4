@@ -83,8 +83,8 @@ public class ContentNegotiator {
       final String formatString = formatOption.getFormat().trim();
       final ContentType contentType =
           JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
-            XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
-              ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+          XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+          ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
       try {
         result = getAcceptedType(
             AcceptType.fromContentType(contentType == null ?
@@ -128,26 +128,24 @@ public class ContentNegotiator {
     for (final AcceptType acceptedType : acceptedContentTypes) {
       for (final ContentType supportedContentType : supportedContentTypes) {
         ContentType contentType = supportedContentType;
-        if (acceptedType.getParameters().containsKey("charset")) {
-          final String value = acceptedType.getParameters().get("charset");
-          if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET + "=utf-8");
+        final String charSetValue = acceptedType.getParameter(ContentType.PARAMETER_CHARSET);
+        if (charSetValue != null) {
+          if ("utf8".equalsIgnoreCase(charSetValue) || "utf-8".equalsIgnoreCase(charSetValue)) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, "utf-8");
           } else {
             throw new IllegalArgumentException("charset not supported: " + acceptedType);
           }
         }
-        
-        if(acceptedType.getParameters().containsKey("ieee754compatible")) {
-          final String value = acceptedType.getParameters().get("ieee754compatible");
-          if("true".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE + "=true");
-          } else if("false".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE + "=false");
-          } else {
-            throw new IllegalArgumentException("Invalid IEEE754Compatible value " + acceptedType);
-          }
+
+        final String ieee754compatibleValue = acceptedType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE);
+        if ("true".equalsIgnoreCase(ieee754compatibleValue)) {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true");
+        } else if ("false".equalsIgnoreCase(ieee754compatibleValue)) {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE, "false");
+        } else if (ieee754compatibleValue != null) {
+          throw new IllegalArgumentException("Invalid IEEE754Compatible value " + ieee754compatibleValue);
         }
-        
+
         if (acceptedType.matches(contentType)) {
           return contentType;
         }

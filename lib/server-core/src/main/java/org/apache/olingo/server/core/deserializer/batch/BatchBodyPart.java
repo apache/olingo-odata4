@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 public class BatchBodyPart implements BatchPart {
   final private String boundary;
   final private boolean isStrict;
-  final List<Line> remainingMessage = new LinkedList<Line>();
+  List<Line> remainingMessage = new LinkedList<Line>();
 
   private Header headers;
   private boolean isChangeSet;
@@ -49,9 +49,8 @@ public class BatchBodyPart implements BatchPart {
     return this;
   }
 
-  private boolean isChangeSet(final Header header) throws BatchDeserializerException {
+  private boolean isChangeSet(final Header headers) throws BatchDeserializerException {
     final List<String> contentTypes = headers.getHeaders(HttpHeader.CONTENT_TYPE);
-    boolean isChangeSet = false;
 
     if (contentTypes.isEmpty()) {
       throw new BatchDeserializerException("Missing content type",
@@ -59,12 +58,12 @@ public class BatchBodyPart implements BatchPart {
           Integer.toString(headers.getLineNumber()));
     }
 
+    boolean isChangeSet = false;
     for (String contentType : contentTypes) {
       if (isContentTypeMultiPartMixed(contentType)) {
         isChangeSet = true;
       }
     }
-
     return isChangeSet;
   }
 
@@ -85,7 +84,7 @@ public class BatchBodyPart implements BatchPart {
     return requestList;
   }
 
-  private List<List<Line>> splitChangeSet(final List<Line> remainingMessage2) throws BatchDeserializerException {
+  private List<List<Line>> splitChangeSet(List<Line> remainingMessage) throws BatchDeserializerException {
 
     final HeaderField contentTypeField = headers.getHeaderField(HttpHeader.CONTENT_TYPE);
     final String changeSetBoundary = BatchParserCommon.getBoundary(contentTypeField.getValueNotNull(),

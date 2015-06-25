@@ -135,10 +135,14 @@ public interface HttpHeader {
    * OData Version 4.0 Part 1: Protocol</a> and <a href="https://www.ietf.org/rfc/rfc7240.txt">RFC 7240</a>.
    */
   public static final String PREFERENCE_APPLIED = "Preference-Applied";
+  /** See <a href="http://www.rfc-editor.org/rfc/rfc7233.txt">RFC 7233</a>. */
+  public static final String RANGE = "Range";
   /**
    * See {@link <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37">HTTP/1.1 documentation</a>}.
    */
   public static final String RETRY_AFTER = "Retry-After";
+  /** See <a href="http://www.rfc-editor.org/rfc/rfc7230.txt">RFC 7230</a>. */
+  public static final String TE = "TE";
   /**
    * See {@link <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43">HTTP/1.1 documentation</a>}.
    */

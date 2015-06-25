@@ -72,4 +72,15 @@ public class ServiceDocumentTest {
     assertTrue(jsonString.contains("SIMedia"));
     assertTrue(jsonString.contains("Singleton"));
   }
+
+  @Test
+  public void serviceDocumentNoMetadata() throws Exception {
+    final String serviceRoot = "http://localhost:8080/odata.svc";
+    final String result = IOUtils.toString(
+        OData.newInstance().createSerializer(ContentType.JSON_NO_METADATA)
+            .serviceDocument(metadata, serviceRoot).getContent());
+    assertFalse(result.contains("odata.context"));
+    assertFalse(result.contains("odata.metadata"));
+    assertTrue(result.contains("ESAllPrim"));
+  }
 }

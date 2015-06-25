@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -60,16 +61,16 @@ public final class ContentType {
 
   public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
   public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON,
-      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_MINIMAL);
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_MINIMAL);
   public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
-      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_NONE);
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_NONE);
   public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
-      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_FULL);
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_FULL);
 
   public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
-  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type", "entry");
+  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type", "feed");
   public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
 
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);
@@ -142,38 +143,23 @@ public final class ContentType {
   }
 
   /**
-   * Creates a content type from format and key-value pairs for parameters.
-   *
-   * @param contentType for example "application/json"
-   * @param parameters for example "a=b", "c=d"
-   * @return a new <code>ContentType</code> object
+   * Creates a content type from an existing content type and an additional parameter as key-value pair.
+   * @param contentType    an existing content type
+   * @param parameterName  the name of the additional parameter
+   * @param parameterValue the value of the additional parameter
+   * @return a new {@link ContentType} object
    */
-  public static ContentType create(final String contentType, final String... parameters) {
-    ContentType ct = parse(contentType);
-
-    for (String p : parameters) {
-      final String[] keyvalue = TypeUtil.parseParameter(p);
-      ct.parameters.put(keyvalue[0], keyvalue[1]);
+  public static ContentType create(final ContentType contentType,
+      final String parameterName, final String parameterValue) {
+    if (parameterName == null || parameterName.isEmpty() || parameterName.indexOf(TypeUtil.WHITESPACE_CHAR) >= 0) {
+      throw new IllegalArgumentException("Illegal parameter name '" + parameterName + "'.");
+    }
+    if (Character.isWhitespace(parameterValue.charAt(0))) {
+      throw new IllegalArgumentException("Value of parameter '" + parameterName + "' starts with whitespace.");
     }
 
-    return ct;
-  }
-
-  /**
-   * Creates a content type from an existing content type and additional key-value pairs for parameters.
-   *
-   * @param contentType for example "application/json"
-   * @param parameters for example "a=b", "c=d"
-   * @return a new <code>ContentType</code> object
-   */
-  public static ContentType create(final ContentType contentType, final String... parameters) {
     ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
-
-    for (String p : parameters) {
-      final String[] keyvalue = TypeUtil.parseParameter(p);
-      ct.parameters.put(keyvalue[0], keyvalue[1]);
-    }
-
+    ct.parameters.put(parameterName.toLowerCase(Locale.ROOT), parameterValue);
     return ct;
   }
 
@@ -240,17 +226,19 @@ public final class ContentType {
     TypeUtil.parseParameters(params, parameters);
   }
 
+  /** Gets the type of this content type. */
   public String getType() {
     return type;
   }
 
+  /** Gets the subtype of this content type. */
   public String getSubtype() {
     return subtype;
   }
 
   /**
-   *
-   * @return parameters of this {@link ContentType} as unmodifiable map.
+   * Gets the parameters of this content type.
+   * @return parameters of this {@link ContentType} as unmodifiable map
    */
   public Map<String, String> getParameters() {
     return Collections.unmodifiableMap(parameters);
@@ -258,13 +246,13 @@ public final class ContentType {
 
   /**
    * Returns the value of a given parameter.
-   * If the parameter does not exists the method returns null
+   * If the parameter does not exists the method returns null.
    * 
-   * @param name The parameter to get
-   * @return the value of the parameter or null if the parameter is not present
+   * @param name the name of the parameter to get (case-insensitive)
+   * @return the value of the parameter or <code>null</code> if the parameter is not present
    */
   public String getParameter(final String name) {
-    return parameters.get(name);
+    return parameters.get(name.toLowerCase(Locale.ROOT));
   }
 
   @Override
@@ -300,17 +288,15 @@ public final class ContentType {
       while (entries.hasNext()) {
         final Entry<String, String> e = entries.next();
         final Entry<String, String> oe = otherEntries.next();
-        if (!areEqual(e.getKey(), oe.getKey())) {
-          return false;
-        }
-        if (!areEqual(e.getValue(), oe.getValue())) {
+        if (!areEqual(e.getKey(), oe.getKey())
+            || !areEqual(e.getValue(), oe.getValue())) {
           return false;
         }
       }
+      return true;
     } else {
       return false;
     }
-    return true;
   }
 
   /**

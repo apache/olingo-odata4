@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -158,7 +159,11 @@ public class AcceptType {
   }
 
   public Map<String, String> getParameters() {
-    return parameters;
+    return Collections.unmodifiableMap(parameters);
+  }
+
+  public String getParameter(final String name) {
+    return parameters.get(name.toLowerCase(Locale.ROOT));
   }
 
   public Float getQuality() {

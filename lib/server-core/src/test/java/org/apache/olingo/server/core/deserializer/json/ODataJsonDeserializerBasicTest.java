@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.junit.Test;
 
 public class ODataJsonDeserializerBasicTest {
-  
+
   @Test
   public void checkSupportedJsonFormats() throws Exception {
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
@@ -78,7 +78,7 @@ public class ODataJsonDeserializerBasicTest {
     assertEquals(1, values.size());
     assertEquals("Orders(10643)", values.get(0).toASCIIString());
   }
-  
+
   @Test
   public void reference() throws Exception {
     String entityString = "{"
@@ -89,82 +89,82 @@ public class ODataJsonDeserializerBasicTest {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(1, entityReferences.size());
     assertEquals("ESAllPrim(0)", entityReferences.get(0).toASCIIString());
   }
-  
+
   @Test
   public void references() throws Exception {
-    String entityString = "{" + 
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," + 
-        "  \"value\": [" + 
-        "    { \"@odata.id\": \"ESAllPrim(0)\" }," + 
-        "    { \"@odata.id\": \"ESAllPrim(1)\" }" + 
-        "  ]" + 
+    String entityString = "{" +
+        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
+        "  \"value\": [" +
+        "    { \"@odata.id\": \"ESAllPrim(0)\" }," +
+        "    { \"@odata.id\": \"ESAllPrim(1)\" }" +
+        "  ]" +
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(2, entityReferences.size());
     assertEquals("ESAllPrim(0)", entityReferences.get(0).toASCIIString());
     assertEquals("ESAllPrim(1)", entityReferences.get(1).toASCIIString());
   }
-  
+
   @Test
   public void referencesWithOtherAnnotations() throws Exception {
-    String entityString = "{" + 
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," + 
-        "  \"value\": [" + 
-        "    { \"@odata.id\": \"ESAllPrim(0)\" }," + 
-        "    { \"@odata.nonExistingODataAnnotation\": \"ESAllPrim(1)\" }" + 
-        "  ]" + 
+    String entityString = "{" +
+        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
+        "  \"value\": [" +
+        "    { \"@odata.id\": \"ESAllPrim(0)\" }," +
+        "    { \"@odata.nonExistingODataAnnotation\": \"ESAllPrim(1)\" }" +
+        "  ]" +
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(1, entityReferences.size());
     assertEquals("ESAllPrim(0)", entityReferences.get(0).toASCIIString());
   }
-  
+
   @Test
   public void referencesWithCustomAnnotation() throws Exception {
-    String entityString = "{" + 
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," + 
-        "  \"value\": [" + 
-        "    { \"@odata.id\": \"ESAllPrim(0)\" }," + 
-        "    { \"@invalid\": \"ESAllPrim(1)\" }" + 
-        "  ]" + 
+    String entityString = "{" +
+        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
+        "  \"value\": [" +
+        "    { \"@odata.id\": \"ESAllPrim(0)\" }," +
+        "    { \"@invalid\": \"ESAllPrim(1)\" }" +
+        "  ]" +
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(1, entityReferences.size());
     assertEquals("ESAllPrim(0)", entityReferences.get(0).toASCIIString());
   }
-  
+
   @Test
   public void referenceEmpty() throws Exception {
-    String entityString = "{" + 
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," + 
-        "  \"value\": [" + 
-        "  ]" + 
+    String entityString = "{" +
+        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
+        "  \"value\": [" +
+        "  ]" +
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(0, entityReferences.size());
   }
-  
-  @Test(expected=DeserializerException.class)
+
+  @Test(expected = DeserializerException.class)
   public void referencesEmpty() throws Exception {
     /*
      * See OData JSON Format chaper 13
@@ -175,15 +175,15 @@ public class ODataJsonDeserializerBasicTest {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-    
+
     assertEquals(0, entityReferences.size());
   }
-  
-  @Test(expected=DeserializerException.class)
+
+  @Test(expected = DeserializerException.class)
   public void referenceValueIsNotAnArray() throws Exception {
-    String entityString = "{" + 
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," + 
-        "  \"value\": \"ESAllPrim(0)\"" +     // This is not allowed. Value must be followed by an array
+    String entityString = "{" +
+        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
+        "  \"value\": \"ESAllPrim(0)\"" + // This is not allowed. Value must be followed by an array
         "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());

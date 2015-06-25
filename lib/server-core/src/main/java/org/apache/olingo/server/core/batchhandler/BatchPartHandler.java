@@ -30,7 +30,6 @@ import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.batchhandler.referenceRewriting.BatchReferenceRewriter;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchPartHandler {
   private final ODataHandler oDataHandler;

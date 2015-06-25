@@ -75,12 +75,12 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   private static final Logger log = LoggerFactory.getLogger(ODataJsonSerializer.class);
 
-  private final ContentType contentType;
   private final boolean isIEEE754Compatible;
-  
+  private final boolean isODataMetadataNone;
+
   public ODataJsonSerializer(final ContentType contentType) {
     this.isIEEE754Compatible = isODataIEEE754Compatible(contentType);
-    this.contentType = contentType;
+    this.isODataMetadataNone = ContentTypeHelper.isODataMetadataNone(contentType);
   }
 
   @Override
@@ -94,7 +94,7 @@ public class ODataJsonSerializer implements ODataSerializer {
       gen = new JsonFactory().createGenerator(buffer.getOutputStream())
           .setPrettyPrinter(new DefaultPrettyPrinter());
 
-      new ServiceDocumentJsonSerializer(metadata, serviceRoot, contentType).writeServiceDocument(gen);
+      new ServiceDocumentJsonSerializer(metadata, serviceRoot, isODataMetadataNone).writeServiceDocument(gen);
 
       gen.close();
 
@@ -146,15 +146,11 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeStartObject();
 
       final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT,
-            ContextURLBuilder.create(contextURL).toASCIIString());
-      }
+      writeContextURL(contextURL, json);
 
       writeMetadataETag(metadata, json);
 
-      if (options != null && options.getCount() != null && options.getCount().getValue()
-          && entitySet.getCount() != null) {
+      if (options != null && options.getCount() != null && options.getCount().getValue()) {
         writeCount(entitySet, json);
       }
       json.writeFieldName(Constants.VALUE);
@@ -164,9 +160,7 @@ public class ODataJsonSerializer implements ODataSerializer {
         writeEntitySet(metadata, entityType, entitySet,
             options.getExpand(), options.getSelect(), options.onlyReferences(), json);
       }
-      if (entitySet.getNext() != null) {
-        writeNextLink(entitySet, json);
-      }
+      writeNextLink(entitySet, json);
       json.close();
     } catch (final IOException e) {
       throw new SerializerException("An I/O exception occurred.", e,
@@ -196,22 +190,12 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
-    if(ContentTypeHelper.isODataMetadataNone(contentType)) {
+    if (isODataMetadataNone) {
       return null;
     } else if (contextURL == null) {
       throw new SerializerException("ContextURL null!", SerializerException.MessageKeys.NO_CONTEXT_URL);
     }
     return contextURL;
-  }
-
-  private void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
-    if (!ContentTypeHelper.isODataMetadataNone(contentType)
-        && metadata != null
-        && metadata.getServiceMetadataETagSupport() != null
-        && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
-      json.writeStringField(Constants.JSON_METADATA_ETAG,
-          metadata.getServiceMetadataETagSupport().getMetadataETag());
-    }
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
@@ -233,12 +217,12 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand,
-      final SelectOption select, final boolean onlyReference, final JsonGenerator json) 
-          throws IOException, SerializerException {
+      final SelectOption select, final boolean onlyReference, final JsonGenerator json)
+      throws IOException, SerializerException {
     json.writeStartObject();
-    if(!ContentTypeHelper.isODataMetadataNone(contentType)) {
+    if (!isODataMetadataNone) {
       if (contextURL != null) { // top-level entity
-        json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
+        writeContextURL(contextURL, json);
         writeMetadataETag(metadata, json);
       }
       if (entity.getETag() != null) {
@@ -262,8 +246,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     if (onlyReference) {
       json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
     } else {
-      EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-      if (!resolvedType.equals(entityType)) {
+      final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
+      if (!isODataMetadataNone && !resolvedType.equals(entityType)) {
         json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
       }
       writeProperties(resolvedType, entity.getProperties(), select, json);
@@ -321,8 +305,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeProperties(final EdmStructuredType type, final List<Property> properties,
-      final SelectOption select, final JsonGenerator json) 
-          throws IOException, SerializerException {
+      final SelectOption select, final JsonGenerator json)
+      throws IOException, SerializerException {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? null :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
@@ -362,8 +346,8 @@ public class ODataJsonSerializer implements ODataSerializer {
     }
   }
 
-  protected void writeExpandedNavigationProperty(final ServiceMetadata metadata, final EdmNavigationProperty property, 
-      final Link navigationLink, final ExpandOption innerExpand, final SelectOption innerSelect, 
+  protected void writeExpandedNavigationProperty(final ServiceMetadata metadata, final EdmNavigationProperty property,
+      final Link navigationLink, final ExpandOption innerExpand, final SelectOption innerSelect,
       final JsonGenerator json) throws IOException, SerializerException {
     json.writeFieldName(property.getName());
     if (property.isCollection()) {
@@ -385,8 +369,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   protected void writeProperty(final EdmProperty edmProperty, final Property property,
-      final Set<List<String>> selectedPaths, final JsonGenerator json) 
-          throws IOException, SerializerException {
+      final Set<List<String>> selectedPaths, final JsonGenerator json)
+      throws IOException, SerializerException {
     json.writeFieldName(edmProperty.getName());
     if (property == null || property.isNull()) {
       if (edmProperty.isNullable() == Boolean.FALSE) {
@@ -401,8 +385,8 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   private void writePropertyValue(final EdmProperty edmProperty,
-      final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json) 
-          throws IOException, SerializerException {
+      final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json)
+      throws IOException, SerializerException {
     try {
       if (edmProperty.isPrimitive()) {
         if (edmProperty.isCollection()) {
@@ -435,8 +419,8 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode, final JsonGenerator json) 
-          throws IOException, EdmPrimitiveTypeException, SerializerException {
+      final Boolean isUnicode, final JsonGenerator json)
+      throws IOException, EdmPrimitiveTypeException, SerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
@@ -500,20 +484,17 @@ public class ODataJsonSerializer implements ODataSerializer {
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
       json.writeNull();
-    } else if(type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
-        json.writeBoolean(Boolean.parseBoolean(value));
-    } else if(isIEEE754Compatible && 
-        (   type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64) 
-         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal))) {
-      json.writeString(value.toString());
+    } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
+      json.writeBoolean(Boolean.parseBoolean(value));
     } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)) {
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)
+        || (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64))
+        && !isIEEE754Compatible) {
       json.writeNumber(value);
     } else {
       json.writeString(value);
@@ -552,17 +533,18 @@ public class ODataJsonSerializer implements ODataSerializer {
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
-      }
+      writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
       if (property.isNull()) {
         throw new SerializerException("Property value can not be null.", SerializerException.MessageKeys.NULL_INPUT);
       } else {
         json.writeFieldName(Constants.VALUE);
         writePrimitive(type, property,
-            options.isNullable(), options.getMaxLength(), options.getPrecision(), options.getScale(),
-            options.isUnicode(), json);
+            options == null ? null : options.isNullable(),
+            options == null ? null : options.getMaxLength(),
+            options == null ? null : options.getPrecision(),
+            options == null ? null : options.getScale(),
+            options == null ? null : options.isUnicode(), json);
       }
       json.writeEndObject();
       json.close();
@@ -585,12 +567,10 @@ public class ODataJsonSerializer implements ODataSerializer {
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
-      }
+      writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
-      EdmComplexType resolvedType = resolveComplexType(metadata, type, property.getType());
-      if (!resolvedType.equals(type)) {
+      final EdmComplexType resolvedType = resolveComplexType(metadata, type, property.getType());
+      if (!isODataMetadataNone && !resolvedType.equals(type)) {
         json.writeStringField(Constants.JSON_TYPE, "#" + property.getType());
       }
       final List<Property> values =
@@ -617,14 +597,15 @@ public class ODataJsonSerializer implements ODataSerializer {
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
-      }
+      writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
       json.writeFieldName(Constants.VALUE);
       writePrimitiveCollection(type, property,
-          options.isNullable(), options.getMaxLength(), options.getPrecision(), options.getScale(),
-          options.isUnicode(), json);
+          options == null ? null : options.isNullable(),
+          options == null ? null : options.getMaxLength(),
+          options == null ? null : options.getPrecision(),
+          options == null ? null : options.getScale(),
+          options == null ? null : options.isUnicode(), json);
       json.writeEndObject();
       json.close();
     } catch (final IOException e) {
@@ -646,9 +627,7 @@ public class ODataJsonSerializer implements ODataSerializer {
     try {
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      if (contextURL != null) {
-        json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
-      }
+      writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
       json.writeFieldName(Constants.VALUE);
       writeComplexCollection(type, property, null, json);
@@ -666,95 +645,100 @@ public class ODataJsonSerializer implements ODataSerializer {
   }
 
   @Override
-  public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
+  public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
       final Entity entity, final ReferenceSerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
     final CircleStreamBuffer buffer = new CircleStreamBuffer();
     final UriHelper uriHelper = new UriHelperImpl();
-    
+
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
-      writeReference(metadata, edmEntitySet, entity, contextURL, uriHelper, json);
+
+      json.writeStartObject();
+      writeContextURL(contextURL, json);
+      writeMetadataETag(metadata, json);
+      json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
+      json.writeEndObject();
 
       json.close();
     } catch (IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,  SerializerException.MessageKeys.IO_EXCEPTION);
+      throw new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
     }
-    
+
     return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
-  
+
   @Override
-  public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
-      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options) 
-          throws SerializerException {
+  public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
+      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
+      throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
     final CircleStreamBuffer buffer = new CircleStreamBuffer();
     final UriHelper uriHelper = new UriHelperImpl();
-    
+
     try {
       final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
-      
-      json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
+
+      writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
-      if(options != null && options.getCount() != null) {
+      if (options != null && options.getCount() != null && options.getCount().getValue()) {
         writeCount(entityCollection, json);
       }
-      
-      writeReferenceCollection(edmEntitySet, entityCollection, uriHelper,json);
 
-      if(entityCollection.getNext() != null) {
-        writeNextLink(entityCollection, json);
+      json.writeArrayFieldStart(Constants.VALUE);
+      for (final Entity entity : entityCollection.getEntities()) {
+        json.writeStartObject();
+        json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
+        json.writeEndObject();
       }
-      
+      json.writeEndArray();
+
+      writeNextLink(entityCollection, json);
+
       json.writeEndObject();
       json.close();
     } catch (IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,  SerializerException.MessageKeys.IO_EXCEPTION);
+      throw new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
     }
-    
+
     return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
-  protected void writeReferenceCollection(final EdmEntitySet edmEntitySet, final EntityCollection entityCollection,
-      final UriHelper uriHelper, final JsonGenerator json) throws IOException, SerializerException {
-    json.writeArrayFieldStart(Constants.VALUE);
-    
-    for(final Entity entity : entityCollection.getEntities()) {
-      writeReference(null, edmEntitySet, entity, null, uriHelper, json);
-    }
-
-    json.writeEndArray();
-  }
-  
-  protected void writeReference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, final Entity entity,
-      final ContextURL contextURL, final UriHelper uriHelper, final JsonGenerator json)
-      throws IOException, SerializerException {
-    json.writeStartObject();
-    if (contextURL != null) {
+  private void writeContextURL(final ContextURL contextURL, JsonGenerator json) throws IOException {
+    if (!isODataMetadataNone && contextURL != null) {
       json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
-      writeMetadataETag(metadata, json);
     }
-
-    json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
-    json.writeEndObject();
   }
-  
-  private void writeCount(final EntityCollection entitySet, final JsonGenerator json) throws IOException {
-    if(isIEEE754Compatible) {
-      json.writeStringField(Constants.JSON_COUNT, entitySet.getCount().toString());
-    } else {
-      json.writeNumberField(Constants.JSON_COUNT, entitySet.getCount());
+
+  private void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
+    if (!isODataMetadataNone
+        && metadata != null
+        && metadata.getServiceMetadataETagSupport() != null
+        && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
+      json.writeStringField(Constants.JSON_METADATA_ETAG,
+          metadata.getServiceMetadataETagSupport().getMetadataETag());
+    }
+  }
+
+  private void writeCount(final EntityCollection entityCollection, JsonGenerator json) throws IOException {
+    if (entityCollection.getCount() != null) {
+      if (isIEEE754Compatible) {
+        json.writeStringField(Constants.JSON_COUNT, entityCollection.getCount().toString());
+      } else {
+        json.writeNumberField(Constants.JSON_COUNT, entityCollection.getCount());
+      }
     }
   }
 
   private void writeNextLink(final EntityCollection entitySet, JsonGenerator json) throws IOException {
-    json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
+    if (entitySet.getNext() != null) {
+      json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
+    }
   }
-  
+
   private boolean isODataIEEE754Compatible(final ContentType contentType) {
-    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE) 
+    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE)
         && Boolean.TRUE.toString().toLowerCase().equals(
             contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE).toLowerCase());
   }

@@ -26,9 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -41,30 +39,31 @@ public class ServiceDocumentJsonSerializer {
 
   private final ServiceMetadata metadata;
   private final String serviceRoot;
-  private final ContentType contentType;
+  private final boolean isODataMetadataNone;
 
   public ServiceDocumentJsonSerializer(final ServiceMetadata metadata, final String serviceRoot,
-      final ContentType contentType) {
+      final boolean isODataMetadataNone) {
     this.metadata = metadata;
     this.serviceRoot = serviceRoot;
-    this.contentType = contentType;
+    this.isODataMetadataNone = isODataMetadataNone;
   }
 
   public void writeServiceDocument(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
 
-    final String metadataUri =
-        (serviceRoot == null ? "" :
-            serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
-        + Constants.METADATA;
-    gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
+    if (!isODataMetadataNone) {
+      final String metadataUri =
+          (serviceRoot == null ? "" :
+              serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
+              + Constants.METADATA;
+      gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
 
-    if (!ContentTypeHelper.isODataMetadataNone(contentType)
-        && metadata != null
-        && metadata.getServiceMetadataETagSupport() != null
-        && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
-      gen.writeStringField(Constants.JSON_METADATA_ETAG,
-          metadata.getServiceMetadataETagSupport().getMetadataETag());
+      if (metadata != null
+          && metadata.getServiceMetadataETagSupport() != null
+          && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
+        gen.writeStringField(Constants.JSON_METADATA_ETAG,
+            metadata.getServiceMetadataETagSupport().getMetadataETag());
+      }
     }
 
     gen.writeArrayFieldStart(Constants.VALUE);

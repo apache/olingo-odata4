@@ -78,11 +78,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private static final EdmPrimitiveType EDM_INT64 = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
   private static final EdmPrimitiveType EDM_DECIMAL = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal);
   private final boolean isIEEE754Compatible;
-  
+
   public ODataJsonDeserializer(final ContentType contentType) {
     isIEEE754Compatible = isODataIEEE754Compatible(contentType);
   }
-  
+
   @Override
   public DeserializerResult entityCollection(final InputStream stream, final EdmEntityType edmEntityType)
       throws DeserializerException {
@@ -248,7 +248,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private void consumeParameters(final EdmAction edmAction, final ObjectNode node,
       final Map<String, Parameter> parameters)
-          throws DeserializerException {
+      throws DeserializerException {
     List<String> parameterNames = edmAction.getParameterNames();
     if (edmAction.isBound()) {
       // The binding parameter must not occur in the payload.
@@ -489,7 +489,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private Object readComplexNode(final String name, final EdmType type, final boolean isNullable,
       final JsonNode jsonNode)
-          throws DeserializerException {
+      throws DeserializerException {
     // read and add all complex properties
     ComplexValue value = readComplexValue(name, type, isNullable, jsonNode);
 
@@ -674,15 +674,15 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       checkJsonTypeBasedOnPrimitiveType(name, edmPrimitiveType.getName(), jsonNode);
       Class<?> javaClass = getJavaClassForPrimitiveType(mapping, edmPrimitiveType);
       String jsonNodeAsText = jsonNode.asText();
-      
+
       if (isIEEE754Compatible && (edmPrimitiveType.equals(EDM_INT64) || edmPrimitiveType.equals(EDM_DECIMAL))) {
-        if(jsonNodeAsText.length() == 0) {
-          throw new DeserializerException("IEEE754Compatible values must not be of length 0", 
+        if (jsonNodeAsText.length() == 0) {
+          throw new DeserializerException("IEEE754Compatible values must not be of length 0",
               MessageKeys.INVALID_NULL_PROPERTY, name);
         }
       }
-      
-      return edmPrimitiveType.valueOfString(jsonNodeAsText, isNullable, maxLength, precision, scale, isUnicode, 
+
+      return edmPrimitiveType.valueOfString(jsonNodeAsText, isNullable, maxLength, precision, scale, isUnicode,
           javaClass);
     } catch (EdmPrimitiveTypeException e) {
       throw new DeserializerException(
@@ -734,7 +734,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private void checkJsonTypeBasedOnPrimitiveType(final String propertyName, final String edmPrimitiveTypeName,
       final JsonNode jsonNode)
-          throws DeserializerException {
+      throws DeserializerException {
     EdmPrimitiveTypeKind primKind;
     try {
       primKind = EdmPrimitiveTypeKind.valueOf(edmPrimitiveTypeName);
@@ -765,15 +765,17 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     case Int64:
     case Decimal:
       // Numbers (eighter numers or string)
-      if(isIEEE754Compatible) {
+      if (isIEEE754Compatible) {
         if (!jsonNode.isTextual()) {
           throw new DeserializerException("Invalid json type: " + jsonNode.getNodeType() + " for edm " + primKind
-            + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, propertyName);
+              + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY,
+              propertyName);
         }
       } else {
         if (!jsonNode.isNumber()) {
           throw new DeserializerException("Invalid json type: " + jsonNode.getNodeType() + " for edm " + primKind
-            + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, propertyName);
+              + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY,
+              propertyName);
         }
       }
       break;
@@ -849,7 +851,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           Iterator<JsonNode> it = arrayNode.iterator();
           while (it.hasNext()) {
             final JsonNode next = it.next();
-            if(next.has(key)) {
+            if (next.has(key)) {
               parsedValues.add(new URI(next.get(key).asText()));
             }
           }
@@ -860,7 +862,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         // if this is value there can be only one property
         return DeserializerResultImpl.with().entityReferences(parsedValues).build();
       }
-      if(tree.get(key) != null) {
+      if (tree.get(key) != null) {
         parsedValues.add(new URI(tree.get(key).asText()));
       } else {
         throw new DeserializerException("Missing entity reference", DeserializerException.MessageKeys.UNKNOWN_CONTENT);
@@ -880,10 +882,10 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           DeserializerException.MessageKeys.UNKNOWN_CONTENT);
     }
   }
-  
+
   private boolean isODataIEEE754Compatible(final ContentType contentType) {
-    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE) 
-        && Boolean.TRUE.toString().toLowerCase().equals(
-            contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE).toLowerCase());
+    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE)
+        && Boolean.TRUE.toString().equalsIgnoreCase(
+            contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE));
   }
 }
