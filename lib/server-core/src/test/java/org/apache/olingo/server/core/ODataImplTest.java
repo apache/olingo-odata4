@@ -23,36 +23,35 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.junit.Test;
 
 public class ODataImplTest {
-	
-	private final OData odata = OData.newInstance();
-	
-	@Test(expected=SerializerException.class)
-	public void testJsonSerializerForOdataMetadataNone() throws SerializerException {
-		odata.createSerializer(ContentType.JSON_NO_METADATA);
-	}
-	
-	@Test(expected=SerializerException.class)
-	public void testJsonSerializerForODataMetadataFull() throws SerializerException {
-		odata.createSerializer(ContentType.JSON_FULL_METADATA);
-	}
-	
-	@Test
-	public void testCreateJsonSerializerForODataMetadataMinimal() throws SerializerException {
-		final ODataSerializer serializer = odata.createSerializer(ContentType.JSON);
-		
-		assertNotNull(serializer);
-	}
-	
-	@Test
-	public void testCreateJsonDeserialierForODataMetadataMinimal() throws DeserializerException {
-		final ODataDeserializer deserializer = odata.createDeserializer(ContentType.JSON);
-		
-		assertNotNull(deserializer);
-	}
+
+  private final OData odata = OData.newInstance();
+
+  @Test
+  public void serializerSupportedFormats() throws SerializerException {
+    assertNotNull(odata.createSerializer(ContentType.JSON_NO_METADATA));
+    assertNotNull(odata.createSerializer(ContentType.JSON));
+    assertNotNull(odata.createSerializer(ContentType.APPLICATION_JSON));
+  }
+
+  @Test(expected = SerializerException.class)
+  public void jsonSerializerForODataMetadataFull() throws SerializerException {
+    odata.createSerializer(ContentType.JSON_FULL_METADATA);
+  }
+
+  @Test
+  public void deserializerSupportedFormats() throws DeserializerException {
+    assertNotNull(odata.createDeserializer(ContentType.JSON_NO_METADATA));
+    assertNotNull(odata.createDeserializer(ContentType.JSON));
+    assertNotNull(odata.createDeserializer(ContentType.JSON_FULL_METADATA));
+    assertNotNull(odata.createDeserializer(ContentType.APPLICATION_JSON));
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void xmlDeserializer() throws DeserializerException {
+    odata.createDeserializer(ContentType.APPLICATION_XML);
+  }
 }

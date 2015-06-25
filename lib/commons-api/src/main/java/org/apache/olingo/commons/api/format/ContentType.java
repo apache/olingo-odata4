@@ -49,20 +49,28 @@ public final class ContentType {
   private static final String APPLICATION = "application";
   private static final String TEXT = "text";
   private static final String MULTIPART = "multipart";
-  
+
+  public static final String PARAMETER_CHARSET = "charset";
+  public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
+  public static final String PARAMETER_ODATA_METADATA = "odata.metadata";
+
+  public static final String VALUE_ODATA_METADATA_NONE = "none";
+  public static final String VALUE_ODATA_METADATA_MINIMAL = "minimal";
+  public static final String VALUE_ODATA_METADATA_FULL = "full";
+
   public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
-  public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON, "odata.metadata=minimal");
-  public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON, 
-                                                                        "odata.metadata=none");
-  public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON, 
-                                                                          "odata.metadata=full");
-  
+  public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_MINIMAL);
+  public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_NONE);
+  public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA + '=' + VALUE_ODATA_METADATA_FULL);
+
   public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
   public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
-
 
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);
 
@@ -81,14 +89,6 @@ public final class ContentType {
   public static final ContentType MULTIPART_MIXED = new ContentType(MULTIPART, "mixed", null);
   public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
 
-  public static final String PARAMETER_CHARSET = "charset";
-  public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
-  public static final String PARAMETER_ODATA_METADATA = "odata.metadata";
-  
-  public static final String VALUE_ODATA_METADATA_NONE = "none";
-  public static final String VALUE_ODATA_METADATA_MINIMAL = "minimal";
-  public static final String VALUE_ODATA_METADATA_FULL = "full";
-  
   private final String type;
   private final String subtype;
   private final Map<String, String> parameters;
@@ -255,7 +255,7 @@ public final class ContentType {
   public Map<String, String> getParameters() {
     return Collections.unmodifiableMap(parameters);
   }
-  
+
   /**
    * Returns the value of a given parameter.
    * If the parameter does not exists the method returns null
@@ -266,7 +266,7 @@ public final class ContentType {
   public String getParameter(final String name) {
     return parameters.get(name);
   }
-  
+
   @Override
   public int hashCode() {
     return 1;
@@ -323,7 +323,7 @@ public final class ContentType {
   public boolean isCompatible(final ContentType other) {
     return type.equalsIgnoreCase(other.type) && subtype.equalsIgnoreCase(other.subtype);
   }
-  
+
   /**
    * <p>{@link ContentType}s are <b>compatible</b>
    * if <code>type</code> and <code>subtype</code> have the same value.</p>
@@ -331,16 +331,16 @@ public final class ContentType {
    * (for compare with parameters see {@link #equals(Object)}).</p>
    * @return <code>true</code> if both instances are compatible (see definition above), otherwise <code>false</code>.
    */
-  public boolean isCompatible(final ContentType...otherTypes) {
-    for(final ContentType otherType : otherTypes) {
-      if(isCompatible(otherType)) {
+  public boolean isCompatible(final ContentType... otherTypes) {
+    for (final ContentType otherType : otherTypes) {
+      if (isCompatible(otherType)) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   /**
    * Checks whether both strings are equal ignoring the case of the strings.
    *
