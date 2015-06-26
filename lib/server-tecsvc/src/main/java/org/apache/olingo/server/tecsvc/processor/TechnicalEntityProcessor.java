@@ -60,6 +60,7 @@ import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.tecsvc.async.AsyncProcessor;
 import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.data.RequestValidator;
@@ -150,13 +151,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
       processor.init(odata, serviceMetadata);
-      TechnicalAsyncService.AsyncProcessor<EntityProcessor> asyncProcessor =
-              asyncService.register(processor, EntityProcessor.class);
+      AsyncProcessor<EntityProcessor> asyncProcessor = asyncService.register(processor, EntityProcessor.class);
       asyncProcessor.prepareFor().createEntity(request, response, uriInfo, requestFormat, responseFormat);
       String location = asyncProcessor.processAsync();
       //
       response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
       response.setHeader(HttpHeader.LOCATION, location);
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
       //
       return;
     }
@@ -402,13 +403,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
       processor.init(odata, serviceMetadata);
-      TechnicalAsyncService.AsyncProcessor<EntityProcessor> asyncProcessor =
-              asyncService.register(processor, EntityProcessor.class);
+      AsyncProcessor<EntityProcessor> asyncProcessor = asyncService.register(processor, EntityProcessor.class);
       asyncProcessor.prepareFor().readEntity(request, response, uriInfo, requestedFormat);
       String location = asyncProcessor.processAsync();
       //
       response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
       response.setHeader(HttpHeader.LOCATION, location);
+      response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
       //
       return;
     }

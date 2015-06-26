@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.server.TomcatTestServer;
 import org.apache.olingo.server.tecsvc.TechnicalServlet;
+import org.apache.olingo.server.tecsvc.async.TechnicalStatusMonitorServlet;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,10 @@ public abstract class AbstractBaseTestITCase {
   public static void init()
       throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     TomcatTestServer.init(9080)
-    .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
-    .addServlet(StaticContent.create("org-odata-core-v1.xml"),
-        "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
+      .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
+      .addServlet(TechnicalStatusMonitorServlet.class, "/odata-server-tecsvc/status/*")
+      .addServlet(StaticContent.create("org-odata-core-v1.xml"),
+                  "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
         .addWebApp(false)
         .start();
   }

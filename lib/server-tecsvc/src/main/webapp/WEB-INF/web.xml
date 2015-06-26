@@ -39,6 +39,17 @@
 		<url-pattern>/odata.svc/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>StatusMonitorServlet</servlet-name>
+		<servlet-class>org.apache.olingo.server.tecsvc.async.TechnicalStatusMonitorServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>StatusMonitorServlet</servlet-name>
+		<url-pattern>/status/*</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>org.apache.olingo.server.tecsvc.TechnicalServletContextListener</listener-class>
 	</listener>

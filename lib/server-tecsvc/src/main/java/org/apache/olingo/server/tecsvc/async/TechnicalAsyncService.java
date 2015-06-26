@@ -22,15 +22,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,157 +52,9 @@ public class TechnicalAsyncService {
       Collections.synchronizedMap(new HashMap<String, AsyncRunner>());
   private static final ExecutorService ASYNC_REQUEST_EXECUTOR = Executors.newFixedThreadPool(10);
   private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
-  public static final String STATUS_MONITOR_TOKEN = "async";
+  public static final String STATUS_MONITOR_TOKEN = "status";
 
-  private static class MyInvocationHandler implements InvocationHandler {
-    private final Object wrappedInstance;
-    private Method invokeMethod;
-    private Object[] invokeParameters;
 
-    public MyInvocationHandler(Object wrappedInstance) {
-      this.wrappedInstance = wrappedInstance;
-    }
-
-    @Override
-    public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-      if(Processor.class.isAssignableFrom(method.getDeclaringClass())) {
-        invokeMethod = method;
-        invokeParameters = objects;
-      }
-
-      return null;
-    }
-
-    ODataResponse processResponse;
-
-    public Object process() throws InvocationTargetException, IllegalAccessException {
-      processResponse = new ODataResponse();
-      replaceInvokeParameter(processResponse);
-      return invokeMethod.invoke(wrappedInstance, invokeParameters);
-    }
-
-    public Object[] getInvokeParameters() {
-      return invokeParameters;
-    }
-
-    public <P> void replaceInvokeParameter(P replacement) {
-      if(replacement == null) {
-        return;
-      }
-
-      List<Object> copy = new ArrayList<Object>();
-      for (Object parameter : invokeParameters) {
-        if (replacement.getClass() == parameter.getClass()) {
-          copy.add(replacement);
-        } else {
-          copy.add(parameter);
-        }
-      }
-      invokeParameters = copy.toArray();
-    }
-
-    private <P> P getParameter(Class<P> parameterClass) {
-      for (Object parameter : invokeParameters) {
-        if (parameter != null && parameterClass == parameter.getClass()) {
-          return parameterClass.cast(parameter);
-        }
-      }
-      return null;
-    }
-
-    public ODataResponse getProcessResponse() {
-      return processResponse;
-    }
-  }
-
-  public class AsyncProcessor<T extends Processor> {
-    private final MyInvocationHandler handler;
-    private final TechnicalAsyncService service;
-    private final Object proxyInstance;
-    private final T proxyProcessor;
-    private String location;
-    private String preferHeader;
-
-    public AsyncProcessor(T processor, Class<T> processorInterface, TechnicalAsyncService service) {
-      Class<? extends Processor> aClass = processor.getClass();
-      Class[] interfaces = aClass.getInterfaces();
-      handler = new MyInvocationHandler(processor);
-      proxyInstance = Proxy.newProxyInstance(aClass.getClassLoader(), interfaces, handler);
-      proxyProcessor = processorInterface.cast(proxyInstance);
-      this.service = service;
-    }
-
-    public T prepareFor() {
-      return proxyProcessor;
-    }
-
-    public ODataRequest getRequest() {
-      return getParameter(ODataRequest.class);
-    }
-
-    public ODataResponse getResponse() {
-      return getParameter(ODataResponse.class);
-    }
-
-    public ODataResponse getProcessResponse() {
-      return handler.getProcessResponse();
-    }
-
-    private <P> P getParameter(Class<P> parameterClass) {
-      for (Object parameter : handler.getInvokeParameters()) {
-        if (parameter != null && parameterClass == parameter.getClass()) {
-          return parameterClass.cast(parameter);
-        }
-      }
-      return null;
-    }
-
-    public String processAsync() throws ODataApplicationException, ODataLibraryException {
-      preferHeader = getRequest().getHeader(HttpHeader.PREFER);
-      ODataRequest request = copyRequest(getRequest());
-      handler.replaceInvokeParameter(request);
-      handler.replaceInvokeParameter(new ODataResponse());
-      return service.processAsynchronous(this);
-    }
-
-    private Object process() throws InvocationTargetException, IllegalAccessException {
-      return handler.process();
-    }
-
-    private ODataRequest copyRequest(ODataRequest request) {
-      ODataRequest req = new ODataRequest();
-      req.setBody(request.getBody());
-      req.setMethod(request.getMethod());
-      req.setRawBaseUri(request.getRawBaseUri());
-      req.setRawODataPath(request.getRawODataPath());
-      req.setRawQueryPath(request.getRawQueryPath());
-      req.setRawRequestUri(request.getRawRequestUri());
-      req.setRawServiceResolutionUri(request.getRawServiceResolutionUri());
-
-      for (Map.Entry<String, List<String>> header : request.getAllHeaders().entrySet()) {
-        if(HttpHeader.PREFER.toLowerCase().equals(
-                header.getKey().toLowerCase())) {
-          preferHeader = header.getValue().get(0);
-        } else {
-          req.addHeader(header.getKey(), header.getValue());
-        }
-      }
-
-      return req;
-    }
-
-    public String getPreferHeader() {
-      return preferHeader;
-    }
-
-    public String getLocation() {
-      return location;
-    }
-
-    private void setLocation(String loc) {
-      this.location = loc;
-    }
-  }
 
 
   public <T extends Processor> AsyncProcessor<T> register(T processor, Class<T> processorInterface) {
@@ -230,10 +75,10 @@ public class TechnicalAsyncService {
   }
 
   public boolean isStatusMonitorResource(HttpServletRequest request) {
-    return request.getRequestURI() != null && request.getRequestURI().contains(STATUS_MONITOR_TOKEN);
+    return request.getRequestURL() != null && request.getRequestURL().toString().contains(STATUS_MONITOR_TOKEN);
   }
 
-  private String processAsynchronous(AsyncProcessor dispatchedProcessor)
+  String processAsynchronous(AsyncProcessor dispatchedProcessor)
       throws ODataApplicationException, ODataLibraryException {
     // use executor thread pool
     String location = createNewAsyncLocation(dispatchedProcessor.getRequest());
@@ -243,16 +88,6 @@ public class TechnicalAsyncService {
     ASYNC_REQUEST_EXECUTOR.execute(run);
     //
     return location;
-  }
-
-  public void status(ODataRequest request, ODataResponse response)
-          throws ODataApplicationException, ODataLibraryException {
-
-  }
-
-  public void cancel(ODataRequest request, ODataResponse response)
-          throws ODataApplicationException, ODataLibraryException {
-
   }
 
   public void handle(HttpServletRequest request, HttpServletResponse response) {
@@ -325,23 +160,12 @@ public class TechnicalAsyncService {
 
 
   private String createNewAsyncLocation(ODataRequest request) {
-    return request.getRawBaseUri() + "/" + STATUS_MONITOR_TOKEN + request.getRawODataPath() +
-            "?" + STATUS_MONITOR_TOKEN + "=" + ID_GENERATOR.incrementAndGet();
+    int pos = request.getRawBaseUri().lastIndexOf("/") + 1;
+    return request.getRawBaseUri().substring(0, pos) + STATUS_MONITOR_TOKEN + "/" + ID_GENERATOR.incrementAndGet();
   }
 
   private String getAsyncLocation(HttpServletRequest request) {
-    return "http://localhost:8080" + request.getRequestURI() + "?" + request.getQueryString();
-  }
-
-  private String getAsyncQueryPart(ODataRequest request) {
-    String rawQueryPath = request.getRawQueryPath();
-    if(rawQueryPath != null) {
-      Matcher m = Pattern.compile("(" + STATUS_MONITOR_TOKEN + "=\\d*)").matcher(rawQueryPath);
-      if(m.find()) {
-        return m.group();
-      }
-    }
-    return "";
+    return request.getRequestURL().toString();
   }
 
   private static class AsyncRunner implements Runnable {
@@ -374,7 +198,6 @@ public class TechnicalAsyncService {
     }
 
     private int getSleepTime(AsyncProcessor wrap) {
-//      String preferHeader = wrap.getRequest().getHeader(HttpHeader.PREFER);
       String preferHeader = wrap.getPreferHeader();
       Matcher matcher = Pattern.compile("(" + TEC_ASYNC_SLEEP +
               "=)(\\d*)").matcher(preferHeader);
