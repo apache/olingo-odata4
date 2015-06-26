@@ -70,7 +70,8 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
     assertEquals("Edm.GeographyPoint", entity.getProperty("Home").getPrimitiveValue().getTypeName());
 
     // In JSON with minimal metadata, links are not provided
-    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML) 
+    if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML) 
         || (contentType.isCompatible(ContentType.JSON) 
               && ContentType.VALUE_ODATA_METADATA_FULL
               .equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA)))) {

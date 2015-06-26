@@ -50,12 +50,12 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  */
 public abstract class TechnicalProcessor implements Processor {
 
+  protected final DataProvider dataProvider;
   protected OData odata;
-  protected DataProvider dataProvider;
   protected ServiceMetadata serviceMetadata;
 
   protected TechnicalProcessor(final DataProvider dataProvider) {
-    this.dataProvider = dataProvider;
+    this(dataProvider, null);
   }
 
   protected TechnicalProcessor(final DataProvider dataProvider, final ServiceMetadata serviceMetadata) {

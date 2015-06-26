@@ -164,6 +164,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       expand = deserializerResult.getExpandTree();
     }
 
+    final String location = request.getRawBaseUri() + '/'
+        + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity);
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, expand, null)
@@ -172,13 +174,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     } else {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      response.setHeader(HttpHeader.ODATA_ENTITY_ID, location);
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
-    response.setHeader(HttpHeader.LOCATION,
-        request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
+    response.setHeader(HttpHeader.LOCATION, location);
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }

@@ -25,6 +25,8 @@ import java.net.URL;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -41,12 +43,11 @@ public class PingITCase extends AbstractBaseTestITCase {
     LOG.debug("ping request: " + SERVICE_URI);
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
   }
 
   @Test
@@ -57,12 +58,11 @@ public class PingITCase extends AbstractBaseTestITCase {
     LOG.debug("redirect request: " + REDIRECT_URI);
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
   }
 
   @Override

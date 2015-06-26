@@ -100,7 +100,6 @@ public class ContentTypeTest {
   @Test
   public void testParse() {
     assertNull(ContentType.parse("a"));
-    assertFalse(ContentType.isParseable("a"));
   }
 
   @Test(expected = IllegalArgumentException.class)

@@ -48,6 +48,7 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
+import org.apache.olingo.commons.api.ODataPreferenceNames;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -160,14 +161,14 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataBatchResponseItem item = iter.next();
     assertFalse(item.isChangeset());
 
-    ODataResponse oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResonse.getHeader("Content-Length").toArray()[0]);
-    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
+    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
+    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
+    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
+    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
   }
 
   @Test
@@ -191,14 +192,14 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataBatchResponseItem item = iter.next();
     assertFalse(item.isChangeset());
 
-    ODataResponse oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResonse.getHeader("Content-Length").toArray()[0]);
-    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
+    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
+    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
+    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
+    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
   }
 
   @Test
@@ -222,23 +223,23 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataBatchResponseItem item = iter.next();
     assertFalse(item.isChangeset());
 
-    ODataResponse oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResonse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResonse.getHeader("Content-Length").toArray()[0]);
-    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
+    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
+    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
+    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
+    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
 
     // Check second get request
     assertTrue(iter.hasNext());
     item = iter.next();
     assertFalse(item.isChangeset());
 
-    oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), oDataResonse.getStatusCode());
+    oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), oDataResponse.getStatusCode());
 
     // Check if third request is available
     assertFalse(iter.hasNext());
@@ -310,7 +311,8 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-    assertEquals("odata.continue-on-error", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    assertEquals(ODataPreferenceNames.CONTINUE_ON_ERROR.toString(),
+        response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
 
@@ -319,37 +321,37 @@ public class BatchClientITCase extends AbstractTestITCase {
     ODataBatchResponseItem item = bodyIterator.next();
     assertFalse(item.isChangeset());
 
-    ODataResponse oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader(HttpHeader.ODATA_VERSION).size());
-    assertEquals("4.0", oDataResonse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals("605", oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
-    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals("605", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
+    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
 
     // Check second get request
     assertTrue(bodyIterator.hasNext());
     item = bodyIterator.next();
     assertFalse(item.isChangeset());
 
-    oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), oDataResonse.getStatusCode());
+    oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), oDataResponse.getStatusCode());
 
     // Check if third request is available
     assertTrue(bodyIterator.hasNext());
     item = bodyIterator.next();
     assertFalse(item.isChangeset());
 
-    oDataResonse = item.next();
-    assertNotNull(oDataResonse);
-    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResonse.getStatusCode());
-    assertEquals(1, oDataResonse.getHeader(HttpHeader.ODATA_VERSION).size());
-    assertEquals("4.0", oDataResonse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
-    assertEquals(1, oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals("513", oDataResonse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
-    assertEquals("application/json;odata.metadata=minimal", oDataResonse.getContentType());
+    oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals("513", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
+    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
   }
 
   @Test

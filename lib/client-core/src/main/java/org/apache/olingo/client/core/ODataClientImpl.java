@@ -95,7 +95,7 @@ public class ODataClientImpl implements ODataClient {
   public ODataWriter getWriter() {
     return writer;
   }
-  
+
   @Override
   public ODataServiceVersion getServiceVersion() {
     return ODataServiceVersion.V40;
@@ -113,7 +113,7 @@ public class ODataClientImpl implements ODataClient {
   public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getConfiguration(), serviceRoot);
   }
-  
+
   @Override
   public FilterFactory getFilterFactory() {
     return filterFactory;
@@ -131,10 +131,10 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public ODataSerializer getSerializer(final ContentType contentType) {
-    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
-                                    ContentType.APPLICATION_XML) ?  
-                                        new AtomSerializer() : new JsonSerializer(false, contentType);
-       
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML) ?
+        new AtomSerializer() : new JsonSerializer(false, contentType);
   }
 
   @Override

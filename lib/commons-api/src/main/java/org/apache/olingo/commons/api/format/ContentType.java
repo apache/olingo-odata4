@@ -20,14 +20,12 @@ package org.apache.olingo.commons.api.format;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 /**
  * Internally used {@link ContentType} for OData library.
@@ -96,10 +94,9 @@ public final class ContentType {
 
   /**
    * Creates a content type from type, subtype, and parameters.
-   *
-   * @param type
-   * @param subtype
-   * @param parameters
+   * @param type       type
+   * @param subtype    subtype
+   * @param parameters parameters as map from names to values
    */
   private ContentType(final String type, final String subtype, final Map<String, String> parameters) {
     this.type = validateType(type);
@@ -108,17 +105,12 @@ public final class ContentType {
     if (parameters == null) {
       this.parameters = Collections.emptyMap();
     } else {
-      this.parameters = new TreeMap<String, String>(new Comparator<String>() {
-        @Override
-        public int compare(final String o1, final String o2) {
-          return o1.compareToIgnoreCase(o2);
-        }
-      });
+      this.parameters = TypeUtil.createParameterMap();
       this.parameters.putAll(parameters);
     }
   }
 
-  private String validateType(final String type) {
+  private String validateType(final String type) throws IllegalArgumentException {
     if (type == null || type.isEmpty() || "*".equals(type)) {
       throw new IllegalArgumentException("Illegal type '" + type + "'.");
     }
@@ -129,20 +121,6 @@ public final class ContentType {
   }
 
   /**
-   * Validates if given <code>format</code> is parseable and can be used as input for {@link #create(String)} method.
-   *
-   * @param format to be validated string
-   * @return <code>true</code> if format is parseable otherwise <code>false</code>
-   */
-  public static boolean isParseable(final String format) {
-    try {
-      return ContentType.create(format) != null;
-    } catch (IllegalArgumentException e) {
-      return false;
-    }
-  }
-
-  /**
    * Creates a content type from an existing content type and an additional parameter as key-value pair.
    * @param contentType    an existing content type
    * @param parameterName  the name of the additional parameter
@@ -150,17 +128,12 @@ public final class ContentType {
    * @return a new {@link ContentType} object
    */
   public static ContentType create(final ContentType contentType,
-      final String parameterName, final String parameterValue) {
-    if (parameterName == null || parameterName.isEmpty() || parameterName.indexOf(TypeUtil.WHITESPACE_CHAR) >= 0) {
-      throw new IllegalArgumentException("Illegal parameter name '" + parameterName + "'.");
-    }
-    if (Character.isWhitespace(parameterValue.charAt(0))) {
-      throw new IllegalArgumentException("Value of parameter '" + parameterName + "' starts with whitespace.");
-    }
+      final String parameterName, final String parameterValue) throws IllegalArgumentException {
+    TypeUtil.validateParameterNameAndValue(parameterName, parameterValue);
 
-    ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
-    ct.parameters.put(parameterName.toLowerCase(Locale.ROOT), parameterValue);
-    return ct;
+    ContentType type = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
+    type.parameters.put(parameterName.toLowerCase(Locale.ROOT), parameterValue);
+    return type;
   }
 
   /**
@@ -168,15 +141,15 @@ public final class ContentType {
    * <code>Media Type</code> format as defined in RFC 7231, chapter 3.1.1.1.
    *
    * @param format a string in format as defined in RFC 7231, chapter 3.1.1.1
-   * @return a new <code>ContentType</code> object
+   * @return a new {@link ContentType} object
    * @throws IllegalArgumentException if input string is not parseable
    */
-  public static ContentType create(final String format) {
+  public static ContentType create(final String format) throws IllegalArgumentException {
     if (format == null) {
       throw new IllegalArgumentException("Parameter format MUST NOT be NULL.");
     }
-    final List<String> typeSubtype = new ArrayList<String>();
-    final Map<String, String> parameters = new HashMap<String, String>();
+    List<String> typeSubtype = new ArrayList<String>();
+    Map<String, String> parameters = new HashMap<String, String>();
     parse(format, typeSubtype, parameters);
     return new ContentType(typeSubtype.get(0), typeSubtype.get(1), parameters);
   }
@@ -198,7 +171,8 @@ public final class ContentType {
     }
   }
 
-  private static void parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+  private static void parse(final String format, List<String> typeSubtype, Map<String, String> parameters)
+      throws IllegalArgumentException {
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -246,8 +220,7 @@ public final class ContentType {
 
   /**
    * Returns the value of a given parameter.
-   * If the parameter does not exists the method returns null.
-   * 
+   * If the parameter does not exist the method returns null.
    * @param name the name of the parameter to get (case-insensitive)
    * @return the value of the parameter or <code>null</code> if the parameter is not present
    */
@@ -311,25 +284,7 @@ public final class ContentType {
   }
 
   /**
-   * <p>{@link ContentType}s are <b>compatible</b>
-   * if <code>type</code> and <code>subtype</code> have the same value.</p>
-   * <p>The set <code>parameters</code> are <b>always</b> ignored
-   * (for compare with parameters see {@link #equals(Object)}).</p>
-   * @return <code>true</code> if both instances are compatible (see definition above), otherwise <code>false</code>.
-   */
-  public boolean isCompatible(final ContentType... otherTypes) {
-    for (final ContentType otherType : otherTypes) {
-      if (isCompatible(otherType)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * Checks whether both strings are equal ignoring the case of the strings.
-   *
    * @param first first string
    * @param second second string
    * @return <code>true</code> if both strings are equal (ignoring the case), otherwise <code>false</code>
@@ -340,10 +295,8 @@ public final class ContentType {
 
   /**
    * Gets {@link ContentType} as string as defined in
-   * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1:
-   * Media Type.
-   *
-   * @return string representation of <code>ContentType</code> object
+   * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1: Media Type.
+   * @return string representation of {@link ContentType} object
    */
   public String toContentTypeString() {
     final StringBuilder sb = new StringBuilder();

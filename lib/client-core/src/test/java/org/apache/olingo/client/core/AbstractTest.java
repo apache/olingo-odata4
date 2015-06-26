@@ -44,7 +44,8 @@ public abstract class AbstractTest {
   }
 
   protected String getSuffix(final ContentType contentType) {
-    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
-                                    ContentType.APPLICATION_XML) ? "xml": "json";
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML) ? "xml": "json";
   }
 }

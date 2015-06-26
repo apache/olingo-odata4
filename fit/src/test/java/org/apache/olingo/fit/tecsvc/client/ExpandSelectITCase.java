@@ -149,6 +149,18 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertEquals("Test String4", innerEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
+  @Test
+  public void expandSingleValuedNavigationPropertyWithNullValue() {
+    final ODataClient client = getClient();
+    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
+        .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build())
+            .execute();
+
+    assertEquals(0, response.getBody().getNavigationLinks().size());
+    assertNull(response.getBody().getNavigationLink("NavPropertyETKeyNavOne"));
+  }
+
   @Override
   protected ODataClient getClient() {
     return ODataClientFactory.getEdmEnabledClient(TecSvcConst.BASE_URI);

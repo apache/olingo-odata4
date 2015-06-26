@@ -102,7 +102,8 @@ public class EntityTest extends AbstractTest {
       }
       if ("Orders".equals(link.getName())) {
         checked++;
-        if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
+        if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+            || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
           assertEquals(ClientLinkType.ENTITY_SET_NAVIGATION, link.getType());
         }
       }
