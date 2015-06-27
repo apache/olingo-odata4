@@ -23,20 +23,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.client.core.communication.request.AsyncRequestWrapperImpl;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -78,14 +76,16 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     // get result of first async request
     assertFalse(first.isDone());
 
-//    TimeUnit.SECONDS.sleep(2);
-//    assertTrue(first.isDone());
+    TimeUnit.SECONDS.sleep(2);
+    assertTrue(first.isDone());
 
-//    assertNotNull(first.getODataResponse());
-//    final ODataRetrieveResponse<ClientEntity> firstAsyncResult = getClient().getRetrieveRequestFactory()
-//        .getEntityRequest(respLocationFirstUri).execute();
-//    assertEquals(32767, firstAsyncResult.getBody().getProperty("PropertyInt16").getPrimitiveValue().toValue());
-//    assertEquals(200, firstAsyncResult.getStatusCode());
+    assertNotNull(first.getODataResponse());
+    ODataResponse firstResponse = first.getODataResponse();
+    assertEquals(200, firstResponse.getStatusCode());
+    ResWrap<Entity> entity = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+        .toEntity(firstResponse.getRawResponse());
+    assertEquals(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
+    assertEquals("First Resource - positive values", entity.getPayload().getProperty("PropertyString").asPrimitive());
   }
 
   @Override
