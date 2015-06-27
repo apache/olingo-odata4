@@ -59,7 +59,7 @@ public class TechnicalStatusMonitorServlet extends HttpServlet {
         TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
         asyncService.handle(request, response);
       }
-    } catch (final RuntimeException e) {
+    } catch (final Exception e) {
       LOG.error("Server Error", e);
       throw new ServletException(e);
     }

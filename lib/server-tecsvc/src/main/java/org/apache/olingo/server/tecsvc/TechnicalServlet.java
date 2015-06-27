@@ -64,12 +64,6 @@ public class TechnicalServlet extends HttpServlet {
   protected void service(final HttpServletRequest request, final HttpServletResponse response)
       throws ServletException, IOException {
     try {
-      if(TechnicalAsyncService.getInstance().isStatusMonitorResource(request)) {
-        TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
-        asyncService.handle(request, response);
-        return;
-      }
-
       OData odata = OData.newInstance();
       EdmxReference reference = new EdmxReference(URI.create("../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
       reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));

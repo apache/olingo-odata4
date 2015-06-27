@@ -33,13 +33,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.Processor;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +93,7 @@ public class TechnicalAsyncService {
     return location;
   }
 
-  public void handle(HttpServletRequest request, HttpServletResponse response) {
+  public void handle(HttpServletRequest request, HttpServletResponse response) throws SerializerException, IOException {
     String location = getAsyncLocation(request);
     AsyncRunner runner = LOCATION_2_ASYNC_RUNNER.get(location);
 
@@ -99,7 +102,7 @@ public class TechnicalAsyncService {
     } else {
       if(runner.isFinished()) {
         ODataResponse wrapResult = runner.getDispatched().getProcessResponse();
-        convertToHttp(response, wrapResult);
+        wrapToAsyncHttpResponse(wrapResult, response);
         LOCATION_2_ASYNC_RUNNER.remove(location);
       } else {
         response.setStatus(HttpStatusCode.ACCEPTED.getStatusCode());
@@ -110,11 +113,19 @@ public class TechnicalAsyncService {
     }
   }
 
+  private static void writeToResponse(HttpServletResponse response, InputStream input) throws IOException {
+    copy(input, response.getOutputStream());
+  }
+
   private void writeToResponse(HttpServletResponse response, String content) {
+    writeToResponse(response, content.getBytes());
+  }
+
+  private static void writeToResponse(HttpServletResponse response, byte[] content) {
     OutputStream output = null;
     try {
       output = response.getOutputStream();
-      output.write(content.getBytes());
+      output.write(content);
     } catch (IOException e) {
       throw new ODataRuntimeException(e);
     } finally {
@@ -122,31 +133,47 @@ public class TechnicalAsyncService {
     }
   }
 
-  static void convertToHttp(final HttpServletResponse response, final ODataResponse odResponse) {
+  static void wrapToAsyncHttpResponse(final ODataResponse odResponse, final HttpServletResponse response)
+      throws SerializerException, IOException {
+    OData odata = OData.newInstance();
+    InputStream odResponseStream = odata.createFixedFormatSerializer().asyncResponse(odResponse);
+
+    response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_HTTP.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_ENCODING, "binary");
+    response.setStatus(HttpStatusCode.OK.getStatusCode());
+
+    writeToResponse(response, odResponseStream);
+  }
+
+  static void writeHttpResponse(final ODataResponse odResponse, final HttpServletResponse response) throws IOException {
     response.setStatus(odResponse.getStatusCode());
 
     for (Map.Entry<String, String> entry : odResponse.getHeaders().entrySet()) {
       response.setHeader(entry.getKey(), entry.getValue());
     }
 
-    InputStream input = odResponse.getContent();
-    if (input != null) {
-      OutputStream output = null;
-      try {
-        output = response.getOutputStream();
-        byte[] buffer = new byte[1024];
-        int n;
-        while (-1 != (n = input.read(buffer))) {
-          output.write(buffer, 0, n);
-        }
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      } finally {
-        closeStream(output);
-        closeStream(input);
+    copy(odResponse.getContent(), response.getOutputStream());
+  }
+
+  static void copy(final InputStream input, final OutputStream output) {
+    if(output == null || input == null) {
+      return;
+    }
+
+    try {
+      byte[] buffer = new byte[1024];
+      int n;
+      while (-1 != (n = input.read(buffer))) {
+        output.write(buffer, 0, n);
       }
+    } catch (IOException e) {
+      throw new ODataRuntimeException(e);
+    } finally {
+      closeStream(output);
+      closeStream(input);
     }
   }
+
 
   private static void closeStream(final Closeable closeable) {
     if (closeable != null) {

@@ -26,7 +26,7 @@ public class SerializerException extends ODataLibraryException {
   private static final long serialVersionUID = 5358683245923127425L;
 
   /** Keys for exception texts in the resource bundle. */
-  public static enum MessageKeys implements MessageKey {
+  public enum MessageKeys implements MessageKey {
     NOT_IMPLEMENTED,
     /** parameter: format */
     UNSUPPORTED_FORMAT,

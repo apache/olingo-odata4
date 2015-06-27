@@ -23,7 +23,7 @@ public class BatchSerializerException extends SerializerException {
 
   private static final long serialVersionUID = 2634433974342796905L;
 
-  public static enum MessageKeys implements MessageKey {
+  public enum MessageKeys implements MessageKey {
     MISSING_CONTENT_ID;
 
     @Override
