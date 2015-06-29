@@ -39,7 +39,6 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -714,7 +713,7 @@ public class ODataHandlerTest {
 
     if (headerName != HttpHeader.CONTENT_TYPE) {
       request.addHeader(HttpHeader.CONTENT_TYPE, Collections.singletonList(
-          ODataFormat.JSON.getContentType().toContentTypeString()));
+          ContentType.JSON.toContentTypeString()));
     }
 
     final OData odata = OData.newInstance();

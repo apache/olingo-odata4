@@ -34,7 +34,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -1008,7 +1008,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 

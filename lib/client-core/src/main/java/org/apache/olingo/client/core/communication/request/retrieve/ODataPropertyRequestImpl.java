@@ -26,12 +26,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements an OData entity property query request.
@@ -50,7 +50,7 @@ public class ODataPropertyRequestImpl<T extends ClientProperty>
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultFormat();
   }
 
@@ -75,7 +75,7 @@ public class ODataPropertyRequestImpl<T extends ClientProperty>
     public T getBody() {
       if (property == null) {
         try {
-          final ResWrap<Property> resource = odataClient.getDeserializer(ODataFormat.fromString(getContentType()))
+          final ResWrap<Property> resource = odataClient.getDeserializer(ContentType.parse(getContentType()))
                   .toProperty(res.getEntity().getContent());
 
           property = (T) odataClient.getBinder().getODataProperty(resource);

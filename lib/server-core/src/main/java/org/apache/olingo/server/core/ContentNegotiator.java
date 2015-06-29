@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -31,6 +30,10 @@ import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 
 public class ContentNegotiator {
+
+  private static final String ATOM = "atom";
+  private static final String JSON = "json";
+  private static final String XML = "xml";
 
   private ContentNegotiator() {}
 
@@ -48,9 +51,9 @@ public class ContentNegotiator {
       return Arrays.asList(ContentType.MULTIPART_MIXED);
     default:
       return Arrays.asList(
-          ODataFormat.JSON.getContentType(),
-          ODataFormat.JSON_NO_METADATA.getContentType(),
-          ODataFormat.APPLICATION_JSON.getContentType());
+          ContentType.JSON,
+          ContentType.JSON_NO_METADATA,
+          ContentType.APPLICATION_JSON);
     }
   }
 
@@ -78,14 +81,14 @@ public class ContentNegotiator {
 
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
-      final ODataFormat format =
-          ODataFormat.JSON.name().equalsIgnoreCase(formatString) ? ODataFormat.JSON :
-              ODataFormat.XML.name().equalsIgnoreCase(formatString) ? ODataFormat.XML :
-                  ODataFormat.ATOM.name().equalsIgnoreCase(formatString) ? ODataFormat.ATOM : null;
+      final ContentType contentType =
+          JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
+          XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+          ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
       try {
         result = getAcceptedType(
-            AcceptType.fromContentType(format == null ?
-                ContentType.create(formatOption.getFormat()) : format.getContentType()),
+            AcceptType.fromContentType(contentType == null ?
+                ContentType.create(formatOption.getFormat()) : contentType),
             supportedContentTypes);
       } catch (final IllegalArgumentException e) {
         // Exception results in result = null for next check.
@@ -125,14 +128,24 @@ public class ContentNegotiator {
     for (final AcceptType acceptedType : acceptedContentTypes) {
       for (final ContentType supportedContentType : supportedContentTypes) {
         ContentType contentType = supportedContentType;
-        if (acceptedType.getParameters().containsKey("charset")) {
-          final String value = acceptedType.getParameters().get("charset");
-          if ("utf8".equalsIgnoreCase(value) || "utf-8".equalsIgnoreCase(value)) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET_UTF8);
+        final String charSetValue = acceptedType.getParameter(ContentType.PARAMETER_CHARSET);
+        if (charSetValue != null) {
+          if ("utf8".equalsIgnoreCase(charSetValue) || "utf-8".equalsIgnoreCase(charSetValue)) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, "utf-8");
           } else {
             throw new IllegalArgumentException("charset not supported: " + acceptedType);
           }
         }
+
+        final String ieee754compatibleValue = acceptedType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE);
+        if ("true".equalsIgnoreCase(ieee754compatibleValue)) {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true");
+        } else if ("false".equalsIgnoreCase(ieee754compatibleValue)) {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE, "false");
+        } else if (ieee754compatibleValue != null) {
+          throw new IllegalArgumentException("Invalid IEEE754Compatible value " + ieee754compatibleValue);
+        }
+
         if (acceptedType.matches(contentType)) {
           return contentType;
         }

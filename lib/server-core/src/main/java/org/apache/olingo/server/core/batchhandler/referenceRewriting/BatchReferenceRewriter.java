@@ -28,9 +28,8 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class BatchReferenceRewriter {
   private static final String REG_EX_REFERENCE = "\\$(.*)(/.*)?";
@@ -67,7 +66,7 @@ public class BatchReferenceRewriter {
   public void addMapping(final ODataRequest request, final ODataResponse response)
       throws BatchDeserializerException {
     final String resourceUri = getODataPath(request, response);
-    final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
+    final String contentId = request.getHeader(HttpHeader.CONTENT_ID);
 
     contentIdMapping.put(contentId, resourceUri);
   }
@@ -91,12 +90,10 @@ public class BatchReferenceRewriter {
   }
 
   private String parseODataPath(final String uri, final String rawBaseUri) throws BatchDeserializerException {
-    int index = uri.indexOf(rawBaseUri);
-
-    if (index == 0) {
+    if (uri.indexOf(rawBaseUri) == 0) {
       return uri.substring(rawBaseUri.length());
     } else {
-      throw new BatchDeserializerException("Invalid base uri or uri", MessageKeys.INVALID_URI, 0);
+      throw new BatchDeserializerException("Invalid base uri or uri", MessageKeys.INVALID_URI, "0");
     }
   }
 

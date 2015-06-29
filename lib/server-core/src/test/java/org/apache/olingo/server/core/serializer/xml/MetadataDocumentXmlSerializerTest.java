@@ -57,7 +57,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -76,7 +76,7 @@ public class MetadataDocumentXmlSerializerTest {
 
   @BeforeClass
   public static void init() throws SerializerException {
-    serializer = OData.newInstance().createSerializer(ODataFormat.XML);
+    serializer = OData.newInstance().createSerializer(ContentType.APPLICATION_XML);
   }
 
   @Test

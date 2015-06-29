@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class BatchRequestTransformator {
   private final String baseUri;
@@ -73,23 +74,22 @@ public class BatchRequestTransformator {
     final HeaderField contentIdRequest = getContentId(request);
 
     if (contentIdChangeRequestPart == null && contentIdRequest == null) {
-      throw new BatchDeserializerException("Missing content id", MessageKeys.MISSING_CONTENT_ID, changeRequestPart
-          .getHeaders()
-          .getLineNumber());
+      throw new BatchDeserializerException("Missing content id", MessageKeys.MISSING_CONTENT_ID,
+          Integer.toString(changeRequestPart.getHeaders().getLineNumber()));
     } else if (contentIdChangeRequestPart != null) {
       request.getHeaders().replaceHeaderField(contentIdChangeRequestPart);
     }
   }
 
   private HeaderField getContentId(final BatchQueryOperation queryOperation) throws BatchDeserializerException {
-    final HeaderField contentTypeHeader = queryOperation.getHeaders().getHeaderField(BatchParserCommon.HTTP_CONTENT_ID);
+    final HeaderField contentTypeHeader = queryOperation.getHeaders().getHeaderField(HttpHeader.CONTENT_ID);
 
     if (contentTypeHeader != null) {
       if (contentTypeHeader.getValues().size() == 1) {
         return contentTypeHeader;
       } else {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER, contentTypeHeader
-            .getLineNumber());
+        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER,
+            Integer.toString(contentTypeHeader.getLineNumber()));
       }
     }
 
@@ -127,10 +127,11 @@ public class BatchRequestTransformator {
   private void validateForbiddenHeader(final BatchQueryOperation operation) throws BatchDeserializerException {
     final Header header = operation.getHeaders();
 
-    if (header.exists(HttpHeader.AUTHORIZATION) || header.exists(BatchParserCommon.HTTP_EXPECT)
-        || header.exists(BatchParserCommon.HTTP_FROM) || header.exists(BatchParserCommon.HTTP_MAX_FORWARDS)
-        || header.exists(BatchParserCommon.HTTP_RANGE) || header.exists(BatchParserCommon.HTTP_TE)) {
-      throw new BatchDeserializerException("Forbidden header", MessageKeys.FORBIDDEN_HEADER, header.getLineNumber());
+    if (header.exists(HttpHeader.AUTHORIZATION) || header.exists(HttpHeader.EXPECT)
+        || header.exists(HttpHeader.FROM) || header.exists(HttpHeader.MAX_FORWARDS)
+        || header.exists(HttpHeader.RANGE) || header.exists(HttpHeader.TE)) {
+      throw new BatchDeserializerException("Forbidden header", MessageKeys.FORBIDDEN_HEADER,
+          Integer.toString(header.getLineNumber()));
     }
   }
 
@@ -152,8 +153,8 @@ public class BatchRequestTransformator {
   private void validateBody(final HttpRequestStatusLine statusLine, final BatchQueryOperation operation)
       throws BatchDeserializerException {
     if (statusLine.getMethod().equals(HttpMethod.GET) && isUnvalidGetRequestBody(operation)) {
-      throw new BatchDeserializerException("Invalid request line", MessageKeys.INVALID_CONTENT, statusLine
-          .getLineNumber());
+      throw new BatchDeserializerException("Invalid request line", MessageKeys.INVALID_CONTENT,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
@@ -165,7 +166,7 @@ public class BatchRequestTransformator {
   private void validateHeader(final BatchPart bodyPart, final boolean isChangeSet) throws BatchDeserializerException {
     final Header headers = bodyPart.getHeaders();
 
-    BatchTransformatorCommon.validateContentType(headers, BatchParserCommon.PATTERN_CONTENT_TYPE_APPLICATION_HTTP);
+    BatchTransformatorCommon.validateContentType(headers, ContentType.APPLICATION_HTTP);
     if (isChangeSet) {
       BatchTransformatorCommon.validateContentTransferEncoding(headers);
     }
@@ -175,10 +176,10 @@ public class BatchRequestTransformator {
     final Header header = bodyPart.getHeaders();
 
     if (bodyPart.isChangeSet()) {
-      BatchTransformatorCommon.validateContentType(header, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY);
+      BatchTransformatorCommon.validateContentType(header, ContentType.MULTIPART_MIXED);
     } else {
       BatchTransformatorCommon.validateContentTransferEncoding(header);
-      BatchTransformatorCommon.validateContentType(header, BatchParserCommon.PATTERN_CONTENT_TYPE_APPLICATION_HTTP);
+      BatchTransformatorCommon.validateContentType(header, ContentType.APPLICATION_HTTP);
     }
   }
 }

@@ -21,7 +21,6 @@ package org.apache.olingo.server.core;
 import java.io.ByteArrayInputStream;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -29,8 +28,8 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.RepresentationType;
@@ -96,9 +95,9 @@ public class ErrorHandler {
       requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, this.customContent, RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
-      requestedContentType = ODataFormat.JSON.getContentType();
+      requestedContentType = ContentType.JSON;
     } catch (UriParserException e) {
-      requestedContentType = ODataFormat.JSON.getContentType();
+      requestedContentType = ContentType.JSON;
     }
     processError(response, serverError, requestedContentType);
   }
@@ -106,8 +105,7 @@ public class ErrorHandler {
   void processError(ODataResponse response, ODataServerError serverError,
       ContentType requestedContentType) {
     try {
-      ODataSerializer serializer = this.odata.createSerializer(ODataFormat
-          .fromContentType(requestedContentType));
+      ODataSerializer serializer = this.odata.createSerializer(requestedContentType);
       response.setContent(serializer.error(serverError).getContent());
       response.setStatusCode(serverError.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());

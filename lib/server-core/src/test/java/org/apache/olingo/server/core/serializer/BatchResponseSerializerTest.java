@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class BatchResponseSerializerTest {
     final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+    response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
     response.setContent(IOUtils.toInputStream("Walter Winter" + CRLF));
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
@@ -55,7 +55,7 @@ public class BatchResponseSerializerTest {
 
     ODataResponse changeSetResponse = new ODataResponse();
     changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-    changeSetResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
     responses = new ArrayList<ODataResponse>(1);
     responses.add(changeSetResponse);
     parts.add(new ODataResponsePart(responses, true));
@@ -86,7 +86,7 @@ public class BatchResponseSerializerTest {
     assertTrue(body.get(line++).contains("--changeset_"));
     assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
-    assertEquals("Content-Id: 1" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
     assertEquals("Content-Length: 0" + CRLF, body.get(line++));
@@ -110,7 +110,7 @@ public class BatchResponseSerializerTest {
 
     ODataResponse changeSetResponse = new ODataResponse();
     changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
-    changeSetResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
     responses = new ArrayList<ODataResponse>(1);
     responses.add(changeSetResponse);
     parts.add(new ODataResponsePart(responses, true));
@@ -140,7 +140,7 @@ public class BatchResponseSerializerTest {
     assertTrue(body.get(line++).contains("--changeset_"));
     assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
-    assertEquals("Content-Id: 1" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
     assertEquals("Content-Length: 0" + CRLF, body.get(line++));
@@ -189,7 +189,7 @@ public class BatchResponseSerializerTest {
   public void testChangeSetResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
-    response.setHeader(BatchParserCommon.HTTP_CONTENT_ID, "1");
+    response.setHeader(HttpHeader.CONTENT_ID, "1");
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
@@ -214,7 +214,7 @@ public class BatchResponseSerializerTest {
     assertTrue(body.get(line++).contains("--changeset_"));
     assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
-    assertEquals("Content-Id: 1" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
     assertEquals("Content-Length: 0" + CRLF, body.get(line++));

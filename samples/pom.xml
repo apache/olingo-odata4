@@ -42,6 +42,7 @@
     <profile>
       <id>samples</id>
       <modules>
+        <module>osgi/server</module>
         <module>client</module>
       </modules>
     </profile>

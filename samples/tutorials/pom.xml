@@ -38,6 +38,7 @@
     <module>p1_read</module>
     <module>p2_readep</module>
     <module>p3_write</module>
+    <module>p4_navigation</module>
   </modules>
 
   <build>

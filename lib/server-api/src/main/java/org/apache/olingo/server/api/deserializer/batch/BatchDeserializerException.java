@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.batch.exception;
+package org.apache.olingo.server.api.deserializer.batch;
 
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 
@@ -52,14 +52,26 @@ public class BatchDeserializerException extends DeserializerException {
 
   private static final long serialVersionUID = -907752788975531134L;
 
-  public BatchDeserializerException(final String developmentMessage, final MessageKey messageKey,
-      final int lineNumber) {
-    this(developmentMessage, messageKey, "" + lineNumber);
-  }
-
+  /**
+   * Creates batch deserializer exception.
+   * @param developmentMessage message text as fallback and for debugging purposes
+   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters         parameters for the exception text
+   */
   public BatchDeserializerException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
+  /**
+   * Creates batch deserializer exception.
+   * @param developmentMessage message text as fallback and for debugging purposes
+   * @param cause              the cause of this exception
+   * @param messageKey         one of the {@link MessageKeys} for the exception text in the resource bundle
+   * @param parameters         parameters for the exception text
+   */
+  public BatchDeserializerException(final String developmentMessage, final Throwable cause,
+      final MessageKey messageKey, final String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
+  }
 }

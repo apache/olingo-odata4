@@ -51,7 +51,7 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -91,7 +91,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   @Test
   public void testDeepInsertExpandedResponse() {
     final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ClientObjectFactory of = client.getObjectFactory();
     final ClientEntity entity = of.newEntity(ET_KEY_NAV);
@@ -900,7 +900,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 }

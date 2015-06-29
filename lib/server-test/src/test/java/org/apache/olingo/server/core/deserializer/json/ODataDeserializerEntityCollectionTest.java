@@ -32,7 +32,6 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrim.json");
     EntityCollection entitySet =
-        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
+        OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType)
             .getEntityCollection();
 
     assertNotNull(entitySet);
@@ -79,7 +78,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETCompCollComp"));
     InputStream stream = getFileAsStream("ESCompCollComp.json");
     EntityCollection entitySet =
-        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
+        OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType)
             .getEntityCollection();
 
     assertNotNull(entitySet);
@@ -92,7 +91,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
   public void esAllPrimODataAnnotationsAreIgnored() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrimWithODataAnnotations.json");
-    OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+    OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
   }
 
   @Test
@@ -101,7 +100,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     EntityCollection entityCollection =
-        OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType)
+        OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType)
             .getEntityCollection();
     assertNotNull(entityCollection.getEntities());
     assertTrue(entityCollection.getEntities().isEmpty());
@@ -112,7 +111,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrimWithCustomAnnotations.json");
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
       throw e;
@@ -124,7 +123,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("ESAllPrimWithDoubleKey.json");
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.DUPLICATE_JSON_PROPERTY, e.getMessageKey());
       throw e;
@@ -137,7 +136,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
       throw e;
@@ -150,7 +149,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
       throw e;
@@ -163,7 +162,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.VALUE_TAG_MUST_BE_AN_ARRAY, e.getMessageKey());
       throw e;
@@ -176,7 +175,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.VALUE_ARRAY_NOT_PRESENT, e.getMessageKey());
       throw e;
@@ -189,7 +188,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_ENTITY, e.getMessageKey());
       throw e;
@@ -202,7 +201,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_ENTITY, e.getMessageKey());
       throw e;
@@ -215,7 +214,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION, e.getMessageKey());
       throw e;
@@ -230,7 +229,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.UNKNOWN_CONTENT, e.getMessageKey());
       throw e;
@@ -245,7 +244,7 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     InputStream stream = new ByteArrayInputStream(entityCollectionString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entityCollection(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
       throw e;

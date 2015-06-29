@@ -52,8 +52,8 @@ import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.format.ContentType;
 
 public class ODataClientImpl implements ODataClient {
 
@@ -95,7 +95,7 @@ public class ODataClientImpl implements ODataClient {
   public ODataWriter getWriter() {
     return writer;
   }
-  
+
   @Override
   public ODataServiceVersion getServiceVersion() {
     return ODataServiceVersion.V40;
@@ -113,7 +113,7 @@ public class ODataClientImpl implements ODataClient {
   public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getConfiguration(), serviceRoot);
   }
-  
+
   @Override
   public FilterFactory getFilterFactory() {
     return filterFactory;
@@ -125,15 +125,16 @@ public class ODataClientImpl implements ODataClient {
   }
 
   @Override
-  public ClientODataDeserializer getDeserializer(final ODataFormat format) {
-    return new ClientODataDeserializerImpl(false, format);
+  public ClientODataDeserializer getDeserializer(final ContentType contentType) {
+    return new ClientODataDeserializerImpl(false, contentType);
   }
 
   @Override
-  public ODataSerializer getSerializer(final ODataFormat format) {
-    return format == ODataFormat.ATOM || format == ODataFormat.XML ?
-        new AtomSerializer() :
-        new JsonSerializer(false, format);
+  public ODataSerializer getSerializer(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML) ?
+        new AtomSerializer() : new JsonSerializer(false, contentType);
   }
 
   @Override

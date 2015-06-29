@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -36,8 +37,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class JsonPropertySerializer extends JsonSerializer {
 
-  public JsonPropertySerializer(final boolean serverMode) {
-    super(serverMode);
+  public JsonPropertySerializer(final boolean serverMode, final ContentType contentType) {
+    super(serverMode, contentType);
   }
 
   protected void doSerialize(final Property property, final JsonGenerator jgen)

@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 

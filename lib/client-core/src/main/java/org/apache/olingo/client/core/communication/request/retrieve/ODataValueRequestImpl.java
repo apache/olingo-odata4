@@ -26,10 +26,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements an OData entity property value query request.
@@ -48,7 +48,7 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultValueFormat();
   }
 
@@ -74,11 +74,11 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
     @Override
     public ClientPrimitiveValue getBody() {
       if (value == null) {
-        final ODataFormat format = ODataFormat.fromString(getContentType());
+        final ContentType contentType = ContentType.parse(getContentType());
 
         try {
           value = odataClient.getObjectFactory().newPrimitiveValueBuilder().
-                  setType(format == ODataFormat.TEXT_PLAIN
+                  setType(contentType.isCompatible(ContentType.TEXT_PLAIN)
                           ? EdmPrimitiveTypeKind.String : EdmPrimitiveTypeKind.Stream).
                   setValue(IOUtils.toString(getRawResponse())).build();
         } catch (Exception e) {

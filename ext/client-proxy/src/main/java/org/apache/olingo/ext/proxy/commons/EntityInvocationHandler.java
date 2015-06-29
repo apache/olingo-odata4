@@ -33,12 +33,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.apache.olingo.ext.proxy.api.Annotatable;
@@ -335,7 +335,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
           getClient().getRetrieveRequestFactory().getMediaEntityRequest(contentSource);
 
       if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
-        retrieveReq.setFormat(ODataFormat.fromString(getEntity().getMediaContentType()));
+        retrieveReq.setFormat(ContentType.parse(getEntity().getMediaContentType()));
       }
 
       final ODataRetrieveResponse<InputStream> res = retrieveReq.execute();

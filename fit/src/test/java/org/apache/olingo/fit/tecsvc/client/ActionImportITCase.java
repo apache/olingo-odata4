@@ -43,7 +43,7 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -304,12 +304,31 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
         getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntity.class, parameters)
             .execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+    assertEquals(TecSvcConst.BASE_URI + "/ESAllPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
+  }
+
+  @Test
+  public void entityActionETAllPrimNoContent() throws Exception {
+    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
+        .appendActionCallSegment("AIRTESAllPrimParam").build();
+    final Map<String, ClientValue> parameters = Collections.singletonMap(
+        "ParameterDate",
+        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("2000-02-29"));
+    ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
+        .getActionInvokeRequest(actionURI, ClientEntity.class, parameters);
+    request.setPrefer(getClient().newPreferences().returnMinimal());
+    final ODataInvokeResponse<ClientEntity> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    final String location = TecSvcConst.BASE_URI + "/ESAllPrim(1)";
+    assertEquals(location, response.getHeader(HttpHeader.LOCATION).iterator().next());
+    assertEquals(location, response.getHeader(HttpHeader.ODATA_ENTITY_ID).iterator().next());
   }
 
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON_NO_METADATA);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 

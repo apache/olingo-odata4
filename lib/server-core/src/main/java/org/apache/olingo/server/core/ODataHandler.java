@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -140,7 +139,7 @@ public class ODataHandler {
           uriInfo == null ? null : uriInfo.getFormatOption(), request, getCustomContentTypeSupport(),
           RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
-      requestedContentType = ODataFormat.JSON.getContentType();
+      requestedContentType = ContentType.JSON;
     }
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
   }

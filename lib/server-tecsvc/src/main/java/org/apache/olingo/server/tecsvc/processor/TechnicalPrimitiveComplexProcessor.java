@@ -38,7 +38,6 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -255,9 +254,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
           } else {
             final ExpandOption expand = uriInfo.getExpandOption();
             final SelectOption select = uriInfo.getSelectOption();
-            final ODataFormat format = ODataFormat.fromContentType(contentType);
             final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
-                type, returnType, representationType, format, expand, select);
+                type, returnType, representationType, contentType, expand, select);
             response.setContent(result.getContent());
           }
         }
@@ -297,7 +295,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
           deserializer.primitiveValue(request.getBody(), edmProperty);
       dataProvider.updatePropertyValue(property, value);
     } else {
-      final Property changedProperty = odata.createDeserializer(ODataFormat.fromContentType(requestFormat))
+      final Property changedProperty = odata.createDeserializer(requestFormat)
           .property(request.getBody(), edmProperty).getProperty();
       if (changedProperty.isNull() && !edmProperty.isNullable()) {
         throw new ODataApplicationException("Not nullable.", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -314,9 +312,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         response.setContent(
             serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) edmProperty.getType(), null));
       } else {
-        final ODataFormat format = ODataFormat.fromContentType(responseFormat);
         final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,
-            edmProperty.getType(), null, representationType, format, null, null);
+            edmProperty.getType(), null, representationType, responseFormat, null, null);
         response.setContent(result.getContent());
       }
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
@@ -406,10 +403,10 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   private SerializerResult serializeProperty(final Entity entity, final EdmEntitySet edmEntitySet,
       final List<String> path, final Property property, final EdmProperty edmProperty,
       final EdmType type, final EdmReturnType returnType,
-      final RepresentationType representationType, final ODataFormat format,
+      final RepresentationType representationType, final ContentType responseFormat,
       final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
-    ODataSerializer serializer = odata.createSerializer(format);
-    final ContextURL contextURL = format == ODataFormat.JSON_NO_METADATA ? null :
+    ODataSerializer serializer = odata.createSerializer(responseFormat);
+    final ContextURL contextURL = isODataMetadataNone(responseFormat) ? null :
         getContextUrl(edmEntitySet, entity, path, type, representationType, expand, select);
     SerializerResult result = null;
     switch (representationType) {

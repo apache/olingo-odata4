@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,31 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.batch.exception;
+package org.apache.olingo.server.core.serializer.utils;
 
-import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.commons.api.format.ContentType;
 
-public class BatchSerializerException extends SerializerException {
-
-  private static final long serialVersionUID = 2634433974342796905L;
-
-  public static enum MessageKeys implements MessageKey {
-    MISSING_CONTENT_ID;
-
-    @Override
-    public String getKey() {
-      return name();
-    }
+public class ContentTypeHelper {
+  public static boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON) 
+       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
-
-  public BatchSerializerException(final String developmentMessage, final MessageKey messageKey,
-      final String... parameters) {
-    super(developmentMessage, messageKey, parameters);
-  }
-
-  @Override
-  protected String getBundleName() {
-    return DEFAULT_SERVER_BUNDLE_NAME;
-  }
-
 }

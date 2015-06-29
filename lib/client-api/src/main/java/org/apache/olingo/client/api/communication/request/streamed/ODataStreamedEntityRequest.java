@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.communication.request.streamed;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.ODataStreamedRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * Abstract class representing a request concerning a streamed entity.
@@ -38,13 +38,12 @@ public interface ODataStreamedEntityRequest<V extends ODataResponse, T extends O
    * @return the configured format (or default if not specified).
    * @see org.apache.olingo.client.api.Configuration#getDefaultPubFormat()
    */
-  ODataFormat getFormat();
+  ContentType getFormat();
 
   /**
    * Override configured request format.
    *
    * @param format request format.
-   * @see ODataFormat
    */
-  void setFormat(final ODataFormat format);
+  void setFormat(final ContentType contentType);
 }

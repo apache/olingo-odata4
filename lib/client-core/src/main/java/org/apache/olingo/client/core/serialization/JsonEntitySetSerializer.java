@@ -27,13 +27,14 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.format.ContentType;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public class JsonEntitySetSerializer extends JsonSerializer {
 
-  public JsonEntitySetSerializer(final boolean serverMode) {
-    super(serverMode);
+  public JsonEntitySetSerializer(final boolean serverMode, final ContentType contentType) {
+    super(serverMode, contentType);
   }
 
   protected void doSerialize(final EntityCollection entitySet, final JsonGenerator jgen)
@@ -81,7 +82,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
     }
 
     jgen.writeArrayFieldStart(Constants.VALUE);
-    final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode);
+    final JsonEntitySerializer entitySerializer = new JsonEntitySerializer(serverMode, contentType);
     for (Entity entity : entitySet.getEntities()) {
       entitySerializer.doSerialize(entity, jgen);
     }

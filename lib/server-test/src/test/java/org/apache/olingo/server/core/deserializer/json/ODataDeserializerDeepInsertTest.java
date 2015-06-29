@@ -30,18 +30,16 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.junit.Test;
 
 public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTest {
-
   @Test
   public void esAllPrimExpandedToOne() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOne.json");
-    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType).getEntity();
+    Entity entity = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType).getEntity();
     Link navigationLink = entity.getNavigationLink("NavPropertyETTwoPrimOne");
     assertNotNull(navigationLink);
 
@@ -55,14 +53,14 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
   public void esAllPrimExpandedToOneWithODataAnnotations() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithODataAnnotations.json");
-    OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
   }
 
   @Test
   public void esAllPrimExpandedToMany() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimMany.json");
-    Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType).getEntity();
+    Entity entity = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType).getEntity();
 
     Link navigationLink = entity.getNavigationLink("NavPropertyETTwoPrimMany");
     assertNotNull(navigationLink);
@@ -78,7 +76,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
   public void esAllPrimExpandedToManyWithODataAnnotations() throws Exception {
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithODataAnnotations.json");
-    OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+    OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
   }
 
   @Test(expected = DeserializerException.class)
@@ -86,7 +84,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithCustomAnnotations.json");
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
       throw e;
@@ -98,7 +96,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     InputStream stream = getFileAsStream("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithCustomAnnotations.json");
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
       throw e;
@@ -114,7 +112,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
       throw e;
@@ -129,7 +127,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
             + "}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETTwoPrim"));
-    final Entity entity = OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType)
+    final Entity entity = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType)
         .getEntity();
 
     assertEquals(1, entity.getNavigationLinks().size());
@@ -149,7 +147,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_NAVIGATION_PROPERTY, e.getMessageKey());
       throw e;
@@ -165,7 +163,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_NULL_PROPERTY, e.getMessageKey());
       throw e;
@@ -181,7 +179,7 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     EdmEntityType edmEntityType = edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"));
     try {
-      OData.newInstance().createDeserializer(ODataFormat.JSON).entity(stream, edmEntityType);
+      OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(stream, edmEntityType);
     } catch (DeserializerException e) {
       assertEquals(DeserializerException.MessageKeys.INVALID_VALUE_FOR_NAVIGATION_PROPERTY, e.getMessageKey());
       throw e;

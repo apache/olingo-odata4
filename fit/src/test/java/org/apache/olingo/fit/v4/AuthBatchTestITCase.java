@@ -38,7 +38,6 @@ import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
@@ -84,7 +83,7 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
 
     // create new request
     ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(targetURI.build());
-    queryReq.setFormat(ODataFormat.JSON);
+    queryReq.setFormat(ContentType.JSON);
 
     streamManager.addRequest(queryReq);
     // -------------------------------------------
@@ -108,7 +107,7 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
 
     final ODataEntityUpdateRequest<ClientEntity> changeReq =
         client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patch);
-    changeReq.setFormat(ODataFormat.JSON_FULL_METADATA);
+    changeReq.setFormat(ContentType.JSON_FULL_METADATA);
 
     changeset.addRequest(changeReq);
     // -------------------------------------------

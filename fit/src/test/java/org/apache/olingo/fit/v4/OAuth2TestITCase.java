@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -76,13 +76,13 @@ public class OAuth2TestITCase extends AbstractTestITCase {
     return _edmClient;
   }
 
-  private void read(final ODataClient client, final ODataFormat format) {
+  private void read(final ODataClient client, final ContentType contentType) {
     final URIBuilder uriBuilder =
         client.newURIBuilder(testOAuth2ServiceRootURL).appendEntitySetSegment("Orders").appendKeySegment(8);
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertEquals(200, res.getStatusCode());
@@ -127,19 +127,19 @@ public class OAuth2TestITCase extends AbstractTestITCase {
   }
 
   public void readAsAtom() {
-    read(getLocalClient(), ODataFormat.ATOM);
+    read(getLocalClient(), ContentType.APPLICATION_ATOM_XML);
   }
 
   public void readAsFullJSON() {
-    read(getLocalClient(), ODataFormat.JSON_FULL_METADATA);
+    read(getLocalClient(), ContentType.JSON_FULL_METADATA);
   }
 
   public void readAsJSON() {
-    read(getEdmClient(), ODataFormat.JSON);
+    read(getEdmClient(), ContentType.JSON);
   }
 
   public void createAndDelete() {
-    createAndDeleteOrder(testOAuth2ServiceRootURL, ODataFormat.JSON, 1002);
+    createAndDeleteOrder(testOAuth2ServiceRootURL, ContentType.JSON, 1002);
   }
 
 }

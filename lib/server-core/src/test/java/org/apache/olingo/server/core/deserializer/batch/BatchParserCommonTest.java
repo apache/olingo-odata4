@@ -44,7 +44,7 @@ public class BatchParserCommonTest {
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
 
-    final List<String> contentIdHeaders = header.getHeaders(BatchParserCommon.HTTP_CONTENT_ID);
+    final List<String> contentIdHeaders = header.getHeaders(HttpHeader.CONTENT_ID);
     assertNotNull(contentIdHeaders);
     assertEquals(2, contentIdHeaders.size());
     assertEquals("1", contentIdHeaders.get(0));
@@ -64,7 +64,7 @@ public class BatchParserCommonTest {
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
 
-    final List<String> contentIdHeaders = header.getHeaders(BatchParserCommon.HTTP_CONTENT_ID);
+    final List<String> contentIdHeaders = header.getHeaders(HttpHeader.CONTENT_ID);
     assertNotNull(contentIdHeaders);
     assertEquals(1, contentIdHeaders.size());
     assertEquals("1", contentIdHeaders.get(0));

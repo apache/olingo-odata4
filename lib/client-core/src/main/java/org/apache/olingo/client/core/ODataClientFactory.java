@@ -21,7 +21,7 @@ package org.apache.olingo.client.core;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 public final class ODataClientFactory {
 
@@ -38,7 +38,7 @@ public final class ODataClientFactory {
 
     final EdmEnabledODataClient instance =
             new EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
-    instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    instance.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return instance;
   }
 

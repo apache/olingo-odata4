@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class Header implements Iterable<HeaderField> {
   private final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
@@ -62,14 +61,6 @@ public class Header implements Iterable<HeaderField> {
     final HeaderField field = headers.get(name.toLowerCase(Locale.ENGLISH));
 
     return field != null && field.getValues().size() != 0;
-  }
-
-  public boolean isHeaderMatching(final String name, final Pattern pattern) {
-    if (getHeaders(name).size() != 1) {
-      return false;
-    } else {
-      return pattern.matcher(getHeaders(name).get(0)).matches();
-    }
   }
 
   public void removeHeader(final String name) {

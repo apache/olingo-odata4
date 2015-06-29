@@ -36,19 +36,19 @@ import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataFormat format) {
+  private void read(final ContentType contentType) {
     // 1. entity set
     URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").
         appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.ODataWCFService.Customer");
     ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
         getEntitySetRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     for (ClientEntity customer : req.execute().getBody().getEntities()) {
       assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", customer.getTypeName().toString());
@@ -60,7 +60,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
         appendNavigationSegment("MyPaymentInstruments").
         appendDerivedEntityTypeSegment("Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI");
     req = client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(format);
+    req.setFormat(contentType);
 
     for (ClientEntity customer : req.execute().getBody().getEntities()) {
       assertEquals("Microsoft.Test.OData.Services.ODataWCFService.CreditCardPI", customer.getTypeName().toString());
@@ -69,15 +69,15 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void readfromAtom() {
-    read(ODataFormat.ATOM);
+    read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void readfromJSON() {
-    read(ODataFormat.JSON_FULL_METADATA);
+    read(ContentType.JSON_FULL_METADATA);
   }
 
-  private void createDelete(final ODataFormat format) {
+  private void createDelete(final ContentType conentType) {
     final ClientEntity customer = client.getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
 
@@ -119,7 +119,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
         getEntityCreateRequest(
             client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People").build(),
             customer);
-    createReq.setFormat(format);
+    createReq.setFormat(conentType);
 
     final ODataEntityCreateResponse<ClientEntity> createRes = createReq.execute();
     assertEquals(201, createRes.getStatusCode());
@@ -127,7 +127,7 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
     final ODataEntityRequest<ClientEntity> fetchReq = client.getRetrieveRequestFactory().
         getEntityRequest(client.newURIBuilder(testStaticServiceRootURL).
             appendEntitySetSegment("People").appendKeySegment(976).build());
-    fetchReq.setFormat(format);
+    fetchReq.setFormat(conentType);
 
     final ClientEntity actual = fetchReq.execute().getBody();
     assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Customer", actual.getTypeName().toString());
@@ -140,11 +140,11 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
 
   @Test
   public void createDeleteAsAtom() {
-    createDelete(ODataFormat.ATOM);
+    createDelete(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
   public void createDeleteAsJSON() {
-    createDelete(ODataFormat.JSON_FULL_METADATA);
+    createDelete(ContentType.JSON_FULL_METADATA);
   }
 }

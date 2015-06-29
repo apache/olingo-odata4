@@ -27,9 +27,9 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ODataErrorDetail;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class ServerErrorSerializerTest {
 
   @Before
   public void before() throws Exception {
-    ser = OData.newInstance().createSerializer(ODataFormat.JSON);
+    ser = OData.newInstance().createSerializer(ContentType.JSON);
   }
 
   @Test

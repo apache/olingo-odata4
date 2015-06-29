@@ -20,11 +20,8 @@ package org.apache.olingo.client.core.v4;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.AtomLinksQualifier;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.custommonkey.xmlunit.Diff;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -32,8 +29,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
+import org.apache.commons.io.IOUtils;
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.core.AtomLinksQualifier;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.custommonkey.xmlunit.Diff;
 
 public class AtomTest extends JSONTest {
 
@@ -43,13 +43,13 @@ public class AtomTest extends JSONTest {
   }
 
   @Override
-  protected ODataFormat getODataPubFormat() {
-    return ODataFormat.ATOM;
+  protected ContentType getODataPubFormat() {
+    return ContentType.APPLICATION_ATOM_XML;
   }
 
   @Override
-  protected ODataFormat getODataFormat() {
-    return ODataFormat.XML;
+  protected ContentType getODataFormat() {
+    return ContentType.APPLICATION_XML;
   }
 
   private String cleanup(final String input) throws Exception {

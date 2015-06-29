@@ -148,7 +148,7 @@ public abstract class AbstractServices {
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);
-    jsonSerializer = new JsonSerializer(true);
+    jsonSerializer = new JsonSerializer(true, ContentType.JSON_FULL_METADATA);
 
     xml = new XMLUtilities(metadata);
     json = new JSONUtilities(metadata);

@@ -20,13 +20,12 @@ package org.apache.olingo.commons.api.format;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 /**
  * Internally used {@link ContentType} for OData library.
@@ -50,13 +49,27 @@ public final class ContentType {
   private static final String TEXT = "text";
   private static final String MULTIPART = "multipart";
 
-  public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
-  public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type=entry");
-  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type=feed");
-  public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
+  public static final String PARAMETER_CHARSET = "charset";
+  public static final String PARAMETER_IEEE754_COMPATIBLE = "IEEE754Compatible";
+  public static final String PARAMETER_ODATA_METADATA = "odata.metadata";
+
+  public static final String VALUE_ODATA_METADATA_NONE = "none";
+  public static final String VALUE_ODATA_METADATA_MINIMAL = "minimal";
+  public static final String VALUE_ODATA_METADATA_FULL = "full";
 
   public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
+  public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_MINIMAL);
+  public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_NONE);
+  public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+      PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_FULL);
+
+  public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
+  public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type", "entry");
+  public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type", "feed");
+  public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
 
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);
 
@@ -70,11 +83,10 @@ public final class ContentType {
   public static final ContentType APPLICATION_FORM_URLENCODED =
       new ContentType(APPLICATION, "x-www-form-urlencoded", null);
 
+  public static final ContentType APPLICATION_HTTP = new ContentType(APPLICATION, "http", null);
+
   public static final ContentType MULTIPART_MIXED = new ContentType(MULTIPART, "mixed", null);
-
   public static final ContentType MULTIPART_FORM_DATA = new ContentType(MULTIPART, "form-data", null);
-
-  public static final String PARAMETER_CHARSET_UTF8 = "charset=utf-8";
 
   private final String type;
   private final String subtype;
@@ -82,10 +94,9 @@ public final class ContentType {
 
   /**
    * Creates a content type from type, subtype, and parameters.
-   *
-   * @param type
-   * @param subtype
-   * @param parameters
+   * @param type       type
+   * @param subtype    subtype
+   * @param parameters parameters as map from names to values
    */
   private ContentType(final String type, final String subtype, final Map<String, String> parameters) {
     this.type = validateType(type);
@@ -94,17 +105,12 @@ public final class ContentType {
     if (parameters == null) {
       this.parameters = Collections.emptyMap();
     } else {
-      this.parameters = new TreeMap<String, String>(new Comparator<String>() {
-        @Override
-        public int compare(final String o1, final String o2) {
-          return o1.compareToIgnoreCase(o2);
-        }
-      });
+      this.parameters = TypeUtil.createParameterMap();
       this.parameters.putAll(parameters);
     }
   }
 
-  private String validateType(final String type) {
+  private String validateType(final String type) throws IllegalArgumentException {
     if (type == null || type.isEmpty() || "*".equals(type)) {
       throw new IllegalArgumentException("Illegal type '" + type + "'.");
     }
@@ -115,53 +121,19 @@ public final class ContentType {
   }
 
   /**
-   * Validates if given <code>format</code> is parseable and can be used as input for {@link #create(String)} method.
-   *
-   * @param format to be validated string
-   * @return <code>true</code> if format is parseable otherwise <code>false</code>
+   * Creates a content type from an existing content type and an additional parameter as key-value pair.
+   * @param contentType    an existing content type
+   * @param parameterName  the name of the additional parameter
+   * @param parameterValue the value of the additional parameter
+   * @return a new {@link ContentType} object
    */
-  public static boolean isParseable(final String format) {
-    try {
-      return ContentType.create(format) != null;
-    } catch (IllegalArgumentException e) {
-      return false;
-    }
-  }
+  public static ContentType create(final ContentType contentType,
+      final String parameterName, final String parameterValue) throws IllegalArgumentException {
+    TypeUtil.validateParameterNameAndValue(parameterName, parameterValue);
 
-  /**
-   * Creates a content type from format and key-value pairs for parameters.
-   *
-   * @param format for example "application/json"
-   * @param parameters for example "a=b", "c=d"
-   * @return a new <code>ContentType</code> object
-   */
-  public static ContentType create(final String format, final String... parameters) {
-    ContentType ct = parse(format);
-
-    for (String p : parameters) {
-      final String[] keyvalue = TypeUtil.parseParameter(p);
-      ct.parameters.put(keyvalue[0], keyvalue[1]);
-    }
-
-    return ct;
-  }
-
-  /**
-   * Creates a content type from an existing content type and additional key-value pairs for parameters.
-   *
-   * @param contentType for example "application/json"
-   * @param parameters for example "a=b", "c=d"
-   * @return a new <code>ContentType</code> object
-   */
-  public static ContentType create(final ContentType contentType, final String... parameters) {
-    ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
-
-    for (String p : parameters) {
-      final String[] keyvalue = TypeUtil.parseParameter(p);
-      ct.parameters.put(keyvalue[0], keyvalue[1]);
-    }
-
-    return ct;
+    ContentType type = new ContentType(contentType.type, contentType.subtype, contentType.parameters);
+    type.parameters.put(parameterName.toLowerCase(Locale.ROOT), parameterValue);
+    return type;
   }
 
   /**
@@ -169,15 +141,15 @@ public final class ContentType {
    * <code>Media Type</code> format as defined in RFC 7231, chapter 3.1.1.1.
    *
    * @param format a string in format as defined in RFC 7231, chapter 3.1.1.1
-   * @return a new <code>ContentType</code> object
+   * @return a new {@link ContentType} object
    * @throws IllegalArgumentException if input string is not parseable
    */
-  public static ContentType create(final String format) {
+  public static ContentType create(final String format) throws IllegalArgumentException {
     if (format == null) {
       throw new IllegalArgumentException("Parameter format MUST NOT be NULL.");
     }
-    final List<String> typeSubtype = new ArrayList<String>();
-    final Map<String, String> parameters = new HashMap<String, String>();
+    List<String> typeSubtype = new ArrayList<String>();
+    Map<String, String> parameters = new HashMap<String, String>();
     parse(format, typeSubtype, parameters);
     return new ContentType(typeSubtype.get(0), typeSubtype.get(1), parameters);
   }
@@ -199,7 +171,8 @@ public final class ContentType {
     }
   }
 
-  private static void parse(final String format, final List<String> typeSubtype, final Map<String, String> parameters) {
+  private static void parse(final String format, List<String> typeSubtype, Map<String, String> parameters)
+      throws IllegalArgumentException {
     final String[] typesAndParameters = format.split(TypeUtil.PARAMETER_SEPARATOR, 2);
     final String types = typesAndParameters[0];
     final String params = (typesAndParameters.length > 1 ? typesAndParameters[1] : null);
@@ -227,20 +200,32 @@ public final class ContentType {
     TypeUtil.parseParameters(params, parameters);
   }
 
+  /** Gets the type of this content type. */
   public String getType() {
     return type;
   }
 
+  /** Gets the subtype of this content type. */
   public String getSubtype() {
     return subtype;
   }
 
   /**
-   *
-   * @return parameters of this {@link ContentType} as unmodifiable map.
+   * Gets the parameters of this content type.
+   * @return parameters of this {@link ContentType} as unmodifiable map
    */
   public Map<String, String> getParameters() {
     return Collections.unmodifiableMap(parameters);
+  }
+
+  /**
+   * Returns the value of a given parameter.
+   * If the parameter does not exist the method returns null.
+   * @param name the name of the parameter to get (case-insensitive)
+   * @return the value of the parameter or <code>null</code> if the parameter is not present
+   */
+  public String getParameter(final String name) {
+    return parameters.get(name.toLowerCase(Locale.ROOT));
   }
 
   @Override
@@ -276,17 +261,15 @@ public final class ContentType {
       while (entries.hasNext()) {
         final Entry<String, String> e = entries.next();
         final Entry<String, String> oe = otherEntries.next();
-        if (!areEqual(e.getKey(), oe.getKey())) {
-          return false;
-        }
-        if (!areEqual(e.getValue(), oe.getValue())) {
+        if (!areEqual(e.getKey(), oe.getKey())
+            || !areEqual(e.getValue(), oe.getValue())) {
           return false;
         }
       }
+      return true;
     } else {
       return false;
     }
-    return true;
   }
 
   /**
@@ -302,7 +285,6 @@ public final class ContentType {
 
   /**
    * Checks whether both strings are equal ignoring the case of the strings.
-   *
    * @param first first string
    * @param second second string
    * @return <code>true</code> if both strings are equal (ignoring the case), otherwise <code>false</code>
@@ -313,10 +295,8 @@ public final class ContentType {
 
   /**
    * Gets {@link ContentType} as string as defined in
-   * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1:
-   * Media Type.
-   *
-   * @return string representation of <code>ContentType</code> object
+   * <a href="http://www.ietf.org/rfc/rfc7231.txt">RFC 7231</a>, chapter 3.1.1.1: Media Type.
+   * @return string representation of {@link ContentType} object
    */
   public String toContentTypeString() {
     final StringBuilder sb = new StringBuilder();
@@ -325,7 +305,7 @@ public final class ContentType {
 
     for (String key : parameters.keySet()) {
       sb.append(TypeUtil.PARAMETER_SEPARATOR).append(key)
-      .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
+          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
     }
     return sb.toString();
   }

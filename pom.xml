@@ -82,6 +82,7 @@
     <maven.plugin.tools.version>3.3</maven.plugin.tools.version>
     <maven.bundle.plugin.version>2.3.4</maven.bundle.plugin.version>
     <hc.client.version>4.2.6</hc.client.version>
+    <hc.core.version>4.2.5</hc.core.version>
     <jackson.version>2.4.2</jackson.version>
     <aalto-xml.version>0.9.10</aalto-xml.version>
 
@@ -89,11 +90,17 @@
 
     <android.platform.version>4.1.1.4</android.platform.version>
     <stax.api.version>1.0-2</stax.api.version>
+    <woodstox.stax2-api.version>3.1.4</woodstox.stax2-api.version>
 
     <sl4j.version>1.7.7</sl4j.version>
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>7.0.55</tomcat.version>
+
+    <!-- for osgi integration testing -->
+    <osgi.version>4.2.0</osgi.version>
+    <karaf.version>3.0.3</karaf.version>
+    <pax.exam.version>3.4.0</pax.exam.version>
 
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -55,7 +55,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -218,7 +218,7 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
     } else if (StringUtils.isNotEmpty(localEdm)) {
       final FileInputStream fis = new FileInputStream(FileUtils.getFile(localEdm));
       try {
-        metadata = getClient().getDeserializer(ODataFormat.XML).toMetadata(fis);
+        metadata = getClient().getDeserializer(ContentType.APPLICATION_XML).toMetadata(fis);
         edm = getClient().getReader().readMetadata(metadata.getSchemaByNsOrAlias());
       } finally {
         IOUtils.closeQuietly(fis);

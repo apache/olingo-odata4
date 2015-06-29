@@ -50,12 +50,12 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  */
 public abstract class TechnicalProcessor implements Processor {
 
+  protected final DataProvider dataProvider;
   protected OData odata;
-  protected DataProvider dataProvider;
   protected ServiceMetadata serviceMetadata;
 
   protected TechnicalProcessor(final DataProvider dataProvider) {
-    this.dataProvider = dataProvider;
+    this(dataProvider, null);
   }
 
   protected TechnicalProcessor(final DataProvider dataProvider, final ServiceMetadata serviceMetadata) {
@@ -254,5 +254,11 @@ public abstract class TechnicalProcessor implements Processor {
       throw new ODataApplicationException("The content type has not been set in the request.",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
     }
+  }
+
+  protected boolean isODataMetadataNone(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON)
+        && ContentType.VALUE_ODATA_METADATA_NONE.equals(
+            contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

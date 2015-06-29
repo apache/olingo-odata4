@@ -53,8 +53,8 @@ import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 /**
@@ -117,17 +117,17 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final ODataEntityCreateRequest<ClientEntity> req = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Orders").build(), order);
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     // check for OData-Version
     assertEquals("4.0", req.getHeader(HttpHeader.ODATA_VERSION));
 
     // check for Content-Type
     assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
-        req.getHeader(HttpHeader.CONTENT_TYPE));
+        ContentType.JSON_FULL_METADATA.toContentTypeString(),
+        req.getHeader("Content-Type"));
     assertEquals(
-        ODataFormat.JSON_FULL_METADATA.getContentType().toContentTypeString(),
+        ContentType.JSON_FULL_METADATA.toContentTypeString(),
         req.getContentType());
 
     final ClientEntity created = req.execute().getBody();
@@ -173,7 +173,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
         getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
     req.setPrefer(client.newPreferences().maxPageSize(5));
 
     ODataRetrieveResponse<ClientEntitySet> res = req.execute();
@@ -190,7 +190,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     assertEquals(expected, found);
 
     req = client.getRetrieveRequestFactory().getEntitySetRequest(found);
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     res = req.execute();
     feed = res.getBody();
@@ -230,7 +230,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
         appendEntitySetSegment("RowIndex").appendKeySegment(id);
 
-    rowIndex = read(ODataFormat.JSON_FULL_METADATA, builder.build());
+    rowIndex = read(ContentType.JSON_FULL_METADATA, builder.build());
     assertNotNull(rowIndex);
     assertEquals(EdmPrimitiveTypeKind.Int32, rowIndex.getProperty("Id").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.String, rowIndex.getProperty("aString").getPrimitiveValue().getTypeKind());
@@ -263,7 +263,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     final ODataEntityUpdateResponse<ClientEntity> res = req.execute();
     assertEquals(204, res.getStatusCode());
 
-    final ClientEntity actual = read(ODataFormat.JSON, uri);
+    final ClientEntity actual = read(ContentType.JSON, uri);
 
     assertEquals(newname, actual.getProperty("FirstName").getPrimitiveValue().toString());
   }
@@ -282,7 +282,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     assertNotNull(req.execute().getBody());
 
@@ -299,7 +299,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
         appendRefSegment();
 
     ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     ODataRetrieveResponse<ClientEntity> res = req.execute();
     assertNotNull(res);
@@ -312,7 +312,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
         appendEntityIdSegment(entity.getId().toASCIIString()).build();
 
     req = client.getRetrieveRequestFactory().getEntityRequest(referenceURI);
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     res = req.execute();
     assertNotNull(res);
@@ -333,7 +333,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     assertNotNull(customers.getDeltaLink());
 
     final ODataDeltaRequest deltaReq = client.getRetrieveRequestFactory().getDeltaRequest(customers.getDeltaLink());
-    deltaReq.setFormat(ODataFormat.JSON_FULL_METADATA);
+    deltaReq.setFormat(ContentType.JSON_FULL_METADATA);
 
     final ClientDelta delta = deltaReq.execute().getBody();
     assertNotNull(delta);
@@ -375,7 +375,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntitySetRequest<ClientEntitySet> req =
         client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON_FULL_METADATA);
+    req.setFormat(ContentType.JSON_FULL_METADATA);
 
     final AsyncRequestWrapper<ODataRetrieveResponse<ClientEntitySet>> async =
         client.getAsyncRequestFactory().<ODataRetrieveResponse<ClientEntitySet>> getAsyncRequestWrapper(req);
@@ -402,7 +402,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
 
     final ODataEntityRequest<ClientEntity> req =
         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build());
-    req.setFormat(ODataFormat.JSON);
+    req.setFormat(ContentType.JSON);
 
     assertEquals("application/json;odata.metadata=minimal", req.getHeader("Accept"));
     assertEquals("application/json;odata.metadata=minimal", req.getAccept());

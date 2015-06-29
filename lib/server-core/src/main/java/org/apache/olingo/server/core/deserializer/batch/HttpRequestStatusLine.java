@@ -27,8 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class HttpRequestStatusLine {
   private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(?:\\?(.*))?");
@@ -67,8 +67,8 @@ public class HttpRequestStatusLine {
       parseUri(parts[1], requestBaseUri);
       httpVersion = parseHttpVersion(parts[2]);
     } else {
-      throw new BatchDeserializerException("Invalid status line", MessageKeys.INVALID_STATUS_LINE, statusLine
-          .getLineNumber());
+      throw new BatchDeserializerException("Invalid status line", MessageKeys.INVALID_STATUS_LINE,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
@@ -81,8 +81,9 @@ public class HttpRequestStatusLine {
       } else {
         parseRelativeUri(rawUri);
       }
-    } catch (URISyntaxException e) {
-      throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
+    } catch (final URISyntaxException e) {
+      throw new BatchDeserializerException("Malformed uri", e, MessageKeys.INVALID_URI,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
@@ -91,8 +92,8 @@ public class HttpRequestStatusLine {
       final String relativeUri = removeLeadingSlash(rawUri.substring(baseUri.length()));
       parseRelativeUri(relativeUri);
     } else {
-      throw new BatchDeserializerException("Base uri do not match", MessageKeys.INVALID_BASE_URI, statusLine
-          .getLineNumber());
+      throw new BatchDeserializerException("Base uri does not match", MessageKeys.INVALID_BASE_URI,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
@@ -106,7 +107,8 @@ public class HttpRequestStatusLine {
     if (relativeUriMatcher.matches()) {
       buildUri(relativeUriMatcher.group(1), relativeUriMatcher.group(2));
     } else {
-      throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI, statusLine.getLineNumber());
+      throw new BatchDeserializerException("Malformed uri", MessageKeys.INVALID_URI,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
@@ -127,15 +129,15 @@ public class HttpRequestStatusLine {
     try {
       return HttpMethod.valueOf(method.trim());
     } catch (IllegalArgumentException e) {
-      throw new BatchDeserializerException("Illegal http method", MessageKeys.INVALID_METHOD, statusLine
-          .getLineNumber());
+      throw new BatchDeserializerException("Illegal http method", e, MessageKeys.INVALID_METHOD,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 
   private String parseHttpVersion(final String httpVersion) throws BatchDeserializerException {
     if (!HTTP_VERSION.equals(httpVersion.trim())) {
-      throw new BatchDeserializerException("Invalid http version", MessageKeys.INVALID_HTTP_VERSION, statusLine
-          .getLineNumber());
+      throw new BatchDeserializerException("Invalid http version", MessageKeys.INVALID_HTTP_VERSION,
+          Integer.toString(statusLine.getLineNumber()));
     } else {
       return HTTP_VERSION;
     }
@@ -147,11 +149,11 @@ public class HttpRequestStatusLine {
     if (!validMethods.contains(getMethod().toString())) {
       if (isChangeSet) {
         throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
-            statusLine.getLineNumber());
+            Integer.toString(statusLine.getLineNumber()));
       } else {
         throw new BatchDeserializerException("Invalid query operation method",
             MessageKeys.INVALID_QUERY_OPERATION_METHOD,
-            statusLine.getLineNumber());
+            Integer.toString(statusLine.getLineNumber()));
       }
     }
   }

@@ -22,7 +22,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
@@ -37,6 +36,8 @@ import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
@@ -139,14 +140,15 @@ public class ODataXmlSerializerImpl implements ODataSerializer {
 
   @Override
   public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntotySet, 
-      final Entity entity, final ContextURL contextURL) throws SerializerException {
+      final Entity entity, final ReferenceSerializerOptions options) throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }
 
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet, 
-      final EntityCollection entityCollection, final ContextURL contextURL) throws SerializerException {
+      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions optionsL) 
+          throws SerializerException {
     throw new SerializerException("Serialization not implemented for XML format.",
         SerializerException.MessageKeys.NOT_IMPLEMENTED);
   }

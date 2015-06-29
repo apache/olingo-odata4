@@ -40,8 +40,8 @@ import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -102,7 +102,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(this.method, uri);
   }
 
-  public abstract ODataFormat getDefaultFormat();
+  public abstract ContentType getDefaultFormat();
 
   @Override
   public URI getURI() {
@@ -172,7 +172,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HttpHeader.ACCEPT);
     return StringUtils.isBlank(acceptHead) ?
-        getDefaultFormat().getContentType().toContentTypeString() :
+        getDefaultFormat().toContentTypeString() :
         acceptHead;
   }
 
@@ -195,7 +195,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HttpHeader.CONTENT_TYPE);
     return StringUtils.isBlank(contentTypeHead) ?
-        getDefaultFormat().getContentType().toContentTypeString() :
+        getDefaultFormat().toContentTypeString() :
         contentTypeHead;
   }
 
