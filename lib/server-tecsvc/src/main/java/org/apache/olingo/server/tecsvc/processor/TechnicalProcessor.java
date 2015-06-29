@@ -213,8 +213,9 @@ public abstract class TechnicalProcessor implements Processor {
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       navigationCount++;
     }
-
-    return (UriResourceNavigation) resourcePaths.get(--navigationCount);
+    
+    final UriResource lastSegment = resourcePaths.get(--navigationCount);
+    return (lastSegment instanceof UriResourceNavigation) ? (UriResourceNavigation) lastSegment : null;
   }
 
   private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {

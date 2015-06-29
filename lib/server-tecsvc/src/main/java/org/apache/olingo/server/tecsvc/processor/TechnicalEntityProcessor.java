@@ -318,6 +318,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo, true);
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    ensureNavigationPropertyNotNull(navigationProperty);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
         request.getRawBaseUri());
 
@@ -338,6 +339,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo, true);
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    ensureNavigationPropertyNotNull(navigationProperty);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
         request.getRawBaseUri());
 
@@ -350,7 +352,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final UriResourceNavigation lastNavigation = getLastNavigation(uriInfo);
     final IdOption idOption = uriInfo.getIdOption();
-
+    
+    ensureNavigationPropertyNotNull(lastNavigation);
     if (lastNavigation.isCollection() && idOption == null) {
       throw new ODataApplicationException("Id system query option must be provided",
           HttpStatusCode.BAD_REQUEST.getStatusCode(),
@@ -536,5 +539,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .selectList(odata.createUriHelper().buildContextURLSelectList(entityType, expand, select))
         .suffix(isSingleEntity && entitySet != null ? Suffix.ENTITY : null);
     return builder.build();
+  }
+  
+  private void ensureNavigationPropertyNotNull(final UriResourceNavigation navigationProperty)
+      throws ODataApplicationException {
+    if(navigationProperty == null) {
+      throw new ODataApplicationException("Missing navigation segment", HttpStatusCode.BAD_REQUEST.getStatusCode(),
+          Locale.ROOT);
+    }
   }
 }

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,9 @@ import org.apache.olingo.client.api.communication.response.ODataReferenceAddingR
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -982,6 +985,49 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     requestGetESTwoKey.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetESTwoKeyNav = requestGetESTwoKey.execute();
     assertNull(responseGetESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+  }
+  
+  @Test
+  public void testCreateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendRefSegment().build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceAddingRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testUpdateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendRefSegment()
+                                                     .build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testDeleteMissingNavigationProperty() {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendRefSegment()
+                                                     .build();
+    
+    try {
+      client.getCUDRequestFactory().getDeleteRequest(uri);
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
   }
   
   private void sendRequest(final URI uri, final int count, final String... expected) {
