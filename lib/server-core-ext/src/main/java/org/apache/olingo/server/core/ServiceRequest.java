@@ -152,7 +152,8 @@ public abstract class ServiceRequest {
       return (T) EntityCollectionSerializerOptions.with()
           .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
-          .select(uriInfo.getSelectOption()).setWriteOnlyReferences(references).build();
+          .select(uriInfo.getSelectOption()).setWriteOnlyReferences(references)
+          .setId(getODataRequest().getRawBaseUri()+getODataRequest().getRawODataPath()).build();
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {
       return (T) ComplexSerializerOptions.with().contextURL(contextUrl)
           .expand(this.uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption()).build();

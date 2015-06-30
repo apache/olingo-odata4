@@ -42,7 +42,7 @@ public class UriHelperTest {
   private static final EdmEntityContainer container = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
   private static final UriHelper helper = new UriHelperImpl();
-  private final DataProvider data = new DataProvider();
+  private final DataProvider data = new DataProvider(edm);
 
   @Test
   public void canonicalURL() throws Exception {

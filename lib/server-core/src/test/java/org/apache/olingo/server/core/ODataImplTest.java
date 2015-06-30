@@ -50,8 +50,7 @@ public class ODataImplTest {
     assertNotNull(odata.createDeserializer(ContentType.APPLICATION_JSON));
   }
 
-  @Test(expected = DeserializerException.class)
   public void xmlDeserializer() throws DeserializerException {
-    odata.createDeserializer(ContentType.APPLICATION_XML);
+    assertNotNull(odata.createDeserializer(ContentType.APPLICATION_XML));
   }
 }

@@ -45,6 +45,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
@@ -73,7 +74,7 @@ import org.junit.Test;
 public class MetadataDocumentXmlSerializerTest {
 
   private static ODataSerializer serializer;
-
+  
   @BeforeClass
   public static void init() throws SerializerException {
     serializer = OData.newInstance().createSerializer(ContentType.APPLICATION_XML);
@@ -263,7 +264,7 @@ public class MetadataDocumentXmlSerializerTest {
         + "</ComplexType>"));
   }
 
-  private class LocalProvider extends CsdlAbstractEdmProvider {
+  static class LocalProvider extends CsdlAbstractEdmProvider {
     private final static String nameSpace = "namespace";
 
     private final FullQualifiedName nameETAbstract = new FullQualifiedName(nameSpace, "ETAbstract");
@@ -468,6 +469,15 @@ public class MetadataDocumentXmlSerializerTest {
       return schemas;
     }
 
+    @Override
+    public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+        throws ODataException {
+      if (entityContainerName == null) {
+        return new CsdlEntityContainerInfo().setContainerName(new FullQualifiedName("org.olingo", "container"));
+      }
+      return null;
+    }
+    
     @Override
     public CsdlEntityContainer getEntityContainer() throws ODataException {
       CsdlEntityContainer container = new CsdlEntityContainer();

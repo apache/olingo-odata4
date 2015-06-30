@@ -31,12 +31,22 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
 
-public final class NavigationITCase extends AbstractBaseTestITCase {
+public class NavigationITCase extends AbstractBaseTestITCase {
 
   private final ODataClient client = getClient();
 
+  
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void oneLevelToEntity() throws Exception {
     final ODataRetrieveResponse<ClientEntity> response =
@@ -129,7 +139,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ClientProperty property = response.getBody();
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(1, property.getPrimitiveValue().toValue());
+    assertShortOrInt(1, property.getPrimitiveValue().toValue());
   }
 
   @Override

@@ -72,7 +72,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertContentType(response.getContentType());
 
     final ClientProperty property = response.getBody();
     assertNotNull(property);
@@ -89,9 +89,19 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyString")
             .build());
     ODataRetrieveResponse<ClientProperty> response = request.execute();
-    String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
-    assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\","));
-    assertTrue(actualResult.endsWith("\"value\":\"Test String1\"}"));
+        
+    if (isJson()) {
+      String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
+      assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\","));
+      assertTrue(actualResult.endsWith("\"value\":\"Test String1\"}"));
+    } else {
+      ClientProperty property = response.getBody();
+      assertEquals("Test String1", property.getPrimitiveValue().toValue());
+    }
+  }
+
+  private boolean isJson() {
+    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
   }
 
   @Test
@@ -141,6 +151,10 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
     assertTrue(property.getCollectionValue().isEmpty());
   }
 
+  protected void assertContentType(String content) {
+    assertThat(content, containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+  }
+
   @Test
   public void readComplexProperty() throws Exception {
     final ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
@@ -151,7 +165,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .build());
     ODataRetrieveResponse<ClientProperty> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertContentType(response.getContentType());
 
     final ClientProperty property = response.getBody();
     assertNotNull(property);
@@ -168,9 +182,16 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
             .appendPropertySegment("PropertyComp")
             .build());
     ODataRetrieveResponse<ClientProperty> response = request.execute();
-    String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
-    assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\","));
-    assertTrue(actualResult.endsWith("\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}"));
+    
+    if (isJson()) {
+      String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
+      assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\","));
+      assertTrue(actualResult.endsWith("\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}"));
+    } else {
+      ClientProperty property = response.getBody();
+      assertEquals((short)222, property.getComplexValue().get("PropertyInt16").getValue().asPrimitive().toValue());
+      assertEquals("TEST B", property.getComplexValue().get("PropertyString").getValue().asPrimitive().toValue());      
+    }
   }
 
   @Test
@@ -232,7 +253,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     final ODataPropertyUpdateResponse response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertContentType(response.getContentType());
 
     final ClientProperty property = response.getBody();
     assertNotNull(property);
@@ -263,7 +284,11 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getComplexValue());
     final ClientComplexValue value = property.getComplexValue();
     assertEquals("Test String42", value.get("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(222, value.get("PropertyInt16").getPrimitiveValue().toValue());
+    if(isJson()) {
+      assertEquals(222, value.get("PropertyInt16").getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)222, value.get("PropertyInt16").getPrimitiveValue().toValue());
+    }
   }
 
   @Test

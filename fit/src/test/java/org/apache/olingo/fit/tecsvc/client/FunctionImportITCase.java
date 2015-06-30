@@ -48,10 +48,19 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class FunctionImportITCase extends AbstractBaseTestITCase {
 
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void entity() throws Exception {
     final ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
@@ -67,7 +76,7 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     assertNotNull(entity);
     final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
-    assertEquals(1, property.getPrimitiveValue().toValue());
+    assertShortOrInt(1, property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -85,7 +94,7 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     assertNotNull(entity);
     final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
-    assertEquals(1, property.getPrimitiveValue().toValue());
+    assertShortOrInt(1, property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -134,7 +143,7 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(1, property.getPrimitiveValue().toValue());
+    assertShortOrInt(1, property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -155,7 +164,7 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     final ClientProperty property = response.getBody();
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(2, property.getPrimitiveValue().toValue());
+    assertShortOrInt(2, property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -181,7 +190,7 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
 
     final ClientProperty property = response.getBody();
     assertNotNull(property);
-    assertEquals(16, property.getPrimitiveValue().toValue());
+    assertShortOrInt(16, property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -264,11 +273,11 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     final Iterator<ClientValue> iter = collection.iterator();
     
     ClientComplexValue complexValue = iter.next().asComplex();
-    assertEquals(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("UFCRTCollCTTwoPrimTwoParam string value: TestString", complexValue.get("PropertyString")
                                                                                      .getPrimitiveValue().toValue());
     complexValue = iter.next().asComplex();
-    assertEquals(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("UFCRTCollCTTwoPrimTwoParam string value: TestString", complexValue.get("PropertyString")
                                                                                      .getPrimitiveValue().toValue());
   }
@@ -287,11 +296,11 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     final Iterator<ClientValue> iter = collection.iterator();
     
     ClientComplexValue complexValue = iter.next().asComplex();
-    assertEquals(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("UFCRTCollCTTwoPrimTwoParam int16 value: 2", complexValue.get("PropertyString")
                                                                                      .getPrimitiveValue().toValue());
     complexValue = iter.next().asComplex();
-    assertEquals(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("UFCRTCollCTTwoPrimTwoParamstring value: null", complexValue.get("PropertyString")
                                                                                      .getPrimitiveValue().toValue());
   }

@@ -24,7 +24,9 @@
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
   <link rel="edit" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)"/>
   <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)/Parent"/>
-  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)/Orders">
+	<link rel="http://docs.oasis-open.org/odata/ns/related/Orders"
+		type="application/atom+xml;type=feed" title="Orders">
+		<m:inline><feed><m:ref id="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)/Orders"/></feed></m:inline>
     <m:annotation term="com.contoso.display.style" m:type="#com.contoso.display.styleType">
       <d:order m:type="Int32">2</d:order>
     </m:annotation>

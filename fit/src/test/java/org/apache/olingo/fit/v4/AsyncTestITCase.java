@@ -40,6 +40,7 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
@@ -119,11 +120,13 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertTrue(found);
   }
 
+  @Ignore
   @Test
   public void withInlineEntryAsAtom() {
     withInlineEntry(ContentType.APPLICATION_ATOM_XML);
   }
 
+  @Ignore
   @Test
   public void withInlineEntryAsJSON() {
     // this needs to be full, otherwise there is no mean to recognize links

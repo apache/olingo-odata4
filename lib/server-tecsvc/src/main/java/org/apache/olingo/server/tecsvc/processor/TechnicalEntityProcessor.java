@@ -513,12 +513,12 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
     final CountOption countOption = uriInfo.getCountOption();
 
+    final String id = request.getRawBaseUri()+edmEntitySet.getName();
     // Serialize
     final SerializerResult serializerResult = (isReference) ? 
         serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
         serializeEntityCollection(entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
-            expand, select, countOption);
-
+            expand, select, countOption, id);
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -530,7 +530,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
   private SerializerResult serializeEntityCollection(final EntityCollection entityCollection,
       final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType, final ContentType requestedFormat,
-      final ExpandOption expand, final SelectOption select, final CountOption countOption)
+      final ExpandOption expand, final SelectOption select, final CountOption countOption, String id)
       throws ODataLibraryException {
     
     return odata.createSerializer(requestedFormat).entityCollection(
@@ -542,6 +542,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
                 getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
             .count(countOption)
             .expand(expand).select(select)
+            .setId(id)
             .build());
   }
 

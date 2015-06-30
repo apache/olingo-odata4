@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -122,9 +124,13 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertTrue(changeSetResponse.isBreaking());
 
     assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), updateResponse.getStatusCode());
-    assertEquals(ContentType.JSON.toContentTypeString(), updateResponse.getContentType());
+    assertContentType(updateResponse.getContentType());
   }
 
+  protected void assertContentType(String content) {
+    assertThat(content, containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+  }
+  
   @Test
   public void emptyBatchRequest() {
     // create your request
