@@ -656,7 +656,6 @@ public class ODataJsonSerializer implements ODataSerializer {
 
       json.writeStartObject();
       writeContextURL(contextURL, json);
-      writeMetadataETag(metadata, json);
       json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
       json.writeEndObject();
 
@@ -681,7 +680,6 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeStartObject();
 
       writeContextURL(contextURL, json);
-      writeMetadataETag(metadata, json);
       if (options != null && options.getCount() != null && options.getCount().getValue()) {
         writeCount(entityCollection, json);
       }

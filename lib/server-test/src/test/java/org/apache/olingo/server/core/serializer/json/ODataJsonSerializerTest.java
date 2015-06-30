@@ -793,7 +793,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#$ref\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.id\":\"ESAllPrim(32767)\"}",
         resultString);
   }
@@ -822,7 +821,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"@odata.id\":\"ESAllPrim(32767)\"},"
         + "{\"@odata.id\":\"ESAllPrim(-32768)\"},"
         + "{\"@odata.id\":\"ESAllPrim(0)\"}]}",
@@ -843,7 +841,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[]}", resultString);
   }
 
@@ -1046,7 +1043,6 @@ public class ODataJsonSerializerTest {
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
         + "\"@odata.nextLink\":\"/next\"}"));
