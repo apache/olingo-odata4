@@ -348,9 +348,9 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertNotNull(oDataResponse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
-    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals("513", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
+    assertEquals("517", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
   }
 

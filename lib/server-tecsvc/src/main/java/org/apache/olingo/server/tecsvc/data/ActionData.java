@@ -235,17 +235,19 @@ public class ActionData {
     return new Entity()
         .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
         .addProperty(DataCreator.createPrimitive("PropertyString", "UARTCollETKeyNavParam int16 value: " + number))
-        .addProperty(
-            DataCreator.createComplex("PropertyCompNav", DataCreator.createPrimitive("PropertyInt16", 0)))
-        .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim")).addProperty(
-            DataCreator.createComplex("PropertyCompTwoPrim", DataCreator.createPrimitive("PropertyInt16", 0),
-                DataCreator.createPrimitive("PropertyString", ""))).addProperty(
-            DataCreator.createPrimitiveCollection("CollPropertyString"))
-        .addProperty(DataCreator.createPrimitiveCollection("CollPropertyInt16")).addProperty(
-            DataCreator.createComplexCollection("CollPropertyComp"))
-        .addProperty(
-            DataCreator.createComplex("PropertyCompCompNav", DataCreator.createPrimitive("PropertyString", ""),
-                DataCreator.createComplex("PropertyCompNav", DataCreator.createPrimitive("PropertyInt16", 0))));
+        .addProperty(DataCreator.createComplex("PropertyCompNav", 
+            DataCreator.createPrimitive("PropertyInt16", (short) 0)))
+        .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
+        .addProperty(DataCreator.createComplex("PropertyCompTwoPrim", 
+              DataCreator.createPrimitive("PropertyInt16", (short) 0),
+              DataCreator.createPrimitive("PropertyString", ""))).addProperty(
+              DataCreator.createPrimitiveCollection("CollPropertyString"))
+        .addProperty(DataCreator.createPrimitiveCollection("CollPropertyInt16"))
+        .addProperty(DataCreator.createComplexCollection("CollPropertyComp"))
+        .addProperty(DataCreator.createComplex("PropertyCompCompNav", 
+            DataCreator.createPrimitive("PropertyString", ""),
+            DataCreator.createComplex("PropertyCompNav", 
+                DataCreator.createPrimitive("PropertyInt16", (short) 0))));
   }
 
   protected static Property createKeyNavAllPrimComplexValue(final String name) {
@@ -253,13 +255,13 @@ public class ActionData {
         DataCreator.createPrimitive("PropertyString", ""),
         DataCreator.createPrimitive("PropertyBinary", new byte[] {}),
         DataCreator.createPrimitive("PropertyBoolean", false),
-        DataCreator.createPrimitive("PropertyByte", 0),
+        DataCreator.createPrimitive("PropertyByte", (short) 0),
         DataCreator.createPrimitive("PropertyDate", null),
         DataCreator.createPrimitive("PropertyDateTimeOffset", null),
-        DataCreator.createPrimitive("PropertyDecimal", 0),
-        DataCreator.createPrimitive("PropertySingle", 0),
-        DataCreator.createPrimitive("PropertyDouble", 0),
-        DataCreator.createPrimitive("PropertyDuration", 0),
+        DataCreator.createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)),
+        DataCreator.createPrimitive("PropertySingle", (float) 0),
+        DataCreator.createPrimitive("PropertyDouble", 0D),
+        DataCreator.createPrimitive("PropertyDuration", BigDecimal.valueOf(0)),
         DataCreator.createPrimitive("PropertyGuid", null),
         DataCreator.createPrimitive("PropertyInt16", null),
         DataCreator.createPrimitive("PropertyInt32", null),

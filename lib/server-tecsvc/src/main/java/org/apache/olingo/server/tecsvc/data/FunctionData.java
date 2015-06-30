@@ -75,14 +75,14 @@ public class FunctionData {
   protected static Property primitiveComplexFunction(final String name, final List<UriParameter> parameters,
       final Map<String, EntityCollection> data) throws DataProviderException {
     if (name.equals("UFNRTInt16")) {
-      return DataCreator.createPrimitive(name, 12345);
+      return DataCreator.createPrimitive(name, (short) 12345);
     } else if (name.equals("UFCRTString")) {
       return DataCreator.createPrimitive(name, "UFCRTString string value");
     } else if (name.equals("UFCRTCollString")) {
       return data.get("ESCollAllPrim").getEntities().get(0).getProperty("CollPropertyString");
     } else if (name.equals("UFCRTCTTwoPrim")) {
       return DataCreator.createComplex(name,
-          DataCreator.createPrimitive("PropertyInt16", 16),
+          DataCreator.createPrimitive("PropertyInt16", (short) 16),
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       try {
@@ -102,7 +102,7 @@ public class FunctionData {
       }
     } else if (name.equals("UFCRTCollCTTwoPrim")) {
       return DataCreator.createComplexCollection(name,
-          Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 16),
+          Arrays.asList(DataCreator.createPrimitive("PropertyInt16", (short) 16),
               DataCreator.createPrimitive("PropertyString", "Test123")),
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 17),
               DataCreator.createPrimitive("PropertyString", "Test456")),
