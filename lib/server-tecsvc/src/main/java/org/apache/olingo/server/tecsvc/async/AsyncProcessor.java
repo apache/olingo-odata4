@@ -18,20 +18,30 @@
  */
 package org.apache.olingo.server.tecsvc.async;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.Processor;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class AsyncProcessor<T extends Processor> {
     private final MyInvocationHandler handler;
@@ -140,9 +150,9 @@ public class AsyncProcessor<T extends Processor> {
       return handler.process();
     }
 
-    private ODataRequest copyRequest(ODataRequest request) {
+    private ODataRequest copyRequest(ODataRequest request) throws ODataApplicationException {
       ODataRequest req = new ODataRequest();
-      req.setBody(request.getBody());
+      req.setBody(copyRequestBody(request));
       req.setMethod(request.getMethod());
       req.setRawBaseUri(request.getRawBaseUri());
       req.setRawODataPath(request.getRawODataPath());
@@ -162,7 +172,29 @@ public class AsyncProcessor<T extends Processor> {
       return req;
     }
 
-    public String getPreferHeader() {
+  private InputStream copyRequestBody(ODataRequest request) throws ODataApplicationException {
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    InputStream input = request.getBody();
+    if (input != null) {
+      try {
+        ByteBuffer inBuffer = ByteBuffer.allocate(8192);
+        ReadableByteChannel ic = Channels.newChannel(input);
+        WritableByteChannel oc = Channels.newChannel(buffer);
+        while (ic.read(inBuffer) > 0) {
+          inBuffer.flip();
+          oc.write(inBuffer);
+          inBuffer.rewind();
+        }
+        return new ByteArrayInputStream(buffer.toByteArray());
+      } catch (IOException e) {
+        throw new ODataApplicationException("Error on reading request content",
+            HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+      }
+    }
+    return null;
+  }
+
+  public String getPreferHeader() {
       return preferHeader;
     }
 
