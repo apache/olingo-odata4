@@ -22,6 +22,7 @@ package org.apache.olingo.server.core.serializer.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
@@ -75,8 +76,9 @@ public class MetadataDocumentJsonSerializer {
     private static final String CONSTANT_TARGET = "target";
     private static final String CONSTANT_PROPERTIES = "properties";
     private static final String CONSTANT_OBJECT = "object";
+    private static final String CONSTANT_ARRAY = "array";
+    private static final String CONSTANT_ITEMS = "items";
     private static final String CONSTANT_ABSTRACT = "abstract";
-    private static final String CONSTANT_BASE_TYPE = "baseType";
     private static final String CONSTANT_IS_UNICODE = "unicode";
     private static final String CONSTANT_DEFAULT_VALUE = "defaultValue";
     private static final String CONSTANT_PARTNER = "partner";
@@ -91,6 +93,18 @@ public class MetadataDocumentJsonSerializer {
     private static final String CONSTANT_ENTITY_TYPE = "entityType";
     private static final String CONSTANT_ENTITY_CONTAINER = "entityContainer";
     private static final String CONSTANT_EXTEND = "extend";
+    private static final String CONSTANT_BASE_TYPE_IDENTIFIER = "allOf";
+    private static final String CONSTANT_PROPERTY_BASE_TYPE_IDENTIFIER = "anyOf";
+    private static final String CONSTANT_STRING = "string";
+    private static final String CONSTANT_NUMBER = "number";
+    private static final String CONSTANT_MINIMUM = "minimum";
+    private static final String CONSTANT_MAXIMUM = "maximum";
+    private static final String CONSTANT_MULTIPLE_OF = "multipleOf";
+    private static final String CONSTANT_PATTERN_IDENTIFIER = "pattern";
+    private static final String CONSTANT_BOOLEAN = "boolean";
+    private static final String CONSTANT_DATE_TIME_PATTERN_1 = "(^[^.]*$|[.][0-9]{1,precision}$)";
+    private static final String CONSTANT_DATE_TIME_PATTERN_2 = "^[^.]*$";
+
 
     public MetadataDocumentJsonSerializer(final ServiceMetadata serviceMetadata) {
         this.serviceMetadata = serviceMetadata;
@@ -151,24 +165,26 @@ public class MetadataDocumentJsonSerializer {
 
     private void appendTypeDefinitions(final JsonGenerator gen, final List<EdmTypeDefinition> typeDefinitions)
             throws IOException {
-        for (EdmTypeDefinition definition : typeDefinitions) {
-            gen.writeFieldName(getAliasedFullQualifiedName(definition, false));
-            gen.writeStartObject();
-            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER,
-                    CONSTANT_DEFINITION_REFERENCE + getFullQualifiedName(definition.getUnderlyingType(), false));
+        if(!typeDefinitions.isEmpty()) {
+            for (EdmTypeDefinition definition : typeDefinitions) {
+                gen.writeFieldName(getAliasedFullQualifiedName(definition, false));
+                gen.writeStartObject();
+                gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER,
+                        CONSTANT_DEFINITION_REFERENCE + getFullQualifiedName(definition.getUnderlyingType(), false));
 
-            if (definition.getMaxLength() != null) {
-                gen.writeNumberField(CONSTANT_MAX_LENGTH, definition.getMaxLength());
-            }
+                if (definition.getMaxLength() != null) {
+                    gen.writeNumberField(CONSTANT_MAX_LENGTH, definition.getMaxLength());
+                }
 
-            if (definition.getPrecision() != null) {
-                gen.writeNumberField(CONSTANT_PRECISION, definition.getPrecision());
-            }
+                if (definition.getPrecision() != null) {
+                    gen.writeNumberField(CONSTANT_PRECISION, definition.getPrecision());
+                }
 
-            if (definition.getScale() != null) {
-                gen.writeNumberField(CONSTANT_SCALE, definition.getScale());
+                if (definition.getScale() != null) {
+                    gen.writeNumberField(CONSTANT_SCALE, definition.getScale());
+                }
+                gen.writeEndObject();
             }
-            gen.writeEndObject();
         }
     }
 
@@ -229,7 +245,7 @@ public class MetadataDocumentJsonSerializer {
             } else {
                 returnTypeFqnString = getAliasedFullQualifiedName(returnType.getType(), returnType.isCollection());
             }
-            gen.writeStringField(CONSTANT_TYPE,returnTypeFqnString);
+            gen.writeStringField(CONSTANT_TYPE, returnTypeFqnString);
             appendReturnTypeFacets(gen, returnType);
             gen.writeEndObject();
         }
@@ -321,69 +337,75 @@ public class MetadataDocumentJsonSerializer {
 
     private void appendFunctionImports(final JsonGenerator gen, final List<EdmFunctionImport> functionImports,
                                        final String containerNamespace) throws IOException {
-        gen.writeFieldName(CONSTANT_FUNCTION_IMPORTS);
-        gen.writeStartObject();
-        for (EdmFunctionImport functionImport : functionImports) {
-            gen.writeFieldName(functionImport.getName());
+        if(!functionImports.isEmpty()) {
+            gen.writeFieldName(CONSTANT_FUNCTION_IMPORTS);
             gen.writeStartObject();
-            String functionFQNString;
-            FullQualifiedName functionFqn = functionImport.getFunctionFqn();
-            if (namespaceToAlias.get(functionFqn.getNamespace()) != null) {
-                functionFQNString = namespaceToAlias.get(functionFqn.getNamespace()) + "." + functionFqn.getName();
-            } else {
-                functionFQNString = functionFqn.getFullQualifiedNameAsString();
-            }
-            gen.writeStringField(CONSTANT_FUNCTION_IDENTIFIER,functionFQNString);
-            EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
-            if (returnedEntitySet != null) {
-                gen.writeStringField(CONSTANT_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
-            }
-            if (functionImport.isIncludeInServiceDocument()) {
-                gen.writeBooleanField(CONSTANT_IS_INCLUDED_IN_SERVICE_DOCUMENT,
-                        functionImport.isIncludeInServiceDocument());
+            for (EdmFunctionImport functionImport : functionImports) {
+                gen.writeFieldName(functionImport.getName());
+                gen.writeStartObject();
+                String functionFQNString;
+                FullQualifiedName functionFqn = functionImport.getFunctionFqn();
+                if (namespaceToAlias.get(functionFqn.getNamespace()) != null) {
+                    functionFQNString = namespaceToAlias.get(functionFqn.getNamespace()) + "." + functionFqn.getName();
+                } else {
+                    functionFQNString = functionFqn.getFullQualifiedNameAsString();
+                }
+                gen.writeStringField(CONSTANT_FUNCTION_IDENTIFIER, functionFQNString);
+                EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
+                if (returnedEntitySet != null) {
+                    gen.writeStringField(CONSTANT_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
+                }
+                if (functionImport.isIncludeInServiceDocument()) {
+                    gen.writeBooleanField(CONSTANT_IS_INCLUDED_IN_SERVICE_DOCUMENT,
+                            functionImport.isIncludeInServiceDocument());
+                }
+                gen.writeEndObject();
             }
             gen.writeEndObject();
         }
-        gen.writeEndObject();
     }
 
     private void appendActionImports(final JsonGenerator gen, final List<EdmActionImport> actionImports)
             throws IOException {
-        gen.writeFieldName(CONSTANT_ACTION_IMPORTS);
-        gen.writeStartObject();
-        for (EdmActionImport actionImport : actionImports) {
-            gen.writeFieldName(actionImport.getName());
+        if(!actionImports.isEmpty()) {
+            gen.writeFieldName(CONSTANT_ACTION_IMPORTS);
             gen.writeStartObject();
-            gen.writeStringField(CONSTANT_ACTION_IDENTIFIER,
-                    getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
+            for (EdmActionImport actionImport : actionImports) {
+                gen.writeFieldName(actionImport.getName());
+                gen.writeStartObject();
+                gen.writeStringField(CONSTANT_ACTION_IDENTIFIER,
+                        getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
+                gen.writeEndObject();
+            }
             gen.writeEndObject();
         }
-        gen.writeEndObject();
     }
 
     private void appendSingletons(final JsonGenerator gen, final List<EdmSingleton> singletons)
             throws IOException {
-        gen.writeFieldName(CONSTANT_SINGLETONS);
-        gen.writeStartObject();
-        for (EdmSingleton singleton : singletons) {
-            gen.writeFieldName(singleton.getName());
+        if(!singletons.isEmpty()) {
+            gen.writeFieldName(CONSTANT_SINGLETONS);
             gen.writeStartObject();
-            gen.writeStringField(CONSTANT_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
-            appendNavigationPropertyBindings(gen, singleton);
+            for (EdmSingleton singleton : singletons) {
+                gen.writeFieldName(singleton.getName());
+                gen.writeStartObject();
+                gen.writeStringField(CONSTANT_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
+                appendNavigationPropertyBindings(gen, singleton);
+                gen.writeEndObject();
+            }
             gen.writeEndObject();
         }
-        gen.writeEndObject();
     }
 
     private void appendNavigationPropertyBindings(final JsonGenerator gen, final EdmBindingTarget bindingTarget)
             throws IOException {
-        if (bindingTarget.getNavigationPropertyBindings() != null) {
+        if (!bindingTarget.getNavigationPropertyBindings().isEmpty()) {
             gen.writeFieldName(CONSTANT_NAVIGATION_PROPERTY_BINDINGS);
             gen.writeStartObject();
             for (EdmNavigationPropertyBinding binding : bindingTarget.getNavigationPropertyBindings()) {
                 gen.writeFieldName(binding.getPath());
                 gen.writeStartObject();
-                gen.writeStringField(CONSTANT_TARGET,binding.getTarget());
+                gen.writeStringField(CONSTANT_TARGET, binding.getTarget());
                 gen.writeEndObject();
             }
             gen.writeEndObject();
@@ -414,15 +436,20 @@ public class MetadataDocumentJsonSerializer {
             gen.writeFieldName(getFullQualifiedName(complexType, false));
             gen.writeStartObject();
             gen.writeStringField(CONSTANT_TYPE, CONSTANT_OBJECT);
+
             if (complexType.getBaseType() != null) {
-                gen.writeStringField(CONSTANT_BASE_TYPE,
-                        getAliasedFullQualifiedName(complexType.getBaseType(), false));
+                gen.writeFieldName(CONSTANT_BASE_TYPE_IDENTIFIER);
+                gen.writeStartArray();
+                gen.writeStartObject();
+                gen.writeStringField( CONSTANT_REFERENCE_IDENTIFIER , CONSTANT_DEFINITION_REFERENCE +
+                                getAliasedFullQualifiedName(complexType.getBaseType(), false));
+                gen.writeEndObject();
+                gen.writeEndArray();
             }
             if (complexType.isAbstract()) {
                 gen.writeBooleanField(CONSTANT_ABSTRACT, complexType.isAbstract());
             }
-            appendProperties(gen, complexType);
-            appendNavigationProperties(gen, complexType);
+            appendCombinedProperties(gen, complexType);
             gen.writeEndObject();
         }
     }
@@ -437,7 +464,13 @@ public class MetadataDocumentJsonSerializer {
                 gen.writeBooleanField(CONSTANT_HAS_STREAM, entityType.hasStream());
             }
             if (entityType.getBaseType() != null) {
-                gen.writeStringField(CONSTANT_BASE_TYPE, getAliasedFullQualifiedName(entityType.getBaseType(), false));
+                gen.writeFieldName(CONSTANT_BASE_TYPE_IDENTIFIER);
+                gen.writeStartArray();
+                gen.writeStartObject();
+                gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER , CONSTANT_DEFINITION_REFERENCE +
+                        getAliasedFullQualifiedName(entityType.getBaseType(), false));
+                gen.writeEndObject();
+                gen.writeEndArray();
             }
             if (entityType.isAbstract()) {
                 gen.writeBooleanField(CONSTANT_ABSTRACT, entityType.isAbstract());
@@ -446,102 +479,321 @@ public class MetadataDocumentJsonSerializer {
                 gen.writeBooleanField(CONSTANT_OPEN_TYPE,entityType.isOpenType());
             }
             appendKey(gen, entityType);
-            appendProperties(gen, entityType);
-            appendNavigationProperties(gen, entityType);
+            appendCombinedProperties(gen, entityType);
             gen.writeEndObject();
         }
+    }
+
+    private void appendCombinedProperties(final JsonGenerator gen, final EdmStructuredType type)
+            throws IOException{
+        gen.writeFieldName(CONSTANT_PROPERTIES);
+        gen.writeStartObject();
+        appendProperties(gen, type);
+        appendNavigationProperties(gen, type);
+        gen.writeEndObject();
     }
 
     private void appendNavigationProperties(final JsonGenerator gen, final EdmStructuredType type)
             throws IOException {
-        gen.writeFieldName(CONSTANT_PROPERTIES);
-        gen.writeStartObject();
         List<String> navigationPropertyNames = new ArrayList<String>(type.getNavigationPropertyNames());
         if (type.getBaseType() != null) {
             navigationPropertyNames.removeAll(type.getBaseType().getNavigationPropertyNames());
         }
-        for (String navigationPropertyName : navigationPropertyNames) {
-            gen.writeFieldName(navigationPropertyName);
-            gen.writeStartObject();
-            EdmNavigationProperty navigationProperty = type.getNavigationProperty(navigationPropertyName);
-            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
-                    getAliasedFullQualifiedName(navigationProperty.getType(), false));
-            if (navigationProperty.isNullable() == false) {
-                gen.writeBooleanField(CONSTANT_NULLABLE, navigationProperty.isNullable());
-            }
-            gen.writeFieldName(CONSTANT_RELATIONSHIP);
-            gen.writeStartObject();
-            if (navigationProperty.getPartner() != null) {
-                EdmNavigationProperty partner = navigationProperty.getPartner();
-                gen.writeStringField(CONSTANT_PARTNER, partner.getName());
-            }
-            if (navigationProperty.containsTarget()) {
-                gen.writeBooleanField(CONSTANT_CONTAINS_TARGET, navigationProperty.containsTarget());
-            }
-
-            if (navigationProperty.getReferentialConstraints() != null) {
-                gen.writeFieldName(CONSTANT_REFERENTIAL_CONSTRAINTS);
+        if(!navigationPropertyNames.isEmpty()) {
+            for (String navigationPropertyName : navigationPropertyNames) {
+                gen.writeFieldName(navigationPropertyName);
                 gen.writeStartObject();
-                for (EdmReferentialConstraint constraint : navigationProperty.getReferentialConstraints()) {
-                    gen.writeFieldName(constraint.getPropertyName());
+                EdmNavigationProperty navigationProperty = type.getNavigationProperty(navigationPropertyName);
+                if(!navigationProperty.isNullable()) {
+                    if (!navigationProperty.isCollection()) {
+                        gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                getAliasedFullQualifiedName(navigationProperty.getType(), false));
+                    } else {
+                        gen.writeStringField(CONSTANT_TYPE, CONSTANT_ARRAY);
+                        gen.writeFieldName(CONSTANT_ITEMS);
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                getAliasedFullQualifiedName(navigationProperty.getType(), false));
+                        gen.writeEndObject();
+                    }
+                }else{
+                    if (!navigationProperty.isCollection()) {
+                        gen.writeFieldName(CONSTANT_PROPERTY_BASE_TYPE_IDENTIFIER);
+                        gen.writeStartArray();
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                getAliasedFullQualifiedName(navigationProperty.getType(), false));
+                        gen.writeEndObject();
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_TYPE, null);
+                        gen.writeEndObject();
+                        gen.writeEndArray();
+                    }else{
+                        gen.writeStringField(CONSTANT_TYPE, CONSTANT_ARRAY);
+                        gen.writeFieldName(CONSTANT_ITEMS);
+                        gen.writeStartObject();
+                        gen.writeFieldName(CONSTANT_PROPERTY_BASE_TYPE_IDENTIFIER);
+                        gen.writeStartArray();
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                getAliasedFullQualifiedName(navigationProperty.getType(), false));
+                        gen.writeEndObject();
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_TYPE, null);
+                        gen.writeEndObject();
+                        gen.writeEndArray();
+                        gen.writeEndObject();
+                    }
+                }
+                gen.writeFieldName(CONSTANT_RELATIONSHIP);
+                gen.writeStartObject();
+                if (navigationProperty.getPartner() != null) {
+                    EdmNavigationProperty partner = navigationProperty.getPartner();
+                    gen.writeStringField(CONSTANT_PARTNER, partner.getName());
+                }
+                if (navigationProperty.containsTarget()) {
+                    gen.writeBooleanField(CONSTANT_CONTAINS_TARGET, navigationProperty.containsTarget());
+                }
+
+                if (navigationProperty.getReferentialConstraints() != null) {
+                    gen.writeFieldName(CONSTANT_REFERENTIAL_CONSTRAINTS);
                     gen.writeStartObject();
-                    gen.writeStringField(CONSTANT_REFERENCED_PROPERTY, constraint.getReferencedPropertyName());
+                    for (EdmReferentialConstraint constraint : navigationProperty.getReferentialConstraints()) {
+                        gen.writeFieldName(constraint.getPropertyName());
+                        gen.writeStartObject();
+                        gen.writeStringField(CONSTANT_REFERENCED_PROPERTY, constraint.getReferencedPropertyName());
+                        gen.writeEndObject();
+                    }
                     gen.writeEndObject();
                 }
                 gen.writeEndObject();
+                gen.writeEndObject();
             }
-            gen.writeEndObject();
-            gen.writeEndObject();
         }
-        gen.writeEndObject();
     }
 
     private void appendProperties(final JsonGenerator gen, final EdmStructuredType type) throws IOException {
-        gen.writeFieldName(CONSTANT_PROPERTIES);
-        gen.writeStartObject();
         List<String> propertyNames = new ArrayList<String>(type.getPropertyNames());
         if (type.getBaseType() != null) {
             propertyNames.removeAll(type.getBaseType().getPropertyNames());
         }
-        for (String propertyName : propertyNames) {
-            EdmProperty property = type.getStructuralProperty(propertyName);
-            gen.writeFieldName(propertyName);
-            gen.writeStartObject();
-            String fqnString;
-            if (property.isPrimitive()) {
-                fqnString = getFullQualifiedName(property.getType(), property.isCollection());
-            } else {
-                fqnString = getAliasedFullQualifiedName(property.getType(), property.isCollection());
-            }
-            gen.writeStringField(CONSTANT_TYPE,fqnString);
+        if(!propertyNames.isEmpty()) {
+            for (String propertyName : propertyNames) {
+                EdmProperty property = type.getStructuralProperty(propertyName);
+                gen.writeFieldName(propertyName);
+                gen.writeStartObject();
+                if(!property.isNullable()) {
+                    if (!property.isCollection()) {
+                        if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.String).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_STRING);
+                        }else if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Decimal).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_NUMBER);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Boolean).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_BOOLEAN);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName())||
+                        property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Duration).getName())||
+                                property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                        .getInstance(EdmPrimitiveTypeKind.TimeOfDay).getName())){
+                            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                    getAliasedFullQualifiedName(property.getType(), false));
+                        }else {
+                            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                    getAliasedFullQualifiedName(property.getType(), false));
+                        }
+                        appendPropertyFacets(gen,property);
+                    } else {
+                        gen.writeStringField(CONSTANT_TYPE, CONSTANT_ARRAY);
+                        gen.writeFieldName(CONSTANT_ITEMS);
+                        gen.writeStartObject();
+                        if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.String).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_STRING);
+                        }else if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Decimal).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_NUMBER);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Boolean).getName())){
+                            gen.writeStringField(CONSTANT_TYPE,CONSTANT_BOOLEAN);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName())||
+                                property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                        .getInstance(EdmPrimitiveTypeKind.Duration).getName())||
+                                property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                        .getInstance(EdmPrimitiveTypeKind.TimeOfDay).getName())){
+                            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                    getAliasedFullQualifiedName(property.getType(), false));
+                        }else {
+                            gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                    getAliasedFullQualifiedName(property.getType(), false));
+                        }
+                        appendPropertyFacets(gen,property);
+                        gen.writeEndObject();
+                    }
+                }else{
+                    if(!property.isCollection()){
+                        if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.String).getName())) {
+                            gen.writeFieldName(CONSTANT_TYPE);
+                            gen.writeStartArray();
+                            gen.writeString(CONSTANT_STRING);
+                            gen.writeNull();
+                            gen.writeEndArray();
+                            appendPropertyFacets(gen, property);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Boolean).getName())){
+                            gen.writeFieldName(CONSTANT_TYPE);
+                            gen.writeStartArray();
+                            gen.writeString(CONSTANT_BOOLEAN);
+                            gen.writeNull();
+                            gen.writeEndArray();
+                            appendPropertyFacets(gen,property);
+                        }else {
+                            gen.writeFieldName(CONSTANT_PROPERTY_BASE_TYPE_IDENTIFIER);
+                            gen.writeStartArray();
+                            if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                    .getInstance(EdmPrimitiveTypeKind.Decimal).getName())) {
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_TYPE, CONSTANT_NUMBER);
+                                appendPropertyFacets(gen, property);
+                                gen.writeEndObject();
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_TYPE,null);
+                                gen.writeEndObject();
+                            } else {
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                        getAliasedFullQualifiedName(property.getType(), false));
+                                gen.writeEndObject();
+                                gen.writeStartObject();
+                                if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                        .getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName()) ||
+                                        property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                                .getInstance(EdmPrimitiveTypeKind.Duration).getName()) ||
+                                        property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                                .getInstance(EdmPrimitiveTypeKind.TimeOfDay).getName())) {
+                                    if (property.getPrecision()==null||property.getPrecision() == 0) {
+                                        gen.writeStringField(CONSTANT_PATTERN_IDENTIFIER,
+                                                    CONSTANT_DATE_TIME_PATTERN_2);
+                                    } else {
+                                            gen.writeStringField(CONSTANT_PATTERN_IDENTIFIER,
+                                                    CONSTANT_DATE_TIME_PATTERN_1.replace("precision",
+                                                            String.valueOf(property.getPrecision())));
+                                    }
+                                } else {
+                                    gen.writeStringField(CONSTANT_TYPE, null);
+                                }
+                                appendPropertyFacets(gen, property);
+                                gen.writeEndObject();
+                            }
+                            gen.writeEndArray();
+                        }
 
-            if (property.isNullable() == false) {
-                gen.writeBooleanField(CONSTANT_NULLABLE, property.isNullable());
+                    }else{
+                        gen.writeStringField(CONSTANT_TYPE, CONSTANT_ARRAY);
+                        gen.writeFieldName(CONSTANT_ITEMS);
+                        gen.writeStartObject();
+                        if(property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.String).getName())) {
+                            gen.writeFieldName(CONSTANT_TYPE);
+                            gen.writeStartArray();
+                            gen.writeString(CONSTANT_STRING);
+                            gen.writeNull();
+                            gen.writeEndArray();
+                            appendPropertyFacets(gen, property);
+                        }else if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                .getInstance(EdmPrimitiveTypeKind.Boolean).getName())){
+                            gen.writeFieldName(CONSTANT_TYPE);
+                            gen.writeStartArray();
+                            gen.writeString(CONSTANT_BOOLEAN);
+                            gen.writeNull();
+                            gen.writeEndArray();
+                            appendPropertyFacets(gen,property);
+                        }else {
+                            gen.writeFieldName(CONSTANT_PROPERTY_BASE_TYPE_IDENTIFIER);
+                            gen.writeStartArray();
+                            if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                    .getInstance(EdmPrimitiveTypeKind.Decimal).getName())) {
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_TYPE, CONSTANT_NUMBER);
+                                appendPropertyFacets(gen, property);
+                                gen.writeEndObject();
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_TYPE,null);
+                                gen.writeEndObject();
+                            } else {
+                                gen.writeStartObject();
+                                gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER, CONSTANT_DEFINITION_REFERENCE +
+                                        getAliasedFullQualifiedName(property.getType(), false));
+                                gen.writeEndObject();
+                                gen.writeStartObject();
+                                if (property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                        .getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName()) ||
+                                        property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                                .getInstance(EdmPrimitiveTypeKind.Duration).getName()) ||
+                                        property.getType().getName().equals(EdmPrimitiveTypeFactory
+                                                .getInstance(EdmPrimitiveTypeKind.TimeOfDay).getName())) {
+                                    if(property.getPrecision()==null||property.getPrecision() == 0){
+                                        gen.writeStringField(CONSTANT_PATTERN_IDENTIFIER, CONSTANT_DATE_TIME_PATTERN_2);
+                                    }else{
+                                        gen.writeStringField(CONSTANT_PATTERN_IDENTIFIER,
+                                                CONSTANT_DATE_TIME_PATTERN_1.replace("precision",
+                                                        String.valueOf(property.getPrecision())));
+                                    }
+                                } else {
+                                    gen.writeStringField(CONSTANT_TYPE, null);
+                                }
+                                appendPropertyFacets(gen, property);
+                                gen.writeEndObject();
+                            }
+                            gen.writeEndArray();
+                        }
+                        gen.writeEndObject();
+                    }
+                }
+                gen.writeEndObject();
             }
-
-            if (property.isUnicode() == false) {
-                gen.writeBooleanField(CONSTANT_IS_UNICODE, property.isUnicode());
-            }
-
-            if (property.getDefaultValue() != null) {
-                gen.writeStringField(CONSTANT_DEFAULT_VALUE, property.getDefaultValue());
-            }
-
-            if (property.getMaxLength() != null) {
-                gen.writeNumberField(CONSTANT_MAX_LENGTH, property.getMaxLength());
-            }
-
-            if (property.getPrecision() != null) {
-                gen.writeNumberField(CONSTANT_PRECISION, property.getPrecision());
-            }
-
-            if (property.getScale() != null) {
-                gen.writeNumberField(CONSTANT_SCALE, property.getScale());
-            }
-            gen.writeEndObject();
         }
-        gen.writeEndObject();
     }
+
+    private void appendPropertyFacets(final JsonGenerator gen,EdmProperty property) throws IOException{
+        if (property.isUnicode() == false) {
+            gen.writeBooleanField(CONSTANT_IS_UNICODE, property.isUnicode());
+        }
+
+        if (property.getDefaultValue() != null) {
+            gen.writeStringField(CONSTANT_DEFAULT_VALUE, property.getDefaultValue());
+        }
+
+        if (property.getMaxLength() != null) {
+            gen.writeNumberField(CONSTANT_MAX_LENGTH, property.getMaxLength());
+        }
+
+        if (property.getScale() != null) {
+            gen.writeNumberField(CONSTANT_MULTIPLE_OF, getScale(property.getScale()));
+
+        }
+        if (property.getPrecision() != null) {
+            int scale;
+            if (property.getScale()!= null) {
+                scale=property.getScale();
+            }else{
+                scale=0;
+            }
+            int presicion = property.getPrecision();
+            if(presicion>scale) {
+                Double min = getMinimum(presicion, scale);
+                Double max = getMaximum(presicion, scale);
+                gen.writeNumberField(CONSTANT_MINIMUM, min);
+                gen.writeNumberField(CONSTANT_MAXIMUM, max);
+            }
+        }
+    }
+
 
     private void appendKey(final JsonGenerator gen, final EdmEntityType entityType) throws IOException {
         List<EdmKeyPropertyRef> keyPropertyRefs = entityType.getKeyPropertyRefs();
@@ -644,4 +896,33 @@ public class MetadataDocumentJsonSerializer {
         return isCollection ? "Collection(" + name + ")" : name;
     }
 
+    private Double getScale(int scale){
+        String temp;
+        if(scale!=0){
+            temp="1e-"+scale;
+        }else{
+            temp="1";
+        }
+        return Double.valueOf(temp);
+    }
+
+    private Double getMinimum(int precision , int scale){
+       return (-1)*getMaximum(precision,scale);
+    }
+
+    private Double getMaximum(int precision , int scale){
+        String temp="";
+        for(int counter=0;counter<(precision-scale);counter++){
+            temp=temp.concat("9");
+        }
+        if(scale==0){
+            return Double.valueOf(temp);
+        }else {
+            temp = temp.concat(".");
+            for (int counter = 0; counter < scale; counter++) {
+                temp = temp.concat("9");
+            }
+            return Double.valueOf(temp);
+        }
+    }
 }
