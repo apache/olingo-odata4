@@ -112,13 +112,13 @@ REF           : '$ref';
 COUNT         : '$count';
 
 //inlined query parameters ( e.g. $skip)
-TOP_I    : '$top' -> type(TOP);
-SKIP_I   : '$skip' -> type(SKIP);
-FILTER_I : '$filter' -> type(FILTER);
-ORDERBY_I: '$orderby' -> type(ORDERBY);
-SELECT_I : '$select' -> type(SELECT);
-EXPAND_I : '$expand' -> type(EXPAND);
-LEVELS_I : '$levels' -> type(LEVELS);
+TOP_I     : '$top' -> type(TOP);
+SKIP_QO_I : '$skip' -> type(SKIP_QO);
+FILTER_I  : '$filter' -> type(FILTER);
+ORDERBY_I : '$orderby' -> type(ORDERBY);
+SELECT_I  : '$select' -> type(SELECT);
+EXPAND_I  : '$expand' -> type(EXPAND);
+LEVELS_I  : '$levels' -> type(LEVELS);
 MAX: 'max';
 
 ROOT            : '$root/';
@@ -254,7 +254,7 @@ FILTER              : '$filter'     ->                    pushMode(DEFAULT_MODE)
 ORDERBY             : '$orderby'    ->                    pushMode(DEFAULT_MODE);
 EXPAND              : '$expand'     ->                    pushMode(DEFAULT_MODE);
 SELECT              : '$select'     ->                    pushMode(DEFAULT_MODE);
-SKIP                : '$skip'       ->                    pushMode(DEFAULT_MODE);
+SKIP_QO             : '$skip'       ->                    pushMode(DEFAULT_MODE);
 SKIPTOKEN           : '$skiptoken'  ->                    pushMode(MODE_SYSTEM_QUERY_REST);
 TOP                 : '$top'        ->                    pushMode(DEFAULT_MODE);
 LEVELS_q            : '$levels'     -> type(LEVELS),      pushMode(DEFAULT_MODE);

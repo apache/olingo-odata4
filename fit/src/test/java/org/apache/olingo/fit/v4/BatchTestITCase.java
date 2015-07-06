@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
@@ -239,7 +240,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void changesetWithReference() throws EdmPrimitiveTypeException {
+  public void changesetWithReference() throws Exception {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
@@ -262,17 +263,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     // add update request: link CustomerInfo(17) to the new customer
     final ClientEntity customerChanges = client.getObjectFactory().newEntity(order.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
-        "OrderDetails",
-        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
-        appendKeySegment(new HashMap<String, Object>() {
-          private static final long serialVersionUID = 3109256773218160485L;
-
-          {
-            put("OrderID", 7);
-            put("ProductID", 5);
-          }
-        }).build()));
-
+        "OrderDetails", new URI(testStaticServiceRootURL + "/OrderDetails(OrderID=7,ProductID=5)")));
+    
     final ODataEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
         URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
 
