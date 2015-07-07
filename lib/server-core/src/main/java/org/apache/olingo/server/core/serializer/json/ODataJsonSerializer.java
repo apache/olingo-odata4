@@ -91,8 +91,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
     try {
       buffer = new CircleStreamBuffer();
-      gen = new JsonFactory().createGenerator(buffer.getOutputStream())
-          .setPrettyPrinter(new DefaultPrettyPrinter());
+      gen = new JsonFactory().createGenerator(buffer.getOutputStream());
 
       new ServiceDocumentJsonSerializer(metadata, serviceRoot, isODataMetadataNone).writeServiceDocument(gen);
 

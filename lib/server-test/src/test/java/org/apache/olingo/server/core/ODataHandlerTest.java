@@ -112,8 +112,8 @@ public class ODataHandlerTest {
     assertNotNull(response.getContent());
     String doc = IOUtils.toString(response.getContent());
 
-    assertThat(doc, containsString("\"@odata.context\" : \"$metadata\""));
-    assertThat(doc, containsString("\"value\" :"));
+    assertThat(doc, containsString("\"@odata.context\":\"$metadata\""));
+    assertThat(doc, containsString("\"value\":"));
   }
 
   @Test
