@@ -99,7 +99,7 @@ public class OlingoOSGiTestSupport {
     protected Option olingoBaseConfig() {
         karafUrl = maven().groupId("org.apache.karaf").artifactId("apache-karaf").version(getKarafVersion())
             .type("tar.gz");
-        olingoUrl = maven().groupId("org.apache.olingo").artifactId("odata-karaf-feature").versionAsInProject()
+        olingoUrl = maven().groupId("org.apache.olingo").artifactId("odata-karaf-features").versionAsInProject()
             .type("xml").classifier("features");
         String localRepo = System.getProperty("localRepository");
         return composite(karafDistributionConfiguration()
