@@ -22,11 +22,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -45,14 +48,14 @@ public class BatchResponseSerializer {
 
   public InputStream serialize(final List<ODataResponsePart> responses, final String boundary)
       throws BatchSerializerException {
-    StringBuilder builder = createBody(responses, boundary);
+    BodyBuilder builder = createBody(responses, boundary);
 
-    return new ByteArrayInputStream(builder.toString().getBytes());
+    return new ByteArrayInputStream(builder.getContent());
   }
 
-  private StringBuilder createBody(final List<ODataResponsePart> batchResponses, final String boundary)
+  private BodyBuilder createBody(final List<ODataResponsePart> batchResponses, final String boundary)
       throws BatchSerializerException {
-    final StringBuilder builder = new StringBuilder();
+    final BodyBuilder builder = new BodyBuilder();
 
     for (final ODataResponsePart part : batchResponses) {
       builder.append(getDashBoundary(boundary));
@@ -68,7 +71,7 @@ public class BatchResponseSerializer {
     return builder;
   }
 
-  private void appendChangeSet(final ODataResponsePart part, final StringBuilder builder)
+  private void appendChangeSet(final ODataResponsePart part, final BodyBuilder builder)
       throws BatchSerializerException {
     final String changeSetBoundary = generateBoundary("changeset");
 
@@ -83,50 +86,27 @@ public class BatchResponseSerializer {
     builder.append(getCloseDelimiter(changeSetBoundary));
   }
 
-  private void appendBodyPart(final ODataResponse response, final StringBuilder builder, final boolean isChangeSet)
+  private void appendBodyPart(final ODataResponse response, final BodyBuilder builder, final boolean isChangeSet)
       throws BatchSerializerException {
-    byte[] body = getBody(response);
 
     appendBodyPartHeader(response, builder, isChangeSet);
     builder.append(CRLF);
 
     appendStatusLine(response, builder);
-    appendResponseHeader(response, body.length, builder);
+    Body body = new Body(response);
+    appendResponseHeader(response, body.getLength(), builder);
     builder.append(CRLF);
 
-    builder.append(new String(body));
+    builder.append(body);
     builder.append(CRLF);
   }
 
-  private byte[] getBody(final ODataResponse response) {
-    final InputStream content = response.getContent();
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-    if (content != null) {
-      byte[] buffer = new byte[BUFFER_SIZE];
-      int n;
-
-      try {
-        while ((n = content.read(buffer, 0, buffer.length)) != -1) {
-          out.write(buffer, 0, n);
-        }
-        out.flush();
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      }
-
-      return out.toByteArray();
-    } else {
-      return new byte[0];
-    }
-  }
-
-  private void appendChangeSetHeader(final StringBuilder builder, final String changeSetBoundary) {
+  private void appendChangeSetHeader(final BodyBuilder builder, final String changeSetBoundary) {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary="
         + changeSetBoundary, builder);
   }
 
-  private void appendHeader(final String name, final String value, final StringBuilder builder) {
+  private void appendHeader(final String name, final String value, final BodyBuilder builder) {
     builder.append(name)
         .append(COLON)
         .append(SP)
@@ -134,7 +114,7 @@ public class BatchResponseSerializer {
         .append(CRLF);
   }
 
-  private void appendStatusLine(final ODataResponse response, final StringBuilder builder) {
+  private void appendStatusLine(final ODataResponse response, final BodyBuilder builder) {
     builder.append("HTTP/1.1")
         .append(SP)
         .append(response.getStatusCode())
@@ -144,7 +124,7 @@ public class BatchResponseSerializer {
   }
 
   private void appendResponseHeader(final ODataResponse response, final int contentLength,
-      final StringBuilder builder) {
+      final BodyBuilder builder) {
     final Map<String, String> header = response.getHeaders();
 
     for (final String key : header.keySet()) {
@@ -157,7 +137,7 @@ public class BatchResponseSerializer {
     appendHeader(HttpHeader.CONTENT_LENGTH, "" + contentLength, builder);
   }
 
-  private void appendBodyPartHeader(final ODataResponse response, final StringBuilder builder,
+  private void appendBodyPartHeader(final ODataResponse response, final BodyBuilder builder,
       final boolean isChangeSet) throws BatchSerializerException {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, builder);
     appendHeader(BatchParserCommon.CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
@@ -181,5 +161,104 @@ public class BatchResponseSerializer {
 
   private String generateBoundary(final String value) {
     return value + "_" + UUID.randomUUID().toString();
+  }
+
+  private class BodyBuilder {
+    private final Charset CHARSET_UTF_8 = Charset.forName("utf-8");
+    private ByteBuffer buffer = ByteBuffer.allocate(8192);
+    private boolean isClosed = false;
+
+    public byte[] getContent() {
+      isClosed = true;
+      byte[] tmp = new byte[buffer.position()];
+      buffer.flip();
+      buffer.get(tmp, 0, buffer.limit());
+      return tmp;
+    }
+
+    public BodyBuilder append(String string) {
+      byte [] b = string.getBytes(CHARSET_UTF_8);
+      put(b);
+      return this;
+    }
+
+    private void put(byte[] b) {
+      if(isClosed) {
+        throw new RuntimeException("BodyBuilder is closed.");
+      }
+      if(buffer.remaining() < b.length) {
+        buffer.flip();
+        ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+        tmp.put(buffer);
+        buffer = tmp;
+      }
+      buffer.put(b);
+    }
+
+    public BodyBuilder append(int statusCode) {
+      return append(String.valueOf(statusCode));
+    }
+
+    public BodyBuilder append(Body body) {
+      put(body.getContent());
+      return this;
+    }
+
+    public String toString() {
+//      byte[] tmp = new byte[buffer.position()];
+//      buffer.get(tmp, 0, buffer.position());
+      return new String(buffer.array(), 0, buffer.position());
+    }
+  }
+
+  private class Body {
+    private final Charset CHARSET_DEFAULT = Charset.forName("utf-8");
+    private final byte[] content;
+    private Charset charset = CHARSET_DEFAULT;
+
+    public Body(ODataResponse response) {
+      this.content = getBody(response);
+      String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+      if(contentType != null) {
+        ContentType ct = ContentType.create(contentType);
+        if(ct != null) {
+          String usedCharset = ct.getParameter(ContentType.PARAMETER_CHARSET);
+          if(usedCharset != null) {
+            this.charset = Charset.forName(usedCharset);
+          }
+        }
+      }
+    }
+
+    public int getLength() {
+      return content.length;
+    }
+
+    private byte[] getBody(final ODataResponse response) {
+      final InputStream content = response.getContent();
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+      if (content != null) {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int n;
+
+        try {
+          while ((n = content.read(buffer, 0, buffer.length)) != -1) {
+            out.write(buffer, 0, n);
+          }
+          out.flush();
+        } catch (IOException e) {
+          throw new ODataRuntimeException(e);
+        }
+
+        return out.toByteArray();
+      } else {
+        return new byte[0];
+      }
+    }
+
+    public byte[] getContent() {
+      return content;
+    }
   }
 }

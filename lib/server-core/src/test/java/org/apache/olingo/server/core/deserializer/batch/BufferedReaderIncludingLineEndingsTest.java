@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import org.junit.Test;
@@ -71,7 +70,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   @Test
   public void testNoBytes() throws Exception {
     BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(new byte[0])));
+        new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(new byte[0]));
 
     assertNull(reader.readLine());
     assertNull(reader.readLine());
@@ -246,7 +245,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   @Test
   public void testReadMoreBufferCapacityThanCharacterAvailable() throws Exception {
     final String TEXT = "Foo";
-    char[] buffer = new char[20];
+    byte[] buffer = new byte[20];
 
     BufferedReaderIncludingLineEndings reader = create(TEXT);
     assertEquals(3, reader.read(buffer, 0, 20));
@@ -274,109 +273,15 @@ public class BufferedReaderIncludingLineEndingsTest {
     reader.close();
   }
 
-  @Test
-  public void testSkipToMuch() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
-
-    assertEquals(8, reader.skip(10)); // Test\r
-    assertEquals(null, reader.readLine());
-    reader.close();
-  }
-
-  @Test
-  public void testReadBufferOne() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
-
-    assertEquals('T', reader.read());
-    assertEquals('e', reader.read());
-    assertEquals('s', reader.read());
-    assertEquals('t', reader.read());
-    assertEquals('\r', reader.read());
-    assertEquals('1', reader.read());
-    assertEquals('2', reader.read());
-    assertEquals('3', reader.read());
-    assertEquals(-1, reader.read());
-    assertEquals(-1, reader.read());
-  }
-
-  @Test
-  public void testReadZeroBytes() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
-
-    char[] buffer = new char[3];
-    assertEquals(0, reader.read(buffer, 0, 0));
-    assertEquals('T', reader.read());
-    assertEquals(0, reader.read(buffer, 0, 0));
-    assertEquals("est\r", reader.readLine());
-    assertEquals("123", reader.readLine());
-
-    reader.close();
-  }
-
-  @Test
-  public void testRead() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
-
-    assertEquals('T', reader.read());
-    assertEquals('e', reader.read());
-    assertEquals('s', reader.read());
-    assertEquals('t', reader.read());
-    assertEquals('\r', reader.read());
-    assertEquals('1', reader.read());
-    assertEquals('2', reader.read());
-    assertEquals('3', reader.read());
-    assertEquals(-1, reader.read());
-    assertEquals(-1, reader.read());
-  }
-
-  @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailReadBufferAndOffsetBiggerThanBuffer() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create("");
-
-    final char[] buffer = new char[3];
-    reader.read(buffer, 1, 3);
-  }
-
-  @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailLengthNegative() throws Exception {
-    final char[] buffer = new char[3];
-    BufferedReaderIncludingLineEndings reader = create("123");
-
-    reader.read(buffer, 1, -2);
-    reader.close();
-  }
-
-  @Test(expected = IndexOutOfBoundsException.class)
-  public void testFailOffsetNegative() throws Exception {
-    final char[] buffer = new char[3];
-    BufferedReaderIncludingLineEndings reader = create("123");
-
-    reader.read(buffer, -1, 2);
-    reader.close();
-  }
-
-  @Test
-  public void testReadAndReadLine() throws Exception {
-    final String TEXT = "Test\r" +
-        "bar\n" +
-        "123\r\n" +
-        "foo";
-
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
-
-    assertEquals('T', reader.read());
-    assertEquals('e', reader.read());
-    assertEquals('s', reader.read());
-    assertEquals('t', reader.read());
-    assertEquals("\r", reader.readLine());
-    assertEquals("bar\n", reader.readLine());
-    assertEquals('1', reader.read());
-    assertEquals('2', reader.read());
-    assertEquals("3\r\n", reader.readLine());
-    assertEquals("foo", reader.readLine());
-    assertEquals(null, reader.readLine());
-    assertEquals(-1, reader.read());
-  }
+//  @Test
+//  public void testSkipToMuch() throws Exception {
+//    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
+//
+//    assertEquals(8, reader.skip(10)); // Test\r
+//    assertEquals(null, reader.readLine());
+//    reader.close();
+//  }
+//
 
   @Test
   public void testLineEqualsAndHashCode() {
@@ -389,22 +294,15 @@ public class BufferedReaderIncludingLineEndingsTest {
     assertTrue(l1.hashCode() != l3.hashCode());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testSkipNegative() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create("123");
-    reader.skip(-1);
-  }
+//  @Test(expected = IllegalArgumentException.class)
+//  public void testSkipNegative() throws Exception {
+//    BufferedReaderIncludingLineEndings reader = create("123");
+//    reader.skip(-1);
+//  }
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeZero() throws Exception {
     BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, 0);
-    reader.close();
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void testInputStreamIsNull() throws Exception {
-    // Same behaviour like BufferedReader
-    BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(null);
     reader.close();
   }
 
@@ -414,39 +312,27 @@ public class BufferedReaderIncludingLineEndingsTest {
     reader.close();
   }
 
-  @Test
-  public void testMarkSupoorted() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY);
+//  @Test
+//  public void testMarkSupoorted() throws Exception {
+//    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY);
+//
+//    assertEquals(false, reader.markSupported());
+//    reader.close();
+//  }
 
-    assertEquals(false, reader.markSupported());
-    reader.close();
-  }
-
-  @Test(expected = Exception.class)
-  public void testFailMark() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create("123");
-
-    reader.mark(1);
-  }
-
-  @Test(expected = Exception.class)
-  public void testFailReset() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create("123");
-
-    reader.reset();
-  }
-
-  @Test
-  public void testReady() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create("123\r123");
-    assertEquals(false, reader.ready());
-    assertEquals("123\r", reader.readLine());
-    assertEquals(true, reader.ready());
-    assertEquals("123", reader.readLine());
-    assertEquals(false, reader.ready());
-
-    reader.close();
-  }
+//  @Test(expected = Exception.class)
+//  public void testFailMark() throws Exception {
+//    BufferedReaderIncludingLineEndings reader = create("123");
+//
+//    reader.mark(1);
+//  }
+//
+//  @Test(expected = Exception.class)
+//  public void testFailReset() throws Exception {
+//    BufferedReaderIncludingLineEndings reader = create("123");
+//
+//    reader.reset();
+//  }
 
   @Test
   public void testToList() throws Exception {
@@ -469,13 +355,13 @@ public class BufferedReaderIncludingLineEndingsTest {
   }
 
   private BufferedReaderIncludingLineEndings create(final String inputString) throws Exception {
-    return new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(inputString
-        .getBytes("UTF-8"))));
+    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString
+        .getBytes("UTF-8")));
   }
 
   private BufferedReaderIncludingLineEndings create(final String inputString, final int bufferSize) throws Exception {
-    return new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(inputString
-        .getBytes("UTF-8"))), bufferSize);
+    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString
+        .getBytes("UTF-8")), bufferSize);
   }
 
 }

@@ -18,37 +18,41 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
+import org.apache.olingo.commons.api.format.ContentType;
+
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BufferedReaderIncludingLineEndings extends Reader {
-  private static final char CR = '\r';
-  private static final char LF = '\n';
+public class BufferedReaderIncludingLineEndings {
+  private static final byte CR = '\r';
+  private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
-  private Reader reader;
-  private char[] buffer;
+  public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private InputStream reader;
+  private byte[] buffer;
   private int offset = 0;
   private int limit = 0;
 
-  public BufferedReaderIncludingLineEndings(final Reader reader) {
+  public BufferedReaderIncludingLineEndings(final InputStream reader) {
     this(reader, BUFFER_SIZE);
   }
 
-  public BufferedReaderIncludingLineEndings(final Reader reader, final int bufferSize) {
+  public BufferedReaderIncludingLineEndings(final InputStream reader, final int bufferSize) {
     if (bufferSize <= 0) {
       throw new IllegalArgumentException("Buffer size must be greater than zero.");
     }
 
     this.reader = reader;
-    buffer = new char[bufferSize];
+    buffer = new byte[bufferSize];
   }
 
-  @Override
-  public int read(final char[] charBuffer, final int bufferOffset, final int length) throws IOException {
-    if ((bufferOffset + length) > charBuffer.length) {
+  public int read(final byte[] byteBuffer, final int bufferOffset, final int length) throws IOException {
+    if ((bufferOffset + length) > byteBuffer.length) {
       throw new IndexOutOfBoundsException("Buffer is too small");
     }
 
@@ -86,7 +90,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
         bytesToRead -= readByte;
 
         for (int i = 0; i < readByte; i++) {
-          charBuffer[currentOutputOffset++] = buffer[offset++];
+          byteBuffer[currentOutputOffset++] = buffer[offset++];
         }
       }
     }
@@ -103,6 +107,27 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     }
 
     return result;
+  }
+
+  private Charset currentCharset = DEFAULT_CHARSET;
+
+  private void updateCurrentCharset(String currentLine) {
+    if(currentLine != null) {
+      if(currentLine.startsWith("Content-Type:") && currentLine.contains(ContentType.PARAMETER_CHARSET)) {
+        currentLine = currentLine.substring(13, currentLine.length()-2).trim();
+        ContentType t = ContentType.parse(currentLine);
+        if(t != null) {
+          String charsetString = t.getParameter(ContentType.PARAMETER_CHARSET);
+          currentCharset = Charset.forName(charsetString);
+        }
+      } else if(isEndBoundary(currentLine)) {
+        currentCharset = Charset.forName("us-ascii");
+      }
+    }
+  }
+
+  private boolean isEndBoundary(String currentLine) {
+    return false;
   }
 
   public List<Line> toLineList() throws IOException {
@@ -122,7 +147,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
       return null;
     }
 
-    final StringBuilder stringBuffer = new StringBuilder();
+    ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
     boolean foundLineEnd = false; // EOF will be considered as line ending
 
     while (!foundLineEnd) {
@@ -134,8 +159,14 @@ public class BufferedReaderIncludingLineEndings extends Reader {
       }
 
       if (!foundLineEnd) {
-        char currentChar = buffer[offset++];
-        stringBuffer.append(currentChar);
+        byte currentChar = this.buffer[offset++];
+        if(!buffer.hasRemaining()) {
+          buffer.flip();
+          ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+          tmp.put(buffer);
+          buffer = tmp;
+        }
+        buffer.put(currentChar);
 
         if (currentChar == LF) {
           foundLineEnd = true;
@@ -149,44 +180,27 @@ public class BufferedReaderIncludingLineEndings extends Reader {
           }
 
           // Check if there is at least one character
-          if (limit != EOF && buffer[offset] == LF) {
-            stringBuffer.append(LF);
+          if (limit != EOF && this.buffer[offset] == LF) {
+            buffer.put(LF);
             offset++;
           }
         }
       }
     }
 
-    return (stringBuffer.length() == 0) ? null : stringBuffer.toString();
+    if(buffer.position() == 0) {
+      return null;
+    } else {
+      String currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
+      updateCurrentCharset(currentLine);
+      return currentLine;
+    }
   }
 
-  @Override
   public void close() throws IOException {
     reader.close();
   }
 
-  @Override
-  public boolean ready() throws IOException {
-    // Not EOF and buffer refill is not required
-    return !isEOF() && !(limit == offset);
-  }
-
-  @Override
-  public void reset() throws IOException {
-    throw new IOException("Reset is not supported");
-  }
-
-  @Override
-  public void mark(final int readAheadLimit) throws IOException {
-    throw new IOException("Mark is not supported");
-  }
-
-  @Override
-  public boolean markSupported() {
-    return false;
-  }
-
-  @Override
   public long skip(final long n) throws IOException {
     if (n == 0) {
       return 0;
@@ -229,5 +243,9 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     offset = 0;
 
     return limit;
+  }
+
+  private Charset getCurrentCharset() {
+    return currentCharset;
   }
 }

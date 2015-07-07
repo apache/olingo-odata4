@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +64,7 @@ public class BatchResponseSerializerTest {
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
+        new BufferedReaderIncludingLineEndings(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -79,6 +79,119 @@ public class BatchResponseSerializerTest {
     assertEquals("Content-Length: 15" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertEquals("Walter Winter" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 0" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertTrue(body.get(line++).contains("--batch_"));
+  }
+
+  @Test
+  public void testBatchResponseUmlauteUtf8() throws Exception {
+    final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE,
+            ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=UTF-8");
+    response.setContent(IOUtils.toInputStream("Wälter Winter" + CRLF));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    ODataResponse changeSetResponse = new ODataResponse();
+    changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
+    responses = new ArrayList<ODataResponse>(1);
+    responses.add(changeSetResponse);
+    parts.add(new ODataResponsePart(responses, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
+    final BufferedReaderIncludingLineEndings reader =
+            new BufferedReaderIncludingLineEndings(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(24, body.size());
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/json; charset=UTF-8" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 16" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("Wälter Winter" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 0" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertTrue(body.get(line++).contains("--batch_"));
+  }
+
+  @Test
+  public void testBatchResponseUmlauteIso() throws Exception {
+    final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE,
+            ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=iso-8859-1");
+    byte[] payload = ("Wälter Winter" + CRLF).getBytes("iso-8859-1");
+    response.setContent(new ByteArrayInputStream(payload));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    ODataResponse changeSetResponse = new ODataResponse();
+    changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
+    responses = new ArrayList<ODataResponse>(1);
+    responses.add(changeSetResponse);
+    parts.add(new ODataResponsePart(responses, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
+    final BufferedReaderIncludingLineEndings reader =
+            new BufferedReaderIncludingLineEndings(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(24, body.size());
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/json; charset=iso-8859-1" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 15" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("Wälter Winter" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--batch_"));
     assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
@@ -119,7 +232,7 @@ public class BatchResponseSerializerTest {
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
+        new BufferedReaderIncludingLineEndings(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -167,7 +280,7 @@ public class BatchResponseSerializerTest {
 
     assertNotNull(content);
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
+        new BufferedReaderIncludingLineEndings(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -202,7 +315,7 @@ public class BatchResponseSerializerTest {
     assertNotNull(content);
 
     final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(content));
+        new BufferedReaderIncludingLineEndings(content);
     final List<String> body = reader.toList();
     reader.close();
 
