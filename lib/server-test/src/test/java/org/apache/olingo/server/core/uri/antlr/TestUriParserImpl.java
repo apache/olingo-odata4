@@ -1018,7 +1018,7 @@ public class TestUriParserImpl {
 
   @Test(expected = UriValidationException.class)
   public void testMemberStartingWithCastFailOnValidation2() throws Exception {
-    testUri.run("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')",
+    testUri.run("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')",
         "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
@@ -1043,7 +1043,7 @@ public class TestUriParserImpl {
     .at(0).isType(PropertyProvider.nameDate);
 
     // on Complex collection
-    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')",
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')",
         "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
         .goFilter().root().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
@@ -1057,7 +1057,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testComplexTypeCastFollowingAsCollection() throws Exception {
-    testUri.run("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')/olingo.odata.test1.CTBase");
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')/olingo.odata.test1.CTBase");
   }
 
   @Test

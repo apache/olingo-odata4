@@ -139,6 +139,11 @@ public class ClientPrimitiveValueImpl extends AbstractClientValue implements Cli
       return setType(EdmPrimitiveTypeKind.Decimal).setValue(value).build();
     }
 
+    @Override
+    public ClientPrimitiveValue buildDuration(BigDecimal value) {
+      return setType(EdmPrimitiveTypeKind.Duration).setValue(value).build();
+    }
+
   }
 
   /**

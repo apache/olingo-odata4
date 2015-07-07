@@ -1636,7 +1636,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     uriParameter.setName(ctx.vODI.getText());
 
     if (ctx.vCOM != null) {
-      uriParameter.setText(ctx.vCOM.getText());
+      final String text = ctx.vCOM.getText();
+      uriParameter.setText("null".equals(text) ? null : text);
       uriParameter.setExpression((ExpressionImpl) ctx.vCOM.accept(this));
     } else {
       uriParameter.setAlias("@" + ctx.vALI.getText());

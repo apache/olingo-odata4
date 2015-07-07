@@ -122,7 +122,7 @@ public class DataProviderTest {
   public void esCompAllPrim() throws Exception {
     EntityCollection outSet = new DataProvider().readAll(esCompAllPrim);
 
-    Assert.assertEquals(3, outSet.getEntities().size());
+    Assert.assertEquals(4, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(1);
     Assert.assertTrue(complex.isComplex());

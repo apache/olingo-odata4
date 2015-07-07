@@ -18,13 +18,17 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.OData;
@@ -108,6 +112,78 @@ public class FunctionData {
               DataCreator.createPrimitive("PropertyString", "Test456")),
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 18),
               DataCreator.createPrimitive("PropertyString", "Test678")));
+    } else if(name.equals("UFCRTStringTwoParam")) {
+      final String parameterStringRaw = getParameterText("ParameterString", parameters);
+      final String parameterInt16Raw = getParameterText("ParameterInt16", parameters);
+      
+      // ParameterString is not provided
+      if(parameterStringRaw == null) {
+        return new Property(null, "value", ValueType.PRIMITIVE, null);
+      } else {
+        try {
+          EdmPrimitiveType edmInt16 = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+          EdmPrimitiveType edmString = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+          Short parameterInt16 =  edmInt16.valueOfString(parameterInt16Raw, null, null, null, null, null, Short.class);
+          String parameterString = edmString.fromUriLiteral(parameterStringRaw);
+          final StringBuilder builder = new StringBuilder();
+          
+          // if parameterInt16 <= 0 return an empty string
+          for(short i = parameterInt16; i > 0; i--) {
+            if(builder.length() != 0) {
+              builder.append(',');
+            }
+            builder.append('"');
+            builder.append(parameterString);
+            builder.append('"');
+          }
+          return new Property(null, "value", ValueType.PRIMITIVE, builder.toString());
+        } catch (EdmPrimitiveTypeException e) {
+          throw new DataProviderException("Invalid function parameter.");
+        }
+      }
+    } else if(name.equals("UFCRTCollCTTwoPrimTwoParam")) {
+      String parameterStringRaw = getParameterText("ParameterString", parameters);
+      String parameteInt16Raw = getParameterText("ParameterInt16", parameters);
+      EdmPrimitiveType edmInt16 = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+      EdmPrimitiveType edmString = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+      try {
+        Short parameterInt16 = edmInt16.valueOfString(parameteInt16Raw, null, null, null, null, null, Short.class);
+
+        if (parameterStringRaw == null) {
+          ComplexValue complexValue1 = new ComplexValue();
+          ComplexValue complexValue2 = new ComplexValue();
+          
+          complexValue1.getValue().add(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, 1));
+          complexValue1.getValue().add(new Property(null, "PropertyString", ValueType.PRIMITIVE, 
+              name + " int16 value: " + parameterInt16));
+          
+          complexValue2.getValue().add(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, 2));
+          complexValue2.getValue().add(new Property(null, "PropertyString", ValueType.PRIMITIVE,
+              name + "string value: null"));
+          
+          
+          return new Property(null, "value", ValueType.COLLECTION_COMPLEX, Arrays.asList(new ComplexValue[] {
+              complexValue1, complexValue2
+          }));
+        } else {
+          String parameterString = edmString.fromUriLiteral(parameterStringRaw);
+          List<ComplexValue> complexValues = new ArrayList<ComplexValue>();
+          short counter = 1;
+          
+          for(short i = parameterInt16; 0 < i; i--) {
+            ComplexValue complexValue = new ComplexValue();
+            complexValue.getValue().add(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, counter++));
+            complexValue.getValue().add(new Property(null, "PropertyString", ValueType.PRIMITIVE, 
+                name + " string value: " + parameterString));
+            complexValues.add(complexValue);
+          }
+          
+          return new Property(null, "value", ValueType.COLLECTION_COMPLEX, complexValues);
+        }
+      } catch (EdmPrimitiveTypeException e) {
+        throw new DataProviderException("Invalid function parameter");
+      }
+      
     } else {
       throw new DataProviderException("Function " + name + " is not yet implemented.");
     }

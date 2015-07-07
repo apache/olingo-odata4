@@ -20,6 +20,7 @@ package org.apache.olingo.server.tecsvc.data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +53,18 @@ public class ActionData {
     if ("UARTCollStringTwoParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
       Parameter paramDuration = parameters.get("ParameterDuration");
-      if (paramInt16 == null || paramDuration == null) {
-        throw new DataProviderException("Missing parameters for action: UARTCollStringTwoParam",
-            HttpStatusCode.BAD_REQUEST);
+      if ((paramInt16 == null || paramInt16.isNull()) || (paramDuration == null || paramDuration.isNull())) {
+        try {
+          String param16String = valueAsString(paramInt16, EdmPrimitiveTypeKind.Int16);
+          String paramDurationString = valueAsString(paramDuration, EdmPrimitiveTypeKind.Duration);
+          
+          return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(new String[] {
+              name + " int16 value: " + param16String,
+              name + " duration value: " + paramDurationString
+          }));
+        } catch(EdmPrimitiveTypeException e) {
+          throw new DataProviderException("EdmPrimitiveTypeException", e);
+        }
       }
       short loopCount = (Short) paramInt16.asPrimitive();
       BigDecimal duration = (BigDecimal) paramDuration.asPrimitive();
@@ -64,7 +74,7 @@ public class ActionData {
       for (int i = 0; i < loopCount; i++) {
         try {
           String value = primDuration.valueToString(duration, false, null, null, null, null);
-          collectionValues.add(value);
+          collectionValues.add(name + " duration value: " + value);
         } catch (EdmPrimitiveTypeException e) {
           throw new DataProviderException("EdmPrimitiveTypeException", e);
         }
@@ -73,6 +83,13 @@ public class ActionData {
       return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, collectionValues);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
+  }
+
+  private static <T> String valueAsString(final Parameter parameter, final EdmPrimitiveTypeKind kind) 
+      throws EdmPrimitiveTypeException {
+    return parameter == null ? "null" 
+         : OData.newInstance().createPrimitiveTypeInstance(kind)
+                              .valueToString(parameter.asPrimitive(), null, null, null, null, null);
   }
 
   protected static Property complexAction(final String name, final Map<String, Parameter> parameters)

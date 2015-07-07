@@ -698,7 +698,7 @@ public class DataCreator {
         createPrimitive("PropertyByte", (short) 255),
         createPrimitive("PropertyDate", getDateTime(2014, 12, 5, 0, 0, 0)),
         createPrimitive("PropertyDateTimeOffset", getTimestamp(2014, 12, 5, 8, 17, 45, 123456700)),
-        createPrimitive("PropertyDecimal", 17.98), 
+        createPrimitive("PropertyDecimal", BigDecimal.valueOf(17.98)), 
         createPrimitive("PropertySingle", 1.79000000E+20),
         createPrimitive("PropertyDouble", -1.7900000000000000E+02), 
         createPrimitive("PropertyDuration", BigDecimal.valueOf(6)),
@@ -710,7 +710,29 @@ public class DataCreator {
         createPrimitive("PropertyTimeOfDay", getTime(13, 27, 45))));
     entity.setETag("W/\"0\"");
     entityCollection.getEntities().add(entity);
-
+    
+    entity = new Entity()
+    .addProperty(createPrimitive("PropertyInt16", (short) -32768))
+    .addProperty(createComplex("PropertyComp", 
+      createPrimitive("PropertyString", null),
+      createPrimitive("PropertyBinary", null),
+      createPrimitive("PropertyBoolean", null), 
+      createPrimitive("PropertyByte", null),
+      createPrimitive("PropertyDate", null),
+      createPrimitive("PropertyDateTimeOffset", null),
+      createPrimitive("PropertyDecimal", null), 
+      createPrimitive("PropertySingle", null),
+      createPrimitive("PropertyDouble", null), 
+      createPrimitive("PropertyDuration", null),
+      createPrimitive("PropertyGuid", null), 
+      createPrimitive("PropertyInt16", null),
+      createPrimitive("PropertyInt32", null), 
+      createPrimitive("PropertyInt64", null),
+      createPrimitive("PropertySByte", null), 
+      createPrimitive("PropertyTimeOfDay", null)));
+  entity.setETag("W/\"-32768\"");
+  entityCollection.getEntities().add(entity);
+    
     return entityCollection;
   }
 

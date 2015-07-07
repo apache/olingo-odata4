@@ -39,6 +39,7 @@ import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -113,9 +114,9 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     ClientCollectionValue<ClientValue> valueArray = response.getBody().getCollectionValue();
     assertEquals(3, valueArray.size());
     Iterator<ClientValue> iterator = valueArray.iterator();
-    assertEquals("PT1S", iterator.next().asPrimitive().toValue());
-    assertEquals("PT2S", iterator.next().asPrimitive().toValue());
-    assertEquals("PT3S", iterator.next().asPrimitive().toValue());
+    assertEquals("UARTCollStringTwoParam duration value: PT1S", iterator.next().asPrimitive().toValue());
+    assertEquals("UARTCollStringTwoParam duration value: PT2S", iterator.next().asPrimitive().toValue());
+    assertEquals("UARTCollStringTwoParam duration value: PT3S", iterator.next().asPrimitive().toValue());
   }
 
   @Test
@@ -324,7 +325,47 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     assertEquals(location, response.getHeader(HttpHeader.LOCATION).iterator().next());
     assertEquals(location, response.getHeader(HttpHeader.ODATA_ENTITY_ID).iterator().next());
   }
+  
+  @Test
+  public void airtCollStringTwoParanNotNull() {
+    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
+                                     .appendActionCallSegment("AIRTCollStringTwoParam").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientObjectFactory of = getClient().getObjectFactory();
+    parameters.put("ParameterInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", of.newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
+    final ODataInvokeResponse<ClientProperty> response = getClient()
+        .getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters).execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    ClientCollectionValue<ClientValue> collectionValue = response.getBody().getCollectionValue().asCollection();
+    assertEquals(2, collectionValue.size());
+    final Iterator<ClientValue> iter = collectionValue.iterator();
+    
+    assertEquals("UARTCollStringTwoParam duration value: PT1S", iter.next().asPrimitive().toValue());
+    assertEquals("UARTCollStringTwoParam duration value: PT2S", iter.next().asPrimitive().toValue());
+  }
+  
+  @Test
+  public void airtCollStringTwoParanNull() {
+    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
+                                     .appendActionCallSegment("AIRTCollStringTwoParam").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientObjectFactory of = getClient().getObjectFactory();
+    parameters.put("ParameterInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", of.newPrimitiveValueBuilder().buildDuration(null));
+    final ODataInvokeResponse<ClientProperty> response = getClient()
+        .getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters).execute();
+    
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    ClientCollectionValue<ClientValue> collectionValue = response.getBody().getCollectionValue().asCollection();
+    assertEquals(2, collectionValue.size());
+    final Iterator<ClientValue> iter = collectionValue.iterator();
 
+    assertEquals("UARTCollStringTwoParam int16 value: 2", iter.next().asPrimitive().toValue());
+    assertEquals("UARTCollStringTwoParam duration value: null", iter.next().asPrimitive().toValue());
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();

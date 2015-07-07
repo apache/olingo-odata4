@@ -179,9 +179,9 @@ public class ODataJsonSerializerTest {
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.count\":3,\"value\":["
+        + "\"@odata.count\":4,\"value\":["
         + "{\"@odata.etag\":\"W/\\\"32767\\\"\","));
-    Assert.assertThat(resultString, CoreMatchers.endsWith("\"}}],"
+    Assert.assertThat(resultString, CoreMatchers.endsWith("}}],"
         + "\"@odata.nextLink\":\"/next\"}"));
 
     int count = 0;
@@ -189,7 +189,7 @@ public class ODataJsonSerializerTest {
     while ((index = resultString.indexOf("PropertyInt16\":", ++index)) > 0) {
       count++;
     }
-    Assert.assertEquals(6, count);
+    Assert.assertEquals(8, count);
   }
 
   @Test

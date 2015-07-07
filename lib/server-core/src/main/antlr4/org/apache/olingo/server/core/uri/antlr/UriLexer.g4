@@ -112,10 +112,10 @@ REF           : '$ref';
 COUNT         : '$count';
 
 //inlined query parameters ( e.g. $skip)
-TOP_I     : '$top' -> type(TOP);
-SKIP_QO_I : '$skip' -> type(SKIP_QO);
+TOP_I     : '$top'    -> type(TOP);
+SKIP_QO_I : '$skip'   -> type(SKIP_QO);
 FILTER_I  : '$filter' -> type(FILTER);
-ORDERBY_I : '$orderby' -> type(ORDERBY);
+ORDERBY_I : '$orderby'-> type(ORDERBY);
 SELECT_I  : '$select' -> type(SELECT);
 EXPAND_I  : '$expand' -> type(EXPAND);
 LEVELS_I  : '$levels' -> type(LEVELS);
