@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
@@ -32,6 +31,7 @@ import org.apache.olingo.client.api.communication.request.batch.ODataBatchReques
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
+import org.apache.olingo.commons.api.http.HttpHeader;
 
 public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataBatchResponse>
         implements AsyncBatchRequestWrapper {
@@ -91,19 +91,19 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
     }
 
     private void retrieveMonitorDetails(final ODataBatchResponse res) {
-      Collection<String> headers = res.getHeader(HeaderName.location.toString());
+      Collection<String> headers = res.getHeader(HttpHeader.LOCATION);
       if (headers == null || headers.isEmpty()) {
         throw new AsyncRequestException("Invalid async request response. Monitor URL not found");
       } else {
         this.location = URI.create(headers.iterator().next());
       }
 
-      headers = res.getHeader(HeaderName.retryAfter.toString());
+      headers = res.getHeader(HttpHeader.RETRY_AFTER);
       if (headers != null && !headers.isEmpty()) {
         this.retryAfter = Integer.parseInt(headers.iterator().next());
       }
 
-      headers = res.getHeader(HeaderName.preferenceApplied.toString());
+      headers = res.getHeader(HttpHeader.PREFERENCE_APPLIED);
       if (headers != null && !headers.isEmpty()) {
         for (String header : headers) {
           if (header.equalsIgnoreCase(new ODataPreferences().respondAsync())) {

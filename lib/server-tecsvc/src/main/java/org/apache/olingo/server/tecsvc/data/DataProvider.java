@@ -173,15 +173,25 @@ public class DataProvider {
     for (final String keyName : entityType.getKeyPredicateNames()) {
       final FullQualifiedName typeName = entityType.getProperty(keyName).getType().getFullQualifiedName();
       Object newValue = null;
-
-      if (EdmPrimitiveTypeKind.Int16.getFullQualifiedName().equals(typeName)
-          || EdmPrimitiveTypeKind.Int32.getFullQualifiedName().equals(typeName)
-          || EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
+      
+      if (EdmPrimitiveTypeKind.Int16.getFullQualifiedName().equals(typeName)) {
+         newValue = Short.valueOf((short) 1);
+         
+         while(!isFree(newValue, keyName, entities)) {
+           newValue = (short) (((Short) newValue) + 1);
+         }
+      } else if (EdmPrimitiveTypeKind.Int32.getFullQualifiedName().equals(typeName)) {
+        newValue = Integer.valueOf((short) 1);
+        
+        while(!isFree(newValue, keyName, entities)) {
+          newValue = ((Integer) newValue) + 1;
+        }
+      } else if(EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
         // Integer keys
-        newValue = Integer.valueOf(1);
+        newValue = Long.valueOf(1);
 
         while (!isFree(newValue, keyName, entities)) {
-          newValue = ((Integer) newValue) + 1;
+          newValue = (long) (((Long) newValue) + 1L);
         }
       } else if (EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(typeName)) {
         // String keys

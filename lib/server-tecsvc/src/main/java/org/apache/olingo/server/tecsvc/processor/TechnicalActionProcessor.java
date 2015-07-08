@@ -158,9 +158,12 @@ public class TechnicalActionProcessor extends TechnicalProcessor
             PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
       }
       if (entityResult.isCreated()) {
-        response.setHeader(HttpHeader.LOCATION,
-            request.getRawBaseUri() + '/'
-                + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entityResult.getEntity()));
+        final String location = request.getRawBaseUri() + '/'
+            + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entityResult.getEntity());
+        response.setHeader(HttpHeader.LOCATION, location);
+        if (returnPreference == Return.MINIMAL) {
+          response.setHeader(HttpHeader.ODATA_ENTITY_ID, location);
+        }
       }
       if (entityResult.getEntity().getETag() != null) {
         response.setHeader(HttpHeader.ETAG, entityResult.getEntity().getETag());

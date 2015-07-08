@@ -144,7 +144,7 @@ orderList           : vlOI+=orderByItem ( WSP* COMMA WSP* vlOI+=orderByItem )*;
 
 orderByItem         : vC=commonExpr ( WSP ( vA=ASC | vD=DESC ) )?;
 
-skip                : SKIP EQ INT;
+skip                : SKIP_QO EQ INT;
 top                 : TOP EQ INT;
 //format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS SLASH PCHARS);
 

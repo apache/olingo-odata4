@@ -274,6 +274,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
                 DeserializerException.MessageKeys.INVALID_NULL_PARAMETER, paramName);
           }
           parameter.setValue(ValueType.PRIMITIVE, null);
+          parameters.put(paramName, parameter);
+          node.remove(paramName);
         } else {
           Property consumePropertyNode =
               consumePropertyNode(edmParameter.getName(), edmParameter.getType(), edmParameter.isCollection(),
@@ -859,7 +861,6 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           throw new DeserializerException("Value must be an array", DeserializerException.MessageKeys.UNKNOWN_CONTENT);
         }
         tree.remove(Constants.VALUE);
-        // if this is value there can be only one property
         return DeserializerResultImpl.with().entityReferences(parsedValues).build();
       }
       if (tree.get(key) != null) {

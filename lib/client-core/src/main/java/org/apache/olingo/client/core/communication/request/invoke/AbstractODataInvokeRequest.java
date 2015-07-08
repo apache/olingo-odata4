@@ -96,9 +96,10 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
   }
 
   private String getActualFormat(final ContentType contentType) {
-    return ((ClientProperty.class.isAssignableFrom(reference) 
-        && contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML))
-        ? ContentType.APPLICATION_XML : contentType).toContentTypeString();
+    return (ClientProperty.class.isAssignableFrom(reference)
+        && (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) ?
+        ContentType.APPLICATION_XML : contentType).toContentTypeString();
   }
 
   @Override

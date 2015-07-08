@@ -54,13 +54,13 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   private final ODataDeserializer deserializer;
-
   private final ContentType contentType;
 
   public ClientODataDeserializerImpl(final boolean serverMode, final ContentType contentType) {
     this.contentType = contentType;
-    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
-        ContentType.APPLICATION_XML )) {
+    if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML)) {
       deserializer = new AtomDeserializer();
     } else {
       deserializer = new JsonDeserializer(serverMode);
@@ -127,10 +127,11 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {
     try {
-      return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML) ?
+      return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+          || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML) ?
           new AtomDeserializer().delta(input) :
           new JsonDeltaDeserializer(false).toDelta(input);
-    } catch (XMLStreamException e) {
+    } catch (final XMLStreamException e) {
       throw new ODataDeserializerException(e);
     } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);

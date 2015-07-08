@@ -142,12 +142,12 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrim"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMedia"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESMedia"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrimParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrimTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTTwoPrim"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollString"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTString"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESTwoKeyNavParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollCTNavFiveProp"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));
 
@@ -598,10 +598,10 @@ public class ContainerProvider {
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESMedia")
             .setIncludeInServiceDocument(true);
 
-      } else if (name.equals("FICRTCTTwoPrimParam")) {
+      } else if (name.equals("FICRTCTTwoPrimTwoParam")) {
         return new CsdlFunctionImport()
             .setName(name)
-            .setFunction(FunctionProvider.nameUFCRTCTTwoPrimParam)
+            .setFunction(FunctionProvider.nameUFCRTCTTwoPrimTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FICRTCTTwoPrim")) {
@@ -629,10 +629,10 @@ public class ContainerProvider {
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESTwoKeyNav")
             .setIncludeInServiceDocument(true);
 
-      } else if (name.equals("FICRTCollCTTwoPrimParam")) {
+      } else if (name.equals("FICRTCollCTTwoPrimTwoParam")) {
         return new CsdlFunctionImport()
             .setName(name)
-            .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrimParam)
+            .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrimTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FINRTCollCTNavFiveProp")) {

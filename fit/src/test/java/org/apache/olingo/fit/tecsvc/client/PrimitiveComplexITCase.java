@@ -33,7 +33,6 @@ import java.util.Iterator;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataPropertyUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
@@ -379,7 +378,7 @@ public class PrimitiveComplexITCase extends AbstractBaseTestITCase {
 
     final ODataValueUpdateResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
   }
 
   @Test

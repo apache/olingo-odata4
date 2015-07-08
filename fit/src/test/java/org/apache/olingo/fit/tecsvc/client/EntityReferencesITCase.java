@@ -984,6 +984,49 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     assertNull(responseGetESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
   }
   
+  @Test
+  public void testCreateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendRefSegment().build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceAddingRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testUpdateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendRefSegment()
+                                                     .build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testDeleteMissingNavigationProperty() {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendRefSegment()
+                                                     .build();
+    
+    try {
+      client.getCUDRequestFactory().getDeleteRequest(uri);
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
   private void sendRequest(final URI uri, final int count, final String... expected) {
     final ODataClient client = getClient();
     final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()

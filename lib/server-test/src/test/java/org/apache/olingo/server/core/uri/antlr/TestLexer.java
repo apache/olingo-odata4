@@ -69,9 +69,9 @@ public class TestLexer {
   public void testQueryOptionsTokens() {
 
     test.globalMode(UriLexer.MODE_QUERY);
-    test.run("$skip=1").isAllText("$skip=1").isType(UriLexer.SKIP);
-    test.run("$skip=2").isAllText("$skip=2").isType(UriLexer.SKIP);
-    test.run("$skip=123").isAllText("$skip=123").isType(UriLexer.SKIP);
+    test.run("$skip=1").isAllText("$skip=1").isType(UriLexer.SKIP_QO);
+    test.run("$skip=2").isAllText("$skip=2").isType(UriLexer.SKIP_QO);
+    test.run("$skip=123").isAllText("$skip=123").isType(UriLexer.SKIP_QO);
 
     test.run("$top=1").isAllText("$top=1").isType(UriLexer.TOP);
     test.run("$top=2").isAllText("$top=2").isType(UriLexer.TOP);
@@ -97,7 +97,34 @@ public class TestLexer {
     test.run("$search=ABC").isAllText("$search=ABC").isType(UriLexer.SEARCH);
     test.run("$search=\"A%20B%20C\"").isAllText("$search=\"A%20B%20C\"").isType(UriLexer.SEARCH);
   }
-
+  
+  @Test
+  public void testQueryOptionsDefaultMode() {
+    // First set query mode, than use expand(switches to default mode) and use nested system query options
+    test.globalMode(UriLexer.MODE_QUERY);
+    test.run("$expand=ABC($skip=1)").isAllText("$expand=ABC($skip=1)").at(4).isType(UriLexer.SKIP_QO);
+    test.run("$expand=ABC($skip=2)").isAllText("$expand=ABC($skip=2)").at(4).isType(UriLexer.SKIP_QO);
+    test.run("$expand=ABC($skip=123)").isAllText("$expand=ABC($skip=123)").at(4).isType(UriLexer.SKIP_QO);
+    
+    test.run("$expand=ABC($top=1)").isAllText("$expand=ABC($top=1)").at(4).isType(UriLexer.TOP);
+    test.run("$expand=ABC($top=2)").isAllText("$expand=ABC($top=2)").at(4).isType(UriLexer.TOP);
+    test.run("$expand=ABC($top=123)").isAllText("$expand=ABC($top=123)").at(4).isType(UriLexer.TOP);
+    
+    test.run("$expand=ABC($expand=DEF($skip=1))").isAllText("$expand=ABC($expand=DEF($skip=1))")
+                                                 .at(8).isType(UriLexer.SKIP_QO);
+    test.run("$expand=ABC($expand=DEF($skip=2))").isAllText("$expand=ABC($expand=DEF($skip=2))")
+                                                 .at(8).isType(UriLexer.SKIP_QO);
+    test.run("$expand=ABC($expand=DEF($skip=123))").isAllText("$expand=ABC($expand=DEF($skip=123))")
+                                                 .at(8).isType(UriLexer.SKIP_QO);
+    
+    test.run("$expand=ABC($expand=DEF($top=1))").isAllText("$expand=ABC($expand=DEF($top=1))")
+                                                .at(8).isType(UriLexer.TOP);
+    test.run("$expand=ABC($expand=DEF($top=2))").isAllText("$expand=ABC($expand=DEF($top=2))")
+                                                .at(8).isType(UriLexer.TOP);
+    test.run("$expand=ABC($expand=DEF($top=123))").isAllText("$expand=ABC($expand=DEF($top=123))")
+                                                  .at(8).isType(UriLexer.TOP);
+  }
+  
   // ;------------------------------------------------------------------------------
   // ; 4. Expressions
   // ;------------------------------------------------------------------------------

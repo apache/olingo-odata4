@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.commons.api.format;
 
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 class TypeUtil {
 
@@ -31,6 +33,16 @@ class TypeUtil {
   static final String PARAMETER_KEY_VALUE_SEPARATOR = "=";
   static final String TYPE_SUBTYPE_SEPARATOR = "/";
   static final String TYPE_SUBTYPE_WILDCARD = "*";
+
+  /** Creates a parameter map with predictable order. */
+  protected static Map<String, String> createParameterMap() {
+    return new TreeMap<String, String>(new Comparator<String>() {
+      @Override
+      public int compare(final String o1, final String o2) {
+        return o1.compareToIgnoreCase(o2);
+      }
+    });
+  }
 
   /**
    * Valid input are <code>;</code> separated <code>key=value</code> pairs
@@ -60,19 +72,23 @@ class TypeUtil {
     if (parameter.isEmpty()) {
       throw new IllegalArgumentException("An empty parameter is not allowed.");
     }
-    String[] keyValue = parameter.trim().split(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR);
-    if (keyValue.length != 2 || keyValue[0].isEmpty()) {
-      throw new IllegalArgumentException(
-          "Parameter '" + parameter + "' must have exactly one '" + TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR +
-              "' that separates the name and the value.");
+    String[] keyValue = parameter.trim().split(PARAMETER_KEY_VALUE_SEPARATOR);
+    if (keyValue.length != 2) {
+      throw new IllegalArgumentException("Parameter '" + parameter + "' must have exactly one '"
+          + PARAMETER_KEY_VALUE_SEPARATOR + "' that separates the name and the value.");
     }
+    validateParameterNameAndValue(keyValue[0], keyValue[1]);
     keyValue[0] = keyValue[0].toLowerCase(Locale.ENGLISH);
-    if (keyValue[0].indexOf(WHITESPACE_CHAR) >= 0) {
-      throw new IllegalArgumentException("Parameter name '" + keyValue[0] + "' contains whitespace.");
-    }
-    if (Character.isWhitespace(keyValue[1].charAt(0))) {
-      throw new IllegalArgumentException("Value of parameter '" + keyValue[0] + "' starts with whitespace.");
-    }
     return keyValue;
+  }
+
+  protected static void validateParameterNameAndValue(final String parameterName, final String parameterValue)
+      throws IllegalArgumentException {
+    if (parameterName == null || parameterName.isEmpty() || parameterName.indexOf(WHITESPACE_CHAR) >= 0) {
+      throw new IllegalArgumentException("Illegal parameter name '" + parameterName + "'.");
+    }
+    if (Character.isWhitespace(parameterValue.charAt(0))) {
+      throw new IllegalArgumentException("Value of parameter '" + parameterName + "' starts with whitespace.");
+    }
   }
 }

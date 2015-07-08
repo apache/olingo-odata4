@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
@@ -67,6 +67,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 public class BatchTestITCase extends AbstractTestITCase {
@@ -239,7 +240,7 @@ public class BatchTestITCase extends AbstractTestITCase {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void changesetWithReference() throws EdmPrimitiveTypeException {
+  public void changesetWithReference() throws Exception {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(testStaticServiceRootURL);
     request.setAccept(ACCEPT);
@@ -262,17 +263,8 @@ public class BatchTestITCase extends AbstractTestITCase {
     // add update request: link CustomerInfo(17) to the new customer
     final ClientEntity customerChanges = client.getObjectFactory().newEntity(order.getTypeName());
     customerChanges.addLink(client.getObjectFactory().newEntitySetNavigationLink(
-        "OrderDetails",
-        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("OrderDetails").
-        appendKeySegment(new HashMap<String, Object>() {
-          private static final long serialVersionUID = 3109256773218160485L;
-
-          {
-            put("OrderID", 7);
-            put("ProductID", 5);
-          }
-        }).build()));
-
+        "OrderDetails", new URI(testStaticServiceRootURL + "/OrderDetails(OrderID=7,ProductID=5)")));
+    
     final ODataEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
         URI.create("$" + createRequestRef), UpdateType.PATCH, customerChanges);
 
@@ -569,7 +561,7 @@ public class BatchTestITCase extends AbstractTestITCase {
     assertEquals(202, res.getStatusCode());
     assertEquals("Accepted", res.getStatusMessage());
 
-    final Collection<String> newMonitorLocation = res.getHeader(HeaderName.location);
+    final Collection<String> newMonitorLocation = res.getHeader(HttpHeader.LOCATION);
     if (newMonitorLocation != null && !newMonitorLocation.isEmpty()) {
       responseWrapper.forceNextMonitorCheck(URI.create(newMonitorLocation.iterator().next()));
       // .... now you can start again with isDone() and getODataResponse().

@@ -1705,6 +1705,14 @@ public class TestFullResourcePath {
         .isKeyPredicate(1, "PropertyString", "'3'")
         .n()
         .isFunction("BFCETBaseTwoKeyNavRTETTwoKeyNav");
+    
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=null)")
+           .isKind(UriInfoKind.resource).goPath()
+           .first()
+           .isFunctionImport("FICRTCollCTTwoPrimTwoParam")
+           .isFunction("UFCRTCollCTTwoPrimTwoParam")
+           .isParameter(0, "ParameterInt16", "1")
+           .isParameter(1, "ParameterString", null);
   }
 
   @Test
@@ -1817,11 +1825,11 @@ public class TestFullResourcePath {
 
   @Test
   public void runFunctionImpError() {
-    testUri.runEx("FICRTCollCTTwoPrimParam")
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    testUri.runEx("FICRTCollCTTwoPrimParam()")
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam()")
     .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
-    testUri.runEx("FICRTCollCTTwoPrimParam(invalidParam=2)")
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(invalidParam=2)")
     .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
   }
 
@@ -4606,11 +4614,11 @@ public class TestFullResourcePath {
     .goParameter(0).isLiteral("'Walldorf'")
     .root().left().goParameter(1).isLiteral("'Wall'");
 
-    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimParam(ParameterInt16=null,ParameterString=null)")
+    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null)")
     .goPath()
-    .isFunction("UFCRTCTTwoPrimParam")
-    .isParameter(0, "ParameterInt16", "null")
-    .isParameter(1, "ParameterString", "null");
+    .isFunction("UFCRTCTTwoPrimTwoParam")
+    .isParameter(0, "ParameterInt16", null)
+    .isParameter(1, "ParameterString", null);
 
     testFilter.runOnETAllPrim("PropertyBoolean eq true")
     .is("<<PropertyBoolean> eq <true>>")
@@ -5180,12 +5188,12 @@ public class TestFullResourcePath {
         .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     // type filter for complex double on entry
-    testUri.runEx("FICRTCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')"
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex double on collection
-    testUri.runEx("FICRTCollCTTwoPrimParam(ParameterInt16=1,ParameterString='2')"
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')"
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 

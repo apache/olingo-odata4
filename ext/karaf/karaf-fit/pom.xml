@@ -37,7 +37,7 @@
     <!-- Karaf features -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>odata-karaf-feature</artifactId>
+      <artifactId>odata-karaf-features</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>

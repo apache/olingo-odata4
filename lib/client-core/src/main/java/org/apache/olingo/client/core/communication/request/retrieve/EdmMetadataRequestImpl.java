@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -109,11 +108,6 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
     @Override
     public Collection<String> getHeader(final String name) {
-      return xmlMetadataResponse.getHeader(name);
-    }
-
-    @Override
-    public Collection<String> getHeader(final HeaderName name) {
       return xmlMetadataResponse.getHeader(name);
     }
 

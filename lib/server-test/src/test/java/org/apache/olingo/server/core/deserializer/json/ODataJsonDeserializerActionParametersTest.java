@@ -79,7 +79,21 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertNotNull(parameter);
     assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
-
+  
+  @Test
+  public void testParameterWithNullLiteral() throws Exception {
+    final Map<String, Parameter> parameters = deserialize("{\"ParameterInt16\":1,\"ParameterDuration\":null}", 
+        "UARTCollStringTwoParam");
+    assertNotNull(parameters);
+    assertEquals(2, parameters.size());
+    Parameter parameter = parameters.get("ParameterInt16");
+    assertNotNull(parameter);
+    assertEquals((short) 1, parameter.getValue());
+    parameter = parameters.get("ParameterDuration");
+    assertNotNull(parameter);
+    assertEquals(null, parameter.getValue());
+  }
+  
   @Test(expected = DeserializerException.class)
   public void bindingParameter() throws Exception {
     deserialize("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim");
@@ -109,7 +123,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
   public void wrongType() throws Exception {
     deserialize("{\"ParameterInt16\":\"42\"}", "UARTParam");
   }
-
+  
   private Map<String, Parameter> deserialize(final String input, final String actionName) throws DeserializerException {
     return OData.newInstance().createDeserializer(CONTENT_TYPE_JSON)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),

@@ -50,12 +50,12 @@ import org.apache.olingo.server.tecsvc.data.DataProvider;
  */
 public abstract class TechnicalProcessor implements Processor {
 
+  protected final DataProvider dataProvider;
   protected OData odata;
-  protected DataProvider dataProvider;
   protected ServiceMetadata serviceMetadata;
 
   protected TechnicalProcessor(final DataProvider dataProvider) {
-    this.dataProvider = dataProvider;
+    this(dataProvider, null);
   }
 
   protected TechnicalProcessor(final DataProvider dataProvider, final ServiceMetadata serviceMetadata) {
@@ -213,8 +213,9 @@ public abstract class TechnicalProcessor implements Processor {
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       navigationCount++;
     }
-
-    return (UriResourceNavigation) resourcePaths.get(--navigationCount);
+    
+    final UriResource lastSegment = resourcePaths.get(--navigationCount);
+    return (lastSegment instanceof UriResourceNavigation) ? (UriResourceNavigation) lastSegment : null;
   }
 
   private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {

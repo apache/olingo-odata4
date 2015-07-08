@@ -57,6 +57,8 @@ public interface ClientPrimitiveValue extends ClientValue {
     ClientPrimitiveValue buildBinary(byte[] value);
     
     ClientPrimitiveValue buildDecimal(BigDecimal value);
+    
+    ClientPrimitiveValue buildDuration(BigDecimal value);
   }
 
   EdmPrimitiveTypeKind getTypeKind();

@@ -20,7 +20,6 @@ package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.AsyncRequestFactory;
@@ -53,6 +52,7 @@ import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.format.ContentType;
 
 public class ODataClientImpl implements ODataClient {
@@ -95,7 +95,7 @@ public class ODataClientImpl implements ODataClient {
   public ODataWriter getWriter() {
     return writer;
   }
-  
+
   @Override
   public ODataServiceVersion getServiceVersion() {
     return ODataServiceVersion.V40;
@@ -104,8 +104,8 @@ public class ODataClientImpl implements ODataClient {
   @Override
   public ODataHeaders newVersionHeaders() {
     final ODataHeadersImpl odataHeaders = new ODataHeadersImpl();
-    odataHeaders.setHeader(HeaderName.odataMaxVersion, ODataServiceVersion.V40.toString());
-    odataHeaders.setHeader(HeaderName.odataVersion, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HttpHeader.ODATA_MAX_VERSION, ODataServiceVersion.V40.toString());
+    odataHeaders.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
     return odataHeaders;
   }
 
@@ -113,7 +113,7 @@ public class ODataClientImpl implements ODataClient {
   public URIBuilder newURIBuilder(final String serviceRoot) {
     return new URIBuilderImpl(getConfiguration(), serviceRoot);
   }
-  
+
   @Override
   public FilterFactory getFilterFactory() {
     return filterFactory;
@@ -131,10 +131,10 @@ public class ODataClientImpl implements ODataClient {
 
   @Override
   public ODataSerializer getSerializer(final ContentType contentType) {
-    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML, 
-                                    ContentType.APPLICATION_XML) ?  
-                                        new AtomSerializer() : new JsonSerializer(false, contentType);
-       
+    return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML) ?
+        new AtomSerializer() : new JsonSerializer(false, contentType);
   }
 
   @Override

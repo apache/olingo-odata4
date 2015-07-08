@@ -22,17 +22,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
+import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
@@ -220,6 +225,77 @@ public class FunctionImportITCase extends AbstractBaseTestITCase {
     assertEquals("UFCRTCTTwoPrim string value", response.getBody().toValue());
   }
 
+  @Test
+  public void testFICRTStringTwoParamNotNull() {
+    final Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("ParameterInt16", 3);
+    keys.put("ParameterString", "ab");
+
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendPropertySegment("FICRTStringTwoParam").appendKeySegment(keys).build());
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    assertEquals("\"ab\",\"ab\",\"ab\"", response.getBody().getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void testFICRTStringTwoParamNull() {
+    final Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("ParameterInt16", 1);
+
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendPropertySegment("FICRTStringTwoParam").appendKeySegment(keys).build());
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+  }
+  
+  @Test
+  public void testFICRTCollCTTwoPrimTwoParamNotNull() {
+    final Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("ParameterInt16", 2);
+    keys.put("ParameterString", "TestString");
+    
+   ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+       .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+           .appendEntitySetSegment("FICRTCollCTTwoPrimTwoParam").appendKeySegment(keys).build());
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    final ClientCollectionValue<ClientValue> collection = response.getBody().getCollectionValue().asCollection();
+    final Iterator<ClientValue> iter = collection.iterator();
+    
+    ClientComplexValue complexValue = iter.next().asComplex();
+    assertEquals(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals("UFCRTCollCTTwoPrimTwoParam string value: TestString", complexValue.get("PropertyString")
+                                                                                     .getPrimitiveValue().toValue());
+    complexValue = iter.next().asComplex();
+    assertEquals(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals("UFCRTCollCTTwoPrimTwoParam string value: TestString", complexValue.get("PropertyString")
+                                                                                     .getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void testFICRTCollCTTwoPrimTwoParamNull() {
+    final Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("ParameterInt16", 2);
+    keys.put("ParameterString", null);
+    
+   ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+       .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+           .appendEntitySetSegment("FICRTCollCTTwoPrimTwoParam").appendKeySegment(keys).build());
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    final ClientCollectionValue<ClientValue> collection = response.getBody().getCollectionValue().asCollection();
+    final Iterator<ClientValue> iter = collection.iterator();
+    
+    ClientComplexValue complexValue = iter.next().asComplex();
+    assertEquals(1, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals("UFCRTCollCTTwoPrimTwoParam int16 value: 2", complexValue.get("PropertyString")
+                                                                                     .getPrimitiveValue().toValue());
+    complexValue = iter.next().asComplex();
+    assertEquals(2, complexValue.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals("UFCRTCollCTTwoPrimTwoParamstring value: null", complexValue.get("PropertyString")
+                                                                                     .getPrimitiveValue().toValue());
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();

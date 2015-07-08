@@ -85,7 +85,8 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     this.contentType = contentType;
     this.osEntitySet = new ByteArrayOutputStream();
     
-    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
+    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
       namespaces = getAllElementAttributes(stream, "feed", osEntitySet);
     } else {
       namespaces = null;
@@ -103,14 +104,12 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
   @SuppressWarnings("unchecked")
+  @Override
   public boolean hasNext() {
     if (available && cached == null) {
-      if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC, ContentType.APPLICATION_ATOM_XML)) {
+      if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+          || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
         cached = nextAtomEntityFromEntitySet(stream, osEntitySet, namespaces);
       } else {
         cached = nextJSONEntityFromEntitySet(stream, osEntitySet);
@@ -131,9 +130,6 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     return available;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public E next() {
     if (hasNext()) {

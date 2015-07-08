@@ -58,10 +58,19 @@ public class TechnicalAsyncService {
   public static final String STATUS_MONITOR_TOKEN = "status";
 
 
-
-
   public <T extends Processor> AsyncProcessor<T> register(T processor, Class<T> processorInterface) {
     return new AsyncProcessor<T>(processor, processorInterface, this);
+  }
+
+  public static void updateHeader(ODataResponse response, HttpStatusCode status, String location) {
+    response.setStatusCode(status.getStatusCode());
+    response.setHeader(HttpHeader.LOCATION, location);
+    response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
+
+  }
+
+  public static void acceptedResponse(ODataResponse response, String location) {
+    updateHeader(response, HttpStatusCode.ACCEPTED, location);
   }
 
 

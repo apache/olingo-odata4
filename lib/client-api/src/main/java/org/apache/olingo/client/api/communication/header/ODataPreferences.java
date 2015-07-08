@@ -28,7 +28,7 @@ public class ODataPreferences {
   /**
    * <code>Prefer</code> header, return content.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnContent() {
     return PreferenceNames.returnContent.toString();
@@ -37,14 +37,16 @@ public class ODataPreferences {
   /**
    * <code>Prefer</code> header, return no content.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnNoContent() {
     return PreferenceNames.returnNoContent.toString();
   }
 
   /**
-   * @see HeaderName#dataServiceUrlConventions
+   * Gets the value of the non-standard preference that the URL should follow the convention
+   * that keys are formatted as separate segments.
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String keyAsSegment() {
     return PreferenceNames.keyAsSegment.toString();
@@ -64,7 +66,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String allowEntityReferences() {
@@ -127,7 +129,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String callback(final String url) {
@@ -148,7 +150,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String continueOnError() {
@@ -195,7 +197,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String includeAnnotations(final String value) {
@@ -228,7 +230,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String maxPageSize(final int size) {
@@ -253,7 +255,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String trackChanges() {
@@ -288,7 +290,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String respondAsync() {
@@ -308,7 +310,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String wait(final int value) {
@@ -338,7 +340,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String returnMinimal() {
@@ -368,7 +370,7 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String returnRepresentation() {

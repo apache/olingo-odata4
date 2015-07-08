@@ -179,9 +179,9 @@ public class ODataJsonSerializerTest {
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#ESCompAllPrim\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.count\":3,\"value\":["
+        + "\"@odata.count\":4,\"value\":["
         + "{\"@odata.etag\":\"W/\\\"32767\\\"\","));
-    Assert.assertThat(resultString, CoreMatchers.endsWith("\"}}],"
+    Assert.assertThat(resultString, CoreMatchers.endsWith("}}],"
         + "\"@odata.nextLink\":\"/next\"}"));
 
     int count = 0;
@@ -189,7 +189,7 @@ public class ODataJsonSerializerTest {
     while ((index = resultString.indexOf("PropertyInt16\":", ++index)) > 0) {
       count++;
     }
-    Assert.assertEquals(6, count);
+    Assert.assertEquals(8, count);
   }
 
   @Test
@@ -384,7 +384,8 @@ public class ODataJsonSerializerTest {
         + "\"CollPropertyBoolean\":[true,null,false],\"CollPropertyByte\":[50,null,249],"
         + "\"CollPropertySByte\":[-120,null,126],\"CollPropertyInt16\":[1000,null,30112],"
         + "\"CollPropertyInt32\":[23232323,null,10000001],\"CollPropertyInt64\":[929292929292,null,444444444444],"
-        + "\"CollPropertySingle\":[1790,null,3210],\"CollPropertyDouble\":[-17900,null,3210],\"CollPropertyDecimal\":"
+        + "\"CollPropertySingle\":[1790.0,null,3210.0],\"CollPropertyDouble\":[-17900.0,null,3210.0]," 
+        + "\"CollPropertyDecimal\":"
         + "[12,null,1234],\"CollPropertyBinary\":[\"q83v\",null,\"VGeJ\"],\"CollPropertyDate\":"
         + "[\"1958-12-03\",null,\"2013-06-25\"],\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",null,"
         + "\"1948-02-17T09:09:09Z\"],\"CollPropertyDuration\":[\"PT13S\",null,\"PT1H0S\"],\"CollPropertyGuid\":"
@@ -793,7 +794,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#$ref\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.id\":\"ESAllPrim(32767)\"}",
         resultString);
   }
@@ -822,7 +822,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"@odata.id\":\"ESAllPrim(32767)\"},"
         + "{\"@odata.id\":\"ESAllPrim(-32768)\"},"
         + "{\"@odata.id\":\"ESAllPrim(0)\"}]}",
@@ -843,7 +842,6 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
     Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[]}", resultString);
   }
 
@@ -1046,7 +1044,6 @@ public class ODataJsonSerializerTest {
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
         + "\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
         + "\"@odata.nextLink\":\"/next\"}"));

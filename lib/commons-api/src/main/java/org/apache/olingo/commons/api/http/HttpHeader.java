@@ -165,23 +165,15 @@ public interface HttpHeader {
    */
   public static final String SET_COOKIE = "Set-Cookie";
 
-  /**
-   * non standard header
-   */
+  /** Non standard header. */
   public static final String X_HTTP_METHOD = "X-HTTP-Method";
-
-  /**
-   * non standard header
-   */
+  /** Non standard header. */
   public static final String X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
 
-  /**
-   * OData Custom Header
-   */
+  /** Custom Header defined in the OData standard. */
   public static final String ODATA_VERSION = "OData-Version";
-
-  /**
-   * OData Custom Header
-   */
+  /** Custom Header defined in the OData standard. */
   public static final String ODATA_MAX_VERSION = "OData-MaxVersion";
+  /** Custom Header defined in the OData standard. */
+  public static final String ODATA_ENTITY_ID = "OData-EntityID";
 }

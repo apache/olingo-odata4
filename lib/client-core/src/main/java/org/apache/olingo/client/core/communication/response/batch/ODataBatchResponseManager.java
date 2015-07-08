@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
@@ -34,6 +33,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineI
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
 
       // search for boundary
       batchBoundary = ODataBatchUtilities.getBoundaryFromHeader(
-              res.getHeader(HeaderName.contentType));
+          res.getHeader(HttpHeader.CONTENT_TYPE));
       LOG.debug("Retrieved batch response bondary '{}'", batchBoundary);
     } catch (IOException e) {
       LOG.error("Error parsing batch response", e);
@@ -104,17 +104,11 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public boolean hasNext() {
     return (current == null || continueOnError || !current.isBreaking()) && expectedItemsIterator.hasNext();
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public ODataBatchResponseItem next() {
     if (current != null) {
@@ -138,7 +132,7 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
 
         current.initFromBatch(
                 batchLineIterator,
-                ODataBatchUtilities.getBoundaryFromHeader(nextItemHeaders.get(HeaderName.contentType.toString())));
+                ODataBatchUtilities.getBoundaryFromHeader(nextItemHeaders.get(HttpHeader.CONTENT_TYPE)));
         break;
 
       case RETRIEVE:

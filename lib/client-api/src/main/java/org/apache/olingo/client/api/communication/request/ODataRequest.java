@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -75,7 +74,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#accept
+   * @see org.apache.olingo.commons.api.http.HttpHeader#ACCEPT
    */
   ODataRequest setAccept(final String value);
 
@@ -83,7 +82,7 @@ public interface ODataRequest {
    * Gets <tt>Accept</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#accept
+   * @see org.apache.olingo.commons.api.http.HttpHeader#ACCEPT
    */
   String getAccept();
 
@@ -92,7 +91,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifMatch
+   * @see org.apache.olingo.commons.api.http.HttpHeader#IF_MATCH
    */
   ODataRequest setIfMatch(final String value);
 
@@ -100,7 +99,7 @@ public interface ODataRequest {
    * Gets <tt>If-Match</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifMatch
+   * @see org.apache.olingo.commons.api.http.HttpHeader#IF_MATCH
    */
   String getIfMatch();
 
@@ -109,7 +108,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifNoneMatch
+   * @see org.apache.olingo.commons.api.http.HttpHeader#IF_NONE_MATCH
    */
   ODataRequest setIfNoneMatch(final String value);
 
@@ -117,7 +116,7 @@ public interface ODataRequest {
    * Gets <tt>If-None-Match</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#ifNoneMatch
+   * @see org.apache.olingo.commons.api.http.HttpHeader#IF_NONE_MATCH
    */
   String getIfNoneMatch();
 
@@ -126,7 +125,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   ODataRequest setPrefer(final String value);
 
@@ -134,7 +133,7 @@ public interface ODataRequest {
    * Gets <tt>Prefer</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   String getPrefer();
 
@@ -143,7 +142,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#contentType
+   * @see org.apache.olingo.commons.api.http.HttpHeader#CONTENT_TYPE
    */
   ODataRequest setContentType(final String value);
 
@@ -151,7 +150,7 @@ public interface ODataRequest {
    * Gets <tt>contentType</tt> OData request header.
    *
    * @return header value.
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#contentType
+   * @see org.apache.olingo.commons.api.http.HttpHeader#CONTENT_TYPE
    */
   String getContentType();
 
@@ -160,7 +159,7 @@ public interface ODataRequest {
    *
    * @param value header value.
    * @return current object
-   * @see org.apache.olingo.client.api.communication.header.HeaderName#xHttpMethod
+   * @see org.apache.olingo.commons.api.http.HttpHeader#X_HTTP_METHOD
    */
   ODataRequest setXHTTPMethod(final String value);
 
@@ -172,16 +171,6 @@ public interface ODataRequest {
    * @return current object
    */
   ODataRequest addCustomHeader(final String name, final String value);
-
-  /**
-   * Adds a custom OData request header. The method fails in case of the header name is not supported by the current
-   * working version.
-   *
-   * @param name header name.
-   * @param value header value.
-   * @return current object
-   */
-  ODataRequest addCustomHeader(final HeaderName name, final String value);
 
   /**
    * Gets byte array representation of the full request header.

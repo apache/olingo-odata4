@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
@@ -39,6 +38,7 @@ import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 public class AuthBatchTestITCase extends AbstractTestITCase {
@@ -70,7 +70,7 @@ public class AuthBatchTestITCase extends AbstractTestITCase {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(baseURL);
     request.setAccept(ACCEPT.toContentTypeString());
     request.addCustomHeader("User-Agent", "Apache Olingo OData Client");
-    request.addCustomHeader(HeaderName.acceptCharset, "UTF-8");
+    request.addCustomHeader(HttpHeader.ACCEPT_CHARSET, "UTF-8");
 
     final BatchManager streamManager = request.payloadManager();
 

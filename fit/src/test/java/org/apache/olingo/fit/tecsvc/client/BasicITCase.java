@@ -38,7 +38,6 @@ import java.util.List;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -84,18 +83,18 @@ import org.junit.Test;
 
 public class BasicITCase extends AbstractBaseTestITCase {
   
-  private static final String CONTENT_TYPE_JSON_IEEE754_COMPATIBLE = "application/json;odata.metadata=minimal;" 
-                                                                   + "IEEE754Compatible=true";
+  private static final String CONTENT_TYPE_JSON_IEEE754_COMPATIBLE =
+      ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true").toContentTypeString();
   private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ET_ALL_PRIM_NAME = "ETAllPrim";
   private static final FullQualifiedName ET_ALL_PRIM = new FullQualifiedName(SERVICE_NAMESPACE, ET_ALL_PRIM_NAME);
-  
+
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_INT64 = "PropertyInt64";
   private static final String PROPERTY_DECIMAL = "PropertyDecimal";
   private static final String PROPERTY_COMP_ALL_PRIM = "PropertyCompAllPrim";
   private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
-  
+
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   private static final String ES_ALL_PRIM = "ESAllPrim";
   private static final String ES_TWO_PRIM = "ESTwoPrim";
@@ -434,8 +433,10 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
-    assertEquals(SERVICE_URI + "/ESTwoPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    final String location = SERVICE_URI + "/ESTwoPrim(1)";
+    assertEquals(location, response.getHeader(HttpHeader.LOCATION).iterator().next());
+    assertEquals(location, response.getHeader(HttpHeader.ODATA_ENTITY_ID).iterator().next());
   }
 
   @Test
@@ -715,7 +716,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("return=representation", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=representation", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     assertTrue(response.getBody().getProperty("PropertyString").hasNullValue());
     assertEquals(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
@@ -862,7 +863,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     request.setPrefer(getClient().newPreferences().returnMinimal());
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HeaderName.preferenceApplied).iterator().next());
+    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     final ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory()
@@ -1291,7 +1292,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     
     assertEquals(BigDecimal.valueOf(34), response.getBody().getPrimitiveValue().toValue());
   }
-  
+
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();

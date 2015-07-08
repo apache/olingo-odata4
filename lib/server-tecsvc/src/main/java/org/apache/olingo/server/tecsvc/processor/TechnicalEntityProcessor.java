@@ -185,6 +185,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       expand = deserializerResult.getExpandTree();
     }
 
+    final String location = request.getRawBaseUri() + '/'
+        + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity);
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, expand, null)
@@ -193,13 +195,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     } else {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+      response.setHeader(HttpHeader.ODATA_ENTITY_ID, location);
     }
     if (returnPreference != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().returnRepresentation(returnPreference).build().toValueString());
     }
-    response.setHeader(HttpHeader.LOCATION,
-        request.getRawBaseUri() + '/' + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity));
+    response.setHeader(HttpHeader.LOCATION, location);
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
     }
@@ -337,6 +339,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo, true);
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    ensureNavigationPropertyNotNull(navigationProperty);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
         request.getRawBaseUri());
 
@@ -357,6 +360,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Entity entity = readEntity(uriInfo, true);
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
+    ensureNavigationPropertyNotNull(navigationProperty);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
             request.getRawBaseUri());
 
@@ -369,7 +373,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final UriResourceNavigation lastNavigation = getLastNavigation(uriInfo);
     final IdOption idOption = uriInfo.getIdOption();
-
+    
+    ensureNavigationPropertyNotNull(lastNavigation);
     if (lastNavigation.isCollection() && idOption == null) {
       throw new ODataApplicationException("Id system query option must be provided",
           HttpStatusCode.BAD_REQUEST.getStatusCode(),
@@ -406,10 +411,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       AsyncProcessor<EntityProcessor> asyncProcessor = asyncService.register(processor, EntityProcessor.class);
       asyncProcessor.prepareFor().readEntity(request, response, uriInfo, requestedFormat);
       String location = asyncProcessor.processAsync();
-      //
-      response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
-      response.setHeader(HttpHeader.LOCATION, location);
-      response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
+      TechnicalAsyncService.acceptedResponse(response, location);
       //
       return;
     }
@@ -453,6 +455,21 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   private void readEntityCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestedContentType, final boolean isReference)
       throws ODataApplicationException, ODataLibraryException {
+    //
+    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+      TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
+      TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
+      processor.init(odata, serviceMetadata);
+      AsyncProcessor<EntityCollectionProcessor> asyncProcessor =
+          asyncService.register(processor, EntityCollectionProcessor.class);
+      asyncProcessor.prepareFor().readEntityCollection(request, response, uriInfo, requestedContentType);
+      String location = asyncProcessor.processAsync();
+      TechnicalAsyncService.acceptedResponse(response, location);
+      //
+      return;
+    }
+    //
+
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EdmEntityType edmEntityType = edmEntitySet == null ?
         (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()
@@ -572,5 +589,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .selectList(odata.createUriHelper().buildContextURLSelectList(entityType, expand, select))
         .suffix(isSingleEntity && entitySet != null ? Suffix.ENTITY : null);
     return builder.build();
+  }
+  
+  private void ensureNavigationPropertyNotNull(final UriResourceNavigation navigationProperty)
+      throws ODataApplicationException {
+    if(navigationProperty == null) {
+      throw new ODataApplicationException("Missing navigation segment", HttpStatusCode.BAD_REQUEST.getStatusCode(),
+          Locale.ROOT);
+    }
   }
 }

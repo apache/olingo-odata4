@@ -146,8 +146,8 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollStringTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollString));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTAllPrimTwoParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrimParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrimParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrimTwoParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrimTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETMedia));
