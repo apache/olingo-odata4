@@ -18,18 +18,6 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.Assert;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -41,9 +29,9 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -54,13 +42,25 @@ import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
 import org.junit.Test;
 
+import java.net.URI;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public final class AsyncSupportITCase extends AbstractBaseTestITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
+  private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   public static final int SLEEP_TIMEOUT_IN_MS = 100;
 
   @Test
-  public void testReadEntity() throws Exception {
+  public void readEntity() throws Exception {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
@@ -104,7 +104,7 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testReadEntitySet() throws Exception {
+  public void readEntitySet() throws Exception {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
@@ -142,29 +142,17 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     assertNotNull(first.getODataResponse());
     ODataResponse firstResponse = first.getODataResponse();
     assertEquals(200, firstResponse.getStatusCode());
-    ResWrap<Entity> entity = getClient().getDeserializer(ContentType.APPLICATION_JSON)
-        .toEntity(firstResponse.getRawResponse());
-    assertEquals(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
-    assertEquals("First Resource - positive values", entity.getPayload().getProperty("PropertyString").asPrimitive());
+    ResWrap<EntityCollection> firWrap = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+        .toEntitySet(firstResponse.getRawResponse());
+    EntityCollection firstResponseEntitySet = firWrap.getPayload();
+    assertEquals(3, firstResponseEntitySet.getEntities().size());
+    Entity firstResponseEntity = firstResponseEntitySet.getEntities().get(0);
+    assertEquals(32767, firstResponseEntity.getProperty("PropertyInt16").asPrimitive());
+    assertEquals("First Resource - positive values", firstResponseEntity.getProperty("PropertyString").asPrimitive());
   }
-
-  private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {
-    List<ClientEntity> entities = entitySet.getEntities();
-    for (ClientEntity entity : entities) {
-      ClientProperty ep = entity.getProperty("PropertyInt16");
-      if(ep != null) {
-        assertEquals(value, ep.getPrimitiveValue().toValue());
-        return;
-      }
-    }
-    fail("Entity with property '" + property +
-        "' and value '" + value + "' not found in entitySet '" + entitySet + "'");
-  }
-
-  private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
 
   @Test
-  public void testCreateEntity() throws Exception {
+  public void createEntity() throws Exception {
     ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM).build();
@@ -182,8 +170,19 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
+    createRequest.addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
     assertNotNull(createRequest);
-    final ODataEntityCreateResponse<ClientEntity> createResponse = createRequest.execute();
+    AsyncResponseWrapper<ODataResponse> asyncResponse =
+        client.getAsyncRequestFactory().getAsyncRequestWrapper(createRequest).execute();
+
+    assertTrue(asyncResponse.isPreferenceApplied());
+    assertFalse(asyncResponse.isDone());
+
+    waitTillDone(asyncResponse, 10);
+
+    @SuppressWarnings("unchecked")
+    final ODataEntityCreateResponse<ClientEntity> createResponse =
+        (ODataEntityCreateResponse<ClientEntity>) asyncResponse.getODataResponse();
 
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), createResponse.getStatusCode());
     assertEquals(SERVICE_URI + "/ESAllPrim(1)", createResponse.getHeader(HttpHeader.LOCATION).iterator().next());
@@ -194,39 +193,21 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     assertEquals(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());    //
-
-
-//    // first async request
-//    ODataRequest re1 = getClient().getRetrieveRequestFactory()
-//        .getEntityRequest(uri)
-//        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
-//    AsyncResponseWrapper<ODataResponse> first = client.getAsyncRequestFactory().getAsyncRequestWrapper(re1).execute();
-//
-//    assertTrue(first.isPreferenceApplied());
-//
-//    // second async request
-//    ODataRequest re2 = getClient().getRetrieveRequestFactory()
-//        .getEntityRequest(uri)
-//        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
-//    AsyncResponseWrapper<ODataResponse> second = client.getAsyncRequestFactory().getAsyncRequestWrapper(re2).execute();
-//    assertTrue(second.isPreferenceApplied());
-//
-//    // get result of first async request
-//    assertFalse(first.isDone());
-//
-//    waitTillDone(first, 2);
-//    assertTrue(first.isDone());
-//
-//    assertNotNull(first.getODataResponse());
-//    ODataResponse firstResponse = first.getODataResponse();
-//    assertEquals(200, firstResponse.getStatusCode());
-//    ResWrap<Entity> entity = getClient().getDeserializer(ContentType.APPLICATION_JSON)
-//        .toEntity(firstResponse.getRawResponse());
-//    assertEquals(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
-//    assertEquals("First Resource - positive values", entity.getPayload().getProperty("PropertyString").asPrimitive());
+    assertNull(property2.getPrimitiveValue());
   }
 
+  private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {
+    List<ClientEntity> entities = entitySet.getEntities();
+    for (ClientEntity entity : entities) {
+      ClientProperty ep = entity.getProperty("PropertyInt16");
+      if(ep != null) {
+        assertEquals(value, ep.getPrimitiveValue().toValue());
+        return;
+      }
+    }
+    fail("Entity with property '" + property +
+        "' and value '" + value + "' not found in entitySet '" + entitySet + "'");
+  }
 
   private void waitTillDone(AsyncResponseWrapper async, int maxWaitInSeconds) throws InterruptedException {
     int waitCounter = maxWaitInSeconds * 1000;

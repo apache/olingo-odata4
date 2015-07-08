@@ -155,9 +155,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       asyncProcessor.prepareFor().createEntity(request, response, uriInfo, requestFormat, responseFormat);
       String location = asyncProcessor.processAsync();
       //
-      response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
-      response.setHeader(HttpHeader.LOCATION, location);
-      response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
+      TechnicalAsyncService.acceptedResponse(response, location);
       //
       return;
     }

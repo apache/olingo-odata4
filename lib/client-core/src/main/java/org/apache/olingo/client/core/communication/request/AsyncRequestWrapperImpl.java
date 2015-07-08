@@ -27,7 +27,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.api.ODataClient;
@@ -91,6 +93,14 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.httpClient = _httpClient;
 
     this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(method, this.uri);
+
+    if(request instanceof HttpEntityEnclosingRequestBase) {
+      if(odataRequest instanceof AbstractODataBasicRequest) {
+        AbstractODataBasicRequest br = (AbstractODataBasicRequest) odataRequest;
+        HttpEntityEnclosingRequestBase httpRequest = ((HttpEntityEnclosingRequestBase) request);
+        httpRequest.setEntity(new InputStreamEntity(br.getPayload(), -1));
+      }
+    }
   }
 
   @Override
