@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.debug.DebugResponseHelper;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -143,4 +144,12 @@ public abstract class OData {
    * It can be used in Processor implementations.
    */
   public abstract Preferences createPreferences(Collection<String> preferHeaders);
+
+  /**
+   * This method creates a DebugResponseHelper for the given debugFormat. If the format is not supported no
+   * exception is thrown. Instead we give back the implementation for the json format.
+   * @param debugFormat to be used.
+   * @return a debug response serializer
+   */
+  public abstract DebugResponseHelper createDebugResponseHelper(String debugFormat);
 }

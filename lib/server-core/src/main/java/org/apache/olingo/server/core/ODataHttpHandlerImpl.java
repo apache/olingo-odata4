@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,6 +40,7 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -51,7 +52,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
-  private ODataHandler handler;
+  private final ODataHandler handler;
+  private DebugSupport debugSupport;
   private int split = 0;
 
   public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
@@ -60,6 +62,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   @Override
   public void process(final HttpServletRequest request, final HttpServletResponse response) {
+    Exception exception = null;
     ODataRequest odRequest = null;
     ODataResponse odResponse;
     try {
@@ -68,10 +71,25 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       odResponse = handler.process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
+      exception = e;
       odResponse = handleException(odRequest, e);
     }
 
+    if (debugSupport != null) {
+      String debugFormat = getDebugQueryParameter(request);
+      if (debugFormat != null) {
+        // TODO: Should we be more careful here with response assignement in order to not loose the original response?
+        // TODO: How should we react to exceptions here?
+        odResponse = debugSupport.createDebugResponse(debugFormat, odRequest, odResponse, exception);
+      }
+    }
+
     convertToHttp(response, odResponse);
+  }
+
+  private String getDebugQueryParameter(HttpServletRequest request) {
+    // TODO Auto-generated method stub
+    return "";
   }
 
   @Override
@@ -132,7 +150,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   private ODataRequest fillODataRequest(final ODataRequest odRequest, final HttpServletRequest httpRequest,
       final int split)
-          throws ODataLibraryException {
+      throws ODataLibraryException {
     try {
       odRequest.setBody(httpRequest.getInputStream());
       extractHeaders(odRequest, httpRequest);
@@ -243,9 +261,14 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   public void register(final CustomContentTypeSupport customContentTypeSupport) {
     handler.register(customContentTypeSupport);
   }
-  
+
   @Override
   public void register(final CustomETagSupport customConcurrencyControlSupport) {
     handler.register(customConcurrencyControlSupport);
+  }
+
+  @Override
+  public void register(final DebugSupport debugSupport) {
+    this.debugSupport = debugSupport;
   }
 }

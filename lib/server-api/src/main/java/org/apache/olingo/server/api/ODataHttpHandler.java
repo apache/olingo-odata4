@@ -21,6 +21,7 @@ package org.apache.olingo.server.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -65,5 +66,11 @@ public interface ODataHttpHandler {
    * @param customETagSupport
    */
   void register(CustomETagSupport customConcurrencyControlSupport);
+
+  /**
+   * Register the debug support handler
+   * @param debugSupport
+   */
+  void register(DebugSupport debugSupport);
 
 }
