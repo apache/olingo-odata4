@@ -18,6 +18,14 @@
  */
 package org.apache.olingo.server.tecsvc.async;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataRequest;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.processor.Processor;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,41 +43,41 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataLibraryException;
-import org.apache.olingo.server.api.ODataRequest;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.processor.Processor;
-
+/**
+ * Async processor "wraps" an Processor (or subclass of) to provide asynchronous support functionality
+ * in combination with the TechnicalAsyncService.
+ *
+ * @param <T> "wrapped" Processor
+ */
 public class AsyncProcessor<T extends Processor> {
-    private final MyInvocationHandler handler;
-    private final TechnicalAsyncService service;
-    private final T proxyProcessor;
-    private String location;
-    private String preferHeader;
+  private final ProcessorInvocationHandler handler;
+  private final TechnicalAsyncService service;
+  private final T proxyProcessor;
+  private String location;
+  private String preferHeader;
 
-  private static class MyInvocationHandler implements InvocationHandler {
+  /**
+   * InvocationHandler which is used as proxy for the Processor method.
+   */
+  private static class ProcessorInvocationHandler implements InvocationHandler {
     private final Object wrappedInstance;
     private Method invokeMethod;
     private Object[] invokeParameters;
+    private ODataResponse processResponse;
 
-    public MyInvocationHandler(Object wrappedInstance) {
+    public ProcessorInvocationHandler(Object wrappedInstance) {
       this.wrappedInstance = wrappedInstance;
     }
 
     @Override
     public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-      if(Processor.class.isAssignableFrom(method.getDeclaringClass())) {
+      if (Processor.class.isAssignableFrom(method.getDeclaringClass())) {
         invokeMethod = method;
         invokeParameters = objects;
       }
 
       return null;
     }
-
-    ODataResponse processResponse;
 
     public Object process() throws InvocationTargetException, IllegalAccessException {
       processResponse = new ODataResponse();
@@ -82,7 +90,7 @@ public class AsyncProcessor<T extends Processor> {
     }
 
     public <P> void replaceInvokeParameter(P replacement) {
-      if(replacement == null) {
+      if (replacement == null) {
         return;
       }
 
@@ -97,80 +105,106 @@ public class AsyncProcessor<T extends Processor> {
       invokeParameters = copy.toArray();
     }
 
-
     public ODataResponse getProcessResponse() {
       return processResponse;
+    }
+
+    Object getWrappedInstance() {
+      return this.wrappedInstance;
     }
   }
 
 
   public AsyncProcessor(T processor, Class<T> processorInterface, TechnicalAsyncService service) {
-      Class<? extends Processor> aClass = processor.getClass();
-      Class[] interfaces = aClass.getInterfaces();
-      handler = new MyInvocationHandler(processor);
-      Object proxyInstance = Proxy.newProxyInstance(aClass.getClassLoader(), interfaces, handler);
-      proxyProcessor = processorInterface.cast(proxyInstance);
-      this.service = service;
-    }
+    Class<? extends Processor> aClass = processor.getClass();
+    Class[] interfaces = aClass.getInterfaces();
+    handler = new ProcessorInvocationHandler(processor);
+    Object proxyInstance = Proxy.newProxyInstance(aClass.getClassLoader(), interfaces, handler);
+    proxyProcessor = processorInterface.cast(proxyInstance);
+    this.service = service;
+  }
 
-    public T prepareFor() {
-      return proxyProcessor;
-    }
+  public T prepareFor() {
+    return proxyProcessor;
+  }
 
-    public ODataRequest getRequest() {
-      return getParameter(ODataRequest.class);
-    }
+  public ODataRequest getRequest() {
+    return getParameter(ODataRequest.class);
+  }
 
-    public ODataResponse getResponse() {
-      return getParameter(ODataResponse.class);
-    }
+  public ODataResponse getResponse() {
+    return getParameter(ODataResponse.class);
+  }
 
-    public ODataResponse getProcessResponse() {
-      return handler.getProcessResponse();
-    }
+  public ODataResponse getProcessResponse() {
+    return handler.getProcessResponse();
+  }
 
-    private <P> P getParameter(Class<P> parameterClass) {
-      for (Object parameter : handler.getInvokeParameters()) {
-        if (parameter != null && parameterClass == parameter.getClass()) {
-          return parameterClass.cast(parameter);
-        }
+  private <P> P getParameter(Class<P> parameterClass) {
+    for (Object parameter : handler.getInvokeParameters()) {
+      if (parameter != null && parameterClass == parameter.getClass()) {
+        return parameterClass.cast(parameter);
       }
-      return null;
     }
+    return null;
+  }
 
-    public String processAsync() throws ODataApplicationException, ODataLibraryException {
-      preferHeader = getRequest().getHeader(HttpHeader.PREFER);
-      ODataRequest request = copyRequest(getRequest());
-      handler.replaceInvokeParameter(request);
-      handler.replaceInvokeParameter(new ODataResponse());
-      return service.processAsynchronous(this);
-    }
+  public String getPreferHeader() {
+    return preferHeader;
+  }
 
-    Object process() throws InvocationTargetException, IllegalAccessException {
-      return handler.process();
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    private ODataRequest copyRequest(ODataRequest request) throws ODataApplicationException {
-      ODataRequest req = new ODataRequest();
-      req.setBody(copyRequestBody(request));
-      req.setMethod(request.getMethod());
-      req.setRawBaseUri(request.getRawBaseUri());
-      req.setRawODataPath(request.getRawODataPath());
-      req.setRawQueryPath(request.getRawQueryPath());
-      req.setRawRequestUri(request.getRawRequestUri());
-      req.setRawServiceResolutionUri(request.getRawServiceResolutionUri());
+  public Class<?> getProcessorClass() {
+    return handler.getWrappedInstance().getClass();
+  }
 
-      for (Map.Entry<String, List<String>> header : request.getAllHeaders().entrySet()) {
-        if(HttpHeader.PREFER.toLowerCase().equals(
-                header.getKey().toLowerCase())) {
-          preferHeader = header.getValue().get(0);
-        } else {
-          req.addHeader(header.getKey(), header.getValue());
-        }
+  /**
+   * Start the asynchronous processing and returns the id for this process
+   *
+   * @return the id for this process
+   * @throws ODataApplicationException
+   * @throws ODataLibraryException
+   */
+  public String processAsync() throws ODataApplicationException, ODataLibraryException {
+    preferHeader = getRequest().getHeader(HttpHeader.PREFER);
+    ODataRequest request = copyRequest(getRequest());
+    handler.replaceInvokeParameter(request);
+    handler.replaceInvokeParameter(new ODataResponse());
+    return service.processAsynchronous(this);
+  }
+
+  Object process() throws InvocationTargetException, IllegalAccessException {
+    return handler.process();
+  }
+
+  void setLocation(String loc) {
+    this.location = loc;
+  }
+
+  private ODataRequest copyRequest(ODataRequest request) throws ODataApplicationException {
+    ODataRequest req = new ODataRequest();
+    req.setBody(copyRequestBody(request));
+    req.setMethod(request.getMethod());
+    req.setRawBaseUri(request.getRawBaseUri());
+    req.setRawODataPath(request.getRawODataPath());
+    req.setRawQueryPath(request.getRawQueryPath());
+    req.setRawRequestUri(request.getRawRequestUri());
+    req.setRawServiceResolutionUri(request.getRawServiceResolutionUri());
+
+    for (Map.Entry<String, List<String>> header : request.getAllHeaders().entrySet()) {
+      if (HttpHeader.PREFER.toLowerCase().equals(
+          header.getKey().toLowerCase())) {
+        preferHeader = header.getValue().get(0);
+      } else {
+        req.addHeader(header.getKey(), header.getValue());
       }
-
-      return req;
     }
+
+    return req;
+  }
 
   private InputStream copyRequestBody(ODataRequest request) throws ODataApplicationException {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -193,16 +227,4 @@ public class AsyncProcessor<T extends Processor> {
     }
     return null;
   }
-
-  public String getPreferHeader() {
-      return preferHeader;
-    }
-
-    public String getLocation() {
-      return location;
-    }
-
-    void setLocation(String loc) {
-      this.location = loc;
-    }
-  }
+}

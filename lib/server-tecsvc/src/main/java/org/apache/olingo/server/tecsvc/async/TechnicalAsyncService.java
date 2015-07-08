@@ -18,20 +18,6 @@
  */
 package org.apache.olingo.server.tecsvc.async;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -46,17 +32,57 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * The TechnicalAsyncService provides asynchronous support for any Processor.
+ * To use it following steps are necessary:
+ * <ul>
+ *   <li>Get the instance</li>
+ *   <li>Create an instance of the Processor which should be wrapped for asynchronous support
+ *   (do not forget to call the <code>init(...)</code> method on the processor)</li>
+ *   <li>register the Processor instance via the <code>register(...)</code> method</li>
+ *   <li>prepare the corresponding method with the request parameters via the
+ *   <code>prepareFor()</code> method at the AsyncProcessor</li>
+ *   <li>start the async processing via the <code>processAsync()</code> methods</li>
+ * </ul>
+ * A short code snippet is shown below:
+ * <p>
+ * <code>
+ * TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
+ * TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
+ * processor.init(odata, serviceMetadata);
+ * AsyncProcessor<EntityProcessor> asyncProcessor = asyncService.register(processor, EntityProcessor.class);
+ * asyncProcessor.prepareFor().readEntity(request, response, uriInfo, requestedFormat);
+ * String location = asyncProcessor.processAsync();
+ * </code>
+ * </p>
+ */
 public class TechnicalAsyncService {
 
   public static final String TEC_ASYNC_SLEEP = "tec.sleep";
+  public static final String STATUS_MONITOR_TOKEN = "status";
 
   private static final Map<String, AsyncRunner> LOCATION_2_ASYNC_RUNNER =
       Collections.synchronizedMap(new HashMap<String, AsyncRunner>());
   private static final ExecutorService ASYNC_REQUEST_EXECUTOR = Executors.newFixedThreadPool(10);
   private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
-  public static final String STATUS_MONITOR_TOKEN = "status";
-
 
   public <T extends Processor> AsyncProcessor<T> register(T processor, Class<T> processorInterface) {
     return new AsyncProcessor<T>(processor, processorInterface, this);
@@ -72,7 +98,6 @@ public class TechnicalAsyncService {
   public static void acceptedResponse(ODataResponse response, String location) {
     updateHeader(response, HttpStatusCode.ACCEPTED, location);
   }
-
 
   private static final class AsyncProcessorHolder {
     private static final TechnicalAsyncService INSTANCE = new TechnicalAsyncService();
@@ -116,11 +141,26 @@ public class TechnicalAsyncService {
       } else {
         response.setStatus(HttpStatusCode.ACCEPTED.getStatusCode());
         response.setHeader(HttpHeader.LOCATION, location);
-        String content = "In progress for async location = " + location;
-        writeToResponse(response, content);
       }
     }
   }
+
+  public void listQueue(HttpServletResponse response) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<html><header/><body><h1>Queued requests</h1><ul>");
+    for (Map.Entry<String, AsyncRunner> entry : LOCATION_2_ASYNC_RUNNER.entrySet()) {
+      AsyncProcessor asyncProcessor = entry.getValue().getDispatched();
+      sb.append("<li><b>ID: </b>").append(entry.getKey()).append("<br/>")
+          .append("<b>Location: </b>").append(asyncProcessor.getLocation()).append("<br/>")
+          .append("<b>Processor: </b>").append(asyncProcessor.getProcessorClass().getSimpleName()).append("<br/>")
+          .append("<b>Finished: </b>").append(entry.getValue().isFinished()).append("<br/>")
+          .append("</li>");
+    }
+    sb.append("</ul></body></html>");
+
+    writeToResponse(response, sb.toString());
+  }
+
 
   private static void writeToResponse(HttpServletResponse response, InputStream input) throws IOException {
     copy(input, response.getOutputStream());
@@ -154,35 +194,46 @@ public class TechnicalAsyncService {
     writeToResponse(response, odResponseStream);
   }
 
-  static void writeHttpResponse(final ODataResponse odResponse, final HttpServletResponse response) throws IOException {
-    response.setStatus(odResponse.getStatusCode());
-
-    for (Map.Entry<String, String> entry : odResponse.getHeaders().entrySet()) {
-      response.setHeader(entry.getKey(), entry.getValue());
-    }
-
-    copy(odResponse.getContent(), response.getOutputStream());
-  }
+//  static void copy(final InputStream input, final OutputStream output) {
+//    if(output == null || input == null) {
+//      return;
+//    }
+//
+//    try {
+//      byte[] buffer = new byte[1024];
+//      int n;
+//      while (-1 != (n = input.read(buffer))) {
+//        output.write(buffer, 0, n);
+//      }
+//    } catch (IOException e) {
+//      throw new ODataRuntimeException(e);
+//    } finally {
+//      closeStream(output);
+//      closeStream(input);
+//    }
+//  }
 
   static void copy(final InputStream input, final OutputStream output) {
-    if(output == null || input == null) {
+    if (output == null || input == null) {
       return;
     }
 
     try {
-      byte[] buffer = new byte[1024];
-      int n;
-      while (-1 != (n = input.read(buffer))) {
-        output.write(buffer, 0, n);
+      ByteBuffer inBuffer = ByteBuffer.allocate(8192);
+      ReadableByteChannel ic = Channels.newChannel(input);
+      WritableByteChannel oc = Channels.newChannel(output);
+      while (ic.read(inBuffer) > 0) {
+        inBuffer.flip();
+        oc.write(inBuffer);
+        inBuffer.rewind();
       }
     } catch (IOException e) {
-      throw new ODataRuntimeException(e);
+      throw new ODataRuntimeException("Error on reading request content");
     } finally {
-      closeStream(output);
       closeStream(input);
+      closeStream(output);
     }
   }
-
 
   private static void closeStream(final Closeable closeable) {
     if (closeable != null) {
@@ -194,7 +245,6 @@ public class TechnicalAsyncService {
     }
   }
 
-
   private String createNewAsyncLocation(ODataRequest request) {
     int pos = request.getRawBaseUri().lastIndexOf("/") + 1;
     return request.getRawBaseUri().substring(0, pos) + STATUS_MONITOR_TOKEN + "/" + ID_GENERATOR.incrementAndGet();
@@ -204,6 +254,9 @@ public class TechnicalAsyncService {
     return request.getRequestURL().toString();
   }
 
+  /**
+   * Runnable for the AsyncProcessor.
+   */
   private static class AsyncRunner implements Runnable {
     private final AsyncProcessor dispatched;
     private int defaultSleepTimeInSeconds = 0;
