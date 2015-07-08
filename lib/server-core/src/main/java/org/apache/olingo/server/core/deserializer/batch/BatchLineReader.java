@@ -27,22 +27,27 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BufferedReaderIncludingLineEndings {
+public class BatchLineReader {
   private static final byte CR = '\r';
   private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
-  public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private Charset currentCharset = DEFAULT_CHARSET;
+  private String currentBoundary = null;
+//  private boolean readBody = false;
+  private ReadState readState = new ReadState();
   private InputStream reader;
   private byte[] buffer;
   private int offset = 0;
   private int limit = 0;
 
-  public BufferedReaderIncludingLineEndings(final InputStream reader) {
+  public BatchLineReader(final InputStream reader) {
     this(reader, BUFFER_SIZE);
   }
 
-  public BufferedReaderIncludingLineEndings(final InputStream reader, final int bufferSize) {
+  public BatchLineReader(final InputStream reader, final int bufferSize) {
     if (bufferSize <= 0) {
       throw new IllegalArgumentException("Buffer size must be greater than zero.");
     }
@@ -51,7 +56,41 @@ public class BufferedReaderIncludingLineEndings {
     buffer = new byte[bufferSize];
   }
 
-  public int read(final byte[] byteBuffer, final int bufferOffset, final int length) throws IOException {
+  public void close() throws IOException {
+    reader.close();
+  }
+
+  public List<String> toList() throws IOException {
+    final List<String> result = new ArrayList<String>();
+    String currentLine = readLine();
+    if(currentLine != null) {
+      currentBoundary = currentLine.trim();
+      result.add(currentLine);
+
+      while ((currentLine = readLine()) != null) {
+        result.add(currentLine);
+      }
+    }
+    return result;
+  }
+
+  public List<Line> toLineList() throws IOException {
+    final List<Line> result = new ArrayList<Line>();
+    String currentLine = readLine();
+    if(currentLine != null) {
+      currentBoundary = currentLine.trim();
+      int counter = 1;
+      result.add(new Line(currentLine, counter++));
+
+      while ((currentLine = readLine()) != null) {
+        result.add(new Line(currentLine, counter++));
+      }
+    }
+
+    return result;
+  }
+
+  int read(final byte[] byteBuffer, final int bufferOffset, final int length) throws IOException {
     if ((bufferOffset + length) > byteBuffer.length) {
       throw new IndexOutOfBoundsException("Buffer is too small");
     }
@@ -98,51 +137,69 @@ public class BufferedReaderIncludingLineEndings {
     return bytesRead;
   }
 
-  public List<String> toList() throws IOException {
-    final List<String> result = new ArrayList<String>();
-    String currentLine;
-
-    while ((currentLine = readLine()) != null) {
-      result.add(currentLine);
-    }
-
-    return result;
-  }
-
-  private Charset currentCharset = DEFAULT_CHARSET;
-
   private void updateCurrentCharset(String currentLine) {
+    // TODO: mibo: Improve this method
     if(currentLine != null) {
-      if(currentLine.startsWith("Content-Type:") && currentLine.contains(ContentType.PARAMETER_CHARSET)) {
-        currentLine = currentLine.substring(13, currentLine.length()-2).trim();
+      if(currentLine.startsWith("Content-Type:")) {
+//        if(currentLine.contains(ContentType.PARAMETER_CHARSET)) {
+        currentLine = currentLine.substring(13, currentLine.length() - 2).trim();
         ContentType t = ContentType.parse(currentLine);
-        if(t != null) {
+        if (t != null) {
           String charsetString = t.getParameter(ContentType.PARAMETER_CHARSET);
-          currentCharset = Charset.forName(charsetString);
+          if (charsetString != null) {
+            currentCharset = Charset.forName(charsetString);
+          } else {
+            currentCharset = DEFAULT_CHARSET;
+          }
+          // boundary
+          String boundary = t.getParameter("boundary");
+          if (boundary != null) {
+            currentBoundary = "--" + boundary;
+          }
         }
-      } else if(isEndBoundary(currentLine)) {
-        currentCharset = Charset.forName("us-ascii");
+      } else if("\r\n".equals(currentLine)) {
+        readState.foundLinebreak();
+      } else if(isBoundary(currentLine)) {
+        readState.foundBoundary();
+//        if(readState.isReadBody()) {
+//          currentCharset = CS_ISO_8859_1;
+//        }
       }
     }
   }
 
-  private boolean isEndBoundary(String currentLine) {
+  private class ReadState {
+    private int state = 0;
+
+    public void foundLinebreak() {
+      state++;
+    }
+    public void foundBoundary() {
+      state = 0;
+    }
+    public boolean isReadBody() {
+      return state >= 2;
+    }
+    public boolean isReadHeader() {
+      return state < 2;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(state);
+    }
+  }
+
+  private boolean isBoundary(String currentLine) {
+    if((currentBoundary + "\r\n").equals(currentLine)) {
+      return true;
+    } else if((currentBoundary + "--\r\n").equals(currentLine)) {
+      return true;
+    }
     return false;
   }
 
-  public List<Line> toLineList() throws IOException {
-    final List<Line> result = new ArrayList<Line>();
-    String currentLine;
-    int counter = 1;
-
-    while ((currentLine = readLine()) != null) {
-      result.add(new Line(currentLine, counter++));
-    }
-
-    return result;
-  }
-
-  public String readLine() throws IOException {
+  String readLine() throws IOException {
     if (limit == EOF) {
       return null;
     }
@@ -191,46 +248,14 @@ public class BufferedReaderIncludingLineEndings {
     if(buffer.position() == 0) {
       return null;
     } else {
-      String currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
+      String currentLine;
+      if(readState.isReadBody()) {
+        currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
+      } else {
+        currentLine = new String(buffer.array(), 0, buffer.position(), CS_ISO_8859_1);
+      }
       updateCurrentCharset(currentLine);
       return currentLine;
-    }
-  }
-
-  public void close() throws IOException {
-    reader.close();
-  }
-
-  public long skip(final long n) throws IOException {
-    if (n == 0) {
-      return 0;
-    } else if (n < 0) {
-      throw new IllegalArgumentException("skip value is negative");
-    } else {
-      long charactersToSkip = n;
-      long charactersSkiped = 0;
-
-      while (charactersToSkip != 0) {
-        // Is buffer refill required?
-        if (limit == offset) {
-          fillBuffer();
-
-          if (isEOF()) {
-            charactersToSkip = 0;
-          }
-        }
-
-        // Check if more characters are available
-        if (!isEOF()) {
-          int skipChars = (int) Math.min(limit - offset, charactersToSkip);
-
-          charactersSkiped += skipChars;
-          charactersToSkip -= skipChars;
-          offset += skipChars;
-        }
-      }
-
-      return charactersSkiped;
     }
   }
 

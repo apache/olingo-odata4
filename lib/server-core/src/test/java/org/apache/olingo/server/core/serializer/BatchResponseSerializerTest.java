@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,12 +35,15 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.junit.Test;
 
 public class BatchResponseSerializerTest {
   private static final String CRLF = "\r\n";
   private static final String BOUNDARY = "batch_" + UUID.randomUUID().toString();
+
+  private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private static final Charset CS_UTF_8 = Charset.forName("utf-8");
 
   @Test
   public void testBatchResponse() throws Exception {
@@ -63,8 +67,8 @@ public class BatchResponseSerializerTest {
     BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
-    final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -97,7 +101,7 @@ public class BatchResponseSerializerTest {
   }
 
   @Test
-  public void testBatchResponseUmlauteUtf8() throws Exception {
+  public void testBatchResponseUmlautsUtf8() throws Exception {
     final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -119,8 +123,8 @@ public class BatchResponseSerializerTest {
     BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
-    final BufferedReaderIncludingLineEndings reader =
-            new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+            new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -153,6 +157,105 @@ public class BatchResponseSerializerTest {
   }
 
   @Test
+  public void testBatchResponseUmlautsUtf8BodyIsoHeader() throws Exception {
+    final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE,
+        ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=UTF-8");
+    response.setContent(IOUtils.toInputStream("Wälter Winter" + CRLF));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    ODataResponse changeSetResponse = new ODataResponse();
+    changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
+
+    byte[] umlauts = "äüö".getBytes(CS_ISO_8859_1);
+    changeSetResponse.setHeader("Custom-Header", new String(umlauts, CS_ISO_8859_1));
+    responses = new ArrayList<ODataResponse>(1);
+    responses.add(changeSetResponse);
+    parts.add(new ODataResponsePart(responses, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(25, body.size());
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/json; charset=UTF-8" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 16" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("Wälter Winter" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertTrue(body.get(line++).contains("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Custom-Header: äüö" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 0" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--changeset_"));
+    assertTrue(body.get(line++).contains("--batch_"));
+  }
+
+  @Test
+  public void testBatchResponseUmlautsUtf8BodyAndHeader() throws Exception {
+    final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE,
+        ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=UTF-8");
+    response.setContent(IOUtils.toInputStream("Wälter Winter" + CRLF));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    ODataResponse changeSetResponse = new ODataResponse();
+    changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
+
+//    byte[] umlauts = "äüö".getBytes(CS_UTF_8);
+//    changeSetResponse.setHeader("Custom-Header", new String(umlauts, CS_UTF_8));
+    changeSetResponse.setHeader("Custom-Header", "äüö");
+    responses = new ArrayList<ODataResponse>(1);
+    responses.add(changeSetResponse);
+    parts.add(new ODataResponsePart(responses, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+    assertNotNull(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    assertEquals(25, body.size());
+    // TODO: check: with latest change in BatchResponseSerializer is not possible
+    // to set header values with UTF-8 (only iso-8859-1)
+//    assertEquals("Custom-Header: Ã¤Ã¼Ã¶" + CRLF, body.get(19));
+    assertEquals("Custom-Header: äüö" + CRLF, body.get(19));
+  }
+
+  @Test
   public void testBatchResponseUmlauteIso() throws Exception {
     final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
@@ -176,8 +279,8 @@ public class BatchResponseSerializerTest {
     BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
-    final BufferedReaderIncludingLineEndings reader =
-            new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+            new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -231,8 +334,8 @@ public class BatchResponseSerializerTest {
     BatchResponseSerializer serializer = new BatchResponseSerializer();
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
-    final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -279,8 +382,8 @@ public class BatchResponseSerializerTest {
     final InputStream content = serializer.serialize(parts, BOUNDARY);
 
     assertNotNull(content);
-    final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -314,8 +417,8 @@ public class BatchResponseSerializerTest {
 
     assertNotNull(content);
 
-    final BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(content);
+    final BatchLineReader reader =
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 

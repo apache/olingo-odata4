@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -165,6 +164,7 @@ public class BatchResponseSerializer {
 
   private class BodyBuilder {
     private final Charset CHARSET_UTF_8 = Charset.forName("utf-8");
+    private final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
     private ByteBuffer buffer = ByteBuffer.allocate(8192);
     private boolean isClosed = false;
 
@@ -177,7 +177,9 @@ public class BatchResponseSerializer {
     }
 
     public BodyBuilder append(String string) {
-      byte [] b = string.getBytes(CHARSET_UTF_8);
+      // TODO: mibo: check used charset
+//      byte [] b = string.getBytes(CHARSET_UTF_8);
+      byte [] b = string.getBytes(CHARSET_ISO_8859_1);
       put(b);
       return this;
     }
@@ -212,22 +214,10 @@ public class BatchResponseSerializer {
   }
 
   private class Body {
-    private final Charset CHARSET_DEFAULT = Charset.forName("utf-8");
     private final byte[] content;
-    private Charset charset = CHARSET_DEFAULT;
 
     public Body(ODataResponse response) {
       this.content = getBody(response);
-      String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
-      if(contentType != null) {
-        ContentType ct = ContentType.create(contentType);
-        if(ct != null) {
-          String usedCharset = ct.getParameter(ContentType.PARAMETER_CHARSET);
-          if(usedCharset != null) {
-            this.charset = Charset.forName(usedCharset);
-          }
-        }
-      }
     }
 
     public int getLength() {

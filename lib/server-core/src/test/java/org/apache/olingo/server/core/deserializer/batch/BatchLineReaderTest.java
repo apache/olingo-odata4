@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class BufferedReaderIncludingLineEndingsTest {
+public class BatchLineReaderTest {
 
   private static final String TEXT_COMBINED = "Test\r" +
       "Test2\r\n" +
@@ -42,14 +42,12 @@ public class BufferedReaderIncludingLineEndingsTest {
       "Test7\n" +
       "\n";
 
-  private static final String TEXT_SMALL = "Test\r" +
-      "123";
   private static final String TEXT_EMPTY = "";
 
   @Test
   public void testSimpleText() throws Exception {
     final String TEXT = "Test";
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals(TEXT, reader.readLine());
     assertNull(reader.readLine());
@@ -60,7 +58,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   @Test
   public void testNoText() throws Exception {
     final String TEXT = "";
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertNull(reader.readLine());
     assertNull(reader.readLine());
@@ -69,8 +67,8 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testNoBytes() throws Exception {
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(new byte[0]));
+    BatchLineReader reader =
+        new BatchLineReader(new ByteArrayInputStream(new byte[0]));
 
     assertNull(reader.readLine());
     assertNull(reader.readLine());
@@ -82,7 +80,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r\n" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\r\n", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -96,7 +94,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\n" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\n", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -110,7 +108,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -121,7 +119,7 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testCombined() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
+    BatchLineReader reader = create(TEXT_COMBINED);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -141,7 +139,7 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testCombinedBufferSizeTwo() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED, 2);
+    BatchLineReader reader = create(TEXT_COMBINED, 2);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -173,7 +171,7 @@ public class BufferedReaderIncludingLineEndingsTest {
         "Test7\n" +
         "\r\n";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT, 1);
+    BatchLineReader reader = create(TEXT, 1);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -197,48 +195,10 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r" +
         "\r";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT, 1);
+    BatchLineReader reader = create(TEXT, 1);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("\r", reader.readLine());
-    reader.close();
-  }
-
-  @Test
-  public void testSkipSimple() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
-
-    assertEquals(5, reader.skip(5)); // Test\r
-    assertEquals("123", reader.readLine());
-    assertNull(reader.readLine());
-    assertNull(reader.readLine());
-    reader.close();
-  }
-
-  @Test
-  public void testSkipBufferOne() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL, 1);
-
-    assertEquals(5, reader.skip(5)); // Test\r
-    assertEquals("123", reader.readLine());
-    assertNull(reader.readLine());
-    assertNull(reader.readLine());
-    reader.close();
-  }
-
-  @Test
-  public void testReadThanSkip() throws Exception {
-    final String TEXT = "Test\r" +
-        "\r" +
-        "123";
-
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
-
-    assertEquals("Test\r", reader.readLine());
-    assertEquals(1, reader.skip(1)); // Test\r
-    assertEquals("123", reader.readLine());
-    assertNull(reader.readLine());
-    assertNull(reader.readLine());
     reader.close();
   }
 
@@ -247,41 +207,16 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Foo";
     byte[] buffer = new byte[20];
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
     assertEquals(3, reader.read(buffer, 0, 20));
     assertEquals(-1, reader.read(buffer, 0, 20));
     reader.close();
 
-    BufferedReaderIncludingLineEndings readerBufferOne = create(TEXT, 1);
+    BatchLineReader readerBufferOne = create(TEXT, 1);
     assertEquals(3, readerBufferOne.read(buffer, 0, 20));
     assertEquals(-1, readerBufferOne.read(buffer, 0, 20));
     readerBufferOne.close();
   }
-
-  @Test
-  public void testSkipZero() throws Exception {
-    final String TEXT = "Test\r" +
-        "123\r\n";
-
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
-
-    assertEquals(0, reader.skip(0)); // Test\r
-    assertEquals("Test\r", reader.readLine());
-    assertEquals("123\r\n", reader.readLine());
-    assertNull(reader.readLine());
-    assertNull(reader.readLine());
-    reader.close();
-  }
-
-//  @Test
-//  public void testSkipToMuch() throws Exception {
-//    BufferedReaderIncludingLineEndings reader = create(TEXT_SMALL);
-//
-//    assertEquals(8, reader.skip(10)); // Test\r
-//    assertEquals(null, reader.readLine());
-//    reader.close();
-//  }
-//
 
   @Test
   public void testLineEqualsAndHashCode() {
@@ -302,41 +237,19 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeZero() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, 0);
+    BatchLineReader reader = create(TEXT_EMPTY, 0);
     reader.close();
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeNegative() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, -1);
+    BatchLineReader reader = create(TEXT_EMPTY, -1);
     reader.close();
   }
 
-//  @Test
-//  public void testMarkSupoorted() throws Exception {
-//    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY);
-//
-//    assertEquals(false, reader.markSupported());
-//    reader.close();
-//  }
-
-//  @Test(expected = Exception.class)
-//  public void testFailMark() throws Exception {
-//    BufferedReaderIncludingLineEndings reader = create("123");
-//
-//    reader.mark(1);
-//  }
-//
-//  @Test(expected = Exception.class)
-//  public void testFailReset() throws Exception {
-//    BufferedReaderIncludingLineEndings reader = create("123");
-//
-//    reader.reset();
-//  }
-
   @Test
   public void testToList() throws Exception {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
+    BatchLineReader reader = create(TEXT_COMBINED);
     List<Line> stringList = reader.toLineList();
 
     assertEquals(11, stringList.size());
@@ -354,13 +267,13 @@ public class BufferedReaderIncludingLineEndingsTest {
     reader.close();
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString) throws Exception {
-    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString
+  private BatchLineReader create(final String inputString) throws Exception {
+    return new BatchLineReader(new ByteArrayInputStream(inputString
         .getBytes("UTF-8")));
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString, final int bufferSize) throws Exception {
-    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString
+  private BatchLineReader create(final String inputString, final int bufferSize) throws Exception {
+    return new BatchLineReader(new ByteArrayInputStream(inputString
         .getBytes("UTF-8")), bufferSize);
   }
 

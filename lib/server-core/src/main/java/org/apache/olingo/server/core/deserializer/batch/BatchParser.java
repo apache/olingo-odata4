@@ -73,7 +73,7 @@ public class BatchParser {
 
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary) throws IOException,
       BatchDeserializerException {
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(in);
+    final BatchLineReader reader = new BatchLineReader(in);
     final List<Line> message = reader.toLineList();
     reader.close();
 
