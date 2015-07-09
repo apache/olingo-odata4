@@ -151,7 +151,9 @@ public class TechnicalAsyncService {
     for (Map.Entry<String, AsyncRunner> entry : LOCATION_2_ASYNC_RUNNER.entrySet()) {
       AsyncProcessor asyncProcessor = entry.getValue().getDispatched();
       sb.append("<li><b>ID: </b>").append(entry.getKey()).append("<br/>")
-          .append("<b>Location: </b>").append(asyncProcessor.getLocation()).append("<br/>")
+          .append("<b>Location: </b><a href=\"")
+          .append(asyncProcessor.getLocation()).append("\">")
+          .append(asyncProcessor.getLocation()).append("</a><br/>")
           .append("<b>Processor: </b>").append(asyncProcessor.getProcessorClass().getSimpleName()).append("<br/>")
           .append("<b>Finished: </b>").append(entry.getValue().isFinished()).append("<br/>")
           .append("</li>");
