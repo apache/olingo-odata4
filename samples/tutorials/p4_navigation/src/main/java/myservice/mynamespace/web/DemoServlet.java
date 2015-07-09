@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -45,16 +45,15 @@ public class DemoServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LoggerFactory.getLogger(DemoServlet.class);
 
-
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     try {
-        HttpSession session = req.getSession(true);
-        Storage storage = (Storage) session.getAttribute(Storage.class.getName());
-        if (storage == null) {
-          storage = new Storage();
-          session.setAttribute(Storage.class.getName(), storage);
-        }
+      HttpSession session = req.getSession(true);
+      Storage storage = (Storage) session.getAttribute(Storage.class.getName());
+      if (storage == null) {
+        storage = new Storage();
+        session.setAttribute(Storage.class.getName(), storage);
+      }
 
       // create odata handler and configure it with EdmProvider and Processor
       OData odata = OData.newInstance();
