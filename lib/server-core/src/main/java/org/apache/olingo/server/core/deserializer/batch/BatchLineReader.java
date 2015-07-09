@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.deserializer.batch;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,11 @@ public class BatchLineReader {
   private static final int BUFFER_SIZE = 8192;
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
   private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  public static final String BOUNDARY = "boundary";
+  public static final String DOUBLE_DASH = "--";
+  public static final String CRLF = "\r\n";
   private Charset currentCharset = DEFAULT_CHARSET;
   private String currentBoundary = null;
-//  private boolean readBody = false;
   private ReadState readState = new ReadState();
   private InputStream reader;
   private byte[] buffer;
@@ -140,60 +143,34 @@ public class BatchLineReader {
   private void updateCurrentCharset(String currentLine) {
     // TODO: mibo: Improve this method
     if(currentLine != null) {
-      if(currentLine.startsWith("Content-Type:")) {
-//        if(currentLine.contains(ContentType.PARAMETER_CHARSET)) {
+      if(currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
         currentLine = currentLine.substring(13, currentLine.length() - 2).trim();
-        ContentType t = ContentType.parse(currentLine);
-        if (t != null) {
-          String charsetString = t.getParameter(ContentType.PARAMETER_CHARSET);
+        ContentType ct = ContentType.parse(currentLine);
+        if (ct != null) {
+          String charsetString = ct.getParameter(ContentType.PARAMETER_CHARSET);
           if (charsetString != null) {
             currentCharset = Charset.forName(charsetString);
           } else {
             currentCharset = DEFAULT_CHARSET;
           }
           // boundary
-          String boundary = t.getParameter("boundary");
+          String boundary = ct.getParameter(BOUNDARY);
           if (boundary != null) {
-            currentBoundary = "--" + boundary;
+            currentBoundary = DOUBLE_DASH + boundary;
           }
         }
-      } else if("\r\n".equals(currentLine)) {
+      } else if(CRLF.equals(currentLine)) {
         readState.foundLinebreak();
       } else if(isBoundary(currentLine)) {
         readState.foundBoundary();
-//        if(readState.isReadBody()) {
-//          currentCharset = CS_ISO_8859_1;
-//        }
       }
     }
   }
 
-  private class ReadState {
-    private int state = 0;
-
-    public void foundLinebreak() {
-      state++;
-    }
-    public void foundBoundary() {
-      state = 0;
-    }
-    public boolean isReadBody() {
-      return state >= 2;
-    }
-    public boolean isReadHeader() {
-      return state < 2;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(state);
-    }
-  }
-
   private boolean isBoundary(String currentLine) {
-    if((currentBoundary + "\r\n").equals(currentLine)) {
+    if((currentBoundary + CRLF).equals(currentLine)) {
       return true;
-    } else if((currentBoundary + "--\r\n").equals(currentLine)) {
+    } else if((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
       return true;
     }
     return false;
@@ -272,5 +249,27 @@ public class BatchLineReader {
 
   private Charset getCurrentCharset() {
     return currentCharset;
+  }
+
+  /**
+   * Read state indicator (whether currently the <code>body</code> or <code>header</code> part is read).
+   */
+  private class ReadState {
+    private int state = 0;
+
+    public void foundLinebreak() {
+      state++;
+    }
+    public void foundBoundary() {
+      state = 0;
+    }
+    public boolean isReadBody() {
+      return state >= 2;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(state);
+    }
   }
 }

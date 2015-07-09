@@ -43,7 +43,6 @@ public class BatchResponseSerializerTest {
   private static final String BOUNDARY = "batch_" + UUID.randomUUID().toString();
 
   private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
-  private static final Charset CS_UTF_8 = Charset.forName("utf-8");
 
   @Test
   public void testBatchResponse() throws Exception {
@@ -256,7 +255,7 @@ public class BatchResponseSerializerTest {
   }
 
   @Test
-  public void testBatchResponseUmlauteIso() throws Exception {
+  public void testBatchResponseUmlautsIso() throws Exception {
     final List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());

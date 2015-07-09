@@ -22,7 +22,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -162,8 +166,10 @@ public class BatchResponseSerializer {
     return value + "_" + UUID.randomUUID().toString();
   }
 
+  /**
+   * Builder class to create the body and the header.
+   */
   private class BodyBuilder {
-    private final Charset CHARSET_UTF_8 = Charset.forName("utf-8");
     private final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
     private ByteBuffer buffer = ByteBuffer.allocate(8192);
     private boolean isClosed = false;
@@ -177,8 +183,6 @@ public class BatchResponseSerializer {
     }
 
     public BodyBuilder append(String string) {
-      // TODO: mibo: check used charset
-//      byte [] b = string.getBytes(CHARSET_UTF_8);
       byte [] b = string.getBytes(CHARSET_ISO_8859_1);
       put(b);
       return this;
@@ -207,12 +211,13 @@ public class BatchResponseSerializer {
     }
 
     public String toString() {
-//      byte[] tmp = new byte[buffer.position()];
-//      buffer.get(tmp, 0, buffer.position());
       return new String(buffer.array(), 0, buffer.position());
     }
   }
 
+  /**
+   * Body part which is read and stored as bytes (no charset conversion).
+   */
   private class Body {
     private final byte[] content;
 
@@ -224,31 +229,29 @@ public class BatchResponseSerializer {
       return content.length;
     }
 
-    private byte[] getBody(final ODataResponse response) {
-      final InputStream content = response.getContent();
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-      if (content != null) {
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int n;
-
-        try {
-          while ((n = content.read(buffer, 0, buffer.length)) != -1) {
-            out.write(buffer, 0, n);
-          }
-          out.flush();
-        } catch (IOException e) {
-          throw new ODataRuntimeException(e);
-        }
-
-        return out.toByteArray();
-      } else {
-        return new byte[0];
-      }
-    }
-
     public byte[] getContent() {
       return content;
+    }
+
+    private byte[] getBody(final ODataResponse response) {
+      if (response == null || response.getContent() == null) {
+        return new byte[0];
+      }
+
+      try {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);
+        ReadableByteChannel ic = Channels.newChannel(response.getContent());
+        WritableByteChannel oc = Channels.newChannel(output);
+        while (ic.read(inBuffer) > 0) {
+          inBuffer.flip();
+          oc.write(inBuffer);
+          inBuffer.rewind();
+        }
+        return output.toByteArray();
+      } catch (IOException e) {
+        throw new ODataRuntimeException("Error on reading request content");
+      }
     }
   }
 }
