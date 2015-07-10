@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +53,7 @@ import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -149,8 +148,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -220,8 +219,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     int line = 0;
@@ -299,8 +298,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -417,8 +416,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
