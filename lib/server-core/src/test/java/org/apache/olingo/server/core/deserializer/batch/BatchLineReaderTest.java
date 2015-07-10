@@ -24,8 +24,20 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.junit.Test;
 
 public class BatchLineReaderTest {
@@ -43,6 +55,7 @@ public class BatchLineReaderTest {
       "\n";
 
   private static final String TEXT_EMPTY = "";
+  private static final String LF = "\n";
 
   @Test
   public void testSimpleText() throws Exception {
@@ -229,26 +242,28 @@ public class BatchLineReaderTest {
     assertTrue(l1.hashCode() != l3.hashCode());
   }
 
-//  @Test(expected = IllegalArgumentException.class)
-//  public void testSkipNegative() throws Exception {
-//    BufferedReaderIncludingLineEndings reader = create("123");
-//    reader.skip(-1);
-//  }
+  @Test
+  public void testToList() throws Exception {
+    BatchLineReader reader = create(TEXT_COMBINED);
+    List<String> stringList = reader.toList();
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testFailBufferSizeZero() throws Exception {
-    BatchLineReader reader = create(TEXT_EMPTY, 0);
-    reader.close();
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testFailBufferSizeNegative() throws Exception {
-    BatchLineReader reader = create(TEXT_EMPTY, -1);
+    assertEquals(11, stringList.size());
+    assertEquals("Test\r", stringList.get(0));
+    assertEquals("Test2\r\n", stringList.get(1));
+    assertEquals("Test3\n", stringList.get(2));
+    assertEquals("Test4\r", stringList.get(3));
+    assertEquals("\r", stringList.get(4));
+    assertEquals("\r\n", stringList.get(5));
+    assertEquals("\r\n", stringList.get(6));
+    assertEquals("Test5\n", stringList.get(7));
+    assertEquals("Test6\r\n", stringList.get(8));
+    assertEquals("Test7\n", stringList.get(9));
+    assertEquals("\n", stringList.get(10));
     reader.close();
   }
 
   @Test
-  public void testToList() throws Exception {
+  public void testToLineList() throws Exception {
     BatchLineReader reader = create(TEXT_COMBINED);
     List<Line> stringList = reader.toLineList();
 
@@ -264,6 +279,53 @@ public class BatchLineReaderTest {
     assertEquals("Test6\r\n", stringList.get(8).toString());
     assertEquals("Test7\n", stringList.get(9).toString());
     assertEquals("\n", stringList.get(10).toString());
+    reader.close();
+  }
+
+  @Test
+  public void testBatchContent() throws Exception {
+    String batchContent = getFileContent("/batchLarge.batch", "utf-8");
+    BatchLineReader reader = create(batchContent);
+
+    List<String> lines = reader.toList();
+    assertEquals(2422, lines.size());
+    assertEquals("--batch_8194-cf13-1f56\n", lines.get(0));
+    assertEquals("              <d:City m:type=\"RefScenario.c_City\">\n", lines.get(1402));
+    assertEquals("\n", lines.get(1903));
+    assertEquals("--batch_8194-cf13-1f56--", lines.get(2421));
+  }
+
+  private String getFileContent(String fileName, String charset) throws IOException {
+    byte[] content = getFileContent(fileName);
+    return new String(content, Charset.forName(charset));
+  }
+
+  private byte[] getFileContent(String fileName) throws IOException {
+    final InputStream input = ClassLoader.class.getResourceAsStream(fileName);
+    if (input == null) {
+      throw new IOException("Requested file '" + fileName + "' was not found.");
+    }
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+      ByteBuffer inBuffer = ByteBuffer.allocate(8192);
+      ReadableByteChannel ic = Channels.newChannel(input);
+      WritableByteChannel oc = Channels.newChannel(output);
+      while (ic.read(inBuffer) > 0) {
+        inBuffer.flip();
+        oc.write(inBuffer);
+        inBuffer.rewind();
+      }
+      return output.toByteArray();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testFailBufferSizeZero() throws Exception {
+    BatchLineReader reader = create(TEXT_EMPTY, 0);
+    reader.close();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testFailBufferSizeNegative() throws Exception {
+    BatchLineReader reader = create(TEXT_EMPTY, -1);
     reader.close();
   }
 

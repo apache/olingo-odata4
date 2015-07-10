@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,11 +38,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
-
   // Service Namespace
   public static final String NAMESPACE = "OData.Demo";
-
-  // OData.Demo
 
   // EDM Container
   public static final String CONTAINER_NAME = "Container";
@@ -59,22 +56,20 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   public static final String ES_PRODUCTS_NAME = "Products";
   public static final String ES_CATEGORIES_NAME = "Categories";
 
-
-
   @Override
   public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) throws ODataException {
 
     // this method is called for each EntityType that are configured in the Schema
     CsdlEntityType entityType = null;
 
-    if(entityTypeName.equals(ET_PRODUCT_FQN)){
-      //create EntityType properties
+    if (entityTypeName.equals(ET_PRODUCT_FQN)) {
+      // create EntityType properties
       CsdlProperty id = new CsdlProperty().setName("ID")
-              .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+          .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
       CsdlProperty name = new CsdlProperty().setName("Name")
-              .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
-      CsdlProperty  description = new CsdlProperty().setName("Description")
-              .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+          .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+      CsdlProperty description = new CsdlProperty().setName("Description")
+          .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
 
       // create PropertyRef for Key element
       CsdlPropertyRef propertyRef = new CsdlPropertyRef();
@@ -82,23 +77,23 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
       // navigation property: many-to-one, null not allowed (product must have a category)
       CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Category")
-              .setType(ET_CATEGORY_FQN).setNullable(false).setPartner("Products");
+          .setType(ET_CATEGORY_FQN).setNullable(false).setPartner("Products");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);
 
       // configure EntityType
       entityType = new CsdlEntityType();
       entityType.setName(ET_PRODUCT_NAME);
-      entityType.setProperties(Arrays.asList(id, name , description));
+      entityType.setProperties(Arrays.asList(id, name, description));
       entityType.setKey(Arrays.asList(propertyRef));
       entityType.setNavigationProperties(navPropList);
 
-    }else if (entityTypeName.equals(ET_CATEGORY_FQN)){
-      //create EntityType properties
+    } else if (entityTypeName.equals(ET_CATEGORY_FQN)) {
+      // create EntityType properties
       CsdlProperty id = new CsdlProperty().setName("ID")
-              .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+          .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
       CsdlProperty name = new CsdlProperty().setName("Name")
-              .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+          .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
 
       // create PropertyRef for Key element
       CsdlPropertyRef propertyRef = new CsdlPropertyRef();
@@ -106,7 +101,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
       // navigation property: one-to-many
       CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Products")
-              .setType(ET_PRODUCT_FQN).setCollection(true).setPartner("Category");
+          .setType(ET_PRODUCT_FQN).setCollection(true).setPartner("Category");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);
 
@@ -127,9 +122,9 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
     CsdlEntitySet entitySet = null;
 
-    if(entityContainer.equals(CONTAINER)){
+    if (entityContainer.equals(CONTAINER)) {
 
-      if(entitySetName.equals(ES_PRODUCTS_NAME)){
+      if (entitySetName.equals(ES_PRODUCTS_NAME)) {
 
         entitySet = new CsdlEntitySet();
         entitySet.setName(ES_PRODUCTS_NAME);
@@ -143,7 +138,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
         navPropBindingList.add(navPropBinding);
         entitySet.setNavigationPropertyBindings(navPropBindingList);
 
-      }else if(entitySetName.equals(ES_CATEGORIES_NAME)){
+      } else if (entitySetName.equals(ES_CATEGORIES_NAME)) {
 
         entitySet = new CsdlEntitySet();
         entitySet.setName(ES_CATEGORIES_NAME);
@@ -167,7 +162,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
     // This method is invoked when displaying the service document at
     // e.g. http://localhost:8080/DemoService/DemoService.svc
-    if(entityContainerName == null || entityContainerName.equals(CONTAINER)){
+    if (entityContainerName == null || entityContainerName.equals(CONTAINER)) {
       CsdlEntityContainerInfo entityContainerInfo = new CsdlEntityContainerInfo();
       entityContainerInfo.setContainerName(CONTAINER);
       return entityContainerInfo;

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -52,13 +52,10 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 
 public class DemoEntityCollectionProcessor implements EntityCollectionProcessor {
 
-
   private OData odata;
   private ServiceMetadata srvMetadata;
   // our database-mock
   private Storage storage;
-
-
 
   public DemoEntityCollectionProcessor(Storage storage) {
     this.storage = storage;
@@ -69,21 +66,19 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     this.srvMetadata = serviceMetadata;
   }
 
-
   /*
    * This method is invoked when a collection of entities has to be read.
    * In our example, this can be either a "normal" read operation, or a navigation:
-   *
+   * 
    * Example for "normal" read entity set operation:
    * http://localhost:8080/DemoService/DemoService.svc/Categories
-   *
+   * 
    * Example for navigation
    * http://localhost:8080/DemoService/DemoService.svc/Categories(3)/Products
-   *
-   * */
+   */
   public void readEntityCollection(ODataRequest request, ODataResponse response,
-                                   UriInfo uriInfo, ContentType responseFormat)
-          throws ODataApplicationException, SerializerException {
+      UriInfo uriInfo, ContentType responseFormat)
+      throws ODataApplicationException, SerializerException {
 
     EdmEntitySet responseEdmEntitySet = null; // we'll need this to build the ContextURL
     EntityCollection responseEntityCollection = null; // we'll need this to set the response body
@@ -93,27 +88,27 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     int segmentCount = resourceParts.size();
 
     UriResource uriResource = resourceParts.get(0); // in our example, the first segment is the EntitySet
-    if (! (uriResource instanceof UriResourceEntitySet)) {
+    if (!(uriResource instanceof UriResourceEntitySet)) {
       throw new ODataApplicationException("Only EntitySet is supported",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),Locale.ROOT);
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
 
     UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResource;
     EdmEntitySet startEdmEntitySet = uriResourceEntitySet.getEntitySet();
 
-    if(segmentCount == 1){ // this is the case for: DemoService/DemoService.svc/Categories
-      responseEdmEntitySet = startEdmEntitySet; //the response body is built from the first (and only) entitySet
+    if (segmentCount == 1) { // this is the case for: DemoService/DemoService.svc/Categories
+      responseEdmEntitySet = startEdmEntitySet; // the response body is built from the first (and only) entitySet
 
       // 2nd: fetch the data from backend for this requested EntitySetName and deliver as EntitySet
       responseEntityCollection = storage.readEntitySetData(startEdmEntitySet);
-    }else if (segmentCount == 2){ // in case of navigation: DemoService.svc/Categories(3)/Products
+    } else if (segmentCount == 2) { // in case of navigation: DemoService.svc/Categories(3)/Products
 
       UriResource lastSegment = resourceParts.get(1); // in our example we don't support more complex URIs
-      if(lastSegment instanceof UriResourceNavigation){
-        UriResourceNavigation uriResourceNavigation = (UriResourceNavigation)lastSegment;
+      if (lastSegment instanceof UriResourceNavigation) {
+        UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) lastSegment;
         EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
         EdmEntityType targetEntityType = edmNavigationProperty.getType();
-        //from Categories(1) to Products
+        // from Categories(1) to Products
         responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
 
         // 2nd: fetch the data from backend
@@ -121,19 +116,19 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
         // e.g. for Categories(3)/Products we have to find the single entity: Category with ID 3
         Entity sourceEntity = storage.readEntityData(startEdmEntitySet, keyPredicates);
-        // error handling for e.g.  DemoService.svc/Categories(99)/Products
-        if(sourceEntity == null) {
+        // error handling for e.g. DemoService.svc/Categories(99)/Products
+        if (sourceEntity == null) {
           throw new ODataApplicationException("Entity not found.",
-                  HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
         }
         // then fetch the entity collection where the entity navigates to
         // note: we don't need to check uriResourceNavigation.isCollection(),
         // because we are the EntityCollectionProcessor
         responseEntityCollection = storage.getRelatedEntityCollection(sourceEntity, targetEntityType);
       }
-    }else{ // this would be the case for e.g. Products(1)/Category/Products
+    } else { // this would be the case for e.g. Products(1)/Category/Products
       throw new ODataApplicationException("Not supported",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),Locale.ROOT);
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
 
     // 3rd: create and configure a serializer
@@ -143,7 +138,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
 
     ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(responseFormat));
     SerializerResult serializerResult = serializer.entityCollection(this.srvMetadata, edmEntityType,
-            responseEntityCollection, opts);
+        responseEntityCollection, opts);
 
     // 4th: configure the response object: set the body, headers and status code
     response.setContent(serializerResult.getContent());

@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -194,7 +193,7 @@ public class BatchResponseSerializer {
       }
       if(buffer.remaining() < b.length) {
         buffer.flip();
-        ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+        ByteBuffer tmp = ByteBuffer.allocate(b.length + BUFFER_SIZE);
         tmp.put(buffer);
         buffer = tmp;
       }

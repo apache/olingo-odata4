@@ -29,6 +29,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.debug.DebugResponseHelper;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -40,6 +41,7 @@ import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.core.debug.DebugResponseHelperImpl;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 import org.apache.olingo.server.core.etag.ETagHelperImpl;
@@ -137,6 +139,13 @@ public class ODataImpl extends OData {
   @Override
   public Preferences createPreferences(final Collection<String> preferHeaders) {
     return new PreferencesImpl(preferHeaders);
+  }
+
+  @Override
+  public DebugResponseHelper createDebugResponseHelper(String debugFormat) {
+    //TODO: What should we do with invalid formats?
+    //TODO: Support more debug formats
+    return new DebugResponseHelperImpl();
   }
 
 }

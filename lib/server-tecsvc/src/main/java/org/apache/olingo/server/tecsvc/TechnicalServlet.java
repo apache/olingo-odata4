@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.debug.DefaultDebugSupport;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
@@ -79,11 +80,15 @@ public class TechnicalServlet extends HttpServlet {
       }
 
       ODataHttpHandler handler = odata.createHandler(serviceMetadata);
+      // Register processors
       handler.register(new TechnicalEntityProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalPrimitiveComplexProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalActionProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalBatchProcessor(dataProvider));
+      // Register Helper
       handler.register(new ETagSupport());
+      handler.register(new DefaultDebugSupport());
+      // Process the request
       handler.process(request, response);
     } catch (final RuntimeException e) {
       LOG.error("Server Error", e);
