@@ -34,12 +34,14 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -61,9 +63,8 @@ public class MetadataDocumentJsonSerializerTest {
         ServiceMetadata metadata = mock(ServiceMetadata.class);
         when(metadata.getEdm()).thenReturn(edm);
         String resultString = IOUtils.toString(serializer.metadataDocument(metadata).getContent());
-        String expectedString = "{\n" +
-                "  \"$schema\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#\"\n" +
-                "}";
+        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
+                "v4.0/edm.json#\"}";
         assertEquals(expectedString, resultString);
     }
 
@@ -77,15 +78,9 @@ public class MetadataDocumentJsonSerializerTest {
         when(serviceMetadata.getEdm()).thenReturn(edm);
         InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
         String resultString = IOUtils.toString(metadata);
-        String expectedString = "{\n" +
-                "  \"$schema\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#\",\n" +
-                "  \"definitions\" : { },\n" +
-                "  \"schemas\" : {\n" +
-                "    \"MyNamespace\" : {\n" +
-                "      \"alias\" : null\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
+                "v4.0/edm.json#\",\"definitions\":{},\"schemas\":{\"MyNamespace\":" +
+                "{\"alias\":null}}}";
         assertNotNull(metadata);
         assertEquals(expectedString, resultString);
     }
@@ -149,170 +144,74 @@ public class MetadataDocumentJsonSerializerTest {
         assertNotNull(metadata);
 
         final String resultString = IOUtils.toString(metadata);
-        assertTrue(resultString.contains("\"http://example.com\" : { }"));
-        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithInclude\" : {\n" +
-                "      \"includes\" : {\n" +
-                "        \"Org.OData.Core.V1\" : {\n" +
-                "          \"alias\" : \"Core\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }"));
-        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithTwoIncludes\" : {\n" +
-                "      \"includes\" : {\n" +
-                "        \"Org.OData.Core.2\" : {\n" +
-                "          \"alias\" : \"Core2\"\n" +
-                "        },\n" +
-                "        \"Org.OData.Core.3\" : {\n" +
-                "          \"alias\" : \"Core3\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }"));
-        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos\" : {\n" +
-                "      \"includeAnnotations\" : [ {\n" +
-                "        \"termNamespace\" : \"TermNs.2\",\n" +
-                "        \"qualifier\" : \"Q.2\",\n" +
-                "        \"targetNamespace\" : \"TargetNS.2\"\n" +
-                "      }, {\n" +
-                "        \"termNamespace\" : \"TermNs.3\",\n" +
-                "        \"qualifier\" : \"Q.3\",\n" +
-                "        \"targetNamespace\" : \"TargetNS.3\"\n" +
-                "      } ]\n" +
-                "    }"));
-        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithAll\" : {\n" +
-                "      \"includes\" : {\n" +
-                "        \"ReferenceWithAll.1\" : {\n" +
-                "          \"alias\" : \"Core1\"\n" +
-                "        },\n" +
-                "        \"ReferenceWithAll.2\" : {\n" +
-                "          \"alias\" : \"Core2\"\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"includeAnnotations\" : [ {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermNs.4\",\n" +
-                "        \"qualifier\" : \"Q.4\",\n" +
-                "        \"targetNamespace\" : \"TargetNS.4\"\n" +
-                "      }, {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermNs.5\",\n" +
-                "        \"qualifier\" : \"Q.5\",\n" +
-                "        \"targetNamespace\" : \"TargetNS.5\"\n" +
-                "      } ]\n" +
-                "    }"));
-        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithAllAndNull\" : {\n" +
-                "      \"includes\" : {\n" +
-                "        \"referenceWithAllAndNull.1\" : { },\n" +
-                "        \"referenceWithAllAndNull.2\" : { }\n" +
-                "      },\n" +
-                "      \"includeAnnotations\" : [ {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermNs.4\"\n" +
-                "      }, {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermAndNullNs.5\",\n" +
-                "        \"qualifier\" : \"Q.5\"\n" +
-                "      }, {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermAndNullNs.6\",\n" +
-                "        \"targetNamespace\" : \"TargetNS\"\n" +
-                "      }, {\n" +
-                "        \"termNamespace\" : \"ReferenceWithAllTermAndNullNs.7\"\n" +
-                "      } ]\n" +
-                "    }"));
+        assertTrue(resultString.contains("\"http://example.com\":{}"));
+        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/" +
+                "referenceWithInclude\":{\"includes\":{\"Org.OData.Core.V1\":" +
+                "{\"alias\":\"Core\"}}}"));
+        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/" +
+                "referenceWithTwoIncludes\":{\"includes\":{\"Org.OData.Core.2\":" +
+                "{\"alias\":\"Core2\"},\"Org.OData.Core.3\":{\"alias\":\"Core3\"}}}"));
+        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/" +
+                "referenceWithIncludeAnnos\":{\"includeAnnotations\":[{\"termNamespace\":" +
+                "\"TermNs.2\",\"qualifier\":\"Q.2\",\"targetNamespace\":\"TargetNS.2\"}," +
+                "{\"termNamespace\":\"TermNs.3\",\"qualifier\":\"Q.3\",\"" +
+                "targetNamespace\":\"TargetNS.3\"}]}"));
+        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/referenceWithAll\":" +
+                "{\"includes\":{\"ReferenceWithAll.1\":{\"alias\":\"Core1\"}," +
+                "\"ReferenceWithAll.2\":{\"alias\":\"Core2\"}},\"" +
+                "includeAnnotations\":[{\"termNamespace\":\"ReferenceWithAllTermNs.4\"," +
+                "\"qualifier\":\"Q.4\",\"targetNamespace\":\"TargetNS.4\"}," +
+                "{\"termNamespace\":\"ReferenceWithAllTermNs.5\"," +
+                "\"qualifier\":\"Q.5\",\"targetNamespace\":\"TargetNS.5\"}]}"));
+        assertTrue(resultString.contains("\"http://localhost/odata/odata/v4.0/" +
+                "referenceWithAllAndNull\":{\"includes\":{\"referenceWithAllAndNull.1\":{}," +
+                "\"referenceWithAllAndNull.2\":{}},\"includeAnnotations\":" +
+                "[{\"termNamespace\":\"ReferenceWithAllTermNs.4\"},{\"termNamespace\":" +
+                "\"ReferenceWithAllTermAndNullNs.5\",\"qualifier\":\"Q.5\"}," +
+                "{\"termNamespace\":\"ReferenceWithAllTermAndNullNs.6\"," +
+                "\"targetNamespace\":\"TargetNS\"},{\"termNamespace\":" +
+                "\"ReferenceWithAllTermAndNullNs.7\"}]}}"));
         assertTrue(resultString.contains("\"references\""));
     }
 
     @Test
     public void metadataDocumentJsonTest() throws Exception {
         CsdlEdmProvider provider = new LocalProvider();
-        ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList());
+        ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference>emptyList());
         InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
         String metadata = IOUtils.toString(metadataStream);
         assertNotNull(metadata);
-        assertTrue(metadata.contains("\"namespace.ENString\" : {\n" +
-                "      \"enum\" : [ \"String1\" ],\n" +
-                "      \"String1@odata.value\" : \"1\"\n" +
-                "    }"));
-        assertTrue(metadata.contains("\"namespace.ETAbstract\" : {\n" +
-                "      \"type\" : \"object\",\n" +
-                "      \"abstract\" : true,\n" +
-                "      \"properties\" : {\n" +
-                "        \"PropertyString\" : {\n" +
-                "          \"type\" : [ \"string\", null ]\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }"));
-        assertTrue(metadata.contains("\"namespace.ETAbstractBase\" : {\n" +
-                "      \"type\" : \"object\",\n" +
-                "      \"allOf\" : [ {\n" +
-                "        \"$ref\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/" +
-                "definitions/namespace.ETAbstract\"\n" +
-                "      } ],\n" +
-                "      \"keys\" : [ {\n" +
-                "        \"name\" : \"PropertyInt16\"\n" +
-                "      } ],\n" +
-                "      \"properties\" : {\n" +
-                "        \"PropertyInt16\" : {\n" +
-                "          \"$ref\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/" +
-                "definitions/Edm.Int16\"\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }"));
-        assertTrue(metadata.contains(" \"namespace.CTTwoPrim\" : {\n" +
-                "      \"type\" : \"object\",\n" +
-                "      \"properties\" : {\n" +
-                "        \"PropertyInt16\" : {\n" +
-                "          \"$ref\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/" +
-                "definitions/Edm.Int16\"\n" +
-                "        },\n" +
-                "        \"PropertyString\" : {\n" +
-                "          \"type\" : [ \"string\", null ]\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }"));
-        assertTrue(metadata.contains("\"namespace.CTTwoPrimBase\" : {\n" +
-                "      \"type\" : \"object\",\n" +
-                "      \"allOf\" : [ {\n" +
-                "        \"$ref\" : \"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/" +
-                "definitions/namespace.CTTwoPrim\"\n" +
-                "      } ],\n" +
-                "      \"properties\" : { }\n" +
-                "    }"));
-        assertTrue(metadata.contains("\"actions\" : [ {\n" +
-                "        \"name\" : \"UARTPrimParam\",\n" +
-                "        \"isBound\" : false,\n" +
-                "        \"parameters\" : {\n" +
-                "          \"ParameterInt16\" : {\n" +
-                "            \"type\" : \"Edm.Int16\"\n" +
-                "          }\n" +
-                "        },\n" +
-                "        \"returnType\" : {\n" +
-                "          \"type\" : \"Edm.String\"\n" +
-                "        }\n" +
-                "      } ]"));
-        assertTrue(metadata.contains("\"functions\" : [ {\n" +
-                "        \"name\" : \"UFNRTInt16\",\n" +
-                "        \"parameters\" : { },\n" +
-                "        \"returnType\" : {\n" +
-                "          \"type\" : \"Edm.Int16\"\n" +
-                "        }\n" +
-                "      } ]"));
-        assertTrue(metadata.contains("\"entitySets\" : {\n" +
-                "          \"ESAllPrim\" : {\n" +
-                "            \"entityType\" : \"Alias.ETAbstractBase\"\n" +
-                "          }\n" +
-                "        }"));
-        assertTrue(metadata.contains("\"actionImports\" : {\n" +
-                "          \"AIRTPrimParam\" : {\n" +
-                "            \"action\" : \"Alias.UARTPrimParam\"\n" +
-                "          }\n" +
-                "        }"));
-        assertTrue(metadata.contains("\"functionImports\" : {\n" +
-                "          \"FINRTInt16\" : {\n" +
-                "            \"function\" : \"Alias.UFNRTInt16\",\n" +
-                "            \"includeInServiceDocument\" : true\n" +
-                "          }\n" +
-                "        }"));
-        assertTrue(metadata.contains("\"singletons\" : {\n" +
-                "          \"SI\" : {\n" +
-                "            \"type\" : \"Alias.ETAbstractBase\"\n" +
-                "          }\n" +
-                "        }"));
+        assertTrue(metadata.contains("\"namespace.ENString\":{\"enum\":[\"String1\"]," +
+                "\"String1@odata.value\":\"1\"}"));
+        assertTrue(metadata.contains("\"namespace.ETAbstract\":{\"type\":\"object\"," +
+                "\"abstract\":true,\"properties\":{\"PropertyString\":" +
+                "{\"type\":[\"string\",null]}}}"));
+        assertTrue(metadata.contains("\"namespace.ETAbstractBase\":{\"type\":\"object\"," +
+                "\"allOf\":[{\"$ref\":\"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/" +
+                "edm.json#/definitions/namespace.ETAbstract\"}]," +
+                "\"keys\":[{\"name\":\"PropertyInt16\"}],\"properties\":" +
+                "{\"PropertyInt16\":{\"$ref\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
+                "v4.0/edm.json#/definitions/Edm.Int16\"}}}"));
+        assertTrue(metadata.contains("\"namespace.CTTwoPrim\":{\"type\":\"object\"," +
+                "\"properties\":{\"PropertyInt16\":{\"$ref\":\"http://docs.oasis-open.org/odata/" +
+                "odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int16\"}," +
+                "\"PropertyString\":{\"type\":[\"string\",null]}}}"));
+        assertTrue(metadata.contains("\"namespace.CTTwoPrimBase\":{\"type\":\"object\"," +
+                "\"allOf\":[{\"$ref\":\"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/" +
+                "edm.json#/definitions/namespace.CTTwoPrim\"}],\"properties\":{}}"));
+        assertTrue(metadata.contains("\"actions\":[{\"name\":\"UARTPrimParam\",\"isBound\"" +
+                ":false,\"parameters\":{\"ParameterInt16\":{\"type\":\"Edm.Int16\"}}," +
+                "\"returnType\":{\"type\":\"Edm.String\"}}]"));
+        assertTrue(metadata.contains("\"functions\":[{\"name\":\"UFNRTInt16\",\"parameters\":{}," +
+                "\"returnType\":{\"type\":\"Edm.Int16\"}}]"));
+        assertTrue(metadata.contains("\"entitySets\":{\"ESAllPrim\":{\"entityType\":" +
+                "\"Alias.ETAbstractBase\"}}"));
+        assertTrue(metadata.contains("\"actionImports\":{\"AIRTPrimParam\":" +
+                "{\"action\":\"Alias.UARTPrimParam\"}}"));
+        assertTrue(metadata.contains("\"functionImports\":{\"FINRTInt16\":{\"function\":" +
+                "\"Alias.UFNRTInt16\",\"includeInServiceDocument\":true}}"));
+        assertTrue(metadata.contains("\"singletons\":{\"SI\":{\"type\":" +
+                "\"Alias.ETAbstractBase\"}}"));
     }
 
     private class LocalProvider extends CsdlAbstractEdmProvider {

@@ -114,7 +114,7 @@ public class MetadataDocumentJsonSerializer {
         gen.writeStartObject();
         gen.writeObjectField(CONSTANT_SCHEMA, DEFAULT_SCHEMA);
         appendDefinitions(gen);
-        appendSchemas(gen);
+        appendSchemas(gen); 
         appendReference(gen);
         gen.writeEndObject();
     }
