@@ -196,25 +196,6 @@ public class TechnicalAsyncService {
     writeToResponse(response, odResponseStream);
   }
 
-//  static void copy(final InputStream input, final OutputStream output) {
-//    if(output == null || input == null) {
-//      return;
-//    }
-//
-//    try {
-//      byte[] buffer = new byte[1024];
-//      int n;
-//      while (-1 != (n = input.read(buffer))) {
-//        output.write(buffer, 0, n);
-//      }
-//    } catch (IOException e) {
-//      throw new ODataRuntimeException(e);
-//    } finally {
-//      closeStream(output);
-//      closeStream(input);
-//    }
-//  }
-
   static void copy(final InputStream input, final OutputStream output) {
     if (output == null || input == null) {
       return;

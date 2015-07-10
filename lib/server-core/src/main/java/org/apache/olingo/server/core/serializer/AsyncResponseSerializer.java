@@ -34,12 +34,12 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Map;
 
 public class AsyncResponseSerializer {
-  private static final int BUFFER_SIZE = 4096;
+  private static final int BUFFER_SIZE = 8192;
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String CRLF = "\r\n";
-  public static final String HEADER_CHARSET_NAME = "ISO-8859-1";
-  public static final String HTTP_VERSION = "HTTP/1.1";
+  private static final String HEADER_CHARSET_NAME = "ISO-8859-1";
+  private static final String HTTP_VERSION = "HTTP/1.1";
 
   public InputStream serialize(final ODataResponse response) throws SerializerException {
     try {

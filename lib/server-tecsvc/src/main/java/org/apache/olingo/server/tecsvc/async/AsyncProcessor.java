@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.async;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -40,7 +40,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -63,6 +62,7 @@ public class AsyncProcessor<T extends Processor> {
     private final Object wrappedInstance;
     private Method invokeMethod;
     private Object[] invokeParameters;
+    private ODataRequest processRequest;
     private ODataResponse processResponse;
 
     public ProcessorInvocationHandler(Object wrappedInstance) {
@@ -74,22 +74,33 @@ public class AsyncProcessor<T extends Processor> {
       if (Processor.class.isAssignableFrom(method.getDeclaringClass())) {
         invokeMethod = method;
         invokeParameters = objects;
+      } else {
+        throw new ODataRuntimeException("Invalid class '" + method.getDeclaringClass() +
+            "' can not wrapped for asynchronous processing.");
       }
 
       return null;
     }
 
-    public Object process() throws InvocationTargetException, IllegalAccessException {
-      processResponse = new ODataResponse();
+    /**
+     * Prepare the handler for the <code>process()</code> call (which is asynchronous and can be at any time in
+     * the future).
+     */
+    void prepareForAsync() {
+      processRequest = copyRequest(getParameter(ODataRequest.class));
+      processResponse = createODataResponse(getParameter(ODataResponse.class));
+    }
+
+    Object process() throws InvocationTargetException, IllegalAccessException {
+      if(processRequest == null || processResponse == null) {
+        throw new ODataRuntimeException("ProcessInvocationHandler was not correct prepared for async processsing.");
+      }
+      replaceInvokeParameter(processRequest);
       replaceInvokeParameter(processResponse);
       return invokeMethod.invoke(wrappedInstance, invokeParameters);
     }
 
-    public Object[] getInvokeParameters() {
-      return invokeParameters;
-    }
-
-    public <P> void replaceInvokeParameter(P replacement) {
+    <P> void replaceInvokeParameter(P replacement) {
       if (replacement == null) {
         return;
       }
@@ -105,12 +116,27 @@ public class AsyncProcessor<T extends Processor> {
       invokeParameters = copy.toArray();
     }
 
-    public ODataResponse getProcessResponse() {
+    /**
+     * Get the ODataResponse which is used when this ProcessorInvocationHandler
+     * is called (via its <code>process()</code> method)
+     *
+     * @return ODataResponse which is used when this ProcessorInvocationHandler is called
+     */
+    ODataResponse getProcessResponse() {
       return processResponse;
     }
 
     Object getWrappedInstance() {
       return this.wrappedInstance;
+    }
+
+    <P> P getParameter(Class<P> parameterClass) {
+      for (Object parameter : invokeParameters) {
+        if (parameter != null && parameterClass == parameter.getClass()) {
+          return parameterClass.cast(parameter);
+        }
+      }
+      return null;
     }
   }
 
@@ -129,24 +155,15 @@ public class AsyncProcessor<T extends Processor> {
   }
 
   public ODataRequest getRequest() {
-    return getParameter(ODataRequest.class);
+    return handler.getParameter(ODataRequest.class);
   }
 
   public ODataResponse getResponse() {
-    return getParameter(ODataResponse.class);
+    return handler.getParameter(ODataResponse.class);
   }
 
   public ODataResponse getProcessResponse() {
     return handler.getProcessResponse();
-  }
-
-  private <P> P getParameter(Class<P> parameterClass) {
-    for (Object parameter : handler.getInvokeParameters()) {
-      if (parameter != null && parameterClass == parameter.getClass()) {
-        return parameterClass.cast(parameter);
-      }
-    }
-    return null;
   }
 
   public String getPreferHeader() {
@@ -170,10 +187,16 @@ public class AsyncProcessor<T extends Processor> {
    */
   public String processAsync() throws ODataApplicationException, ODataLibraryException {
     preferHeader = getRequest().getHeader(HttpHeader.PREFER);
-    ODataRequest request = copyRequest(getRequest());
-    handler.replaceInvokeParameter(request);
-    handler.replaceInvokeParameter(new ODataResponse());
+    handler.prepareForAsync();
     return service.processAsynchronous(this);
+  }
+
+  private static ODataResponse createODataResponse(ODataResponse response) {
+    ODataResponse created = new ODataResponse();
+    for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
+      created.setHeader(header.getKey(), header.getValue());
+    }
+    return created;
   }
 
   Object process() throws InvocationTargetException, IllegalAccessException {
@@ -184,7 +207,7 @@ public class AsyncProcessor<T extends Processor> {
     this.location = loc;
   }
 
-  private ODataRequest copyRequest(ODataRequest request) throws ODataApplicationException {
+  static ODataRequest copyRequest(ODataRequest request) {
     ODataRequest req = new ODataRequest();
     req.setBody(copyRequestBody(request));
     req.setMethod(request.getMethod());
@@ -195,10 +218,8 @@ public class AsyncProcessor<T extends Processor> {
     req.setRawServiceResolutionUri(request.getRawServiceResolutionUri());
 
     for (Map.Entry<String, List<String>> header : request.getAllHeaders().entrySet()) {
-      if (HttpHeader.PREFER.toLowerCase().equals(
+      if (!HttpHeader.PREFER.toLowerCase().equals(
           header.getKey().toLowerCase())) {
-        preferHeader = header.getValue().get(0);
-      } else {
         req.addHeader(header.getKey(), header.getValue());
       }
     }
@@ -206,7 +227,7 @@ public class AsyncProcessor<T extends Processor> {
     return req;
   }
 
-  private InputStream copyRequestBody(ODataRequest request) throws ODataApplicationException {
+  static InputStream copyRequestBody(ODataRequest request) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     InputStream input = request.getBody();
     if (input != null) {
@@ -221,8 +242,7 @@ public class AsyncProcessor<T extends Processor> {
         }
         return new ByteArrayInputStream(buffer.toByteArray());
       } catch (IOException e) {
-        throw new ODataApplicationException("Error on reading request content",
-            HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+        throw new ODataRuntimeException("Error on reading request content");
       }
     }
     return null;

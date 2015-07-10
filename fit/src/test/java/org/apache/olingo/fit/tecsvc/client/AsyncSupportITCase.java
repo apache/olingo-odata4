@@ -142,6 +142,8 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     assertNotNull(first.getODataResponse());
     ODataResponse firstResponse = first.getODataResponse();
     assertEquals(200, firstResponse.getStatusCode());
+    assertEquals(2, firstResponse.getHeaderNames().size());
+    assertEquals("4.0", firstResponse.getHeader("OData-Version").iterator().next());
     ResWrap<EntityCollection> firWrap = getClient().getDeserializer(ContentType.APPLICATION_JSON)
         .toEntitySet(firstResponse.getRawResponse());
     EntityCollection firstResponseEntitySet = firWrap.getPayload();

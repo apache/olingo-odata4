@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,6 +39,7 @@ public class AsyncResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(200));
 
     response.setContent(IOUtils.toInputStream("Walter Winter" + CRLF));
 
@@ -45,6 +47,7 @@ public class AsyncResponseSerializerTest {
     InputStream in = serializer.serialize(response);
     String result = IOUtils.toString(in);
     assertEquals("HTTP/1.1 200 OK" + CRLF +
+        "Content-Length: 200" + CRLF +
         "Content-Type: application/json" + CRLF + CRLF +
         "Walter Winter" + CRLF, result);
   }
@@ -54,6 +57,7 @@ public class AsyncResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
+    response.setHeader(HttpHeader.CONTENT_LENGTH, String.valueOf(0));
 
     String testData = testData(20000);
     response.setContent(IOUtils.toInputStream(testData));
@@ -62,13 +66,14 @@ public class AsyncResponseSerializerTest {
     InputStream in = serializer.serialize(response);
     String result = IOUtils.toString(in);
     assertEquals("HTTP/1.1 202 Accepted" + CRLF +
+        "Content-Length: 0" + CRLF +
         "Content-Type: application/json" + CRLF + CRLF +
         testData, result);
   }
 
   private String testData(int amount) {
     StringBuilder result = new StringBuilder();
-    Random r = new Random();
+    ThreadLocalRandom r = ThreadLocalRandom.current();
     for (int i = 0; i < amount; i++) {
       result.append((char)(r.nextInt(26) + 'a'));
     }
