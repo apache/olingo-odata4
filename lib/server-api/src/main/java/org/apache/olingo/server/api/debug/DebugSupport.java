@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.api.debug;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -44,6 +47,6 @@ public interface DebugSupport {
    * @return a new debug response which will be send to the client
    */
   ODataResponse createDebugResponse(String debugFormat, ODataRequest request, ODataResponse response,
-      Exception exception);
+      Exception exception, Map<String, String> serverEnvironmentVaribles, List<RuntimeMeasurement> runtimeInformation);
 
 }

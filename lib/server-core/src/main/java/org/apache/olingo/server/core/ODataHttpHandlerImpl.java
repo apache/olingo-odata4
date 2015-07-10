@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +43,7 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugSupport;
+import org.apache.olingo.server.api.debug.RuntimeMeasurement;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -53,10 +56,17 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
   private final ODataHandler handler;
-  private DebugSupport debugSupport;
+  private final OData odata;
   private int split = 0;
 
+  // debug stuff
+  private final List<RuntimeMeasurement> runtimeInformation = new ArrayList<RuntimeMeasurement>();
+  private DebugSupport debugSupport;
+  private String debugFormat;
+  private boolean isDebugMode = false;
+
   public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
+    this.odata = odata;
     handler = new ODataHandler(odata, serviceMetadata);
   }
 
@@ -65,31 +75,101 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     Exception exception = null;
     ODataRequest odRequest = null;
     ODataResponse odResponse;
+    resolveDebugMode(request);
+    int processMethodHandel = startRuntimeMeasurement("ODataHttpHandlerImpl", "process");
+
     try {
       odRequest = new ODataRequest();
+      int requestHandel = startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
       fillODataRequest(odRequest, request, split);
+      stopRuntimeMeasurement(requestHandel);
+      
+      int responseHandel = startRuntimeMeasurement("ODataHandler", "process");
       odResponse = handler.process(odRequest);
+      stopRuntimeMeasurement(responseHandel);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
       exception = e;
       odResponse = handleException(odRequest, e);
     }
+    stopRuntimeMeasurement(processMethodHandel);
 
-    if (debugSupport != null) {
-      String debugFormat = getDebugQueryParameter(request);
-      if (debugFormat != null) {
-        // TODO: Should we be more careful here with response assignement in order to not loose the original response?
-        // TODO: How should we react to exceptions here?
-        odResponse = debugSupport.createDebugResponse(debugFormat, odRequest, odResponse, exception);
+    if (isDebugMode) {
+      debugSupport.init(odata);
+      // TODO: Should we be more careful here with response assignement in order to not loose the original response?
+      // TODO: How should we react to exceptions here?
+      if (exception == null) {
+        // This is to ensure that we have access to the thrown OData Exception
+        // TODO: Should we make this hack
+        exception = handler.getLastThrownException();
       }
+      Map<String, String> serverEnvironmentVaribles = createEnvironmentVariablesMap(request);
+
+      odResponse =
+          debugSupport.createDebugResponse(debugFormat, odRequest, odResponse, exception, serverEnvironmentVaribles,
+              runtimeInformation);
     }
 
     convertToHttp(response, odResponse);
   }
 
-  private String getDebugQueryParameter(HttpServletRequest request) {
-    // TODO Auto-generated method stub
-    return "";
+  private void resolveDebugMode(HttpServletRequest request) {
+    if (debugSupport != null) {
+      // Should we read the parameter from the servlet here and ignore multiple parameters?
+      debugFormat = request.getParameter(DebugSupport.ODATA_DEBUG_QUERY_PARAMETER);
+      // Debug format is present and we have a debug support processor registered so we are in debug mode
+      isDebugMode = debugFormat != null;
+    }
+  }
+
+  public int startRuntimeMeasurement(final String className, final String methodName) {
+    if (isDebugMode) {
+      int handleId = runtimeInformation.size();
+
+      final RuntimeMeasurement measurement = new RuntimeMeasurement();
+      measurement.setTimeStarted(System.nanoTime());
+      measurement.setClassName(className);
+      measurement.setMethodName(methodName);
+
+      runtimeInformation.add(measurement);
+
+      return handleId;
+    } else {
+      return 0;
+    }
+  }
+
+  public void stopRuntimeMeasurement(final int handle) {
+    if (isDebugMode && handle < runtimeInformation.size()) {
+        long stopTime = System.nanoTime();
+        RuntimeMeasurement runtimeMeasurement = runtimeInformation.get(handle);
+        if (runtimeMeasurement != null) {
+          runtimeMeasurement.setTimeStopped(stopTime);
+        }
+      }
+  }
+
+  private Map<String, String> createEnvironmentVariablesMap(HttpServletRequest request) {
+    LinkedHashMap<String, String> environment = new LinkedHashMap<String, String>();
+    environment.put("authType", request.getAuthType());
+    environment.put("localAddr", request.getLocalAddr());
+    environment.put("localName", request.getLocalName());
+    environment.put("localPort", getIntAsString(request.getLocalPort()));
+    environment.put("pathInfo", request.getPathInfo());
+    environment.put("pathTranslated", request.getPathTranslated());
+    environment.put("remoteAddr", request.getRemoteAddr());
+    environment.put("remoteHost", request.getRemoteHost());
+    environment.put("remotePort", getIntAsString(request.getRemotePort()));
+    environment.put("remoteUser", request.getRemoteUser());
+    environment.put("scheme", request.getScheme());
+    environment.put("serverName", request.getServerName());
+    environment.put("serverPort", getIntAsString(request.getServerPort()));
+    environment.put("servletPath", request.getServletPath());
+    return environment;
+  }
+
+  private String getIntAsString(final int number) {
+    return number == 0 ? "unknown" : Integer.toString(number);
   }
 
   @Override
@@ -107,7 +187,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     } else {
       serverError = ODataExceptionHelper.createServerErrorObject(e);
     }
-    handler.handleException(odRequest, resp, serverError);
+    handler.handleException(odRequest, resp, serverError, e);
     return resp;
   }
 
@@ -153,6 +233,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       throws ODataLibraryException {
     try {
       odRequest.setBody(httpRequest.getInputStream());
+      odRequest.setProtocol(httpRequest.getProtocol());
       extractHeaders(odRequest, httpRequest);
       extractUri(odRequest, httpRequest, split);
       extractMethod(odRequest, httpRequest);

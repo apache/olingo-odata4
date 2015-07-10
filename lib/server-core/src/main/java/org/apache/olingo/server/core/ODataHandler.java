@@ -58,6 +58,7 @@ public class ODataHandler {
   private CustomETagSupport customETagSupport;
 
   private UriInfo uriInfo;
+  private Exception lastThrownException;
 
   public ODataHandler(final OData server, final ServiceMetadata serviceMetadata) {
     odata = server;
@@ -75,37 +76,37 @@ public class ODataHandler {
 
     } catch (final UriValidationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserSemanticException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserSyntaxException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ContentNegotiatorException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (SerializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (PreconditionException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ODataApplicationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (Exception e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     }
     return response;
   }
@@ -124,8 +125,8 @@ public class ODataHandler {
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
-      final ODataServerError serverError) {
-
+      final ODataServerError serverError, Exception exception) {
+    this.lastThrownException = exception;
     ErrorProcessor exceptionProcessor;
     try {
       exceptionProcessor = selectProcessor(ErrorProcessor.class);
@@ -186,5 +187,9 @@ public class ODataHandler {
 
   public CustomETagSupport getCustomETagSupport() {
     return customETagSupport;
+  }
+
+  public Exception getLastThrownException() {
+    return lastThrownException;
   }
 }
