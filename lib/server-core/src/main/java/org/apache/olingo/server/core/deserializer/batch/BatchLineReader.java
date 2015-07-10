@@ -28,29 +28,19 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Read batch content and split it into lines.
- * This class is not thread safe.
- */
 public class BatchLineReader {
-  private static final byte CR_BYTE = '\r';
-  private static final byte LF_BYTE = '\n';
+  private static final byte CR = '\r';
+  private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
   private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
-  private static final String BOUNDARY = "boundary";
-  private static final String DOUBLE_DASH = "--";
-  private static final String CR = "\r";
-  private static final String LF = "\n";
-  private static final String CRLF = "\r\n";
-  // length of the Content-Type Header field including the ':'
-  // "Content-Type:" => 13
-  private static final int CONTENT_TYPE_LENGTH = 13;
-
-  private final ReadState readState = new ReadState();
+  public static final String BOUNDARY = "boundary";
+  public static final String DOUBLE_DASH = "--";
+  public static final String CRLF = "\r\n";
   private Charset currentCharset = DEFAULT_CHARSET;
   private String currentBoundary = null;
+  private ReadState readState = new ReadState();
   private InputStream reader;
   private byte[] buffer;
   private int offset = 0;
@@ -103,57 +93,11 @@ public class BatchLineReader {
     return result;
   }
 
-  int read(final byte[] byteBuffer, final int bufferOffset, final int length) throws IOException {
-    if ((bufferOffset + length) > byteBuffer.length) {
-      throw new IndexOutOfBoundsException("Buffer is too small");
-    }
-
-    if (length < 0 || bufferOffset < 0) {
-      throw new IndexOutOfBoundsException("Offset and length must be greater than zero");
-    }
-
-    // Check if buffer is filled. Return if EOF is reached
-    // Is buffer refill required
-    if (limit == offset || isEOF()) {
-      fillBuffer();
-
-      if (isEOF()) {
-        return EOF;
-      }
-    }
-
-    int bytesRead = 0;
-    int bytesToRead = length;
-    int currentOutputOffset = bufferOffset;
-
-    while (bytesToRead != 0) {
-      // Is buffer refill required?
-      if (limit == offset) {
-        fillBuffer();
-
-        if (isEOF()) {
-          bytesToRead = 0;
-        }
-      }
-
-      if (bytesToRead > 0) {
-        int readByte = Math.min(limit - offset, bytesToRead);
-        bytesRead += readByte;
-        bytesToRead -= readByte;
-
-        for (int i = 0; i < readByte; i++) {
-          byteBuffer[currentOutputOffset++] = buffer[offset++];
-        }
-      }
-    }
-
-    return bytesRead;
-  }
-
   private void updateCurrentCharset(String currentLine) {
     if(currentLine != null) {
       if(currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
-        ContentType ct = parseContentType(currentLine);
+        currentLine = currentLine.substring(13, currentLine.length() - 2).trim();
+        ContentType ct = ContentType.parse(currentLine);
         if (ct != null) {
           String charsetString = ct.getParameter(ContentType.PARAMETER_CHARSET);
           if (charsetString != null) {
@@ -167,24 +111,12 @@ public class BatchLineReader {
             currentBoundary = DOUBLE_DASH + boundary;
           }
         }
-      } else if(isLinebreak(currentLine)) {
+      } else if(CRLF.equals(currentLine)) {
         readState.foundLinebreak();
       } else if(isBoundary(currentLine)) {
         readState.foundBoundary();
       }
     }
-  }
-
-  private ContentType parseContentType(String currentLine) {
-    currentLine = currentLine.substring(CONTENT_TYPE_LENGTH, currentLine.length()).trim();
-    return ContentType.parse(currentLine);
-  }
-
-  private boolean isLinebreak(String currentLine) {
-    if(currentLine.length() > 2) {
-      return false;
-    }
-    return CR.equals(currentLine) || LF.equals(currentLine) || CRLF.equals(currentLine);
   }
 
   private boolean isBoundary(String currentLine) {
@@ -222,20 +154,20 @@ public class BatchLineReader {
         }
         buffer.put(currentChar);
 
-        if (currentChar == LF_BYTE) {
+        if (currentChar == LF) {
           foundLineEnd = true;
-        } else if (currentChar == CR_BYTE) {
+        } else if (currentChar == CR) {
           foundLineEnd = true;
 
-          // Check next char. Consume \n if available
+          // Check next byte. Consume \n if available
           // Is buffer refill required?
           if (limit == offset) {
             fillBuffer();
           }
 
           // Check if there is at least one character
-          if (limit != EOF && this.buffer[offset] == LF_BYTE) {
-            buffer.put(LF_BYTE);
+          if (limit != EOF && this.buffer[offset] == LF) {
+            buffer.put(LF);
             offset++;
           }
         }
@@ -254,10 +186,6 @@ public class BatchLineReader {
       updateCurrentCharset(currentLine);
       return currentLine;
     }
-  }
-
-  private boolean isEOF() {
-    return limit == EOF;
   }
 
   private int fillBuffer() throws IOException {

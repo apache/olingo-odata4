@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -97,7 +96,7 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 
   @Test
@@ -153,7 +152,7 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 
   @Test
@@ -213,7 +212,7 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 
   @Test
@@ -309,7 +308,7 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 
   @Test
@@ -363,7 +362,7 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 
   @Test
@@ -398,54 +397,7 @@ public class BatchResponseSerializerTest {
     assertEquals("Content-Length: 13" + CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertEquals("Walter Winter" + CRLF, body.get(line++));
-    assertTrue(body.get(line).contains("--batch_"));
-  }
-
-  @Test
-  public void testResponseVeryLargeHeader() throws Exception {
-    List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
-    ODataResponse response = new ODataResponse();
-    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
-    final String chValue = generateTestData(20000);
-    response.setHeader("Custom-Header", chValue);
-    response.setContent(IOUtils.toInputStream("Walter Winter"));
-
-    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
-    responses.add(response);
-    parts.add(new ODataResponsePart(responses, false));
-
-    final BatchResponseSerializer serializer = new BatchResponseSerializer();
-    final InputStream content = serializer.serialize(parts, BOUNDARY);
-
-    assertNotNull(content);
-    final BatchLineReader reader =
-            new BatchLineReader(content);
-    final List<String> body = reader.toList();
-    reader.close();
-
-    int line = 0;
-    assertEquals(11, body.size());
     assertTrue(body.get(line++).contains("--batch_"));
-    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
-    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
-    assertEquals(CRLF, body.get(line++));
-    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
-    assertEquals("Custom-Header: " + chValue + CRLF, body.get(line++));
-    assertEquals("Content-Type: application/json" + CRLF, body.get(line++));
-    assertEquals("Content-Length: 13" + CRLF, body.get(line++));
-    assertEquals(CRLF, body.get(line++));
-    assertEquals("Walter Winter" + CRLF, body.get(line++));
-    assertTrue(body.get(line).contains("--batch_"));
-  }
-
-  private String generateTestData(int amount) {
-    StringBuilder sb = new StringBuilder();
-    Random r = new Random();
-    for (int j = 0; j < amount; j++) {
-      sb.append((char)(65 + r.nextInt(25)));
-    }
-    return sb.toString();
   }
 
   @Test
@@ -484,6 +436,6 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
-    assertTrue(body.get(line).contains("--batch_"));
+    assertTrue(body.get(line++).contains("--batch_"));
   }
 }
