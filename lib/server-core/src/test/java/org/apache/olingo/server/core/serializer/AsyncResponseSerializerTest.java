@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 
@@ -73,7 +72,7 @@ public class AsyncResponseSerializerTest {
 
   private String testData(int amount) {
     StringBuilder result = new StringBuilder();
-    ThreadLocalRandom r = ThreadLocalRandom.current();
+    Random r = new Random();
     for (int i = 0; i < amount; i++) {
       result.append((char)(r.nextInt(26) + 'a'));
     }
