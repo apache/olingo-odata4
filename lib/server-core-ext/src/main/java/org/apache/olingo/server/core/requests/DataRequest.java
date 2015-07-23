@@ -317,7 +317,7 @@ public class DataRequest extends ServiceRequest {
               getContextURL(odata), false, response, getReturnRepresentation());
           handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
         } else {
-          handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
+          handler.upsertEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
               entityResponse);
         }
       } else if (isPOST()) {
