@@ -20,7 +20,6 @@ package org.apache.olingo.client.api.edm.xml;
 
 import java.util.List;
 import java.util.Map;
-
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 /**
@@ -52,6 +51,6 @@ public interface XMLMetadata {
   List<CsdlSchema> getSchemas();
 
   Map<String, CsdlSchema> getSchemaByNsOrAlias();
-  
+
   List<Reference> getReferences();
 }

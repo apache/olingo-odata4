@@ -62,8 +62,8 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
-  public Edm readMetadata(final InputStream input) {
-    return readMetadata(client.getDeserializer(ODataFormat.XML).toMetadata(input).getSchemaByNsOrAlias());
+  public Edm readMetadata(final InputStream input, final ODataFormat format) {
+    return readMetadata(client.getDeserializer(format).toMetadata(input).getSchemaByNsOrAlias());
   }
 
   @Override
@@ -129,7 +129,7 @@ public class ODataReaderImpl implements ODataReader {
         res = new ResWrap<T>(
             (URI) null,
             null,
-            reference.cast(readMetadata(src)));
+            reference.cast(readMetadata(src,ODataFormat.fromString(format))));
       } else if (ClientServiceDocument.class.isAssignableFrom(reference)) {
         final ResWrap<ServiceDocument> resource =
             client.getDeserializer(ODataFormat.fromString(format)).toServiceDocument(src);

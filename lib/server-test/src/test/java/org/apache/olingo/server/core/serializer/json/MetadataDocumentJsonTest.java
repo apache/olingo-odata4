@@ -56,6 +56,8 @@ public class MetadataDocumentJsonTest {
         expectedString="\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#\"";
         assertThat(metadata, containsString(expectedString));
 
+        expectedString="\"odata-version\":\"4.0\"";
+        assertThat(metadata, containsString(expectedString));
 
         expectedString="\"olingo.odata.test1.ENString\":{\"enum\":[\"String1\",\"String2\",\"String3\"]," +
                 "\"String1@odata.value\":\"1\",\"String2@odata.value\":\"2\",\"String3@odata.value\":\"4\"}";

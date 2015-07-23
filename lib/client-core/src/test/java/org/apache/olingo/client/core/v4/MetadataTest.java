@@ -79,7 +79,8 @@ public class MetadataTest extends AbstractTest {
 
   @Test
   public void parse() {
-    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("metadata.xml"));
+    final Edm edm = getClient().getReader().
+            readMetadata(getClass().getResourceAsStream("metadata.xml"),ODataFormat.XML);
     assertNotNull(edm);
 
     // 1. Enum
@@ -155,7 +156,7 @@ public class MetadataTest extends AbstractTest {
 
     // Now let's test some edm:Annotations
     final Edm edm = getClient().getReader().
-        readMetadata(getClass().getResourceAsStream("demo-metadata.xml"));
+        readMetadata(getClass().getResourceAsStream("demo-metadata.xml"),ODataFormat.XML);
     assertNotNull(edm);
 
     final EdmSchema schema = edm.getSchema("ODataDemo");
@@ -239,7 +240,8 @@ public class MetadataTest extends AbstractTest {
         functionImport.getFunction());
 
     // Now let's go high-level
-    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml")
+            ,ODataFormat.XML);
     assertNotNull(edm);
 
     List<EdmSchema> schemaList = edm.getSchemas();
@@ -325,7 +327,8 @@ public class MetadataTest extends AbstractTest {
    */
   @Test
   public void fromdoc3() {
-    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc3-metadata.xml")
+            ,ODataFormat.XML);
     assertNotNull(edm);
 
     final EdmAnnotations group = edm.getSchema("Annotations").getAnnotationGroups().get(0);
@@ -371,7 +374,8 @@ public class MetadataTest extends AbstractTest {
     assertTrue(urlRef.getValue().asDynamic().isApply());
 
     // Now let's go high-level
-    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml"));
+    final Edm edm = getClient().getReader().readMetadata(getClass().getResourceAsStream("fromdoc4-metadata.xml")
+            ,ODataFormat.XML);
     assertNotNull(edm);
 
     final EdmAnnotations edmGroup = edm.getSchemas().get(0).getAnnotationGroups().get(0);

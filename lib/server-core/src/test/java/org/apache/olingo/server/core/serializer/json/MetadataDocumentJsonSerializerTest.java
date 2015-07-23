@@ -63,8 +63,8 @@ public class MetadataDocumentJsonSerializerTest {
         ServiceMetadata metadata = mock(ServiceMetadata.class);
         when(metadata.getEdm()).thenReturn(edm);
         String resultString = IOUtils.toString(serializer.metadataDocument(metadata).getContent());
-        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
-                "v4.0/edm.json#\"}";
+        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#\",\"" +
+                "odata-version\":\"4.0\"}";
         assertEquals(expectedString, resultString);
     }
 
@@ -78,9 +78,8 @@ public class MetadataDocumentJsonSerializerTest {
         when(serviceMetadata.getEdm()).thenReturn(edm);
         InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
         String resultString = IOUtils.toString(metadata);
-        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
-                "v4.0/edm.json#\",\"definitions\":{},\"schemas\":{\"MyNamespace\":" +
-                "{\"alias\":null}}}";
+        String expectedString = "{\"$schema\":\"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#\",\"" +
+                "odata-version\":\"4.0\",\"definitions\":{},\"schemas\":{\"MyNamespace\":{\"alias\":null}}}";
         assertNotNull(metadata);
         assertEquals(expectedString, resultString);
     }

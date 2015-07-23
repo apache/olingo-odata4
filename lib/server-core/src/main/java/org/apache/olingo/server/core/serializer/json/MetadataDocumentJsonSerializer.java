@@ -39,6 +39,8 @@ public class MetadataDocumentJsonSerializer {
     private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
     private static final String CONSTANT_SCHEMA = "$schema";
     private static final String DEFAULT_SCHEMA="http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#";
+    private static final String CONSTANT_VERSION = "odata-version";
+    private static final String CONSTANT_VERSION_VALUE = "4.0";
     private static final String CONSTANT_DEFINITION_REFERENCE=DEFAULT_SCHEMA+"/definitions/";
     private static final String CONSTANT_REFERENCE_IDENTIFIER="$ref";
     private static final String CONSTANT_REFERENCES = "references";
@@ -113,8 +115,9 @@ public class MetadataDocumentJsonSerializer {
     public void writeMetadataDocument(final JsonGenerator gen) throws IOException {
         gen.writeStartObject();
         gen.writeObjectField(CONSTANT_SCHEMA, DEFAULT_SCHEMA);
+        gen.writeObjectField(CONSTANT_VERSION, CONSTANT_VERSION_VALUE);
         appendDefinitions(gen);
-        appendSchemas(gen); 
+        appendSchemas(gen);
         appendReference(gen);
         gen.writeEndObject();
     }

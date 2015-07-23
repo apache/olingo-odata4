@@ -23,11 +23,14 @@ import java.io.InputStream;
 
 import javax.xml.stream.XMLStreamException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
+import org.apache.olingo.client.core.edm.ClientCsdlJSONMetadata;
+import org.apache.olingo.client.core.edm.json.ClientJsonSchemaCsdl;
 import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
 import org.apache.olingo.client.core.edm.ClientCsdlXMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
@@ -111,10 +114,31 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
     return xmlMapper;
   }
 
+  protected ObjectMapper getObjectMapper() {
+    final ObjectMapper jsonMapper = new ObjectMapper();
+
+    jsonMapper.setInjectableValues(new InjectableValues.Std().addValue(Boolean.class, Boolean.FALSE));
+
+    jsonMapper.addHandler(new DeserializationProblemHandler() {
+      @Override
+      public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser jp,
+                  final com.fasterxml.jackson.databind.JsonDeserializer<?> deserializer,
+                  final Object beanOrClass, final String propertyName)
+              throws IOException, JsonProcessingException {
+
+        ctxt.getParser().skipChildren();
+        return true;
+      }
+    });
+    return jsonMapper;
+  }
+
   @Override
   public XMLMetadata toMetadata(final InputStream input) {
     try {
-      return new ClientCsdlXMLMetadata(getXmlMapper().readValue(input, ClientCsdlEdmx.class));
+      return format == ODataFormat.XML ?
+              new ClientCsdlXMLMetadata(getXmlMapper().readValue(input,ClientCsdlEdmx.class)):
+              new ClientCsdlJSONMetadata(getObjectMapper().readValue(input, ClientJsonSchemaCsdl.class));
     } catch (Exception e) {
       throw new IllegalArgumentException("Could not parse as Edmx document", e);
     }

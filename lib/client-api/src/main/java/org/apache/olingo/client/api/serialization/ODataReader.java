@@ -46,7 +46,7 @@ public interface ODataReader {
    * @param input stream to de-serialize.
    * @return metadata representation.
    */
-  Edm readMetadata(InputStream input);
+  Edm readMetadata(InputStream input, ODataFormat format);
 
   /**
    * Parses a stream into metadata representation, including referenced metadata documents.

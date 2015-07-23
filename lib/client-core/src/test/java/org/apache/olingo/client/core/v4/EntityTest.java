@@ -70,7 +70,7 @@ public class EntityTest extends AbstractTest {
       @Override
       public Edm getCachedEdm() {
         if (edm == null) {
-          edm = getReader().readMetadata(getClass().getResourceAsStream("staticservice-metadata.xml"));
+          edm = getReader().readMetadata(getClass().getResourceAsStream("staticservice-metadata.xml"),ODataFormat.XML);
         }
         return edm;
       }
