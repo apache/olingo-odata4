@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -77,6 +77,7 @@ import org.apache.olingo.server.api.processor.ReferenceCollectionProcessor;
 import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
@@ -233,7 +234,8 @@ public class ODataHandlerTest {
     request.setMethod(HttpMethod.GET);
     request.setRawODataPath("EdmException");
 
-    final ODataResponse response = new ODataHandler(odata, serviceMetadata).process(request);
+    final ODataResponse response =
+        new ODataHandler(odata, serviceMetadata, new ServerCoreDebugger(odata)).process(request);
     assertNotNull(response);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
@@ -720,7 +722,7 @@ public class ODataHandlerTest {
     final ServiceMetadata metadata = odata.createServiceMetadata(
         new EdmTechProvider(), Collections.<EdmxReference> emptyList());
 
-    ODataHandler handler = new ODataHandler(odata, metadata);
+    ODataHandler handler = new ODataHandler(odata, metadata, new ServerCoreDebugger(odata));
 
     if (processor != null) {
       handler.register(processor);

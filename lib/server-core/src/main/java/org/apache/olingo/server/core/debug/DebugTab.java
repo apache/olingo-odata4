@@ -27,7 +27,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Debug information.
  */
-public interface DebugInfo {
+public interface DebugTab {
 
   /**
    * Gets the name of this debug information part, useful as title.

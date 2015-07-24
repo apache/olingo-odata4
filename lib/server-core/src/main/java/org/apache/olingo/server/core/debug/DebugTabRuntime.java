@@ -31,11 +31,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Runtime debug information.
  */
-public class DebugInfoRuntime implements DebugInfo {
+public class DebugTabRuntime implements DebugTab {
 
   private final RuntimeNode rootNode;
 
-  public DebugInfoRuntime(List<RuntimeMeasurement> runtimeInformation) {
+  public DebugTabRuntime(List<RuntimeMeasurement> runtimeInformation) {
     rootNode = new RuntimeNode();
     for (final RuntimeMeasurement runtimeMeasurement : runtimeInformation) {
       rootNode.add(runtimeMeasurement);
@@ -82,44 +82,39 @@ public class DebugInfoRuntime implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
-    // TODO Auto-generated method stub
-    //
-//  @Override
-//  public void appendHtml(final Writer writer) throws IOException {
-//    appendRuntimeNode(rootNode, "", true, writer);
-//  }
-//
-//  private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, final Writer writer)
-//      throws IOException {
-//    if (node.className != null) {
-//      writer.append("<li>")
-//          .append("<span class=\"code\">")
-//          .append("<span class=\"draw\">").append(draw)
-//          .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")
-//          .append("<span class=\"class\">").append(node.className).append("</span>.")
-//          .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
-//          .append("</span></span>");
-//      long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / 1000;
-//      writer.append("<span class=\"").append(time == 0 ? "null" : "numeric")
-//          .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
-//          .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")
-//          .append("</span>\n");
-//    }
-//    if (!node.children.isEmpty()) {
-//      writer.append("<ol class=\"tree\">\n");
-//      for (final RuntimeNode childNode : node.children) {
-//        appendRuntimeNode(childNode,
-//            node.className == null ? draw : draw + (isLast ? "&nbsp;" : "&#x2502;") + "&nbsp;&nbsp;",
-//            node.children.indexOf(childNode) == node.children.size() - 1,
-//            writer);
-//      }
-//      writer.append("</ol>\n");
-//    }
-//    if (node.className != null) {
-//      writer.append("</li>\n");
-//    }
-//  }
+  public void appendHtml(final Writer writer) throws IOException {
+    appendRuntimeNode(rootNode, "", true, writer);
+  }
+
+  private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, final Writer writer)
+      throws IOException {
+    if (node.className != null) {
+      writer.append("<li>")
+          .append("<span class=\"code\">")
+          .append("<span class=\"draw\">").append(draw)
+          .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")
+          .append("<span class=\"class\">").append(node.className).append("</span>.")
+          .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
+          .append("</span></span>");
+      long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / 1000;
+      writer.append("<span class=\"").append(time == 0 ? "null" : "numeric")
+          .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
+          .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")
+          .append("</span>\n");
+    }
+    if (!node.children.isEmpty()) {
+      writer.append("<ol class=\"tree\">\n");
+      for (final RuntimeNode childNode : node.children) {
+        appendRuntimeNode(childNode,
+            node.className == null ? draw : draw + (isLast ? "&nbsp;" : "&#x2502;") + "&nbsp;&nbsp;",
+            node.children.indexOf(childNode) == node.children.size() - 1,
+            writer);
+      }
+      writer.append("</ol>\n");
+    }
+    if (node.className != null) {
+      writer.append("</li>\n");
+    }
   }
 
   private class RuntimeNode {

@@ -35,19 +35,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugSupport;
-import org.apache.olingo.server.api.debug.RuntimeMeasurement;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,97 +56,50 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
 
   private final ODataHandler handler;
-  private final OData odata;
+  private final ServerCoreDebugger debugger;
+
   private int split = 0;
 
-  // debug stuff
-  private final List<RuntimeMeasurement> runtimeInformation = new ArrayList<RuntimeMeasurement>();
-  private DebugSupport debugSupport;
-  private String debugFormat;
-  private boolean isDebugMode = false;
-
   public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
-    this.odata = odata;
-    handler = new ODataHandler(odata, serviceMetadata);
+    debugger = new ServerCoreDebugger(odata);
+    handler = new ODataHandler(odata, serviceMetadata, debugger);
   }
 
   @Override
   public void process(final HttpServletRequest request, final HttpServletResponse response) {
+    ODataRequest odRequest = new ODataRequest();
     Exception exception = null;
-    ODataRequest odRequest = null;
     ODataResponse odResponse;
-    resolveDebugMode(request);
-    int processMethodHandel = startRuntimeMeasurement("ODataHttpHandlerImpl", "process");
+    debugger.resolveDebugMode(request);
 
+    int processMethodHandel = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "process");
     try {
-      odRequest = new ODataRequest();
-      int requestHandel = startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
+      int requestHandel = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
       fillODataRequest(odRequest, request, split);
-      stopRuntimeMeasurement(requestHandel);
-      
-      int responseHandel = startRuntimeMeasurement("ODataHandler", "process");
+      debugger.stopRuntimeMeasurement(requestHandel);
+
+      int responseHandel = debugger.startRuntimeMeasurement("ODataHandler", "process");
       odResponse = handler.process(odRequest);
-      stopRuntimeMeasurement(responseHandel);
+      debugger.stopRuntimeMeasurement(responseHandel);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
       exception = e;
       odResponse = handleException(odRequest, e);
     }
-    stopRuntimeMeasurement(processMethodHandel);
+    debugger.stopRuntimeMeasurement(processMethodHandel);
 
-    if (isDebugMode) {
-      debugSupport.init(odata);
-      // TODO: Should we be more careful here with response assignement in order to not loose the original response?
-      // TODO: How should we react to exceptions here?
+    if (debugger.isDebugMode()) {
+      Map<String, String> serverEnvironmentVaribles = createEnvironmentVariablesMap(request);
       if (exception == null) {
         // This is to ensure that we have access to the thrown OData Exception
-        // TODO: Should we make this hack
         exception = handler.getLastThrownException();
       }
-      Map<String, String> serverEnvironmentVaribles = createEnvironmentVariablesMap(request);
-
       odResponse =
-          debugSupport.createDebugResponse(debugFormat, odRequest, odResponse, exception, serverEnvironmentVaribles,
-              runtimeInformation);
+          debugger.createDebugResponse(request, exception, odRequest, odResponse, handler.getUriInfo(),
+              serverEnvironmentVaribles);
     }
 
     convertToHttp(response, odResponse);
-  }
-
-  private void resolveDebugMode(HttpServletRequest request) {
-    if (debugSupport != null) {
-      // Should we read the parameter from the servlet here and ignore multiple parameters?
-      debugFormat = request.getParameter(DebugSupport.ODATA_DEBUG_QUERY_PARAMETER);
-      // Debug format is present and we have a debug support processor registered so we are in debug mode
-      isDebugMode = debugFormat != null;
-    }
-  }
-
-  public int startRuntimeMeasurement(final String className, final String methodName) {
-    if (isDebugMode) {
-      int handleId = runtimeInformation.size();
-
-      final RuntimeMeasurement measurement = new RuntimeMeasurement();
-      measurement.setTimeStarted(System.nanoTime());
-      measurement.setClassName(className);
-      measurement.setMethodName(methodName);
-
-      runtimeInformation.add(measurement);
-
-      return handleId;
-    } else {
-      return 0;
-    }
-  }
-
-  public void stopRuntimeMeasurement(final int handle) {
-    if (isDebugMode && handle < runtimeInformation.size()) {
-        long stopTime = System.nanoTime();
-        RuntimeMeasurement runtimeMeasurement = runtimeInformation.get(handle);
-        if (runtimeMeasurement != null) {
-          runtimeMeasurement.setTimeStopped(stopTime);
-        }
-      }
   }
 
   private Map<String, String> createEnvironmentVariablesMap(HttpServletRequest request) {
@@ -350,6 +303,6 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   @Override
   public void register(final DebugSupport debugSupport) {
-    this.debugSupport = debugSupport;
+    debugger.setDebugSupportProcessor(debugSupport);
   }
 }

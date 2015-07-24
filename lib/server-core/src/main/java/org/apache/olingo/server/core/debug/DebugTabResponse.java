@@ -30,14 +30,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Response debug information.
  */
-public class DebugInfoResponse implements DebugInfo {
+public class DebugTabResponse implements DebugTab {
 
   private final ODataResponse response;
   private final String serviceRoot;
   private final HttpStatusCode status;
   private final Map<String, String> headers;
 
-  public DebugInfoResponse(final ODataResponse applicationResponse, final String serviceRoot) {
+  public DebugTabResponse(final ODataResponse applicationResponse, final String serviceRoot) {
     this.response = applicationResponse;
     this.serviceRoot = serviceRoot;
     status = HttpStatusCode.fromStatusCode(response.getStatusCode());
@@ -67,21 +67,23 @@ public class DebugInfoResponse implements DebugInfo {
     }
 
     gen.writeFieldName("body");
-    new DebugInfoBody(response, serviceRoot).appendJson(gen);
+    new DebugTabBody(response, serviceRoot).appendJson(gen);
 
     gen.writeEndObject();
   }
 
   @Override
   public void appendHtml(final Writer writer) throws IOException {
-//    writer.append("<h2>Status Code</h2>\n")
-//        .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
-//        .append(status.getInfo()).append("</p>\n")
-//        .append("<h2>Response Headers</h2>\n");
-//    ODataDebugResponseWrapper.appendHtmlTable(writer, headers);
-//    if (response.getContentHeader() != null && response.getEntity() != null) {
-//      writer.append("<h2>Response Body</h2>\n");
-//      new DebugInfoBody(response, serviceRoot).appendHtml(writer);
-//    }
+    writer.append("<h2>Status Code</h2>\n")
+        .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
+        .append(status.getInfo()).append("</p>\n")
+        .append("<h2>Response Headers</h2>\n");
+    DebugResponseHelperImpl.appendHtmlTable(writer, headers);
+    writer.append("<h2>Response Body</h2>\n");
+    if (response.getContent() != null) {
+      new DebugTabBody(response, serviceRoot).appendHtml(writer);
+    } else {
+      writer.append("<p>ODataLibrary: no response body</p>");
+    }
   }
 }

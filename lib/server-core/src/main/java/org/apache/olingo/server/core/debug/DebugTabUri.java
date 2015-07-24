@@ -21,18 +21,25 @@ package org.apache.olingo.server.core.debug;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.apache.olingo.server.api.uri.UriInfo;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 
 
 /**
  * URI parser debug information.
  */
-public class DebugInfoUri implements DebugInfo {
+public class DebugTabUri implements DebugTab {
+
+  private UriInfo uriInfo;
+
+  public DebugTabUri(UriInfo uriInfo) {
+    this.uriInfo = uriInfo;
+  }
 
   @Override
   public String getName() {
-    // TODO Auto-generated method stub
-    return null;
+    return "URI";
   }
 
   @Override
@@ -69,12 +76,6 @@ public class DebugInfoUri implements DebugInfo {
 //      return null;
 //    }
 //  }
-//
-//  @Override
-//  public String getName() {
-//    return "URI";
-//  }
-//
 //  @Override
 //  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
 //    jsonStreamWriter.beginObject();

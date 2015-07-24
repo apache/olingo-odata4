@@ -29,11 +29,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Exception debug information.
  */
-public class DebugInfoException implements DebugInfo {
+public class DebugTabException implements DebugTab {
 
   private final Exception exception;
 
-  public DebugInfoException(final Exception exception) {
+  public DebugTabException(final Exception exception) {
     this.exception = exception;
   }
 
@@ -51,7 +51,7 @@ public class DebugInfoException implements DebugInfo {
     while (throwable != null) {
       gen.writeStartObject();
       gen.writeStringField("class", throwable.getClass().getCanonicalName());
-      gen.writeStringField("message", getMessage(throwable));
+      gen.writeStringField("message", getMessageText(throwable));
       gen.writeFieldName("invocation");
       appendJsonStackTraceElement(gen, throwable.getStackTrace()[0]);
       gen.writeEndObject();
@@ -71,7 +71,7 @@ public class DebugInfoException implements DebugInfo {
     gen.writeEndObject();
   }
 
-  private String getMessage(final Throwable throwable) {
+  private String getMessageText(final Throwable throwable) {
     String message;
     if (throwable instanceof ODataLibraryException) {
       ODataLibraryException ex = (ODataLibraryException) throwable;
@@ -95,48 +95,42 @@ public class DebugInfoException implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
-    // TODO Auto-generated method stub
-
+  public void appendHtml(final Writer writer) throws IOException {
+    appendException(exception, writer);
+    writer.append("<h2>Stacktrace</h2>\n");
+    int count = 0;
+    for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
+      appendStackTraceElement(stackTraceElement, ++count == 1, count == exception.getStackTrace().length, writer);
+    }
   }
-//
-//  @Override
-//  public void appendHtml(final Writer writer) throws IOException {
-//    appendException(exception, writer);
-//    writer.append("<h2>Stacktrace</h2>\n");
-//    int count = 0;
-//    for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
-//      appendStackTraceElement(stackTraceElement, ++count == 1, count == exception.getStackTrace().length, writer);
-//    }
-//  }
-//
-//  private void appendException(final Throwable throwable, final Writer writer) throws IOException {
-//    if (throwable.getCause() != null) {
-//      appendException(throwable.getCause(), writer);
-//    }
-//    final StackTraceElement details = throwable.getStackTrace()[0];
-//    writer.append("<h2>").append(throwable.getClass().getCanonicalName()).append("</h2>\n")
-//        .append("<p>")
-//        .append(ODataDebugResponseWrapper.escapeHtml(getMessageText(throwable)))
-//        .append("</p>\n");
-//    appendStackTraceElement(details, true, true, writer);
-//  }
-//
-//  private void appendStackTraceElement(final StackTraceElement stackTraceElement,
-//      final boolean isFirst, final boolean isLast, final Writer writer) throws IOException {
-//    if (isFirst) {
-//      writer.append("<table>\n<thead>\n")
-//          .append("<tr>\n<th class=\"name\">Class</th>\n")
-//          .append("<th class=\"name\">Method</th>\n")
-//          .append("<th class=\"value\">Line number in class</th>\n</tr>\n")
-//          .append("</thead>\n<tbody>\n");
-//    }
-//    writer.append("<tr>\n<td class=\"name\">").append(stackTraceElement.getClassName()).append("</td>\n")
-//        .append("<td class=\"name\">").append(stackTraceElement.getMethodName()).append("</td>\n")
-//        .append("<td class=\"value\">").append(Integer.toString(stackTraceElement.getLineNumber()))
-//        .append("</td>\n</tr>\n");
-//    if (isLast) {
-//      writer.append("</tbody>\n</table>\n");
-//    }
-//  }
+
+  private void appendException(final Throwable throwable, final Writer writer) throws IOException {
+    if (throwable.getCause() != null) {
+      appendException(throwable.getCause(), writer);
+    }
+    final StackTraceElement details = throwable.getStackTrace()[0];
+    writer.append("<h2>").append(throwable.getClass().getCanonicalName()).append("</h2>\n")
+        .append("<p>")
+        .append(DebugResponseHelperImpl.escapeHtml(getMessageText(throwable)))
+        .append("</p>\n");
+    appendStackTraceElement(details, true, true, writer);
+  }
+
+  private void appendStackTraceElement(final StackTraceElement stackTraceElement,
+      final boolean isFirst, final boolean isLast, final Writer writer) throws IOException {
+    if (isFirst) {
+      writer.append("<table>\n<thead>\n")
+          .append("<tr>\n<th class=\"name\">Class</th>\n")
+          .append("<th class=\"name\">Method</th>\n")
+          .append("<th class=\"value\">Line number in class</th>\n</tr>\n")
+          .append("</thead>\n<tbody>\n");
+    }
+    writer.append("<tr>\n<td class=\"name\">").append(stackTraceElement.getClassName()).append("</td>\n")
+        .append("<td class=\"name\">").append(stackTraceElement.getMethodName()).append("</td>\n")
+        .append("<td class=\"value\">").append(Integer.toString(stackTraceElement.getLineNumber()))
+        .append("</td>\n</tr>\n");
+    if (isLast) {
+      writer.append("</tbody>\n</table>\n");
+    }
+  }
 }

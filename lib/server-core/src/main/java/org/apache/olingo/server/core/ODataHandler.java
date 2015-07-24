@@ -42,6 +42,7 @@ import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -54,15 +55,18 @@ public class ODataHandler {
   private final OData odata;
   private final ServiceMetadata serviceMetadata;
   private final List<Processor> processors = new LinkedList<Processor>();
+  private final ServerCoreDebugger debugger;
+
   private CustomContentTypeSupport customContentTypeSupport;
   private CustomETagSupport customETagSupport;
 
   private UriInfo uriInfo;
   private Exception lastThrownException;
 
-  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata) {
+  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, ServerCoreDebugger debugger) {
     odata = server;
     this.serviceMetadata = serviceMetadata;
+    this.debugger = debugger;
 
     register(new DefaultRedirectProcessor());
     register(new DefaultProcessor());
@@ -191,5 +195,9 @@ public class ODataHandler {
 
   public Exception getLastThrownException() {
     return lastThrownException;
+  }
+  
+  public UriInfo getUriInfo(){
+    return uriInfo;
   }
 }

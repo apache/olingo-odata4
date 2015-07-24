@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.server.api.debug;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 
 /**
@@ -38,18 +34,21 @@ public class DefaultDebugSupport implements DebugSupport {
   }
 
   @Override
-  public ODataResponse createDebugResponse(String debugFormat, ODataRequest request, ODataResponse applicationResponse,
-      Exception exception, Map<String, String> serverEnvironmentVaribles, List<RuntimeMeasurement> runtimeInformation) {
+  public boolean isUserAuthorized() {
+    return true;
+  }
+
+  @Override
+  public ODataResponse createDebugResponse(String debugFormat, DebugInformation debugInfo) {
     // Check if debugFormat is supported by the library
     if (DebugSupport.ODATA_DEBUG_JSON.equalsIgnoreCase(debugFormat)
         || DebugSupport.ODATA_DEBUG_HTML.equalsIgnoreCase(debugFormat)
         || DebugSupport.ODATA_DEBUG_DOWNLOAD.equalsIgnoreCase(debugFormat)) {
-      return odata.createDebugResponseHelper(debugFormat).createDebugResponse(request, applicationResponse, exception,
-          serverEnvironmentVaribles, runtimeInformation);
+      return odata.createDebugResponseHelper(debugFormat).createDebugResponse(debugInfo);
     } else {
       // Debug format is not supported by the library by default so in order to avoid an exception we will just give
       // back the original response from the application.
-      return applicationResponse;
+      return debugInfo.getApplicationResponse();
     }
   }
 

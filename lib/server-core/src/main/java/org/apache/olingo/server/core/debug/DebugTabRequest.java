@@ -20,7 +20,7 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +31,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Request debug information.
  */
-public class DebugInfoRequest implements DebugInfo {
+public class DebugTabRequest implements DebugTab {
 
   private final String method;
   private final String uri;
   private final String protocol;
   private final Map<String, String> headers;
 
-  public DebugInfoRequest(ODataRequest request) {
+  public DebugTabRequest(ODataRequest request) {
     method = request.getMethod() == null ? "unkown" : request.getMethod().toString();
     uri = request.getRawRequestUri() == null ? "unkown" : request.getRawRequestUri();
     protocol = request.getProtocol() == null ? "unkown" : request.getProtocol();
@@ -47,7 +47,7 @@ public class DebugInfoRequest implements DebugInfo {
   }
 
   private Map<String, String> wrapHeaders(Map<String, List<String>> allHeaders) {
-    Map<String, String> localHeaders = new HashMap<String, String>();
+    Map<String, String> localHeaders = new LinkedHashMap<String, String>();
     for (Map.Entry<String, List<String>> entry : allHeaders.entrySet()) {
       String value = null;
       if (entry.getValue() != null) {
@@ -60,19 +60,22 @@ public class DebugInfoRequest implements DebugInfo {
           value = value + valuePart;
         }
       }
+      localHeaders.put(entry.getKey(), value);
     }
     return localHeaders;
   }
 
   @Override
   public void appendHtml(final Writer writer) throws IOException {
-//    writer.append("<h2>Request Method</h2>\n")
-//        .append("<p>").append(method).append("</p>\n")
-//        .append("<h2>Request URI</h2>\n")
-//        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri.toString())).append("</p>\n")
-//        .append("<h2>Request Protocol</h2>\n")
-//        .append("<p>").append(protocol).append("</p>\n");
-//    writer.append("<h2>Request Headers</h2>\n")
+    writer.append("<h2>Request Method</h2>\n")
+        .append("<p>").append(method).append("</p>\n")
+        .append("<h2>Request URI</h2>\n")
+        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri.toString())).append("</p>\n")
+        .append("<h2>Request Protocol</h2>\n")
+        .append("<p>").append(protocol).append("</p>\n");
+    writer.append("<h2>Request Headers</h2>\n");
+    DebugResponseHelperImpl.appendHtmlTable(writer, headers);
+
 //        .append("<table>\n<thead>\n")
 //        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
 //        .append("</thead>\n<tbody>\n");
