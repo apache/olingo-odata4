@@ -39,7 +39,8 @@
     <module>p2_readep</module>
     <module>p3_write</module>
     <module>p4_navigation</module>
-    <module>p5_queryoptions</module>
+    <module>p5_queryoptions-tis</module>
+    <module>p6_queryoptions-es</module>
   </modules>
 
   <build>

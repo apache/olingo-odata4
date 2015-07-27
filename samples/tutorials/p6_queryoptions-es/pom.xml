@@ -20,19 +20,19 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>my.group.id</groupId>
-	<artifactId>DemoService-QueryOptions</artifactId>
-	<packaging>war</packaging>
-	<version>0.0.1</version>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>my.group.id</groupId>
+  <artifactId>DemoService-QueryOptions-ES</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1</version>
 
 	<name>${project.artifactId}-Webapp</name>
 
 	<build>
 		<finalName>DemoService</finalName>
 	</build>
-
+  
 	<properties>
 		<javax.version>2.5</javax.version>
 		<odata.version>4.0.0-beta-03</odata.version>
@@ -56,6 +56,7 @@
 			<groupId>org.apache.olingo</groupId>
 			<artifactId>odata-server-core</artifactId>
 			<version>${odata.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
