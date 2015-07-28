@@ -50,11 +50,15 @@ public class DebugTabBody implements DebugTab {
 
   public DebugTabBody(final ODataResponse response, final String serviceRoot) {
     this.response = response;
-    this.serviceRoot = serviceRoot;
-    final String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
-    // TODO: Differentiate better
-    if (contentType != null) {
-      responseContent = ResponseContent.JSON;
+    this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
+    if (response != null) {
+      final String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+      // TODO: Differentiate better
+      if (contentType != null) {
+        responseContent = ResponseContent.JSON;
+      } else {
+        responseContent = ResponseContent.TEXT;
+      }
     } else {
       responseContent = ResponseContent.TEXT;
     }
@@ -74,7 +78,7 @@ public class DebugTabBody implements DebugTab {
 //
   @Override
   public void appendJson(final JsonGenerator gen) throws IOException {
-    if (response.getContent() == null) {
+    if (response == null || response.getContent() == null) {
       gen.writeNull();
     } else {
       gen.writeString(getContentString());
@@ -106,7 +110,8 @@ public class DebugTabBody implements DebugTab {
   @Override
   public void appendHtml(final Writer writer) throws IOException {
 
-    final String body = response.getContent() == null ? "ODataLibrary: null body." : getContentString();
+    final String body =
+        response == null || response.getContent() == null ? "ODataLibrary: No body." : getContentString();
     switch (responseContent) {
     case XML:
       writer.append("<pre class=\"code").append("xml").append("\">\n");

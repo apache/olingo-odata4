@@ -74,10 +74,9 @@ public class ODataHandler {
 
   public ODataResponse process(final ODataRequest request) {
     ODataResponse response = new ODataResponse();
+    int measurementHandel = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
     try {
-
       processInternal(request, response);
-
     } catch (final UriValidationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, e);
@@ -112,6 +111,7 @@ public class ODataHandler {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, e);
     }
+    debugger.stopRuntimeMeasurement(measurementHandel);
     return response;
   }
 
@@ -119,13 +119,19 @@ public class ODataHandler {
       throws ODataApplicationException, ODataLibraryException {
     validateODataVersion(request, response);
 
+    int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
         serviceMetadata.getEdm());
+    debugger.stopRuntimeMeasurement(measurementUriParser);
 
+    int measurementUriValidator = debugger.startRuntimeMeasurement("UriValidator", "validate");
     final HttpMethod method = request.getMethod();
     new UriValidator().validate(uriInfo, method);
+    debugger.stopRuntimeMeasurement(measurementUriValidator);
 
+    int measurementDispatcher = debugger.startRuntimeMeasurement("Dispatcher", "dispatch");
     new ODataDispatcher(method, uriInfo, this).dispatch(request, response);
+    debugger.stopRuntimeMeasurement(measurementDispatcher);
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
@@ -146,7 +152,9 @@ public class ODataHandler {
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
+    int measurementHandle = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
+    debugger.stopRuntimeMeasurement(measurementHandle);
   }
 
   private void validateODataVersion(final ODataRequest request, final ODataResponse response)
@@ -196,8 +204,8 @@ public class ODataHandler {
   public Exception getLastThrownException() {
     return lastThrownException;
   }
-  
-  public UriInfo getUriInfo(){
+
+  public UriInfo getUriInfo() {
     return uriInfo;
   }
 }

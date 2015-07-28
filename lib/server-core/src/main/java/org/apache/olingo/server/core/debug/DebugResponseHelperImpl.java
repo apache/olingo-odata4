@@ -76,7 +76,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
             + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
         // Download is the same as html except for the above header
       case HTML:
-        String title = debugInfo.getRequest() == null ? 
+        String title = debugInfo.getRequest() == null ?
             "V4 Service" : "V4 Service: " + debugInfo.getRequest().getRawODataPath();
         body = wrapInHtml(parts, title);
         contentTypeString = ContentType.TEXT_HTML.toContentTypeString();
@@ -164,7 +164,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
     gen.writeEndObject();
     gen.close();
-    csb.close();
+    csb.closeWrite();
 
     return csb.getInputStream();
   }
@@ -258,14 +258,15 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         .append("</thead>\n<tbody>\n");
     for (final String name : entries.keySet()) {
       final String value = entries.get(name);
+      writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+      .append("<td class=\"value\">");
       if (value != null) {
-        writer.append("<tr><td class=\"name\">").append(name).append("</td>")
-            .append("<td class=\"value\">")
-            .append(escapeHtml(value))
-            .append("</td></tr>\n");
+        writer.append(escapeHtml(value));
+      }else{
+        writer.append("null");
       }
+      writer.append("</td></tr>\n");
     }
     writer.append("</tbody>\n</table>\n");
   }
-
 }

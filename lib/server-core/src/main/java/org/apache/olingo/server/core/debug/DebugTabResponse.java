@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -39,9 +40,14 @@ public class DebugTabResponse implements DebugTab {
 
   public DebugTabResponse(final ODataResponse applicationResponse, final String serviceRoot) {
     this.response = applicationResponse;
-    this.serviceRoot = serviceRoot;
-    status = HttpStatusCode.fromStatusCode(response.getStatusCode());
-    headers = response.getHeaders();
+    if (response != null) {
+      status = HttpStatusCode.fromStatusCode(response.getStatusCode());
+      headers = response.getHeaders();
+    } else {
+      status = HttpStatusCode.INTERNAL_SERVER_ERROR;
+      headers = Collections.emptyMap();
+    }
+    this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
   }
 
   @Override
@@ -67,7 +73,11 @@ public class DebugTabResponse implements DebugTab {
     }
 
     gen.writeFieldName("body");
-    new DebugTabBody(response, serviceRoot).appendJson(gen);
+    if (response != null && response.getContent() != null) {
+      new DebugTabBody(response, serviceRoot).appendJson(gen);
+    } else {
+      gen.writeNull();
+    }
 
     gen.writeEndObject();
   }
@@ -80,7 +90,7 @@ public class DebugTabResponse implements DebugTab {
         .append("<h2>Response Headers</h2>\n");
     DebugResponseHelperImpl.appendHtmlTable(writer, headers);
     writer.append("<h2>Response Body</h2>\n");
-    if (response.getContent() != null) {
+    if (response != null && response.getContent() != null) {
       new DebugTabBody(response, serviceRoot).appendHtml(writer);
     } else {
       writer.append("<p>ODataLibrary: no response body</p>");

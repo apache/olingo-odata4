@@ -20,7 +20,7 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,33 +36,20 @@ public class DebugTabRequest implements DebugTab {
   private final String method;
   private final String uri;
   private final String protocol;
-  private final Map<String, String> headers;
+  private final Map<String, List<String>> headers;
 
   public DebugTabRequest(ODataRequest request) {
-    method = request.getMethod() == null ? "unkown" : request.getMethod().toString();
-    uri = request.getRawRequestUri() == null ? "unkown" : request.getRawRequestUri();
-    protocol = request.getProtocol() == null ? "unkown" : request.getProtocol();
-    // TODO: Should we really wrap the headers here or keep the original structure?
-    headers = wrapHeaders(request.getAllHeaders());
-  }
-
-  private Map<String, String> wrapHeaders(Map<String, List<String>> allHeaders) {
-    Map<String, String> localHeaders = new LinkedHashMap<String, String>();
-    for (Map.Entry<String, List<String>> entry : allHeaders.entrySet()) {
-      String value = null;
-      if (entry.getValue() != null) {
-        value = "";
-        boolean first = true;
-        for (String valuePart : entry.getValue()) {
-          if (!first) {
-            value = value + ", ";
-          }
-          value = value + valuePart;
-        }
-      }
-      localHeaders.put(entry.getKey(), value);
+    if (request != null) {
+      method = request.getMethod() == null ? "unkown" : request.getMethod().toString();
+      uri = request.getRawRequestUri() == null ? "unkown" : request.getRawRequestUri();
+      protocol = request.getProtocol() == null ? "unkown" : request.getProtocol();
+      headers = request.getAllHeaders();
+    } else {
+      method = "unkown";
+      uri = "unkown";
+      protocol = "unkown";
+      headers = Collections.emptyMap();
     }
-    return localHeaders;
   }
 
   @Override
@@ -70,25 +57,26 @@ public class DebugTabRequest implements DebugTab {
     writer.append("<h2>Request Method</h2>\n")
         .append("<p>").append(method).append("</p>\n")
         .append("<h2>Request URI</h2>\n")
-        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri.toString())).append("</p>\n")
+        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri)).append("</p>\n")
         .append("<h2>Request Protocol</h2>\n")
-        .append("<p>").append(protocol).append("</p>\n");
+        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(protocol)).append("</p>\n");
     writer.append("<h2>Request Headers</h2>\n");
-    DebugResponseHelperImpl.appendHtmlTable(writer, headers);
 
-//        .append("<table>\n<thead>\n")
-//        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
-//        .append("</thead>\n<tbody>\n");
-//    for (final String name : headers.keySet()) {
-//      for (final String value : headers.get(name)) {
-//        if (value != null) {
-//          writer.append("<tr><td class=\"name\">").append(name).append("</td>")
-//              .append("<td class=\"value\">").append(DebugResponseHelperImpl.escapeHtml(value))
-//              .append("</td></tr>\n");
-//        }
-//      }
-//    }
-//    writer.append("</tbody>\n</table>\n");
+    writer.append("<table>\n<thead>\n")
+        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
+        .append("</thead>\n<tbody>\n");
+    for (final Map.Entry<String, List<String>> entry : headers.entrySet()) {
+      List<String> headersList = entry.getValue();
+      if (headersList != null && !headersList.isEmpty()) {
+        for (String headerValue : headersList) {
+          writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
+              .append("<td class=\"value\">")
+              .append(DebugResponseHelperImpl.escapeHtml(headerValue))
+              .append("</td></tr>\n");
+        }
+      }
+    }
+    writer.append("</tbody>\n</table>\n");
   }
 
   @Override
@@ -107,7 +95,32 @@ public class DebugTabRequest implements DebugTab {
 
     if (!headers.isEmpty()) {
       gen.writeFieldName("headers");
-      DebugResponseHelperImpl.appendJsonTable(gen, headers);
+
+      gen.writeStartObject();
+
+      for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+        List<String> headersList = entry.getValue();
+        if (headersList != null && !headersList.isEmpty()) {
+          if (headersList.size() == 1) {
+            gen.writeStringField(entry.getKey(), headersList.get(0));
+          } else {
+            gen.writeFieldName(entry.getKey());
+            gen.writeStartArray();
+            for (String headerValue : headersList) {
+              if (headerValue != null) {
+                gen.writeString(headerValue);
+              } else {
+                gen.writeNull();
+              }
+            }
+            gen.writeEndArray();
+          }
+        } else {
+          gen.writeNullField(entry.getKey());
+        }
+      }
+
+      gen.writeEndObject();
     }
 
     gen.writeEndObject();

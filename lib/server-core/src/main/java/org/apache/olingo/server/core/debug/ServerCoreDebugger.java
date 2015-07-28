@@ -64,6 +64,11 @@ public class ServerCoreDebugger {
   public ODataResponse createDebugResponse(final HttpServletRequest request, final Exception exception,
       final ODataRequest odRequest, final ODataResponse odResponse, UriInfo uriInfo,
       Map<String, String> serverEnvironmentVaribles) {
+    //Failsafe so we do not generate unauthorized debug messages
+    if(!isDebugMode){
+      return odResponse;
+    }
+    
     try {
       DebugInformation debugInfo =
           createDebugInformation(request, exception, odRequest, odResponse, uriInfo, serverEnvironmentVaribles);
@@ -80,7 +85,7 @@ public class ServerCoreDebugger {
     odResponse.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
     InputStream content = new ByteArrayInputStream("ODataLibrary: Could not assemble debug response.".getBytes());
     odResponse.setContent(content);
-    return null;
+    return odResponse;
   }
 
   private DebugInformation createDebugInformation(final HttpServletRequest request, final Exception exception,
