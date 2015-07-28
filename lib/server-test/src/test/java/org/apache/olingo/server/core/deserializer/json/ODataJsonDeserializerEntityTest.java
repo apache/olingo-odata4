@@ -1520,6 +1520,56 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
   }
 
+  @Test(expected = DeserializerException.class)
+  public void ieee754CompatibleAsNumber() throws Exception {
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON_IEEE754Compatible);
+    String entityString =
+        "{\"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"PropertyBoolean\":null," +
+            "\"PropertyByte\":255," +
+            "\"PropertySByte\":127," +
+            "\"PropertyInt32\":2147483647," +
+            "\"PropertyInt64\":123," +
+            "\"PropertySingle\":1.79E20," +
+            "\"PropertyDouble\":-1.79E19," +
+            "\"PropertyDecimal\":\"null\"," +
+            "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
+            "\"PropertyDate\":null," +
+            "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
+            "\"PropertyDuration\":\"PT6S\"," +
+            "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
+            "\"PropertyTimeOfDay\":\"03:26:05\"}";
+
+    final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
+  }
+
+  @Test(expected = DeserializerException.class)
+  public void ieee754NotCompatibleAsString() throws Exception {
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
+    String entityString =
+        "{\"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"PropertyBoolean\":null," +
+            "\"PropertyByte\":255," +
+            "\"PropertySByte\":127," +
+            "\"PropertyInt32\":2147483647," +
+            "\"PropertyInt64\":\"123\"," +
+            "\"PropertySingle\":1.79E20," +
+            "\"PropertyDouble\":-1.79E19," +
+            "\"PropertyDecimal\":\"null\"," +
+            "\"PropertyBinary\":\"ASNFZ4mrze8=\"," +
+            "\"PropertyDate\":null," +
+            "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," +
+            "\"PropertyDuration\":\"PT6S\"," +
+            "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," +
+            "\"PropertyTimeOfDay\":\"03:26:05\"}";
+
+    final InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    deserializer.entity(stream, edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim"))).getEntity();
+  }
+
   private void checkPropertyJsonType(final String entityString) throws DeserializerException {
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON);
