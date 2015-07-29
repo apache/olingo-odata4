@@ -21,13 +21,12 @@ package org.apache.olingo.client.core.v4;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.AbstractTest;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class JsonMetadataTest extends AbstractTest {
 
@@ -39,17 +38,39 @@ public class JsonMetadataTest extends AbstractTest {
 
     @Test
     public void parse() {
+        //container
         final Edm edm = getClient().getReader().
                 readMetadata(getClass().getResourceAsStream("metadata.json"), ODataFormat.JSON);
         assertNotNull(edm);
 
         assertNotNull(edm.getEnumType(new FullQualifiedName("namespace", "ENString")));
         assertNotNull(edm.getEntityType(new FullQualifiedName("namespace", "ETAbstractBase")));
-        assertNotNull(edm.getEntityContainer(new FullQualifiedName("namespace","container"))
+        assertNotNull(edm.getEntityContainer(new FullQualifiedName("namespace", "container"))
                 .getEntitySet("ESAllPrim"));
         assertEquals(edm.getEntityType(new FullQualifiedName("namespace", "ETAbstractBase")),
-                edm.getEntityContainer(new FullQualifiedName("namespace","container"))
+                edm.getEntityContainer(new FullQualifiedName("namespace", "container"))
                         .getEntitySet("ESAllPrim").getEntityType());
+
+        //action
+        final Edm edm2 = getClient().getReader().
+                readMetadata(getClass().getResourceAsStream("metadata.actions.functions.json"), ODataFormat.JSON);
+        assertNotNull(edm2);
+        EdmAction action = edm2.getUnboundAction(new FullQualifiedName("namespace", "UARTPrimParam"));
+        assertNotNull(action);
+        assertFalse(action.isBound());
+        assertEquals(action.getParameterNames().size(), 1);
+        assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16),
+                action.getParameter("ParameterInt16").getType());
+        assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String),
+                action.getReturnType().getType());
+
+        //function
+        EdmFunction function = edm2.getUnboundFunctions(new FullQualifiedName("namespace","UFNRTInt16")).get(0);
+        assertEquals( edm2.getUnboundFunctions(new FullQualifiedName("namespace", "UFNRTInt16")).size(), 1);
+        assertNotNull(function);
+        assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16),
+                function.getReturnType().getType());
+        assertFalse(function.isBound());
 
     }
 }

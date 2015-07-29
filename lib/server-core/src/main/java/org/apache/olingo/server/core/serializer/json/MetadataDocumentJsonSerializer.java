@@ -172,8 +172,7 @@ public class MetadataDocumentJsonSerializer {
             for (EdmTypeDefinition definition : typeDefinitions) {
                 gen.writeFieldName(getAliasedFullQualifiedName(definition, false));
                 gen.writeStartObject();
-                gen.writeStringField(CONSTANT_REFERENCE_IDENTIFIER,
-                        CONSTANT_DEFINITION_REFERENCE + getFullQualifiedName(definition.getUnderlyingType(), false));
+                gen.writeStringField(CONSTANT_TYPE, getFullQualifiedName(definition.getUnderlyingType(), false));
 
                 if (definition.getMaxLength() != null) {
                     gen.writeNumberField(CONSTANT_MAX_LENGTH, definition.getMaxLength());

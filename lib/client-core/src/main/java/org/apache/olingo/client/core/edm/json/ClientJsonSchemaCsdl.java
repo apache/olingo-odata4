@@ -58,16 +58,26 @@ public class ClientJsonSchemaCsdl implements EdmJsonSchema {
                 throws IOException {
             final ClientJsonSchemaCsdl jsonSchemaCsdl = new ClientJsonSchemaCsdl();
             final ObjectNode tree = parser.getCodec().readTree(parser);
-            JsonNode definitionsNode=tree.get("definitions");
+            JsonNode definitionsNode = tree.get("definitions");
             //Dependency exists schemas should be de serialized first
-            JsonNode schemasNode=tree.get("schemas");
-            new ClientCsdlSchemasDeserializer(jsonSchemaCsdl)
-                    .deserialize(schemasNode.traverse(parser.getCodec()),ctxt);
-            JsonNode referencesNode=tree.get("references");
-            new ClientCsdlReferencesDeserializer(jsonSchemaCsdl)
-                    .deserialize(referencesNode.traverse(parser.getCodec()), ctxt);
-            return new ClientCsdlDefinitionsDeserializer(jsonSchemaCsdl)
-                    .deserialize(definitionsNode.traverse(parser.getCodec()), ctxt);
+            JsonNode schemasNode = tree.get("schemas");
+            if (schemasNode != null) {
+                new ClientCsdlSchemasDeserializer(jsonSchemaCsdl)
+                        .deserialize(schemasNode.traverse(parser.getCodec()), ctxt);
+            }
+
+            JsonNode referencesNode = tree.get("references");
+            if (referencesNode != null) {
+                new ClientCsdlReferencesDeserializer(jsonSchemaCsdl)
+                        .deserialize(referencesNode.traverse(parser.getCodec()), ctxt);
+            }
+
+            if (definitionsNode != null) {
+                new ClientCsdlDefinitionsDeserializer(jsonSchemaCsdl)
+                        .deserialize(definitionsNode.traverse(parser.getCodec()), ctxt);
+            }
+
+            return jsonSchemaCsdl;
         }
     }
 }

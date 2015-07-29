@@ -66,8 +66,14 @@ public class ClientCsdlDefinitionsDeserializer extends JsonDeserializer<ClientJs
                         getSchemaByNsOrAlias().get(nameSpace).getEntityTypes().add(type);
                     }
                 }
-            }else{
-                //toDo Complex Type and other type definitions
+                //toDo Complex Type
+            } else if (typeObject.getValue().has("type") &&
+                    !("object".equals(typeObject.getValue().get("type").asText()))) {
+                final CsdlTypeDefinition typeDefinition = new ClientCsdlTypeDefinitionDeserializer(nameSpace, typeName)
+                        .deserialize(tree.get(typeObject.getKey()).traverse(parser.getCodec()), ctxt);
+                if (getSchemaByNsOrAlias().get(nameSpace)!=null){
+                    getSchemaByNsOrAlias().get(nameSpace).getTypeDefinitions().add(typeDefinition);
+                }
             }
         }
         return jsonCsdl;

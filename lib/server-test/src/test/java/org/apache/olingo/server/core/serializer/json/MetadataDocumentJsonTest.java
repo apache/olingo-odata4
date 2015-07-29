@@ -64,8 +64,7 @@ public class MetadataDocumentJsonTest {
         assertThat(metadata, containsString(expectedString));
 
 
-        expectedString="\"olingo.odata.test1.TDString\":{\"$ref\":\"http://docs.oasis-open.org/odata/odata-json-csdl/" +
-                "v4.0/edm.json#/definitions/Edm.String\",\"maxLength\":15}";
+        expectedString="\"olingo.odata.test1.TDString\":{\"type\":\"Edm.String\",\"maxLength\":15}";
         assertThat(metadata, containsString(expectedString));
 
 

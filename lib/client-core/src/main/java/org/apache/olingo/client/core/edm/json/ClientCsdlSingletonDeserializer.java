@@ -25,9 +25,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,28 +34,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ClientCsdlEntitySetDeserializer extends JsonDeserializer<CsdlEntitySet> {
+public class ClientCsdlSingletonDeserializer extends JsonDeserializer<CsdlSingleton> {
 
     private String name;
-    private CsdlSchema schema;
 
-    public ClientCsdlEntitySetDeserializer(CsdlSchema schema, String name) {
-        this.schema = schema;
+    public ClientCsdlSingletonDeserializer(String name) {
         this.name = name;
     }
 
     @Override
-    public CsdlEntitySet deserialize(final JsonParser parser, final DeserializationContext ctxt)
+    public CsdlSingleton deserialize(final JsonParser parser, final DeserializationContext ctxt)
             throws IOException {
         final ObjectNode tree = parser.getCodec().readTree(parser);
-        CsdlEntitySet entitySet = new CsdlEntitySet();
-        entitySet.setName(name);
-        String entityTypeName = tree.get("entityType").asText();
-        String aliasReplaced = entityTypeName.replace(schema.getAlias(), schema.getNamespace());
-        FullQualifiedName typeName = new FullQualifiedName(aliasReplaced);
-        entitySet.setType(typeName);
-        if (tree.has("includeInServiceDocument")) {
-            entitySet.setIncludeInServiceDocument(tree.get("includeInServiceDocument").asBoolean());
+        final CsdlSingleton singleton = new CsdlSingleton();
+        singleton.setName(name);
+        if (tree.has("type")) {
+            singleton.setType(new FullQualifiedName(tree.get("type").asText()));
         }
         if (tree.has("navigationPropertyBindings")) {
             JsonNode propertyBindingsNodes = tree.get("navigationPropertyBindings");
@@ -70,8 +63,8 @@ public class ClientCsdlEntitySetDeserializer extends JsonDeserializer<CsdlEntity
                                 deserialize(propertyBindingNode.traverse(parser.getCodec()), ctxt);
                 bindingsList.add(navigationPropertyBinding);
             }
-            entitySet.setNavigationPropertyBindings(bindingsList);
+            singleton.setNavigationPropertyBindings(bindingsList);
         }
-        return entitySet;
+        return singleton;
     }
 }

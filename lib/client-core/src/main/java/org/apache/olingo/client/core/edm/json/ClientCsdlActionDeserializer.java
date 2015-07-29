@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
-import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,11 +37,8 @@ import java.util.Map;
 
 public class ClientCsdlActionDeserializer extends JsonDeserializer<CsdlAction> {
 
-    private CsdlSchema schema;
-
-    public ClientCsdlActionDeserializer(CsdlSchema schema) {
-        this.schema = schema;
-    }
+    private static final String COLLECTION_PREFIX = "Collection(";
+    private static final int COLLECTION_PREFIX_LENGTH = "Collection(".length();
 
     @Override
     public CsdlAction deserialize(final JsonParser parser, final DeserializationContext ctxt)
@@ -64,11 +60,10 @@ public class ClientCsdlActionDeserializer extends JsonDeserializer<CsdlAction> {
             CsdlReturnType returnType = new CsdlReturnType();
             if (tree.get("returnType").has("type")) {
                 String fullQualifiedName = tree.get("returnType").get("type").asText();
-                fullQualifiedName = fullQualifiedName.replace(schema.getAlias(), schema.getNamespace());
                 String typeName = "";
-                if (fullQualifiedName.contains("Collection")) {
+                if (fullQualifiedName.startsWith(COLLECTION_PREFIX)) {
                     returnType.setCollection(true);
-                    typeName = fullQualifiedName.substring("Collection(".length(), fullQualifiedName.length() - 2);
+                    typeName = fullQualifiedName.substring(COLLECTION_PREFIX_LENGTH, fullQualifiedName.length() - 2);
                 } else {
                     typeName = fullQualifiedName;
                 }
@@ -98,11 +93,11 @@ public class ClientCsdlActionDeserializer extends JsonDeserializer<CsdlAction> {
                 parameter.setName(entry.getKey());
                 if (entry.getValue().has("type")) {
                     String fullQualifiedName = entry.getValue().get("type").asText();
-                    fullQualifiedName = fullQualifiedName.replace(schema.getAlias(), schema.getNamespace());
                     String typeName = "";
-                    if (fullQualifiedName.contains("Collection")) {
+                    if (fullQualifiedName.startsWith(COLLECTION_PREFIX)) {
                         parameter.setCollection(true);
-                        typeName = fullQualifiedName.substring("Collection(".length(), fullQualifiedName.length() - 2);
+                        typeName = fullQualifiedName.
+                                substring(COLLECTION_PREFIX_LENGTH, fullQualifiedName.length() - 2);
                     } else {
                         typeName = fullQualifiedName;
                     }

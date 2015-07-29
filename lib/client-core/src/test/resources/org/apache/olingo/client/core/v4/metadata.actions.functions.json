@@ -1,0 +1,6 @@
+{"$schema":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#","schemas":{"namespace":{"alias":"Alias","actions":[{"name":"UARTPrimParam","isBound":false,"parameters":{"ParameterInt16":{"type":"Edm.Int16"}},"returnType":{"type":"Edm.String"}}],"functions":[{"name":"UFNRTInt16","returnType":{"type":"Edm.Int16"}}]}}}
+
+
+
+
+
