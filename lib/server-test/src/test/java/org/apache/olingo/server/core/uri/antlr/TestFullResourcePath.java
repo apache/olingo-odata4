@@ -22,6 +22,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
@@ -46,6 +51,7 @@ import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class TestFullResourcePath {
   Edm edm = null;
@@ -248,8 +254,8 @@ public class TestFullResourcePath {
         .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav"
-        + "/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()"
-        + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
+            + "/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()"
+            + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1474,7 +1480,7 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav"
-        + "/NavPropertyETKeyNavMany(3)")
+            + "/NavPropertyETKeyNavMany(3)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
@@ -1766,7 +1772,7 @@ public class TestFullResourcePath {
     .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')"
-        + "/olingo.odata.test1.ETBaseTwoKeyNav")
+            + "/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
@@ -2072,6 +2078,45 @@ public class TestFullResourcePath {
     .isCount();
   }
 
+  /**
+   * Test for EntitySet and NavigationProperty with same name defined in metadata.
+   * (related to Olingo issue OLINGO-741)
+   */
+  @Test
+  public void yetAnotherSmallTest() throws Exception {
+    TestUriValidator testUri = new TestUriValidator();
+
+    Edm mockEdm = Mockito.mock(Edm.class);
+    EdmEntitySet esCategory = Mockito.mock(EdmEntitySet.class);
+    EdmEntitySet esProduct = Mockito.mock(EdmEntitySet.class);
+    EdmEntityType typeCategory = Mockito.mock(EdmEntityType.class);
+    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
+    EdmNavigationProperty productsNavigation = Mockito.mock(EdmNavigationProperty.class);
+    EdmEntityType productsType = Mockito.mock(EdmEntityType.class);
+
+    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
+    Mockito.when(typeCategory.getName()).thenReturn("Category");
+    Mockito.when(typeCategory.getNamespace()).thenReturn("NS");
+    Mockito.when(esCategory.getEntityType()).thenReturn(typeCategory);
+    Mockito.when(productsNavigation.getName()).thenReturn("Products");
+    Mockito.when(typeCategory.getProperty("Products")).thenReturn(productsNavigation);
+    Mockito.when(container.getEntitySet("Category")).thenReturn(esCategory);
+    Mockito.when(container.getEntitySet("Products")).thenReturn(esProduct);
+    Mockito.when(productsType.getName()).thenReturn("Products");
+    Mockito.when(productsType.getNamespace()).thenReturn("NS");
+    Mockito.when(productsNavigation.getType()).thenReturn(productsType);
+
+    // test and verify
+    testUri.setEdm(mockEdm)
+            .run("Category", "$expand=Products")
+            .isKind(UriInfoKind.resource).goPath().goExpand()
+            .first()
+            .goPath().first()
+            .isNavProperty("Products", new FullQualifiedName("NS", "Products"), false)
+            .isType(new FullQualifiedName("NS", "Products"), false);
+    Mockito.verifyZeroInteractions(esProduct);
+  }
+
   @Test
   public void runExpand() throws Exception {
 
@@ -2362,9 +2407,6 @@ public class TestFullResourcePath {
     .goExpand().first()
     .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
     .goPath().first()
-    // .isType(EntityTypeProvider.nameETTwoKeyNav)
-    // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
-    // .n()
     .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')",

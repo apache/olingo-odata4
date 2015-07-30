@@ -288,8 +288,21 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     String odi = ctx.vODI.getText();
 
-    if (checkFirst && ctx.vNS == null) {
+    boolean searchInContainer = true;
+    // validate if context type and according property is available
+    // otherwise search in container for first element
+    if (checkFirst && ctx.vNS == null && !context.contextTypes.empty()) {
+      TypeInformation source = context.contextTypes.peek();
+      if (source.type instanceof EdmStructuredType) {
+        EdmStructuredType str = (EdmStructuredType) source.type;
+        EdmElement property = str.getProperty(odi);
+        if (property != null) {
+          searchInContainer = false;
+        }
+      }
+    }
 
+    if(searchInContainer) {
       // check EntitySet
       EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
       if (edmEntitySet != null) {
@@ -362,8 +375,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
     }
 
-    TypeInformation source = null;
-    UriResource lastResourcePart = context.contextUriInfo.getLastResourcePart();
+    final TypeInformation source;
+    final UriResource lastResourcePart = context.contextUriInfo.getLastResourcePart();
 
     if (lastResourcePart == null) {
       if (context.contextTypes.empty()) {
@@ -427,7 +440,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       if (property instanceof EdmProperty) {
-        if (((EdmProperty) property).isPrimitive() == true) {
+        if (((EdmProperty) property).isPrimitive()) {
           // create simple property
           UriResourcePrimitivePropertyImpl simpleResource = new UriResourcePrimitivePropertyImpl()
               .setProperty((EdmProperty) property);
@@ -485,7 +498,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             if (lastResourcePart instanceof UriResourceWithKeysImpl) {
               UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
 
-              if (lastPartWithKeys.isCollection() == false) {
+              if (!lastPartWithKeys.isCollection()) {
                 if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
                   throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
                       + getName(filterEntityType) + "' behind '"
@@ -559,7 +572,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               // e.g. in case of function returning complex data or a list of complex data
               UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) lastResourcePart;
 
-              if (lastPartWithKeys.isCollection() == false) {
+              if (!lastPartWithKeys.isCollection()) {
                 if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
                   throw wrap(new UriParserSemanticException("Entry typefilters are not chainable, used '"
                       + getName(filterComplexType) + "' behind '"
@@ -1193,9 +1206,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Object visitExpandPath(final ExpandPathContext ctx) {
     ExpandItemImpl expandItem = new ExpandItemImpl();
 
-    // UriResourceItImpl pathInfoIT = new UriResourceItImpl();
-    context.contextUriInfo.getLastResourcePart();
-
     // save context
     ExpandItemImpl contextExpandItemPathBU = context.contextExpandItemPath;
     UriInfoImpl uriInfoResourceBU = context.contextUriInfo;
@@ -1203,7 +1213,6 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     // set tmp context
     context.contextExpandItemPath = expandItem;
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-    // contextUriInfo.addPathInfo(pathInfoIT);
 
     super.visitExpandPath(ctx);
 
