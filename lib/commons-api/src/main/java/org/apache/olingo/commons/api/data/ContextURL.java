@@ -48,6 +48,12 @@ public class ContextURL {
 
   private Suffix suffix;
 
+  private String odataPath;
+
+  public String getODataPath() {
+    return odataPath;
+  }
+
   public enum Suffix {
 
     ENTITY("$entity"), REFERENCE("$ref"),
@@ -55,7 +61,7 @@ public class ContextURL {
 
     private final String representation;
 
-    private Suffix(final String representation) {
+    Suffix(final String representation) {
       this.representation = representation;
     }
 
@@ -128,7 +134,12 @@ public class ContextURL {
 
   public static final class Builder {
 
-    private ContextURL contextURL = new ContextURL();
+    private final ContextURL contextURL = new ContextURL();
+
+    public Builder oDataPath(String oDataPath) {
+      contextURL.odataPath = oDataPath;
+      return this;
+    }
 
     public Builder serviceRoot(final URI serviceRoot) {
       contextURL.serviceRoot = serviceRoot;

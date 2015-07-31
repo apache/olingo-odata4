@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -31,11 +32,47 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.apache.olingo.fit.util.StringHelper;
 import org.junit.Test;
+
+import java.io.InputStream;
 
 public final class NavigationITCase extends AbstractBaseTestITCase {
 
   private final ODataClient client = getClient();
+
+  @Test
+  public void navigationToEntityWithRelativeContextUrl() throws Exception {
+    // zero navigation
+    final InputStream zeroLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
+            client.newURIBuilder(TecSvcConst.BASE_URI)
+                    .appendEntitySetSegment("ESAllPrim").
+                    appendKeySegment(32767).build()).rawExecute();
+
+    String zeroLevelResponseBody = StringHelper.asString(zeroLevelResponse);
+    assertTrue(zeroLevelResponseBody.contains("\"@odata.context\":\"$metadata#ESAllPrim/$entity\""));
+
+    // one navigation
+    final InputStream oneLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
+                    client.newURIBuilder(TecSvcConst.BASE_URI)
+                            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+                            .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
+                    .rawExecute();
+
+    String oneLevelResponseBody = StringHelper.asString(oneLevelResponse);
+    assertTrue(oneLevelResponseBody.contains("\"@odata.context\":\"../$metadata#ESTwoPrim/$entity\""));
+
+    // two navigation
+    final InputStream twoLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
+                    client.newURIBuilder(TecSvcConst.BASE_URI)
+                            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+                            .appendNavigationSegment("NavPropertyETAllPrimOne")
+                            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+                    .rawExecute();
+
+    String twoLevelResponseBody = StringHelper.asString(twoLevelResponse);
+    assertTrue(twoLevelResponseBody.contains("\"@odata.context\":\"../../$metadata#ESTwoPrim/$entity\""));
+  }
 
   @Test
   public void oneLevelToEntity() throws Exception {

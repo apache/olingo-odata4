@@ -35,7 +35,16 @@ public final class ContextURLBuilder {
     StringBuilder result = new StringBuilder();
     if (contextURL.getServiceRoot() != null) {
       result.append(contextURL.getServiceRoot());
+    } else if(contextURL.getODataPath() != null) {
+      String oDataPath = contextURL.getODataPath();
+      char[] chars = oDataPath.toCharArray();
+      for (int i = 1; i < chars.length-1; i++) {
+        if(chars[i] == '/' && chars[i-1] != '/') {
+          result.append("../");
+        }
+      }
     }
+
     result.append(Constants.METADATA);
     if (contextURL.getEntitySetOrSingletonOrType() != null) {
       result.append('#');
