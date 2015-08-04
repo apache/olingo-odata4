@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +65,9 @@ import org.apache.olingo.server.core.uri.UriHelperImpl;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.CoreMatchers;
@@ -70,11 +75,17 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
-public class ODataXmlSerializerTest  {
+public class ODataXmlSerializerTest {
   private static final ServiceMetadata metadata = new ServiceMetadataImpl(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("WmetadataETag"));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
+  private static final DifferenceListener DIFFERENCE_LISTENER = new CustomDifferenceListener();
+  private static final int MAX_ALLOWED_UPDATED_DIFFERENCE = 2000;
+  private static final String UPDATED_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+  
   private final DataProvider data = new DataProvider(metadata.getEdm());
   private final ODataSerializer serializer = new ODataXmlSerializer();
   private final UriHelper helper = new UriHelperImpl();
@@ -87,69 +98,70 @@ public class ODataXmlSerializerTest  {
     XMLUnit.setNormalizeWhitespace(true);
     XMLUnit.setCompareUnmatched(false);
   }
-  
+
   @Test
   public void entitySimple() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
-        "    href=\"ESTwoPrim(32767)\" />\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +         
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:PropertyString>First Resource - positive values</d:PropertyString>\n" + 
-        "      <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" + 
-        "      <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" + 
-        "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
-        "      <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" + 
-        "      <d:PropertyInt64 m:type=\"Int64\">9223372036854775807\n" + 
-        "      </d:PropertyInt64>\n" + 
-        "      <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" + 
-        "      <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" + 
-        "      <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" + 
-        "      <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=\n" + 
-        "      </d:PropertyBinary>\n" + 
-        "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
-        "      <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-12-03T07:16:23Z\n" + 
-        "      </d:PropertyDateTimeOffset>\n" + 
-        "      <d:PropertyDuration m:type=\"Duration\">PT6S\n" + 
-        "      </d:PropertyDuration>\n" + 
-        "      <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef\n" + 
-        "      </d:PropertyGuid>\n" + 
-        "      <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05\n" + 
-        "      </d:PropertyTimeOfDay>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        + "m:context=\"$metadata#ESAllPrim/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESAllPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "    href=\"ESTwoPrim(32767)\" />\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:PropertyString>First Resource - positive values</d:PropertyString>\n" +
+        "      <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" +
+        "      <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" +
+        "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
+        "      <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" +
+        "      <d:PropertyInt64 m:type=\"Int64\">9223372036854775807\n" +
+        "      </d:PropertyInt64>\n" +
+        "      <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" +
+        "      <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" +
+        "      <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" +
+        "      <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=\n" +
+        "      </d:PropertyBinary>\n" +
+        "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
+        "      <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-12-03T07:16:23Z\n" +
+        "      </d:PropertyDateTimeOffset>\n" +
+        "      <d:PropertyDuration m:type=\"Duration\">PT6S\n" +
+        "      </d:PropertyDuration>\n" +
+        "      <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef\n" +
+        "      </d:PropertyGuid>\n" +
+        "      <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05\n" +
+        "      </d:PropertyTimeOfDay>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -157,60 +169,62 @@ public class ODataXmlSerializerTest  {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
-    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(),
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entity(metadata, edmEntitySet.getEntityType(),
         entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()).getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "+
-        "m:context=\"$metadata#ESAllPrim/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
+        "m:context=\"$metadata#ESAllPrim/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESAllPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
         "    href=\"ESTwoPrim(32767)\" />\n" +
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +         
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:PropertyString m:null=\"true\" />\n" + 
-        "      <d:PropertyBoolean m:null=\"true\" />\n" + 
-        "      <d:PropertyByte m:null=\"true\" />\n" + 
-        "      <d:PropertySByte m:null=\"true\" />\n" + 
-        "      <d:PropertyInt32 m:null=\"true\" />\n" + 
-        "      <d:PropertyInt64 m:null=\"true\" />\n" + 
-        "      <d:PropertySingle m:null=\"true\" />\n" + 
-        "      <d:PropertyDouble m:null=\"true\" />\n" + 
-        "      <d:PropertyDecimal m:null=\"true\" />\n" + 
-        "      <d:PropertyBinary m:null=\"true\" />\n" + 
-        "      <d:PropertyDate m:null=\"true\" />\n" + 
-        "      <d:PropertyDateTimeOffset\n" + 
-        "        m:null=\"true\" />\n" + 
-        "      <d:PropertyDuration m:null=\"true\" />\n" + 
-        "      <d:PropertyGuid m:null=\"true\" />\n" + 
-        "      <d:PropertyTimeOfDay m:null=\"true\" />\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
-        "</a:entry>\n" + 
-        "";    
-    XMLAssert.assertXMLEqual(expected, resultString);
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:PropertyString m:null=\"true\" />\n" +
+        "      <d:PropertyBoolean m:null=\"true\" />\n" +
+        "      <d:PropertyByte m:null=\"true\" />\n" +
+        "      <d:PropertySByte m:null=\"true\" />\n" +
+        "      <d:PropertyInt32 m:null=\"true\" />\n" +
+        "      <d:PropertyInt64 m:null=\"true\" />\n" +
+        "      <d:PropertySingle m:null=\"true\" />\n" +
+        "      <d:PropertyDouble m:null=\"true\" />\n" +
+        "      <d:PropertyDecimal m:null=\"true\" />\n" +
+        "      <d:PropertyBinary m:null=\"true\" />\n" +
+        "      <d:PropertyDate m:null=\"true\" />\n" +
+        "      <d:PropertyDateTimeOffset\n" +
+        "        m:null=\"true\" />\n" +
+        "      <d:PropertyDuration m:null=\"true\" />\n" +
+        "      <d:PropertyGuid m:null=\"true\" />\n" +
+        "      <d:PropertyTimeOfDay m:null=\"true\" />\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
+        "</a:entry>\n" +
+        "";
+    checkXMLEqual(expected, resultString);
   }
 
   @Test(expected = SerializerException.class)
@@ -254,7 +268,7 @@ public class ODataXmlSerializerTest  {
     InputStream result = serializer.entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().serviceRoot(new URI("http://host:port"))
-            .entitySet(edmEntitySet).build())
+                .entitySet(edmEntitySet).build())
             .setId("http://host/svc/ESCompAllPrim")
             .count(countOption)
             .build()).getContent();
@@ -277,228 +291,231 @@ public class ODataXmlSerializerTest  {
   public void entityCollAllPrim() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/service/"))
                 .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"http://host/service/$metadata#ESCollAllPrim/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESCollAllPrim(1)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "<a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESCollAllPrim(1)\" />\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETCollAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" + 
-        "      <d:CollPropertyString m:type=\"#Collection(String)\">\n" + 
-        "        <m:element>Employee1@company.example</m:element>\n" + 
-        "        <m:element>Employee2@company.example</m:element>\n" + 
-        "        <m:element>Employee3@company.example</m:element>\n" + 
-        "      </d:CollPropertyString>\n" + 
-        "      <d:CollPropertyBoolean m:type=\"#Collection(Boolean)\">\n" + 
-        "        <m:element>true</m:element>\n" + 
-        "        <m:element>false</m:element>\n" + 
-        "        <m:element>true</m:element>\n" + 
-        "      </d:CollPropertyBoolean>\n" + 
-        "      <d:CollPropertyByte m:type=\"#Collection(Byte)\">\n" + 
-        "        <m:element>50</m:element>\n" + 
-        "        <m:element>200</m:element>\n" + 
-        "        <m:element>249</m:element>\n" + 
-        "      </d:CollPropertyByte>\n" + 
-        "      <d:CollPropertySByte m:type=\"#Collection(SByte)\">\n" + 
-        "        <m:element>-120</m:element>\n" + 
-        "        <m:element>120</m:element>\n" + 
-        "        <m:element>126</m:element>\n" + 
-        "      </d:CollPropertySByte>\n" + 
-        "      <d:CollPropertyInt16 m:type=\"#Collection(Int16)\">\n" + 
-        "        <m:element>1000</m:element>\n" + 
-        "        <m:element>2000</m:element>\n" + 
-        "        <m:element>30112</m:element>\n" + 
-        "      </d:CollPropertyInt16>\n" + 
-        "      <d:CollPropertyInt32 m:type=\"#Collection(Int32)\">\n" + 
-        "        <m:element>23232323</m:element>\n" + 
-        "        <m:element>11223355</m:element>\n" + 
-        "        <m:element>10000001</m:element>\n" + 
-        "      </d:CollPropertyInt32>\n" + 
-        "      <d:CollPropertyInt64 m:type=\"#Collection(Int64)\">\n" + 
-        "        <m:element>929292929292</m:element>\n" + 
-        "        <m:element>333333333333</m:element>\n" + 
-        "        <m:element>444444444444</m:element>\n" + 
-        "      </d:CollPropertyInt64>\n" + 
-        "      <d:CollPropertySingle m:type=\"#Collection(Single)\">\n" + 
-        "        <m:element>1790.0</m:element>\n" + 
-        "        <m:element>26600.0</m:element>\n" + 
-        "        <m:element>3210.0</m:element>\n" + 
-        "      </d:CollPropertySingle>\n" + 
-        "      <d:CollPropertyDouble m:type=\"#Collection(Double)\">\n" + 
-        "        <m:element>-17900.0</m:element>\n" + 
-        "        <m:element>-2.78E7</m:element>\n" + 
-        "        <m:element>3210.0</m:element>\n" + 
-        "      </d:CollPropertyDouble>\n" + 
-        "      <d:CollPropertyDecimal m:type=\"#Collection(Decimal)\">\n" + 
-        "        <m:element>12</m:element>\n" + 
-        "        <m:element>-2</m:element>\n" + 
-        "        <m:element>1234</m:element>\n" + 
-        "      </d:CollPropertyDecimal>\n" + 
-        "      <d:CollPropertyBinary m:type=\"#Collection(Binary)\">\n" + 
-        "        <m:element>q83v</m:element>\n" + 
-        "        <m:element>ASNF</m:element>\n" + 
-        "        <m:element>VGeJ</m:element>\n" + 
-        "      </d:CollPropertyBinary>\n" + 
-        "      <d:CollPropertyDate m:type=\"#Collection(Date)\">\n" + 
-        "        <m:element>1958-12-03</m:element>\n" + 
-        "        <m:element>1999-08-05</m:element>\n" + 
-        "        <m:element>2013-06-25</m:element>\n" + 
-        "      </d:CollPropertyDate>\n" + 
-        "      <d:CollPropertyDateTimeOffset m:type=\"#Collection(DateTimeOffset)\">\n" + 
-        "        <m:element>2015-08-12T03:08:34Z</m:element>\n" + 
-        "        <m:element>1970-03-28T12:11:10Z</m:element>\n" + 
-        "        <m:element>1948-02-17T09:09:09Z</m:element>\n" + 
-        "      </d:CollPropertyDateTimeOffset>\n" + 
-        "      <d:CollPropertyDuration m:type=\"#Collection(Duration)\">\n" + 
-        "        <m:element>PT13S</m:element>\n" + 
-        "        <m:element>PT5H28M0S</m:element>\n" + 
-        "        <m:element>PT1H0S</m:element>\n" + 
-        "      </d:CollPropertyDuration>\n" + 
-        "      <d:CollPropertyGuid m:type=\"#Collection(Guid)\">\n" + 
-        "        <m:element>ffffff67-89ab-cdef-0123-456789aaaaaa</m:element>\n" + 
-        "        <m:element>eeeeee67-89ab-cdef-0123-456789bbbbbb</m:element>\n" + 
-        "        <m:element>cccccc67-89ab-cdef-0123-456789cccccc</m:element>\n" + 
-        "      </d:CollPropertyGuid>\n" + 
-        "      <d:CollPropertyTimeOfDay m:type=\"#Collection(TimeOfDay)\">\n" + 
-        "        <m:element>04:14:13</m:element>\n" + 
-        "        <m:element>23:59:59</m:element>\n" + 
-        "        <m:element>01:12:33</m:element>\n" + 
-        "      </d:CollPropertyTimeOfDay>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        + "m:context=\"http://host/service/$metadata#ESCollAllPrim/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESCollAllPrim(1)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESCollAllPrim(1)\" />\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETCollAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
+        "      <d:CollPropertyString m:type=\"#Collection(String)\">\n" +
+        "        <m:element>Employee1@company.example</m:element>\n" +
+        "        <m:element>Employee2@company.example</m:element>\n" +
+        "        <m:element>Employee3@company.example</m:element>\n" +
+        "      </d:CollPropertyString>\n" +
+        "      <d:CollPropertyBoolean m:type=\"#Collection(Boolean)\">\n" +
+        "        <m:element>true</m:element>\n" +
+        "        <m:element>false</m:element>\n" +
+        "        <m:element>true</m:element>\n" +
+        "      </d:CollPropertyBoolean>\n" +
+        "      <d:CollPropertyByte m:type=\"#Collection(Byte)\">\n" +
+        "        <m:element>50</m:element>\n" +
+        "        <m:element>200</m:element>\n" +
+        "        <m:element>249</m:element>\n" +
+        "      </d:CollPropertyByte>\n" +
+        "      <d:CollPropertySByte m:type=\"#Collection(SByte)\">\n" +
+        "        <m:element>-120</m:element>\n" +
+        "        <m:element>120</m:element>\n" +
+        "        <m:element>126</m:element>\n" +
+        "      </d:CollPropertySByte>\n" +
+        "      <d:CollPropertyInt16 m:type=\"#Collection(Int16)\">\n" +
+        "        <m:element>1000</m:element>\n" +
+        "        <m:element>2000</m:element>\n" +
+        "        <m:element>30112</m:element>\n" +
+        "      </d:CollPropertyInt16>\n" +
+        "      <d:CollPropertyInt32 m:type=\"#Collection(Int32)\">\n" +
+        "        <m:element>23232323</m:element>\n" +
+        "        <m:element>11223355</m:element>\n" +
+        "        <m:element>10000001</m:element>\n" +
+        "      </d:CollPropertyInt32>\n" +
+        "      <d:CollPropertyInt64 m:type=\"#Collection(Int64)\">\n" +
+        "        <m:element>929292929292</m:element>\n" +
+        "        <m:element>333333333333</m:element>\n" +
+        "        <m:element>444444444444</m:element>\n" +
+        "      </d:CollPropertyInt64>\n" +
+        "      <d:CollPropertySingle m:type=\"#Collection(Single)\">\n" +
+        "        <m:element>1790.0</m:element>\n" +
+        "        <m:element>26600.0</m:element>\n" +
+        "        <m:element>3210.0</m:element>\n" +
+        "      </d:CollPropertySingle>\n" +
+        "      <d:CollPropertyDouble m:type=\"#Collection(Double)\">\n" +
+        "        <m:element>-17900.0</m:element>\n" +
+        "        <m:element>-2.78E7</m:element>\n" +
+        "        <m:element>3210.0</m:element>\n" +
+        "      </d:CollPropertyDouble>\n" +
+        "      <d:CollPropertyDecimal m:type=\"#Collection(Decimal)\">\n" +
+        "        <m:element>12</m:element>\n" +
+        "        <m:element>-2</m:element>\n" +
+        "        <m:element>1234</m:element>\n" +
+        "      </d:CollPropertyDecimal>\n" +
+        "      <d:CollPropertyBinary m:type=\"#Collection(Binary)\">\n" +
+        "        <m:element>q83v</m:element>\n" +
+        "        <m:element>ASNF</m:element>\n" +
+        "        <m:element>VGeJ</m:element>\n" +
+        "      </d:CollPropertyBinary>\n" +
+        "      <d:CollPropertyDate m:type=\"#Collection(Date)\">\n" +
+        "        <m:element>1958-12-03</m:element>\n" +
+        "        <m:element>1999-08-05</m:element>\n" +
+        "        <m:element>2013-06-25</m:element>\n" +
+        "      </d:CollPropertyDate>\n" +
+        "      <d:CollPropertyDateTimeOffset m:type=\"#Collection(DateTimeOffset)\">\n" +
+        "        <m:element>2015-08-12T03:08:34Z</m:element>\n" +
+        "        <m:element>1970-03-28T12:11:10Z</m:element>\n" +
+        "        <m:element>1948-02-17T09:09:09Z</m:element>\n" +
+        "      </d:CollPropertyDateTimeOffset>\n" +
+        "      <d:CollPropertyDuration m:type=\"#Collection(Duration)\">\n" +
+        "        <m:element>PT13S</m:element>\n" +
+        "        <m:element>PT5H28M0S</m:element>\n" +
+        "        <m:element>PT1H0S</m:element>\n" +
+        "      </d:CollPropertyDuration>\n" +
+        "      <d:CollPropertyGuid m:type=\"#Collection(Guid)\">\n" +
+        "        <m:element>ffffff67-89ab-cdef-0123-456789aaaaaa</m:element>\n" +
+        "        <m:element>eeeeee67-89ab-cdef-0123-456789bbbbbb</m:element>\n" +
+        "        <m:element>cccccc67-89ab-cdef-0123-456789cccccc</m:element>\n" +
+        "      </d:CollPropertyGuid>\n" +
+        "      <d:CollPropertyTimeOfDay m:type=\"#Collection(TimeOfDay)\">\n" +
+        "        <m:element>04:14:13</m:element>\n" +
+        "        <m:element>23:59:59</m:element>\n" +
+        "        <m:element>01:12:33</m:element>\n" +
+        "      </d:CollPropertyTimeOfDay>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
   public void entityCompAllPrim() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompAllPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
-    
+
     final String resultString = IOUtils.toString(result);
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESCompAllPrim/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\" m:etag=\"W/&quot;32767&quot;\">\n" + 
-        "  <a:id>ESCompAllPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "<a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESCompAllPrim(32767)\" />\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETCompAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:PropertyComp m:type=\"#olingo.odata.test1.CTAllPrim\">\n" + 
-        "        <d:PropertyString>First Resource - first</d:PropertyString>\n" + 
-        "        <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=</d:PropertyBinary>\n" + 
-        "        <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" + 
-        "        <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" + 
-        "        <d:PropertyDate m:type=\"Date\">2012-10-03</d:PropertyDate>\n" + 
+        + "m:context=\"$metadata#ESCompAllPrim/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\" m:etag=\"W/&quot;32767&quot;\">\n" +
+        "  <a:id>ESCompAllPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESCompAllPrim(32767)\" />\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETCompAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:PropertyComp m:type=\"#olingo.odata.test1.CTAllPrim\">\n" +
+        "        <d:PropertyString>First Resource - first</d:PropertyString>\n" +
+        "        <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=</d:PropertyBinary>\n" +
+        "        <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" +
+        "        <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" +
+        "        <d:PropertyDate m:type=\"Date\">2012-10-03</d:PropertyDate>\n" +
         "        <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-10-03T07:16:23.1234567Z"
-        + "</d:PropertyDateTimeOffset>\n" + 
-        "        <d:PropertyDecimal m:type=\"Decimal\">34.27</d:PropertyDecimal>\n" + 
-        "        <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" + 
-        "        <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" + 
-        "        <d:PropertyDuration m:type=\"Duration\">PT6S</d:PropertyDuration>\n" + 
-        "        <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef</d:PropertyGuid>\n" + 
-        "        <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "        <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" + 
-        "        <d:PropertyInt64 m:type=\"Int64\">9223372036854775807</d:PropertyInt64>\n" + 
-        "        <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
-        "        <d:PropertyTimeOfDay m:type=\"TimeOfDay\">01:00:01</d:PropertyTimeOfDay>\n" + 
-        "      </d:PropertyComp>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        + "</d:PropertyDateTimeOffset>\n" +
+        "        <d:PropertyDecimal m:type=\"Decimal\">34.27</d:PropertyDecimal>\n" +
+        "        <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" +
+        "        <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" +
+        "        <d:PropertyDuration m:type=\"Duration\">PT6S</d:PropertyDuration>\n" +
+        "        <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef</d:PropertyGuid>\n" +
+        "        <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "        <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" +
+        "        <d:PropertyInt64 m:type=\"Int64\">9223372036854775807</d:PropertyInt64>\n" +
+        "        <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
+        "        <d:PropertyTimeOfDay m:type=\"TimeOfDay\">01:00:01</d:PropertyTimeOfDay>\n" +
+        "      </d:PropertyComp>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
   public void entityMixPrimCollComp() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" + 
-        "  m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-          .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESMixPrimCollComp(32767)\"/>\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETMixPrimCollComp\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:CollPropertyString m:type=\"#Collection(String)\">\n" + 
-        "        <m:element>Employee1@company.example</m:element>\n" + 
-        "        <m:element>Employee2@company.example</m:element>\n" + 
-        "        <m:element>Employee3@company.example</m:element>\n" + 
-        "      </d:CollPropertyString>\n" + 
-        "      <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "        <d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" + 
-        "        <d:PropertyString>TEST A</d:PropertyString>\n" + 
-        "      </d:PropertyComp>\n" + 
-        "        <d:CollPropertyComp m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" + 
-        "          <m:element>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>TEST 1</d:PropertyString>\n" + 
-        "          </m:element>\n" + 
-        "          <m:element>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>TEST 2</d:PropertyString>\n" + 
-        "          </m:element>\n" + 
-        "          <m:element>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>TEST 3</d:PropertyString>\n" + 
-        "          </m:element>\n" + 
-        "        </d:CollPropertyComp>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
-        "</a:entry>\n"; 
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
+        "  m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESMixPrimCollComp(32767)\"/>\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETMixPrimCollComp\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:CollPropertyString m:type=\"#Collection(String)\">\n" +
+        "        <m:element>Employee1@company.example</m:element>\n" +
+        "        <m:element>Employee2@company.example</m:element>\n" +
+        "        <m:element>Employee3@company.example</m:element>\n" +
+        "      </d:CollPropertyString>\n" +
+        "      <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+        "        <d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
+        "        <d:PropertyString>TEST A</d:PropertyString>\n" +
+        "      </d:PropertyComp>\n" +
+        "        <d:CollPropertyComp m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" +
+        "          <m:element>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
+        "            <d:PropertyString>TEST 1</d:PropertyString>\n" +
+        "          </m:element>\n" +
+        "          <m:element>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
+        "            <d:PropertyString>TEST 2</d:PropertyString>\n" +
+        "          </m:element>\n" +
+        "          <m:element>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
+        "            <d:PropertyString>TEST 3</d:PropertyString>\n" +
+        "          </m:element>\n" +
+        "        </d:CollPropertyComp>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
+        "</a:entry>\n";
     XMLAssert.assertXMLEqual(expectedResult, resultString);
   }
 
@@ -507,36 +524,38 @@ public class ODataXmlSerializerTest  {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().retainAll(Arrays.asList(entity.getProperties().get(0)));
-    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), 
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entity(metadata, edmEntitySet.getEntityType(),
         entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()).getContent());
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESMixPrimCollComp(32767)\"/>\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETMixPrimCollComp\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:CollPropertyString m:null=\"true\" />\n" + 
-        "      <d:PropertyComp m:null=\"true\" />\n" + 
-        "      <d:CollPropertyComp m:null=\"true\" />\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        + "m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESMixPrimCollComp(32767)\"/>\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETMixPrimCollComp\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:CollPropertyString m:null=\"true\" />\n" +
+        "      <d:PropertyComp m:null=\"true\" />\n" +
+        "      <d:CollPropertyComp m:null=\"true\" />\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
     XMLAssert.assertXMLEqual(expectedResult, resultString);
   }
@@ -573,33 +592,35 @@ public class ODataXmlSerializerTest  {
   public void entityMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
-    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(),
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entity(metadata, edmEntitySet.getEntityType(),
         entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build()).getContent());
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
-        "  m:context=\"$metadata#ESMedia/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESMedia(1)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" + 
+        "  m:context=\"$metadata#ESMedia/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESMedia(1)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" +
         "  <a:content type=\"image/svg+xml\" src=\"ESMedia(1)/$value\" />\n" +
         "  <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(1)/$value\"/>\n" +
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETMedia\" />\n" + 
-        "  <m:properties>\n" + 
-        "    <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" + 
-        "  </m:properties>\n" + 
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETMedia\" />\n" +
+        "  <m:properties>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
+        "  </m:properties>\n" +
         "</a:entry>";
     XMLAssert.assertXMLEqual(expectedResult, resultString);
   }
@@ -608,92 +629,94 @@ public class ODataXmlSerializerTest  {
   public void entitySetMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
-    final String resultString = IOUtils.toString(serializer.entityCollection(metadata,
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entityCollection(metadata,
         edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
             .setId("http://host/svc/ESMedia")
-            .build()).getContent());
-    
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESMedia\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>http://host/svc/ESMedia</a:id>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESMedia(1)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" + 
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESMedia\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>http://host/svc/ESMedia</a:id>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESMedia(1)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" +
         "    <a:content type=\"image/svg+xml\" src=\"ESMedia(1)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(1)/$value\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETMedia\" />\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:entry>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESMedia(2)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESMedia(2)\"/>\n" + 
-        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(2)/$value\" />\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
+        "    </m:properties>\n" +
+        "  </a:entry>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESMedia(2)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESMedia(2)\"/>\n" +
+        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(2)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(2)/$value\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETMedia\" />\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:entry>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESMedia(3)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESMedia(3)\"/>\n" + 
-        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(3)/$value\" />\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>\n" +
+        "    </m:properties>\n" +
+        "  </a:entry>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESMedia(3)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESMedia(3)\"/>\n" +
+        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(3)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(3)/$value\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETMedia\" />\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">3</d:PropertyInt16>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:entry>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESMedia(4)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESMedia(4)\"/>\n" + 
-        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(4)/$value\" />\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">3</d:PropertyInt16>\n" +
+        "    </m:properties>\n" +
+        "  </a:entry>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESMedia(4)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESMedia(4)\"/>\n" +
+        "    <a:content type=\"image/svg+xml\" src=\"ESMedia(4)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(4)/$value\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETMedia\" />\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">4</d:PropertyInt16>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:entry>\n" + 
-        "</a:feed>\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">4</d:PropertyInt16>\n" +
+        "    </m:properties>\n" +
+        "  </a:entry>\n" +
+        "</a:feed>\n" +
         "";
     XMLAssert.assertXMLEqual(expectedResult, resultString);
   }
@@ -702,136 +725,138 @@ public class ODataXmlSerializerTest  {
   public void primitiveValuesAllNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllNullable");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
-    final String resultString = IOUtils.toString(serializer.entityCollection(metadata,
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entityCollection(metadata,
         edmEntitySet.getEntityType(), entitySet,
-                EntityCollectionSerializerOptions.with()
-                    .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/svc"))
-                        .entitySet(edmEntitySet).build())
-                    .setId("http://host/svc/ESAllNullable")
-                    .build()).getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/svc"))
+                .entitySet(edmEntitySet).build())
+            .setId("http://host/svc/ESAllNullable")
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"http://host/svc$metadata#ESAllNullable\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>http://host/svc/ESAllNullable</a:id>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESAllNullable(1)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESAllNullable(1)\" />\n" + 
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETAllNullable\" />\n" + 
-        "    <a:content type=\"application/xml\">\n" + 
-        "      <m:properties>\n" + 
-        "        <d:PropertyKey m:type=\"Int16\">1</d:PropertyKey>\n" + 
-        "        <d:PropertyInt16 m:null=\"true\" />\n" + 
-        "        <d:PropertyString m:null=\"true\" />\n" + 
-        "        <d:PropertyBoolean m:null=\"true\" />\n" + 
-        "        <d:PropertyByte m:null=\"true\" />\n" + 
-        "        <d:PropertySByte m:null=\"true\" />\n" + 
-        "        <d:PropertyInt32 m:null=\"true\" />\n" + 
-        "        <d:PropertyInt64 m:null=\"true\" />\n" + 
-        "        <d:PropertySingle m:null=\"true\" />\n" + 
-        "        <d:PropertyDouble m:null=\"true\" />\n" + 
-        "        <d:PropertyDecimal m:null=\"true\" />\n" + 
-        "        <d:PropertyBinary m:null=\"true\" />\n" + 
-        "        <d:PropertyDate m:null=\"true\" />\n" + 
-        "        <d:PropertyDateTimeOffset m:null=\"true\" />\n" + 
-        "        <d:PropertyDuration m:null=\"true\" />\n" + 
-        "        <d:PropertyGuid m:null=\"true\" />\n" + 
-        "        <d:PropertyTimeOfDay m:null=\"true\" />\n" + 
-        "        <d:CollPropertyString m:type=\"#Collection(String)\">\n" + 
-        "          <m:element>spiderman@comic.com</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>spidergirl@comic.com</m:element>\n" + 
-        "        </d:CollPropertyString>\n" + 
-        "        <d:CollPropertyBoolean m:type=\"#Collection(Boolean)\">\n" + 
-        "          <m:element>true</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>false</m:element>\n" + 
-        "        </d:CollPropertyBoolean>\n" + 
-        "        <d:CollPropertyByte m:type=\"#Collection(Byte)\">\n" + 
-        "          <m:element>50</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>249</m:element>\n" + 
-        "        </d:CollPropertyByte>\n" + 
-        "        <d:CollPropertySByte m:type=\"#Collection(SByte)\">\n" + 
-        "          <m:element>-120</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>126</m:element>\n" + 
-        "        </d:CollPropertySByte>\n" + 
-        "        <d:CollPropertyInt16 m:type=\"#Collection(Int16)\">\n" + 
-        "          <m:element>1000</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>30112</m:element>\n" + 
-        "        </d:CollPropertyInt16>\n" + 
-        "        <d:CollPropertyInt32 m:type=\"#Collection(Int32)\">\n" + 
-        "          <m:element>23232323</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>10000001</m:element>\n" + 
-        "        </d:CollPropertyInt32>\n" + 
-        "        <d:CollPropertyInt64 m:type=\"#Collection(Int64)\">\n" + 
-        "          <m:element>929292929292</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>444444444444</m:element>\n" + 
-        "        </d:CollPropertyInt64>\n" + 
-        "        <d:CollPropertySingle m:type=\"#Collection(Single)\">\n" + 
-        "          <m:element>1790.0</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>3210.0</m:element>\n" + 
-        "        </d:CollPropertySingle>\n" + 
-        "        <d:CollPropertyDouble m:type=\"#Collection(Double)\">\n" + 
-        "          <m:element>-17900.0</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>3210.0</m:element>\n" + 
-        "        </d:CollPropertyDouble>\n" + 
-        "        <d:CollPropertyDecimal m:type=\"#Collection(Decimal)\">\n" + 
-        "          <m:element>12</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>1234</m:element>\n" + 
-        "        </d:CollPropertyDecimal>\n" + 
-        "        <d:CollPropertyBinary m:type=\"#Collection(Binary)\">\n" + 
-        "          <m:element>q83v</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>VGeJ</m:element>\n" + 
-        "        </d:CollPropertyBinary>\n" + 
-        "        <d:CollPropertyDate m:type=\"#Collection(Date)\">\n" + 
-        "          <m:element>1958-12-03</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>2013-06-25</m:element>\n" + 
-        "        </d:CollPropertyDate>\n" + 
-        "        <d:CollPropertyDateTimeOffset m:type=\"#Collection(DateTimeOffset)\">\n" + 
-        "          <m:element>2015-08-12T03:08:34Z</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>1948-02-17T09:09:09Z</m:element>\n" + 
-        "        </d:CollPropertyDateTimeOffset>\n" + 
-        "        <d:CollPropertyDuration m:type=\"#Collection(Duration)\">\n" + 
-        "          <m:element>PT13S</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>PT1H0S</m:element>\n" + 
-        "        </d:CollPropertyDuration>\n" + 
-        "        <d:CollPropertyGuid m:type=\"#Collection(Guid)\">\n" + 
-        "          <m:element>ffffff67-89ab-cdef-0123-456789aaaaaa</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>cccccc67-89ab-cdef-0123-456789cccccc</m:element>\n" + 
-        "        </d:CollPropertyGuid>\n" + 
-        "        <d:CollPropertyTimeOfDay m:type=\"#Collection(TimeOfDay)\">\n" + 
-        "          <m:element>04:14:13</m:element>\n" + 
-        "          <m:element d:null=\"true\" />\n" + 
-        "          <m:element>00:37:13</m:element>\n" + 
-        "        </d:CollPropertyTimeOfDay>\n" + 
-        "      </m:properties>\n" + 
-        "    </a:content>\n" + 
-        "  </a:entry>\n" + 
+        + "m:context=\"http://host/svc$metadata#ESAllNullable\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>http://host/svc/ESAllNullable</a:id>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESAllNullable(1)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESAllNullable(1)\" />\n" +
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETAllNullable\" />\n" +
+        "    <a:content type=\"application/xml\">\n" +
+        "      <m:properties>\n" +
+        "        <d:PropertyKey m:type=\"Int16\">1</d:PropertyKey>\n" +
+        "        <d:PropertyInt16 m:null=\"true\" />\n" +
+        "        <d:PropertyString m:null=\"true\" />\n" +
+        "        <d:PropertyBoolean m:null=\"true\" />\n" +
+        "        <d:PropertyByte m:null=\"true\" />\n" +
+        "        <d:PropertySByte m:null=\"true\" />\n" +
+        "        <d:PropertyInt32 m:null=\"true\" />\n" +
+        "        <d:PropertyInt64 m:null=\"true\" />\n" +
+        "        <d:PropertySingle m:null=\"true\" />\n" +
+        "        <d:PropertyDouble m:null=\"true\" />\n" +
+        "        <d:PropertyDecimal m:null=\"true\" />\n" +
+        "        <d:PropertyBinary m:null=\"true\" />\n" +
+        "        <d:PropertyDate m:null=\"true\" />\n" +
+        "        <d:PropertyDateTimeOffset m:null=\"true\" />\n" +
+        "        <d:PropertyDuration m:null=\"true\" />\n" +
+        "        <d:PropertyGuid m:null=\"true\" />\n" +
+        "        <d:PropertyTimeOfDay m:null=\"true\" />\n" +
+        "        <d:CollPropertyString m:type=\"#Collection(String)\">\n" +
+        "          <m:element>spiderman@comic.com</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>spidergirl@comic.com</m:element>\n" +
+        "        </d:CollPropertyString>\n" +
+        "        <d:CollPropertyBoolean m:type=\"#Collection(Boolean)\">\n" +
+        "          <m:element>true</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>false</m:element>\n" +
+        "        </d:CollPropertyBoolean>\n" +
+        "        <d:CollPropertyByte m:type=\"#Collection(Byte)\">\n" +
+        "          <m:element>50</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>249</m:element>\n" +
+        "        </d:CollPropertyByte>\n" +
+        "        <d:CollPropertySByte m:type=\"#Collection(SByte)\">\n" +
+        "          <m:element>-120</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>126</m:element>\n" +
+        "        </d:CollPropertySByte>\n" +
+        "        <d:CollPropertyInt16 m:type=\"#Collection(Int16)\">\n" +
+        "          <m:element>1000</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>30112</m:element>\n" +
+        "        </d:CollPropertyInt16>\n" +
+        "        <d:CollPropertyInt32 m:type=\"#Collection(Int32)\">\n" +
+        "          <m:element>23232323</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>10000001</m:element>\n" +
+        "        </d:CollPropertyInt32>\n" +
+        "        <d:CollPropertyInt64 m:type=\"#Collection(Int64)\">\n" +
+        "          <m:element>929292929292</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>444444444444</m:element>\n" +
+        "        </d:CollPropertyInt64>\n" +
+        "        <d:CollPropertySingle m:type=\"#Collection(Single)\">\n" +
+        "          <m:element>1790.0</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>3210.0</m:element>\n" +
+        "        </d:CollPropertySingle>\n" +
+        "        <d:CollPropertyDouble m:type=\"#Collection(Double)\">\n" +
+        "          <m:element>-17900.0</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>3210.0</m:element>\n" +
+        "        </d:CollPropertyDouble>\n" +
+        "        <d:CollPropertyDecimal m:type=\"#Collection(Decimal)\">\n" +
+        "          <m:element>12</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>1234</m:element>\n" +
+        "        </d:CollPropertyDecimal>\n" +
+        "        <d:CollPropertyBinary m:type=\"#Collection(Binary)\">\n" +
+        "          <m:element>q83v</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>VGeJ</m:element>\n" +
+        "        </d:CollPropertyBinary>\n" +
+        "        <d:CollPropertyDate m:type=\"#Collection(Date)\">\n" +
+        "          <m:element>1958-12-03</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>2013-06-25</m:element>\n" +
+        "        </d:CollPropertyDate>\n" +
+        "        <d:CollPropertyDateTimeOffset m:type=\"#Collection(DateTimeOffset)\">\n" +
+        "          <m:element>2015-08-12T03:08:34Z</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>1948-02-17T09:09:09Z</m:element>\n" +
+        "        </d:CollPropertyDateTimeOffset>\n" +
+        "        <d:CollPropertyDuration m:type=\"#Collection(Duration)\">\n" +
+        "          <m:element>PT13S</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>PT1H0S</m:element>\n" +
+        "        </d:CollPropertyDuration>\n" +
+        "        <d:CollPropertyGuid m:type=\"#Collection(Guid)\">\n" +
+        "          <m:element>ffffff67-89ab-cdef-0123-456789aaaaaa</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>cccccc67-89ab-cdef-0123-456789cccccc</m:element>\n" +
+        "        </d:CollPropertyGuid>\n" +
+        "        <d:CollPropertyTimeOfDay m:type=\"#Collection(TimeOfDay)\">\n" +
+        "          <m:element>04:14:13</m:element>\n" +
+        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element>00:37:13</m:element>\n" +
+        "        </d:CollPropertyTimeOfDay>\n" +
+        "      </m:properties>\n" +
+        "    </a:content>\n" +
+        "  </a:entry>\n" +
         "</a:feed>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -843,6 +868,7 @@ public class ODataXmlSerializerTest  {
     final SelectItem selectItem2 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyBoolean");
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         selectItem1, selectItem2, selectItem2));
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer
         .entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
@@ -852,37 +878,37 @@ public class ODataXmlSerializerTest  {
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
-        "  m:context=\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
+        "  m:context=\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESAllPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
         "    href=\"ESTwoPrim(32767)\" />\n" +
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +         
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" + 
-        "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" +
+        "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
     XMLAssert.assertXMLEqual(expectedResult, resultString);
   }
@@ -894,6 +920,7 @@ public class ODataXmlSerializerTest  {
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
@@ -904,59 +931,59 @@ public class ODataXmlSerializerTest  {
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" + 
-        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>http://host/svc/ESCompComp</a:id>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESCompComp(1)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "<a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-          .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" + 
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "    <a:content type=\"application/xml\">\n" + 
-        "      <m:properties>\n" + 
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" + 
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "            <d:PropertyString>String 1</d:PropertyString>\n" + 
-        "          </d:PropertyComp>\n" + 
-        "        </d:PropertyComp>\n" + 
-        "      </m:properties>\n" + 
-        "    </a:content>\n" + 
-        "  </a:entry>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESCompComp(2)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "<a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-            .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" + 
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "    <a:content type=\"application/xml\">\n" + 
-        "      <m:properties>\n" + 
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" + 
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "            <d:PropertyString>String 2</d:PropertyString>\n" + 
-        "          </d:PropertyComp>\n" + 
-        "        </d:PropertyComp>\n" + 
-        "      </m:properties>\n" + 
-        "    </a:content>\n" + 
-        "  </a:entry>\n" + 
-        "</a:feed>\n"; 
-    XMLAssert.assertXMLEqual(expected, resultString);
+    final String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
+        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESCompComp(1)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" +
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
+        "    <a:content type=\"application/xml\">\n" +
+        "      <m:properties>\n" +
+        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+        "            <d:PropertyString>String 1</d:PropertyString>\n" +
+        "          </d:PropertyComp>\n" +
+        "        </d:PropertyComp>\n" +
+        "      </m:properties>\n" +
+        "    </a:content>\n" +
+        "  </a:entry>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESCompComp(2)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" +
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
+        "    <a:content type=\"application/xml\">\n" +
+        "      <m:properties>\n" +
+        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+        "            <d:PropertyString>String 2</d:PropertyString>\n" +
+        "          </d:PropertyComp>\n" +
+        "        </d:PropertyComp>\n" +
+        "      </m:properties>\n" +
+        "    </a:content>\n" +
+        "  </a:entry>\n" +
+        "</a:feed>\n";
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -967,7 +994,8 @@ public class ODataXmlSerializerTest  {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
-    final String resultString = IOUtils.toString(serializer
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream inputStream = serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
@@ -975,62 +1003,63 @@ public class ODataXmlSerializerTest  {
                     .build())
                 .setId("http://host/svc/ESCompComp")
                 .select(select)
-                .build()).getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" + 
-        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp)\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>http://host/svc/ESCompComp</a:id>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESCompComp(1)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-                .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" + 
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "    <a:content type=\"application/xml\">\n" + 
-        "      <m:properties>\n" + 
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" + 
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>String 1</d:PropertyString>\n" + 
-        "          </d:PropertyComp>\n" + 
-        "        </d:PropertyComp>\n" + 
-        "      </m:properties>\n" + 
-        "    </a:content>\n" + 
-        "  </a:entry>\n" + 
-        "  <a:entry>\n" + 
-        "    <a:id>ESCompComp(2)</a:id>\n" + 
-        "    <a:title />\n" + 
-        "    <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-                .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "    <a:author>\n" + 
-        "      <a:name />\n" + 
-        "    </a:author>\n" + 
-        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" + 
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "    <a:content type=\"application/xml\">\n" + 
-        "      <m:properties>\n" + 
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" + 
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">987</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>String 2</d:PropertyString>\n" + 
-        "          </d:PropertyComp>\n" + 
-        "        </d:PropertyComp>\n" + 
-        "      </m:properties>\n" + 
-        "    </a:content>\n" + 
-        "  </a:entry>\n" + 
+                .build()).getContent();
+    final String resultString = IOUtils.toString(inputStream);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
+        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp)\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESCompComp(1)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" +
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
+        "    <a:content type=\"application/xml\">\n" +
+        "      <m:properties>\n" +
+        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
+        "            <d:PropertyString>String 1</d:PropertyString>\n" +
+        "          </d:PropertyComp>\n" +
+        "        </d:PropertyComp>\n" +
+        "      </m:properties>\n" +
+        "    </a:content>\n" +
+        "  </a:entry>\n" +
+        "  <a:entry>\n" +
+        "    <a:id>ESCompComp(2)</a:id>\n" +
+        "    <a:title />\n" +
+        "    <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:author>\n" +
+        "      <a:name />\n" +
+        "    </a:author>\n" +
+        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" +
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
+        "    <a:content type=\"application/xml\">\n" +
+        "      <m:properties>\n" +
+        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">987</d:PropertyInt16>\n" +
+        "            <d:PropertyString>String 2</d:PropertyString>\n" +
+        "          </d:PropertyComp>\n" +
+        "        </d:PropertyComp>\n" +
+        "      </m:properties>\n" +
+        "    </a:content>\n" +
+        "  </a:entry>\n" +
         "</a:feed>\n";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1039,100 +1068,101 @@ public class ODataXmlSerializerTest  {
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
         ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .expand(expand)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESTwoPrim/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESTwoPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESTwoPrim/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESTwoPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
         "  <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\" />\n" +
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "    href=\"ESAllPrim(32767)\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:entry>\n" + 
-        "        <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "        <a:title />\n" + 
-        "        <a:summary />\n" + 
-        "    <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "        <a:author>\n" + 
-        "          <a:name />\n" + 
-        "        </a:author>\n" + 
-        "        <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" + 
-        "        <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "    href=\"ESAllPrim(32767)\">\n" +
+        "    <m:inline>\n" +
+        "      <a:entry>\n" +
+        "        <a:id>ESAllPrim(32767)</a:id>\n" +
+        "        <a:title />\n" +
+        "        <a:summary />\n" +
+        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "        <a:author>\n" +
+        "          <a:name />\n" +
+        "        </a:author>\n" +
+        "        <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" +
+        "        <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
         "          href=\"ESTwoPrim(32767)\" />\n" +
-        "        <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "          href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +         
-        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "          term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "        <a:content type=\"application/xml\">\n" + 
-        "          <m:properties>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>First Resource - positive values\n" + 
-        "            </d:PropertyString>\n" + 
-        "            <d:PropertyBoolean m:type=\"Boolean\">true\n" + 
-        "            </d:PropertyBoolean>\n" + 
-        "            <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" + 
-        "            <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
-        "            <d:PropertyInt32 m:type=\"Int32\">2147483647\n" + 
-        "            </d:PropertyInt32>\n" + 
-        "            <d:PropertyInt64 m:type=\"Int64\">9223372036854775807\n" + 
-        "            </d:PropertyInt64>\n" + 
-        "            <d:PropertySingle m:type=\"Single\">1.79E20\n" + 
-        "            </d:PropertySingle>\n" + 
-        "            <d:PropertyDouble m:type=\"Double\">-1.79E19\n" + 
-        "            </d:PropertyDouble>\n" + 
-        "            <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" + 
-        "            <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=\n" + 
-        "            </d:PropertyBinary>\n" + 
-        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
-        "            <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-12-03T07:16:23Z\n" + 
-        "            </d:PropertyDateTimeOffset>\n" + 
-        "            <d:PropertyDuration m:type=\"Duration\">PT6S\n" + 
-        "            </d:PropertyDuration>\n" + 
-        "            <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef\n" + 
-        "            </d:PropertyGuid>\n" + 
-        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05\n" + 
-        "            </d:PropertyTimeOfDay>\n" + 
-        "          </m:properties>\n" + 
-        "        </a:content>\n" + 
-        "      </a:entry>\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
-        "    href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />"+
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:PropertyString>Test String4</d:PropertyString>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
-        "</a:entry>\n" + 
+        "        <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "          href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +
+        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "          term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "        <a:content type=\"application/xml\">\n" +
+        "          <m:properties>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "            <d:PropertyString>First Resource - positive values\n" +
+        "            </d:PropertyString>\n" +
+        "            <d:PropertyBoolean m:type=\"Boolean\">true\n" +
+        "            </d:PropertyBoolean>\n" +
+        "            <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" +
+        "            <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
+        "            <d:PropertyInt32 m:type=\"Int32\">2147483647\n" +
+        "            </d:PropertyInt32>\n" +
+        "            <d:PropertyInt64 m:type=\"Int64\">9223372036854775807\n" +
+        "            </d:PropertyInt64>\n" +
+        "            <d:PropertySingle m:type=\"Single\">1.79E20\n" +
+        "            </d:PropertySingle>\n" +
+        "            <d:PropertyDouble m:type=\"Double\">-1.79E19\n" +
+        "            </d:PropertyDouble>\n" +
+        "            <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" +
+        "            <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=\n" +
+        "            </d:PropertyBinary>\n" +
+        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
+        "            <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-12-03T07:16:23Z\n" +
+        "            </d:PropertyDateTimeOffset>\n" +
+        "            <d:PropertyDuration m:type=\"Duration\">PT6S\n" +
+        "            </d:PropertyDuration>\n" +
+        "            <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef\n" +
+        "            </d:PropertyGuid>\n" +
+        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05\n" +
+        "            </d:PropertyTimeOfDay>\n" +
+        "          </m:properties>\n" +
+        "        </a:content>\n" +
+        "      </a:entry>\n" +
+        "    </m:inline>\n" +
+        "  </a:link>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
+        "    href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:PropertyString>Test String4</d:PropertyString>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
+        "</a:entry>\n" +
         "";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1145,76 +1175,78 @@ public class ODataXmlSerializerTest  {
     ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne");
     Mockito.when(expandItem.getSelectOption()).thenReturn(select);
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
-    final String resultString = IOUtils.toString(serializer
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream inputStream = serializer
         .entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
-                .build()).getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+                .build()).getContent();
+    final String resultString = IOUtils.toString(inputStream);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" + 
-        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESTwoPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\" />\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "    href=\"ESAllPrim(32767)\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:entry>\n" + 
-        "        <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "        <a:title />\n" + 
-        "        <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "        <a:author>\n" + 
-        "          <a:name />\n" + 
-        "        </a:author>\n" + 
-        "        <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" + 
-        "        <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
+        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESTwoPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\" />\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "    href=\"ESAllPrim(32767)\">\n" +
+        "    <m:inline>\n" +
+        "      <a:entry>\n" +
+        "        <a:id>ESAllPrim(32767)</a:id>\n" +
+        "        <a:title />\n" +
+        "        <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "        <a:author>\n" +
+        "          <a:name />\n" +
+        "        </a:author>\n" +
+        "        <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" +
+        "        <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
         "          href=\"ESTwoPrim(32767)\" />\n" +
-        "        <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "          href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +         
-        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "          term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "        <a:content type=\"application/xml\">\n" + 
-        "          <m:properties>\n" + 
-        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
-        "          </m:properties>\n" + 
-        "        </a:content>\n" + 
-        "      </a:entry>\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
+        "        <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "          href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" +
+        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "          term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "        <a:content type=\"application/xml\">\n" +
+        "          <m:properties>\n" +
+        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
+        "          </m:properties>\n" +
+        "        </a:content>\n" +
+        "      </a:entry>\n" +
+        "    </m:inline>\n" +
+        "  </a:link>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
         "    href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />" +
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "      <d:PropertyString>Test String4</d:PropertyString>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "      <d:PropertyString>Test String4</d:PropertyString>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1229,7 +1261,8 @@ public class ODataXmlSerializerTest  {
         expandItem, expandItem, expandItemAll));
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertySByte")));
-    final String resultString = IOUtils.toString(serializer
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream inputStream = serializer
         .entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
@@ -1237,102 +1270,103 @@ public class ODataXmlSerializerTest  {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
-                .build()).getContent());    
-    final String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+                .build()).getContent();
+    final String resultString = IOUtils.toString(inputStream);
+    final String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertySByte)/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESAllPrim(32767)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-              .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" + 
-        "    href=\"ESTwoPrim(32767)\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:entry>\n" + 
-        "        <a:id>ESTwoPrim(32767)</a:id>\n" + 
-        "        <a:title />\n" + 
-        "        <a:summary />\n" + 
-        "        <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-                  .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "        <a:author>\n" + 
-        "          <a:name />\n" + 
-        "        </a:author>\n" + 
-        "        <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\"/>\n" + 
-        "        <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "          href=\"ESAllPrim(32767)\" />\n" + 
-        "       <a:link\n" + 
-        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
-        "          href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />"+
-        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "          term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "        <a:content type=\"application/xml\">\n" + 
-        "          <m:properties>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "            <d:PropertyString>Test String4</d:PropertyString>\n" + 
-        "          </m:properties>\n" + 
-        "        </a:content>\n" + 
-        "      </a:entry>\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:feed>\n" + 
-        "        <a:entry>\n" + 
-        "          <a:id>ESTwoPrim(-365)</a:id>\n" + 
-        "          <a:title />\n" + 
-        "          <a:summary />\n" + 
-        "          <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-                  .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "          <a:author>\n" + 
-        "            <a:name />\n" + 
-        "          </a:author>\n" + 
-        "          <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\"/>\n" + 
-        "         <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "            href=\"ESTwoPrim(-365)/NavPropertyETAllPrimOne\" />"+
-        "          <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
-        "            href=\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\" />\n" + 
-        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "            term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "          <a:content type=\"application/xml\">\n" + 
-        "            <m:properties>\n" + 
-        "              <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" + 
-        "              <d:PropertyString>Test String2</d:PropertyString>\n" + 
-        "            </m:properties>\n" + 
-        "          </a:content>\n" + 
-        "        </a:entry>\n" + 
-        "      </a:feed>\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
-        "</a:entry>\n" + 
+        + "m:context=\"$metadata#ESAllPrim(PropertySByte)/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESAllPrim(32767)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "    href=\"ESTwoPrim(32767)\">\n" +
+        "    <m:inline>\n" +
+        "      <a:entry>\n" +
+        "        <a:id>ESTwoPrim(32767)</a:id>\n" +
+        "        <a:title />\n" +
+        "        <a:summary />\n" +
+        "        <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "        <a:author>\n" +
+        "          <a:name />\n" +
+        "        </a:author>\n" +
+        "        <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\"/>\n" +
+        "        <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "          type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "          href=\"ESAllPrim(32767)\" />\n" +
+        "       <a:link\n" +
+        "          rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "          type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
+        "          href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />" +
+        "        <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "          term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "        <a:content type=\"application/xml\">\n" +
+        "          <m:properties>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "            <d:PropertyString>Test String4</d:PropertyString>\n" +
+        "          </m:properties>\n" +
+        "        </a:content>\n" +
+        "      </a:entry>\n" +
+        "    </m:inline>\n" +
+        "  </a:link>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "    href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\">\n" +
+        "    <m:inline>\n" +
+        "      <a:feed>\n" +
+        "        <a:entry>\n" +
+        "          <a:id>ESTwoPrim(-365)</a:id>\n" +
+        "          <a:title />\n" +
+        "          <a:summary />\n" +
+        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:author>\n" +
+        "            <a:name />\n" +
+        "          </a:author>\n" +
+        "          <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\"/>\n" +
+        "         <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "            href=\"ESTwoPrim(-365)/NavPropertyETAllPrimOne\" />" +
+        "          <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
+        "            href=\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\" />\n" +
+        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "            term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "          <a:content type=\"application/xml\">\n" +
+        "            <m:properties>\n" +
+        "              <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" +
+        "              <d:PropertyString>Test String2</d:PropertyString>\n" +
+        "            </m:properties>\n" +
+        "          </a:content>\n" +
+        "        </a:entry>\n" +
+        "      </a:feed>\n" +
+        "    </m:inline>\n" +
+        "  </a:link>\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
+        "</a:entry>\n" +
         "";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1345,7 +1379,8 @@ public class ODataXmlSerializerTest  {
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemAll));
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyTimeOfDay")));
-    final String resultString = IOUtils.toString(serializer
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream result = serializer
         .entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
@@ -1353,46 +1388,47 @@ public class ODataXmlSerializerTest  {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .select(select)
-                .build()).getContent());    
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+                .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESAllPrim(-32768)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESAllPrim(-32768)\" />\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" + 
-        "    href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimOne\">\n" + 
-        "    <m:inline />\n" + 
-        "  </a:link>\n" + 
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "    href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimMany\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:feed />\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>"+
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyTimeOfDay m:type=\"TimeOfDay\">23:49:14\n" + 
-        "      </d:PropertyTimeOfDay>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        + "m:context=\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESAllPrim(-32768)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESAllPrim(-32768)\" />\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "    href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimOne\">\n" +
+        "    <m:inline />\n" +
+        "  </a:link>\n" +
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "    href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimMany\">\n" +
+        "    <m:inline>\n" +
+        "      <a:feed />\n" +
+        "    </m:inline>\n" +
+        "  </a:link>" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyTimeOfDay m:type=\"TimeOfDay\">23:49:14\n" +
+        "      </d:PropertyTimeOfDay>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1410,200 +1446,201 @@ public class ODataXmlSerializerTest  {
         ExpandSelectMock.mockSelectItem(innerEntitySet, "PropertyInt32")));
     Mockito.when(expandItemFirst.getSelectOption()).thenReturn(select);
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItemFirst));
-    final String resultString = IOUtils.toString(serializer
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream result = serializer
         .entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, expand, select))
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
-                .build()).getContent());
-    System.out.println(resultString);
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+                .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" + 
-        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <a:id>ESTwoPrim(-365)</a:id>\n" + 
-        "  <a:title />\n" + 
-        "  <a:summary />\n" + 
-        "  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "  <a:author>\n" + 
-        "    <a:name />\n" + 
-        "  </a:author>\n" + 
-        "  <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\" />\n" + 
-        " <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" + 
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
+        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <a:id>ESTwoPrim(-365)</a:id>\n" +
+        "  <a:title />\n" +
+        "  <a:summary />\n" +
+        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:author>\n" +
+        "    <a:name />\n" +
+        "  </a:author>\n" +
+        "  <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\" />\n" +
+        " <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" +
         "    href=\"ESTwoPrim(-365)/NavPropertyETAllPrimOne\" />" +
-        "  <a:link\n" + 
-        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
-        "    href=\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\">\n" + 
-        "    <m:inline>\n" + 
-        "      <a:feed>\n" + 
-        "        <a:entry>\n" + 
-        "          <a:id>ESAllPrim(-32768)</a:id>\n" + 
-        "          <a:title />\n" + 
-        "          <a:summary />\n" + 
-        "          <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
-        "          <a:author>\n" + 
-        "            <a:name />\n" + 
-        "          </a:author>\n" + 
-        "          <a:link rel=\"edit\" href=\"ESAllPrim(-32768)\" />\n" + 
-        "         <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" + 
-        "            href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimOne\">\n" + 
-        "            <m:inline />\n" + 
-        "          </a:link>\n" + 
-        "          <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "            href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimMany\">\n" + 
-        "            <m:inline>\n" + 
-        "              <a:feed />\n" + 
-        "            </m:inline>\n" + 
-        "          </a:link>"+
-        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "          <a:content type=\"application/xml\">\n" + 
-        "            <m:properties>\n" + 
-        "              <d:PropertyInt32 m:type=\"Int32\">-2147483648</d:PropertyInt32>\n" + 
-        "            </m:properties>\n" + 
-        "          </a:content>\n" + 
-        "        </a:entry>\n" + 
-        "        <a:entry>\n" + 
-        "          <a:id>ESAllPrim(0)</a:id>\n" + 
-        "          <a:title />\n" + 
-        "          <a:summary />\n" + 
-        "          <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" + 
-        "          <a:author>\n" + 
-        "            <a:name />\n" + 
-        "          </a:author>\n" + 
-        "          <a:link rel=\"edit\" href=\"ESAllPrim(0)\" />\n" + 
-        "         <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" + 
-        "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimOne\">\n" + 
-        "            <m:inline />\n" + 
+        "  <a:link\n" +
+        "    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
+        "    href=\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\">\n" +
+        "    <m:inline>\n" +
+        "      <a:feed>\n" +
+        "        <a:entry>\n" +
+        "          <a:id>ESAllPrim(-32768)</a:id>\n" +
+        "          <a:title />\n" +
+        "          <a:summary />\n" +
+        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:author>\n" +
+        "            <a:name />\n" +
+        "          </a:author>\n" +
+        "          <a:link rel=\"edit\" href=\"ESAllPrim(-32768)\" />\n" +
+        "         <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "            href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimOne\">\n" +
+        "            <m:inline />\n" +
+        "          </a:link>\n" +
+        "          <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "            href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimMany\">\n" +
+        "            <m:inline>\n" +
+        "              <a:feed />\n" +
+        "            </m:inline>\n" +
         "          </a:link>" +
-        "          <a:link\n" + 
-        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" + 
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" + 
-        "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimMany\">\n" + 
-        "            <m:inline>\n" + 
-        "              <a:feed>\n" + 
-        "                <a:entry>\n" + 
-        "                  <a:id>ESTwoPrim(32766)</a:id>\n" + 
-        "                  <a:title />\n" + 
-        "                  <a:summary />\n" + 
-        "                  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" +
- 
-        "                  <a:author>\n" + 
-        "                    <a:name />\n" + 
-        "                  </a:author>\n" + 
-        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(32766)\" />\n" + 
-        "                 <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "                    href=\"ESTwoPrim(32766)/NavPropertyETAllPrimOne\" />\n" + 
-        "                  <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
+        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "          <a:content type=\"application/xml\">\n" +
+        "            <m:properties>\n" +
+        "              <d:PropertyInt32 m:type=\"Int32\">-2147483648</d:PropertyInt32>\n" +
+        "            </m:properties>\n" +
+        "          </a:content>\n" +
+        "        </a:entry>\n" +
+        "        <a:entry>\n" +
+        "          <a:id>ESAllPrim(0)</a:id>\n" +
+        "          <a:title />\n" +
+        "          <a:summary />\n" +
+        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:author>\n" +
+        "            <a:name />\n" +
+        "          </a:author>\n" +
+        "          <a:link rel=\"edit\" href=\"ESAllPrim(0)\" />\n" +
+        "         <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimOne\">\n" +
+        "            <m:inline />\n" +
+        "          </a:link>" +
+        "          <a:link\n" +
+        "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
+        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
+        "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimMany\">\n" +
+        "            <m:inline>\n" +
+        "              <a:feed>\n" +
+        "                <a:entry>\n" +
+        "                  <a:id>ESTwoPrim(32766)</a:id>\n" +
+        "                  <a:title />\n" +
+        "                  <a:summary />\n" +
+        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+
+        "                  <a:author>\n" +
+        "                    <a:name />\n" +
+        "                  </a:author>\n" +
+        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(32766)\" />\n" +
+        "                 <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "                    href=\"ESTwoPrim(32766)/NavPropertyETAllPrimOne\" />\n" +
+        "                  <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
         "                    href=\"ESTwoPrim(32766)/NavPropertyETAllPrimMany\" />" +
-        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "                  <a:content type=\"application/xml\">\n" + 
-        "                    <m:properties>\n" + 
-        "                      <d:PropertyInt16 m:type=\"Int16\">32766</d:PropertyInt16>\n" + 
-        "                      <d:PropertyString>Test String1</d:PropertyString>\n" + 
-        "                    </m:properties>\n" + 
-        "                  </a:content>\n" + 
-        "                </a:entry>\n" + 
-        "                <a:entry>\n" + 
-        "                  <a:id>ESTwoPrim(-32766)</a:id>\n" + 
-        "                  <a:title />\n" + 
-        "                  <a:summary />\n" + 
-        "                  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" + 
-        "                  <a:author>\n" + 
-        "                    <a:name />\n" + 
-        "                  </a:author>\n" + 
-        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(-32766)\" />\n" + 
-        "                 <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "                    href=\"ESTwoPrim(-32766)/NavPropertyETAllPrimOne\" />\n" + 
-        "                  <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "                  <a:content type=\"application/xml\">\n" +
+        "                    <m:properties>\n" +
+        "                      <d:PropertyInt16 m:type=\"Int16\">32766</d:PropertyInt16>\n" +
+        "                      <d:PropertyString>Test String1</d:PropertyString>\n" +
+        "                    </m:properties>\n" +
+        "                  </a:content>\n" +
+        "                </a:entry>\n" +
+        "                <a:entry>\n" +
+        "                  <a:id>ESTwoPrim(-32766)</a:id>\n" +
+        "                  <a:title />\n" +
+        "                  <a:summary />\n" +
+        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "                  <a:author>\n" +
+        "                    <a:name />\n" +
+        "                  </a:author>\n" +
+        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(-32766)\" />\n" +
+        "                 <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "                    href=\"ESTwoPrim(-32766)/NavPropertyETAllPrimOne\" />\n" +
+        "                  <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
         "                    href=\"ESTwoPrim(-32766)/NavPropertyETAllPrimMany\" />" +
-        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "                  <a:content type=\"application/xml\">\n" + 
-        "                    <m:properties>\n" + 
-        "                      <d:PropertyInt16 m:type=\"Int16\">-32766</d:PropertyInt16>\n" + 
-        "                      <d:PropertyString m:null=\"true\" />\n" + 
-        "                    </m:properties>\n" + 
-        "                  </a:content>\n" + 
-        "                </a:entry>\n" + 
-        "                <a:entry>\n" + 
-        "                  <a:id>ESTwoPrim(32767)</a:id>\n" + 
-        "                  <a:title />\n" + 
-        "                  <a:summary />\n" + 
-        "                  <a:updated>"+new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") 
-        .format(new Date(System.currentTimeMillis()))+"</a:updated>" + 
-        "                  <a:author>\n" + 
-        "                    <a:name />\n" + 
-        "                  </a:author>\n" + 
-        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\" />\n" + 
-        "                  <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" + 
-        "                    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" + 
-        "                    href=\"ESAllPrim(32767)\" />\n" + 
-        "                 <a:link\n" + 
-        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" + 
-        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "                  <a:content type=\"application/xml\">\n" +
+        "                    <m:properties>\n" +
+        "                      <d:PropertyInt16 m:type=\"Int16\">-32766</d:PropertyInt16>\n" +
+        "                      <d:PropertyString m:null=\"true\" />\n" +
+        "                    </m:properties>\n" +
+        "                  </a:content>\n" +
+        "                </a:entry>\n" +
+        "                <a:entry>\n" +
+        "                  <a:id>ESTwoPrim(32767)</a:id>\n" +
+        "                  <a:title />\n" +
+        "                  <a:summary />\n" +
+        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "                  <a:author>\n" +
+        "                    <a:name />\n" +
+        "                  </a:author>\n" +
+        "                  <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\" />\n" +
+        "                  <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\"\n" +
+        "                    type=\"application/atom+xml;type=entry\" title=\"NavPropertyETAllPrimOne\"\n" +
+        "                    href=\"ESAllPrim(32767)\" />\n" +
+        "                 <a:link\n" +
+        "                    rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\"\n" +
+        "                    type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\"\n" +
         "                    href=\"ESTwoPrim(32767)/NavPropertyETAllPrimMany\" />" +
-        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "                  <a:content type=\"application/xml\">\n" + 
-        "                    <m:properties>\n" + 
-        "                      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
-        "                      <d:PropertyString>Test String4</d:PropertyString>\n" + 
-        "                    </m:properties>\n" + 
-        "                  </a:content>\n" + 
-        "                </a:entry>\n" + 
-        "              </a:feed>\n" + 
-        "            </m:inline>\n" + 
-        "          </a:link>\n" + 
-        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
-        "          <a:content type=\"application/xml\">\n" + 
-        "            <m:properties>\n" + 
-        "              <d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" + 
-        "            </m:properties>\n" + 
-        "          </a:content>\n" + 
-        "        </a:entry>\n" + 
-        "      </a:feed>\n" + 
-        "    </m:inline>\n" + 
-        "  </a:link>\n" + 
-        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
-        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" + 
-        "  <a:content type=\"application/xml\">\n" + 
-        "    <m:properties>\n" + 
-        "      <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" + 
-        "      <d:PropertyString>Test String2</d:PropertyString>\n" + 
-        "    </m:properties>\n" + 
-        "  </a:content>\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "                    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "                  <a:content type=\"application/xml\">\n" +
+        "                    <m:properties>\n" +
+        "                      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+        "                      <d:PropertyString>Test String4</d:PropertyString>\n" +
+        "                    </m:properties>\n" +
+        "                  </a:content>\n" +
+        "                </a:entry>\n" +
+        "              </a:feed>\n" +
+        "            </m:inline>\n" +
+        "          </a:link>\n" +
+        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
+        "          <a:content type=\"application/xml\">\n" +
+        "            <m:properties>\n" +
+        "              <d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" +
+        "            </m:properties>\n" +
+        "          </a:content>\n" +
+        "        </a:entry>\n" +
+        "      </a:feed>\n" +
+        "    </m:inline>\n" +
+        "  </a:link>\n" +
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETTwoPrim\" />\n" +
+        "  <a:content type=\"application/xml\">\n" +
+        "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" +
+        "      <d:PropertyString>Test String2</d:PropertyString>\n" +
+        "    </m:properties>\n" +
+        "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1618,7 +1655,7 @@ public class ODataXmlSerializerTest  {
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
                 .build()).getContent());
-    
+
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"$metadata#ESAllPrim(32767)/PropertyString\" "
@@ -1632,7 +1669,7 @@ public class ODataXmlSerializerTest  {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
     final Property property = new Property("Edm.String", edmProperty.getName(), ValueType.PRIMITIVE, null);
-    String response = IOUtils.toString(serializer.primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), 
+    String response = IOUtils.toString(serializer.primitive(metadata, (EdmPrimitiveType) edmProperty.getType(),
         property,
         PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
@@ -1668,7 +1705,7 @@ public class ODataXmlSerializerTest  {
         + "<m:element>Employee2@company.example</m:element>"
         + "<m:element>Employee3@company.example</m:element>"
         + "</m:value>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1693,7 +1730,7 @@ public class ODataXmlSerializerTest  {
         + "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>"
         + "<d:PropertyString>TEST A</d:PropertyString>"
         + "</m:value>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1709,25 +1746,25 @@ public class ODataXmlSerializerTest  {
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
                 .build()).getContent());
-    String expected = "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+    String expected = "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" + 
-        "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" + 
-        "  m:metadata-etag=\"WmetadataETag\">\n" + 
-        "  <m:element>\n" + 
-        "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" + 
-        "    <d:PropertyString>TEST 1</d:PropertyString>\n" + 
-        "  </m:element>\n" + 
-        "  <m:element>\n" + 
-        "    <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" + 
-        "    <d:PropertyString>TEST 2</d:PropertyString>\n" + 
-        "  </m:element>\n" + 
-        "  <m:element>\n" + 
-        "    <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" + 
-        "    <d:PropertyString>TEST 3</d:PropertyString>\n" + 
-        "  </m:element>\n" + 
+        + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
+        "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
+        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 1</d:PropertyString>\n" +
+        "  </m:element>\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 2</d:PropertyString>\n" +
+        "  </m:element>\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 3</d:PropertyString>\n" +
+        "  </m:element>\n" +
         "</m:value>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1738,12 +1775,12 @@ public class ODataXmlSerializerTest  {
     ReferenceSerializerOptions options = ReferenceSerializerOptions.with()
         .contextURL(ContextURL.with().suffix(Suffix.REFERENCE).build()).build();
 
-    final SerializerResult serializerResult = serializer.reference(metadata, edmEntitySet, entity,options);
+    final SerializerResult serializerResult = serializer.reference(metadata, edmEntitySet, entity, options);
     final String resultString = IOUtils.toString(serializerResult.getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<m:ref xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<m:ref xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  m:context=\"$metadata#$ref\" id=\"ESAllPrim(32767)\" />";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1753,21 +1790,21 @@ public class ODataXmlSerializerTest  {
 
     ReferenceCollectionSerializerOptions options = ReferenceCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build()).build();
-    
+
     final SerializerResult serializerResult = serializer.referenceCollection(metadata,
         edmEntitySet,
-        entityCollection,options);
+        entityCollection, options);
 
     final String resultString = IOUtils.toString(serializerResult.getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  m:context=\"$metadata#Collection($ref)\">\n" + 
-        "  <m:ref id=\"ESAllPrim(32767)\" />\n" + 
-        "  <m:ref id=\"ESAllPrim(-32768)\" />\n" + 
-        "  <m:ref id=\"ESAllPrim(0)\" />\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  m:context=\"$metadata#Collection($ref)\">\n" +
+        "  <m:ref id=\"ESAllPrim(32767)\" />\n" +
+        "  <m:ref id=\"ESAllPrim(-32768)\" />\n" +
+        "  <m:ref id=\"ESAllPrim(0)\" />\n" +
         "</a:feed>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1777,18 +1814,59 @@ public class ODataXmlSerializerTest  {
 
     ReferenceCollectionSerializerOptions options = ReferenceCollectionSerializerOptions.with()
         .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build()).build();
-    
+
     final SerializerResult serializerResult = serializer.referenceCollection(metadata,
         edmEntitySet,
-        entityCollection,options);
+        entityCollection, options);
 
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" + 
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
-        "  m:context=\"$metadata#Collection($ref)\">\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  m:context=\"$metadata#Collection($ref)\">\n" +
         "</a:feed>";
-    XMLAssert.assertXMLEqual(expected, resultString);
+    checkXMLEqual(expected, resultString);
   }
+
+  private void checkXMLEqual(String resultString, String expected) throws SAXException, IOException {
+    Diff diff = XMLUnit.compareXML(expected, resultString);
+    diff.overrideDifferenceListener(DIFFERENCE_LISTENER);
+    XMLAssert.assertXMLEqual(diff, true);
+  }
+  
+  private static class CustomDifferenceListener implements DifferenceListener {
+
+
+    @Override
+    public int differenceFound(Difference difference) {
+      final String xpath = "/entry[1]/updated[1]/text()[1]";
+      if(difference.getControlNodeDetail().getXpathLocation().equals(xpath)) {
+        String controlValue = difference.getControlNodeDetail().getValue();
+        String testValue = difference.getTestNodeDetail().getValue();
+        // allow a difference from two seconds
+        SimpleDateFormat sdf = new SimpleDateFormat(UPDATED_FORMAT);
+        try {
+          long controlTime = sdf.parse(controlValue).getTime();
+          long testTime = sdf.parse(testValue).getTime();
+          long diff = controlTime - testTime;
+          if(diff < 0) {
+            diff = diff * -1;
+          }
+          if(diff < MAX_ALLOWED_UPDATED_DIFFERENCE) {
+            // allow a difference from 2 seconds
+            return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
+          }
+        } catch (ParseException e) {
+          throw new RuntimeException("Parse exception for updated value (see difference '" + difference + "').");
+        }
+      }
+      //Yes it is a difference so throw an exception
+      return DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
+    }
+
+    @Override
+    public void skippedComparison(Node control, Node test) { }
+  };
+  
 }
