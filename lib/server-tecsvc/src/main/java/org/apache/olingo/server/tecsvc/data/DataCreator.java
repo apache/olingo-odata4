@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.data;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 
 public class DataCreator {
 
@@ -44,28 +49,28 @@ public class DataCreator {
 
   private final Map<String, EntityCollection> data;
 
-  public DataCreator() {
+  public DataCreator(Edm edm) {
     data = new HashMap<String, EntityCollection>();
-    data.put("ESTwoPrim", createESTwoPrim());
-    data.put("ESAllPrim", createESAllPrim());
-    data.put("ESCompAllPrim", createESCompAllPrim());
-    data.put("ESCollAllPrim", createESCollAllPrim());
-    data.put("ESMixPrimCollComp", createESMixPrimCollComp());
-    data.put("ESAllKey", createESAllKey());
-    data.put("ESCompComp", createESCompComp());
-    data.put("ESMedia", createESMedia());
-    data.put("ESKeyNav", createESKeyNav());
-    data.put("ESTwoKeyNav", createESTwoKeyNav());
-    data.put("ESCompCollComp", createESCompCollComp());
-    data.put("ESServerSidePaging", createESServerSidePaging());
-    data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim());
-    data.put("ESAllNullable", createESAllNullable());
-    data.put("ESTwoBase", createESTwoBase());
-    data.put("ESBaseTwoKeyNav", createESBaseTwoKeyNav());
-    data.put("ESCompCollAllPrim", createESCompCollAllPrim());
-    data.put("ESFourKeyAlias", createESFourKeyAlias());
-    data.put("ESBase", createESBase());
-    data.put("ESCompMixPrimCollComp", createESCompMixPrimCollComp());
+    data.put("ESTwoPrim", createESTwoPrim(edm));
+    data.put("ESAllPrim", createESAllPrim(edm));
+    data.put("ESCompAllPrim", createESCompAllPrim(edm));
+    data.put("ESCollAllPrim", createESCollAllPrim(edm));
+    data.put("ESMixPrimCollComp", createESMixPrimCollComp(edm));
+    data.put("ESAllKey", createESAllKey(edm));
+    data.put("ESCompComp", createESCompComp(edm));
+    data.put("ESMedia", createESMedia(edm));
+    data.put("ESKeyNav", createESKeyNav(edm));
+    data.put("ESTwoKeyNav", createESTwoKeyNav(edm));
+    data.put("ESCompCollComp", createESCompCollComp(edm));
+    data.put("ESServerSidePaging", createESServerSidePaging(edm));
+    data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim(edm));
+    data.put("ESAllNullable", createESAllNullable(edm));
+    data.put("ESTwoBase", createESTwoBase(edm));
+    data.put("ESBaseTwoKeyNav", createESBaseTwoKeyNav(edm));
+    data.put("ESCompCollAllPrim", createESCompCollAllPrim(edm));
+    data.put("ESFourKeyAlias", createESFourKeyAlias(edm));
+    data.put("ESBase", createESBase(edm));
+    data.put("ESCompMixPrimCollComp", createESCompMixPrimCollComp(edm));
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -73,13 +78,17 @@ public class DataCreator {
     linkESTwoKeyNav(data);
   }
 
-  private EntityCollection createESCompMixPrimCollComp() {
+  private EntityCollection createESCompMixPrimCollComp(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     
     entityCollection.getEntities().add(createETCompMixPrimCollComp((short) 1));
     entityCollection.getEntities().add(createETCompMixPrimCollComp((short) 2));
     entityCollection.getEntities().add(createETCompMixPrimCollComp((short) 3));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCompMixPrimCollComp", entityCollection, type.getKeyPropertyRefs());
+    
     return entityCollection;
   }
   
@@ -111,7 +120,7 @@ public class DataCreator {
        ));
   }
   
-  private EntityCollection createESBase() {
+  private EntityCollection createESBase(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     
     entityCollection.getEntities().add(new Entity()
@@ -129,11 +138,14 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyString", "TEST C"))
         .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST E 0815")));
 
-    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETBase);
+    setEntityType(entityCollection, type);
+    createEntityId("ESBase", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESFourKeyAlias() {
+  private EntityCollection createESFourKeyAlias(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     
     entityCollection.getEntities().add(new Entity()
@@ -150,16 +162,22 @@ public class DataCreator {
         ))
     );
     
-    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETFourKeyAlias);
+    setEntityType(entityCollection, type);
+    createEntityId("ESFourKeyAlias", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESCompCollAllPrim() {
+  private EntityCollection createESCompCollAllPrim(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     
     entityCollection.getEntities().add(createETCompCollAllPrim((short) 5678));
     entityCollection.getEntities().add(createETCompCollAllPrim((short) 12326));
     
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCompCollAllPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCompCollAllPrim", entityCollection, type.getKeyPropertyRefs());    
     return entityCollection;
   }
   
@@ -244,7 +262,7 @@ public class DataCreator {
         ));
   }
   
-  private EntityCollection createESBaseTwoKeyNav() {
+  private EntityCollection createESBaseTwoKeyNav(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 1, "1")
@@ -261,10 +279,15 @@ public class DataCreator {
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 3, "1")
           .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
+    setEntityType(entityCollection, type);
+    createEntityId("ESBaseTwoKeyNav", entityCollection, type.getKeyPropertyRefs());
+    
     return entityCollection;
   }
 
-  private EntityCollection createESTwoBase() {
+  private EntityCollection createESTwoBase(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16",(short) 111))
@@ -284,10 +307,14 @@ public class DataCreator {
         .addProperty(createPrimitive("AdditionalPropertyString_5", "TEST E 0815"))
         .addProperty(createPrimitive("AdditionalPropertyString_6", "TEST F 0815")));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETTwoBase);
+    setEntityType(entityCollection, type);
+    createEntityId("ESTwoBase", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESAllNullable() {
+  private EntityCollection createESAllNullable(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity()
@@ -374,7 +401,9 @@ public class DataCreator {
             getTime(0, 37, 13))
         ));
     
-    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETAllNullable);
+    setEntityType(entityCollection, type);
+    createEntityId("ESAllNullable", entityCollection, type.getKeyPropertyRefs());
     return entityCollection;
   }
 
@@ -382,11 +411,16 @@ public class DataCreator {
     return data;
   }
 
-  private EntityCollection createESTwoKeyTwoPrim() {
+  private EntityCollection createESTwoKeyTwoPrim(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) 32767, "Test String1"));
     entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) -365, "Test String2"));
     entityCollection.getEntities().add(createETTwoKeyTwoPrimEntity((short) -32766, "Test String3"));
+    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETTwoKeyTwoPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESTwoKeyTwoPrim", entityCollection, type.getKeyPropertyRefs());
+    
     return entityCollection;
   }
 
@@ -396,7 +430,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyString", propertyString));
   }
 
-  private EntityCollection createESServerSidePaging() {
+  private EntityCollection createESServerSidePaging(Edm  edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     for (short i = 1; i <= 503; i++) {
@@ -405,15 +439,23 @@ public class DataCreator {
       	.addProperty(createPrimitive("PropertyString", "Number:" + i)));
     }
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETServerSidePaging);
+    setEntityType(entityCollection, type);
+    createEntityId("ESServerSidePaging", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESKeyNav() {
+  private EntityCollection createESKeyNav(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(createETKeyNavEntity((short) 1, "I am String Property 1"));
     entityCollection.getEntities().add(createETKeyNavEntity((short) 2, "I am String Property 2"));
     entityCollection.getEntities().add(createETKeyNavEntity((short) 3, "I am String Property 3"));
+
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
+    setEntityType(entityCollection, type);
+    createEntityId("ESKeyNav", entityCollection, type.getKeyPropertyRefs());
 
     return entityCollection;
   }
@@ -453,13 +495,17 @@ public class DataCreator {
         		    createPrimitive("PropertyInt16",(short) 1))));
   }
 
-  private EntityCollection createESTwoKeyNav() {
+  private EntityCollection createESTwoKeyNav(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(createESTwoKeyNavEntity((short) 1, "1"));
     entityCollection.getEntities().add(createESTwoKeyNavEntity((short) 1, "2"));
     entityCollection.getEntities().add(createESTwoKeyNavEntity((short) 2, "1"));
     entityCollection.getEntities().add(createESTwoKeyNavEntity((short) 3, "1"));
+
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
+    setEntityType(entityCollection, type);
+    createEntityId("ESTwoKeyNav", entityCollection, type.getKeyPropertyRefs());
 
     return entityCollection;
   }
@@ -521,7 +567,7 @@ public class DataCreator {
   }
 
   @SuppressWarnings("unchecked")
-  private EntityCollection createESCompCollComp() {
+  private EntityCollection createESCompCollComp(Edm edm) {
     final EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -552,10 +598,14 @@ public class DataCreator {
               createPrimitive("PropertyInt16",(short) 0),
               createPrimitive("PropertyString", "13 Test Complex in Complex Property"))))));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCompCollComp);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCompCollComp", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESTwoPrim() {
+  private EntityCollection createESTwoPrim(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -574,10 +624,19 @@ public class DataCreator {
     	.addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
       .addProperty(createPrimitive("PropertyString", "Test String4")));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETTwoPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESTwoPrim", entityCollection, type.getKeyPropertyRefs());
     return entityCollection;
   }
 
-  private EntityCollection createESAllPrim() {
+  private void setEntityType(EntityCollection entityCollection, EdmEntityType type) {
+    for (Entity entity:entityCollection.getEntities()) {
+      entity.setType(type.getFullQualifiedName().getFullQualifiedNameAsString());
+    }
+  }
+
+  private EntityCollection createESAllPrim(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -636,10 +695,14 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETAllPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESAllPrim", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESCompAllPrim() {
+  private EntityCollection createESCompAllPrim(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity()
@@ -730,18 +793,26 @@ public class DataCreator {
       createPrimitive("PropertyInt64", null),
       createPrimitive("PropertySByte", null), 
       createPrimitive("PropertyTimeOfDay", null)));
-  entity.setETag("W/\"-32768\"");
-  entityCollection.getEntities().add(entity);
-    
+    entity.setETag("W/\"-32768\"");
+    entityCollection.getEntities().add(entity);
+
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCompAllPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCompAllPrim", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESCollAllPrim() {
+  private EntityCollection createESCollAllPrim(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(createETCollAllPrim((short) 1));
     entityCollection.getEntities().add(createETCollAllPrim((short) 2));
     entityCollection.getEntities().add(createETCollAllPrim((short) 3));
+
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCollAllPrim);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCollAllPrim", entityCollection, type.getKeyPropertyRefs());
 
     return entityCollection;
   }
@@ -815,7 +886,7 @@ public class DataCreator {
             getTime(1, 12, 33)));
   }
   
-  private EntityCollection createESMixPrimCollComp() {
+  private EntityCollection createESMixPrimCollComp(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -841,7 +912,7 @@ public class DataCreator {
       .addProperty(createColPropertyComp()));
 
     entityCollection.getEntities().add(new Entity()
-    	.addProperty(createPrimitive("PropertyInt16", 0))
+    	.addProperty(createPrimitive("PropertyInt16", (short)0))
     	.addProperty(createPrimitiveCollection("CollPropertyString", 
     	    "Employee1@company.example", 
     	    "Employee2@company.example",
@@ -851,6 +922,10 @@ public class DataCreator {
         createPrimitive("PropertyString", "TEST C")))
       .addProperty(createColPropertyComp()));
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp);
+    setEntityType(entityCollection, type);
+    createEntityId("ESMixPrimCollComp", entityCollection, type.getKeyPropertyRefs());
+    
     return entityCollection;
   }
   
@@ -868,7 +943,7 @@ public class DataCreator {
 				createPrimitive("PropertyString", "TEST 3")));
 	}
   
-	private EntityCollection createESAllKey() {
+	private EntityCollection createESAllKey(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -900,11 +975,15 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
         .addProperty(createPrimitive("PropertyGuid", GUID))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(2, 48, 21))));
+    
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETAllKey);
+    setEntityType(entityCollection, type);
+    createEntityId("ESAllKey", entityCollection, type.getKeyPropertyRefs());
 
     return entityCollection;
   }
 
-  private EntityCollection createESCompComp() {
+  private EntityCollection createESCompComp(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity();
@@ -923,10 +1002,14 @@ public class DataCreator {
             createPrimitive("PropertyString", "String 2"))));
     entityCollection.getEntities().add(entity);
 
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETCompComp);
+    setEntityType(entityCollection, type);
+    createEntityId("ESCompComp", entityCollection, type.getKeyPropertyRefs());
+
     return entityCollection;
   }
 
-  private EntityCollection createESMedia() {
+  private EntityCollection createESMedia(Edm edm) {
     EntityCollection entityCollection = new EntityCollection();
 
     Entity entity = new Entity()
@@ -934,6 +1017,7 @@ public class DataCreator {
       .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"1\"");
+    entity.getMediaEditLinks().add(buildMediaLink("ESMedia", "ESMedia(1)/$value"));
     entityCollection.getEntities().add(entity);
 
     entity = new Entity()
@@ -941,6 +1025,7 @@ public class DataCreator {
       .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("royalblue")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"2\"");
+    entity.getMediaEditLinks().add(buildMediaLink("ESMedia", "ESMedia(2)/$value"));
     entityCollection.getEntities().add(entity);
 
     entity = new Entity()
@@ -948,6 +1033,7 @@ public class DataCreator {
       .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("crimson")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"3\"");
+    entity.getMediaEditLinks().add(buildMediaLink("ESMedia", "ESMedia(3)/$value"));
     entityCollection.getEntities().add(entity);
 
     entity = new Entity()
@@ -955,7 +1041,12 @@ public class DataCreator {
       .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
     entity.setMediaContentType("image/svg+xml");
     entity.setMediaETag("W/\"4\"");
+    entity.getMediaEditLinks().add(buildMediaLink("ESMedia", "ESMedia(4)/$value"));
     entityCollection.getEntities().add(entity);
+
+    EdmEntityType type = edm.getEntityType(EntityTypeProvider.nameETMedia);
+    setEntityType(entityCollection, type);
+    createEntityId("ESMedia", entityCollection, type.getKeyPropertyRefs());
 
     return entityCollection;
   }
@@ -1116,12 +1207,22 @@ public class DataCreator {
     return timestamp;
   }
 
+  protected static Link buildMediaLink(String title, String href) {
+    Link link = new Link();
+    link.setRel("edit-media");
+    link.setTitle(title);
+    link.setHref(href);
+    return link;
+  }
+  
   protected static void setLink(final Entity entity, final String navigationPropertyName, final Entity target) {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
+      link.setRel("http://docs.oasis-open.org/odata/ns/related/"+navigationPropertyName);
       link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
+      link.setHref(target.getId().toASCIIString());
       entity.getNavigationLinks().add(link);
     }
     link.setInlineEntity(target);
@@ -1131,14 +1232,42 @@ public class DataCreator {
     Link link = entity.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
+      link.setRel("http://docs.oasis-open.org/odata/ns/related/"+navigationPropertyName);
       link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
       EntityCollection target = new EntityCollection();
       target.getEntities().addAll(Arrays.asList(targets));
       link.setInlineEntitySet(target);
+      link.setHref(entity.getId().toASCIIString()+"/"+navigationPropertyName);
       entity.getNavigationLinks().add(link);
     } else {
       link.getInlineEntitySet().getEntities().addAll(Arrays.asList(targets));
     }
   }
+  
+  protected static void createEntityId (String esName, EntityCollection entities, List<EdmKeyPropertyRef> keys) {
+    for (Entity entity:entities.getEntities()) {
+      createEntityId(esName, entity, keys);
+    }
+  }  
+  protected static void createEntityId (String esName, Entity entity, List<EdmKeyPropertyRef> keys) {
+    try {
+      if(keys.size() == 1) {
+        entity.setId(URI.create(esName+"("+entity.getProperty(keys.get(0).getName()).asPrimitive()+")"));
+      } else {
+        StringBuilder sb = new StringBuilder();
+        sb.append(esName).append("(");
+        for (int i = 0; i < keys.size(); i++) {
+          if (i != 0) {
+            sb.append(",");
+          }
+          sb.append(keys.get(i)).append("=").append(entity.getProperty(keys.get(i).getName()).asPrimitive());
+        }
+        sb.append(")");
+        entity.setId(URI.create(sb.toString()));
+      }
+    } catch (Exception e) {
+      entity.setId(URI.create("id"));
+    }
+  }  
 }

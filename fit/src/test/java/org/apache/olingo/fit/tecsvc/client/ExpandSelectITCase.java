@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -34,13 +35,23 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientLinkType;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
 
-public final class ExpandSelectITCase extends AbstractBaseTestITCase {
+public class ExpandSelectITCase extends AbstractBaseTestITCase {
 
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void readSelect() {
     final ODataClient client = getClient();
@@ -64,7 +75,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(Integer.valueOf(Short.MAX_VALUE), property.getPrimitiveValue().toValue());
+    assertShortOrInt(Integer.valueOf(Short.MAX_VALUE), property.getPrimitiveValue().toValue());
 
     property = entity.getProperty("PropertyInt32");
     assertNotNull(property);
@@ -72,6 +83,10 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertEquals(Integer.MAX_VALUE, property.getPrimitiveValue().toValue());
   }
 
+  private boolean isJson() {
+    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
+  }
+  
   @Test
   public void readExpandSelect() {
     final ODataClient client = getClient();
@@ -96,7 +111,13 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getPrimitiveValue());
     assertEquals("Test String2", property.getPrimitiveValue().toValue());
 
-    assertNull(entity.getNavigationLink("NavPropertyETAllPrimOne"));
+    if(isJson()) {
+      assertNull(entity.getNavigationLink("NavPropertyETAllPrimOne"));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      Assert.assertFalse(entity.getNavigationLink("NavPropertyETAllPrimOne") instanceof ClientInlineEntity);
+    }
 
     final ClientLink link = entity.getNavigationLink("NavPropertyETAllPrimMany");
     assertNotNull(link);
@@ -108,7 +129,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertEquals(2, entities.size());
     final ClientEntity inlineEntity = entities.get(0);
     assertEquals(2, inlineEntity.getProperties().size());
-    assertEquals(-128, inlineEntity.getProperty("PropertySByte").getPrimitiveValue().toValue());
+    assertShortOrInt(-128, inlineEntity.getProperty("PropertySByte").getPrimitiveValue().toValue());
     assertEquals(new java.sql.Timestamp(85754000),
         inlineEntity.getProperty("PropertyTimeOfDay").getPrimitiveValue().toValue());
   }
@@ -130,7 +151,13 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertNotNull(entity);
     assertEquals(2, entity.getProperties().size());
 
-    assertNull(entity.getNavigationLink("NavPropertyETAllPrimMany"));
+    if(isJson()) {
+      assertNull(entity.getNavigationLink("NavPropertyETAllPrimMany"));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      Assert.assertFalse(entity.getNavigationLink("NavPropertyETAllPrimMany") instanceof ClientInlineEntity);
+    }
 
     final ClientLink link = entity.getNavigationLink("NavPropertyETAllPrimOne");
     assertNotNull(link);
@@ -145,7 +172,7 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
     final ClientEntity innerEntity = innerLink.asInlineEntity().getEntity();
     assertNotNull(innerEntity);
     assertEquals(2, innerEntity.getProperties().size());
-    assertEquals(32767, innerEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, innerEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("Test String4", innerEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -156,13 +183,26 @@ public final class ExpandSelectITCase extends AbstractBaseTestITCase {
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build())
             .execute();
-
-    assertEquals(0, response.getBody().getNavigationLinks().size());
-    assertNull(response.getBody().getNavigationLink("NavPropertyETKeyNavOne"));
+    
+    if(isJson()) {
+      // this will be only true in the json;metadata=minimal case not always
+      assertEquals(0, response.getBody().getNavigationLinks().size());
+      assertNull(response.getBody().getNavigationLink("NavPropertyETKeyNavOne"));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      assertEquals(6, response.getBody().getNavigationLinks().size());
+      Assert.assertFalse(response.getBody()
+          .getNavigationLink("NavPropertyETKeyNavOne") instanceof ClientInlineEntity);
+    }    
   }
 
   @Override
   protected ODataClient getClient() {
-    return ODataClientFactory.getEdmEnabledClient(TecSvcConst.BASE_URI);
+    return ODataClientFactory.getEdmEnabledClient(TecSvcConst.BASE_URI, ContentType.JSON);
   }
+  
+  protected EdmEnabledODataClient getClient(String serviceURI) {
+    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
+  } 
 }

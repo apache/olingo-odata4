@@ -74,7 +74,7 @@ public class TechnicalServlet extends HttpServlet {
       HttpSession session = request.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
       if (dataProvider == null) {
-        dataProvider = new DataProvider();
+        dataProvider = new DataProvider(serviceMetadata.getEdm());
         session.setAttribute(DataProvider.class.getName(), dataProvider);
         LOG.info("Created new data provider.");
       }

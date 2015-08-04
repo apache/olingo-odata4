@@ -51,6 +51,7 @@ import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -58,7 +59,7 @@ import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public final class ConditionalITCase extends AbstractBaseTestITCase {
+public class ConditionalITCase extends AbstractBaseTestITCase {
 
   private final ODataClient client = getClient();
 
@@ -123,14 +124,14 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
   public void updateWithoutIfMatch() throws Exception {
     executeAndExpectError(
         client.getCUDRequestFactory().getEntityUpdateRequest(
-            uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(null)),
+            uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order"))),
         HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
   @Test
   public void updateWithWrongIfMatch() throws Exception {
     ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(null));
+        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order")));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
@@ -173,7 +174,7 @@ public final class ConditionalITCase extends AbstractBaseTestITCase {
     final ODataDeleteResponse response = deleteRequest.execute();
 
     ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(null));
+        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order")));
     request.setIfMatch(eTag);
     // This request has to be in the same session as the first in order to access the same data provider.
     request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());

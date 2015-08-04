@@ -44,11 +44,12 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.debug.DebugResponseHelperImpl;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
+import org.apache.olingo.server.core.deserializer.xml.ODataXmlDeserializer;
 import org.apache.olingo.server.core.etag.ETagHelperImpl;
 import org.apache.olingo.server.core.prefer.PreferencesImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
-import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializerImpl;
+import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
 
 public class ODataImpl extends OData {
@@ -64,8 +65,9 @@ public class ODataImpl extends OData {
           || ContentType.VALUE_ODATA_METADATA_NONE.equals(metadata)) {
         serializer = new ODataJsonSerializer(contentType);
       }
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)) {
-      serializer = new ODataXmlSerializerImpl();
+    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+      serializer = new ODataXmlSerializer();
     }
 
     if (serializer == null) {
@@ -114,15 +116,13 @@ public class ODataImpl extends OData {
 
     if (contentType.isCompatible(ContentType.JSON)) {
       deserializer = new ODataJsonDeserializer(contentType);
-      // } else if(contentType.isCompatible(ContentType.APPLICATION_XML))
-      // We do not support XML deserialization right now so this must lead
-      // to an error.
-      // {
+    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+      deserializer = new ODataXmlDeserializer();      
     } else {
       throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
           DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     }
-
     return deserializer;
   }
 

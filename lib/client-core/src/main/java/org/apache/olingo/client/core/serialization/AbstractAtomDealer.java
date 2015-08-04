@@ -32,7 +32,8 @@ abstract class AbstractAtomDealer {
 
   protected final String namespaceMetadata;
   protected final String namespaceData;
-
+  protected final String namespaceAtom;
+  
   protected final QName etagQName;
   protected final QName metadataEtagQName;
   protected final QName inlineQName;
@@ -59,6 +60,7 @@ abstract class AbstractAtomDealer {
   public AbstractAtomDealer() {
     namespaceMetadata = Constants.NS_METADATA;
     namespaceData = Constants.NS_DATASERVICES;
+    namespaceAtom = Constants.NS_ATOM;
 
     etagQName = new QName(namespaceMetadata, Constants.ATOM_ATTR_ETAG);
     metadataEtagQName = new QName(namespaceMetadata, Constants.ATOM_ATTR_METADATAETAG);

@@ -78,6 +78,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -100,6 +101,15 @@ public class BasicITCase extends AbstractBaseTestITCase {
   private static final String ES_TWO_PRIM = "ESTwoPrim";
   private static final String ES_KEY_NAV = "ESKeyNav";
 
+  
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void readServiceDocument() {
     ODataServiceDocumentRequest request = getClient().getRetrieveRequestFactory()
@@ -111,7 +121,6 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     ClientServiceDocument serviceDocument = response.getBody();
     assertNotNull(serviceDocument);
-
     assertThat(serviceDocument.getEntitySetNames(), hasItem("ESAllPrim"));
     assertThat(serviceDocument.getFunctionImportNames(), hasItem("FICRTCollCTTwoPrim"));
     assertThat(serviceDocument.getSingletonNames(), hasItem("SIMedia"));
@@ -162,7 +171,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertContentType(response.getContentType());
 
     final ClientEntitySet entitySet = response.getBody();
     assertNotNull(entitySet);
@@ -180,9 +189,21 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(0, property.getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(0, property.getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)0, property.getPrimitiveValue().toValue());
+    }
+  }
+  
+  protected void assertContentType(String content) {
+    assertThat(content, containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
   }
 
+  private boolean isJson() {
+    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
+  }
+  
   @Test
   public void readEntityCollectionCount() {
     final ODataValueRequest request = getClient().getRetrieveRequestFactory()
@@ -225,7 +246,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertThat(response.getContentType(), containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertContentType(response.getContentType());
 
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);
@@ -234,9 +255,15 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getCollectionValue());
     assertEquals(3, property.getCollectionValue().size());
     Iterator<ClientValue> iterator = property.getCollectionValue().iterator();
-    assertEquals(1000, iterator.next().asPrimitive().toValue());
-    assertEquals(2000, iterator.next().asPrimitive().toValue());
-    assertEquals(30112, iterator.next().asPrimitive().toValue());
+    if(isJson()) {
+      assertEquals(1000, iterator.next().asPrimitive().toValue());
+      assertEquals(2000, iterator.next().asPrimitive().toValue());
+      assertEquals(30112, iterator.next().asPrimitive().toValue());      
+    } else {
+      assertEquals((short)1000, iterator.next().asPrimitive().toValue());
+      assertEquals((short)2000, iterator.next().asPrimitive().toValue());
+      assertEquals((short)30112, iterator.next().asPrimitive().toValue());
+    }
   }
 
   @Test
@@ -268,7 +295,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
         factory.newPrimitiveValueBuilder().buildString("new")));
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDecimal",
-        factory.newPrimitiveValueBuilder().buildDouble(42.875)));
+        factory.newPrimitiveValueBuilder().buildDecimal(new BigDecimal(42.875))));
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
         factory.newPrimitiveValueBuilder().buildInt64(null)));
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
@@ -286,13 +313,22 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals("new", property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = entity.getProperty("PropertyDecimal");
     assertNotNull(property2);
-    assertEquals(42.875, property2.getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(42.875, property2.getPrimitiveValue().toValue());
+    } else {
+      assertEquals(new BigDecimal(42.875), property2.getPrimitiveValue().toValue());
+    }
     final ClientProperty property3 = entity.getProperty("PropertyInt64");
     assertNotNull(property3);
     assertNull(property3.getPrimitiveValue());
     final ClientProperty property4 = entity.getProperty("PropertyDuration");
     assertNotNull(property4);
-    assertEquals("PT6S", property4.getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals("PT6S", property4.getPrimitiveValue().toValue());
+    } else {
+      assertEquals(new BigDecimal(6), property4.getPrimitiveValue().toValue());
+    }
+    
   }
 
   @Test
@@ -301,7 +337,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ClientObjectFactory factory = client.getObjectFactory();
     ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt32(42)));
+        factory.newPrimitiveValueBuilder().buildInt64((long)42)));
 
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
         .build();
@@ -315,7 +351,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(entity);
     final ClientProperty property1 = entity.getProperty("PropertyInt64");
     assertNotNull(property1);
-    assertEquals(42, property1.getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(42, property1.getPrimitiveValue().toValue());
+    } else {
+      assertEquals((long)42, property1.getPrimitiveValue().toValue());
+    }
     final ClientProperty property2 = entity.getProperty("PropertyDecimal");
     assertNotNull(property2);
     assertNull(property2.getPrimitiveValue());
@@ -331,7 +371,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
             factory.newComplexProperty("PropertyComp",
                 factory.newComplexValue("olingo.odata.test1.CTTwoPrim").add(
                     factory.newPrimitiveProperty("PropertyInt16",
-                        factory.newPrimitiveValueBuilder().buildInt32(42)))))));
+                        factory.newPrimitiveValueBuilder().buildInt16((short)42)))))));
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.PATCH, patchEntity);
@@ -346,7 +386,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(complex);
     final ClientProperty property1 = complex.get("PropertyInt16");
     assertNotNull(property1);
-    assertEquals(42, property1.getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(42, property1.getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)42, property1.getPrimitiveValue().toValue());
+    }
     final ClientProperty property2 = complex.get("PropertyString");
     assertNotNull(property2);
     assertEquals("String 1", property2.getPrimitiveValue().toValue());
@@ -394,7 +438,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ClientObjectFactory factory = client.getObjectFactory();
     ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt32(42)));
+        factory.newPrimitiveValueBuilder().buildInt64((long)42)));
     newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
@@ -413,7 +457,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(createdEntity);
     final ClientProperty property1 = createdEntity.getProperty("PropertyInt64");
     assertNotNull(property1);
-    assertEquals(42, property1.getPrimitiveValue().toValue());
+    if(isJson()) {
+      assertEquals(42, property1.getPrimitiveValue().toValue());
+    } else {
+      assertEquals((long)42, property1.getPrimitiveValue().toValue());
+    }
     final ClientProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
     assertNull(property2.getPrimitiveValue());
@@ -441,7 +489,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readEntityWithExpandedNavigationProperty() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
 
     final URI uri = client.newURIBuilder(SERVICE_URI)
@@ -532,14 +580,22 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .iterator();
 
     ClientComplexValue complexProperty = collectionIterator.next().asComplex();
-    assertEquals(42, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(42, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)42, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    }
     assertNotNull(complexProperty.get("PropertyComp"));
 
     ClientComplexValue innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
     assertEquals("42", innerComplexProperty.get("PropertyString").getPrimitiveValue().toValue());
 
     complexProperty = collectionIterator.next().asComplex();
-    assertEquals(43, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(43, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)43, complexProperty.get("PropertyInt16").getPrimitiveValue().toValue());
+    }
     assertNotNull(complexProperty.get("PropertyComp"));
 
     innerComplexProperty = complexProperty.get("PropertyComp").getComplexValue();
@@ -601,7 +657,11 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(2, newEntity.getProperty("CollPropertyComp").getCollectionValue().size());
     final Iterator<ClientValue> iter = newEntity.getProperty("CollPropertyComp").getCollectionValue().iterator();
     final ClientComplexValue complexProperty1 = iter.next().asComplex();
-    assertEquals(1, complexProperty1.get("PropertyInt16").getPrimitiveValue().toValue());
+    if (isJson()) {
+      assertEquals(1, complexProperty1.get("PropertyInt16").getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)1, complexProperty1.get("PropertyInt16").getPrimitiveValue().toValue());
+    }
     assertNotNull(complexProperty1.get("PropertyComp"));
     final ClientComplexValue innerComplexProperty1 = complexProperty1.get("PropertyComp").getComplexValue();
     assertEquals("1", innerComplexProperty1.get("PropertyString").getPrimitiveValue().toValue());
@@ -627,8 +687,14 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertNotNull(complexProperty2.get("PropertyComp"));
     final ClientComplexValue innerComplexProperty2 = complexProperty2.get("PropertyComp").getComplexValue();
     assertEquals("2", innerComplexProperty2.get("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(2, innerComplexProperty2.get("PropertyInt16").getPrimitiveValue().toValue());
-    assertEquals(Double.valueOf(2), innerComplexProperty2.get("PropertySingle").getPrimitiveValue().toValue());
+    if(isJson()) {
+      assertEquals(2, innerComplexProperty2.get("PropertyInt16").getPrimitiveValue().toValue());
+      assertEquals(Double.valueOf(2), innerComplexProperty2.get("PropertySingle").getPrimitiveValue().toValue());
+    } else {
+      assertEquals((short)2, innerComplexProperty2.get("PropertyInt16").getPrimitiveValue().toValue());
+      assertEquals(Float.valueOf(2), innerComplexProperty2.get("PropertySingle").getPrimitiveValue().toValue());
+    }
+    
     assertTrue(innerComplexProperty2.get("PropertyBinary").hasNullValue());
     assertTrue(innerComplexProperty2.get("PropertyBoolean").hasNullValue());
     assertTrue(innerComplexProperty2.get("PropertyByte").hasNullValue());
@@ -649,7 +715,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void complexPropertyWithNotNullablePrimitiveValue() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     // PropertyComp is null, but the primitive values in PropertyComp must not be null
@@ -666,7 +732,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void upsert() throws EdmPrimitiveTypeException {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     final ClientEntity entity = of.newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
@@ -698,7 +764,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void updatePropertyWithNull() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
@@ -718,12 +784,12 @@ public class BasicITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals("return=representation", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     assertTrue(response.getBody().getProperty("PropertyString").hasNullValue());
-    assertEquals(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
+    assertShortOrInt(34, response.getBody().getProperty("PropertyDecimal").getPrimitiveValue().toValue());
   }
 
   @Test(expected = ODataClientErrorException.class)
   public void updatePropertyWithNullNotAllowed() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
@@ -740,9 +806,9 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void updateMerge() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
-
+    
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(1)
@@ -777,7 +843,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+    assertShortOrInt(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
         .asInlineEntity()
         .getEntity()
         .getProperty("PropertyInt16")
@@ -790,7 +856,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getEntities()
         .size());
 
-    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -799,7 +865,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -808,7 +874,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -834,7 +900,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
 
   @Test
   public void updateReplace() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
@@ -877,7 +943,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), entityResponse.getStatusCode());
-    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
+    assertShortOrInt(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavOne")
         .asInlineEntity()
         .getEntity()
         .getProperty("PropertyInt16")
@@ -890,7 +956,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getEntities()
         .size());
 
-    assertEquals(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(1, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -899,7 +965,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(2, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -908,7 +974,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getPrimitiveValue()
         .toValue());
 
-    assertEquals(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
+    assertShortOrInt(3, entityResponse.getBody().getNavigationLink("NavPropertyETKeyNavMany")
         .asInlineEntitySet()
         .getEntitySet()
         .getEntities()
@@ -938,7 +1004,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
         .getComplexValue();
 
     assertEquals("Must not be null", propCompTwoPrim.get("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(42, propCompTwoPrim.get("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(42, propCompTwoPrim.get("PropertyInt16").getPrimitiveValue().toValue());
 
     assertNotNull(entityResponse.getBody().getProperty("PropertyCompNav").getComplexValue());
     assertTrue(entityResponse.getBody()
@@ -950,7 +1016,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void createEntityWithIEEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
@@ -977,7 +1043,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void createEntityWithIEEE754CompatibleParameterNull() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
@@ -1003,7 +1069,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
@@ -1035,7 +1101,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameterNull() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
@@ -1065,7 +1131,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameterWithNullString() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
@@ -1091,7 +1157,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateEdmInt64PropertyWithIEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
@@ -1118,7 +1184,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateComplexPropertyWithIEEE754CompatibleParamter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
@@ -1155,7 +1221,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void updateProperyEdmDecimaltWithIEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
@@ -1182,7 +1248,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void readESAllPrimCollectionWithIEEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
                                                      .orderBy(PROPERTY_INT16)
                                                      .build();
@@ -1213,7 +1279,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void readESKeyNavCheckComplexPropertyWithIEEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
     
     final ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory().getEntityRequest(uri);
@@ -1238,7 +1304,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   
   @Test
   public void readESKEyNavComplexPropertyWithIEEE754CompatibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(PROPERTY_COMP_ALL_PRIM)
@@ -1262,7 +1328,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   @Ignore
   public void readEdmInt64PropertyWithIEEE754ComaptibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
@@ -1279,7 +1345,7 @@ public class BasicITCase extends AbstractBaseTestITCase {
   @Test
   @Ignore
   public void readEdmDecimalPropertyWithIEEE754ComaptibleParameter() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
@@ -1299,4 +1365,8 @@ public class BasicITCase extends AbstractBaseTestITCase {
     odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
+  
+  protected EdmEnabledODataClient getClient(String serviceURI) {
+    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
+  }  
 }

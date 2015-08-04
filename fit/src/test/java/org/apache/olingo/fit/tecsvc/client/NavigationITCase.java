@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -33,14 +35,22 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.fit.util.StringHelper;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.InputStream;
-
-public final class NavigationITCase extends AbstractBaseTestITCase {
+public class NavigationITCase extends AbstractBaseTestITCase {
 
   private final ODataClient client = getClient();
 
+  
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void navigationToEntityWithRelativeContextUrl() throws Exception {
     // zero navigation
@@ -50,7 +60,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
                     appendKeySegment(32767).build()).rawExecute();
 
     String zeroLevelResponseBody = StringHelper.asString(zeroLevelResponse);
-    assertTrue(zeroLevelResponseBody.contains("\"@odata.context\":\"$metadata#ESAllPrim/$entity\""));
+    assertTrue(zeroLevelResponseBody.contains("\"$metadata#ESAllPrim/$entity\""));
 
     // one navigation
     final InputStream oneLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
@@ -60,7 +70,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
                     .rawExecute();
 
     String oneLevelResponseBody = StringHelper.asString(oneLevelResponse);
-    assertTrue(oneLevelResponseBody.contains("\"@odata.context\":\"../$metadata#ESTwoPrim/$entity\""));
+    assertTrue(oneLevelResponseBody.contains("\"../$metadata#ESTwoPrim/$entity\""));
 
     // two navigation
     final InputStream twoLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
@@ -71,7 +81,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
                     .rawExecute();
 
     String twoLevelResponseBody = StringHelper.asString(twoLevelResponse);
-    assertTrue(twoLevelResponseBody.contains("\"@odata.context\":\"../../$metadata#ESTwoPrim/$entity\""));
+    assertTrue(twoLevelResponseBody.contains("\"../../$metadata#ESTwoPrim/$entity\""));
   }
 
   @Test
@@ -166,7 +176,7 @@ public final class NavigationITCase extends AbstractBaseTestITCase {
     final ClientProperty property = response.getBody();
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(1, property.getPrimitiveValue().toValue());
+    assertShortOrInt(1, property.getPrimitiveValue().toValue());
   }
 
   @Override

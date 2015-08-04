@@ -63,12 +63,9 @@ public class DataProvider {
   private Edm edm;
   private OData odata;
 
-  public DataProvider() {
-    data = new DataCreator().getData();
-  }
-
-  public void setEdm(final Edm edm) {
+  public DataProvider(final Edm edm) {
     this.edm = edm;
+    data = new DataCreator(edm).getData();
   }
 
   public void setOData(final OData odata) {
@@ -153,6 +150,7 @@ public class DataProvider {
     }
 
     createProperties(edmEntityType, newEntity.getProperties());
+    DataCreator.createEntityId(edmEntitySet.getName(), newEntity, edmEntityType.getKeyPropertyRefs());
     entities.add(newEntity);
 
     return newEntity;

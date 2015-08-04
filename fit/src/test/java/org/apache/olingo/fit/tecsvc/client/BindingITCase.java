@@ -323,7 +323,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testDeepInsertWithBindingSameNavigationProperty() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -395,4 +395,8 @@ public class BindingITCase extends AbstractBaseTestITCase {
     odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
+  
+  protected EdmEnabledODataClient getClient(String serviceURI) {
+    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
+  }   
 }

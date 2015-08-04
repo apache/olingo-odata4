@@ -59,6 +59,19 @@ import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * The issue I see with this unit test, or in general with JSON metadata=minimal case is
+ * none of the navigation properties will be represented as such in deserialized form, because
+ * no navigation link information will be written when metadata=minimal. The client will
+ * interpret those results as complex properties (which I do not think is right).
+ * 
+ * Where as in the atom+xml case, there is no intermediate results, it is equivalent to
+ * metadata=full, thus the navigation links and inline content is correctly represented through
+ * deserialization. 
+ * 
+ * For above reason, the DeepInsertXMLITCase case re-written slightly differently.  
+ *
+ */
 public class DeepInsertITCase extends AbstractBaseTestITCase {
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
@@ -90,7 +103,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testDeepInsertExpandedResponse() {
-    final ODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ClientObjectFactory of = client.getObjectFactory();
@@ -272,7 +285,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     inlineEntitySingle.getProperties()
     .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 430)))));
     inlineEntitySingle.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
@@ -293,7 +307,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+          .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 440)))));
     inlineEntityCol1.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
@@ -308,7 +323,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+          .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 450)))));
     inlineEntityCol2.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
@@ -545,7 +561,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testConsistency() throws EdmPrimitiveTypeException {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
 
@@ -574,7 +590,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testInvalidType() throws EdmPrimitiveTypeException {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
 
@@ -613,7 +629,7 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
   @Test
   @Ignore
   public void testDeepInsertOnNavigationPropertyInComplexProperty() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
+    final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
     final ClientEntity inlineEntity = of.newEntity(ET_TWO_KEY_NAV);
@@ -704,8 +720,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)));
     inlineEntitySingle.getProperties()
     .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("43")));
-    inlineEntitySingle.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+    inlineEntitySingle.getProperties().add(of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 43)))));
     inlineEntitySingle.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 431)))));
@@ -726,7 +742,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 442)))
@@ -741,7 +758,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
-        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)));
+        of.newComplexProperty(PROPERTY_COMP, of.newComplexValue(CT_PRIM_COMP)
+            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties()
     .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
         .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 452)))
@@ -903,4 +921,8 @@ public class DeepInsertITCase extends AbstractBaseTestITCase {
     odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
+  
+  protected EdmEnabledODataClient getClient(String serviceURI) {
+    return ODataClientFactory.getEdmEnabledClient(serviceURI,ContentType.JSON);
+  }   
 }

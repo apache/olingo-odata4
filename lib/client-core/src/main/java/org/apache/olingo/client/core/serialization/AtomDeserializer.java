@@ -20,8 +20,10 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 
@@ -95,12 +98,17 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()
           && (typeInfo == null || !typeInfo.getPrimitiveTypeKind().isGeospatial())) {
-
         final String stringValue = event.asCharacters().getData();
-        value = typeInfo == null ? stringValue : // TODO: add facets
-          ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
+        if (typeInfo == null) {
+          value = stringValue;
+        } else {
+          final EdmPrimitiveType primitiveType = (EdmPrimitiveType) typeInfo.getType();
+          final Class<?> returnType = primitiveType.getDefaultType().isAssignableFrom(Calendar.class)
+              ? Timestamp.class : primitiveType.getDefaultType();
+          value = ((EdmPrimitiveType) typeInfo.getType()).valueOfString(stringValue, true, null,
               Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
-              ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
+              returnType);
+        }
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -634,11 +642,9 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
                 entity.setMediaETag(mediaETag.getValue());
               }
             } else if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
-
               entity.getNavigationLinks().add(link);
               inline(reader, event.asStartElement(), link);
             } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
-
               entity.getAssociationLinks().add(link);
             } else if (link.getRel().startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
 

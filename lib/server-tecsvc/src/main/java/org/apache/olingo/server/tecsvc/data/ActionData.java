@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class ActionData {
 
@@ -151,6 +155,9 @@ public class ActionData {
 
   protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
+    final ServiceMetadata metadata = OData.newInstance().createServiceMetadata(new EdmTechProvider(), 
+        Collections.<EdmxReference> emptyList(),null);
+    
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
       Parameter parameter = parameters.get("ParameterInt16");
       Short number;
@@ -160,7 +167,7 @@ public class ActionData {
         number = (short) 0;
       }
 
-      EntityCollection entityCollection = new DataCreator().getData().get("ESTwoKeyTwoPrim");
+      EntityCollection entityCollection = new DataCreator(metadata.getEdm()).getData().get("ESTwoKeyTwoPrim");
       for (Entity entity : entityCollection.getEntities()) {
         Object asPrimitive = entity.getProperty("PropertyInt16").asPrimitive();
         if (number.equals(asPrimitive)) {
@@ -171,7 +178,7 @@ public class ActionData {
       throw new DataProviderException("Entity not found with key: " + number, HttpStatusCode.NOT_FOUND);
     } else if ("UARTETAllPrimParam".equals(name)) {
       Parameter paramDate = parameters.get("ParameterDate");
-      EntityCollection entityCollection = new DataCreator().getData().get("ESAllPrim");
+      EntityCollection entityCollection = new DataCreator(metadata.getEdm()).getData().get("ESAllPrim");
       if (paramDate != null) {
         Calendar date = (Calendar) paramDate.asPrimitive();
         boolean freeKey;

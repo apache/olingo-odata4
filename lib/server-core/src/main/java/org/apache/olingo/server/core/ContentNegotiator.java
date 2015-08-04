@@ -53,7 +53,9 @@ public class ContentNegotiator {
       return Arrays.asList(
           ContentType.JSON,
           ContentType.JSON_NO_METADATA,
-          ContentType.APPLICATION_JSON);
+          ContentType.APPLICATION_JSON,
+          ContentType.APPLICATION_ATOM_XML,
+          ContentType.APPLICATION_XML);
     }
   }
 

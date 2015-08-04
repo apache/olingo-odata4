@@ -30,7 +30,7 @@
   <category term="#Microsoft.Test.OData.Services.ODataWCFService.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
   <link rel="edit" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer" />
   <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Parent" />
-  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Orders" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders"><m:inline><feed><ref xmlns="http://docs.oasis-open.org/odata/ns/metadata" id="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Orders"/></feed></m:inline></link>
   <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Company" />
   <title />
   <updated>2014-03-28T13:03:32Z</updated>

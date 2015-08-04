@@ -61,7 +61,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -70,15 +70,15 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     clientEntity = response.getBody().getEntities().get(1);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq true");
     assertEquals(1, response.getBody().getEntities().size());
 
     clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -87,7 +87,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -97,7 +97,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -108,7 +108,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -120,7 +120,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -129,11 +129,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     assertEquals(2, result.getBody().getEntities().size());
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -144,7 +144,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     assertEquals(1, result.getBody().getEntities().size());
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -165,7 +165,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
     assertEquals(1, response.getBody().getEntities().size());
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -183,17 +183,17 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
         sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' and PropertyInt16 eq 1");
     assertEquals(1, result.getBody().getEntities().size());
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' or PropertyInt16 eq 1");
     assertEquals(2, result.getBody().getEntities().size());
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -252,9 +252,8 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "substring(PropertyString, -1, 1) eq 'F'");
     assertEquals(1, response.getBody().getEntities().size());
-
-    assertEquals(32767, response.getBody().getEntities().get(0).getProperty("PropertyInt16").getPrimitiveValue()
-        .toValue());
+    assertShortOrInt(32767, response.getBody().getEntities().get(0).getProperty("PropertyInt16")
+          .getPrimitiveValue().toValue());
 
     // -1 should be treated as 0, Same values substring(PropertyString, 0, 0) returns the empty String
     response = sendRequest(ES_ALL_PRIM, "substring(PropertyString, 0, -1) eq ''");
@@ -344,21 +343,21 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(3, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
+    assertShortOrInt(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
         .getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
+    assertShortOrInt(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
         .getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(2);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
-    assertEquals(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
+    assertShortOrInt(11, clientEntity.getProperty("PropertyComp").getComplexValue().get("PropertyInt16")
         .getPrimitiveValue().toValue());
   }
 
@@ -368,11 +367,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -382,11 +381,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -396,11 +395,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -430,7 +429,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -441,19 +440,19 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(4, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(2);
-    assertEquals(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(3);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -470,7 +469,15 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+  }
+  
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
   }
 
   @Test
@@ -479,7 +486,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -488,13 +495,13 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(3, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(2);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -503,7 +510,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -512,13 +519,13 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(3, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(2);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -527,7 +534,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -536,10 +543,10 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -548,7 +555,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -557,7 +564,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -566,7 +573,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -575,7 +582,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -584,7 +591,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -594,11 +601,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("W/\"32767\"", clientEntity.getETag());
 
     clientEntity = response.getBody().getEntities().get(1);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("W/\"0\"", clientEntity.getETag());
   }
 
@@ -638,14 +645,14 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -655,14 +662,14 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.6)");
     assertEquals(1, result.getBody().getEntities().size());
 
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -672,28 +679,28 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.4)");
     assertEquals(1, result.getBody().getEntities().size());
 
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(2, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.6)");
     assertEquals(1, result.getBody().getEntities().size());
 
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
     result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(3.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
     clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(3, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("1", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
 
@@ -703,10 +710,10 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
 
     clientEntity = result.getBody().getEntities().get(1);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -716,7 +723,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -725,7 +732,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -735,7 +742,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -745,7 +752,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -755,7 +762,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -765,7 +772,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -775,7 +782,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -793,7 +800,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -803,7 +810,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -820,7 +827,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -830,7 +837,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -840,7 +847,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -850,7 +857,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -860,7 +867,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test
@@ -870,7 +877,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
-    assertEquals(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
 
   @Test

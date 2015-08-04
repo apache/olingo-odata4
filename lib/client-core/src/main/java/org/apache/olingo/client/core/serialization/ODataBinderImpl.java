@@ -456,7 +456,7 @@ public class ODataBinderImpl implements ODataBinder {
         odataLinked.addLink(createODataInlineEntity(inlineEntity,
             URIUtils.getURI(base, href), title, metadataETag));
       } else {
-        odataLinked.addLink(createODataInlineEntitySet(inlineEntitySet,
+        odataLinked.addLink(createODataInlineEntitySet(inlineEntitySet, href == null?null:
             URIUtils.getURI(base, href), title, metadataETag));
       }
     }

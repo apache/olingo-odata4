@@ -68,7 +68,7 @@ public class OAuth2TestITCase extends AbstractTestITCase {
 
   protected EdmEnabledODataClient getEdmClient() {
     if (_edmClient == null) {
-      _edmClient = ODataClientFactory.getEdmEnabledClient(testOAuth2ServiceRootURL);
+      _edmClient = ODataClientFactory.getEdmEnabledClient(testOAuth2ServiceRootURL, ContentType.JSON);
       _edmClient.getConfiguration().setHttpClientFactory(
           new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
     }

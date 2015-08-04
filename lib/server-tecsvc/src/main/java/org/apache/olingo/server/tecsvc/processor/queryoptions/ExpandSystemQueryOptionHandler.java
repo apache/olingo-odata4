@@ -202,7 +202,7 @@ public class ExpandSystemQueryOptionHandler {
     newLink.setTitle(link.getTitle());
     newLink.setType(link.getType());
     newLink.setRel(link.getRel());
-
+    newLink.setHref(link.getHref());
     return newLink;
   }
 
