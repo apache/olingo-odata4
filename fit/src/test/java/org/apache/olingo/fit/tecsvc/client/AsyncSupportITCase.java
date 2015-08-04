@@ -315,7 +315,7 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
         "' and value '" + value + "' not found in entitySet '" + entitySet + "'");
   }
 
-  private void waitTillDone(AsyncResponseWrapper async, int maxWaitInSeconds) throws InterruptedException {
+  private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds) throws InterruptedException {
     int waitCounter = maxWaitInSeconds * 1000;
     while(!async.isDone() && waitCounter > 0) {
       TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);

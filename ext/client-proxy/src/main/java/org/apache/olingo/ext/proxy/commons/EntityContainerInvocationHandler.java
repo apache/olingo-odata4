@@ -137,7 +137,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   }
 
   @SuppressWarnings("unchecked")
-  public <NE extends EntityType> NE newEntityInstance(final Class<NE> ref) {
+  public <NE extends EntityType<?>> NE newEntityInstance(final Class<NE> ref) {
     final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(ref, getService());
 
     return (NE) Proxy.newProxyInstance(

@@ -96,7 +96,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     if(request instanceof HttpEntityEnclosingRequestBase) {
       if(odataRequest instanceof AbstractODataBasicRequest) {
-        AbstractODataBasicRequest br = (AbstractODataBasicRequest) odataRequest;
+        AbstractODataBasicRequest<?> br = (AbstractODataBasicRequest<?>) odataRequest;
         HttpEntityEnclosingRequestBase httpRequest = ((HttpEntityEnclosingRequestBase) request);
         httpRequest.setEntity(new InputStreamEntity(br.getPayload(), -1));
       }

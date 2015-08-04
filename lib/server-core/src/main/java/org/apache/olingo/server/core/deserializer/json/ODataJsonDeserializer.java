@@ -220,7 +220,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         // remove here to avoid iterator issues.
         tree.remove(toRemove);
         assertJsonNodeIsEmpty(tree);
-      return DeserializerResultImpl.with().actionParameters(parameters).build();
+        return DeserializerResultImpl.with().actionParameters(parameters).build();
       }
       return DeserializerResultImpl.with().build();
 
@@ -243,7 +243,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return parser.getCodec().readTree(parser);
   }
 
-  private  Map<String, Parameter> consumeParameters(final EdmAction edmAction, final ObjectNode node)
+  private Map<String, Parameter> consumeParameters(final EdmAction edmAction, final ObjectNode node)
       throws DeserializerException {
     List<String> parameterNames = edmAction.getParameterNames();
     if (edmAction.isBound()) {
@@ -754,7 +754,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private void checkJsonTypeBasedOnPrimitiveType(final String propertyName, final String edmPrimitiveTypeName,
       final JsonNode jsonNode)
-        throws DeserializerException {
+      throws DeserializerException {
 
     EdmPrimitiveTypeKind primKind;
     try {
@@ -769,38 +769,41 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     valid |= matchBooleanCase(jsonNode, primKind);
     valid |= matchIEEENumberCase(jsonNode, primKind);
 
-    if(!valid) {
+    if (!valid) {
       throw new DeserializerException("Invalid json type: " + jsonNode.getNodeType() + " for edm " + primKind
           + " property: " + propertyName, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, propertyName);
     }
   }
 
   private boolean matchIEEENumberCase(JsonNode node, EdmPrimitiveTypeKind primKind) {
-      switch (primKind) {
-      case Int64:
-      case Decimal:
-        // Numbers (either numbers or string)
-        if (isIEEE754Compatible) {
-          return node.isTextual();
-        } else {
-          return node.isNumber();
-        }
+    switch (primKind) {
+    case Int64:
+    case Decimal:
+      // Numbers (either numbers or string)
+      if (isIEEE754Compatible) {
+        return node.isTextual();
+      } else {
+        return node.isNumber();
       }
-    return false;
+    default:
+      return false;
+    }
   }
 
   private boolean matchBooleanCase(JsonNode node, EdmPrimitiveTypeKind primKind) {
-    if(node.isBoolean()) {
+    if (node.isBoolean()) {
       switch (primKind) {
       case Boolean:
         return true;
+      default:
+        return false;
       }
     }
     return false;
   }
 
   private boolean matchNumberCase(JsonNode node, EdmPrimitiveTypeKind primKind) {
-    if(node.isNumber()) {
+    if (node.isNumber()) {
       switch (primKind) {
       // Numbers (must be numbers)
       case Int16:
@@ -810,13 +813,15 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       case Single:
       case Double:
         return true;
+      default:
+        return false;
       }
     }
     return false;
   }
 
   private boolean matchTextualCase(JsonNode node, EdmPrimitiveTypeKind primKind) {
-    if(node.isTextual()) {
+    if (node.isTextual()) {
       switch (primKind) {
       case String:
       case Binary:
@@ -826,6 +831,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       case Guid:
       case TimeOfDay:
         return true;
+      default:
+        return false;
       }
     }
     return false;

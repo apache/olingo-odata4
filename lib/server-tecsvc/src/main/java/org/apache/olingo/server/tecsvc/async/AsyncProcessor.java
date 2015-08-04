@@ -143,7 +143,7 @@ public class AsyncProcessor<T extends Processor> {
 
   public AsyncProcessor(T processor, Class<T> processorInterface, TechnicalAsyncService service) {
     Class<? extends Processor> aClass = processor.getClass();
-    Class[] interfaces = aClass.getInterfaces();
+    Class<?>[] interfaces = aClass.getInterfaces();
     handler = new ProcessorInvocationHandler(processor);
     Object proxyInstance = Proxy.newProxyInstance(aClass.getClassLoader(), interfaces, handler);
     proxyProcessor = processorInterface.cast(proxyInstance);

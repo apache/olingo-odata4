@@ -115,7 +115,7 @@ public class TechnicalAsyncService {
     return request.getRequestURL() != null && request.getRequestURL().toString().contains(STATUS_MONITOR_TOKEN);
   }
 
-  String processAsynchronous(AsyncProcessor dispatchedProcessor)
+  String processAsynchronous(AsyncProcessor<?> dispatchedProcessor)
       throws ODataApplicationException, ODataLibraryException {
     // use executor thread pool
     String location = createNewAsyncLocation(dispatchedProcessor.getRequest());
@@ -149,7 +149,7 @@ public class TechnicalAsyncService {
     StringBuilder sb = new StringBuilder();
     sb.append("<html><header/><body><h1>Queued requests</h1><ul>");
     for (Map.Entry<String, AsyncRunner> entry : LOCATION_2_ASYNC_RUNNER.entrySet()) {
-      AsyncProcessor asyncProcessor = entry.getValue().getDispatched();
+      AsyncProcessor<?> asyncProcessor = entry.getValue().getDispatched();
       sb.append("<li><b>ID: </b>").append(entry.getKey()).append("<br/>")
           .append("<b>Location: </b><a href=\"")
           .append(asyncProcessor.getLocation()).append("\">")
@@ -240,17 +240,17 @@ public class TechnicalAsyncService {
   /**
    * Runnable for the AsyncProcessor.
    */
-  private static class AsyncRunner implements Runnable {
-    private final AsyncProcessor dispatched;
+  static class AsyncRunner implements Runnable {
+    private final AsyncProcessor<?> dispatched;
     private int defaultSleepTimeInSeconds = 0;
     private Exception exception;
     boolean finished = false;
 
-    public AsyncRunner(AsyncProcessor wrap) {
+    public AsyncRunner(AsyncProcessor<?> wrap) {
       this(wrap, 0);
     }
 
-    public AsyncRunner(AsyncProcessor wrap, int defaultSleepTimeInSeconds) {
+    public AsyncRunner(AsyncProcessor<?> wrap, int defaultSleepTimeInSeconds) {
       this.dispatched = wrap;
       if(defaultSleepTimeInSeconds > 0) {
         this.defaultSleepTimeInSeconds = defaultSleepTimeInSeconds;
@@ -269,7 +269,7 @@ public class TechnicalAsyncService {
       finished = true;
     }
 
-    private int getSleepTime(AsyncProcessor wrap) {
+    private int getSleepTime(AsyncProcessor<?> wrap) {
       String preferHeader = wrap.getPreferHeader();
       Matcher matcher = Pattern.compile("(" + TEC_ASYNC_SLEEP +
               "=)(\\d*)").matcher(preferHeader);
@@ -288,7 +288,7 @@ public class TechnicalAsyncService {
       return finished;
     }
 
-    public AsyncProcessor getDispatched() {
+    public AsyncProcessor<?> getDispatched() {
       return dispatched;
     }
   }
