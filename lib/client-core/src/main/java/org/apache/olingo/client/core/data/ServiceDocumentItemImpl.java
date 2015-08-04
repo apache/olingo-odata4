@@ -18,13 +18,9 @@
  */
 package org.apache.olingo.client.core.data;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 
-public class ServiceDocumentItemImpl implements ServiceDocumentItem {
+public final class ServiceDocumentItemImpl implements ServiceDocumentItem {
 
   private String name;
 
@@ -49,17 +45,35 @@ public class ServiceDocumentItemImpl implements ServiceDocumentItem {
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    ServiceDocumentItemImpl that = (ServiceDocumentItemImpl) o;
+
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    return !(url != null ? !url.equals(that.url) : that.url != null);
+
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    int result = name != null ? name.hashCode() : 0;
+    result = 31 * result + (url != null ? url.hashCode() : 0);
+    return result;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "ServiceDocumentItemImpl{" +
+        "name='" + name + '\'' +
+        ", url='" + url + '\'' +
+        '}';
   }
 }

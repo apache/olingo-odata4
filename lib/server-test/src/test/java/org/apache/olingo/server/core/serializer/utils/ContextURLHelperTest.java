@@ -95,6 +95,76 @@ public class ContextURLHelperTest {
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
+
+  @Test
+  public void buildEntity() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("$metadata#ESTwoPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  // /odata.svc/ESAllPrim(32767)/NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne/
+  //                            NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne/NavPropertyETTwoPrimOne
+  // @odata.context: "../../../../../$metadata#ESTwoPrim/$entity"
+  @Test
+  public void buildRelativeFiveNavigation() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    String odataPath = "ESAllPrim(32767)/NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne/" +
+                        "NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne/NavPropertyETTwoPrimOne";
+    ContextURL contextURL = ContextURL.with()
+            .oDataPath("/" + odataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../../../../$metadata#ESTwoPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+
+    // removed leading '/'
+    contextURL = ContextURL.with()
+            .oDataPath(odataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../../../../$metadata#ESTwoPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  // odata.svc/ESAllPrim(32767)/NavPropertyETTwoPrimOne
+  // @odata.context: "$metadata#ESTwoPrim/$entity",
+  @Test
+  public void buildRelativeNavigation() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final String oDataPath = "ESAllPrim(32767)/NavPropertyETTwoPrimOne";
+    ContextURL contextURL = ContextURL.with().oDataPath("/" + oDataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../$metadata#ESTwoPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+
+    // without leading '/'
+    contextURL = ContextURL.with().oDataPath(oDataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../$metadata#ESTwoPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  // /odata.svc/ESAllPrim(32767)/NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne
+  // @odata.context: "$metadata#ESAllPrim/$entity",
+  @Test
+  public void buildRelativeTwoNavigation() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESAllPrim");
+    String oDataPath = "ESAllPrim(32767)/NavPropertyETTwoPrimOne/NavPropertyETAllPrimOne";
+    ContextURL contextURL = ContextURL.with()
+            .oDataPath("/" + oDataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../$metadata#ESAllPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+
+    // without leading '/'
+    contextURL = ContextURL.with().oDataPath(oDataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../$metadata#ESAllPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+
+    // without unnecessary '///'
+    contextURL = ContextURL.with().oDataPath("///" + oDataPath)
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../$metadata#ESAllPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+    // without unnecessary '///' between
+    contextURL = ContextURL.with().oDataPath(oDataPath.replace("/", "///"))
+            .entitySet(entitySet).suffix(ContextURL.Suffix.ENTITY).build();
+    assertEquals("../../$metadata#ESAllPrim/$entity", ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
   @Test
   public void buildExpandAll() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
@@ -116,6 +186,22 @@ public class ContextURLHelperTest {
     assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
+  @Test
+  public void buildExpandWithNavigationProperty() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(
+        ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne", "PropertyString")));
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(entitySet, "PropertyInt16");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem1));
+    
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, select)).build();
+    assertEquals("$metadata#ESTwoPrim(PropertyInt16,NavPropertyETAllPrimOne/PropertyString)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+
+  
   @Test
   public void buildExpandSelect() throws Exception {
     final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoPrim");

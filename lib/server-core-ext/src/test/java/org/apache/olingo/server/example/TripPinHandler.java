@@ -544,4 +544,16 @@ public class TripPinHandler implements ServiceHandler {
   public void crossJoin(DataRequest dataRequest, List<String> entitySetNames, ODataResponse response) {
     response.setStatusCode(200);
   }
+
+  @Override
+  public void upsertEntity(DataRequest request, Entity entity, boolean merge, String entityETag, 
+      EntityResponse response) throws ODataLibraryException, ODataApplicationException {
+    EdmEntitySet edmEntitySet = request.getEntitySet();
+    Entity currentEntity = this.dataModel.getEntity(edmEntitySet.getName(), request.getKeyPredicates());
+    if(currentEntity == null) {
+      createEntity(request, entity, response);
+    } else {
+      updateEntity(request, entity, merge, entityETag, response);
+    }
+  }
 }

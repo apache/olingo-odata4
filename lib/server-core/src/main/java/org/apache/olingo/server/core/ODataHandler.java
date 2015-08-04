@@ -42,6 +42,7 @@ import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -54,14 +55,18 @@ public class ODataHandler {
   private final OData odata;
   private final ServiceMetadata serviceMetadata;
   private final List<Processor> processors = new LinkedList<Processor>();
+  private final ServerCoreDebugger debugger;
+
   private CustomContentTypeSupport customContentTypeSupport;
   private CustomETagSupport customETagSupport;
 
   private UriInfo uriInfo;
+  private Exception lastThrownException;
 
-  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata) {
+  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, ServerCoreDebugger debugger) {
     odata = server;
     this.serviceMetadata = serviceMetadata;
+    this.debugger = debugger;
 
     register(new DefaultRedirectProcessor());
     register(new DefaultProcessor());
@@ -69,44 +74,44 @@ public class ODataHandler {
 
   public ODataResponse process(final ODataRequest request) {
     ODataResponse response = new ODataResponse();
+    int measurementHandel = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
     try {
-
       processInternal(request, response);
-
     } catch (final UriValidationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserSemanticException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserSyntaxException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (final UriParserException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ContentNegotiatorException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (SerializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (DeserializerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (PreconditionException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ODataHandlerException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (ODataApplicationException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     } catch (Exception e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
-      handleException(request, response, serverError);
+      handleException(request, response, serverError, e);
     }
+    debugger.stopRuntimeMeasurement(measurementHandel);
     return response;
   }
 
@@ -114,18 +119,24 @@ public class ODataHandler {
       throws ODataApplicationException, ODataLibraryException {
     validateODataVersion(request, response);
 
+    int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
         serviceMetadata.getEdm());
+    debugger.stopRuntimeMeasurement(measurementUriParser);
 
+    int measurementUriValidator = debugger.startRuntimeMeasurement("UriValidator", "validate");
     final HttpMethod method = request.getMethod();
     new UriValidator().validate(uriInfo, method);
+    debugger.stopRuntimeMeasurement(measurementUriValidator);
 
+    int measurementDispatcher = debugger.startRuntimeMeasurement("Dispatcher", "dispatch");
     new ODataDispatcher(method, uriInfo, this).dispatch(request, response);
+    debugger.stopRuntimeMeasurement(measurementDispatcher);
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
-      final ODataServerError serverError) {
-
+      final ODataServerError serverError, Exception exception) {
+    this.lastThrownException = exception;
     ErrorProcessor exceptionProcessor;
     try {
       exceptionProcessor = selectProcessor(ErrorProcessor.class);
@@ -141,7 +152,9 @@ public class ODataHandler {
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
+    int measurementHandle = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
+    debugger.stopRuntimeMeasurement(measurementHandle);
   }
 
   private void validateODataVersion(final ODataRequest request, final ODataResponse response)
@@ -186,5 +199,13 @@ public class ODataHandler {
 
   public CustomETagSupport getCustomETagSupport() {
     return customETagSupport;
+  }
+
+  public Exception getLastThrownException() {
+    return lastThrownException;
+  }
+
+  public UriInfo getUriInfo() {
+    return uriInfo;
   }
 }

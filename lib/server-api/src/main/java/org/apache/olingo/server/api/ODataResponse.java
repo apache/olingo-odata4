@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 public class ODataResponse {
 
   private int statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode();
-  private Map<String, String> headers = new HashMap<String, String>();
+  private final Map<String, String> headers = new HashMap<String, String>();
   private InputStream content;
 
   /**

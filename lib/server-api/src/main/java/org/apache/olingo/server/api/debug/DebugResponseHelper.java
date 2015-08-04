@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.api.debug;
 
-import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 
 /**
@@ -31,8 +30,9 @@ public interface DebugResponseHelper {
    * @param request
    * @param applicationResponse
    * @param exception
+   * @param serverEnvironmentVaribles
+   * @param runtimeInformation
    * @return the debug response or the raw application response in case an exception occurred.
    */
-  ODataResponse createDebugResponse(ODataRequest request, ODataResponse applicationResponse, Exception exception);
-
+  ODataResponse createDebugResponse(DebugInformation debugInfo);
 }

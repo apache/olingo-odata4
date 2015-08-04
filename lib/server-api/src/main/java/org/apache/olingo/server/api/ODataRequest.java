@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,6 +39,7 @@ public class ODataRequest {
   private String rawODataPath;
   private String rawBaseUri;
   private String rawServiceResolutionUri;
+  private String protocol;
 
   /**
    * Gets the HTTP method.
@@ -203,4 +204,21 @@ public class ODataRequest {
   public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
     this.rawServiceResolutionUri = rawServiceResolutionUri;
   }
+
+  /**
+   * @return the protocol version used e.g. HTTP/1.1
+   */
+  public String getProtocol() {
+    return protocol;
+  }
+
+  /**
+   * Sets the HTTP protocol used
+   * @param protocol
+   * @see #getProtocol()
+   */
+  public void setProtocol(String protocol) {
+    this.protocol = protocol;
+  }
+
 }

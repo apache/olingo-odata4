@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.olingo.client.api.domain.ClientAnnotatable;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -33,7 +28,10 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 
-public class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, ClientValuable {
+import java.util.ArrayList;
+import java.util.List;
+
+public final class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, ClientValuable {
 
 
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
@@ -118,13 +116,36 @@ public class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, Cl
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    ClientPropertyImpl that = (ClientPropertyImpl) o;
+
+    if (annotations != null ? !annotations.equals(that.annotations) : that.annotations != null) {
+      return false;
+    }
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    if (value != null ? !value.equals(that.value) : that.value != null) {
+      return false;
+    }
+    return !(valuable != null ? !valuable.equals(that.valuable) : that.valuable != null);
+
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    int result = annotations != null ? annotations.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    result = 31 * result + (valuable != null ? valuable.hashCode() : 0);
+    return result;
   }
 
   @Override

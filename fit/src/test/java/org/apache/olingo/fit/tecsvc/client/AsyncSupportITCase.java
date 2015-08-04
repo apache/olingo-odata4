@@ -19,9 +19,15 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
+import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
+import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -29,6 +35,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -40,9 +47,11 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -196,6 +205,101 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     final ClientProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
     assertNull(property2.getPrimitiveValue());
+  }
+
+  @Test
+  @Ignore("mibo: Does currently not work as expected -> issue in ODataClient?")
+  public void getBatchRequest() throws Exception {
+    ODataClient client = getClient();
+    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+
+//    final BatchManager payload = request.payloadManager();
+
+    // create new request
+//    ODataEntityRequest<ClientEntity> getRequest = appendGetRequest(client, payload, "ESAllPrim", 32767, false);
+//    payload.addRequest(getRequest);
+
+    //
+    request.addCustomHeader(HttpHeader.PREFER,
+        "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+    ODataBatchableRequest getRequest = appendGetRequest(client, "ESAllPrim", 32767, false);
+    AsyncBatchRequestWrapper asyncRequest =
+        client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(request);
+    asyncRequest.addRetrieve(getRequest);
+    AsyncResponseWrapper<ODataBatchResponse> asyncResponse = asyncRequest.execute();
+
+//    Future<ODataBatchResponse> test = payload.getAsyncResponse();
+//    ODataBatchResponse res = payload.getResponse();
+//
+//    while(!test.isDone()) {
+//      System.out.println("Wait...");
+//      TimeUnit.SECONDS.sleep(1);
+//    }
+
+//    // Fetch result
+//    final ODataBatchResponse response = asyncResponse.getODataResponse();
+
+    waitTillDone(asyncResponse, 3);
+//    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+//    assertEquals("Accepted", response.getStatusMessage());
+
+    ODataResponse firstResponse = asyncResponse.getODataResponse();
+    assertEquals(200, firstResponse.getStatusCode());
+    assertEquals(2, firstResponse.getHeaderNames().size());
+    assertEquals("4.0", firstResponse.getHeader("OData-Version").iterator().next());
+
+    ResWrap<Entity> firWrap = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+        .toEntity(firstResponse.getRawResponse());
+    Entity entity = firWrap.getPayload();
+    assertEquals(32767, entity.getProperty("PropertyInt16").asPrimitive());
+    assertEquals("First Resource - positive values", entity.getProperty("PropertyString").asPrimitive());
+  }
+
+
+  /**
+   * Test delete with async prefer header but without async support from TecSvc.
+   */
+  @Test
+  public void deleteEntity() throws Exception {
+    ODataClient client = getClient();
+    URI uri = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(ES_ALL_PRIM)
+        .appendKeySegment(32767).build();
+
+    // asyncDeleteRequest async request
+    ODataRequest deleteRequest = getClient().getCUDRequestFactory().getDeleteRequest(uri)
+        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=5");
+    AsyncResponseWrapper<ODataResponse> asyncDeleteRequest =
+        client.getAsyncRequestFactory().getAsyncRequestWrapper(deleteRequest).execute();
+
+    waitTillDone(asyncDeleteRequest, 5);
+
+    ODataResponse response = asyncDeleteRequest.getODataResponse();
+    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+
+    // Check that the deleted entity is really gone.
+    // This check has to be in the same session in order to access the same data provider.
+    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
+    try {
+      entityRequest.execute();
+      fail("Expected exception not thrown!");
+    } catch (final ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+
+  private ODataEntityRequest<ClientEntity> appendGetRequest(final ODataClient client, final String segment,
+                                                            final Object key, final boolean isRelative)
+      throws URISyntaxException {
+
+    final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
+    targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
+    final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
+
+    ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    queryReq.setFormat(ContentType.JSON);
+    return queryReq;
   }
 
   private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {

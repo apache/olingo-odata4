@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api.debug;
 
 import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 
 /**
@@ -32,8 +31,11 @@ public interface DebugSupport {
   public static final String ODATA_DEBUG_HTML = "html";
   public static final String ODATA_DEBUG_DOWNLOAD = "download";
 
+  //TODO:JavaDoc
   void init(OData odata);
 
+  boolean isUserAuthorized();
+  
   /**
    * This method should create a debug response and deliver it back to the Olingo library. This method MUST NEVER throw
    * an exception.
@@ -43,7 +45,6 @@ public interface DebugSupport {
    * @param exception which has been thrown. Might be null in case there was no exception
    * @return a new debug response which will be send to the client
    */
-  ODataResponse createDebugResponse(String debugFormat, ODataRequest request, ODataResponse response,
-      Exception exception);
+  ODataResponse createDebugResponse(String debugFormat, DebugInformation debugInfo);
 
 }

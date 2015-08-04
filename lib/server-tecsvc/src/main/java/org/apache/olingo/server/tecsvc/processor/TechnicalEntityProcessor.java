@@ -147,7 +147,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     checkRequestFormat(requestFormat);
 
     //
-    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+    if (odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
       processor.init(odata, serviceMetadata);
@@ -161,7 +161,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     //
 
-
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
@@ -173,7 +172,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       dataProvider.setMedia(entity, odata.createFixedFormatDeserializer().binary(request.getBody()),
           requestFormat.toContentTypeString());
     } else {
-      final DeserializerResult deserializerResult = 
+      final DeserializerResult deserializerResult =
           odata.createDeserializer(requestFormat).entity(request.getBody(), edmEntityType);
       new RequestValidator(dataProvider, request.getRawBaseUri())
           .validate(edmEntitySet, deserializerResult.getEntity());
@@ -187,8 +186,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity);
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
-      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, expand, null)
-              .getContent());
+      response.setContent(serializeEntity(request, entity, edmEntitySet, edmEntityType, responseFormat, expand, null)
+          .getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
       response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     } else {
@@ -238,13 +237,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         request.getRawBaseUri()).validate(edmEntitySet, changedEntity);
 
     dataProvider.update(request.getRawBaseUri(), edmEntitySet, entity, changedEntity,
-            request.getMethod() == HttpMethod.PATCH, false);
+        request.getMethod() == HttpMethod.PATCH, false);
 
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, null, null)
-              .getContent());
+      response.setContent(serializeEntity(request, entity, edmEntitySet, edmEntityType, responseFormat)
+          .getContent());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
     } else {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -275,7 +274,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
-      response.setContent(serializeEntity(entity, edmEntitySet, edmEntityType, responseFormat, null, null)
+      response.setContent(serializeEntity(request, entity, edmEntitySet, edmEntityType, responseFormat)
           .getContent());
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
@@ -360,7 +359,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final UriResourceNavigation navigationProperty = getLastNavigation(uriInfo);
     ensureNavigationPropertyNotNull(navigationProperty);
     dataProvider.createReference(entity, navigationProperty.getProperty(), references.getEntityReferences().get(0),
-            request.getRawBaseUri());
+        request.getRawBaseUri());
 
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
@@ -371,7 +370,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final UriResourceNavigation lastNavigation = getLastNavigation(uriInfo);
     final IdOption idOption = uriInfo.getIdOption();
-    
+
     ensureNavigationPropertyNotNull(lastNavigation);
     if (lastNavigation.isCollection() && idOption == null) {
       throw new ODataApplicationException("Id system query option must be provided",
@@ -393,8 +392,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void readReferenceCollection(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
-      final ContentType requestedContentType) throws ODataApplicationException, ODataLibraryException {
+  public void readReferenceCollection(final ODataRequest request, final ODataResponse response,
+      final UriInfo uriInfo, final ContentType requestedContentType)
+      throws ODataApplicationException, ODataLibraryException {
     readEntityCollection(request, response, uriInfo, requestedContentType, true);
   }
 
@@ -402,7 +402,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType requestedFormat, final boolean isReference)
       throws ODataApplicationException, ODataLibraryException {
     //
-    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+    if (odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
       processor.init(odata, serviceMetadata);
@@ -440,7 +440,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final SerializerResult serializerResult = isReference ?
         serializeReference(entity, edmEntitySet, requestedFormat) :
-        serializeEntity(entitySerialization, edmEntitySet, edmEntityType, requestedFormat, expand, select);
+        serializeEntity(request, entitySerialization, edmEntitySet, edmEntityType, requestedFormat, expand, select);
 
     if (entity.getETag() != null) {
       response.setHeader(HttpHeader.ETAG, entity.getETag());
@@ -454,7 +454,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final UriInfo uriInfo, final ContentType requestedContentType, final boolean isReference)
       throws ODataApplicationException, ODataLibraryException {
     //
-    if(odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
+    if (odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
       processor.init(odata, serviceMetadata);
@@ -513,11 +513,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
     final CountOption countOption = uriInfo.getCountOption();
 
-    final String id = request.getRawBaseUri()+edmEntitySet.getName();
+    final String id = request.getRawBaseUri() + edmEntitySet.getName();
     // Serialize
-    final SerializerResult serializerResult = (isReference) ? 
+    final SerializerResult serializerResult = (isReference) ?
         serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
-        serializeEntityCollection(entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+        serializeEntityCollection(request, entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
             expand, select, countOption, id);
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -528,32 +528,33 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
   }
 
-  private SerializerResult serializeEntityCollection(final EntityCollection entityCollection,
-      final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType, final ContentType requestedFormat,
-      final ExpandOption expand, final SelectOption select, final CountOption countOption, String id)
-      throws ODataLibraryException {
-    
+  private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
+      entityCollection, final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType,
+      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
+      final CountOption countOption, String id) throws ODataLibraryException {
+
     return odata.createSerializer(requestedFormat).entityCollection(
         serviceMetadata,
         edmEntityType,
         entityCollection,
         EntityCollectionSerializerOptions.with()
             .contextURL(isODataMetadataNone(requestedFormat) ? null :
-                getContextUrl(edmEntitySet, edmEntityType, false, expand, select))
+                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
             .count(countOption)
             .expand(expand).select(select)
             .setId(id)
             .build());
   }
 
-  private SerializerResult serializeReferenceCollection(final EntityCollection entityCollection, 
-      final EdmEntitySet edmEntitySet, final ContentType requestedFormat, final CountOption countOption) 
-          throws ODataLibraryException {
+  private SerializerResult serializeReferenceCollection(final EntityCollection entityCollection,
+      final EdmEntitySet edmEntitySet, final ContentType requestedFormat, final CountOption countOption)
+      throws ODataLibraryException {
 
     return odata.createSerializer(requestedFormat)
-        .referenceCollection(serviceMetadata, edmEntitySet, entityCollection,ReferenceCollectionSerializerOptions.with()
-            .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
-            .count(countOption).build());
+        .referenceCollection(serviceMetadata, edmEntitySet, entityCollection,
+            ReferenceCollectionSerializerOptions.with()
+                .contextURL(ContextURL.with().asCollection().suffix(Suffix.REFERENCE).build())
+                .count(countOption).build());
   }
 
   private SerializerResult serializeReference(final Entity entity, final EdmEntitySet edmEntitySet,
@@ -561,26 +562,39 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     return odata.createSerializer(requestedFormat)
         .reference(serviceMetadata, edmEntitySet, entity, ReferenceSerializerOptions.with()
             .contextURL(ContextURL.with().suffix(Suffix.REFERENCE).build()).build());
-            
+
   }
 
-  private SerializerResult serializeEntity(final Entity entity,
-      final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType, final ContentType requestedFormat,
-      final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
+  private SerializerResult serializeEntity(final ODataRequest request, final Entity entity,
+      final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType,
+      final ContentType requestedFormat) throws ODataLibraryException {
+    return serializeEntity(request, entity, edmEntitySet, edmEntityType, requestedFormat, null, null);
+  }
+
+  private SerializerResult serializeEntity(final ODataRequest request, final Entity entity,
+      final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType,
+      final ContentType requestedFormat,
+      final ExpandOption expand, final SelectOption select)
+      throws ODataLibraryException {
+
+    ContextURL contextUrl = isODataMetadataNone(requestedFormat) ? null :
+        getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, true, expand, null);
     return odata.createSerializer(requestedFormat).entity(
         serviceMetadata,
         edmEntityType,
         entity,
         EntitySerializerOptions.with()
-            .contextURL(isODataMetadataNone(requestedFormat) ? null :
-                getContextUrl(edmEntitySet, edmEntityType, true, expand, select))
+            .contextURL(contextUrl)
             .expand(expand).select(select)
             .build());
   }
 
-  private ContextURL getContextUrl(final EdmEntitySet entitySet, final EdmEntityType entityType,
-      final boolean isSingleEntity, final ExpandOption expand, final SelectOption select) throws ODataLibraryException {
-    Builder builder = ContextURL.with();
+  private ContextURL getContextUrl(String rawODataPath, final EdmEntitySet entitySet, final EdmEntityType entityType,
+      final boolean isSingleEntity, final ExpandOption expand, final SelectOption select)
+      throws ODataLibraryException {
+    //
+    //
+    Builder builder = ContextURL.with().oDataPath(rawODataPath);
     builder = entitySet == null ?
         isSingleEntity ? builder.type(entityType) : builder.asCollection().type(entityType) :
         builder.entitySet(entitySet);
@@ -589,10 +603,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         .suffix(isSingleEntity && entitySet != null ? Suffix.ENTITY : null);
     return builder.build();
   }
-  
+
   private void ensureNavigationPropertyNotNull(final UriResourceNavigation navigationProperty)
       throws ODataApplicationException {
-    if(navigationProperty == null) {
+    if (navigationProperty == null) {
       throw new ODataApplicationException("Missing navigation segment", HttpStatusCode.BAD_REQUEST.getStatusCode(),
           Locale.ROOT);
     }

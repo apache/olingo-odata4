@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEnumValue;
@@ -29,7 +25,7 @@ import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 
-public class ClientValuableImpl implements ClientValuable {
+public final class ClientValuableImpl implements ClientValuable {
 
   private final ClientValue value;
 
@@ -94,18 +90,29 @@ public class ClientValuableImpl implements ClientValuable {
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    ClientValuableImpl that = (ClientValuableImpl) o;
+
+    return !(value != null ? !value.equals(that.value) : that.value != null);
+
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    return value != null ? value.hashCode() : 0;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "ClientValuableImpl{" +
+        "value=" + value +
+        '}';
   }
-
 }

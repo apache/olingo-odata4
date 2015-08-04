@@ -145,7 +145,7 @@ public class ODataImpl extends OData {
   public DebugResponseHelper createDebugResponseHelper(String debugFormat) {
     //TODO: What should we do with invalid formats?
     //TODO: Support more debug formats
-    return new DebugResponseHelperImpl();
+    return new DebugResponseHelperImpl(debugFormat);
   }
 
 }

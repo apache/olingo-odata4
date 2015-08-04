@@ -102,6 +102,21 @@ public interface ServiceHandler extends Processor {
       EntityResponse response) throws ODataLibraryException, ODataApplicationException;
 
   /**
+   * Update or create the entity object. If based on passed in entity object's key value,  if 
+   * entity exists update the entity, else create a new entity
+   * @param request
+   * @param entity - Entity to create or update
+   * @param merge - in the case of update, true to do merge operation with current entity, 
+   * false the entity needs to be replaced
+   * @param entityETag - previous entity tag if provided by the user. "*" means allow.
+   * @param response
+   * @throws ODataLibraryException
+   * @throws ODataApplicationException
+   */
+  void upsertEntity(DataRequest request, Entity entity, boolean merge, String entityETag,
+      EntityResponse response) throws ODataLibraryException, ODataApplicationException;
+
+  /**
    * Delete the Entity
    * @param request
    * @param entityETag - entity tag to match, if provided by the user. "*" means allow
