@@ -290,6 +290,7 @@ public class TomcatTestServer {
     private Context getContext() {
       if (baseContext == null) {
         baseContext = tomcat.addContext("/", baseDir.getAbsolutePath());
+        baseContext.setLoader(new WebappLoader(Thread.currentThread().getContextClassLoader()));
       }
       return baseContext;
     }

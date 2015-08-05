@@ -34,6 +34,32 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <properties>
+    <cobertura.skip>true</cobertura.skip>
+    <!-- exclude proxy tests by default -->
+    <exclude.regex>.*proxy.*</exclude.regex>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>build.fast</id>
+      <properties>
+        <pmd.skip>true</pmd.skip>
+        <rat.skip>true</rat.skip>
+        <checkstyle.skip>true</checkstyle.skip>
+        <exclude.regex>.*(proxy|client).*</exclude.regex>
+      </properties>
+    </profile>
+    <profile>
+      <id>build.quality</id>
+      <properties>
+        <cobertura.skip>false</cobertura.skip>
+        <!-- nothing excluded -->
+        <exclude.regex></exclude.regex>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
@@ -110,10 +136,6 @@
 
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
@@ -154,6 +176,9 @@
             <include>**/*ITCase.java</include>
             <include>**/*Test.java</include>
           </includes>
+          <excludes>
+            <exclude>%regex[${exclude.regex}]</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -176,6 +201,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
+              <skip>${cobertura.skip}</skip>
               <includeGroupIds>${project.groupId}</includeGroupIds>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
               <overWriteReleases>true</overWriteReleases>
@@ -189,6 +215,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <configuration>
+          <skip>${cobertura.skip}</skip>
           <instrumentation>
             <excludes>
               <exclude>org/apache/olingo/**/tecsvc/**/*.class</exclude>
@@ -207,6 +234,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <excludes>
+            <skip>${cobertura.skip}</skip>
             <exclude>**/*ITCase.java</exclude>
           </excludes>
         </configuration>
@@ -225,6 +253,7 @@
           </execution>
         </executions>
         <configuration>
+          <skip>${cobertura.skip}</skip>
           <mainClass>org.apache.olingo.fit.server.TomcatTestServer</mainClass>
         </configuration>
       </plugin>
@@ -246,9 +275,6 @@
           <webResources>
             <resource>
               <directory>${project.build.outputDirectory}</directory>
-              <!--<includes>
-                <include>META-INF/DEPENDENCIES*</include>
-              </includes>-->
             </resource>
           </webResources>
 
