@@ -102,9 +102,9 @@ public class PreferParser {
     }
     if (matcher.hitEnd()) {
       // Here we also have to keep already existing preferences.
-      for (final String key : partResult.keySet()) {
-        if (!result.containsKey(key)) {
-          result.put(key, partResult.get(key));
+      for (final Map.Entry<String, Preference> entry : partResult.entrySet()) {
+        if (!result.containsKey(entry.getKey())) {
+          result.put(entry.getKey(), entry.getValue());
         }
       }
     }

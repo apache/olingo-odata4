@@ -47,7 +47,6 @@ public class HeaderTest {
 
     assertNull(header.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(0, header.getHeaders(HttpHeader.CONTENT_TYPE).size());
-    assertEquals("", header.getHeaderNotNull(HttpHeader.CONTENT_TYPE));
   }
 
   @Test

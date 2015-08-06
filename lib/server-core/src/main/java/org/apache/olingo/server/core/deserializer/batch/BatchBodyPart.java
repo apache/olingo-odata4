@@ -87,7 +87,7 @@ public class BatchBodyPart implements BatchPart {
   private List<List<Line>> splitChangeSet(List<Line> remainingMessage) throws BatchDeserializerException {
 
     final HeaderField contentTypeField = headers.getHeaderField(HttpHeader.CONTENT_TYPE);
-    final String changeSetBoundary = BatchParserCommon.getBoundary(contentTypeField.getValueNotNull(),
+    final String changeSetBoundary = BatchParserCommon.getBoundary(contentTypeField.getValue(),
         contentTypeField.getLineNumber());
     validateChangeSetBoundary(changeSetBoundary, headers);
 

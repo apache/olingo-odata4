@@ -61,8 +61,8 @@ public class AsyncResponseSerializer {
                                     final ByteArrayOutputStream buffer) throws IOException {
     final Map<String, String> header = response.getHeaders();
 
-    for (final String key: header.keySet()) {
-      appendHeader(key, header.get(key), buffer);
+    for (final Map.Entry<String, String> entry: header.entrySet()) {
+      appendHeader(entry.getKey(), entry.getValue(), buffer);
     }
   }
 

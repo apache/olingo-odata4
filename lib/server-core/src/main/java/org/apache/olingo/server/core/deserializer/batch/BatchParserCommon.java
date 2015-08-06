@@ -46,9 +46,9 @@ public class BatchParserCommon {
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
     final ContentType type = getContentType(contentType, ContentType.MULTIPART_MIXED, line);
     final Map<String, String> parameters = type.getParameters();
-    for (final String parameterName : parameters.keySet()) {
-      if (BOUNDARY.equalsIgnoreCase(parameterName)) {
-        final String boundary = parameters.get(parameterName).trim();
+    for (final Map.Entry<String, String> entries : parameters.entrySet()) {
+      if (BOUNDARY.equalsIgnoreCase(entries.getKey())) {
+        final String boundary = entries.getValue().trim();
         if (boundary.matches(PATTERN_BOUNDARY)) {
           return trimQuotes(boundary);
         } else {
@@ -63,7 +63,7 @@ public class BatchParserCommon {
 
   public static ContentType getContentType(final String contentType, final ContentType expected, final int line)
       throws BatchDeserializerException {
-    ContentType type = null;
+    ContentType type;
     try {
       type = ContentType.create(contentType);
     } catch (final IllegalArgumentException e) {
@@ -81,11 +81,6 @@ public class BatchParserCommon {
       throw new BatchDeserializerException("Content type is not the expected content type",
           BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, expected.toContentTypeString());
     }
-  }
-
-  public static String removeEndingSlash(final String content) {
-    String newContent = content.trim();
-    return newContent.endsWith("/") ? newContent.substring(0, newContent.length() - 1) : newContent;
   }
 
   private static String trimQuotes(final String boundary) {

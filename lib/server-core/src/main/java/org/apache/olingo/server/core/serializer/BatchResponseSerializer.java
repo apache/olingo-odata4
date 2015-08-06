@@ -105,7 +105,7 @@ public class BatchResponseSerializer {
 
   private void appendChangeSetHeader(final BodyBuilder builder, final String changeSetBoundary) {
     appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary="
-        + changeSetBoundary, builder);
+            + changeSetBoundary, builder);
   }
 
   private void appendHeader(final String name, final String value, final BodyBuilder builder) {
@@ -121,18 +121,26 @@ public class BatchResponseSerializer {
         .append(SP)
         .append(response.getStatusCode())
         .append(SP)
-        .append(HttpStatusCode.fromStatusCode(response.getStatusCode()).toString())
+        .append(getStatusCodeInfo(response))
         .append(CRLF);
+  }
+
+  private String getStatusCodeInfo(ODataResponse response) {
+    HttpStatusCode status = HttpStatusCode.fromStatusCode(response.getStatusCode());
+    if(status == null) {
+      throw new ODataRuntimeException("Invalid status code in response '" + response.getStatusCode() + "'");
+    }
+    return status.getInfo();
   }
 
   private void appendResponseHeader(final ODataResponse response, final int contentLength,
       final BodyBuilder builder) {
     final Map<String, String> header = response.getHeaders();
 
-    for (final String key : header.keySet()) {
+    for (final Map.Entry<String, String> entry : header.entrySet()) {
       // Requests do never has a content id header
-      if (!key.equalsIgnoreCase(HttpHeader.CONTENT_ID)) {
-        appendHeader(key, header.get(key), builder);
+      if (!entry.getKey().equalsIgnoreCase(HttpHeader.CONTENT_ID)) {
+        appendHeader(entry.getKey(), entry.getValue(), builder);
       }
     }
 

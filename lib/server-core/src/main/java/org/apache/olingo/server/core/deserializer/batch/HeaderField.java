@@ -59,15 +59,9 @@ public class HeaderField implements Cloneable {
     return result.toString();
   }
 
-  public String getValueNotNull() {
-    final String value = getValue();
-
-    return (value == null) ? "" : value;
-  }
-
   @Override
   public HeaderField clone() {
-    List<String> newValues = new ArrayList<String>();
+    List<String> newValues = new ArrayList<String>(values.size());
     newValues.addAll(values);
 
     return new HeaderField(fieldName, newValues, lineNumber);
