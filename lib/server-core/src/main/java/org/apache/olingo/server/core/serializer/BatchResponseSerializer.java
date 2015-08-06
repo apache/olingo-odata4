@@ -201,7 +201,8 @@ public class BatchResponseSerializer {
       }
       if(buffer.remaining() < b.length) {
         buffer.flip();
-        ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+        int newSize = (buffer.limit() * 2) + b.length;
+        ByteBuffer tmp = ByteBuffer.allocate(newSize);
         tmp.put(buffer);
         buffer = tmp;
       }

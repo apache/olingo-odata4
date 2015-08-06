@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -401,6 +402,42 @@ public class BatchResponseSerializerTest {
   }
 
   @Test
+  public void testBigResponse() throws Exception {
+    List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+    String bigData = generateData(10000);
+    response.setContent(IOUtils.toInputStream(bigData));
+
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(new ODataResponsePart(responses, false));
+
+    final BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+
+    assertNotNull(content);
+    final BatchLineReader reader =
+            new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(10, body.size());
+    assertTrue(body.get(line++).contains("--batch_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/json" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 10000" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(bigData + CRLF, body.get(line++));
+    assertTrue(body.get(line++).contains("--batch_"));
+  }
+
+  @Test
   public void testChangeSetResponse() throws Exception {
     List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
     ODataResponse response = new ODataResponse();
@@ -437,5 +474,20 @@ public class BatchResponseSerializerTest {
     assertEquals(CRLF, body.get(line++));
     assertTrue(body.get(line++).contains("--changeset_"));
     assertTrue(body.get(line++).contains("--batch_"));
+  }
+
+  /**
+   * Generates a string with given length containing random upper case characters ([A-Z]).
+   * @param len length of the generated string
+   * @return random upper case characters ([A-Z])
+   */
+  public static String generateData(final int len) {
+    Random random = new Random();
+    StringBuilder b = new StringBuilder(len);
+    for (int j = 0; j < len; j++) {
+      final char c = (char) ('A' + random.nextInt('Z' - 'A' + 1));
+      b.append(c);
+    }
+    return b.toString();
   }
 }
