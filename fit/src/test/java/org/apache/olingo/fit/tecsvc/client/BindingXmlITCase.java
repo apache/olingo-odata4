@@ -22,21 +22,14 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Ignore;
 
-@Ignore
-/**
- * I believe BindingITCase was not written correctly, as they seem to use navigation property and 
- * any other property interchangeably. Once we fix that then we can remove the ignore
- */
 public class BindingXmlITCase extends BindingITCase {
 
   @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
+  protected EdmEnabledODataClient getClient() {
+    EdmEnabledODataClient odata = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
     odata.getConfiguration().setDefaultPubFormat(ContentType.APPLICATION_ATOM_XML);
     return odata;
   }  

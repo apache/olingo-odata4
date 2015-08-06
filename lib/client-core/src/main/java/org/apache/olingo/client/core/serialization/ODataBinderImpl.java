@@ -90,6 +90,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
@@ -713,11 +714,22 @@ public class ODataBinderImpl implements ODataBinder {
     } else {
       if (propertyType == null || propertyType.equals(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString())) {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
+      } else if(isPrimiteveType(typeName)) {
+        // Inheritance is not allowed for primitve types, so we use the type given by the EDM
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
       } else {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();
       }
     }
     return typeInfo;
+  }
+
+  private boolean isPrimiteveType(final FullQualifiedName typeName) {
+    try {
+      return EdmPrimitiveTypeKind.valueOfFQN(typeName) != null;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 
   protected ClientProperty getODataProperty(final EdmType type, final Property resource) {
