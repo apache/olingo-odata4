@@ -77,7 +77,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
       // navigation property: many-to-one, null not allowed (product must have a category)
       CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Category")
-          .setType(ET_CATEGORY_FQN).setNullable(false).setPartner("RelProducts");
+          .setType(ET_CATEGORY_FQN).setNullable(false).setPartner("Products");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);
 
@@ -100,7 +100,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       propertyRef.setName("ID");
 
       // navigation property: one-to-many
-      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("RelProducts")
+      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Products")
           .setType(ET_PRODUCT_FQN).setCollection(true).setPartner("Category");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);
@@ -147,7 +147,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
         // navigation
         CsdlNavigationPropertyBinding navPropBinding = new CsdlNavigationPropertyBinding();
         navPropBinding.setTarget("Products"); // the target entity set, where the navigation property points to
-        navPropBinding.setPath("RelProducts"); // the path from entity type to navigation property
+        navPropBinding.setPath("Products"); // the path from entity type to navigation property
         List<CsdlNavigationPropertyBinding> navPropBindingList = new ArrayList<CsdlNavigationPropertyBinding>();
         navPropBindingList.add(navPropBinding);
         entitySet.setNavigationPropertyBindings(navPropBindingList);
