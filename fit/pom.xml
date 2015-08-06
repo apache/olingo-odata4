@@ -136,6 +136,10 @@
 
     <dependency>
       <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
@@ -234,7 +238,6 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <excludes>
-            <skip>${cobertura.skip}</skip>
             <exclude>**/*ITCase.java</exclude>
           </excludes>
         </configuration>
@@ -253,7 +256,6 @@
           </execution>
         </executions>
         <configuration>
-          <skip>${cobertura.skip}</skip>
           <mainClass>org.apache.olingo.fit.server.TomcatTestServer</mainClass>
         </configuration>
       </plugin>
@@ -275,6 +277,9 @@
           <webResources>
             <resource>
               <directory>${project.build.outputDirectory}</directory>
+              <!--<includes>
+                <include>META-INF/DEPENDENCIES*</include>
+              </includes>-->
             </resource>
           </webResources>
 
