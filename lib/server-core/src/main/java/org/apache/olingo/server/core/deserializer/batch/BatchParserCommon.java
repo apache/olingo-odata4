@@ -44,7 +44,7 @@ public class BatchParserCommon {
   public static final String BINARY_ENCODING = "binary";
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
-    final ContentType type = getContentType(contentType, ContentType.MULTIPART_MIXED, line);
+    final ContentType type = parseContentType(contentType, ContentType.MULTIPART_MIXED, line);
     final Map<String, String> parameters = type.getParameters();
     for (final Map.Entry<String, String> entries : parameters.entrySet()) {
       if (BOUNDARY.equalsIgnoreCase(entries.getKey())) {
@@ -61,7 +61,18 @@ public class BatchParserCommon {
         BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER, Integer.toString(line));
   }
 
-  public static ContentType getContentType(final String contentType, final ContentType expected, final int line)
+  /**
+   * Get the content type based on <code>contentType</code> parameter.
+   * If this content type is not compatible to the expected ContentType a
+   * BatchDeserializerException is thrown.
+   *
+   * @param contentType content type string which is parsed
+   * @param expected content type to which the parsed must be compatible
+   * @param line parsed line
+   * @return the parsed content type or if not compatible or parseable an exception is thrown (never returns null)
+   * @throws BatchDeserializerException
+   */
+  public static ContentType parseContentType(final String contentType, final ContentType expected, final int line)
       throws BatchDeserializerException {
     ContentType type;
     try {

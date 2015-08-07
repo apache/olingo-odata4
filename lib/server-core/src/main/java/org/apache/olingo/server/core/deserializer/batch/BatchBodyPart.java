@@ -113,7 +113,7 @@ public class BatchBodyPart implements BatchPart {
 
   private boolean isContentTypeMultiPartMixed(final String contentType) {
     try {
-      BatchParserCommon.getContentType(contentType, ContentType.MULTIPART_MIXED, 0);
+      BatchParserCommon.parseContentType(contentType, ContentType.MULTIPART_MIXED, 0);
       return true;
     } catch (final BatchDeserializerException e) {
       return false;

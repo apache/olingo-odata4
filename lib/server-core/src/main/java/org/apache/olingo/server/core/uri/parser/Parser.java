@@ -465,22 +465,23 @@ public class Parser {
     boolean first = true;
     System.out.println("input: " + input);
     String nL = "\n";
-    String out = "[" + nL;
+    StringBuilder out = new StringBuilder("[").append(nL);
     for (Token token : list) {
       if (!first) {
-        out += ",";
+        out.append(",");
         first = false;
       }
       int index = token.getType();
+      out.append("\"").append(token.getText()).append("\"").append("     ");
       if (index != -1) {
-        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
+        out.append(UriLexer.tokenNames[index]);
       } else {
-        out += "\"" + token.getText() + "\"" + "     " + index + nL;
+        out.append(index);
       }
+        out.append(nL);
     }
-    out += ']';
-    System.out.println("tokens: " + out);
-    return;
+    out.append(']');
+    System.out.println("tokens: " + out.toString());
   }
 
 }

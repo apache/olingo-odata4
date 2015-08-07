@@ -57,7 +57,7 @@ public class BatchHandler {
 
   private void validateContentType(final ODataRequest request) throws BatchDeserializerException {
     // This method does validation.
-    BatchParserCommon.getContentType(request.getHeader(HttpHeader.CONTENT_TYPE), ContentType.MULTIPART_MIXED, 0);
+    BatchParserCommon.parseContentType(request.getHeader(HttpHeader.CONTENT_TYPE), ContentType.MULTIPART_MIXED, 0);
   }
 
   private void validateHttpMethod(final ODataRequest request) throws BatchDeserializerException {

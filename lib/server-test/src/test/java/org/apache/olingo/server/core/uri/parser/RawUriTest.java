@@ -16,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri;
+package org.apache.olingo.server.core.uri.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.server.core.uri.parser.RawUri;
-import org.apache.olingo.server.core.uri.parser.UriDecoder;
-import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.junit.Test;
 
 public class RawUriTest {
@@ -126,12 +124,29 @@ public class RawUriTest {
 
   @Test
   public void testSplit() {
-    UriDecoder.split("", '/');
-    UriDecoder.split("/", '/');
-    UriDecoder.split("a", '/');
-    UriDecoder.split("a/", '/');
-    UriDecoder.split("/a", '/');
-    UriDecoder.split("a/a", '/');
+    assertEquals(Arrays.asList(""), UriDecoder.split("", '/'));
+    assertEquals(Arrays.asList("", ""), UriDecoder.split("/", '/'));
+    assertEquals(Arrays.asList("a"), UriDecoder.split("a", '/'));
+    assertEquals(Arrays.asList("a", ""), UriDecoder.split("a/", '/'));
+    assertEquals(Arrays.asList("", "a"), UriDecoder.split("/a", '/'));
+    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("a/a", '/'));
+    assertEquals(Arrays.asList("", "a", "a"), UriDecoder.split("/a/a", '/'));
+    // with skip
+    assertTrue(UriDecoder.split("", '/', true).isEmpty());
+    assertTrue(UriDecoder.split("/", '/', true).isEmpty());
+    assertEquals(Arrays.asList("a"), UriDecoder.split("a", '/', true));
+    assertEquals(Arrays.asList("a"), UriDecoder.split("a/", '/', true));
+    assertEquals(Arrays.asList("a"), UriDecoder.split("/a", '/', true));
+    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("a/a", '/', true));
+    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("/a/a", '/', true));
+    // with skip
+    assertTrue(UriDecoder.splitSkipEmpty("", '/').isEmpty());
+    assertTrue(UriDecoder.splitSkipEmpty("/", '/').isEmpty());
+    assertEquals(Arrays.asList("a"), UriDecoder.splitSkipEmpty("a", '/'));
+    assertEquals(Arrays.asList("a"), UriDecoder.splitSkipEmpty("a/", '/'));
+    assertEquals(Arrays.asList("a"), UriDecoder.splitSkipEmpty("/a", '/'));
+    assertEquals(Arrays.asList("a", "a"), UriDecoder.splitSkipEmpty("a/a", '/'));
+    assertEquals(Arrays.asList("a", "a"), UriDecoder.splitSkipEmpty("/a/a", '/'));
   }
 
   private void checkPath(final RawUri rawUri, final String path, final List<String> list) {

@@ -54,23 +54,23 @@ public class ExpandItemImpl implements ExpandItem {
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
 
-    if (sysItem.getKind() == SystemQueryOptionKind.EXPAND) {
+    if (sysItem instanceof ExpandOptionImpl) {
       expandOption = (ExpandOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.FILTER) {
+    } else if (sysItem instanceof FilterOptionImpl) {
       filterOption = (FilterOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.COUNT) {
+    } else if (sysItem instanceof CountOptionImpl) {
       inlineCountOption = (CountOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.ORDERBY) {
+    } else if (sysItem instanceof OrderByOptionImpl) {
       orderByOption = (OrderByOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SEARCH) {
+    } else if (sysItem instanceof SearchOptionImpl) {
       searchOption = (SearchOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SELECT) {
+    } else if (sysItem instanceof SelectOptionImpl) {
       selectOption = (SelectOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SKIP) {
+    } else if (sysItem instanceof SkipOptionImpl) {
       skipOption = (SkipOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.TOP) {
+    } else if (sysItem instanceof TopOptionImpl) {
       topOption = (TopOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.LEVELS) {
+    } else if (sysItem instanceof LevelsExpandOption) {
       levelsExpandOption = (LevelsExpandOption) sysItem;
     }
     return this;

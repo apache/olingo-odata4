@@ -227,14 +227,14 @@ public class UriInfoImpl implements UriInfo {
       if (item instanceof SystemQueryOptionImpl) {
         setSystemQueryOption((SystemQueryOptionImpl) item);
       } else if (item instanceof CustomQueryOptionImpl) {
-        addCustomQueryOption(item);
+        addCustomQueryOption((CustomQueryOptionImpl) item);
       }
     }
     return this;
   }
 
-  public void addCustomQueryOption(final QueryOptionImpl item) {
-    customQueryOptions.add((CustomQueryOptionImpl) item);
+  public void addCustomQueryOption(final CustomQueryOptionImpl item) {
+    customQueryOptions.add(item);
     if (item.getName().startsWith("@")) {
       aliasToValue.put(item.getName(), item.getText());
     }

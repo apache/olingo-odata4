@@ -360,13 +360,13 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         // get function from function import
         EdmFunction function = edmFunctionImport.getUnboundFunction(names);
         if (function == null) {
-          String tmp = "";
+          StringBuilder tmp = new StringBuilder();
           for (String name : names) {
-            tmp += (tmp.length() != 0 ? "," : "") + name;
+            tmp.append((tmp.length() != 0 ? "," : "")).append(name);
           }
           throw wrap(new UriParserSemanticException("Function of functionimport '" + edmFunctionImport.getName()
-              + "' with parameters [" + tmp + "] not found",
-              UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, edmFunctionImport.getName(), tmp));
+              + "' with parameters [" + tmp.toString() + "] not found",
+              UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, edmFunctionImport.getName(), tmp.toString()));
         }
 
         uriResource.setFunction(edmFunctionImport.getUnboundFunction(names));

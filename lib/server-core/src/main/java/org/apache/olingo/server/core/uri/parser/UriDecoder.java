@@ -59,15 +59,13 @@ public class UriDecoder {
 
   private static List<RawUri.QueryOption> splitOptions(final String queryOptionString) {
     if (queryOptionString == null) {
-      return Collections.<RawUri.QueryOption> emptyList();
+      return Collections.emptyList();
     }
 
     List<RawUri.QueryOption> queryOptionList = new ArrayList<RawUri.QueryOption>();
-    for (String option : split(queryOptionString, '&')) {
-      if (option.length() != 0) {
-        final List<String> pair = splitFirst(option, '=');
-        queryOptionList.add(new RawUri.QueryOption(pair.get(0), pair.get(1)));
-      }
+    for (String option : splitSkipEmpty(queryOptionString, '&')) {
+      final List<String> pair = splitFirst(option, '=');
+      queryOptionList.add(new RawUri.QueryOption(pair.get(0), pair.get(1)));
     }
     return queryOptionList;
   }
@@ -82,29 +80,67 @@ public class UriDecoder {
   }
 
   private static List<String> splitPath(final String path, final int skipSegments) {
-    List<String> list = split(path, '/');
-
-    // Empty path segments of the resource path are removed.
-    while (list.remove("")) {
-      // this place intentionally left blank
-    }
+    List<String> list = splitSkipEmpty(path, '/');
 
     return skipSegments > 0 ? list.subList(skipSegments, list.size()) : list;
   }
 
-  public static List<String> split(final String input, final char c) {
+  static List<String> split(final String input, final char c) {
+    return split(input, c, false);
+  }
+
+  static List<String> splitSkipEmpty(final String input, final char c) {
+    if(input.isEmpty() || input.length() == 1 && input.charAt(0) == c) {
+      return Collections.emptyList();
+    }
 
     List<String> list = new LinkedList<String>();
 
     int start = 0;
-    int end = -1;
+    int end;
 
     while ((end = input.indexOf(c, start)) >= 0) {
-      list.add(input.substring(start, end));
+      if(start != end) {
+        list.add(input.substring(start, end));
+      }
       start = end + 1;
     }
 
-    list.add(input.substring(start));
+    if(input.charAt(input.length()-1) != c) {
+      list.add(input.substring(start));
+    }
+
+    return list;
+  }
+
+  static List<String> split(final String input, final char c, boolean skipEmpty) {
+    if(skipEmpty && (input.isEmpty() || input.length() == 1 && input.charAt(0) == c)) {
+      return Collections.emptyList();
+    }
+
+    List<String> list = new LinkedList<String>();
+
+    int start = 0;
+    int end;
+
+    while ((end = input.indexOf(c, start)) >= 0) {
+      if(skipEmpty) {
+        if(start != end) {
+          list.add(input.substring(start, end));
+        }
+      } else {
+        list.add(input.substring(start, end));
+      }
+      start = end + 1;
+    }
+
+    if(skipEmpty) {
+      if(input.charAt(input.length()-1) != c) {
+        list.add(input.substring(start));
+      }
+    } else {
+      list.add(input.substring(start));
+    }
 
     return list;
   }

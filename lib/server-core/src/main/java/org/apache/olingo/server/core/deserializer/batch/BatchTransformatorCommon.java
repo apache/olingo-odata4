@@ -35,10 +35,7 @@ public class BatchTransformatorCommon {
       throw new BatchDeserializerException("Missing content type", MessageKeys.MISSING_CONTENT_TYPE,
           Integer.toString(headers.getLineNumber()));
     }
-    if (BatchParserCommon.getContentType(contentTypes.get(0), expected, headers.getLineNumber()) == null) {
-      throw new BatchDeserializerException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE,
-          expected.toContentTypeString());
-    }
+    BatchParserCommon.parseContentType(contentTypes.get(0), expected, headers.getLineNumber());
   }
 
   public static void validateContentTransferEncoding(final Header headers) throws BatchDeserializerException {
