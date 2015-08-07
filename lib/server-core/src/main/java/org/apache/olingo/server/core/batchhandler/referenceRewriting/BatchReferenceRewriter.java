@@ -98,7 +98,7 @@ public class BatchReferenceRewriter {
   }
 
   private String removeSlash(final String rawODataPath, final boolean first) {
-    final int indexOfSlash = rawODataPath.indexOf("/");
+    final int indexOfSlash = rawODataPath.indexOf('/');
     if (first) {
       return (indexOfSlash == 0) ? rawODataPath.substring(1) : rawODataPath;
     } else {

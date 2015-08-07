@@ -85,10 +85,13 @@ public class UriDecoder {
     return skipSegments > 0 ? list.subList(skipSegments, list.size()) : list;
   }
 
-  static List<String> split(final String input, final char c) {
-    return split(input, c, false);
-  }
-
+  /**
+   * Split the input string at given character and drop all empty elements.
+   *
+   * @param input string to split
+   * @param c character at which to split
+   * @return list of elements (can be empty)
+   */
   static List<String> splitSkipEmpty(final String input, final char c) {
     if(input.isEmpty() || input.length() == 1 && input.charAt(0) == c) {
       return Collections.emptyList();
@@ -107,38 +110,6 @@ public class UriDecoder {
     }
 
     if(input.charAt(input.length()-1) != c) {
-      list.add(input.substring(start));
-    }
-
-    return list;
-  }
-
-  static List<String> split(final String input, final char c, boolean skipEmpty) {
-    if(skipEmpty && (input.isEmpty() || input.length() == 1 && input.charAt(0) == c)) {
-      return Collections.emptyList();
-    }
-
-    List<String> list = new LinkedList<String>();
-
-    int start = 0;
-    int end;
-
-    while ((end = input.indexOf(c, start)) >= 0) {
-      if(skipEmpty) {
-        if(start != end) {
-          list.add(input.substring(start, end));
-        }
-      } else {
-        list.add(input.substring(start, end));
-      }
-      start = end + 1;
-    }
-
-    if(skipEmpty) {
-      if(input.charAt(input.length()-1) != c) {
-        list.add(input.substring(start));
-      }
-    } else {
       list.add(input.substring(start));
     }
 

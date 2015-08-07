@@ -124,22 +124,6 @@ public class RawUriTest {
 
   @Test
   public void testSplit() {
-    assertEquals(Arrays.asList(""), UriDecoder.split("", '/'));
-    assertEquals(Arrays.asList("", ""), UriDecoder.split("/", '/'));
-    assertEquals(Arrays.asList("a"), UriDecoder.split("a", '/'));
-    assertEquals(Arrays.asList("a", ""), UriDecoder.split("a/", '/'));
-    assertEquals(Arrays.asList("", "a"), UriDecoder.split("/a", '/'));
-    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("a/a", '/'));
-    assertEquals(Arrays.asList("", "a", "a"), UriDecoder.split("/a/a", '/'));
-    // with skip
-    assertTrue(UriDecoder.split("", '/', true).isEmpty());
-    assertTrue(UriDecoder.split("/", '/', true).isEmpty());
-    assertEquals(Arrays.asList("a"), UriDecoder.split("a", '/', true));
-    assertEquals(Arrays.asList("a"), UriDecoder.split("a/", '/', true));
-    assertEquals(Arrays.asList("a"), UriDecoder.split("/a", '/', true));
-    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("a/a", '/', true));
-    assertEquals(Arrays.asList("a", "a"), UriDecoder.split("/a/a", '/', true));
-    // with skip
     assertTrue(UriDecoder.splitSkipEmpty("", '/').isEmpty());
     assertTrue(UriDecoder.splitSkipEmpty("/", '/').isEmpty());
     assertEquals(Arrays.asList("a"), UriDecoder.splitSkipEmpty("a", '/'));

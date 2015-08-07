@@ -303,9 +303,9 @@ public final class ContentType {
 
     sb.append(type).append(TypeUtil.TYPE_SUBTYPE_SEPARATOR).append(subtype);
 
-    for (String key : parameters.keySet()) {
-      sb.append(TypeUtil.PARAMETER_SEPARATOR).append(key)
-          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(parameters.get(key));
+    for (Entry<String, String> entry : parameters.entrySet()) {
+      sb.append(TypeUtil.PARAMETER_SEPARATOR).append(entry.getKey())
+          .append(TypeUtil.PARAMETER_KEY_VALUE_SEPARATOR).append(entry.getValue());
     }
     return sb.toString();
   }

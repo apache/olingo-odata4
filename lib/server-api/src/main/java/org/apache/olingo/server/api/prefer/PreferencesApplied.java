@@ -50,23 +50,24 @@ public class PreferencesApplied {
   /** Returns a string representation that can be used as value of a Preference-Applied HTTP response header. */
   public String toValueString() {
     StringBuilder result = new StringBuilder();
-    for (final String name : applied.keySet()) {
+    for (final Map.Entry<String, String> entry : applied.entrySet()) {
       if (result.length() > 0) {
         result.append(',').append(' ');
       }
-      result.append(name);
-      if (applied.get(name) != null) {
-        final boolean safe = ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString().equals(name)
-            || ODataPreferenceNames.CALLBACK.toString().equals(name)
-            || ODataPreferenceNames.CONTINUE_ON_ERROR.toString().equals(name)
-            || ODataPreferenceNames.MAX_PAGE_SIZE.toString().equals(name)
-            || ODataPreferenceNames.TRACK_CHANGES.toString().equals(name)
-            || ODataPreferenceNames.RETURN.toString().equals(name)
-            || ODataPreferenceNames.RESPOND_ASYNC.toString().equals(name)
-            || ODataPreferenceNames.WAIT.toString().equals(name);
+      final String key = entry.getKey();
+      result.append(key);
+      if (entry.getValue() != null) {
+        final boolean safe = ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString().equals(key)
+            || ODataPreferenceNames.CALLBACK.toString().equals(key)
+            || ODataPreferenceNames.CONTINUE_ON_ERROR.toString().equals(key)
+            || ODataPreferenceNames.MAX_PAGE_SIZE.toString().equals(key)
+            || ODataPreferenceNames.TRACK_CHANGES.toString().equals(key)
+            || ODataPreferenceNames.RETURN.toString().equals(key)
+            || ODataPreferenceNames.RESPOND_ASYNC.toString().equals(key)
+            || ODataPreferenceNames.WAIT.toString().equals(key);
         result.append('=')
             .append(safe ? "" : '"')
-            .append(applied.get(name).replaceAll("\\\\|\"", "\\\\$0"))
+            .append(entry.getValue().replaceAll("\\\\|\"", "\\\\$0"))
             .append(safe ? "" : '"');
       }
     }

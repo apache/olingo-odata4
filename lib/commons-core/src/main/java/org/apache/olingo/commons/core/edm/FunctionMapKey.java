@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public class FunctionMapKey {
+public final class FunctionMapKey {
 
   private final FullQualifiedName functionName;
 
@@ -54,29 +54,11 @@ public class FunctionMapKey {
 
   @Override
   public int hashCode() {
-    String hash = functionName.toString();
-
-    if (bindingParameterTypeName != null) {
-      hash = hash + bindingParameterTypeName.toString();
-    } else {
-      hash = hash + "typeNull";
-    }
-
-    if (isBindingParameterCollection != null) {
-      hash = hash + isBindingParameterCollection.toString();
-    } else {
-      hash = hash + "collectionNull";
-    }
-
-    if (!parameterNames.isEmpty()) {
-      for (String name : parameterNames) {
-        hash = hash + name;
-      }
-    } else {
-      hash = hash + "parameterNamesEmpty";
-    }
-
-    return hash.hashCode();
+    int result = functionName != null ? functionName.hashCode() : 0;
+    result = 31 * result + (bindingParameterTypeName != null ? bindingParameterTypeName.hashCode() : 0);
+    result = 31 * result + (isBindingParameterCollection != null ? isBindingParameterCollection.hashCode() : 0);
+    result = 31 * result + parameterNames.hashCode();
+    return result;
   }
 
   @Override
@@ -97,9 +79,7 @@ public class FunctionMapKey {
         || (isBindingParameterCollection != null
         && isBindingParameterCollection.equals(other.isBindingParameterCollection))) {
 
-      if (parameterNames == null && other.parameterNames == null) {
-        return true;
-      } else if (parameterNames.size() == other.parameterNames.size()) {
+      if (parameterNames.size() == other.parameterNames.size()) {
         for (String name : parameterNames) {
           if (!other.parameterNames.contains(name)) {
             return false;

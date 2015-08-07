@@ -26,9 +26,9 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 
 public class BatchBodyPart implements BatchPart {
-  final private String boundary;
-  final private boolean isStrict;
-  List<Line> remainingMessage = new LinkedList<Line>();
+  private final String boundary;
+  private final boolean isStrict;
+  private final List<Line> remainingMessage = new LinkedList<Line>();
 
   private Header headers;
   private boolean isChangeSet;
@@ -58,13 +58,13 @@ public class BatchBodyPart implements BatchPart {
           Integer.toString(headers.getLineNumber()));
     }
 
-    boolean isChangeSet = false;
+    boolean changeSet = false;
     for (String contentType : contentTypes) {
       if (isContentTypeMultiPartMixed(contentType)) {
-        isChangeSet = true;
+        changeSet = true;
       }
     }
-    return isChangeSet;
+    return changeSet;
   }
 
   private List<BatchQueryOperation> consumeRequest(final List<Line> remainingMessage)

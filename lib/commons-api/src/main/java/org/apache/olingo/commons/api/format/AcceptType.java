@@ -164,8 +164,8 @@ public class AcceptType {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append(type).append('/').append(subtype);
-    for (final String key : parameters.keySet()) {
-      result.append(';').append(key).append('=').append(parameters.get(key));
+    for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+      result.append(';').append(entry.getKey()).append('=').append(entry.getValue());
     }
 
     return result.toString();
@@ -179,7 +179,7 @@ public class AcceptType {
    * <li>the subtype must be '*' or equal to the content-type's subtype,</li>
    * <li>all parameters must have the same value as in the content-type's parameter map.</li>
    * </ul></p>
-   * @param contentType
+   * @param contentType content type against which is matched
    * @return whether this accept type matches the given content type
    */
   public boolean matches(final ContentType contentType) {
@@ -196,10 +196,10 @@ public class AcceptType {
       return false;
     }
     Map<String, String> compareParameters = contentType.getParameters();
-    for (final String key : parameters.keySet()) {
-      if (compareParameters.containsKey(key) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
-        if (!parameters.get(key).equalsIgnoreCase(compareParameters.get(key))
-            && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
+    for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+      if (compareParameters.containsKey(entry.getKey()) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
+        String compare = compareParameters.get(entry.getKey());
+        if (!entry.getValue().equalsIgnoreCase(compare) && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
           return false;
         }
       } else {
