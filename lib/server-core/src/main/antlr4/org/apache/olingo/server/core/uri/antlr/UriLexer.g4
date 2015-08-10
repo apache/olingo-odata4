@@ -26,9 +26,9 @@ lexer grammar UriLexer;
 QM              : '?'                 ->        pushMode(MODE_QUERY);               //first query parameter
 AMP             : '&'                 ->        pushMode(MODE_QUERY);               //more query parameters
 STRING          : '\''                -> more,  pushMode(MODE_STRING);              //reads up to next single '
-QUOTATION_MARK  : ('\u0022' | '%22')  -> more,  pushMode(MODE_JSON_STRING);         //reads up to next unescaped "
+QUOTATION_MARK  : '\u0022'            -> more,  pushMode(MODE_JSON_STRING);         //reads up to next unescaped "
 SEARCH_INLINE   : '$search'           ->        pushMode(MODE_SYSTEM_QUERY_SEARCH); //
-FRAGMENT        : '#'                 ->        pushMode(MODE_FRAGMENT); //
+FRAGMENT        : '#'                 ->        pushMode(MODE_FRAGMENT);            //
 
 GEOGRAPHY    : G E O G R A P H Y SQUOTE         -> pushMode(MODE_ODATA_GEO); //TODO make case insensitive
 GEOMETRY     : G E O M E T R Y   SQUOTE         -> pushMode(MODE_ODATA_GEO);
@@ -55,28 +55,28 @@ fragment Y    : 'Y'|'y';
 fragment Z    : 'Z'|'z';
 
 //special chars
-OPEN            : '(' | '%28';
-CLOSE           : ')' | '%29';
-COMMA           : ',' | '%2C';
+OPEN            : '(';
+CLOSE           : ')';
+COMMA           : ',';
 SLASH           : '/';
 POINT           : '.';
 AT              : '@';
 EQ              : '=' ;
 STAR            : '*';
-SEMI            : ';' | '%3b';
+SEMI            : ';';
 COLON           : ':';
 
 EQ_sq           : '='           -> type(EQ);
 AMP_sq          : '&'           -> type(AMP), popMode;
-fragment WS     : ( ' ' | '%09' | '%20' | '%09' );
+fragment WS     : ( ' ' | '\u0009' );
 WSP             : WS+;
 
 //JSON support 
-BEGIN_OBJECT    : WS* ( '{' / '%7B' ) WS*;
-END_OBJECT      : WS* ( '}' / '%7D' ) WS*;
+BEGIN_OBJECT    : WS* '{' WS*;
+END_OBJECT      : WS* '}' WS*;
 
-BEGIN_ARRAY     : WS* ( '[' / '%5B' ) WS*;
-END_ARRAY       : WS* ( ']' / '%5D' ) WS*;
+BEGIN_ARRAY     : WS* '[' WS*;
+END_ARRAY       : WS* ']' WS*;
 
 
 //alpha stuff
@@ -132,7 +132,7 @@ BOOLEAN       :  T R U E |  F A L S E;
 PLUS          : '+';
 
 MINUS         : '-';
-SIGN          : PLUS  | '%2B' | '-';
+SIGN          : PLUS  | '-';
 INT           : SIGN? DIGITS;
 DECIMAL       : INT '.' DIGITS (('e'|'E') SIGN?  DIGITS)?;
 NANINFINITY   : 'NaN' | '-INF' | 'INF';
@@ -334,10 +334,10 @@ AND_sqc             : 'AND'   -> type(AND);
 OR_sqc              : 'OR'    -> type(OR);
 EQ_sqc              : '='     -> type(EQ);
 
-fragment WS_sqc     : ( ' ' | '\u0009' | '%20' | '%09' );
+fragment WS_sqc     : ( ' ' | '\u0009');
 WSP_sqc             : WS_sqc+ -> type(WSP);
 
-QUOTATION_MARK_sqc  : '\u0022' | '%22';
+QUOTATION_MARK_sqc  : '\u0022';
 
 SEARCHWORD          : ('a'..'z'|'A'..'Z')+;
 SEARCHPHRASE        : QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc -> popMode;
@@ -356,7 +356,7 @@ mode MODE_JSON_STRING;
 // Any """ characters inside a string are escaped with "\".
 //;==============================================================================
 
-STRING_IN_JSON      : ('\\"' | ~[\u0022] )* ('"' | '%22') -> popMode;
+STRING_IN_JSON      : ('\\"' | ~[\u0022] )* '"' -> popMode;
 
 //;==============================================================================
 mode MODE_ODATA_GEO;
@@ -379,21 +379,21 @@ fragment T_  : 't'|'T';
 fragment U_  : 'u'|'U';
 fragment Y_  : 'y'|'Y';
 
-fragment SP_g   : ' ';//'\u0020'; // a simple space
-fragment WS_g   : ( ' ' | '%20' | '%09' );
+fragment SP_g   : ' ';                  //'\u0020'; // a simple space
+fragment WS_g   : ( ' ' | '\u0009' );
 
-OPEN_g          : ('(' | '%28') -> type(OPEN);
-CLOSE_g         : (')' | '%29') -> type(CLOSE);
-COMMA_g         : (',' | '%2C') -> type(COMMA);
+OPEN_g          : '('   -> type(OPEN);
+CLOSE_g         : ')'   -> type(CLOSE);
+COMMA_g         : ','   -> type(COMMA);
 WSP_g           : WS_g+ -> type(WSP);
-POINT_g         : '.' -> type(POINT);
-AT_g            : '@' -> type(AT);
-SEMI_g            : (';' | '%3B') -> type(SEMI);
-EQ_g            : '=' -> type(EQ);
+POINT_g         : '.'   -> type(POINT);
+AT_g            : '@'   -> type(AT);
+SEMI_g          : ';'   -> type(SEMI);
+EQ_g            : '='   -> type(EQ);
 
 fragment DIGIT_g    : '0'..'9';
 fragment DIGITS_g   : DIGIT_g+;
-SIGN_g              : ('+' | '%2B' |'-') -> type(SIGN);
+SIGN_g              : ('+' | '-') -> type(SIGN);
 INT_g               : SIGN_g? DIGITS_g -> type(INT);
 DECIMAL_g           : 'SS' INT_g '.' DIGITS_g (('e'|'E') SIGN_g?  DIGITS_g)? -> type(DECIMAL);
 COLLECTION_g        : C_ O_ L_ L_ E_ C_ T_ I_ O_ N_ -> type(COLLECTION);

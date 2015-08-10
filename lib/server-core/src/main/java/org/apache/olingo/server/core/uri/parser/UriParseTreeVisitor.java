@@ -455,6 +455,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
       } else if (property instanceof EdmNavigationProperty) {
         // create navigation property
+        if(ctx.getParent() instanceof ExpandPathContext && ctx.vlNVO.size() > 0) {
+          throw wrap(new UriParserSemanticException("Navigation properties in expand system query options must not" 
+                + " be followed a an key", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+        }
+        
         UriResourceNavigationPropertyImpl navigationResource = new UriResourceNavigationPropertyImpl()
             .setNavigationProperty((EdmNavigationProperty) property);
         context.contextUriInfo.addResourcePart(navigationResource);
@@ -1213,7 +1218,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     // set tmp context
     context.contextExpandItemPath = expandItem;
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-
+    
     super.visitExpandPath(ctx);
 
     EdmType startType = removeUriResourceStartingTypeFilterImpl(context.contextUriInfo);
@@ -1228,7 +1233,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
     return expandItem;
   }
-
+  
   @Override
   public Object visitExpandPathExtension(final ExpandPathExtensionContext ctx) {
     List<SystemQueryOptionImpl> list = new ArrayList<SystemQueryOptionImpl>();
@@ -1733,6 +1738,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (ctx.vlNVO.size() > 0) {
       // check for keyPredicates
       if (pathInfoSegment instanceof UriResourceWithKeysImpl) {
+        if(ctx.vlNVO.size() > 1) {
+          throw wrap(new UriParserSemanticException("More than one key predicates found", 
+              UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES));
+        }
+        
         @SuppressWarnings("unchecked")
         List<UriParameterImpl> list = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
         ((UriResourceWithKeysImpl) pathInfoSegment)

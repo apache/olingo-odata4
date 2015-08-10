@@ -5274,7 +5274,51 @@ public class TestFullResourcePath {
     .goUpUriValidator()
     .isCustomParameter(0, "@A", "'2'");
   }
-
+  
+  @Test(expected=UriParserException.class)
+  public void testDoublePercentDecoding() throws Exception {
+    testUri.run("ESAllPrim%252832767%29");
+  }
+  
+  @Test(expected=UriParserException.class)
+  public void testMultipleKeysInResourcePath() throws Exception {
+    // See OLINGO-730
+    testUri.run("ESAllPrim(32767)(1)(2)");
+  }
+  
+  @Test(expected=UriParserException.class)
+  public void testSimpleKeyInExpandSystemQueryOption() throws Exception {
+    testUri.run("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(-365)($filter=PropertyString eq 'Test String1')");
+  }
+  
+  @Test(expected=UriParserException.class)
+  public void testCompountKeyInExpandSystemQueryOption() throws Exception {
+    testUri.run("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(PropertyInt16=1,PropertyString=2)" 
+             + "($filter=PropertyString eq 'Test String1')");
+  }
+  
+  @Test(expected=UriParserException.class)
+  public void testFilterSystemQueryOptionAnyWithKeyAny() throws Exception {
+    testUri.run("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)" 
+              + "/any(d:d/PropertyInt16 eq 0)");
+  }
+  
+  @Test(expected=UriParserException.class)
+  public void testFilterSystemQueryOptionAnyWithKeyAll() throws Exception {
+    testUri.run("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)" 
+              + "/all(d:d/PropertyInt16 eq 0)");
+  }
+  
+  @Test
+  public void testNavigationPropertyWithCount() throws Exception {
+    testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$count")
+           .goPath().at(0).isEntitySet("ESKeyNav").isKeyPredicate(0, "PropertyInt16", "1")
+           .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+           .at(2).isCount();
+  }
+  
+  // ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$count
+  
   public static String encode(final String decoded) throws UnsupportedEncodingException {
     return Encoder.encode(decoded);
   }
