@@ -46,9 +46,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 public class DebugResponseHelperImpl implements DebugResponseHelper {
 
-  private static enum DebugFormat {
+  private enum DebugFormat {
     JSON, HTML, DOWNLOAD
-  };
+  }
 
   private final DebugFormat requestedFormat;
 
@@ -150,12 +150,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
     gen.writeFieldName("server");
     gen.writeStartObject();
-    String version = DebugResponseHelperImpl.class.getPackage().getImplementationVersion();
-    if (version != null) {
-      gen.writeStringField("version", version);
-    } else {
-      gen.writeNullField("version");
-    }
+    gen.writeStringField("version", getVersion());
     for (DebugTab part : parts.subList(2, parts.size())) {
       gen.writeFieldName(part.getName().toLowerCase(Locale.ROOT));
       part.appendJson(gen);
@@ -167,6 +162,20 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     csb.closeWrite();
 
     return csb.getInputStream();
+  }
+
+  /**
+   * Get version field information for response.
+   * Result is never null.
+   *
+   * @return version field information
+   */
+  private String getVersion() {
+    final String version = DebugResponseHelperImpl.class.getPackage().getImplementationVersion();
+    if (version == null) {
+      return "Olingo";
+    }
+    return "Olingo " + version;
   }
 
   private InputStream wrapInHtml(final List<DebugTab> parts, String title) throws IOException {

@@ -116,10 +116,11 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-		<version>${maven.bundle.plugin.version}</version>
+    		<version>${maven.bundle.plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Implementation-Version>${project.version}</Implementation-Version>
             <Export-Package>
               org.apache.olingo.server.core
             </Export-Package>
