@@ -19,6 +19,8 @@
 package org.apache.olingo.server.api.processor;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
+import java.util.Locale;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -116,7 +118,7 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
       // This should never happen but to be sure we have this catch here to prevent sending a stacktrace to a client.
       String responseContent =
           "{\"error\":{\"code\":null,\"message\":\"An unexpected exception occurred during error processing\"}}";
-      response.setContent(new ByteArrayInputStream(responseContent.getBytes()));
+      response.setContent(new ByteArrayInputStream(responseContent.getBytes(Charset.forName("utf-8"))));
       response.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
     }

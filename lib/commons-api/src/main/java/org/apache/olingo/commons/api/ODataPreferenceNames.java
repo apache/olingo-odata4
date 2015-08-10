@@ -35,7 +35,7 @@ public enum ODataPreferenceNames {
 
   private final String preferenceName;
 
-  private ODataPreferenceNames(final String preferenceName) {
+  ODataPreferenceNames(final String preferenceName) {
     this.preferenceName = preferenceName;
   }
 

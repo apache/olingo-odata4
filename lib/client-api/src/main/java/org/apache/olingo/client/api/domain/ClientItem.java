@@ -45,7 +45,7 @@ public abstract class ClientItem {
   /**
    * OData item self link.
    */
-  protected URI link;
+  private URI link;
 
   /**
    * Constructor.

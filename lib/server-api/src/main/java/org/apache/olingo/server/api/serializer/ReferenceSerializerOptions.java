@@ -20,7 +20,7 @@ package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 
-public class ReferenceSerializerOptions {
+public final class ReferenceSerializerOptions {
   private ContextURL contextURL;
 
   /** Gets the {@link ContextURL}. */

@@ -19,9 +19,11 @@
 package org.apache.olingo.server.api.prefer;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.ODataPreferenceNames;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
@@ -31,8 +33,9 @@ import org.apache.olingo.server.api.prefer.Preferences.Return;
  * as described in <a href="https://www.ietf.org/rfc/rfc7240.txt">RFC 7240</a>.
  * There are named methods for preferences defined in the OData standard.
  */
-public class PreferencesApplied {
+public final class PreferencesApplied {
 
+  private static final Set<String> SAFE_PREFERENCE_NAMES = new HashSet<String>();
   private Map<String, String> applied;
 
   private PreferencesApplied() {
@@ -57,14 +60,7 @@ public class PreferencesApplied {
       final String key = entry.getKey();
       result.append(key);
       if (entry.getValue() != null) {
-        final boolean safe = ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString().equals(key)
-            || ODataPreferenceNames.CALLBACK.toString().equals(key)
-            || ODataPreferenceNames.CONTINUE_ON_ERROR.toString().equals(key)
-            || ODataPreferenceNames.MAX_PAGE_SIZE.toString().equals(key)
-            || ODataPreferenceNames.TRACK_CHANGES.toString().equals(key)
-            || ODataPreferenceNames.RETURN.toString().equals(key)
-            || ODataPreferenceNames.RESPOND_ASYNC.toString().equals(key)
-            || ODataPreferenceNames.WAIT.toString().equals(key);
+        final boolean safe = isSafe(key);
         result.append('=')
             .append(safe ? "" : '"')
             .append(entry.getValue().replaceAll("\\\\|\"", "\\\\$0"))
@@ -72,6 +68,20 @@ public class PreferencesApplied {
       }
     }
     return result.toString();
+  }
+
+  private boolean isSafe(String key) {
+    if(SAFE_PREFERENCE_NAMES.isEmpty()) {
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.CALLBACK.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.CONTINUE_ON_ERROR.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.MAX_PAGE_SIZE.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.TRACK_CHANGES.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.RETURN.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.RESPOND_ASYNC.toString());
+      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.WAIT.toString());
+    }
+    return SAFE_PREFERENCE_NAMES.contains(key);
   }
 
   @Override

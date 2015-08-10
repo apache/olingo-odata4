@@ -25,7 +25,7 @@ import org.apache.olingo.client.api.uri.URIFilter;
 public class FilterArgFactoryImpl implements FilterArgFactory {
 
   @Override
-  public FilterArg _null() {
+  public FilterArg nullValue() {
     return new FilterConst("null");
   }
 

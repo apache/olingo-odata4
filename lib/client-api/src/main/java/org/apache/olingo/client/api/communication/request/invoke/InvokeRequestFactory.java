@@ -36,57 +36,57 @@ public interface InvokeRequestFactory {
    * This method is mainly meant for internal usage, but defined for generic calls from proxy; normally, one of other
    * methods should be used instead.
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param method HTTP invocation method
    * @param uri invocation URI
    * @param resultRef reference Class for result
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getInvokeRequest(
-          HttpMethod method, URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getInvokeRequest(
+          HttpMethod method, URI uri, Class<T> resultRef, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (no parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param uri invocation URI
    * @param resultRef reference Class for result
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(URI uri, Class<RES> resultRef);
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getFunctionInvokeRequest(URI uri, Class<T> resultRef);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (with parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param uri invocation URI
    * @param resultRef reference Class for result
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionInvokeRequest(
-          URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getFunctionInvokeRequest(
+          URI uri, Class<T> resultRef, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (no parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param uri invocation URI
    * @param resultRef reference Class for result
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(URI uri, Class<RES> resultRef);
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getActionInvokeRequest(URI uri, Class<T> resultRef);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (with parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param uri invocation URI
    * @param resultRef reference Class for result
    * @param parameters parameters to pass to action invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionInvokeRequest(
-          URI uri, Class<RES> resultRef, Map<String, ClientValue> parameters);
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getActionInvokeRequest(
+          URI uri, Class<T> resultRef, Map<String, ClientValue> parameters);
 }

@@ -30,63 +30,63 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
   /**
    * Gets an invoke request instance for the function import with the given name and no parameters.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
+   * @param <T> OData domain object result, derived from return type defined in the function import
    * @param functionImportName operation to be invoked
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getFunctionImportInvokeRequest(
           String functionImportName);
 
   /**
    * Gets an invoke request instance for the function import with the given name and matching parameter names.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the function import
+   * @param <T> OData domain object result, derived from return type defined in the function import
    * @param functionImportName operation to be invoked
    * @param parameters parameters to pass to operation import invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getFunctionImportInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getFunctionImportInvokeRequest(
           String functionImportName, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action import with the given name.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the action import
+   * @param <T> OData domain object result, derived from return type defined in the action import
    * @param actionImportName operation to be invoked
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getActionImportInvokeRequest(
           String actionImportName);
 
   /**
    * Gets an invoke request instance for the action import with the given name.
    *
-   * @param <RES> OData domain object result, derived from return type defined in the action import
+   * @param <T> OData domain object result, derived from return type defined in the action import
    * @param actionImportName operation to be invoked
    * @param parameters parameters to pass to operation import invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getActionImportInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getActionImportInvokeRequest(
           String actionImportName, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (no parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param bindingParameterURI binding parameter URI
    * @param functionName operation to be invoked
    * @param bindingParameterTypeName binding parameter type full qualified name
    * @param isBindingParameterCollection whether binding parameter is collection
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getBoundFunctionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection);
 
   /**
    * Gets an invoke request instance for the function bound to given URI (with parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param bindingParameterURI binding parameter URI
    * @param functionName operation to be invoked
    * @param bindingParameterTypeName binding parameter type full qualified name
@@ -94,28 +94,28 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundFunctionInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getBoundFunctionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection, Map<String, ClientValue> parameters);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (no parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param bindingParameterURI binding parameter URI
    * @param actionName operation to be invoked
    * @param bindingParameterTypeName binding parameter type full qualified name
    * @param isBindingParameterCollection whether binding parameter is collection
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getBoundActionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection);
 
   /**
    * Gets an invoke request instance for the action bound to given URI (with parameters).
    *
-   * @param <RES> OData domain object result
+   * @param <T> OData domain object result
    * @param bindingParameterURI binding parameter URI
    * @param actionName operation to be invoked
    * @param bindingParameterTypeName binding parameter type full qualified name
@@ -123,7 +123,7 @@ public interface EdmEnabledInvokeRequestFactory extends InvokeRequestFactory {
    * @param parameters parameters to pass to function invocation
    * @return new {@link ODataInvokeRequest} instance.
    */
-  <RES extends ClientInvokeResult> ODataInvokeRequest<RES> getBoundActionInvokeRequest(
+  <T extends ClientInvokeResult> ODataInvokeRequest<T> getBoundActionInvokeRequest(
           URI bindingParameterURI, FullQualifiedName actionName, FullQualifiedName bindingParameterTypeName,
           Boolean isBindingParameterCollection, Map<String, ClientValue> parameters);
 

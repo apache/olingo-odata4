@@ -41,9 +41,9 @@ public abstract class ODataLibraryException extends ODataException {
   protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
 
   /** Key for the exception text in the resource bundle. */
-  public static interface MessageKey {
+  public interface MessageKey {
     /** Gets this key. */
-    public String getKey();
+    String getKey();
   }
 
   private MessageKey messageKey;
@@ -137,9 +137,9 @@ public abstract class ODataLibraryException extends ODataException {
   }
 
   /** Error message text and {@link Locale} used for it. */
-  public class ODataErrorMessage {
-    String message;
-    Locale locale;
+  public static class ODataErrorMessage {
+    private String message;
+    private Locale locale;
 
     public ODataErrorMessage(final String message, final Locale usedLocale) {
       this.message = message;

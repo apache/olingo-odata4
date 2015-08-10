@@ -24,7 +24,7 @@ package org.apache.olingo.server.api.deserializer.batch;
  * {@link org.apache.olingo.server.api.deserializer.FixedFormatDeserializer
  *  #parseBatchRequest(java.io.InputStream, String, BatchOptions)}
  */
-public class BatchOptions {
+public final class BatchOptions {
   private boolean isStrict = true;
   private String rawBaseUri = "";
   private String rawServiceResolutionUri = "";

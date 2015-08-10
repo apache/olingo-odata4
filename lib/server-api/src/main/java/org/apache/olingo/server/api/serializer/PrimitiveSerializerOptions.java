@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 
 /** Options for the OData serializer. */
-public class PrimitiveSerializerOptions {
+public final class PrimitiveSerializerOptions {
 
   private ContextURL contextURL;
   private Boolean isNullable;

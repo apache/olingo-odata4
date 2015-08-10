@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
 /** Options for the OData serializer. */
-public class ReferenceCollectionSerializerOptions {
+public final class ReferenceCollectionSerializerOptions {
   private ContextURL contextURL;
   private CountOption count;
   

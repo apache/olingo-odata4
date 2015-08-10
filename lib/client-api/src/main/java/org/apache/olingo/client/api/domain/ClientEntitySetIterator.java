@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
  * <b>Please don't forget to call the <tt>close()>/</tt> method when not needed any more.</b>
  *
  * @param <E> concrete ODataEntity implementation
- * @param <ES> concrete ODataEntitySet implementation
+ * @param <T> concrete ODataEntitySet implementation
  */
-public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends ClientEntity>
+public class ClientEntitySetIterator<T extends ClientEntitySet, E extends ClientEntity>
         implements Iterator<E> {
 
   /**
@@ -62,7 +62,7 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
 
   private final ContentType contentType;
 
-  private ES entitySet;
+  private T entitySet;
 
   private final ByteArrayOutputStream osEntitySet;
 
@@ -118,7 +118,7 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
       if (cached == null) {
         available = false;
         try {
-          entitySet = (ES) odataClient.getReader().
+          entitySet = (T) odataClient.getReader().
                   readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), contentType);
         } catch (final ODataDeserializerException e) {
           available = false;

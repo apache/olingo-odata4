@@ -21,6 +21,7 @@ package org.apache.olingo.client.api;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 
@@ -99,6 +100,9 @@ public final class ODataClientBuilder {
     }
   }
 
+  /** Empty private constructor for static helper class */
+  private ODataClientBuilder() {}
+
   /**
    * Create an new ODataClient based on via system property ODATA_CLIENT_IMPL_SYS_PROPERTY
    * class name or if not net the default ODATA_CLIENT_IMPL_CLASS set class.
@@ -161,15 +165,19 @@ public final class ODataClientBuilder {
       Constructor<?> ctor = clazz.getConstructor(ctorParameterClasses);
       return typeOfClass.cast(ctor.newInstance(ctorParameters));
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException("Requested class '" + className + "' could not be loaded.", e);
+      throw wrapException(className, e);
     } catch (InstantiationException e) {
-      throw new RuntimeException("Requested class '" + className + "' could not be loaded.", e);
+      throw wrapException(className, e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException("Requested class '" + className + "' could not be loaded.", e);
+      throw wrapException(className, e);
     } catch (NoSuchMethodException e) {
-      throw new RuntimeException("Requested class '" + className + "' could not be loaded.", e);
+      throw wrapException(className, e);
     } catch (InvocationTargetException e) {
-      throw new RuntimeException("Requested class '" + className + "' could not be loaded.", e);
+      throw wrapException(className, e);
     }
+  }
+
+  private static ODataRuntimeException wrapException(String className, Exception e) {
+    return new ODataRuntimeException("Requested class '" + className + "' could not be loaded.", e);
   }
 }
