@@ -2078,45 +2078,6 @@ public class TestFullResourcePath {
     .isCount();
   }
 
-  /**
-   * Test for EntitySet and NavigationProperty with same name defined in metadata.
-   * (related to Olingo issue OLINGO-741)
-   */
-  @Test
-  public void yetAnotherSmallTest() throws Exception {
-    TestUriValidator testUri = new TestUriValidator();
-
-    Edm mockEdm = Mockito.mock(Edm.class);
-    EdmEntitySet esCategory = Mockito.mock(EdmEntitySet.class);
-    EdmEntitySet esProduct = Mockito.mock(EdmEntitySet.class);
-    EdmEntityType typeCategory = Mockito.mock(EdmEntityType.class);
-    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
-    EdmNavigationProperty productsNavigation = Mockito.mock(EdmNavigationProperty.class);
-    EdmEntityType productsType = Mockito.mock(EdmEntityType.class);
-
-    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
-    Mockito.when(typeCategory.getName()).thenReturn("Category");
-    Mockito.when(typeCategory.getNamespace()).thenReturn("NS");
-    Mockito.when(esCategory.getEntityType()).thenReturn(typeCategory);
-    Mockito.when(productsNavigation.getName()).thenReturn("Products");
-    Mockito.when(typeCategory.getProperty("Products")).thenReturn(productsNavigation);
-    Mockito.when(container.getEntitySet("Category")).thenReturn(esCategory);
-    Mockito.when(container.getEntitySet("Products")).thenReturn(esProduct);
-    Mockito.when(productsType.getName()).thenReturn("Products");
-    Mockito.when(productsType.getNamespace()).thenReturn("NS");
-    Mockito.when(productsNavigation.getType()).thenReturn(productsType);
-
-    // test and verify
-    testUri.setEdm(mockEdm)
-            .run("Category", "$expand=Products")
-            .isKind(UriInfoKind.resource).goPath().goExpand()
-            .first()
-            .goPath().first()
-            .isNavProperty("Products", new FullQualifiedName("NS", "Products"), false)
-            .isType(new FullQualifiedName("NS", "Products"), false);
-    Mockito.verifyZeroInteractions(esProduct);
-  }
-
   @Test
   public void runExpand() throws Exception {
 

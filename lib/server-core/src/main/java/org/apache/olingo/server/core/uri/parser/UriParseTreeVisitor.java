@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -46,7 +42,9 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriInfoKind;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
@@ -184,6 +182,10 @@ import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * UriVisitor
@@ -1226,7 +1228,41 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     context.contextUriInfo = uriInfoResourceBU;
     context.contextExpandItemPath = contextExpandItemPathBU;
 
+    // test
+    validate(uriInfoResourceBU.asUriInfoResource(), expandItem);
+    //
+
     return expandItem;
+  }
+
+  private void validate(UriInfoResource uriInfoResource, ExpandItemImpl expandItem) {
+    if(uriInfoResource != null) {
+      EdmEntityType type = getEntityType(uriInfoResource);
+      EdmEntityType name = getEntityType(expandItem.getResourcePath());
+
+      if(name != null && type != null) {
+        EdmElement property = type.getProperty(name.getName());
+        if(! (property instanceof EdmNavigationProperty)) {
+          throw wrap(new UriParserSemanticException("NavigationProperty '" + name.getName() + "' not found in type '" +
+                        type.getFullQualifiedName().getFullQualifiedNameAsString() + "'",
+                        UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE,
+                        name.getFullQualifiedName().getFullQualifiedNameAsString(),
+                        type.getFullQualifiedName().getFullQualifiedNameAsString()));
+        }
+      }
+    }
+  }
+
+  private EdmEntityType getEntityType(UriInfoResource test) {
+    List<UriResource> parts = test.getUriResourceParts();
+    if (!parts.isEmpty()) {
+      UriResource lastPart = parts.get(parts.size() - 1);
+      if (lastPart instanceof UriResourceEntitySet) {
+        UriResourceEntitySet entitySet = (UriResourceEntitySet) lastPart;
+        return entitySet.getEntityType();
+      }
+    }
+    return null;
   }
 
   @Override
