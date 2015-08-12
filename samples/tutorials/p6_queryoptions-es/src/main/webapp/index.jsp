@@ -31,10 +31,16 @@ under the License.
         <a href="DemoService.svc/Products/?$expand=Category">Expand - /Products/?$expand=Category</a>
     </li>
     <li>
+        <a href="DemoService.svc/Products(1)/?$expand=*">Expand - /Products(1)/?$expand=*</a>
+    </li>
+    <li>
         <a href="DemoService.svc/Categories(1)/?$expand=Products">Expand - /Categories(1)/?$expand=Products</a>
     </li>
     <li>
         <a href="DemoService.svc/Categories/?$expand=Products">Expand - /Categories/?$expand=Products</a>
+    </li>
+    <li>
+        <a href="DemoService.svc/Categories/?$expand=*">Expand - /Categories/?$expand=*</a>
     </li>
 </ul>
 

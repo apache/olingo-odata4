@@ -29,9 +29,11 @@ import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -71,144 +73,110 @@ public class DemoEntityProcessor implements EntityProcessor {
     this.srvMetadata = serviceMetadata;
   }
 
+	public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+					throws ODataApplicationException, SerializerException {
 
-//  /**
-//   * DUMMY example implementation
-//   * */
-//  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-//      throws ODataApplicationException, SerializerException {
-//
-//		// 1. Analyze the URI
-//	  	EdmEntitySet edmEntitySet  = ((UriResourceEntitySet)uriInfo.getUriResourceParts().get(0)).getEntitySet();
-//	  	// get the system query option $expand
-//		ExpandOption expandOption = uriInfo.getExpandOption();
-//
-//		// 2. get the data. 
-//		
-//		// Note: this is FAKE implementation
-//		// used for following request: 
-//		// http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
-//		
-//		// create hard-coded product entity and set a hard-coded category as inlineEntity for the expand
-//	    Entity fakeProductEntity = new Entity().addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 11))
-//	    					.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Gamer Mouse"));
-//	    fakeProductEntity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE, "High end gaming mouse"));
-//	    
-//	    // create hard-coded category entity (the target of the $expand) 
-//	    Entity fakeCategoryEntity = new Entity().addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 22))
-//	    					.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Mice"));
-//
-//	    // create navigation link from product to category
-//        Link fakeLink = new Link();
-//        fakeLink.setTitle("Category");  // hard-code the name of the navigation property as declared in EdmProvider
-//        fakeLink.setInlineEntity(fakeCategoryEntity); // the entity which will be expanded
-//        
-//        //add the link to the product entity
-//        fakeProductEntity.getNavigationLinks().add(fakeLink);
-//        
-//        // END FAKE
-//
-//        
-//		// 3. serialize
-//		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).suffix(ContextURL.Suffix.ENTITY).build();
-//		// $expand info is added to the serializer options
-//		EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextUrl).expand(expandOption).build();  
-//		ODataSerializer serializer = this.odata.createSerializer(ODataFormat.fromContentType(responseFormat));
-//		SerializerResult serializerResult = serializer.entity(srvMetadata, edmEntitySet.getEntityType(), fakeProductEntity, options);
-//
-//		//4. configure the response object
-//		response.setContent(serializerResult.getContent());
-//		response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-//		response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
-//  }
+		// 1. retrieve the Entity Type
+		List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+		// Note: only in our example we can assume that the first segment is the EntitySet
+		UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
+		EdmEntitySet edmEntitySet = uriResourceEntitySet.getEntitySet();
 
-  
-  
-  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-	      throws ODataApplicationException, SerializerException {
+		// 2. retrieve the data from backend
+		List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
+		Entity entity = storage.readEntityData(edmEntitySet, keyPredicates);
 
-			// 1. retrieve the Entity Type
-			List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-			// Note: only in our example we can assume that the first segment is the EntitySet
-			UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
-			EdmEntitySet edmEntitySet = uriResourceEntitySet.getEntitySet();
+		// 3. apply system query options
 
-			// 2. retrieve the data from backend
-			List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
-			Entity entity = storage.readEntityData(edmEntitySet, keyPredicates);
+		// handle $select
+		SelectOption selectOption = uriInfo.getSelectOption();
+		// in our example, we don't have performance issues, so we can rely upon the handling in the Olingo lib
+		// nothing else to be done
 
-			// 3. apply system query options
-			
-			// handle $select
-			SelectOption selectOption = uriInfo.getSelectOption();
-			// in our example, we don't have performance issues, so we can rely upon the handling in the Olingo lib
-			// nothing else to be done
-			
-			// handle $expand
-			ExpandOption expandOption = uriInfo.getExpandOption();
-			// in our example: http://localhost:8080/DemoService/DemoService.svc/Categories(1)/$expand=Products
-			// or http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
-			if(expandOption != null){
-
-				// retrieve the EdmNavigationProperty from the expand expression
-				// Note: in our example, we have only one NavigationProperty, so we can directly access it
-				ExpandItem expandItem = expandOption.getExpandItems().get(0);
+		// handle $expand
+		ExpandOption expandOption = uriInfo.getExpandOption();
+		// in our example: http://localhost:8080/DemoService/DemoService.svc/Categories(1)/$expand=Products
+		// or http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
+		if(expandOption != null) {
+			// retrieve the EdmNavigationProperty from the expand expression
+			// Note: in our example, we have only one NavigationProperty, so we can directly access it
+			EdmNavigationProperty edmNavigationProperty = null;
+			ExpandItem expandItem = expandOption.getExpandItems().get(0);
+			if(expandItem.isStar()) {
+				List<EdmNavigationPropertyBinding> bindings = edmEntitySet.getNavigationPropertyBindings();
+				// we know that there are navigation bindings
+				// however normally in this case a check if navigation bindings exists is done
+				if(!bindings.isEmpty()) {
+					// can in our case only be 'Category' or 'Products', so we can take the first
+					EdmNavigationPropertyBinding binding = bindings.get(0);
+					EdmElement property = edmEntitySet.getEntityType().getProperty(binding.getPath());
+					// we don't need to handle error cases, as it is done in the Olingo library
+					if(property instanceof EdmNavigationProperty) {
+						edmNavigationProperty = (EdmNavigationProperty) property;
+					}
+				}
+			} else {
 				// can be 'Category' or 'Products', no path supported
 				UriResource uriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
 				// we don't need to handle error cases, as it is done in the Olingo library
-				if(uriResource instanceof UriResourceNavigation){
-					EdmNavigationProperty edmNavigationProperty = ((UriResourceNavigation)uriResource).getProperty();
-					EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
-					String navPropName = edmNavigationProperty.getName();
-					
-					// build the inline data
-					Link link = new Link();
-					link.setTitle(navPropName);
-					link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);  
-					
-					if(edmNavigationProperty.isCollection()){ // in case of Categories(1)/$expand=Products
-						// fetch the data for the $expand (to-many navigation) from backend
-						// here we get the data for the expand
-						EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
-						link.setInlineEntitySet(expandEntityCollection);
-					}else{  // in case of Products(1)?$expand=Category
-						// fetch the data for the $expand (to-one navigation) from backend
-						// here we get the data for the expand
-						Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
-						link.setInlineEntity(expandEntity);
-					}
-					
-					// set the link - containing the expanded data - to the current entity 
-					entity.getNavigationLinks().add(link);
+				if(uriResource instanceof UriResourceNavigation) {
+					edmNavigationProperty = ((UriResourceNavigation) uriResource).getProperty();
 				}
 			}
-			
-			
-			
-			// 4. serialize
-			EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-			// we need the property names of the $select, in order to build the context URL
-			String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType, expandOption, selectOption);
-			ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet)
-                                                .selectList(selectList)
-                                                .suffix(Suffix.ENTITY).build();
-		 	
-			// make sure that $expand and $select are considered by the serializer
-			// adding the selectOption to the serializerOpts will actually tell the lib to do the job
-			EntitySerializerOptions opts = EntitySerializerOptions.with()
-					.contextURL(contextUrl)
-					.select(selectOption)
-					.expand(expandOption)
-					.build();
 
-			ODataSerializer serializer = this.odata.createSerializer(ODataFormat.fromContentType(responseFormat));
-			SerializerResult serializerResult = serializer.entity(srvMetadata, edmEntityType, entity, opts);
+			// can be 'Category' or 'Products', no path supported
+			// we don't need to handle error cases, as it is done in the Olingo library
+			if(edmNavigationProperty != null) {
+				EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
+				String navPropName = edmNavigationProperty.getName();
 
-			//5. configure the response object
-			response.setContent(serializerResult.getContent());
-			response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-			response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
-	  }
+				// build the inline data
+				Link link = new Link();
+				link.setTitle(navPropName);
+				link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+
+				if(edmNavigationProperty.isCollection()){ // in case of Categories(1)/$expand=Products
+					// fetch the data for the $expand (to-many navigation) from backend
+					// here we get the data for the expand
+					EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
+					link.setInlineEntitySet(expandEntityCollection);
+				} else {  // in case of Products(1)?$expand=Category
+					// fetch the data for the $expand (to-one navigation) from backend
+					// here we get the data for the expand
+					Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
+					link.setInlineEntity(expandEntity);
+				}
+
+				// set the link - containing the expanded data - to the current entity
+				entity.getNavigationLinks().add(link);
+			}
+		}
+
+
+		// 4. serialize
+		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+		// we need the property names of the $select, in order to build the context URL
+		String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType, expandOption, selectOption);
+		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet)
+						.selectList(selectList)
+						.suffix(Suffix.ENTITY).build();
+
+		// make sure that $expand and $select are considered by the serializer
+		// adding the selectOption to the serializerOpts will actually tell the lib to do the job
+		EntitySerializerOptions opts = EntitySerializerOptions.with()
+						.contextURL(contextUrl)
+						.select(selectOption)
+						.expand(expandOption)
+						.build();
+
+		ODataSerializer serializer = this.odata.createSerializer(ODataFormat.fromContentType(responseFormat));
+		SerializerResult serializerResult = serializer.entity(srvMetadata, edmEntityType, entity, opts);
+
+		// 5. configure the response object
+		response.setContent(serializerResult.getContent());
+		response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+		response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+	}
 
   
   

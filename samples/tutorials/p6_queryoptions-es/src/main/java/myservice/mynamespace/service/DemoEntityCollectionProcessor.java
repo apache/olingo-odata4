@@ -27,9 +27,11 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -100,15 +102,35 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     // in our example: http://localhost:8080/DemoService/DemoService.svc/Categories/$expand=Products
     // or http://localhost:8080/DemoService/DemoService.svc/Products?$expand=Category
     if (expandOption != null) {
-
       // retrieve the EdmNavigationProperty from the expand expression
       // Note: in our example, we have only one NavigationProperty, so we can directly access it
+      EdmNavigationProperty edmNavigationProperty = null;
       ExpandItem expandItem = expandOption.getExpandItems().get(0);
-      // can be 'Category' or 'Products'
-      UriResource uriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
+      if(expandItem.isStar()) {
+        List<EdmNavigationPropertyBinding> bindings = edmEntitySet.getNavigationPropertyBindings();
+        // we know that there are navigation bindings
+        // however normally in this case a check if navigation bindings exists is done
+        if(!bindings.isEmpty()) {
+          // can in our case only be 'Category' or 'Products', so we can take the first
+          EdmNavigationPropertyBinding binding = bindings.get(0);
+          EdmElement property = edmEntitySet.getEntityType().getProperty(binding.getPath());
+          // we don't need to handle error cases, as it is done in the Olingo library
+          if(property instanceof EdmNavigationProperty) {
+            edmNavigationProperty = (EdmNavigationProperty) property;
+          }
+        }
+      } else {
+        // can be 'Category' or 'Products', no path supported
+        UriResource uriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
+        // we don't need to handle error cases, as it is done in the Olingo library
+        if(uriResource instanceof UriResourceNavigation) {
+          edmNavigationProperty = ((UriResourceNavigation) uriResource).getProperty();
+        }
+      }
+
+      // can be 'Category' or 'Products', no path supported
       // we don't need to handle error cases, as it is done in the Olingo library
-      if (uriResource instanceof UriResourceNavigation) {
-        EdmNavigationProperty edmNavigationProperty = ((UriResourceNavigation) uriResource).getProperty();
+      if(edmNavigationProperty != null) {
         String navPropName = edmNavigationProperty.getName();
         EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
 
