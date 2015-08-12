@@ -85,7 +85,7 @@ public interface ExpressionVisitor<T> {
    * @throws ExpressionVisitException Thrown if an exception while traversing occured
    * @throws ODataApplicationException Thrown by the application
    */
-  T visitLiteral(String literal) throws ExpressionVisitException, ODataApplicationException;
+  T visitLiteral(Literal literal) throws ExpressionVisitException, ODataApplicationException;
 
   /**
    * Called for each traversed {@link Member} expression

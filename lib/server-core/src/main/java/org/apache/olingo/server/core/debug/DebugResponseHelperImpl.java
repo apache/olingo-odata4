@@ -113,12 +113,10 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       parts.add(new DebugTabServer(serverEnvironmentVaribles));
     }
 
-    // TODO:Enable URIDebugInfo
     // URI
-//    if (uriInfo != null && (uriInfo.getFilterOption() != null || uriInfo.getOrderByOption() != null
-//        || uriInfo.getExpandOption() != null || uriInfo.getSelectOption() != null)) {
-//      parts.add(new DebugInfoUri(uriInfo));
-//    }
+    if (debugInfo.getUriInfo() != null ) {
+      parts.add(new DebugTabUri(debugInfo.getUriInfo()));
+    }
 
     // runtime measurements
     List<RuntimeMeasurement> runtimeInformation = debugInfo.getRuntimeInformation();

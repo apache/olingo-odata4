@@ -36,6 +36,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
+import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
@@ -167,9 +168,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitLiteral(final String literal) throws ExpressionVisitException, ODataApplicationException {
-
-    return new UntypedOperand(literal);
+  public VisitorOperand visitLiteral(final Literal literal) throws ExpressionVisitException, ODataApplicationException {
+    return new UntypedOperand(literal.getText());
   }
 
   @Override
