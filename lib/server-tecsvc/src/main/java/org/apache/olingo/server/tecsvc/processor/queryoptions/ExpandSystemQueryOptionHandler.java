@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -27,9 +28,11 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -75,9 +78,27 @@ public class ExpandSystemQueryOptionHandler {
     final EdmEntityType entityType = edmBindingTarget.getEntityType();
 
     for (ExpandItem item : expandOption.getExpandItems()) {
-      final List<UriResource> uriResourceParts = item.getResourcePath().getUriResourceParts();
-      if (uriResourceParts.size() == 1 && uriResourceParts.get(0) instanceof UriResourceNavigation) {
-        final String navPropertyName = ((UriResourceNavigation) uriResourceParts.get(0)).getProperty().getName();
+      List<EdmNavigationProperty> navigationProperties = new ArrayList<EdmNavigationProperty>();
+      if(item.isStar()) {
+        List<EdmNavigationPropertyBinding> bindings = edmBindingTarget.getNavigationPropertyBindings();
+        for (EdmNavigationPropertyBinding binding : bindings) {
+          EdmElement property = entityType.getProperty(binding.getPath());
+          if(property instanceof EdmNavigationProperty) {
+            navigationProperties.add((EdmNavigationProperty) property);
+          }
+        }
+      } else {
+        final List<UriResource> uriResourceParts = item.getResourcePath().getUriResourceParts();
+        if (uriResourceParts.size() == 1 && uriResourceParts.get(0) instanceof UriResourceNavigation) {
+          navigationProperties.add(((UriResourceNavigation) uriResourceParts.get(0)).getProperty());
+        } else {
+          throw new ODataApplicationException("Not supported resource part in expand system query option",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+        }
+      }
+
+      for(EdmNavigationProperty navigationProperty: navigationProperties) {
+        final String navPropertyName = navigationProperty.getName();
         final EdmBindingTarget targetEdmEntitySet = edmBindingTarget.getRelatedBindingTarget(navPropertyName);
 
         final Link link = entity.getNavigationLink(navPropertyName);
@@ -91,9 +112,6 @@ public class ExpandSystemQueryOptionHandler {
               item.getTopOption(),
               item.getExpandOption());
         }
-      } else {
-        throw new ODataApplicationException("Not supported resource part in expand system query option",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
       }
     }
   }
@@ -238,6 +256,10 @@ public class ExpandSystemQueryOptionHandler {
 
   private ExpandOption getInnerExpandOption(final ExpandOption expand, final String propertyName) {
     for (final ExpandItem item : expand.getExpandItems()) {
+      if(item.isStar()) {
+        return item.getExpandOption();
+      }
+
       final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
       if (resource instanceof UriResourceNavigation
           && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) {
