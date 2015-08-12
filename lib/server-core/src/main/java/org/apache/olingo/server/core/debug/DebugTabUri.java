@@ -20,21 +20,31 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectItem;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-
 
 /**
  * URI parser debug information.
  */
 public class DebugTabUri implements DebugTab {
 
-  private UriInfo uriInfo;
+  private final UriInfo uriInfo;
+  private final SelectOption selectOption;
+  private final ExpandOption expandOption;
 
   public DebugTabUri(UriInfo uriInfo) {
     this.uriInfo = uriInfo;
+    this.selectOption = uriInfo == null ? null : uriInfo.getSelectOption();
+    this.expandOption = uriInfo == null ? null : uriInfo.getExpandOption();
   }
 
   @Override
@@ -43,15 +53,93 @@ public class DebugTabUri implements DebugTab {
   }
 
   @Override
-  public void appendJson(JsonGenerator jsonGenerator) throws IOException {
-    // TODO Auto-generated method stub
-    
+  public void appendJson(JsonGenerator gen) throws IOException {
+    if (uriInfo == null) {
+      gen.writeNull();
+      return;
+    }
+
+    gen.writeStartObject();
+
+    if (uriInfo.getFilterOption() != null) {
+      gen.writeFieldName("filter");
+      appendJsonExpressionString(gen, uriInfo.getFilterOption().getExpression());
+    }
+
+    if (uriInfo.getOrderByOption() != null && uriInfo.getOrderByOption().getOrders() != null
+        && !uriInfo.getOrderByOption().getOrders().isEmpty()) {
+      gen.writeFieldName("orderby");
+      gen.writeStartObject();
+      gen.writeStringField("nodeType", "orderCollection");
+      gen.writeFieldName("orders");
+      gen.writeStartArray();
+      for(OrderByItem item : uriInfo.getOrderByOption().getOrders()){
+        gen.writeStartObject();
+        gen.writeStringField("nodeType", "order");
+        gen.writeStringField("sortorder", item.isDescending() ? "desc" : "asc");
+        gen.writeFieldName("expression");
+        appendJsonExpressionString(gen, item.getExpression());
+        gen.writeEndObject();
+      }
+      gen.writeEndArray();
+      gen.writeEndObject();
+    }
+
+    if (selectOption != null && !selectOption.getSelectItems().isEmpty()) {
+      appendSelectedPropertiesJson(gen, selectOption.getSelectItems());
+    }
+
+    gen.writeEndObject();
+  }
+
+  private void appendJsonExpressionString(JsonGenerator gen, Expression expression) throws IOException {
+    if(expression == null){
+      gen.writeNull();
+      return;
+    }
+    String expressionJsonString;
+    try {
+      expressionJsonString = expression.accept(new ExpressionJsonVisitor());
+    } catch (Exception e) {
+      expressionJsonString = "Exception in Debug Filter visitor occoured: " + e.getMessage();
+    }
+
+    gen.writeRawValue(expressionJsonString);
+  }
+
+  private void appendSelectedPropertiesJson(JsonGenerator gen, List<SelectItem> selectItems) throws IOException {
+    gen.writeFieldName("select");
+
+    gen.writeStartArray();
+    for (SelectItem selectItem : selectItems) {
+      appendSelectItemJson(gen, selectItem);
+    }
+    gen.writeEndArray();
+  }
+
+  private void appendSelectItemJson(JsonGenerator gen, SelectItem selectItem) throws IOException {
+    String selectedProperty = "";
+    if (selectItem.isStar()) {
+      if (selectItem.getAllOperationsInSchemaNameSpace() == null) {
+        selectedProperty = "*";
+      } else {
+        selectedProperty = selectItem.getAllOperationsInSchemaNameSpace().getFullQualifiedNameAsString() + ".*";
+      }
+    } else {
+      boolean first = true;
+      for (UriResource resourcePart : selectItem.getResourcePath().getUriResourceParts()) {
+        if (!first) {
+          selectedProperty = selectedProperty + "/";
+        }
+        selectedProperty = resourcePart.toString();
+      }
+    }
   }
 
   @Override
   public void appendHtml(Writer writer) throws IOException {
     // TODO Auto-generated method stub
-    
+
   }
 
 //  private final UriInfo uriInfo;

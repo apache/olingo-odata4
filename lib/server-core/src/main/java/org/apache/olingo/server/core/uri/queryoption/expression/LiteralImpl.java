@@ -51,7 +51,7 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
-    return visitor.visitLiteral(text);
+    return visitor.visitLiteral(this);
   }
 
 }
