@@ -95,6 +95,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
+              <skip>${cobertura.skip}</skip>
               <!--<includes>**/olingo/**/*.class</includes>-->
               <!--<excludes>**/*.properties</excludes>-->
               <includeGroupIds>${project.groupId}</includeGroupIds>

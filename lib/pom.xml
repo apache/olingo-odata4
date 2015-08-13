@@ -23,7 +23,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.olingo</groupId>
   <artifactId>odata-lib</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
@@ -46,4 +45,30 @@
     <module>server-tecsvc</module>
     <module>server-test</module>
   </modules>
+
+  <properties>
+    <cobertura.skip>true</cobertura.skip>
+    <!-- exclude proxy tests by default -->
+    <exclude.regex>.*proxy.*</exclude.regex>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>build.fast</id>
+      <properties>
+        <pmd.skip>true</pmd.skip>
+        <rat.skip>true</rat.skip>
+        <checkstyle.skip>true</checkstyle.skip>
+        <exclude.regex>.*(proxy|client).*</exclude.regex>
+      </properties>
+    </profile>
+    <profile>
+      <id>build.quality</id>
+      <properties>
+        <cobertura.skip>false</cobertura.skip>
+        <!-- nothing excluded -->
+        <exclude.regex></exclude.regex>
+      </properties>
+    </profile>
+  </profiles>
 </project>
