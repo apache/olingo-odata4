@@ -220,6 +220,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         .append("ul, .tree { list-style-type: none; }\n")
         .append("div > ul.expr, div > .expand, .tree { padding-left: 0; }\n")
         .append(".expr, .expand, .null, .numeric { padding-left: 1.5em; }\n")
+        .append(".jsonCode{ white-space: pre-wrap; }")
         .append("</style>\n")
         .append("</head>\n")
         .append("<body>\n");

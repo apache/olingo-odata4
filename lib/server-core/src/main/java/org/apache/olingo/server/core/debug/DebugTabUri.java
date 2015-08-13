@@ -22,15 +22,26 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
+import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.api.uri.queryoption.SkipOption;
+import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 /**
  * URI parser debug information.
@@ -38,13 +49,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class DebugTabUri implements DebugTab {
 
   private final UriInfo uriInfo;
-  private final SelectOption selectOption;
-  private final ExpandOption expandOption;
 
   public DebugTabUri(UriInfo uriInfo) {
     this.uriInfo = uriInfo;
-    this.selectOption = uriInfo == null ? null : uriInfo.getSelectOption();
-    this.expandOption = uriInfo == null ? null : uriInfo.getExpandOption();
   }
 
   @Override
@@ -61,19 +68,56 @@ public class DebugTabUri implements DebugTab {
 
     gen.writeStartObject();
 
-    if (uriInfo.getFilterOption() != null) {
-      gen.writeFieldName("filter");
-      appendJsonExpressionString(gen, uriInfo.getFilterOption().getExpression());
+    if (uriInfo.getFormatOption() != null) {
+      gen.writeStringField("format", uriInfo.getFormatOption().getFormat());
     }
 
-    if (uriInfo.getOrderByOption() != null && uriInfo.getOrderByOption().getOrders() != null
-        && !uriInfo.getOrderByOption().getOrders().isEmpty()) {
+    if (uriInfo.getIdOption() != null) {
+      gen.writeStringField("id", uriInfo.getIdOption().getValue());
+    }
+
+    if (uriInfo.getSkipTokenOption() != null) {
+      gen.writeStringField("id", uriInfo.getSkipTokenOption().getValue());
+    }
+
+    appendCommonJsonObjects(gen, uriInfo.getCountOption(), uriInfo.getSkipOption(), uriInfo.getTopOption(), uriInfo
+        .getFilterOption(), uriInfo.getOrderByOption(), uriInfo.getSelectOption(), uriInfo.getExpandOption());
+
+    if (uriInfo.getUriResourceParts() != null) {
+      appendURIResourceParts(gen, uriInfo.getUriResourceParts());
+    }
+
+    gen.writeEndObject();
+  }
+
+  private void appendCommonJsonObjects(JsonGenerator gen, CountOption countOption, SkipOption skipOption,
+      TopOption topOption, FilterOption filterOption, OrderByOption orderByOption, SelectOption selectOption,
+      ExpandOption expandOption)
+      throws IOException {
+    if (countOption != null) {
+      gen.writeBooleanField("isCount", countOption.getValue());
+    }
+
+    if (skipOption != null) {
+      gen.writeNumberField("skip", skipOption.getValue());
+    }
+
+    if (topOption != null) {
+      gen.writeNumberField("top", topOption.getValue());
+    }
+
+    if (filterOption != null) {
+      gen.writeFieldName("filter");
+      appendJsonExpressionString(gen, filterOption.getExpression());
+    }
+
+    if (orderByOption != null && orderByOption.getOrders() != null) {
       gen.writeFieldName("orderby");
       gen.writeStartObject();
       gen.writeStringField("nodeType", "orderCollection");
       gen.writeFieldName("orders");
       gen.writeStartArray();
-      for(OrderByItem item : uriInfo.getOrderByOption().getOrders()){
+      for (OrderByItem item : orderByOption.getOrders()) {
         gen.writeStartObject();
         gen.writeStringField("nodeType", "order");
         gen.writeStringField("sortorder", item.isDescending() ? "desc" : "asc");
@@ -89,11 +133,69 @@ public class DebugTabUri implements DebugTab {
       appendSelectedPropertiesJson(gen, selectOption.getSelectItems());
     }
 
+    if (expandOption != null && !expandOption.getExpandItems().isEmpty()) {
+      appendExpandedPropertiesJson(gen, expandOption.getExpandItems());
+    }
+  }
+
+  private void appendURIResourceParts(JsonGenerator gen, List<UriResource> uriResourceParts) throws IOException {
+    gen.writeFieldName("uriResourceParts");
+
+    gen.writeStartArray();
+    for (UriResource resource : uriResourceParts) {
+      gen.writeStartObject();
+      gen.writeStringField("uriResourceKind", resource.getKind().toString());
+      gen.writeStringField("segment", resource.toString());
+      gen.writeEndObject();
+    }
+    gen.writeEndArray();
+  }
+
+  private void appendExpandedPropertiesJson(JsonGenerator gen, List<ExpandItem> expandItems) throws IOException {
+    gen.writeFieldName("expand");
+
+    gen.writeStartArray();
+
+    for (ExpandItem item : expandItems) {
+      appendExpandItemJson(gen, item);
+    }
+
+    gen.writeEndArray();
+  }
+
+  private void appendExpandItemJson(JsonGenerator gen, ExpandItem item) throws IOException {
+    gen.writeStartObject();
+
+    if (item.isStar()) {
+      gen.writeBooleanField("star", item.isStar());
+    } else if (item.getResourcePath() != null && item.getResourcePath().getUriResourceParts() != null) {
+      gen.writeFieldName("expandPath");
+      gen.writeStartArray();
+      for (UriResource resource : item.getResourcePath().getUriResourceParts()) {
+        gen.writeStartObject();
+        gen.writeStringField("propertyKind", resource.getKind().toString());
+        gen.writeStringField("propertyName", resource.toString());
+        gen.writeEndObject();
+      }
+      gen.writeEndArray();
+    }
+
+    if (item.isRef()) {
+      gen.writeBooleanField("isRef", item.isRef());
+    }
+
+    if (item.getLevelsOption() != null) {
+      gen.writeNumberField("levels", item.getLevelsOption().getValue());
+    }
+
+    appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(), item
+        .getFilterOption(), item.getOrderByOption(), item.getSelectOption(), item.getExpandOption());
+
     gen.writeEndObject();
   }
 
   private void appendJsonExpressionString(JsonGenerator gen, Expression expression) throws IOException {
-    if(expression == null){
+    if (expression == null) {
       gen.writeNull();
       return;
     }
@@ -134,187 +236,31 @@ public class DebugTabUri implements DebugTab {
         selectedProperty = resourcePart.toString();
       }
     }
+
+    gen.writeString(selectedProperty);
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
-    // TODO Auto-generated method stub
+  public void appendHtml(final Writer writer) throws IOException {
+    if (uriInfo == null) {
+      return;
+    }
 
+    writer.append("<h2>Uri Information</h2>\n")
+        .append("<ul class=\"jsonCode\"><li>");
+    writer.append(getJsonString());
+    writer.append("</li></ul>\n");
   }
 
-//  private final UriInfo uriInfo;
-//  private final FilterExpression filter;
-//  private final OrderByExpression orderBy;
-//  private final ExpandSelectTreeNodeImpl expandSelectTree;
-//  private final ExpressionParserException exception;
-//
-//  public DebugInfoUri(final UriInfo uriInfo, final ExpressionParserException exception) {
-//    this.uriInfo = uriInfo;
-//    filter = uriInfo == null ? null : uriInfo.getFilter();
-//    orderBy = uriInfo == null ? null : uriInfo.getOrderBy();
-//    expandSelectTree = uriInfo == null ? null : getExpandSelect();
-//    this.exception = exception;
-//  }
-//
-//  private ExpandSelectTreeNodeImpl getExpandSelect() {
-//    try {
-//      return uriInfo.getExpand().isEmpty() && uriInfo.getSelect().isEmpty() ? null :
-//          new ExpandSelectTreeCreator(uriInfo.getSelect(), uriInfo.getExpand()).create();
-//    } catch (final EdmException e) {
-//      return null;
-//    }
-//  }
-//  @Override
-//  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
-//    jsonStreamWriter.beginObject();
-//
-//    if (exception != null && exception.getFilterTree() != null) {
-//      jsonStreamWriter.name("error")
-//          .beginObject()
-//          .namedStringValue("expression", exception.getFilterTree().getUriLiteral())
-//          .endObject();
-//      if (filter != null || orderBy != null || expandSelectTree != null) {
-//        jsonStreamWriter.separator();
-//      }
-//    }
-//
-//    if (filter != null) {
-//      String filterString;
-//      try {
-//        filterString = (String) filter.accept(new JsonVisitor());
-//      } catch (final ExceptionVisitExpression e) {
-//        filterString = null;
-//      } catch (final ODataApplicationException e) {
-//        filterString = null;
-//      }
-//      jsonStreamWriter.name("filter").unquotedValue(filterString);
-//      if (orderBy != null || expandSelectTree != null) {
-//        jsonStreamWriter.separator();
-//      }
-//    }
-//
-//    if (orderBy != null) {
-//      String orderByString;
-//      try {
-//        orderByString = (String) orderBy.accept(new JsonVisitor());
-//      } catch (final ExceptionVisitExpression e) {
-//        orderByString = null;
-//      } catch (final ODataApplicationException e) {
-//        orderByString = null;
-//      }
-//      jsonStreamWriter.name("orderby").unquotedValue(orderByString);
-//      if (expandSelectTree != null) {
-//        jsonStreamWriter.separator();
-//      }
-//    }
-//
-//    if (expandSelectTree != null) {
-//      jsonStreamWriter.name("expandSelect").unquotedValue(expandSelectTree.toJsonString());
-//    }
-//
-//    jsonStreamWriter.endObject();
-//  }
-//
-//  @Override
-//  public void appendHtml(final Writer writer) throws IOException {
-//    if (exception != null && exception.getFilterTree() != null) {
-//      writer.append("<h2>Expression Information</h2>\n")
-//          .append("<pre class=\"code\">").append(exception.getFilterTree().getUriLiteral())
-//          .append("</pre>\n");
-//      // TODO: filter error position, filter tokens, filter tree
-//    }
-//    if (filter != null) {
-//      writer.append("<h2>Filter</h2>\n")
-//          .append("<ul class=\"expr\"><li>");
-//      appendExpression(filter.getExpression(), writer);
-//      writer.append("</li></ul>\n");
-//    }
-//    if (orderBy != null) {
-//      writer.append("<h2>Orderby</h2>\n")
-//          .append(orderBy.getOrdersCount() == 1 ? "<ul" : "<ol").append(" class=\"expr\">\n");
-//      for (final OrderExpression order : orderBy.getOrders()) {
-//        writer.append("<li>");
-//        appendExpression(order.getExpression(), writer);
-//        final ExpressionKind kind = order.getExpression().getKind();
-//        if (kind == ExpressionKind.PROPERTY || kind == ExpressionKind.LITERAL) {
-//          writer.append("<br />");
-//        }
-//        writer.append("<span class=\"order\">")
-//            .append(order.getSortOrder().toString())
-//            .append("</span></li>\n");
-//      }
-//      writer.append(orderBy.getOrdersCount() == 1 ? "</ul" : "</ol").append(">\n");
-//    }
-//    if (expandSelectTree != null) {
-//      writer.append("<h2>Expand/Select</h2>\n");
-//      appendExpandSelect(expandSelectTree, writer);
-//    }
-//  }
-//
-//  private void appendExpression(final CommonExpression expression, final Writer writer) throws IOException {
-//    final ExpressionKind kind = expression.getKind();
-//    writer.append("<span class=\"kind\">")
-//        .append(kind.toString())
-//        .append("</span> <span class=\"literal\">")
-//        .append(kind == ExpressionKind.MEMBER ? ((MemberExpression) expression).getProperty().getUriLiteral() :
-//            expression.getUriLiteral())
-//        .append("</span>, type <span class=\"type\">")
-//        .append(expression.getEdmType().toString())
-//        .append("</span>");
-//    if (kind == ExpressionKind.UNARY) {
-//      writer.append("<ul class=\"expr\"><li>");
-//      appendExpression(((UnaryExpression) expression).getOperand(), writer);
-//      writer.append("</li></ul>");
-//    } else if (kind == ExpressionKind.BINARY) {
-//      writer.append("<ol class=\"expr\"><li>");
-//      appendExpression(((BinaryExpression) expression).getLeftOperand(), writer);
-//      writer.append("</li><li>");
-//      appendExpression(((BinaryExpression) expression).getRightOperand(), writer);
-//      writer.append("</li></ol>");
-//    } else if (kind == ExpressionKind.METHOD) {
-//      final MethodExpression methodExpression = (MethodExpression) expression;
-//      if (methodExpression.getParameterCount() > 0) {
-//        writer.append("<ol class=\"expr\">");
-//        for (final CommonExpression parameter : methodExpression.getParameters()) {
-//          writer.append("<li>");
-//          appendExpression(parameter, writer);
-//          writer.append("</li>");
-//        }
-//        writer.append("</ol>");
-//      }
-//    } else if (kind == ExpressionKind.MEMBER) {
-//      writer.append("<ul class=\"expr\"><li>");
-//      appendExpression(((MemberExpression) expression).getPath(), writer);
-//      writer.append("</li></ul>");
-//    }
-//  }
-//
-//  private void appendExpandSelect(final ExpandSelectTreeNode expandSelect, final Writer writer) throws IOException {
-//    writer.append("<ul class=\"expand\">\n")
-//        .append("<li>");
-//    if (expandSelect.isAll()) {
-//      writer.append("all properties");
-//    } else {
-//      for (final EdmProperty property : expandSelect.getProperties()) {
-//        try {
-//          writer.append("property <span class=\"prop\">")
-//              .append(property.getName())
-//              .append("</span><br />");
-//        } catch (final EdmException e) {}
-//      }
-//    }
-//    writer.append("</li>\n");
-//    if (!expandSelect.getLinks().isEmpty()) {
-//      for (final String name : expandSelect.getLinks().keySet()) {
-//        writer.append("<li>link <span class=\"link\">").append(name).append("</span>");
-//        final ExpandSelectTreeNode link = expandSelect.getLinks().get(name);
-//        if (link != null) {
-//          writer.append('\n');
-//          appendExpandSelect(link, writer);
-//        }
-//        writer.append("</li>\n");
-//      }
-//    }
-//    writer.append("</ul>\n");
-//  }
+  private String getJsonString() throws IOException {
+    CircleStreamBuffer csb = new CircleStreamBuffer();
+    JsonGenerator gen =
+        new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8).setPrettyPrinter(
+            new DefaultPrettyPrinter());
+    appendJson(gen);
+    gen.close();
+    csb.closeWrite();
+
+    return IOUtils.toString(csb.getInputStream());
+  }
 }
