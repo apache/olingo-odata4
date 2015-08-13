@@ -19,10 +19,13 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpHeaders;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
@@ -31,7 +34,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 public class ODataResponse {
 
   private int statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode();
-  private final Map<String, String> headers = new HashMap<String, String>();
+  private final HttpHeaders headers = new HttpHeaders();
   private InputStream content;
 
   /**
@@ -56,7 +59,7 @@ public class ODataResponse {
    * @param value the value
    */
   public void setHeader(final String name, final String value) {
-    headers.put(name, value);
+    headers.setHeader(name, value);
   }
 
   /**
@@ -64,7 +67,12 @@ public class ODataResponse {
    * @return an unmodifiable Map of header names/values
    */
   public Map<String, String> getHeaders() {
-    return Collections.unmodifiableMap(headers);
+    Map<String, String> result = new HashMap<String, String>();
+    Collection<HttpHeader> allHeaders = headers.getHeaders();
+    for (HttpHeader header : allHeaders) {
+      result.put(header.getName(), header.getValues().iterator().next());
+    }
+    return Collections.unmodifiableMap(result);
   }
 
   /**

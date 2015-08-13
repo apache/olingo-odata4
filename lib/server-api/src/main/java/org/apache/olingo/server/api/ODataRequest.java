@@ -20,11 +20,14 @@ package org.apache.olingo.server.api;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpHeaders;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -32,7 +35,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  */
 public class ODataRequest {
   private HttpMethod method;
-  private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+  private HttpHeaders headers = new HttpHeaders();
   private InputStream body;
   private String rawQueryPath;
   private String rawRequestUri;
@@ -66,18 +69,7 @@ public class ODataRequest {
    * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
    */
   public void addHeader(final String name, final List<String> values) {
-    String key = name.toUpperCase();
-    if (headers.containsKey(key)) {
-      List<String> oldValues = headers.get(key);
-
-      List<String> newValues = new ArrayList<String>();
-      newValues.addAll(oldValues);
-      newValues.addAll(values);
-
-      headers.put(name.toUpperCase(), newValues);
-    } else {
-      headers.put(name.toUpperCase(), values);
-    }
+    headers.addHeader(name, values);
   }
 
   /**
@@ -86,7 +78,11 @@ public class ODataRequest {
    * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
-    return headers.get(name.toUpperCase());
+    HttpHeader h = headers.getHeader(name);
+    if(h == null) {
+      return null;//Collections.emptyList();
+    }
+    return new ArrayList<String>(h.getValues());
   }
 
   /**
@@ -104,7 +100,14 @@ public class ODataRequest {
    * @return an unmodifiable Map of header names/values
    */
   public Map<String, List<String>> getAllHeaders() {
-    return Collections.unmodifiableMap(headers);
+    Collection<HttpHeader> allHeader = headers.getHeaders();
+    Map<String, List<String>> result = new HashMap<String, List<String>>();
+
+    for (HttpHeader httpHeader : allHeader) {
+      result.put(httpHeader.getName(), new ArrayList<String>(httpHeader.getValues()));
+    }
+
+    return Collections.unmodifiableMap(result);
   }
 
 

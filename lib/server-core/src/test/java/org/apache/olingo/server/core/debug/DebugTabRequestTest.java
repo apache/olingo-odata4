@@ -86,7 +86,7 @@ public class DebugTabRequestTest extends AbstractDebugTabTest {
   @Test
   public void singleHeaderValue() throws Exception {
     String expectedJson =
-        "{\"method\":\"GET\",\"uri\":\"def&\",\"protocol\":\"def&\",\"headers\":{\"HEADERNAME\":\"Value1\"}}";
+        "{\"method\":\"GET\",\"uri\":\"def&\",\"protocol\":\"def&\",\"headers\":{\"HeaderName\":\"Value1\"}}";
     String expectedHtml = "<h2>Request Method</h2>\n"
         + "<p>GET</p>\n"
         + "<h2>Request URI</h2>\n"
@@ -99,7 +99,7 @@ public class DebugTabRequestTest extends AbstractDebugTabTest {
         + "<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n"
         + "</thead>\n"
         + "<tbody>\n"
-        + "<tr><td class=\"name\">HEADERNAME</td><td class=\"value\">Value1</td></tr>\n"
+        + "<tr><td class=\"name\">HeaderName</td><td class=\"value\">Value1</td></tr>\n"
         + "</tbody>\n"
         + "</table>\n";
 
@@ -120,7 +120,7 @@ public class DebugTabRequestTest extends AbstractDebugTabTest {
   @Test
   public void multiHeaderValueResultsInMap() throws Exception {
     String expectedJson = "{\"method\":\"GET\",\"uri\":\"def&\",\"protocol\":\"def&\","
-        + "\"headers\":{\"HEADERNAME\":[\"Value1\",\"Value2\"]}}";
+        + "\"headers\":{\"HeaderName\":[\"Value1\",\"Value2\"]}}";
     String expectedHtml = "<h2>Request Method</h2>\n"
         + "<p>GET</p>\n"
         + "<h2>Request URI</h2>\n"
@@ -133,8 +133,8 @@ public class DebugTabRequestTest extends AbstractDebugTabTest {
         + "<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n"
         + "</thead>\n"
         + "<tbody>\n"
-        + "<tr><td class=\"name\">HEADERNAME</td><td class=\"value\">Value1</td></tr>\n"
-        + "<tr><td class=\"name\">HEADERNAME</td><td class=\"value\">Value2</td></tr>\n"
+        + "<tr><td class=\"name\">HeaderName</td><td class=\"value\">Value1</td></tr>\n"
+        + "<tr><td class=\"name\">HeaderName</td><td class=\"value\">Value2</td></tr>\n"
         + "</tbody>\n"
         + "</table>\n";
 

@@ -18,10 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.commons.api.http;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+
 /**
  * HTTP header constants.
  */
-public interface HttpHeader {
+public class HttpHeader {
 
   /**
    * See {@link <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">HTTP/1.1 documentation</a>}.
@@ -176,4 +181,107 @@ public interface HttpHeader {
   public static final String ODATA_MAX_VERSION = "OData-MaxVersion";
   /** Custom Header defined in the OData standard. */
   public static final String ODATA_ENTITY_ID = "OData-EntityID";
+
+  private final String name;
+  private final Collection<String> values;
+
+  /**
+   * Create header for given name
+   * @param name of header
+   */
+  public HttpHeader(String name) {
+    this.name = name;
+    this.values = new ArrayList<String>();
+  }
+
+  /**
+   * Create header for given name and add given values
+   * @param name of header
+   * @param values values for header
+   */
+  public HttpHeader(String name, Collection<String> values) {
+    this(name);
+    this.values.addAll(values);
+  }
+
+  /**
+   * Get name of header (not the canonical name)
+   * @return name of header
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Get all values for this header
+   * @return all header values
+   */
+  public Collection<String> getValues() {
+    return Collections.unmodifiableCollection(values);
+  }
+
+  /**
+   * Add header value
+   *
+   * @param value value to be added
+   * @return this header object (fluent interface)
+   */
+  public HttpHeader addValue(String value) {
+    this.values.add(value);
+    return this;
+  }
+
+  /**
+   * Add header values
+   *
+   * @param values values to be added
+   * @return this header object (fluent interface)
+   */
+  public HttpHeader addValues(Collection<String> values) {
+    this.values.addAll(values);
+    return this;
+  }
+
+  /**
+   * Get the canonical name of header
+   * @return canonical name of header
+   */
+  public String getCanonicalName() {
+    return createCanonicalName(name);
+  }
+
+  /**
+   * Create the canonical name based on given name parameter
+   *
+   * @param name name which is canonicalised
+   * @return canonical name
+   */
+  public static String createCanonicalName(String name) {
+    return name.toLowerCase(Locale.ROOT);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    HttpHeader that = (HttpHeader) o;
+
+    if (!name.equals(that.name)) {
+      return false;
+    }
+    return values.equals(that.values);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + values.hashCode();
+    return result;
+  }
 }
