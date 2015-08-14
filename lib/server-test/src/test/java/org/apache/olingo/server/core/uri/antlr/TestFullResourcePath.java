@@ -26,6 +26,7 @@ import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -5252,6 +5253,27 @@ public class TestFullResourcePath {
              + "($filter=PropertyString eq 'Test String1')");
   }
   
+  @Test
+  public void testKeyPredicatesInExpandFilter() throws Exception {
+    testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($filter=NavPropertyETTwoKeyNavMany" 
+        + "(PropertyInt16=1,PropertyString='2')/PropertyInt16 eq 1)").goPath().goExpand()
+        .first().goPath().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .goUpExpandValidator()
+        .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
+  }
+  
+  @Test
+  public void testKeyPredicatesInDoubleExpandedFilter() throws Exception {
+    testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany" 
+        + "($filter=NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='2')/PropertyInt16 eq 1))")
+        .goPath().goExpand()
+        .first().goPath().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .goUpExpandValidator().goExpand()
+        .first().goPath().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .goUpExpandValidator()
+        .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
+  }
+  
   @Test(expected=UriParserException.class)
   public void testFilterSystemQueryOptionAnyWithKeyAny() throws Exception {
     testUri.run("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)" 
@@ -5272,7 +5294,11 @@ public class TestFullResourcePath {
            .at(2).isCount();
   }
   
-  // ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$count
+  @Test(expected=UriParserException.class)
+  public void testNavigationWithMoreThanOneKey() throws Exception {
+    testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
+        + "(PropertyInt=1,PropertyString='2')");
+  }
   
   public static String encode(final String decoded) throws UnsupportedEncodingException {
     return Encoder.encode(decoded);

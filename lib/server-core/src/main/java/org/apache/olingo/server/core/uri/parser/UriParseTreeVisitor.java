@@ -45,6 +45,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
@@ -457,7 +458,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
       } else if (property instanceof EdmNavigationProperty) {
         // create navigation property
-        if(ctx.getParent() instanceof ExpandPathContext && ctx.vlNVO.size() > 0) {
+        if(context.contextVisitExpandResourcePath && ctx.vlNVO.size() > 0) {
+        //if(ctx.getParent() instanceof ExpandPathContext && ctx.vlNVO.size() > 0) {
           throw wrap(new UriParserSemanticException("Navigation properties in expand system query options must not" 
                 + " be followed a an key", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
         }
@@ -701,6 +703,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (!(obj instanceof UriResourcePartTyped)) {
       throw wrap(new UriParserSemanticException("all only allowed on typed path segments",
           UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "all"));
+    } else if(obj instanceof UriResourceNavigation) {
+      if(!((UriResourceNavigation) obj).getKeyPredicates().isEmpty()) {
+        throw wrap(new UriParserSemanticException("Any lamdba expression must not be following navigation properties"
+            + "with key predicates", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+      }
     }
 
     UriContext.LambdaVariables var = new UriContext.LambdaVariables();
@@ -926,6 +933,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (!(lastResourcePart instanceof UriResourcePartTyped)) {
         throw wrap(new UriParserSemanticException("any only allowed on typed path segments",
             UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "any"));
+      } else if(lastResourcePart instanceof UriResourceNavigation) {
+        if(!((UriResourceNavigation) lastResourcePart).getKeyPredicates().isEmpty()) {
+          throw wrap(new UriParserSemanticException("Any lamdba expression must not be following navigation properties"
+              + "with key predicates", UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED));
+        }
       }
 
       UriContext.LambdaVariables var = new UriContext.LambdaVariables();
@@ -1221,8 +1233,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     context.contextExpandItemPath = expandItem;
     context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
     
+    context.contextVisitExpandResourcePath = true;
     super.visitExpandPath(ctx);
-
+    context.contextVisitExpandResourcePath = false;
+    
     EdmType startType = removeUriResourceStartingTypeFilterImpl(context.contextUriInfo);
     expandItem.setResourcePath(context.contextUriInfo);
     if (startType != null) {
