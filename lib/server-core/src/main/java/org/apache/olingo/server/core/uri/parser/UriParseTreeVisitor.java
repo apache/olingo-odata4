@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -87,18 +91,23 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.AltMultContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AltOrContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AnyExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.BatchEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.BooleanNonCaseContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.BinaryLiteralContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.BooleanNonCaseLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CastExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CeilingMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConcatMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ConstSegmentContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ContainsMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.CrossjoinEOFContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.DateLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.DateMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.DatetimeoffsetLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.DayMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.DecimalLiteralContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.DurationLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.EndsWithMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.EntityEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.EnumLitContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.EnumLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandCountOptionContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandItemContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandItemsContext;
@@ -113,9 +122,11 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.Fractionalseconds
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.GeoDistanceMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.GeoIntersectsMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.GeoLengthMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.GuidLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.HourMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.IndexOfMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.InlinecountContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.IntLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.IsofExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.LengthMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.LevelsContext;
@@ -128,9 +139,9 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.MonthMethodCallEx
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NameValueOptListContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NameValuePairContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NamespaceContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.NaninfinityContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.NaninfinityLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.NowMethodCallExprContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.NullruleContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.NullruleLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OdataIdentifierContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
@@ -151,8 +162,10 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectSegmentCont
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SkipContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SkiptokenContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.StartsWithMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.StringLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SubstringMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TimeMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.TimeofdayLiteralContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ToLowerMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ToUpperMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.TopContext;
@@ -183,10 +196,6 @@ import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * UriVisitor
@@ -954,7 +963,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitBooleanNonCase(final BooleanNonCaseContext ctx) {
+  public Object visitBooleanNonCaseLiteral(final BooleanNonCaseLiteralContext ctx) {
     String text = ctx.getText().toLowerCase();
 
     if (text.equals("false")) {
@@ -1148,7 +1157,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitEnumLit(final EnumLitContext ctx) {
+  public Object visitEnumLiteral(final EnumLiteralContext ctx) {
     EnumerationImpl enum1 = new EnumerationImpl();
 
     // get type
@@ -1711,7 +1720,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitNaninfinity(final NaninfinityContext ctx) {
+  public Object visitNaninfinityLiteral(final NaninfinityLiteralContext ctx) {
     return new LiteralImpl().setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)).
         setText(ctx.getText());
   }
@@ -1723,7 +1732,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   }
 
   @Override
-  public Object visitNullrule(final NullruleContext ctx) {
+  public Object visitNullruleLiteral(final NullruleLiteralContext ctx) {
     return new LiteralImpl().setText("null");
   }
 
@@ -1823,14 +1832,106 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitPrimitiveLiteral(final PrimitiveLiteralContext ctx) {
     ParseTree child1 = ctx.children.get(0);
-
-    if (child1 instanceof EnumLitContext
-        || child1 instanceof BooleanNonCaseContext
-        || child1 instanceof NullruleContext
-        || child1 instanceof NaninfinityContext) {
+    
+    if (child1 instanceof EnumLiteralContext
+        || child1 instanceof BooleanNonCaseLiteralContext
+        || child1 instanceof NullruleLiteralContext
+        || child1 instanceof NaninfinityLiteralContext
+        || child1 instanceof StringLiteralContext
+        || child1 instanceof IntLiteralContext
+        || child1 instanceof BinaryLiteralContext
+        || child1 instanceof DateLiteralContext
+        || child1 instanceof DatetimeoffsetLiteralContext
+        || child1 instanceof DurationLiteralContext
+        || child1 instanceof GuidLiteralContext
+        || child1 instanceof TimeofdayLiteralContext
+        || child1 instanceof DecimalLiteralContext
+        || child1 instanceof BinaryLiteralContext) {
       return child1.accept(this);
     }
+    
+    // TODO Implement geography types and set the proper type
     return new LiteralImpl().setText(ctx.getText());
+  }
+  
+  @Override
+  public Object visitBinaryLiteral(BinaryLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary));
+  }
+
+  @Override
+  public Object visitStringLiteral(final StringLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+                            .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String));
+  }
+  
+  @Override
+  public Object visitDecimalLiteral(final DecimalLiteralContext ctx) {
+    EdmType type = null;
+    
+    if(!ctx.getText().matches(".*[eE].*")) {
+      type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal);
+    } else {
+      type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double);
+    }
+    
+    return new LiteralImpl().setText(ctx.getText()).setType(type);
+  }
+
+  @Override
+  public Object visitIntLiteral(final IntLiteralContext ctx) {
+    try {
+      final long value = Long.parseLong(ctx.getText());
+      EdmType type = null;
+      
+      if(value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
+        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte);
+      } else if (value >= 0 && value <= 255) {
+        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte);
+      } else if(value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16);
+      } else if(value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
+        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
+      } else {
+        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
+      }
+
+      return new LiteralImpl().setText(ctx.getText()).setType(type);
+    } catch( NumberFormatException e) {
+      return new LiteralImpl().setText(ctx.getText())
+          .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal));
+    }
+  }
+
+  @Override
+  public Object visitDateLiteral(final DateLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date));
+  }
+
+  @Override
+  public Object visitDatetimeoffsetLiteral(final  DatetimeoffsetLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset));
+  }
+
+  @Override
+  public Object visitDurationLiteral(final DurationLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration));
+  }
+
+  @Override
+  public Object visitGuidLiteral(final GuidLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid));
+  }
+
+  @Override
+  public Object visitTimeofdayLiteral(final TimeofdayLiteralContext ctx) {
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay));
   }
 
   @Override

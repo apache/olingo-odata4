@@ -148,7 +148,7 @@ skip                : SKIP_QO EQ INT;
 top                 : TOP EQ INT;
 //format              : FORMAT EQ ( ATOM | JSON | XML | PCHARS SLASH PCHARS);
 
-inlinecount         : COUNT EQ booleanNonCase;
+inlinecount         : COUNT EQ booleanNonCaseLiteral;
 
 search              : SEARCH searchSpecialToken;
 searchInline        : SEARCH_INLINE searchSpecialToken;
@@ -342,19 +342,19 @@ odataIdentifier         : ODATAIDENTIFIER;
 //;------------------------------------------------------------------------------
 
 
-primitiveLiteral    : nullrule
-                    | booleanNonCase
-                    | DECIMAL   //includes double and single literals
-                    | naninfinity
-                    | INT       //includes int16/int32 and int64 literals
-                    | BINARY  
-                    | DATE
-                    | DATETIMEOFFSET
-                    | DURATION
-                    | GUID
-                    | string
-                    | TIMEOFDAY
-                    | enumLit
+primitiveLiteral    : nullruleLiteral
+                    | booleanNonCaseLiteral
+                    | decimalLiteral   //includes double and single literals
+                    | naninfinityLiteral
+                    | intLiteral       //includes int16/int32 and int64 literals
+                    | binaryLiteral  
+                    | dateLiteral
+                    | datetimeoffsetLiteral
+                    | durationLiteral
+                    | guidLiteral
+                    | stringLiteral
+                    | timeofdayLiteral
+                    | enumLiteral
                     | geographyCollection
                     | geographyLineString
                     | geographyMultilineString
@@ -371,14 +371,22 @@ primitiveLiteral    : nullrule
                     | geometryPolygon
                     ;
 
-naninfinity         : NANINFINITY;
 
-nullrule            : NULLVALUE;
-booleanNonCase      : BOOLEAN | TRUE | FALSE;
-string              : STRING;
+nullruleLiteral            : NULLVALUE;
+booleanNonCaseLiteral      : BOOLEAN | TRUE | FALSE;
+decimalLiteral             : DECIMAL;
+naninfinityLiteral         : NANINFINITY;
+intLiteral                 : INT;
+binaryLiteral              : BINARY;
+dateLiteral                : DATE;
+datetimeoffsetLiteral      : DATETIMEOFFSET;
+durationLiteral            : DURATION;
+guidLiteral                : GUID;
+stringLiteral              : STRING;
+timeofdayLiteral           : TIMEOFDAY;
 
-enumLit             : vNS=namespace vODI=odataIdentifier vValues=STRING;
-enumValues          : vlODI+=odataIdentifier ( COMMA vlODI+=odataIdentifier )*;
+enumLiteral                : vNS=namespace vODI=odataIdentifier vValues=STRING;
+enumValues                 : vlODI+=odataIdentifier ( COMMA vlODI+=odataIdentifier )*;
 
 geographyCollection         : GEOGRAPHY  fullCollectionLiteral SQUOTE;
 fullCollectionLiteral       : sridLiteral collectionLiteral;

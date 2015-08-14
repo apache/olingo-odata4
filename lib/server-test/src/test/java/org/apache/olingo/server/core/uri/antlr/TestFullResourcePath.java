@@ -25,8 +25,22 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmGuid;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.processor.EntityProcessor;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -5298,6 +5312,83 @@ public class TestFullResourcePath {
   public void testNavigationWithMoreThanOneKey() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
         + "(PropertyInt=1,PropertyString='2')");
+  }
+  
+  @Test
+  public void testFilterLiteralTypes() throws Exception {
+    testUri.run("ESAllPrim", "$filter='1' eq 42")
+      .goFilter().isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("'1'").isLiteralType(EdmString.getInstance())
+        .root()
+        .right().isLiteral("42").isLiteralType(EdmSByte.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=127 eq 128")
+      .goFilter().isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("127").isLiteralType(EdmSByte.getInstance())
+        .root()
+        .right().isLiteral("128").isLiteralType(EdmByte.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=null eq 42.1")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("null").isNullLiteralType()
+      .root()
+      .right().isLiteral("42.1").isLiteralType(EdmDecimal.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=15.6E300 eq 3.4E37")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("15.6E300")
+      .isLiteralType(EdmDouble.getInstance())
+      .root()
+      .right().isLiteral("3.4E37").isLiteralType(EdmDouble.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=15.55555555555555555555555555555555555555555555 eq 3.1")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("15.55555555555555555555555555555555555555555555")
+      .isLiteralType(EdmDecimal.getInstance())
+      .root()
+      .right().isLiteral("3.1").isLiteralType(EdmDecimal.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=duration'PT1H2S' eq 2012-12-03")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("duration'PT1H2S'").isLiteralType(EdmDuration.getInstance())
+      .root()
+      .right().isLiteral("2012-12-03").isLiteralType(EdmDate.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=true eq 2012-12-03T07:16:23Z")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("true").isLiteralType(EdmBoolean.getInstance())
+      .root()
+      .right().isLiteral("2012-12-03T07:16:23Z").isLiteralType(EdmDateTimeOffset.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=07:59:59.999 eq 01234567-89ab-cdef-0123-456789abcdef")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("07:59:59.999").isLiteralType(EdmTimeOfDay.getInstance())
+      .root()
+      .right().isLiteral("01234567-89ab-cdef-0123-456789abcdef").isLiteralType(EdmGuid.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=binary'0FAB7B' eq true")
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("binary'0FAB7B'").isLiteralType(EdmBinary.getInstance())
+      .root()
+      .right().isLiteral("true").isLiteralType(EdmBoolean.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=" + Short.MIN_VALUE + " eq " + Short.MAX_VALUE)
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("" + Short.MIN_VALUE).isLiteralType(EdmInt16.getInstance())
+      .root()
+      .right().isLiteral("" + Short.MAX_VALUE).isLiteralType(EdmInt16.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=" + Integer.MIN_VALUE + " eq " + Integer.MAX_VALUE)
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("" + Integer.MIN_VALUE).isLiteralType(EdmInt32.getInstance())
+      .root()
+      .right().isLiteral("" + Integer.MAX_VALUE).isLiteralType(EdmInt32.getInstance());
+    
+    testUri.run("ESAllPrim", "$filter=" + Long.MIN_VALUE + " eq " + Long.MAX_VALUE)
+    .goFilter().isBinary(BinaryOperatorKind.EQ)
+      .left().isLiteral("" + Long.MIN_VALUE).isLiteralType(EdmInt64.getInstance())
+      .root()
+      .right().isLiteral("" + Long.MAX_VALUE).isLiteralType(EdmInt64.getInstance());
   }
   
   public static String encode(final String decoded) throws UnsupportedEncodingException {

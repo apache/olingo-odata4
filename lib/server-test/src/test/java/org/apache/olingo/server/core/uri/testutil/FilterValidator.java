@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core.uri.testutil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -362,7 +364,30 @@ public class FilterValidator implements TestValidator {
 
     return this;
   }
-
+  
+  public FilterValidator isLiteralType(EdmType edmType) {
+    if(!(curExpression instanceof LiteralImpl)) {
+      fail("Current expression is nit a literal");
+    }
+    
+    final EdmType type = ((LiteralImpl) curExpression).getType();
+    assertNotNull(type);
+    assertEquals(edmType.getClass(), type.getClass());
+    
+    return this;
+  }
+  
+  public FilterValidator isNullLiteralType() {
+    if(!(curExpression instanceof LiteralImpl)) {
+      fail("Current expression is nit a literal");
+    }
+    
+    final EdmType type = ((LiteralImpl) curExpression).getType();
+    assertNull(type);
+    
+    return this;
+  }
+  
   public FilterValidator isMethod(final MethodKind methodKind, final int parameterCount) {
     if (!(curExpression instanceof MethodImpl)) {
       fail("Current expression is not a methodCall");

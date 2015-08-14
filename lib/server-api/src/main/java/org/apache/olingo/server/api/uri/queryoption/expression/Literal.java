@@ -31,7 +31,12 @@ public interface Literal extends Expression {
   public String getText();
 
   /**
-   * @return Type of the literal if detected
+   * Numeric literals without an dot and without an e return the smallest possible Edm Integer type.
+   * Numeric literals without an dot, without an e and larger than 2^63 - 1 are considered as Edm.Decimal
+   * Numeric literals with an e, are considered to be Edm.Double 
+   * Numeric literals with an dot and without an e, are supposed to be Edm.Decimal
+   * 
+   * @return Type of the literal if detected. The type of the literal is guessed by the parser. 
    */
   public EdmType getType();
 
