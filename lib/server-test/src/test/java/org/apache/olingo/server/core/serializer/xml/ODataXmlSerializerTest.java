@@ -1840,8 +1840,8 @@ public class ODataXmlSerializerTest {
 
     @Override
     public int differenceFound(Difference difference) {
-      final String xpath = "/entry[1]/updated[1]/text()[1]";
-      if(difference.getControlNodeDetail().getXpathLocation().equals(xpath)) {
+      final String xpath = "/updated[1]/text()[1]";
+      if(difference.getControlNodeDetail().getXpathLocation().endsWith(xpath)) {
         String controlValue = difference.getControlNodeDetail().getValue();
         String testValue = difference.getTestNodeDetail().getValue();
         // allow a difference from two seconds
