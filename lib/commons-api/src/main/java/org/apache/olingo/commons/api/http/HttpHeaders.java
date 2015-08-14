@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -102,6 +104,21 @@ public class HttpHeaders {
    */
   public Collection<HttpHeader> getHeaders() {
     return Collections.unmodifiableCollection(headers.values());
+  }
+
+
+  /**
+   * Get all headers with the according values.
+   *
+   * @return an unmodifiable Map of header names/values
+   */
+  public Map<String, List<String>> getHeaderToValues() {
+    Map<String, List<String>> result = new HashMap<String, List<String>>();
+    Collection<HttpHeader> allHeaders = headers.values();
+    for (HttpHeader header : allHeaders) {
+      result.put(header.getName(), header.getValues());
+    }
+    return Collections.unmodifiableMap(result);
   }
 
   /**

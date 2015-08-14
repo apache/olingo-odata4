@@ -20,9 +20,6 @@ package org.apache.olingo.server.api;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,14 +121,7 @@ public class ODataRequest {
    * @return an unmodifiable Map of header names/values
    */
   public Map<String, List<String>> getAllHeaders() {
-    Collection<HttpHeader> allHeader = headers.getHeaders();
-    Map<String, List<String>> result = new HashMap<String, List<String>>();
-
-    for (HttpHeader httpHeader : allHeader) {
-      result.put(httpHeader.getName(), new ArrayList<String>(httpHeader.getValues()));
-    }
-
-    return Collections.unmodifiableMap(result);
+    return headers.getHeaderToValues();
   }
 
 
@@ -241,7 +231,7 @@ public class ODataRequest {
 
   /**
    * Sets the HTTP protocol used
-   * @param protocol
+   * @param 2protocol
    * @see #getProtocol()
    */
   public void setProtocol(String protocol) {

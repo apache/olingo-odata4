@@ -21,6 +21,7 @@ package org.apache.olingo.commons.api.http;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -183,7 +184,7 @@ public class HttpHeader {
   public static final String ODATA_ENTITY_ID = "OData-EntityID";
 
   private final String name;
-  private final Collection<String> values;
+  private final List<String> values;
 
   /**
    * Create header for given name
@@ -216,8 +217,8 @@ public class HttpHeader {
    * Get all values for this header
    * @return all header values
    */
-  public Collection<String> getValues() {
-    return Collections.unmodifiableCollection(values);
+  public List<String> getValues() {
+    return Collections.unmodifiableList(values);
   }
 
   /**

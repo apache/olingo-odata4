@@ -97,12 +97,7 @@ public class ODataResponse {
    * @return an unmodifiable Map of header names/values
    */
   public Map<String, List<String>> getAllHeaders() {
-    Map<String, List<String>> result = new HashMap<String, List<String>>();
-    Collection<HttpHeader> allHeaders = headers.getHeaders();
-    for (HttpHeader header : allHeaders) {
-      result.put(header.getName(), new ArrayList<String>(header.getValues()));
-    }
-    return Collections.unmodifiableMap(result);
+    return headers.getHeaderToValues();
   }
 
   /**
