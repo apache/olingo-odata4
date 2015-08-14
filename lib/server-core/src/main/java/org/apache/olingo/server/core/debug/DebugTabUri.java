@@ -234,6 +234,7 @@ public class DebugTabUri implements DebugTab {
           selectedProperty = selectedProperty + "/";
         }
         selectedProperty = resourcePart.toString();
+        first = false;
       }
     }
 
@@ -254,13 +255,48 @@ public class DebugTabUri implements DebugTab {
 
   private String getJsonString() throws IOException {
     CircleStreamBuffer csb = new CircleStreamBuffer();
-    JsonGenerator gen =
-        new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8).setPrettyPrinter(
-            new DefaultPrettyPrinter());
-    appendJson(gen);
-    gen.close();
-    csb.closeWrite();
+    IOException cachedException = null;
+    try {
+      JsonGenerator json =
+          new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8)
+              .setPrettyPrinter(new DefaultPrettyPrinter());
+      appendJson(json);
+      json.close();
+      csb.getOutputStream().close();
+    } catch (IOException e) {
+      throw e;
+    } finally {
+      if (csb != null && csb.getOutputStream() != null) {
+        try {
+          csb.getOutputStream().close();
+        } catch (IOException e) {
+          if (cachedException != null) {
+            throw cachedException;
+          } else {
+            throw e;
+          }
+        }
+      }
+    }
 
-    return IOUtils.toString(csb.getInputStream());
+    try {
+      String jsonString = IOUtils.toString(csb.getInputStream());
+      csb.getInputStream().close();
+      return jsonString;
+    } catch (IOException e) {
+      throw e;
+    } finally {
+      if (csb != null && csb.getInputStream() != null) {
+        try {
+          csb.getInputStream().close();
+        } catch (IOException e) {
+          if (cachedException != null) {
+            throw cachedException;
+          } else {
+            throw e;
+          }
+        }
+      }
+    }
   }
 }

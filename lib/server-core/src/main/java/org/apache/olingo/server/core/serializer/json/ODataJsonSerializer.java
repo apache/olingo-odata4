@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,7 +48,6 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
@@ -58,21 +57,18 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
-public class ODataJsonSerializer implements ODataSerializer {
-
-  private static final Logger log = LoggerFactory.getLogger(ODataJsonSerializer.class);
+public class ODataJsonSerializer extends AbstractODataSerializer {
 
   private final boolean isIEEE754Compatible;
   private final boolean isODataMetadataNone;
@@ -85,32 +81,23 @@ public class ODataJsonSerializer implements ODataSerializer {
   @Override
   public SerializerResult serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
       throws SerializerException {
-    CircleStreamBuffer buffer;
-    JsonGenerator gen = null;
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
 
     try {
       buffer = new CircleStreamBuffer();
-      gen = new JsonFactory().createGenerator(buffer.getOutputStream());
+      JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
+      new ServiceDocumentJsonSerializer(metadata, serviceRoot, isODataMetadataNone).writeServiceDocument(json);
 
-      new ServiceDocumentJsonSerializer(metadata, serviceRoot, isODataMetadataNone).writeServiceDocument(gen);
-
-      gen.close();
-
+      json.close();
+      buffer.getOutputStream().close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
-
     } catch (final IOException e) {
-      log.error(e.getMessage(), e);
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
     } finally {
-      if (gen != null) {
-        try {
-          gen.close();
-        } catch (IOException e) {
-          throw new SerializerException("An I/O exception occurred.", e,
-              SerializerException.MessageKeys.IO_EXCEPTION);
-        }
-      }
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
   }
 
@@ -122,24 +109,33 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   @Override
   public SerializerResult error(final ODataServerError error) throws SerializerException {
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       new ODataErrorSerializer().writeErrorDocument(json, error);
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
       final EdmEntityType entityType, final EntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
 
@@ -159,32 +155,44 @@ public class ODataJsonSerializer implements ODataSerializer {
             options.getExpand(), options.getSelect(), options.onlyReferences(), json);
       }
       writeNextLink(entitySet, json);
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult entity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final EntitySerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
           options == null ? null : options.getSelect(),
           options == null ? false : options.onlyReferences(),
           json);
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
@@ -418,12 +426,18 @@ public class ODataJsonSerializer implements ODataSerializer {
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final Boolean isUnicode, final JsonGenerator json)
-      throws IOException, EdmPrimitiveTypeException, SerializerException {
+      throws IOException, SerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
-        writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, json);
+        try {
+          writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, json);
+        } catch (EdmPrimitiveTypeException e) {
+          throw new SerializerException("Wrong value for property!", e,
+              SerializerException.MessageKeys.WRONG_PROPERTY_VALUE,
+              property.getName(), property.getValue().toString());
+        }
         break;
       case COLLECTION_GEOSPATIAL:
         throw new SerializerException("Property type not yet supported!",
@@ -441,7 +455,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   private void writeComplexCollection(final EdmComplexType type, final Property property,
       final Set<List<String>> selectedPaths, final JsonGenerator json)
-      throws IOException, EdmPrimitiveTypeException, SerializerException {
+      throws IOException, SerializerException {
     json.writeStartArray();
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
@@ -501,7 +515,7 @@ public class ODataJsonSerializer implements ODataSerializer {
 
   protected void writeComplexValue(final EdmComplexType type, final List<Property> properties,
       final Set<List<String>> selectedPaths, final JsonGenerator json)
-      throws IOException, EdmPrimitiveTypeException, SerializerException {
+      throws IOException, SerializerException {
     json.writeStartObject();
     for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
@@ -526,9 +540,11 @@ public class ODataJsonSerializer implements ODataSerializer {
   @Override
   public SerializerResult primitive(final ServiceMetadata metadata, final EdmPrimitiveType type,
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       writeContextURL(contextURL, json);
@@ -545,24 +561,32 @@ public class ODataJsonSerializer implements ODataSerializer {
             options == null ? null : options.isUnicode(), json);
       }
       json.writeEndObject();
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
     } catch (final EdmPrimitiveTypeException e) {
-      throw new SerializerException("Wrong value for property!", e,
+      cachedException = new SerializerException("Wrong value for property!", e,
           SerializerException.MessageKeys.WRONG_PROPERTY_VALUE,
           property.getName(), property.getValue().toString());
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult complex(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       writeContextURL(contextURL, json);
@@ -579,20 +603,27 @@ public class ODataJsonSerializer implements ODataSerializer {
             options == null ? null : options.getExpand(), json);
       }
       json.writeEndObject();
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult primitiveCollection(final ServiceMetadata metadata, final EdmPrimitiveType type,
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       writeContextURL(contextURL, json);
@@ -605,24 +636,27 @@ public class ODataJsonSerializer implements ODataSerializer {
           options == null ? null : options.getScale(),
           options == null ? null : options.isUnicode(), json);
       json.writeEndObject();
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
-    } catch (final EdmPrimitiveTypeException e) {
-      throw new SerializerException("Wrong value for property!", e,
-          SerializerException.MessageKeys.WRONG_PROPERTY_VALUE,
-          property.getName(), property.getValue().toString());
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
       JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
       writeContextURL(contextURL, json);
@@ -630,26 +664,29 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeFieldName(Constants.VALUE);
       writeComplexCollection(type, property, null, json);
       json.writeEndObject();
+
       json.close();
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
-    } catch (final EdmPrimitiveTypeException e) {
-      throw new SerializerException("Wrong value for property!", e,
-          SerializerException.MessageKeys.WRONG_PROPERTY_VALUE,
-          property.getName(), property.getValue().toString());
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult reference(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
       final Entity entity, final ReferenceSerializerOptions options) throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    final CircleStreamBuffer buffer = new CircleStreamBuffer();
-    final UriHelper uriHelper = new UriHelperImpl();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
 
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
+      final UriHelper uriHelper = new UriHelperImpl();
       final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
 
       json.writeStartObject();
@@ -658,22 +695,28 @@ public class ODataJsonSerializer implements ODataSerializer {
       json.writeEndObject();
 
       json.close();
-    } catch (IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+    } catch (final IOException e) {
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
-
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
       final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
       throws SerializerException {
-    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    final CircleStreamBuffer buffer = new CircleStreamBuffer();
-    final UriHelper uriHelper = new UriHelperImpl();
+    CircleStreamBuffer buffer = null;
+    SerializerException cachedException = null;
 
     try {
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      buffer = new CircleStreamBuffer();
+      final UriHelper uriHelper = new UriHelperImpl();
       final JsonGenerator json = new JsonFactory().createGenerator(buffer.getOutputStream());
       json.writeStartObject();
 
@@ -693,12 +736,18 @@ public class ODataJsonSerializer implements ODataSerializer {
       writeNextLink(entityCollection, json);
 
       json.writeEndObject();
+
       json.close();
-    } catch (IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      buffer.getOutputStream().close();
+      return SerializerResultImpl.with().content(buffer.getInputStream()).build();
+    } catch (final IOException e) {
+      cachedException =
+          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    } finally {
+      closeCircleStreamBufferOutput(buffer, cachedException);
     }
 
-    return SerializerResultImpl.with().content(buffer.getInputStream()).build();
   }
 
   private void writeContextURL(final ContextURL contextURL, JsonGenerator json) throws IOException {

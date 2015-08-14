@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -182,29 +182,29 @@ public class EdmProviderImpl extends AbstractEdm {
       }
       final List<String> parameterNamesCopy =
           parameterNames == null ? Collections.<String> emptyList() : parameterNames;
-          for (CsdlFunction function : functions) {
-            if (function.isBound()) {
-              List<CsdlParameter> providerParameters = function.getParameters();
-              if (providerParameters == null || providerParameters.size() == 0) {
-                throw new EdmException("No parameter specified for bound function: " + functionName);
-              }
-              final CsdlParameter bindingParameter = providerParameters.get(0);
-              if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
-                  && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
+      for (CsdlFunction function : functions) {
+        if (function.isBound()) {
+          List<CsdlParameter> providerParameters = function.getParameters();
+          if (providerParameters == null || providerParameters.size() == 0) {
+            throw new EdmException("No parameter specified for bound function: " + functionName);
+          }
+          final CsdlParameter bindingParameter = providerParameters.get(0);
+          if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
+              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
 
-                if (parameterNamesCopy.size() == providerParameters.size() - 1) {
-                  final List<String> providerParameterNames = new ArrayList<String>();
-                  for (int i = 1; i < providerParameters.size(); i++) {
-                    providerParameterNames.add(providerParameters.get(i).getName());
-                  }
-                  if (parameterNamesCopy.containsAll(providerParameterNames)) {
-                    return new EdmFunctionImpl(this, functionName, function);
-                  }
-                }
+            if (parameterNamesCopy.size() == providerParameters.size() - 1) {
+              final List<String> providerParameterNames = new ArrayList<String>();
+              for (int i = 1; i < providerParameters.size(); i++) {
+                providerParameterNames.add(providerParameters.get(i).getName());
+              }
+              if (parameterNamesCopy.containsAll(providerParameterNames)) {
+                return new EdmFunctionImpl(this, functionName, function);
               }
             }
           }
-          return null;
+        }
+      }
+      return null;
     } catch (ODataException e) {
       throw new EdmException(e);
     }
@@ -291,25 +291,25 @@ public class EdmProviderImpl extends AbstractEdm {
 
       final List<String> parameterNamesCopy =
           parameterNames == null ? Collections.<String> emptyList() : parameterNames;
-          for (CsdlFunction function : functions) {
-            if (!function.isBound()) {
-              List<CsdlParameter> providerParameters = function.getParameters();
-              if (providerParameters == null) {
-                providerParameters = Collections.emptyList();
-              }
-              if (parameterNamesCopy.size() == providerParameters.size()) {
-                final List<String> functionParameterNames = new ArrayList<String>();
-                for (CsdlParameter parameter : providerParameters) {
-                  functionParameterNames.add(parameter.getName());
-                }
+      for (CsdlFunction function : functions) {
+        if (!function.isBound()) {
+          List<CsdlParameter> providerParameters = function.getParameters();
+          if (providerParameters == null) {
+            providerParameters = Collections.emptyList();
+          }
+          if (parameterNamesCopy.size() == providerParameters.size()) {
+            final List<String> functionParameterNames = new ArrayList<String>();
+            for (CsdlParameter parameter : providerParameters) {
+              functionParameterNames.add(parameter.getName());
+            }
 
-                if (parameterNamesCopy.containsAll(functionParameterNames)) {
-                  return new EdmFunctionImpl(this, functionName, function);
-                }
-              }
+            if (parameterNamesCopy.containsAll(functionParameterNames)) {
+              return new EdmFunctionImpl(this, functionName, function);
             }
           }
-          return null;
+        }
+      }
+      return null;
     } catch (ODataException e) {
       throw new EdmException(e);
     }
@@ -319,8 +319,11 @@ public class EdmProviderImpl extends AbstractEdm {
   protected Map<String, EdmSchema> createSchemas() {
     try {
       final Map<String, EdmSchema> providerSchemas = new LinkedHashMap<String, EdmSchema>();
-      for (CsdlSchema schema : provider.getSchemas()) {
-        providerSchemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
+      List<CsdlSchema> localSchemas = provider.getSchemas();
+      if (localSchemas != null) {
+        for (CsdlSchema schema : localSchemas) {
+          providerSchemas.put(schema.getNamespace(), new EdmSchemaImpl(this, provider, schema));
+        }
       }
       return providerSchemas;
     } catch (ODataException e) {

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Header implements Iterable<HeaderField> {
+public class Header implements Iterable<HeaderField>, Cloneable {
   private final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
   private int lineNumber;
 

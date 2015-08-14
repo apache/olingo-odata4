@@ -73,7 +73,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       switch (requestedFormat) {
       case DOWNLOAD:
         response.setHeader("Content-Disposition", "attachment; filename=OData-Response."
-                + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
+            + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
         // Download is the same as html except for the above header
       case HTML:
         String title = debugInfo.getRequest() == null ?
@@ -114,7 +114,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     }
 
     // URI
-    if (debugInfo.getUriInfo() != null ) {
+    if (debugInfo.getUriInfo() != null) {
       parts.add(new DebugTabUri(debugInfo.getUriInfo()));
     }
 
@@ -134,29 +134,48 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
   private InputStream wrapInJson(final List<DebugTab> parts) throws IOException {
     CircleStreamBuffer csb = new CircleStreamBuffer();
-    JsonGenerator gen = new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8);
+    IOException cachedException = null;
 
-    gen.writeStartObject();
-    DebugTab requestInfo = parts.get(0);
-    gen.writeFieldName(requestInfo.getName().toLowerCase(Locale.ROOT));
-    requestInfo.appendJson(gen);
+    try {
+      JsonGenerator gen = new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8);
 
-    DebugTab responseInfo = parts.get(1);
-    gen.writeFieldName(responseInfo.getName().toLowerCase(Locale.ROOT));
-    responseInfo.appendJson(gen);
+      gen.writeStartObject();
+      DebugTab requestInfo = parts.get(0);
+      gen.writeFieldName(requestInfo.getName().toLowerCase(Locale.ROOT));
+      requestInfo.appendJson(gen);
 
-    gen.writeFieldName("server");
-    gen.writeStartObject();
-    gen.writeStringField("version", getVersion());
-    for (DebugTab part : parts.subList(2, parts.size())) {
-      gen.writeFieldName(part.getName().toLowerCase(Locale.ROOT));
-      part.appendJson(gen);
+      DebugTab responseInfo = parts.get(1);
+      gen.writeFieldName(responseInfo.getName().toLowerCase(Locale.ROOT));
+      responseInfo.appendJson(gen);
+
+      gen.writeFieldName("server");
+      gen.writeStartObject();
+      gen.writeStringField("version", getVersion());
+      for (DebugTab part : parts.subList(2, parts.size())) {
+        gen.writeFieldName(part.getName().toLowerCase(Locale.ROOT));
+        part.appendJson(gen);
+      }
+      gen.writeEndObject();
+
+      gen.writeEndObject();
+      gen.close();
+      csb.getOutputStream().close();
+
+    } catch (IOException e) {
+      throw e;
+    } finally {
+      if (csb != null && csb.getOutputStream() != null) {
+        try {
+          csb.getOutputStream().close();
+        } catch (IOException e) {
+          if (cachedException != null) {
+            throw cachedException;
+          } else {
+            throw e;
+          }
+        }
+      }
     }
-    gen.writeEndObject();
-
-    gen.writeEndObject();
-    gen.close();
-    csb.closeWrite();
 
     return csb.getInputStream();
   }
@@ -266,10 +285,10 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     for (final String name : entries.keySet()) {
       final String value = entries.get(name);
       writer.append("<tr><td class=\"name\">").append(name).append("</td>")
-      .append("<td class=\"value\">");
+          .append("<td class=\"value\">");
       if (value != null) {
         writer.append(escapeHtml(value));
-      }else{
+      } else {
         writer.append("null");
       }
       writer.append("</td></tr>\n");

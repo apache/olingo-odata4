@@ -112,7 +112,6 @@ public class DebugTabRequestTest extends AbstractDebugTabTest {
     oDataRequest.addHeader("HeaderName", headerValues);
 
     DebugTabRequest requestTab = new DebugTabRequest(oDataRequest);
-    System.out.println(createHtml(requestTab));
     assertEquals(expectedJson, createJson(requestTab));
     assertEquals(expectedHtml, createHtml(requestTab));
   }

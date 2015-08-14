@@ -312,6 +312,7 @@ public class Parser {
 
       // create parser
       if (logLevel > 0) {
+        //TODO: Discuss if we should keep this code
         lexer = new UriLexer(new ANTLRInputStream(input));
         showTokens(input, lexer.getAllTokens());
       }
