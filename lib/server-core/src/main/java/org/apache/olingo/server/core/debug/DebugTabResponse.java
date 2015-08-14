@@ -21,6 +21,8 @@ package org.apache.olingo.server.core.debug;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -36,13 +38,13 @@ public class DebugTabResponse implements DebugTab {
   private final ODataResponse response;
   private final String serviceRoot;
   private final HttpStatusCode status;
-  private final Map<String, String> headers;
+  private final Map<String, List<String>> headers;
 
   public DebugTabResponse(final ODataResponse applicationResponse, final String serviceRoot) {
     this.response = applicationResponse;
     if (response != null) {
       status = HttpStatusCode.fromStatusCode(response.getStatusCode());
-      headers = response.getHeaders();
+      headers = response.getAllHeaders();
     } else {
       status = HttpStatusCode.INTERNAL_SERVER_ERROR;
       headers = Collections.emptyMap();
@@ -69,7 +71,7 @@ public class DebugTabResponse implements DebugTab {
 
     if (headers != null && !headers.isEmpty()) {
       gen.writeFieldName("headers");
-      DebugResponseHelperImpl.appendJsonTable(gen, headers);
+      DebugResponseHelperImpl.appendJsonTable(gen, map(headers));
     }
 
     gen.writeFieldName("body");
@@ -82,13 +84,25 @@ public class DebugTabResponse implements DebugTab {
     gen.writeEndObject();
   }
 
+  private Map<String, String> map(Map<String, List<String>> headers) {
+    Map<String, String> result = new HashMap<String, String>();
+    for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+      if(entry.getValue().size() == 1) {
+        result.put(entry.getKey(), entry.getValue().get(0));
+      } else {
+        result.put(entry.getKey(), entry.getValue().toString());
+      }
+    }
+    return result;
+  }
+
   @Override
   public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Status Code</h2>\n")
         .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
         .append(status.getInfo()).append("</p>\n")
         .append("<h2>Response Headers</h2>\n");
-    DebugResponseHelperImpl.appendHtmlTable(writer, headers);
+    DebugResponseHelperImpl.appendHtmlTable(writer, map(headers));
     writer.append("<h2>Response Body</h2>\n");
     if (response != null && response.getContent() != null) {
       new DebugTabBody(response, serviceRoot).appendHtml(writer);

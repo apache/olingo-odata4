@@ -61,6 +61,30 @@ public class ODataRequest {
   }
 
   /**
+   * <p>Set a header to the response.</p>
+   * <p>The header name will be handled as case-insensitive key.</p>
+   * <p>If a header already exists then the header will be replaced by this new value.</p>
+   * @param name case-insensitive header name
+   * @param value value for the given header name
+   * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
+   */
+  public void setHeader(final String name, final String value) {
+    headers.setHeader(name, value);
+  }
+
+  /**
+   * <p>Adds a header to the request.</p>
+   * <p>The header name will be handled as case-insensitive key.</p>
+   * <p>If a header already exists then the list of values will just be extended.</p>
+   * @param name case-insensitive header name
+   * @param value value for the given header name
+   * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
+   */
+  public void addHeader(final String name, final String value) {
+    headers.addHeader(name, value);
+  }
+
+  /**
    * <p>Adds a header to the request.</p>
    * <p>The header name will be handled as case-insensitive key.</p>
    * <p>If a header already exists then the list of values will just be extended.</p>
@@ -73,20 +97,20 @@ public class ODataRequest {
   }
 
   /**
-   * Gets header value for a given name.
+   * Get header values for a given name.
    * @param name the header name as a case-insensitive key
    * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
     HttpHeader h = headers.getHeader(name);
     if(h == null) {
-      return null;//Collections.emptyList();
+      return null;
     }
     return new ArrayList<String>(h.getValues());
   }
 
   /**
-   * Gets first header value for a given name.
+   * Get first header value for a given name.
    * @param name the header name as a case-insensitive key
    * @return the first header value or null if not found
    */

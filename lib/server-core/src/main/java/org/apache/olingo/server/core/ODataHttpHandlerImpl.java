@@ -147,8 +147,10 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   static void convertToHttp(final HttpServletResponse response, final ODataResponse odResponse) {
     response.setStatus(odResponse.getStatusCode());
 
-    for (Entry<String, String> entry : odResponse.getHeaders().entrySet()) {
-      response.setHeader(entry.getKey(), entry.getValue());
+    for (Entry<String, List<String>> entry : odResponse.getAllHeaders().entrySet()) {
+      for (String headerValue : entry.getValue()) {
+        response.addHeader(entry.getKey(), headerValue);
+      }
     }
 
     InputStream input = odResponse.getContent();

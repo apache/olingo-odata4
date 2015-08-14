@@ -106,7 +106,7 @@ public class ODataHandlerTest {
     final ODataResponse response = dispatch(HttpMethod.GET, "/", null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
-    String ct = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+    String ct = response.getHeader(HttpHeader.CONTENT_TYPE);
     assertThat(ct, containsString("application/json"));
     assertThat(ct, containsString("odata.metadata=minimal"));
 
@@ -121,7 +121,7 @@ public class ODataHandlerTest {
   public void serviceDocumentRedirect() throws Exception {
     final ODataResponse response = dispatch(HttpMethod.GET, "", null);
     assertEquals(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode(), response.getStatusCode());
-    assertEquals(BASE_URI + "/", response.getHeaders().get(HttpHeader.LOCATION));
+    assertEquals(BASE_URI + "/", response.getHeader(HttpHeader.LOCATION));
   }
 
   @Test
@@ -143,7 +143,7 @@ public class ODataHandlerTest {
   public void metadataDefault() throws Exception {
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals(HttpContentType.APPLICATION_XML, response.getHeaders().get(HttpHeader.CONTENT_TYPE));
+    assertEquals(HttpContentType.APPLICATION_XML, response.getHeader(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
     assertThat(IOUtils.toString(response.getContent()),
@@ -153,14 +153,14 @@ public class ODataHandlerTest {
   @Test
   public void maxVersionNone() {
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null);
-    assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
+    assertEquals(ODataServiceVersion.V40.toString(), response.getHeader(HttpHeader.ODATA_VERSION));
   }
 
   @Test
   public void maxVersionSupported() {
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null,
         HttpHeader.ODATA_MAX_VERSION, ODataServiceVersion.V40.toString(), null);
-    assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
+    assertEquals(ODataServiceVersion.V40.toString(), response.getHeader(HttpHeader.ODATA_VERSION));
   }
 
   @Test
@@ -168,7 +168,7 @@ public class ODataHandlerTest {
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null,
         HttpHeader.ODATA_MAX_VERSION, ODataServiceVersion.V30.toString(), null);
 
-    assertEquals(ODataServiceVersion.V40.toString(), response.getHeaders().get(HttpHeader.ODATA_VERSION));
+    assertEquals(ODataServiceVersion.V40.toString(), response.getHeader(HttpHeader.ODATA_VERSION));
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
   }
 

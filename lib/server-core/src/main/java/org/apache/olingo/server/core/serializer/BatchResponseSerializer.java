@@ -135,12 +135,12 @@ public class BatchResponseSerializer {
 
   private void appendResponseHeader(final ODataResponse response, final int contentLength,
       final BodyBuilder builder) {
-    final Map<String, String> header = response.getHeaders();
+    final Map<String, List<String>> header = response.getAllHeaders();
 
-    for (final Map.Entry<String, String> entry : header.entrySet()) {
+    for (final Map.Entry<String, List<String>> entry : header.entrySet()) {
       // Requests do never has a content id header
       if (!entry.getKey().equalsIgnoreCase(HttpHeader.CONTENT_ID)) {
-        appendHeader(entry.getKey(), entry.getValue(), builder);
+        appendHeader(entry.getKey(), entry.getValue().get(0), builder);
       }
     }
 
@@ -153,8 +153,8 @@ public class BatchResponseSerializer {
     appendHeader(BatchParserCommon.CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
 
     if (isChangeSet) {
-      if (response.getHeaders().get(HttpHeader.CONTENT_ID) != null) {
-        appendHeader(HttpHeader.CONTENT_ID, response.getHeaders().get(HttpHeader.CONTENT_ID), builder);
+      if (response.getAllHeaders().get(HttpHeader.CONTENT_ID) != null) {
+        appendHeader(HttpHeader.CONTENT_ID, response.getHeader(HttpHeader.CONTENT_ID), builder);
       } else {
         throw new BatchSerializerException("Missing content id", MessageKeys.MISSING_CONTENT_ID);
       }

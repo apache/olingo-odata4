@@ -193,8 +193,8 @@ public class AsyncProcessor<T extends Processor> {
 
   private static ODataResponse createODataResponse(ODataResponse response) {
     ODataResponse created = new ODataResponse();
-    for (Map.Entry<String, String> header : response.getHeaders().entrySet()) {
-      created.setHeader(header.getKey(), header.getValue());
+    for (Map.Entry<String, List<String>> header : response.getAllHeaders().entrySet()) {
+      created.addHeader(header.getKey(), header.getValue());
     }
     return created;
   }

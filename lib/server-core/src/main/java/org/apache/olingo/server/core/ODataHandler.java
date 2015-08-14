@@ -117,7 +117,9 @@ public class ODataHandler {
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataApplicationException, ODataLibraryException {
-    validateODataVersion(request, response);
+    response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
+
+    validateODataVersion(request);
 
     int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
     uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
@@ -157,11 +159,9 @@ public class ODataHandler {
     debugger.stopRuntimeMeasurement(measurementHandle);
   }
 
-  private void validateODataVersion(final ODataRequest request, final ODataResponse response)
+  private void validateODataVersion(final ODataRequest request)
       throws ODataHandlerException {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
-    response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
-
     if (maxVersion != null) {
       if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
         throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,

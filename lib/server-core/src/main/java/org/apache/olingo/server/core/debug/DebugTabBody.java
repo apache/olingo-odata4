@@ -52,7 +52,7 @@ public class DebugTabBody implements DebugTab {
     this.response = response;
     this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
     if (response != null) {
-      final String contentType = response.getHeaders().get(HttpHeader.CONTENT_TYPE);
+      final String contentType = response.getHeader(HttpHeader.CONTENT_TYPE);
       // TODO: Differentiate better
       if (contentType != null) {
         responseContent = ResponseContent.JSON;
@@ -125,7 +125,7 @@ public class DebugTabBody implements DebugTab {
       break;
     case IMAGE:
       // Make header query case insensitive
-      writer.append("<img src=\"data:").append(response.getHeaders().get(HttpHeader.CONTENT_TYPE)).append(";base64,")
+      writer.append("<img src=\"data:").append(response.getHeader(HttpHeader.CONTENT_TYPE)).append(";base64,")
           .append(body)
           .append("\" />\n");
       break;

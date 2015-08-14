@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.List;
 import java.util.Map;
 
 public class AsyncResponseSerializer {
@@ -59,16 +60,18 @@ public class AsyncResponseSerializer {
 
   private void appendResponseHeader(final ODataResponse response,
                                     final ByteArrayOutputStream buffer) throws IOException {
-    final Map<String, String> header = response.getHeaders();
+    final Map<String, List<String>> header = response.getAllHeaders();
 
-    for (final Map.Entry<String, String> entry: header.entrySet()) {
+    for (final Map.Entry<String, List<String>> entry: header.entrySet()) {
       appendHeader(entry.getKey(), entry.getValue(), buffer);
     }
   }
 
-  private void appendHeader(final String name, final String value, final ByteArrayOutputStream buffer)
+  private void appendHeader(final String name, final List<String> values, final ByteArrayOutputStream buffer)
       throws IOException {
-    append(name + COLON + SP + value + CRLF, buffer);
+    for (String value : values) {
+      append(name + COLON + SP + value + CRLF, buffer);
+    }
   }
 
   private void appendStatusLine(final ODataResponse response, final ByteArrayOutputStream buffer)

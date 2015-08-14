@@ -73,7 +73,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       switch (requestedFormat) {
       case DOWNLOAD:
         response.setHeader("Content-Disposition", "attachment; filename=OData-Response."
-            + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
+                + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
         // Download is the same as html except for the above header
       case HTML:
         String title = debugInfo.getRequest() == null ?
