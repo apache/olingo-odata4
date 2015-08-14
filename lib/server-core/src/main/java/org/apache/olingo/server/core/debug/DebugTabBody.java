@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataResponse;
@@ -43,31 +44,27 @@ public class DebugTabBody implements DebugTab {
 
   private final String serviceRoot;
 
-//  private final boolean isXml;
-//  private final boolean isJson;
-//  private final boolean isText;
-//  private final boolean isImage;
-
   public DebugTabBody(final ODataResponse response, final String serviceRoot) {
     this.response = response;
     this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
     if (response != null) {
-      final String contentType = response.getHeader(HttpHeader.CONTENT_TYPE);
-      // TODO: Differentiate better
-      if (contentType != null) {
-        responseContent = ResponseContent.JSON;
+      final String contentTypeString = response.getHeader(HttpHeader.CONTENT_TYPE);
+      if (contentTypeString != null) {
+        if (contentTypeString.startsWith("application/json")) {
+          responseContent = ResponseContent.JSON;
+        } else if (contentTypeString.startsWith("image/")) {
+          responseContent = ResponseContent.IMAGE;
+        } else if (contentTypeString.contains("xml")) {
+          responseContent = ResponseContent.XML;
+        } else {
+          responseContent = ResponseContent.TEXT;
+        }
       } else {
         responseContent = ResponseContent.TEXT;
       }
     } else {
       responseContent = ResponseContent.TEXT;
     }
-//    isXml = contentType.contains("xml");
-//    isJson = !isXml && contentType.startsWith(HttpContentType.APPLICATION_JSON);
-//    isText = isXml || isJson || contentType.startsWith("text/")
-//        || contentType.startsWith(HttpContentType.APPLICATION_HTTP)
-//        || contentType.startsWith(HttpContentType.MULTIPART_MIXED);
-//    isImage = !isText && contentType.startsWith("image/");
   }
 
   @Override
@@ -90,14 +87,12 @@ public class DebugTabBody implements DebugTab {
       String contentString;
       switch (responseContent) {
       case IMAGE:
-        // TODO: DecodeString as base 64
-        contentString = "Currently not supported";
+        contentString = Base64.encodeBase64String(IOUtils.toString(response.getContent()).getBytes());
         break;
       case JSON:
       case XML:
       case TEXT:
       default:
-        // TODO: Remove IOUtils from core dependency
         contentString = IOUtils.toString(response.getContent(), "UTF-8");
         break;
       }
@@ -124,7 +119,6 @@ public class DebugTabBody implements DebugTab {
       writer.append("</pre>\n");
       break;
     case IMAGE:
-      // Make header query case insensitive
       writer.append("<img src=\"data:").append(response.getHeader(HttpHeader.CONTENT_TYPE)).append(";base64,")
           .append(body)
           .append("\" />\n");

@@ -38,6 +38,7 @@ public interface ExpandItem {
   FilterOption getFilterOption();
 
   /**
+   * <b>CURRENTLY NOT SUPPORTED. WILL ALWAYS RETURN NULL</b>
    * @return Information of the option $search when used within $expand
    */
   SearchOption getSearchOption();

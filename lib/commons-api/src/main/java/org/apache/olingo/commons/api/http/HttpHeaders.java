@@ -21,14 +21,14 @@ package org.apache.olingo.commons.api.http;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * HttpHeader container
  */
 public class HttpHeaders {
-  private final Map<String, HttpHeader> headers = new TreeMap<String, HttpHeader>();
+  private final Map<String, HttpHeader> headers = new LinkedHashMap<String, HttpHeader>();
 
   /**
    * Add a header with given name and value.

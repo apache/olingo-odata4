@@ -75,6 +75,7 @@ public interface UriInfoResource {
   OrderByOption getOrderByOption();
 
   /**
+   * <b>CURRENTLY NOT SUPPORTED. WILL ALWAYS RETURN NULL</b>
    * @return Object containing information of the $search option
    */
   SearchOption getSearchOption();

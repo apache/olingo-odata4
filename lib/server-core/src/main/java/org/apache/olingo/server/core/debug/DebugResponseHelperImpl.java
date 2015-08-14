@@ -138,7 +138,6 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
     gen.writeStartObject();
     DebugTab requestInfo = parts.get(0);
-    // TODO: Should we really translate to lower case here?
     gen.writeFieldName(requestInfo.getName().toLowerCase(Locale.ROOT));
     requestInfo.appendJson(gen);
 
