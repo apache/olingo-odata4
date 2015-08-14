@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.AcceptType;
@@ -29,33 +30,36 @@ import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 
-public class ContentNegotiator {
+public final class ContentNegotiator {
 
   private static final String ATOM = "atom";
   private static final String JSON = "json";
   private static final String XML = "xml";
+
+  private static final List<ContentType> DEFAULT_SUPPORTED_CONTENT_TYPES =
+          Collections.unmodifiableList(Arrays.asList(
+                  ContentType.JSON,
+                  ContentType.JSON_NO_METADATA,
+                  ContentType.APPLICATION_JSON,
+                  ContentType.APPLICATION_ATOM_XML,
+                  ContentType.APPLICATION_XML));
 
   private ContentNegotiator() {}
 
   private static List<ContentType> getDefaultSupportedContentTypes(final RepresentationType type) {
     switch (type) {
     case METADATA:
-      return Arrays.asList(ContentType.APPLICATION_XML);
+      return Collections.singletonList(ContentType.APPLICATION_XML);
     case MEDIA:
     case BINARY:
-      return Arrays.asList(ContentType.APPLICATION_OCTET_STREAM);
+      return Collections.singletonList(ContentType.APPLICATION_OCTET_STREAM);
     case VALUE:
     case COUNT:
-      return Arrays.asList(ContentType.TEXT_PLAIN);
+      return Collections.singletonList(ContentType.TEXT_PLAIN);
     case BATCH:
-      return Arrays.asList(ContentType.MULTIPART_MIXED);
+      return Collections.singletonList(ContentType.MULTIPART_MIXED);
     default:
-      return Arrays.asList(
-          ContentType.JSON,
-          ContentType.JSON_NO_METADATA,
-          ContentType.APPLICATION_JSON,
-          ContentType.APPLICATION_ATOM_XML,
-          ContentType.APPLICATION_XML);
+      return DEFAULT_SUPPORTED_CONTENT_TYPES;
     }
   }
 
@@ -83,10 +87,8 @@ public class ContentNegotiator {
 
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
-      final ContentType contentType =
-          JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
-          XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
-          ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+      final ContentType contentType = mapContentType(formatString);
+
       try {
         result = getAcceptedType(
             AcceptType.fromContentType(contentType == null ?
@@ -123,6 +125,12 @@ public class ContentNegotiator {
       }
     }
     return result;
+  }
+
+  private static ContentType mapContentType(String formatString) {
+    return JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
+    XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+    ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
   }
 
   private static ContentType getAcceptedType(final List<AcceptType> acceptedContentTypes,

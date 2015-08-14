@@ -20,7 +20,7 @@ package org.apache.olingo.commons.api.data;
 
 public class Parameter extends Valuable {
 
-  String name;
+  private String name;
 
   /**
    * @return name of the parameter

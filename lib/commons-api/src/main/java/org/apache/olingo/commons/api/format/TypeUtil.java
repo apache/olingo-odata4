@@ -34,6 +34,8 @@ class TypeUtil {
   static final String TYPE_SUBTYPE_SEPARATOR = "/";
   static final String TYPE_SUBTYPE_WILDCARD = "*";
 
+  private TypeUtil() { /* static helper class */}
+
   /** Creates a parameter map with predictable order. */
   protected static Map<String, String> createParameterMap() {
     return new TreeMap<String, String>(new Comparator<String>() {

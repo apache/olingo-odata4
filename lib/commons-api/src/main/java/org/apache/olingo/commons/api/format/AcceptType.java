@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * Once created an {@link AcceptType} is <b>IMMUTABLE</b>.
  */
-public class AcceptType {
+public final class AcceptType {
 
   private final String type;
   private final String subtype;

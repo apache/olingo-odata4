@@ -30,7 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
  * href="http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Toc372793655">
  * protocol specification</a>.
  */
-public class ContextURL {
+public final class ContextURL {
 
   private URI serviceRoot;
 

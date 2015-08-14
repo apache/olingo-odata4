@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.server.core;
 
-import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -48,12 +50,10 @@ import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ODataHttpHandlerImpl.class);
+  public static final int COPY_BUFFER_SIZE = 8192;
 
   private final ODataHandler handler;
   private final ServerCoreDebugger debugger;
@@ -153,32 +153,35 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    InputStream input = odResponse.getContent();
-    if (input != null) {
-      OutputStream output = null;
-      try {
-        output = response.getOutputStream();
-        byte[] buffer = new byte[1024];
-        int n;
-        while (-1 != (n = input.read(buffer))) {
-          output.write(buffer, 0, n);
-        }
-      } catch (IOException e) {
-        LOG.error(e.getMessage(), e);
-        throw new ODataRuntimeException(e);
-      } finally {
-        closeStream(output);
-        closeStream(input);
+    copyContent(odResponse, response);
+  }
+
+  static void copyContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
+    ReadableByteChannel input = null;
+    WritableByteChannel output = null;
+    try {
+      ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
+      output = Channels.newChannel(servletResponse.getOutputStream());
+      input = Channels.newChannel(odataResponse.getContent());
+      while (input.read(inBuffer) > 0) {
+        inBuffer.flip();
+        output.write(inBuffer);
+        inBuffer.rewind();
       }
+    } catch (IOException e) {
+      throw new ODataRuntimeException("Error on reading request content", e);
+    } finally {
+      closeStream(input);
+      closeStream(output);
     }
   }
 
-  private static void closeStream(final Closeable closeable) {
+  private static void closeStream(final Channel closeable) {
     if (closeable != null) {
       try {
         closeable.close();
       } catch (IOException e) {
-        LOG.error(e.getMessage(), e);
+        // ignore
       }
     }
   }
@@ -189,9 +192,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     try {
       odRequest.setBody(httpRequest.getInputStream());
       odRequest.setProtocol(httpRequest.getProtocol());
-      extractHeaders(odRequest, httpRequest);
-      extractUri(odRequest, httpRequest, split);
-      extractMethod(odRequest, httpRequest);
+      odRequest.setMethod(extractMethod(httpRequest));
+      copyHeaders(odRequest, httpRequest);
+      fillUriInformation(odRequest, httpRequest, split);
 
       return odRequest;
     } catch (final IOException e) {
@@ -200,7 +203,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  static void extractMethod(final ODataRequest odRequest, final HttpServletRequest httpRequest)
+  static HttpMethod extractMethod(final HttpServletRequest httpRequest)
       throws ODataLibraryException {
     try {
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
@@ -210,20 +213,20 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         String xHttpMethodOverride = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD_OVERRIDE);
 
         if (xHttpMethod == null && xHttpMethodOverride == null) {
-          odRequest.setMethod(httpRequestMethod);
+          return httpRequestMethod;
         } else if (xHttpMethod == null) {
-          odRequest.setMethod(HttpMethod.valueOf(xHttpMethodOverride));
+          return HttpMethod.valueOf(xHttpMethodOverride);
         } else if (xHttpMethodOverride == null) {
-          odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
+          return HttpMethod.valueOf(xHttpMethod);
         } else {
           if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
             throw new ODataHandlerException("Ambiguous X-HTTP-Methods",
                 ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD, xHttpMethod, xHttpMethodOverride);
           }
-          odRequest.setMethod(HttpMethod.valueOf(xHttpMethod));
+          return HttpMethod.valueOf(xHttpMethod);
         }
       } else {
-        odRequest.setMethod(httpRequestMethod);
+        return httpRequestMethod;
       }
     } catch (IllegalArgumentException e) {
       throw new ODataHandlerException("Invalid HTTP method" + httpRequest.getMethod(),
@@ -231,39 +234,34 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  static void extractUri(final ODataRequest odRequest, final HttpServletRequest httpRequest, final int split) {
+  static void fillUriInformation(final ODataRequest odRequest, final HttpServletRequest httpRequest, final int split) {
     String rawRequestUri = httpRequest.getRequestURL().toString();
 
     String rawODataPath;
     if (!"".equals(httpRequest.getServletPath())) {
-      int beginIndex;
-      beginIndex = rawRequestUri.indexOf(httpRequest.getServletPath());
-      beginIndex += httpRequest.getServletPath().length();
+      int beginIndex = rawRequestUri.indexOf(httpRequest.getServletPath()) + httpRequest.getServletPath().length();
       rawODataPath = rawRequestUri.substring(beginIndex);
     } else if (!"".equals(httpRequest.getContextPath())) {
-      int beginIndex;
-      beginIndex = rawRequestUri.indexOf(httpRequest.getContextPath());
-      beginIndex += httpRequest.getContextPath().length();
+      int beginIndex = rawRequestUri.indexOf(httpRequest.getContextPath()) + httpRequest.getContextPath().length();
       rawODataPath = rawRequestUri.substring(beginIndex);
     } else {
       rawODataPath = httpRequest.getRequestURI();
     }
 
-    String rawServiceResolutionUri;
+    String rawServiceResolutionUri = null;
     if (split > 0) {
       rawServiceResolutionUri = rawODataPath;
       for (int i = 0; i < split; i++) {
-        int e = rawODataPath.indexOf("/", 1);
-        if (-1 == e) {
+        int index = rawODataPath.indexOf('/', 1);
+        if (-1 == index) {
           rawODataPath = "";
+          break;
         } else {
-          rawODataPath = rawODataPath.substring(e);
+          rawODataPath = rawODataPath.substring(index);
         }
       }
       int end = rawServiceResolutionUri.length() - rawODataPath.length();
       rawServiceResolutionUri = rawServiceResolutionUri.substring(0, end);
-    } else {
-      rawServiceResolutionUri = null;
     }
 
     String rawBaseUri = rawRequestUri.substring(0, rawRequestUri.length() - rawODataPath.length());
@@ -276,7 +274,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     odRequest.setRawServiceResolutionUri(rawServiceResolutionUri);
   }
 
-  static void extractHeaders(final ODataRequest odRequest, final HttpServletRequest req) {
+  static void copyHeaders(final ODataRequest odRequest, final HttpServletRequest req) {
     for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       String headerName = (String) headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();

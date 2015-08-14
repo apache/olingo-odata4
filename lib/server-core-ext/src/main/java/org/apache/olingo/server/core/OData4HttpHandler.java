@@ -79,9 +79,9 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
       ODataRequest odRequest = new ODataRequest();
 
       odRequest.setBody(httpRequest.getInputStream());
-      extractHeaders(odRequest, httpRequest);
-      extractMethod(odRequest, httpRequest);
-      extractUri(odRequest, httpRequest, split);
+      copyHeaders(odRequest, httpRequest);
+      odRequest.setMethod(extractMethod(httpRequest));
+      fillUriInformation(odRequest, httpRequest, split);
 
       return odRequest;
     } catch (final IOException e) {

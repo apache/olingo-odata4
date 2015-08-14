@@ -61,10 +61,6 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
     return this;
   }
 
-  // public List<Annotation> getAnnotation() {
-  // return annotation;
-  // }
-
   public CsdlAnnotation setAnnotations(final List<CsdlAnnotation> annotation) {
     this.annotation = annotation;
     return this;
