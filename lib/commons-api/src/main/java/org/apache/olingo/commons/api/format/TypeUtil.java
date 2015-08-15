@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-class TypeUtil {
+final class TypeUtil {
 
   static final String MEDIA_TYPE_WILDCARD = "*";
   static final String PARAMETER_Q = "q";

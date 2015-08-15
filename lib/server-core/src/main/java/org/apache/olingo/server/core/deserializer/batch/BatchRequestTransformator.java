@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.deserializer.batch;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class BatchRequestTransformator {
+  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
   private final String baseUri;
   private final String rawServiceResolutionUri;
 
@@ -104,7 +106,8 @@ public class BatchRequestTransformator {
     statusLine.validateHttpMethod(isChangeSet);
 
     validateBody(statusLine, operation);
-    InputStream bodyStrean = getBodyStream(operation, statusLine);
+    Charset charset = getCharset(operation);
+    InputStream bodyStrean = getBodyStream(operation, statusLine, charset);
 
     validateForbiddenHeader(operation);
 
@@ -124,6 +127,20 @@ public class BatchRequestTransformator {
     return request;
   }
 
+  private Charset getCharset(BatchQueryOperation operation) {
+    String ct = operation.getHeaders().getHeader(HttpHeader.CONTENT_TYPE);
+    if(ct != null) {
+      ContentType contentType = ContentType.parse(ct);
+      if(contentType != null) {
+        String charsetValue = contentType.getParameter(ContentType.PARAMETER_CHARSET);
+        if(charsetValue != null) {
+          return Charset.forName(charsetValue);
+        }
+      }
+    }
+    return DEFAULT_CHARSET;
+  }
+
   private void validateForbiddenHeader(final BatchQueryOperation operation) throws BatchDeserializerException {
     final Header header = operation.getHeaders();
 
@@ -135,7 +152,8 @@ public class BatchRequestTransformator {
     }
   }
 
-  private InputStream getBodyStream(final BatchQueryOperation operation, final HttpRequestStatusLine statusLine)
+  private InputStream getBodyStream(final BatchQueryOperation operation, final HttpRequestStatusLine statusLine,
+                                    final Charset charset)
       throws BatchDeserializerException {
     if (statusLine.getMethod().equals(HttpMethod.GET)) {
       return new ByteArrayInputStream(new byte[0]);
@@ -143,9 +161,9 @@ public class BatchRequestTransformator {
       int contentLength = BatchTransformatorCommon.getContentLength(operation.getHeaders());
 
       if (contentLength == -1) {
-        return BatchParserCommon.convertLineListToInputStream(operation.getBody());
+        return BatchParserCommon.convertLineListToInputStream(operation.getBody(), charset);
       } else {
-        return BatchParserCommon.convertLineListToInputStream(operation.getBody(), contentLength);
+        return BatchParserCommon.convertLineListToInputStream(operation.getBody(), charset, contentLength);
       }
     }
   }

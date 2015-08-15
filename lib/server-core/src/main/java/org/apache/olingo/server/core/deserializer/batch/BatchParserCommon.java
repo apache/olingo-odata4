@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.deserializer.batch;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,8 @@ public class BatchParserCommon {
 
   protected static final String BOUNDARY = "boundary";
   public static final String BINARY_ENCODING = "binary";
+
+  private BatchParserCommon() { /* private ctor for helper class */}
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
     final ContentType type = parseContentType(contentType, ContentType.MULTIPART_MIXED, line);
@@ -198,10 +201,10 @@ public class BatchParserCommon {
     }
   }
 
-  public static InputStream convertLineListToInputStream(final List<Line> messageList) {
+  public static InputStream convertLineListToInputStream(final List<Line> messageList, final Charset charset) {
     final String message = lineListToString(messageList);
 
-    return new ByteArrayInputStream(message.getBytes());
+    return new ByteArrayInputStream(message.getBytes(charset));
   }
 
   private static String lineListToString(final List<Line> messageList) {
@@ -221,9 +224,10 @@ public class BatchParserCommon {
     return (lastIndex > 0) ? message.substring(0, lastIndex) : "";
   }
 
-  public static InputStream convertLineListToInputStream(final List<Line> list, final int length) {
+  public static InputStream convertLineListToInputStream(final List<Line> list, final Charset charset,
+                                                         final int length) {
     final String message = trimLineListToLength(list, length);
 
-    return new ByteArrayInputStream(message.getBytes());
+    return new ByteArrayInputStream(message.getBytes(charset));
   }
 }

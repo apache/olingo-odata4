@@ -176,8 +176,8 @@ public class BatchResponseSerializer {
   /**
    * Builder class to create the body and the header.
    */
-  private class BodyBuilder {
-    private final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private static class BodyBuilder {
+    private static final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
     private ByteBuffer buffer = ByteBuffer.allocate(8192);
     private boolean isClosed = false;
 
@@ -219,7 +219,7 @@ public class BatchResponseSerializer {
     }
 
     public String toString() {
-      return new String(buffer.array(), 0, buffer.position());
+      return new String(buffer.array(), 0, buffer.position(), CHARSET_ISO_8859_1);
     }
   }
 

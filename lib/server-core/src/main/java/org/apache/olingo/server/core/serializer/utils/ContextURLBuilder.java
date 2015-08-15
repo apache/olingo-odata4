@@ -31,6 +31,8 @@ import org.apache.olingo.commons.core.Encoder;
  */
 public final class ContextURLBuilder {
 
+  private ContextURLBuilder() { /* private ctor for helper class */ }
+
   public static URI create(final ContextURL contextURL) {
     StringBuilder result = new StringBuilder();
     if (contextURL.getServiceRoot() != null) {
@@ -76,10 +78,10 @@ public final class ContextURLBuilder {
         throw new IllegalArgumentException("ContextURL: $ref with Entity Set");
       }
       if (contextURL.isCollection()) {
-        result.append('#');
-        result.append("Collection(")
-        .append(ContextURL.Suffix.REFERENCE.getRepresentation())
-        .append(")");
+        result.append('#')
+              .append("Collection(")
+              .append(ContextURL.Suffix.REFERENCE.getRepresentation())
+              .append(")");
       } else {
         result.append('#').append(ContextURL.Suffix.REFERENCE.getRepresentation());
       }

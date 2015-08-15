@@ -38,6 +38,8 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public final class ContextURLHelper {
 
+  private ContextURLHelper() { /* private ctor for helper class */ }
+
   /**
    * Builds a list of selected Properties for the ContextURL,
    * taking care to preserve the order as defined in the EDM;
