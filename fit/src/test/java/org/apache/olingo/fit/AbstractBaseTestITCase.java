@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.server.TomcatTestServer;
 import org.apache.olingo.server.tecsvc.TechnicalServlet;
 import org.apache.olingo.server.tecsvc.async.TechnicalStatusMonitorServlet;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +53,12 @@ public abstract class AbstractBaseTestITCase {
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractBaseTestITCase.class);
 
   protected abstract ODataClient getClient();
+  private static TomcatTestServer server;
 
   @BeforeClass
   public static void init()
       throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-    TomcatTestServer.init(9080)
+    server = TomcatTestServer.init(9080)
       .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
       .addServlet(TechnicalStatusMonitorServlet.class, "/odata-server-tecsvc/status/*")
       .addServlet(StaticContent.create("org-odata-core-v1.xml"),
@@ -65,10 +67,10 @@ public abstract class AbstractBaseTestITCase {
         .start();
   }
 
-  // @AfterClass
-  // public static void cleanUp() throws LifecycleException {
-  // server.stop();
-  // }
+  @AfterClass
+  public static void cleanUp() throws LifecycleException {
+    server.invalidateAllSessions();
+  }
 
   protected void debugEntity(final Entity entity, final String message) {
     if (LOG.isDebugEnabled()) {
