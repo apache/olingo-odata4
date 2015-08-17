@@ -60,6 +60,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
 
   private static final String CRLF = "\r\n";
   private static final String DEFAULT_ENCODING = "utf-8";
+  public static final long SLEEP_TIMEOUT_IN_MS = 200;
 
   /**
    * Works
@@ -87,8 +88,8 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
-    TimeUnit.SECONDS.sleep(2);
-    HttpURLConnection result = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
+    HttpURLConnection result = waitTillDone(respondUri, 4);
+
     StringHelper.Stream resultBody = StringHelper.toStream(result.getInputStream());
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
@@ -131,8 +132,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
-    TimeUnit.SECONDS.sleep(2);
-    HttpURLConnection result = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
+    HttpURLConnection result = waitTillDone(respondUri, 4);
     StringHelper.Stream resultBody = StringHelper.toStream(result.getInputStream());
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
@@ -182,6 +182,27 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
         + CRLF
         + CRLF
         + "--" + DEFAULT_BATCH_BOUNDARY + "--";
+  }
+
+  private HttpURLConnection waitTillDone(String location, int maxWaitInSeconds) throws Exception {
+    HttpURLConnection result = null;
+    int waitCounter = maxWaitInSeconds * 1000;
+
+    while(result == null && waitCounter > 0) {
+      HttpURLConnection statusRequest = getRequest(new URL(location), Collections.<String, String>emptyMap());
+      Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
+      String statusHeader = statusHeaderFields.get(null).get(0);
+      if("HTTP/1.1 202 Accepted".equals(statusHeader)) {
+        TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);
+        waitCounter -= SLEEP_TIMEOUT_IN_MS;
+      } else if("HTTP/1.1 200 OK".equals(statusHeader)) {
+        result = statusRequest;
+      } else {
+        throw new RuntimeException("Unexpected status header ('" + statusHeader +
+                "') for async status request on: " + location);
+      }
+    }
+    return result;
   }
 
   private HttpURLConnection postRequest(final URL url, final String content, final Map<String, String> headers)
