@@ -19,18 +19,18 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
 public abstract class AbstractODataSerializer implements ODataSerializer {
 
-  protected void closeCircleStreamBufferOutput(CircleStreamBuffer buffer, SerializerException cachedException)
+  protected void closeCircleStreamBufferOutput(OutputStream outputStream, SerializerException cachedException)
       throws SerializerException {
-    if (buffer != null && buffer.getOutputStream() != null) {
+    if (outputStream != null) {
       try {
-        buffer.getOutputStream().close();
+        outputStream.close();
       } catch (IOException e) {
         if (cachedException != null) {
           throw cachedException;

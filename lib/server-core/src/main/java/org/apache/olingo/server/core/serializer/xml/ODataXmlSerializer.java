@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.serializer.xml;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -85,18 +86,18 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   @Override
   public SerializerResult serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
       throws SerializerException {
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(),
-          DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       ServiceDocumentXmlSerializer serializer = new ServiceDocumentXmlSerializer(metadata, serviceRoot);
-      serializer.writeServiceDocument(xmlStreamWriter);
+      serializer.writeServiceDocument(writer);
 
-      xmlStreamWriter.flush();
-      xmlStreamWriter.close();
-      buffer.getOutputStream().close();
+      writer.flush();
+      writer.close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -108,24 +109,24 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
   @Override
   public SerializerResult metadataDocument(final ServiceMetadata serviceMetadata) throws SerializerException {
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(),
-          DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       MetadataDocumentXmlSerializer serializer = new MetadataDocumentXmlSerializer(serviceMetadata);
-      serializer.writeMetadataDocument(xmlStreamWriter);
+      serializer.writeMetadataDocument(writer);
 
-      xmlStreamWriter.flush();
-      xmlStreamWriter.close();
-      buffer.getOutputStream().close();
+      writer.flush();
+      writer.close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -137,7 +138,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -148,12 +149,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           SerializerException.MessageKeys.NULL_INPUT);
     }
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(),
-          DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
 
       writer.writeStartElement("error");
@@ -171,7 +172,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -183,7 +184,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -218,12 +219,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return entityReferenceCollection(metadata, entityType, entitySet, rso);
     }
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(ATOM, "feed", NS_ATOM);
       writer.writeNamespace(ATOM, NS_ATOM);
@@ -260,7 +261,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -272,7 +273,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -287,12 +288,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return entityReference(metadata, entityType, entity, rso);
     }
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
@@ -302,7 +303,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -314,7 +315,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -802,12 +803,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(METADATA, "value", NS_METADATA);
@@ -832,7 +833,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -849,7 +850,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -858,13 +859,13 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
       EdmComplexType resolvedType = resolveComplexType(metadata, type, property.getType());
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(METADATA, "value", NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
@@ -883,7 +884,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -895,7 +896,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -904,12 +905,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(METADATA, "value", NS_METADATA);
@@ -931,7 +932,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -948,7 +949,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -957,12 +958,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
 
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
       writer.writeStartElement(METADATA, "value", NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
@@ -976,7 +977,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
@@ -987,7 +988,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -999,18 +1000,18 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected SerializerResult entityReference(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, ReferenceSerializerOptions options) throws SerializerException {
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writeReference(metadata, entityType, entity, options == null ? null : options.getContextURL(), writer, true);
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -1022,7 +1023,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 
@@ -1050,12 +1051,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   protected SerializerResult entityReferenceCollection(final ServiceMetadata metadata,
       final EdmEntityType entityType, final EntityCollection entitySet,
       ReferenceCollectionSerializerOptions options) throws SerializerException {
-    CircleStreamBuffer buffer = null;
+    OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      buffer = new CircleStreamBuffer();
-      XMLStreamWriter writer =
-          XMLOutputFactory.newInstance().createXMLStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET);
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      outputStream = buffer.getOutputStream();
+      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(ATOM, "feed", NS_ATOM);
       writer.writeNamespace(ATOM, NS_ATOM);
@@ -1078,7 +1079,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeEndDocument();
       writer.flush();
       writer.close();
-      buffer.getOutputStream().close();
+      outputStream.close();
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
@@ -1090,7 +1091,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
-      closeCircleStreamBufferOutput(buffer, cachedException);
+      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 

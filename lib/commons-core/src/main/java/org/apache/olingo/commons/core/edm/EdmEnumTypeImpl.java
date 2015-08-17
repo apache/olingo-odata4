@@ -265,4 +265,20 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   public FullQualifiedName getAnnotationsTargetFQN() {
     return getFullQualifiedName();
   }
+  
+  @Override
+  public boolean equals(Object obj){
+    if(obj == null){
+      return false;
+    }
+    
+    if(obj instanceof EdmEnumType){
+      EdmEnumType other = (EdmEnumType) obj;
+      if(this.getFullQualifiedName().equals(other.getFullQualifiedName())){
+        return true;
+      }
+    }
+    
+    return false;
+  }
 }
