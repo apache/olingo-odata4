@@ -211,7 +211,8 @@ public class Parser {
 
             systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
-            throw new RuntimeException("System query option '$search' not implemented!");
+            throw new UriParserSemanticException("System query option '$search' not implemented!", 
+                UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option '$search");
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
@@ -475,7 +476,7 @@ public class Parser {
       int index = token.getType();
       out.append("\"").append(token.getText()).append("\"").append("     ");
       if (index != -1) {
-        out.append(UriLexer.tokenNames[index]);
+        out.append(UriLexer.VOCABULARY.getDisplayName(index));
       } else {
         out.append(index);
       }

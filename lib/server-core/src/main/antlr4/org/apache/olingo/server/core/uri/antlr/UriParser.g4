@@ -115,7 +115,7 @@ expandPathExtension : OPEN vlEO+=expandOption                        ( SEMI vlEO
                     ;  
 
 expandCountOption   : filter
-                    | search
+                    | searchInline
                     ;
 
 expandRefOption     : expandCountOption

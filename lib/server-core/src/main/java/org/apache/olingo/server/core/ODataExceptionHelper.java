@@ -48,6 +48,8 @@ public class ODataExceptionHelper {
     if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+    } else if(UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED.equals(e.getMessageKey())) {
+      serverError.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
     } else {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     }

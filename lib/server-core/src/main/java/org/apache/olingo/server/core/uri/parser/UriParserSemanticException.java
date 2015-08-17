@@ -73,7 +73,9 @@ public class UriParserSemanticException extends UriParserException {
     NOT_FOR_ENTITY_TYPE,
     PREVIOUS_PART_TYPED,
     /** parameter: resource_name */
-    RESOURCE_NOT_FOUND;
+    RESOURCE_NOT_FOUND,
+    /** parameter: not implemented part */
+    NOT_IMPLEMENTED;
 
     @Override
     public String getKey() {

@@ -25,6 +25,7 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -307,7 +308,24 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
-
+  
+  @Test
+  public void testNegativeSearch() {
+    ODataClient client = getClient();
+    URI uri = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(ES_ALL_PRIM)
+        .search("ABC")
+        .build();
+    try {
+      client.getRetrieveRequestFactory()
+      .getEntitySetRequest(uri)
+      .execute();
+      fail();
+    } catch (ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();

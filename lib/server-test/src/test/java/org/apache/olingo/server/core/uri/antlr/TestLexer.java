@@ -96,6 +96,8 @@ public class TestLexer {
     test.run("$search=\"ABC\"").isAllText("$search=\"ABC\"").isType(UriLexer.SEARCH);
     test.run("$search=ABC").isAllText("$search=ABC").isType(UriLexer.SEARCH);
     test.run("$search=\"A%20B%20C\"").isAllText("$search=\"A%20B%20C\"").isType(UriLexer.SEARCH);
+    test.run("$search=Test Test").isAllText("$search=Test Test").isType(UriLexer.SEARCH);
+    test.run("$search=Test&$filter=ABC eq 1").isAllText("$search=Test&$filter=ABC eq 1").isType(UriLexer.SEARCH);
   }
   
   @Test
@@ -105,7 +107,10 @@ public class TestLexer {
     test.run("$expand=ABC($skip=1)").isAllText("$expand=ABC($skip=1)").at(4).isType(UriLexer.SKIP_QO);
     test.run("$expand=ABC($skip=2)").isAllText("$expand=ABC($skip=2)").at(4).isType(UriLexer.SKIP_QO);
     test.run("$expand=ABC($skip=123)").isAllText("$expand=ABC($skip=123)").at(4).isType(UriLexer.SKIP_QO);
-    
+    test.run("$expand=ABC($search=abc)").isAllText("$expand=ABC($search=abc)").at(4).isType(UriLexer.SEARCH_INLINE);
+    test.run("$expand=ABC($search=\"123\")").isAllText("$expand=ABC($search=\"123\")")
+                                            .at(4).isType(UriLexer.SEARCH_INLINE)
+                                            .at(6).isType(UriLexer.SEARCHPHRASE);
     test.run("$expand=ABC($top=1)").isAllText("$expand=ABC($top=1)").at(4).isType(UriLexer.TOP);
     test.run("$expand=ABC($top=2)").isAllText("$expand=ABC($top=2)").at(4).isType(UriLexer.TOP);
     test.run("$expand=ABC($top=123)").isAllText("$expand=ABC($top=123)").at(4).isType(UriLexer.TOP);
@@ -123,6 +128,24 @@ public class TestLexer {
                                                 .at(8).isType(UriLexer.TOP);
     test.run("$expand=ABC($expand=DEF($top=123))").isAllText("$expand=ABC($expand=DEF($top=123))")
                                                   .at(8).isType(UriLexer.TOP);
+    test.run("$expand=ABC($expand=DEF($search=Test Test))").isAllText("$expand=ABC($expand=DEF($search=Test Test))")
+                                                        .at(8).isType(UriLexer.SEARCH_INLINE)
+                                                        .at(10).isType(UriLexer.SEARCHWORD)
+                                                        .at(12).isType(UriLexer.SEARCHWORD);
+    test.run("$expand=ABC($expand=DEF($search=\"Test\" \"Test\"))")
+                .isAllText("$expand=ABC($expand=DEF($search=\"Test\" \"Test\"))")
+                .at(8).isType(UriLexer.SEARCH_INLINE)
+                .at(10).isType(UriLexer.SEARCHPHRASE)
+                .at(12).isType(UriLexer.SEARCHPHRASE);
+    test.run("$expand=ABC($expand=DEF($search=\"Test\" \"Test\";$filter=PropertyInt16 eq 0;$orderby=PropertyInt16))")
+                .isAllText("$expand=ABC($expand=DEF($search=\"Test\" \"Test\";$filter=PropertyInt16 " + 
+                           "eq 0;$orderby=PropertyInt16))")
+                .at(8).isType(UriLexer.SEARCH_INLINE)
+                .at(10).isType(UriLexer.SEARCHPHRASE)
+                .at(12).isType(UriLexer.SEARCHPHRASE)
+                .at(13).isType(UriLexer.SEMI)
+                .at(14).isType(UriLexer.FILTER)
+                .at(22).isType(UriLexer.ORDERBY);
   }
   
   // ;------------------------------------------------------------------------------

@@ -154,6 +154,7 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.QueryOptionContex
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.QueryOptionsContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.RootExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.RoundMethodCallExprContext;
+import org.apache.olingo.server.core.uri.antlr.UriParserParser.SearchSpecialTokenContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SecondMethodCallExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectEOFContext;
@@ -2390,5 +2391,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     AliasImpl alias = new AliasImpl();
     alias.setParameter("@" + ctx.odataIdentifier().getChild(0).getText());
     return alias;
+  }
+  
+  @Override
+  public Object visitSearchSpecialToken(final SearchSpecialTokenContext ctx) {
+    throw wrap(new UriParserSemanticException("System query option '$search' not implemented!", 
+                UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option '$search"));
   }
 }

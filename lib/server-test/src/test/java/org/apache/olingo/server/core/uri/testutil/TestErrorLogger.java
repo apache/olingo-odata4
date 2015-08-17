@@ -92,7 +92,7 @@ class TestErrorLogger implements ANTLRErrorListener {
 
       String lexerTokenName = "";
       try {
-        lexerTokenName = UriLexer.tokenNames[e.getOffendingToken().getType()];
+        lexerTokenName = UriLexer.VOCABULARY.getDisplayName(e.getOffendingToken().getType());
       } catch (ArrayIndexOutOfBoundsException es) {
         lexerTokenName = "token error";
       }

@@ -45,7 +45,7 @@ public class UriLexerWithTrace extends UriLexer {
       if (tokenType == -1) {
         out += "-1/EOF";
       } else {
-        out += UriLexer.tokenNames[tokenType];
+        out += UriLexer.VOCABULARY.getDisplayName(tokenType);
       }
       System.out.println("Lexer.emit(...):" + out);
     }

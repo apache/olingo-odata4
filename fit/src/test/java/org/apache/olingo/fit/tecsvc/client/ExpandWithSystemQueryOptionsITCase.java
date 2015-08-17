@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -456,6 +457,26 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     assertEquals("1", fourthLevelEntites.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
 
+  @Test
+  public void expandWithSearchQuery() {
+    final ODataClient client = getClient();
+    final Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+    expandOptions.put(QueryOption.SEARCH, "abc");
+    expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
+    
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+        .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+        .build();
+
+    final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    
+    try {
+      request.execute();
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+  }
+  
   private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions) {
     return buildRequest(entitySet, navigationProperty, expandOptions, null);

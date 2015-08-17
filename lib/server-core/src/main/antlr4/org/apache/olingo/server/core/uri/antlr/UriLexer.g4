@@ -340,7 +340,12 @@ WSP_sqc             : WS_sqc+ -> type(WSP);
 QUOTATION_MARK_sqc  : '\u0022';
 
 SEARCHWORD          : ('a'..'z'|'A'..'Z')+;
-SEARCHPHRASE        : QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc -> popMode;
+SEARCHPHRASE        : QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc;
+
+// Follow Set
+CLOSE_qs            : ')' -> popMode, type(CLOSE);   
+SEMI_qs             : ';' -> popMode, type(SEMI);   
+AMP_qs              : '&' -> popMode, type(AMP);
 
 //;==============================================================================
 mode MODE_STRING;
