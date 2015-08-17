@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class DebugTabRequest implements DebugTab {
 
+  private static final String UNKOWN_MSG = "unkown";
   private final String method;
   private final String uri;
   private final String protocol;
@@ -40,14 +41,14 @@ public class DebugTabRequest implements DebugTab {
 
   public DebugTabRequest(ODataRequest request) {
     if (request != null) {
-      method = request.getMethod() == null ? "unkown" : request.getMethod().toString();
-      uri = request.getRawRequestUri() == null ? "unkown" : request.getRawRequestUri();
-      protocol = request.getProtocol() == null ? "unkown" : request.getProtocol();
+      method = request.getMethod() == null ? UNKOWN_MSG : request.getMethod().toString();
+      uri = request.getRawRequestUri() == null ? UNKOWN_MSG : request.getRawRequestUri();
+      protocol = request.getProtocol() == null ? UNKOWN_MSG : request.getProtocol();
       headers = request.getAllHeaders();
     } else {
-      method = "unkown";
-      uri = "unkown";
-      protocol = "unkown";
+      method = UNKOWN_MSG;
+      uri = UNKOWN_MSG;
+      protocol = UNKOWN_MSG;
       headers = Collections.emptyMap();
     }
   }

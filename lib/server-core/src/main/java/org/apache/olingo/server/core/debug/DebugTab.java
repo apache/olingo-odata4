@@ -33,18 +33,18 @@ public interface DebugTab {
    * Gets the name of this debug information part, useful as title.
    * @return the name
    */
-  public String getName();
+  String getName();
 
   /**
    * Appends the content of this debug information part
    * to the given JSON stream writer.
    * @param jsonGenerator a JSON generator
    */
-  public void appendJson(JsonGenerator jsonGenerator) throws IOException;
+  void appendJson(JsonGenerator jsonGenerator) throws IOException;
 
   /**
    * Appends the content of this debug information part to the given writer.
    * @param writer a {@link Writer}
    */
-  public void appendHtml(Writer writer) throws IOException;
+  void appendHtml(Writer writer) throws IOException;
 }

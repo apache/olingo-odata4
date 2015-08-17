@@ -58,6 +58,10 @@ public class PreferParser {
   private static final Pattern PREFERENCE = Pattern.compile("\\s*(,\\s*)+|"
       + "(?:" + namedValue + "((?:\\s*;\\s*(?:" + namedValue + ")?)*))");
   private static final Pattern PARAMETER = Pattern.compile("\\s*(;\\s*)+|(?:" + namedValue + ")");
+  
+  private PreferParser (){
+    //Private constructor for utility classes
+  }
 
   protected static Map<String, Preference> parse(final Collection<String> values) {
     if (values == null || values.isEmpty()) {

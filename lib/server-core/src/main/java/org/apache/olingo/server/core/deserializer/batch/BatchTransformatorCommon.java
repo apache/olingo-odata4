@@ -26,6 +26,10 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class BatchTransformatorCommon {
+  
+  private BatchTransformatorCommon() {
+    //Private Utility Constructor
+  }
 
   public static void validateContentType(final Header headers, final ContentType expected)
       throws BatchDeserializerException {
@@ -78,7 +82,7 @@ public class BatchTransformatorCommon {
 
         return contentLength;
       } catch (NumberFormatException e) {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER,
+        throw new BatchDeserializerException("Invalid header", e, MessageKeys.INVALID_HEADER,
             Integer.toString(contentLengthField.getLineNumber()));
       }
     }

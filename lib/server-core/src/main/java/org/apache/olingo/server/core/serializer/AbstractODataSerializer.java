@@ -25,6 +25,8 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
 public abstract class AbstractODataSerializer implements ODataSerializer {
+  
+  protected static final String IO_EXCEPTION_TEXT = "An I/O exception occurred.";
 
   protected void closeCircleStreamBufferOutput(OutputStream outputStream, SerializerException cachedException)
       throws SerializerException {

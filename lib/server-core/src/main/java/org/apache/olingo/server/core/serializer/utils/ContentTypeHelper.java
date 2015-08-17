@@ -21,6 +21,11 @@ package org.apache.olingo.server.core.serializer.utils;
 import org.apache.olingo.commons.api.format.ContentType;
 
 public class ContentTypeHelper {
+  
+  private ContentTypeHelper (){
+    //Private constructor for utility classes
+  }
+  
   public static boolean isODataMetadataNone(final ContentType contentType) {
     return contentType.isCompatible(ContentType.APPLICATION_JSON) 
        && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));

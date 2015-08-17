@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -127,7 +128,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
     // exceptions
     if (debugInfo.getException() != null) {
-      parts.add(new DebugTabException(debugInfo.getException()));
+      parts.add(new DebugTabStacktrace(debugInfo.getException()));
     }
 
     return parts;
@@ -165,8 +166,6 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       outputStream.close();
 
       return csb.getInputStream();
-    } catch (IOException e) {
-      throw e;
     } finally {
       if (outputStream != null) {
         try {
@@ -284,12 +283,11 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     writer.append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");
-    for (final String name : entries.keySet()) {
-      final String value = entries.get(name);
-      writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+    for (final Entry<String, String> entry : entries.entrySet()) {
+      writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
           .append("<td class=\"value\">");
-      if (value != null) {
-        writer.append(escapeHtml(value));
+      if (entry.getValue() != null) {
+        writer.append(escapeHtml(entry.getValue()));
       } else {
         writer.append("null");
       }

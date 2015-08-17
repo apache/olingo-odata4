@@ -258,7 +258,7 @@ public class BatchResponseSerializer {
         }
         return output.toByteArray();
       } catch (IOException e) {
-        throw new ODataRuntimeException("Error on reading request content");
+        throw new ODataRuntimeException("Error on reading request content", e);
       }
     }
   }

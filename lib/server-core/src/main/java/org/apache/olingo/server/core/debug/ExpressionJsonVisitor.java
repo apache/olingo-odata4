@@ -43,19 +43,49 @@ import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind
  */
 public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
 
+  private static final String ANY_NAME = "ANY";
+  private static final String ALL_NAME = "ALL";
+  private static final String STRING_NAME = "String";
+  private static final String UNKNOWN_NAME = "unknown";
+  private static final String BOOLEAN_NAME = "Boolean";
+  private static final String NUMBER_NAME = "Number";
+  private static final String ENUM_NAME = "enum";
+  private static final String VALUES_NAME = "values";
+  private static final String NAME_NAME = "name";
+  private static final String LAMBDA_REFERENCE_NAME = "lambdaReference";
+  private static final String ALIAS_NAME = "alias";
+  private static final String RESOURCE_SEGMENTS_NAME = "resourceSegments";
+  private static final String MEMBER_NAME = "member";
+  private static final String VALUE_NAME = "value";
+  private static final String LITERAL_NAME = "literal";
+  private static final String EXPRESSION_NAME = "expression";
+  private static final String LAMBDA_VARIABLE_NAME = "lambdaVariable";
+  private static final String LAMBDA_FUNCTION_NAME = "lambdaFunction";
+  private static final String UNARY_NAME = "unary";
+  private static final String BINARY_NAME = "binary";
+  private static final String LEFT_NODE_NAME = "left";
+  private static final String RIGHT_NODE_NAME = "right";
+  private static final String IO_EXCEPTION_OCCOURED_MESSAGE = "IOException occoured";
+  private static final String PARAMETERS_NAME = "parameters";
+  private static final String METHOD_NAME = "method";
+  private static final String OPERAND_NAME = "operand";
+  private static final String TYPE_NAME = "type";
+  private static final String OPERATOR_NAME = "operator";
+  private static final String NODE_TYPE_NAME = "nodeType";
+
   @Override
   public String visitBinaryOperator(BinaryOperatorKind operator, String left, String right)
       throws ExpressionVisitException, ODataApplicationException {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", "binary").separator().namedStringValue("operator",
-          operator.toString()).separator().namedStringValueRaw("type", getType(operator)).separator().name("left")
-          .unquotedValue(left).separator().name("right").unquotedValue(right).endObject();
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, BINARY_NAME).separator().namedStringValue(
+          OPERATOR_NAME, operator.toString()).separator().namedStringValueRaw(TYPE_NAME, getType(operator)).separator()
+          .name(LEFT_NODE_NAME).unquotedValue(left).separator().name(RIGHT_NODE_NAME).unquotedValue(right).endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -65,13 +95,13 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", "unary").separator()
-          .namedStringValueRaw("operator", operator.toString()).separator().namedStringValueRaw("type",
-              getType(operator)).separator().name("operand").unquotedValue(operand).endObject();
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, UNARY_NAME).separator()
+          .namedStringValueRaw(OPERATOR_NAME, operator.toString()).separator().namedStringValueRaw(TYPE_NAME,
+              getType(operator)).separator().name(OPERAND_NAME).unquotedValue(operand).endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -81,9 +111,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "method").separator()
-          .namedStringValueRaw("operator", methodCall.toString()).separator().namedStringValueRaw("type",
-              getType(methodCall)).separator().name("parameters").beginArray();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, METHOD_NAME).separator()
+          .namedStringValueRaw(OPERATOR_NAME, methodCall.toString()).separator().namedStringValueRaw(TYPE_NAME,
+              getType(methodCall)).separator().name(PARAMETERS_NAME).beginArray();
       boolean first = true;
       for (String parameter : parameters) {
         if (first) {
@@ -97,7 +127,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -107,8 +137,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", "lambdaFunction").separator()
-          .namedStringValue("lambdaVariable", lambdaVariable).separator().name("expression");
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, LAMBDA_FUNCTION_NAME).separator()
+          .namedStringValue(LAMBDA_VARIABLE_NAME, lambdaVariable).separator().name(EXPRESSION_NAME);
 
       // Write expression string object
       String expressionJsonTree = expression.accept(this);
@@ -116,7 +146,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -125,12 +155,13 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "literal").separator().namedStringValueRaw("type",
-          getTypeString(literal.getType())).separator().namedStringValue("value", literal.getText()).endObject();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, LITERAL_NAME).separator().namedStringValueRaw(
+          TYPE_NAME, getTypeString(literal.getType())).separator().namedStringValue(VALUE_NAME, literal.getText())
+          .endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured");
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE);
     }
   }
 
@@ -140,11 +171,11 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
       List<UriResource> uriResourceParts = member.getUriResourceParts();
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", "member").separator()
-          .namedStringValueRaw("type", getType(uriResourceParts)).separator();
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, MEMBER_NAME).separator()
+          .namedStringValueRaw(TYPE_NAME, getType(uriResourceParts)).separator();
 
       // write all member properties in an array
-      jsonStreamWriter.name("resourceSegments").beginArray();
+      jsonStreamWriter.name(RESOURCE_SEGMENTS_NAME).beginArray();
       if (uriResourceParts != null) {
         boolean first = true;
         for (UriResource segment : uriResourceParts) {
@@ -162,7 +193,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -171,12 +202,12 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "alias").separator()
-          .namedStringValue("alias", aliasName).endObject();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, ALIAS_NAME).separator()
+          .namedStringValue(ALIAS_NAME, aliasName).endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -185,12 +216,12 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "type").separator()
-          .namedStringValueRaw("type", getTypeString(type)).endObject();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, TYPE_NAME).separator()
+          .namedStringValueRaw(TYPE_NAME, getTypeString(type)).endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -199,12 +230,12 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "lambdaReference").separator()
-          .namedStringValueRaw("name", variableName).endObject();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, LAMBDA_REFERENCE_NAME).separator()
+          .namedStringValueRaw(NAME_NAME, variableName).endObject();
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
@@ -214,9 +245,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     try {
       StringWriter writer = new StringWriter();
       JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-      jsonStreamWriter.beginObject().namedStringValueRaw("nodeType", "enum").separator()
-          .namedStringValueRaw("type", getTypeString(type)).separator();
-      jsonStreamWriter.name("values").beginArray();
+      jsonStreamWriter.beginObject().namedStringValueRaw(NODE_TYPE_NAME, ENUM_NAME).separator()
+          .namedStringValueRaw(TYPE_NAME, getTypeString(type)).separator();
+      jsonStreamWriter.name(VALUES_NAME).beginArray();
       if (enumValues != null) {
         boolean first = true;
         for (String value : enumValues) {
@@ -234,18 +265,18 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException("IOException occoured", e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
     }
   }
 
   private String getType(UnaryOperatorKind operator) {
     switch (operator) {
     case MINUS:
-      return "Number";
+      return NUMBER_NAME;
     case NOT:
-      return "Boolean";
+      return BOOLEAN_NAME;
     default:
-      return "unknown";
+      return UNKNOWN_NAME;
     }
   }
 
@@ -255,7 +286,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     case CONTAINS:
     case ENDSWITH:
     case ISOF:
-      return "Boolean";
+      return BOOLEAN_NAME;
     case INDEXOF:
     case LENGTH:
     case ROUND:
@@ -267,7 +298,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     case MONTH:
     case SECOND:
     case FRACTIONALSECONDS:
-      return "Number";
+      return NUMBER_NAME;
     case CAST:
     case CONCAT:
     case DATE:
@@ -285,9 +316,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     case TOUPPER:
     case TRIM:
     case YEAR:
-      return "String";
+      return STRING_NAME;
     default:
-      return "unkown";
+      return UNKNOWN_NAME;
     }
   }
 
@@ -295,22 +326,23 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       ExpressionVisitException, ODataApplicationException {
     if (segment instanceof UriResourceLambdaAll) {
       UriResourceLambdaAll all = (UriResourceLambdaAll) segment;
-      String lambdaJsonObjectString = visitLambdaExpression("ALL", all.getLambdaVariable(), all.getExpression());
+      String lambdaJsonObjectString = visitLambdaExpression(ALL_NAME, all.getLambdaVariable(), all.getExpression());
       jsonStreamWriter.unquotedValue(lambdaJsonObjectString);
       return;
     } else if (segment instanceof UriResourceLambdaAny) {
       UriResourceLambdaAny any = (UriResourceLambdaAny) segment;
-      String lambdaJsonObjectString = visitLambdaExpression("ANY", any.getLambdaVariable(), any.getExpression());
+      String lambdaJsonObjectString = visitLambdaExpression(ANY_NAME, any.getLambdaVariable(), any.getExpression());
       jsonStreamWriter.unquotedValue(lambdaJsonObjectString);
       return;
     } else if (segment instanceof UriResourcePartTyped) {
       String typeName =
           ((UriResourcePartTyped) segment).getType().getFullQualifiedName().getFullQualifiedNameAsString();
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", segment.getKind().toString()).separator()
-          .namedStringValue("name", segment.toString()).separator().namedStringValueRaw("type", typeName).endObject();
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, segment.getKind().toString()).separator()
+          .namedStringValue(NAME_NAME, segment.toString()).separator().namedStringValueRaw(TYPE_NAME, typeName)
+          .endObject();
     } else {
-      jsonStreamWriter.beginObject().namedStringValue("nodeType", segment.getKind().toString()).separator()
-          .namedStringValue("name", segment.toString()).separator().namedStringValueRaw("type", null).endObject();
+      jsonStreamWriter.beginObject().namedStringValue(NODE_TYPE_NAME, segment.getKind().toString()).separator()
+          .namedStringValue(NAME_NAME, segment.toString()).separator().namedStringValueRaw(TYPE_NAME, null).endObject();
     }
   }
 
@@ -321,7 +353,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     case MOD:
     case ADD:
     case SUB:
-      return "Number";
+      return NUMBER_NAME;
 
     case HAS:
     case GT:
@@ -332,10 +364,10 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     case NE:
     case AND:
     case OR:
-      return "Boolean";
+      return BOOLEAN_NAME;
 
     default:
-      return "unkown";
+      return UNKNOWN_NAME;
     }
   }
 
@@ -355,7 +387,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
     if (lastSegment instanceof UriResourcePartTyped) {
       type = ((UriResourcePartTyped) lastSegment).getType();
     }
-    return type == null ? "unknown" : type.getFullQualifiedName().getFullQualifiedNameAsString();
+    return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
 }

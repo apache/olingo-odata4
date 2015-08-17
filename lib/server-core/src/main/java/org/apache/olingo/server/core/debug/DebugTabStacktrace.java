@@ -29,11 +29,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Exception debug information.
  */
-public class DebugTabException implements DebugTab {
+public class DebugTabStacktrace implements DebugTab {
 
   private final Exception exception;
 
-  public DebugTabException(final Exception exception) {
+  public DebugTabStacktrace(final Exception exception) {
     this.exception = exception;
   }
 

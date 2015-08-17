@@ -229,7 +229,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         return httpRequestMethod;
       }
     } catch (IllegalArgumentException e) {
-      throw new ODataHandlerException("Invalid HTTP method" + httpRequest.getMethod(),
+      throw new ODataHandlerException("Invalid HTTP method" + httpRequest.getMethod(), e,
           ODataHandlerException.MessageKeys.INVALID_HTTP_METHOD, httpRequest.getMethod());
     }
   }

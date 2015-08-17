@@ -43,6 +43,10 @@ import java.util.regex.Pattern;
 public class ETagParser {
 
   private static final Pattern ETAG = Pattern.compile("\\s*(,\\s*)+|((?:W/)?\"[!#-~\\x80-\\xFF]*\")");
+  
+  private ETagParser (){
+    //Private constructor for utility classes
+  }
 
   protected static Collection<String> parse(final Collection<String> values) {
     if (values == null) {

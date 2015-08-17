@@ -73,6 +73,7 @@ import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 
 public class ODataXmlSerializer extends AbstractODataSerializer {
+
   private static final String DATA = "d";
   private static final String CONTEXT = "context";
   /** The default character set is UTF-8. */
@@ -103,11 +104,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -132,11 +133,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -178,11 +179,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -267,11 +268,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -309,11 +310,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -838,7 +839,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
-      cachedException = new SerializerException("An I/O exception occurred.", e,
+      cachedException = new SerializerException(IO_EXCEPTION_TEXT, e,
           SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (final EdmPrimitiveTypeException e) {
@@ -848,7 +849,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -890,11 +891,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -937,7 +938,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
-      cachedException = new SerializerException("An I/O exception occurred.", e,
+      cachedException = new SerializerException(IO_EXCEPTION_TEXT, e,
           SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (final EdmPrimitiveTypeException e) {
@@ -947,7 +948,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -982,11 +983,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -1017,11 +1018,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -1085,11 +1086,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final XMLStreamException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } catch (IOException e) {
       cachedException =
-          new SerializerException("An I/O exception occurred.", e, SerializerException.MessageKeys.IO_EXCEPTION);
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);

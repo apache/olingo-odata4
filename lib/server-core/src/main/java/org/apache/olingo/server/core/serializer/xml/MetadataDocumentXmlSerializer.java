@@ -112,11 +112,11 @@ public class MetadataDocumentXmlSerializer {
   private static final String DATA_SERVICES = "DataServices";
   private static final String ABSTRACT = "Abstract";
 
-  private final static String EDMX = "Edmx";
-  private final static String PREFIX_EDMX = "edmx";
-  private final static String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
+  private static final String EDMX = "Edmx";
+  private static final String PREFIX_EDMX = "edmx";
+  private static final String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
 
-  private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
+  private static final String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
   private static final String XML_ENTITY_SET_PATH = "EntitySetPath";
   private static final String XML_CONTAINS_TARGET = "ContainsTarget";
 
@@ -401,7 +401,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendReturnTypeFacets(final XMLStreamWriter writer, final EdmReturnType returnType)
       throws XMLStreamException {
-    if (returnType.isNullable() == false) {
+    if (!returnType.isNullable()) {
       writer.writeAttribute(XML_NULLABLE, "" + returnType.isNullable());
     }
     if (returnType.getMaxLength() != null) {
@@ -417,7 +417,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendParameterFacets(final XMLStreamWriter writer, final EdmParameter parameter)
       throws XMLStreamException {
-    if (parameter.isNullable() == false) {
+    if (!parameter.isNullable()) {
       writer.writeAttribute(XML_NULLABLE, "" + parameter.isNullable());
     }
     if (parameter.getMaxLength() != null) {
@@ -494,7 +494,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_NAME, navigationPropertyName);
       writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(navigationProperty.getType(), navigationProperty
           .isCollection()));
-      if (navigationProperty.isNullable() == false) {
+      if (!navigationProperty.isNullable()) {
         writer.writeAttribute(XML_NULLABLE, "" + navigationProperty.isNullable());
       }
 
@@ -537,11 +537,11 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_TYPE, fqnString);
 
       // Facets
-      if (property.isNullable() == false) {
+      if (!property.isNullable()) {
         writer.writeAttribute(XML_NULLABLE, "" + property.isNullable());
       }
 
-      if (property.isUnicode() == false) {
+      if (!property.isUnicode()) {
         writer.writeAttribute(XML_UNICODE, "" + property.isUnicode());
       }
 

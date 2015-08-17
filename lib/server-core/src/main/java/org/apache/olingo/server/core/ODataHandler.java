@@ -132,7 +132,7 @@ public class ODataHandler {
     debugger.stopRuntimeMeasurement(measurementUriValidator);
 
     int measurementDispatcher = debugger.startRuntimeMeasurement("Dispatcher", "dispatch");
-    new ODataDispatcher(method, uriInfo, this).dispatch(request, response);
+    new ODataDispatcher(uriInfo, this).dispatch(request, response);
     debugger.stopRuntimeMeasurement(measurementDispatcher);
   }
 
@@ -162,11 +162,9 @@ public class ODataHandler {
   private void validateODataVersion(final ODataRequest request)
       throws ODataHandlerException {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
-    if (maxVersion != null) {
-      if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
+    if (maxVersion != null && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
         throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
             ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
-      }
     }
   }
 

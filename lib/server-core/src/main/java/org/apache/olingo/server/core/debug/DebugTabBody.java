@@ -87,7 +87,7 @@ public class DebugTabBody implements DebugTab {
       String contentString;
       switch (responseContent) {
       case IMAGE:
-        contentString = Base64.encodeBase64String(IOUtils.toString(response.getContent()).getBytes());
+        contentString = Base64.encodeBase64String(IOUtils.toString(response.getContent()).getBytes("UTF-8"));
         break;
       case JSON:
       case XML:

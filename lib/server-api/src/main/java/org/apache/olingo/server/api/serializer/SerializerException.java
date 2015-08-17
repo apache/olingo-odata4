@@ -45,7 +45,9 @@ public class SerializerException extends ODataLibraryException {
     /** parameters: primitive-type name, value */
     WRONG_PRIMITIVE_VALUE,
     UNKNOWN_TYPE,
-    WRONG_BASE_TYPE;
+    WRONG_BASE_TYPE,
+    /** parameter: encoding-name */
+    UNSUPPORTED_ENCODING;
 
     @Override
     public String getKey() {

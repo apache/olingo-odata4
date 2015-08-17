@@ -34,6 +34,10 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ODataExceptionHelper {
+  
+  private ODataExceptionHelper() {
+    //Private Constructor
+  }
 
   public static ODataServerError createServerErrorObject(final UriValidationException e,
       final Locale requestedLocale) {

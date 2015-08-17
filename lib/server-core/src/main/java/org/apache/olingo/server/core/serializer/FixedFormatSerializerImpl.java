@@ -41,7 +41,12 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
 
   @Override
   public InputStream count(final Integer count) throws SerializerException {
-    return new ByteArrayInputStream(count.toString().getBytes());
+    try {
+      return new ByteArrayInputStream(count.toString().getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new SerializerException("UTF-8 is nott supprted as an encoding", e,
+          SerializerException.MessageKeys.UNSUPPORTED_ENCODING, "UTF-8");
+    }
   }
 
   @Override

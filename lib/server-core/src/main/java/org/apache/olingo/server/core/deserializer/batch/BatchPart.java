@@ -19,7 +19,7 @@
 package org.apache.olingo.server.core.deserializer.batch;
 
 public interface BatchPart {
-  public Header getHeaders();
+  Header getHeaders();
 
-  public boolean isStrict();
+  boolean isStrict();
 }

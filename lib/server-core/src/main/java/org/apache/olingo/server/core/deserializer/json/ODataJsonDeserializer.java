@@ -72,6 +72,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ODataJsonDeserializer implements ODataDeserializer {
 
+  private static final String AN_IO_EXCEPTION_OCCURRED_MSG = "An IOException occurred";
+  private static final String DUPLICATE_JSON_PROPERTY_DETECTED_MSG = "Duplicate json property detected";
+  private static final String AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG = "An JsonParseException occurred";
   private static final String ODATA_ANNOTATION_MARKER = "@";
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
   private static final EdmPrimitiveType EDM_INT64 = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
@@ -91,13 +94,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       return DeserializerResultImpl.with().entityCollection(consumeEntitySetNode(edmEntityType, tree, null))
           .build();
     } catch (JsonParseException e) {
-      throw new DeserializerException("An JsonParseException occurred", e,
+      throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     } catch (JsonMappingException e) {
-      throw new DeserializerException("Duplicate json property detected", e,
+      throw new DeserializerException(DUPLICATE_JSON_PROPERTY_DETECTED_MSG, e,
           DeserializerException.MessageKeys.DUPLICATE_JSON_PROPERTY);
     } catch (IOException e) {
-      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
+      throw new DeserializerException(AN_IO_EXCEPTION_OCCURRED_MSG, e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
 
@@ -166,13 +169,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           .build();
 
     } catch (JsonParseException e) {
-      throw new DeserializerException("An JsonParseException occurred", e,
+      throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     } catch (JsonMappingException e) {
-      throw new DeserializerException("Duplicate property detected", e,
+      throw new DeserializerException(DUPLICATE_JSON_PROPERTY_DETECTED_MSG, e,
           DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (IOException e) {
-      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
+      throw new DeserializerException(AN_IO_EXCEPTION_OCCURRED_MSG, e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
 
   }
@@ -225,13 +228,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       return DeserializerResultImpl.with().build();
 
     } catch (final JsonParseException e) {
-      throw new DeserializerException("An JsonParseException occurred", e,
+      throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     } catch (final JsonMappingException e) {
-      throw new DeserializerException("Duplicate property detected", e,
+      throw new DeserializerException(DUPLICATE_JSON_PROPERTY_DETECTED_MSG, e,
           DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (final IOException e) {
-      throw new DeserializerException("An IOException occurred", e,
+      throw new DeserializerException(AN_IO_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
@@ -695,11 +698,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       Class<?> javaClass = getJavaClassForPrimitiveType(mapping, edmPrimitiveType);
       String jsonNodeAsText = jsonNode.asText();
 
-      if (isIEEE754Compatible && (edmPrimitiveType.equals(EDM_INT64) || edmPrimitiveType.equals(EDM_DECIMAL))) {
-        if (jsonNodeAsText.length() == 0) {
-          throw new DeserializerException("IEEE754Compatible values must not be of length 0",
-              MessageKeys.INVALID_NULL_PROPERTY, name);
-        }
+      if (isIEEE754Compatible
+          && (edmPrimitiveType.equals(EDM_INT64) || edmPrimitiveType.equals(EDM_DECIMAL))
+              && jsonNodeAsText.length() == 0) {
+        throw new DeserializerException("IEEE754Compatible values must not be of length 0",
+            MessageKeys.INVALID_NULL_PROPERTY, name);
       }
 
       return edmPrimitiveType.valueOfString(jsonNodeAsText, isNullable, maxLength, precision, scale, isUnicode,
@@ -865,13 +868,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       }
       return DeserializerResultImpl.with().property(property).build();
     } catch (JsonParseException e) {
-      throw new DeserializerException("An JsonParseException occurred", e,
+      throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     } catch (JsonMappingException e) {
-      throw new DeserializerException("Duplicate property detected", e,
+      throw new DeserializerException(DUPLICATE_JSON_PROPERTY_DETECTED_MSG, e,
           DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (IOException e) {
-      throw new DeserializerException("An IOException occurred", e, DeserializerException.MessageKeys.IO_EXCEPTION);
+      throw new DeserializerException(AN_IO_EXCEPTION_OCCURRED_MSG, e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
 
@@ -908,13 +911,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       }
       return DeserializerResultImpl.with().entityReferences(parsedValues).build();
     } catch (JsonParseException e) {
-      throw new DeserializerException("An JsonParseException occurred", e,
+      throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     } catch (JsonMappingException e) {
-      throw new DeserializerException("Duplicate property detected", e,
+      throw new DeserializerException(DUPLICATE_JSON_PROPERTY_DETECTED_MSG, e,
           DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
     } catch (IOException e) {
-      throw new DeserializerException("An IOException occurred", e,
+      throw new DeserializerException(AN_IO_EXCEPTION_OCCURRED_MSG, e,
           DeserializerException.MessageKeys.IO_EXCEPTION);
     } catch (URISyntaxException e) {
       throw new DeserializerException("failed to read @odata.id", e,

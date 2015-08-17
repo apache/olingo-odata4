@@ -24,12 +24,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -66,30 +64,30 @@ import com.fasterxml.aalto.stax.InputFactoryImpl;
 
 public class ODataXmlDeserializer implements ODataDeserializer {
 
-  protected static final XMLInputFactory FACTORY = new InputFactoryImpl();
+  private static final XMLInputFactory FACTORY = new InputFactoryImpl();
   private static final String ATOM = "a";
   private static final String NS_ATOM = "http://www.w3.org/2005/Atom";  
-  protected QName REF_ELEMENT = new QName("http://docs.oasis-open.org/odata/ns/metadata", "ref");
-  protected QName FEED_ELEMENT = new QName("http://www.w3.org/2005/Atom", "feed");
-  protected QName ID_ATTR = new QName(NS_ATOM, ATOM);
+  private static final QName REF_ELEMENT = new QName("http://docs.oasis-open.org/odata/ns/metadata", "ref");
+//  private static final QName FEED_ELEMENT = new QName("http://www.w3.org/2005/Atom", "feed");
+  private static final QName ID_ATTR = new QName(NS_ATOM, ATOM);
 
-  protected final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
-  protected final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
-  protected final QName contextQName = new QName(Constants.NS_METADATA, Constants.CONTEXT);
-  protected final QName nullQName = new QName(Constants.NS_METADATA, Constants.ATTR_NULL);
-  protected final QName inlineQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_INLINE);
-  protected final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
-  protected final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG); 
-  protected final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
+  private final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
+  private final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
+  private final QName contextQName = new QName(Constants.NS_METADATA, Constants.CONTEXT);
+  private final QName nullQName = new QName(Constants.NS_METADATA, Constants.ATTR_NULL);
+  private final QName inlineQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_INLINE);
+  private final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
+  private final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG); 
+  private final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
   
-  protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
-    writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
-    writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
-    writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);
-    writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
-    writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
-  }
+//  private void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
+//    writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
+//    writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
+//    writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
+//    writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);
+//    writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
+//    writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
+//  }
   
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     return FACTORY.createXMLEventReader(input);
@@ -373,10 +371,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     while (reader.hasNext() && !foundEndElement) {
       final XMLEvent event = reader.nextEvent();
       
-      if (event.isStartElement()) {
-        if (REF_ELEMENT.equals(event.asStartElement().getName())) {
+      if (event.isStartElement() && REF_ELEMENT.equals(event.asStartElement().getName())) {
           references.add(entityRef(reader, event.asStartElement()));
-        }
       }
       
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -689,7 +685,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       }
       return DeserializerResultImpl.with().entityReferences(references).build();
     } catch (XMLStreamException e) {
-      throw new DeserializerException("An IOException occurred", e.getCause(),
+      throw new DeserializerException("An IOException occurred", e,
           DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
