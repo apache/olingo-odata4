@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
 
@@ -256,19 +258,20 @@ public class DebugTabUri implements DebugTab {
   private String getJsonString() throws IOException {
     CircleStreamBuffer csb = new CircleStreamBuffer();
     IOException cachedException = null;
+    OutputStream outputStream = csb.getOutputStream();
     try {
       JsonGenerator json =
-          new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8)
+          new JsonFactory().createGenerator(outputStream, JsonEncoding.UTF8)
               .setPrettyPrinter(new DefaultPrettyPrinter());
       appendJson(json);
       json.close();
-      csb.getOutputStream().close();
+      outputStream.close();
     } catch (IOException e) {
       throw e;
     } finally {
-      if (csb != null && csb.getOutputStream() != null) {
+      if (outputStream != null) {
         try {
-          csb.getOutputStream().close();
+          outputStream.close();
         } catch (IOException e) {
           if (cachedException != null) {
             throw cachedException;
@@ -279,16 +282,17 @@ public class DebugTabUri implements DebugTab {
       }
     }
 
+    InputStream inputStream = csb.getInputStream();
     try {
-      String jsonString = IOUtils.toString(csb.getInputStream());
-      csb.getInputStream().close();
+      String jsonString = IOUtils.toString(inputStream);
+      inputStream.close();
       return jsonString;
     } catch (IOException e) {
       throw e;
     } finally {
-      if (csb != null && csb.getInputStream() != null) {
+      if (inputStream != null) {
         try {
-          csb.getInputStream().close();
+          inputStream.close();
         } catch (IOException e) {
           if (cachedException != null) {
             throw cachedException;

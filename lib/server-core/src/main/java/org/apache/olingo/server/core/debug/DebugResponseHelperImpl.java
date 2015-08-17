@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.debug;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -133,11 +134,13 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
   }
 
   private InputStream wrapInJson(final List<DebugTab> parts) throws IOException {
-    CircleStreamBuffer csb = new CircleStreamBuffer();
     IOException cachedException = null;
+    OutputStream outputStream = null;
 
     try {
-      JsonGenerator gen = new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8);
+      CircleStreamBuffer csb = new CircleStreamBuffer();
+      outputStream = csb.getOutputStream();
+      JsonGenerator gen = new JsonFactory().createGenerator(outputStream, JsonEncoding.UTF8);
 
       gen.writeStartObject();
       DebugTab requestInfo = parts.get(0);
@@ -159,14 +162,15 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
       gen.writeEndObject();
       gen.close();
-      csb.getOutputStream().close();
+      outputStream.close();
 
+      return csb.getInputStream();
     } catch (IOException e) {
       throw e;
     } finally {
-      if (csb != null && csb.getOutputStream() != null) {
+      if (outputStream != null) {
         try {
-          csb.getOutputStream().close();
+          outputStream.close();
         } catch (IOException e) {
           if (cachedException != null) {
             throw cachedException;
@@ -176,8 +180,6 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         }
       }
     }
-
-    return csb.getInputStream();
   }
 
   /**

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -495,7 +496,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final List<Property> properties, final SelectOption select, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
     final boolean all = ExpandSelectHelper.isAll(select);
-    final Set<String> selected = all ? null :
+    final Set<String> selected = all ? new HashSet<String>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
     for (final String propertyName : type.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
@@ -513,7 +514,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final XMLStreamWriter writer) throws SerializerException, XMLStreamException {
     if (ExpandSelectHelper.hasExpand(expand)) {
       final boolean expandAll = ExpandSelectHelper.isExpandAll(expand);
-      final Set<String> expanded = expandAll ? null :
+      final Set<String> expanded = expandAll ? new HashSet<String>() :
           ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
       for (final String propertyName : type.getNavigationPropertyNames()) {
         final EdmNavigationProperty property = type.getNavigationProperty(propertyName);
