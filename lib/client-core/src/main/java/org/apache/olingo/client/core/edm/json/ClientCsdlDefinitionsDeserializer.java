@@ -58,15 +58,25 @@ public class ClientCsdlDefinitionsDeserializer extends JsonDeserializer<ClientJs
                     getSchemaByNsOrAlias().get(nameSpace).getEnumTypes().add(enumType);
                 }
             }else if(typeObject.getValue().has("type")&&"object".equals(typeObject.getValue().get("type").asText())){
+
+                boolean isEntityType = false;
                 for(CsdlEntitySet entitySet : getSchemaByNsOrAlias().get(nameSpace)
                         .getEntityContainer().getEntitySets()){
                     if(entitySet.getType().equals(combinedNamespaceType)){
                         final CsdlEntityType type = new ClientCsdlEntityTypeDeserializer(nameSpace,typeName)
                                 .deserialize(tree.get(typeObject.getKey()).traverse(parser.getCodec()), ctxt);
                         getSchemaByNsOrAlias().get(nameSpace).getEntityTypes().add(type);
+                        isEntityType=true;
+                        break;
                     }
                 }
-                //toDo Complex Type
+
+                if(!isEntityType) {
+                    final CsdlComplexType type = new ClientCsdlComplexTypeDeserializer(nameSpace, typeName)
+                            .deserialize(tree.get(typeObject.getKey()).traverse(parser.getCodec()), ctxt);
+                    getSchemaByNsOrAlias().get(nameSpace).getComplexTypes().add(type);
+                }
+
             } else if (typeObject.getValue().has("type") &&
                     !("object".equals(typeObject.getValue().get("type").asText()))) {
                 final CsdlTypeDefinition typeDefinition = new ClientCsdlTypeDefinitionDeserializer(nameSpace, typeName)

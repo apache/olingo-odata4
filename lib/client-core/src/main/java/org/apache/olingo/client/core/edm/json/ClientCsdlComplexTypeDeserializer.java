@@ -25,50 +25,35 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
-import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-public class ClientCsdlEntityTypeDeserializer extends JsonDeserializer<CsdlEntityType> {
+public class ClientCsdlComplexTypeDeserializer extends JsonDeserializer<CsdlComplexType> {
 
-    private static final String DEFAULT_SCHEMA="http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#";
-    private static final String CONSTANT_DEFINITION_REFERENCE=DEFAULT_SCHEMA+"/definitions/";
+    private static final String DEFAULT_SCHEMA = "http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#";
+    private static final String CONSTANT_DEFINITION_REFERENCE = DEFAULT_SCHEMA + "/definitions/";
 
     private String typeName;
     private String nameSpace;
 
-    public ClientCsdlEntityTypeDeserializer(String nameSpace,String typeName){
+    public ClientCsdlComplexTypeDeserializer(String nameSpace, String typeName) {
         this.nameSpace = nameSpace;
         this.typeName = typeName;
     }
 
     @Override
-    public CsdlEntityType deserialize(final JsonParser parser, final DeserializationContext ctxt)
+    public CsdlComplexType deserialize(final JsonParser parser, final DeserializationContext ctxt)
             throws IOException {
         final ObjectNode tree = parser.getCodec().readTree(parser);
-        CsdlEntityType type = new CsdlEntityType();
+        CsdlComplexType type = new CsdlComplexType();
         type.setName(typeName);
-        if (tree.has("keys")) {
-            Iterator<JsonNode> itr = tree.get("keys").elements();
-            List<CsdlPropertyRef> keys = new ArrayList<CsdlPropertyRef>();
-            while (itr.hasNext()) {
-                JsonNode key = itr.next();
-                CsdlPropertyRef propRef = new CsdlPropertyRef();
-                propRef.setName(key.get("name").asText());
-                if (key.has("alias")) {
-                    propRef.setAlias(key.get("alias").asText());
-                }
-                keys.add(propRef);
-            }
-            type.setKey(keys);
-        }
 
         if (tree.has("allOf")) {
             Iterator<JsonNode> itr = tree.get("allOf").elements();
@@ -84,12 +69,6 @@ public class ClientCsdlEntityTypeDeserializer extends JsonDeserializer<CsdlEntit
 
         if (tree.has("abstract")) {
             type.setAbstract(tree.get("abstract").asBoolean());
-        }
-        if (tree.has("hasStream")) {
-            type.setHasStream(tree.get("hasStream").asBoolean());
-        }
-        if (tree.has("openType")) {
-            type.setOpenType(tree.get("openType").asBoolean());
         }
 
         if (tree.has("properties")) {
