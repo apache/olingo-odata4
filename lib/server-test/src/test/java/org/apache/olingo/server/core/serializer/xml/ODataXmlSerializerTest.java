@@ -516,7 +516,7 @@ public class ODataXmlSerializerTest {
         "    </m:properties>\n" +
         "  </a:content>\n" +
         "</a:entry>\n";
-    XMLAssert.assertXMLEqual(expectedResult, resultString);
+    checkXMLEqual(expectedResult, resultString);
   }
 
   @Test
@@ -557,7 +557,7 @@ public class ODataXmlSerializerTest {
         "    </m:properties>\n" +
         "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expectedResult, resultString);
+    checkXMLEqual(expectedResult, resultString);
   }
 
   @Test
@@ -622,7 +622,7 @@ public class ODataXmlSerializerTest {
         "    <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
         "  </m:properties>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expectedResult, resultString);
+    checkXMLEqual(expectedResult, resultString);
   }
 
   @Test
@@ -718,7 +718,7 @@ public class ODataXmlSerializerTest {
         "  </a:entry>\n" +
         "</a:feed>\n" +
         "";
-    XMLAssert.assertXMLEqual(expectedResult, resultString);
+    checkXMLEqual(expectedResult, resultString);
   }
 
   @Test
@@ -910,7 +910,7 @@ public class ODataXmlSerializerTest {
         "    </m:properties>\n" +
         "  </a:content>\n" +
         "</a:entry>";
-    XMLAssert.assertXMLEqual(expectedResult, resultString);
+    checkXMLEqual(expectedResult, resultString);
   }
 
   @Test
@@ -1853,7 +1853,7 @@ public class ODataXmlSerializerTest {
           if(diff < 0) {
             diff = diff * -1;
           }
-          if(diff < MAX_ALLOWED_UPDATED_DIFFERENCE) {
+          if(diff <= MAX_ALLOWED_UPDATED_DIFFERENCE) {
             // allow a difference from 2 seconds
             return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
           }
