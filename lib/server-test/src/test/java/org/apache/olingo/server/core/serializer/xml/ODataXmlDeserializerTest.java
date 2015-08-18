@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -83,59 +82,59 @@ public class ODataXmlDeserializerTest {
     XMLUnit.setCompareUnmatched(false);
   }
   
-  private Object edmInt16(String value) throws EdmPrimitiveTypeException {
+  protected Object edmInt16(String value) throws EdmPrimitiveTypeException {
     return EdmInt16.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmInt16.getInstance().getDefaultType()); 
   }
-  private Object edmInt32(String value) throws EdmPrimitiveTypeException {
+  protected Object edmInt32(String value) throws EdmPrimitiveTypeException {
     return EdmInt32.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmInt32.getInstance().getDefaultType()); 
   }
-  private Object edmInt64(String value) throws EdmPrimitiveTypeException {
+  protected Object edmInt64(String value) throws EdmPrimitiveTypeException {
     return EdmInt64.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmInt64.getInstance().getDefaultType()); 
   }
-  private Object edmSingle(String value) throws EdmPrimitiveTypeException {
+  protected Object edmSingle(String value) throws EdmPrimitiveTypeException {
     return EdmSingle.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmSingle.getInstance().getDefaultType()); 
   }
-  private Object edmDouble(String value) throws EdmPrimitiveTypeException {
+  protected Object edmDouble(String value) throws EdmPrimitiveTypeException {
     return EdmDouble.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmDouble.getInstance().getDefaultType()); 
   }
-  private Object edmSByte(String value) throws EdmPrimitiveTypeException {
+  protected Object edmSByte(String value) throws EdmPrimitiveTypeException {
     return EdmSByte.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmSByte.getInstance().getDefaultType()); 
   }
-  private Object edmByte(String value) throws EdmPrimitiveTypeException {
+  protected Object edmByte(String value) throws EdmPrimitiveTypeException {
     return EdmByte.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmByte.getInstance().getDefaultType()); 
   }  
-  private Object edmDecimal(String value) throws EdmPrimitiveTypeException {
+  protected Object edmDecimal(String value) throws EdmPrimitiveTypeException {
     return EdmDecimal.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmDecimal.getInstance().getDefaultType()); 
   }
-  private Object edmBinary(String value) throws EdmPrimitiveTypeException {
+  protected Object edmBinary(String value) throws EdmPrimitiveTypeException {
     return EdmBinary.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmBinary.getInstance().getDefaultType()); 
   }
-  private Object edmDate(String value) throws EdmPrimitiveTypeException {
+  protected Object edmDate(String value) throws EdmPrimitiveTypeException {
     return EdmDate.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmDate.getInstance().getDefaultType()); 
   }
-  private Object edmDateTimeOffset(String value) throws EdmPrimitiveTypeException {
+  protected Object edmDateTimeOffset(String value) throws EdmPrimitiveTypeException {
     return EdmDateTimeOffset.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmDateTimeOffset.getInstance().getDefaultType()); 
   }  
-  private Object edmDuration(String value) throws EdmPrimitiveTypeException {
+  protected Object edmDuration(String value) throws EdmPrimitiveTypeException {
     return EdmDuration.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmDuration.getInstance().getDefaultType()); 
   }   
-  private Object edmGUID(String value) throws EdmPrimitiveTypeException {
+  protected Object edmGUID(String value) throws EdmPrimitiveTypeException {
     return EdmGuid.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmGuid.getInstance().getDefaultType()); 
   }  
-  private Object edmTimeOfDay(String value) throws EdmPrimitiveTypeException {
+  protected Object edmTimeOfDay(String value) throws EdmPrimitiveTypeException {
     return EdmTimeOfDay.getInstance().valueOfString(value, true, 10, 10, 10, true, 
         EdmTimeOfDay.getInstance().getDefaultType()); 
   }
@@ -344,6 +343,7 @@ public class ODataXmlDeserializerTest {
     return null;
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void entityMixPrimCollComp() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
@@ -567,6 +567,7 @@ public class ODataXmlDeserializerTest {
     Assert.assertEquals("Obere Str. 57", getCVProperty(cv, "Street").asPrimitive());    
   }
   
+  @SuppressWarnings("unchecked")
   @Test
   public void complexCollectionProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");

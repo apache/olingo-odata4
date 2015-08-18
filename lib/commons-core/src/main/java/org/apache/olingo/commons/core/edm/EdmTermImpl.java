@@ -30,12 +30,9 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EdmTermImpl.class);
   private final CsdlTerm term;
   private final FullQualifiedName fqn;
   private final EdmTypeInfo typeInfo;
@@ -92,7 +89,7 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
         try {
           appliesToLocal.add(ClassUtils.getClass(EdmTerm.class.getPackage().getName() + ".Edm" + element));
         } catch (ClassNotFoundException e) {
-          LOG.error("Could not load Edm class for {}", element, e);
+          throw new EdmException("Could not load Edm class for {} " + element, e);
         }
       }
 

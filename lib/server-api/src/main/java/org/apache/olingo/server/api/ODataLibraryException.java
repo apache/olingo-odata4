@@ -26,8 +26,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.olingo.commons.api.ODataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract superclass of all translatable server exceptions.
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
 public abstract class ODataLibraryException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
-  private static final Logger LOG = LoggerFactory.getLogger(ODataLibraryException.class);
   private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
   protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
@@ -109,7 +106,6 @@ public abstract class ODataLibraryException extends ODataException {
     try {
       return ResourceBundle.getBundle(getBundleName(), locale == null ? DEFAULT_LOCALE : locale);
     } catch (final MissingResourceException e) {
-      LOG.error(e.getMessage(), e);
       return null;
     }
   }

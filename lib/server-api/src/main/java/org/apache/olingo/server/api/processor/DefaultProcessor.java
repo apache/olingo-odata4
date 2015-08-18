@@ -20,7 +20,6 @@ package org.apache.olingo.server.api.processor;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
-import java.util.Locale;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
