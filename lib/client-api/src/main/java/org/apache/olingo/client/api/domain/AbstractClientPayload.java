@@ -47,4 +47,39 @@ public abstract class AbstractClientPayload extends ClientItem {
   public void setContextURL(final URI contextURL) {
     this.contextURL = contextURL;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((contextURL == null) ? 0 : contextURL.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof AbstractClientPayload)) {
+      return false;
+    }
+    AbstractClientPayload other = (AbstractClientPayload) obj;
+    if (contextURL == null) {
+      if (other.contextURL != null) {
+        return false;
+      }
+    } else if (!contextURL.equals(other.contextURL)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "AbstractClientPayload [contextURL=" + contextURL + "super[" + super.toString() + "]]";
+  }
 }

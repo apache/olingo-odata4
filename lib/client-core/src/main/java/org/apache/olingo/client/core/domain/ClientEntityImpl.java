@@ -295,4 +295,143 @@ public class ClientEntityImpl extends AbstractClientPayload implements ClientEnt
   public List<ClientAnnotation> getAnnotations() {
     return annotations;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((associationLinks == null) ? 0 : associationLinks.hashCode());
+    result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
+    result = prime * result + ((editLink == null) ? 0 : editLink.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((mediaContentSource == null) ? 0 : mediaContentSource.hashCode());
+    result = prime * result + ((mediaContentType == null) ? 0 : mediaContentType.hashCode());
+    result = prime * result + ((mediaETag == null) ? 0 : mediaETag.hashCode());
+    result = prime * result + ((mediaEditLinks == null) ? 0 : mediaEditLinks.hashCode());
+    result = prime * result + (mediaEntity ? 1231 : 1237);
+    result = prime * result + ((navigationLinks == null) ? 0 : navigationLinks.hashCode());
+    result = prime * result + ((operations == null) ? 0 : operations.hashCode());
+    result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+    result = prime * result + ((typeName == null) ? 0 : typeName.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientEntityImpl)) {
+      return false;
+    }
+    ClientEntityImpl other = (ClientEntityImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
+      return false;
+    }
+    if (associationLinks == null) {
+      if (other.associationLinks != null) {
+        return false;
+      }
+    } else if (!associationLinks.equals(other.associationLinks)) {
+      return false;
+    }
+    if (eTag == null) {
+      if (other.eTag != null) {
+        return false;
+      }
+    } else if (!eTag.equals(other.eTag)) {
+      return false;
+    }
+    if (editLink == null) {
+      if (other.editLink != null) {
+        return false;
+      }
+    } else if (!editLink.equals(other.editLink)) {
+      return false;
+    }
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (mediaContentSource == null) {
+      if (other.mediaContentSource != null) {
+        return false;
+      }
+    } else if (!mediaContentSource.equals(other.mediaContentSource)) {
+      return false;
+    }
+    if (mediaContentType == null) {
+      if (other.mediaContentType != null) {
+        return false;
+      }
+    } else if (!mediaContentType.equals(other.mediaContentType)) {
+      return false;
+    }
+    if (mediaETag == null) {
+      if (other.mediaETag != null) {
+        return false;
+      }
+    } else if (!mediaETag.equals(other.mediaETag)) {
+      return false;
+    }
+    if (mediaEditLinks == null) {
+      if (other.mediaEditLinks != null) {
+        return false;
+      }
+    } else if (!mediaEditLinks.equals(other.mediaEditLinks)) {
+      return false;
+    }
+    if (mediaEntity != other.mediaEntity) {
+      return false;
+    }
+    if (navigationLinks == null) {
+      if (other.navigationLinks != null) {
+        return false;
+      }
+    } else if (!navigationLinks.equals(other.navigationLinks)) {
+      return false;
+    }
+    if (operations == null) {
+      if (other.operations != null) {
+        return false;
+      }
+    } else if (!operations.equals(other.operations)) {
+      return false;
+    }
+    if (properties == null) {
+      if (other.properties != null) {
+        return false;
+      }
+    } else if (!properties.equals(other.properties)) {
+      return false;
+    }
+    if (typeName == null) {
+      if (other.typeName != null) {
+        return false;
+      }
+    } else if (!typeName.equals(other.typeName)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientEntityImpl [id=" + id + ", eTag=" + eTag + ", mediaEntity=" + mediaEntity + ", mediaContentType="
+        + mediaContentType + ", mediaContentSource=" + mediaContentSource + ", mediaETag=" + mediaETag + ", editLink="
+        + editLink + ", properties=" + properties + ", annotations=" + annotations + ", typeName=" + typeName
+        + ", navigationLinks=" + navigationLinks + ", associationLinks=" + associationLinks + ", mediaEditLinks="
+        + mediaEditLinks + ", operations=" + operations + "super[" + super.toString() + "]]";
+  }
 }

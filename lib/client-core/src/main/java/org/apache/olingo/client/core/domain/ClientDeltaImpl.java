@@ -57,4 +57,55 @@ public class ClientDeltaImpl extends ClientEntitySetImpl implements ClientDelta 
     return deletedLinks;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((addedLinks == null) ? 0 : addedLinks.hashCode());
+    result = prime * result + ((deletedEntities == null) ? 0 : deletedEntities.hashCode());
+    result = prime * result + ((deletedLinks == null) ? 0 : deletedLinks.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientDeltaImpl)) {
+      return false;
+    }
+    ClientDeltaImpl other = (ClientDeltaImpl) obj;
+    if (addedLinks == null) {
+      if (other.addedLinks != null) {
+        return false;
+      }
+    } else if (!addedLinks.equals(other.addedLinks)) {
+      return false;
+    }
+    if (deletedEntities == null) {
+      if (other.deletedEntities != null) {
+        return false;
+      }
+    } else if (!deletedEntities.equals(other.deletedEntities)) {
+      return false;
+    }
+    if (deletedLinks == null) {
+      if (other.deletedLinks != null) {
+        return false;
+      }
+    } else if (!deletedLinks.equals(other.deletedLinks)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientDeltaImpl [deletedEntities=" + deletedEntities + ", addedLinks=" + addedLinks + ", deletedLinks="
+        + deletedLinks + "super[" + super.toString() + "]]";
+  }
 }

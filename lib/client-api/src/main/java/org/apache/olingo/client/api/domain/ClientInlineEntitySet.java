@@ -36,7 +36,7 @@ public class ClientInlineEntitySet extends ClientLink {
    * @param entitySet entity set.
    */
   public ClientInlineEntitySet(final URI uri, final ClientLinkType type,
-                               final String title, final ClientEntitySet entitySet) {
+      final String title, final ClientEntitySet entitySet) {
 
     super(uri, type, title);
     this.entitySet = entitySet;
@@ -52,7 +52,7 @@ public class ClientInlineEntitySet extends ClientLink {
    * @param entitySet entity set.
    */
   public ClientInlineEntitySet(final URI baseURI, final String href,
-                               final ClientLinkType type, final String title, final ClientEntitySet entitySet) {
+      final ClientLinkType type, final String title, final ClientEntitySet entitySet) {
 
     super(baseURI, href, type, title);
     this.entitySet = entitySet;
@@ -66,4 +66,40 @@ public class ClientInlineEntitySet extends ClientLink {
   public ClientEntitySet getEntitySet() {
     return entitySet;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((entitySet == null) ? 0 : entitySet.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientInlineEntitySet)) {
+      return false;
+    }
+    ClientInlineEntitySet other = (ClientInlineEntitySet) obj;
+    if (entitySet == null) {
+      if (other.entitySet != null) {
+        return false;
+      }
+    } else if (!entitySet.equals(other.entitySet)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientInlineEntitySet [entitySet=" + entitySet + "super[" + super.toString() + "]]";
+  }
+
 }

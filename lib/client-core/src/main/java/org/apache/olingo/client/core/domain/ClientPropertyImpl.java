@@ -33,7 +33,6 @@ import java.util.List;
 
 public final class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, ClientValuable {
 
-
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
   private final String name;
   private final ClientValue value;
@@ -116,35 +115,56 @@ public final class ClientPropertyImpl implements ClientProperty, ClientAnnotatab
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null) {
       return false;
     }
-
-    ClientPropertyImpl that = (ClientPropertyImpl) o;
-
-    if (annotations != null ? !annotations.equals(that.annotations) : that.annotations != null) {
+    if (!(obj instanceof ClientPropertyImpl)) {
       return false;
     }
-    if (name != null ? !name.equals(that.name) : that.name != null) {
+    ClientPropertyImpl other = (ClientPropertyImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
       return false;
     }
-    if (value != null ? !value.equals(that.value) : that.value != null) {
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
       return false;
     }
-    return !(valuable != null ? !valuable.equals(that.valuable) : that.valuable != null);
-
+    if (valuable == null) {
+      if (other.valuable != null) {
+        return false;
+      }
+    } else if (!valuable.equals(other.valuable)) {
+      return false;
+    }
+    if (value == null) {
+      if (other.value != null) {
+        return false;
+      }
+    } else if (!value.equals(other.value)) {
+      return false;
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    int result = annotations != null ? annotations.hashCode() : 0;
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    result = 31 * result + (value != null ? value.hashCode() : 0);
-    result = 31 * result + (valuable != null ? valuable.hashCode() : 0);
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((valuable == null) ? 0 : valuable.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
     return result;
   }
 

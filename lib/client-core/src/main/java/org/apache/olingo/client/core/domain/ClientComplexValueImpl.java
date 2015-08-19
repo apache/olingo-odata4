@@ -201,4 +201,64 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
   public int size() {
     return fields.size();
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((associationLinks == null) ? 0 : associationLinks.hashCode());
+    result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+    result = prime * result + ((navigationLinks == null) ? 0 : navigationLinks.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientComplexValueImpl)) {
+      return false;
+    }
+    ClientComplexValueImpl other = (ClientComplexValueImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
+      return false;
+    }
+    if (associationLinks == null) {
+      if (other.associationLinks != null) {
+        return false;
+      }
+    } else if (!associationLinks.equals(other.associationLinks)) {
+      return false;
+    }
+    if (fields == null) {
+      if (other.fields != null) {
+        return false;
+      }
+    } else if (!fields.equals(other.fields)) {
+      return false;
+    }
+    if (navigationLinks == null) {
+      if (other.navigationLinks != null) {
+        return false;
+      }
+    } else if (!navigationLinks.equals(other.navigationLinks)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientComplexValueImpl [navigationLinks=" + navigationLinks + ", associationLinks=" + associationLinks
+        + ", annotations=" + annotations + ", fields=" + fields + "super[" + super.toString() + "]]";
+  }
 }

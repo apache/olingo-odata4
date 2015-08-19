@@ -68,4 +68,47 @@ public abstract class AbstractClientEntitySet extends AbstractClientPayload impl
   public void setCount(final int count) {
     this.count = count;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((count == null) ? 0 : count.hashCode());
+    result = prime * result + ((next == null) ? 0 : next.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof AbstractClientEntitySet)) {
+      return false;
+    }
+    AbstractClientEntitySet other = (AbstractClientEntitySet) obj;
+    if (count == null) {
+      if (other.count != null) {
+        return false;
+      }
+    } else if (!count.equals(other.count)) {
+      return false;
+    }
+    if (next == null) {
+      if (other.next != null) {
+        return false;
+      }
+    } else if (!next.equals(other.next)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "AbstractClientEntitySet [next=" + next + ", count=" + count + "super[" + super.toString() + "]]";
+  }
 }

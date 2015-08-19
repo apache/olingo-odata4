@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.api.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
  * Abstract representation of an OData entity property value.
  */
@@ -103,18 +98,40 @@ public abstract class AbstractClientValue implements ClientValue {
     return isCollection() ? (ClientCollectionValue<OV>) this : null;
   }
 
+  
+  
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof AbstractClientValue)) {
+      return false;
+    }
+    AbstractClientValue other = (AbstractClientValue) obj;
+    if (typeName == null) {
+      if (other.typeName != null) {
+        return false;
+      }
+    } else if (!typeName.equals(other.typeName)) {
+      return false;
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((typeName == null) ? 0 : typeName.hashCode());
+    return result;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "AbstractClientValue [typeName=" + typeName + "]";
   }
 }
