@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
@@ -58,6 +60,10 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 public class DataProvider {
 
   protected static final String MEDIA_PROPERTY_NAME = "$value";
+  private AtomicInteger KEY_INT_16 = new AtomicInteger(0);
+  private AtomicInteger KEY_INT_32 = new AtomicInteger(0);
+  private AtomicLong KEY_INT_64 = new AtomicLong(0);
+  private AtomicLong KEY_STRING = new AtomicLong(0);
 
   private Map<String, EntityCollection> data;
   private Edm edm;
@@ -163,42 +169,40 @@ public class DataProvider {
     
     return data.get(edmEntitySet.getName());
   }
-    
+
   private Map<String, Object> findFreeComposedKey(final List<Entity> entities, final EdmEntityType entityType)
       throws DataProviderException {
     // Weak key construction
     final HashMap<String, Object> keys = new HashMap<String, Object>();
     for (final String keyName : entityType.getKeyPredicateNames()) {
       final FullQualifiedName typeName = entityType.getProperty(keyName).getType().getFullQualifiedName();
-      Object newValue = null;
+      Object newValue;
       
       if (EdmPrimitiveTypeKind.Int16.getFullQualifiedName().equals(typeName)) {
-         newValue = Short.valueOf((short) 1);
+         newValue = (short) KEY_INT_16.incrementAndGet();
          
          while(!isFree(newValue, keyName, entities)) {
-           newValue = (short) (((Short) newValue) + 1);
+           newValue = (short) KEY_INT_16.incrementAndGet();
          }
       } else if (EdmPrimitiveTypeKind.Int32.getFullQualifiedName().equals(typeName)) {
-        newValue = Integer.valueOf((short) 1);
+        newValue = KEY_INT_32.incrementAndGet();
         
         while(!isFree(newValue, keyName, entities)) {
-          newValue = ((Integer) newValue) + 1;
+          newValue = KEY_INT_32.incrementAndGet();
         }
       } else if(EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
         // Integer keys
-        newValue = Long.valueOf(1);
+        newValue = KEY_INT_64.incrementAndGet();
 
         while (!isFree(newValue, keyName, entities)) {
-          newValue = (long) (((Long) newValue) + 1L);
+          newValue = KEY_INT_64.incrementAndGet();
         }
       } else if (EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(typeName)) {
         // String keys
-        newValue = String.valueOf(1);
-        int i = 0;
+        newValue = String.valueOf(KEY_STRING.incrementAndGet());
 
         while (!isFree(newValue, keyName, entities)) {
-          newValue = String.valueOf(i);
-          i++;
+          newValue = String.valueOf(KEY_STRING.incrementAndGet());
         }
       } else {
         throw new DataProviderException("Key type not supported", HttpStatusCode.NOT_IMPLEMENTED);
