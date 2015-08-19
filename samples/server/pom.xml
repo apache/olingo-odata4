@@ -34,6 +34,10 @@
 		<relativePath>..</relativePath>
 	</parent>
 
+	<properties>
+		<version.slf4j>1.7.7</version.slf4j>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -80,11 +84,13 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>${version.slf4j}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.7</version>
+			<version>${version.slf4j}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
