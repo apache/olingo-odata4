@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core;
 
 import static org.junit.Assert.assertTrue;
 
@@ -31,7 +31,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.AtomLinksQualifier;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.custommonkey.xmlunit.Diff;
 

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.uri.v4;
+package org.apache.olingo.client.core.uri;
 
 import static org.junit.Assert.assertEquals;
 

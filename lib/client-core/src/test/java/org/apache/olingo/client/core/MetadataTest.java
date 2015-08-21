@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;

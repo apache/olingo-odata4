@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core;
 
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;

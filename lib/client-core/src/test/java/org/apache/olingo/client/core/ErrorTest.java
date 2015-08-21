@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
-import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.v4;
+package org.apache.olingo.client.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +35,6 @@ import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientValue;
-import org.apache.olingo.client.core.AbstractTest;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Property;
