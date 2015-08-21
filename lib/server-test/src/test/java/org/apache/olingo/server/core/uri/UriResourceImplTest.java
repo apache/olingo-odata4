@@ -267,6 +267,11 @@ public class UriResourceImplTest {
 
       @Override
       public String toString() {
+        return getSegmentValue();
+      }
+
+      @Override
+      public String getSegmentValue() {
         return "mock";
       }
     }
@@ -342,10 +347,15 @@ public class UriResourceImplTest {
         this.type = type;
         return this;
       }
+      
+      @Override
+      public String getSegmentValue() {
+        return "mock";
+      }
 
       @Override
       public String toString() {
-        return "mock";
+        return getSegmentValue();
       }
 
     }

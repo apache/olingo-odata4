@@ -26,10 +26,15 @@ public class UriResourceCountImpl extends UriResourceImpl implements UriResource
   public UriResourceCountImpl() {
     super(UriResourceKind.count);
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return "$count";
+  }
 
   @Override
   public String toString() {
-    return "$count";
+    return getSegmentValue();
   }
 
 }

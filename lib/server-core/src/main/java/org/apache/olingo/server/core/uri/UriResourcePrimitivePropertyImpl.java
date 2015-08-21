@@ -50,10 +50,15 @@ public class UriResourcePrimitivePropertyImpl extends UriResourceTypedImpl imple
   public boolean isCollection() {
     return property.isCollection();
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return  property.getName();
+  }
 
   @Override
   public String toString() {
-    return property.getName();
+    return getSegmentValue();
   }
 
 }

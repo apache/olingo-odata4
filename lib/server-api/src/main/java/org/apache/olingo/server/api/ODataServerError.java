@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 
 /**
- * Server error.
+ * Class to hold all server relevant error information.
  */
 public class ODataServerError extends ODataError {
 

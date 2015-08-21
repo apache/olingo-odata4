@@ -20,6 +20,9 @@ package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 
+/**
+ * Use this options calls to pass additional information to the reference serializer.
+ */
 public final class ReferenceSerializerOptions {
   private ContextURL contextURL;
 

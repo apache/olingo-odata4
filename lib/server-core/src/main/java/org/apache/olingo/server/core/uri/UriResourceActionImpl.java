@@ -74,14 +74,24 @@ public class UriResourceActionImpl extends UriResourceImpl implements UriResourc
     }
     return null;
   }
-
+  
   @Override
-  public String toString(final boolean includeFilters) {
+  public String getSegmentValue(final boolean includeFilters){
     return actionImport == null ? (action == null ? "" : action.getName()) : actionImport.getName();
   }
 
   @Override
+  public String getSegmentValue(){
+    return getSegmentValue(false);
+  }
+  
+  @Override
+  public String toString(final boolean includeFilters) {
+    return getSegmentValue(includeFilters);
+  }
+
+  @Override
   public String toString() {
-    return toString(false);
+    return getSegmentValue();
   }
 }

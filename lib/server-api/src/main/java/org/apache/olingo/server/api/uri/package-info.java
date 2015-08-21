@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -15,28 +15,14 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ ******************************************************************************/
+/**
+ * Olingo URI
+ * <p>
+ * The URI package is used to condense all information about the OData path used to query the data.
+ * <br> In order to support filter and orderby statements the
+ * {@link org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor} has to be implemented by an
+ * application. 
  */
 package org.apache.olingo.server.api.uri;
 
-/**
- * Super interface for all objects representing resource parts.
- * See {@link UriInfoResource} for details.
- */
-public interface UriResource {
-
-  /**
-   * @return Kind of the resource part
-   */
-  UriResourceKind getKind();
-
-  /**
-   * In case of an EntitySet this method will return the EntitySet name. In Case of $ref this method will return '$ref"
-   * as a String.
-   * @return the value of this URI Resource Segment
-   */
-  String getSegmentValue();
-
-  @Override
-  String toString();
-
-}

@@ -231,7 +231,7 @@ public class ODataRequest {
 
   /**
    * Sets the HTTP protocol used
-   * @param 2protocol
+   * @param protocol
    * @see #getProtocol()
    */
   public void setProtocol(String protocol) {

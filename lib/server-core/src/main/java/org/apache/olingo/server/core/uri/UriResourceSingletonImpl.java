@@ -62,10 +62,15 @@ public class UriResourceSingletonImpl extends UriResourceTypedImpl implements Ur
   public boolean isCollection() {
     return false;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return singleton.getName();
+  }
 
   @Override
   public String toString() {
-    return singleton.getName();
+    return getSegmentValue();
   }
 
 }

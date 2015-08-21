@@ -48,6 +48,10 @@ public abstract class OData {
 
   private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataImpl";
 
+  /**
+   * Use this method to create a new OData instance. Each thread/request should keep its own instance.
+   * @return a new OData instance
+   */
   public static OData newInstance() {
     try {
       final Class<?> clazz = Class.forName(OData.IMPLEMENTATION);
@@ -74,7 +78,8 @@ public abstract class OData {
   public abstract ODataSerializer createSerializer(ContentType contentType) throws SerializerException;
 
   /**
-   * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output.
+   * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output or multipart/mixed
+   * outpu.
    * Serializers are used in Processor implementations.
    */
   public abstract FixedFormatSerializer createFixedFormatSerializer();

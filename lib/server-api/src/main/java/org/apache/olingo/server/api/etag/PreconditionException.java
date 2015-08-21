@@ -20,6 +20,9 @@ package org.apache.olingo.server.api.etag;
 
 import org.apache.olingo.server.api.ODataLibraryException;
 
+/**
+ * This exception is thrown for invalid precondition error cases.
+ */
 public class PreconditionException extends ODataLibraryException {
   private static final long serialVersionUID = -8112658467394158700L;
 

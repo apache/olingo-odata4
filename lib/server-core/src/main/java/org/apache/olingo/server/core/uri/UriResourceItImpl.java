@@ -56,10 +56,15 @@ public class UriResourceItImpl extends UriResourceWithKeysImpl implements UriRes
     this.isCollection = isCollection;
     return this;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return "$it";
+  }
 
   @Override
   public String toString() {
-    return "$it";
+    return getSegmentValue();
   }
 
 }

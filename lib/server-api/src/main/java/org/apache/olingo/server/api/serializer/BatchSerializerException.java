@@ -19,6 +19,9 @@
 package org.apache.olingo.server.api.serializer;
 
 
+/**
+ * Thrown for invalid  batch payloads.
+ */
 public class BatchSerializerException extends SerializerException {
 
   private static final long serialVersionUID = 2634433974342796905L;

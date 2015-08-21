@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.api.etag;
 
+/**
+ * Register implementations for this interface in oder to support etags for the metadata document and service document.
+ */
 public interface ServiceMetadataETagSupport {
 
   /**

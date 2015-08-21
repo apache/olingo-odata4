@@ -63,8 +63,13 @@ public class UriResourceComplexPropertyImpl extends UriResourceTypedImpl impleme
   }
 
   @Override
-  public String toString() {
+  public String getSegmentValue(){
     return property.getName();
+  }
+  
+  @Override
+  public String toString() {
+    return getSegmentValue();
   }
 
 }

@@ -40,15 +40,19 @@ public abstract class UriResourceTypedImpl extends UriResourceImpl implements Ur
     return this;
   }
 
-  @Override
-  public String toString(final boolean includeFilters) {
+  public String getSegmentValue(final boolean includeFilters) {
     if (includeFilters) {
       if (typeFilter != null) {
-        return toString() + "/" + typeFilter.getFullQualifiedName().toString();
+        return getSegmentValue() + "/" + typeFilter.getFullQualifiedName().toString();
       } else {
-        return toString();
+        return getSegmentValue();
       }
     }
-    return toString();
+    return getSegmentValue();
+  }
+
+  @Override
+  public String toString(final boolean includeFilters) {
+    return getSegmentValue(includeFilters);
   }
 }

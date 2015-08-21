@@ -71,8 +71,7 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
   }
 
   @Override
-  public String toString(final boolean includeFilters) {
-
+  public String getSegmentValue(final boolean includeFilters) {
     if (includeFilters) {
       StringBuilder tmp = new StringBuilder();
       if (collectionTypeFilter != null) {
@@ -88,11 +87,16 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
       }
 
       if (tmp.length() != 0) {
-        return toString() + "/" + tmp.toString();
+        return getSegmentValue() + "/" + tmp.toString();
       }
     }
 
-    return toString();
+    return getSegmentValue();
+  }
+
+  @Override
+  public String toString(final boolean includeFilters) {
+    return getSegmentValue(includeFilters);
   }
 
   private String getFQN(final EdmType type) {
