@@ -47,11 +47,12 @@ public class ClientCsdlFunctionImportDeserializer extends JsonDeserializer<CsdlF
             functionImport.setFunction(new FullQualifiedName(tree.get("function").asText()));
         }
         if (tree.has("entitySet")) {
-            functionImport.setEntitySet(tree.get("entitySet").asText());
+            FullQualifiedName fullQualifiedName = new FullQualifiedName(tree.get("entitySet").asText());
+            functionImport.setEntitySet(fullQualifiedName.getName());
         }
         if (tree.has("includeInServiceDocument")) {
             functionImport.setIncludeInServiceDocument(tree.get("includeInServiceDocument").asBoolean());
         }
-        return null;
+        return functionImport;
     }
 }

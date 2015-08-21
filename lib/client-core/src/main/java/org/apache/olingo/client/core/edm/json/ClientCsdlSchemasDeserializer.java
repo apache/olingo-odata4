@@ -67,17 +67,19 @@ public class ClientCsdlSchemasDeserializer extends JsonDeserializer<ClientJsonSc
                 if(entityContainer.has("extend")){
                     container.setExtendsContainer(entityContainer.get("extend").asText());
                 }
-                Iterator<Map.Entry<String, JsonNode>> itr = entityContainer.get("entitySets").fields();
-                while (itr.hasNext()) {
-                    Map.Entry<String, JsonNode> entitySetEntry = itr.next();
-                    JsonNode entitySetNode = entitySetEntry.getValue();
-                    CsdlEntitySet entitySet = new ClientCsdlEntitySetDeserializer(schema, entitySetEntry.getKey())
-                            .deserialize(entitySetNode.traverse(parser.getCodec()), ctxt);
-                    container.getEntitySets().add(entitySet);
+                if (entityContainer.has("entitySets")) {
+                    Iterator<Map.Entry<String, JsonNode>> itr = entityContainer.get("entitySets").fields();
+                    while (itr.hasNext()) {
+                        Map.Entry<String, JsonNode> entitySetEntry = itr.next();
+                        JsonNode entitySetNode = entitySetEntry.getValue();
+                        CsdlEntitySet entitySet = new ClientCsdlEntitySetDeserializer(schema, entitySetEntry.getKey())
+                                .deserialize(entitySetNode.traverse(parser.getCodec()), ctxt);
+                        container.getEntitySets().add(entitySet);
+                    }
                 }
                 if (entityContainer.has("singletons")) {
                     Iterator<Map.Entry<String, JsonNode>> itr2 = entityContainer.get("singletons").fields();
-                    while (itr.hasNext()) {
+                    while (itr2.hasNext()) {
                         Map.Entry<String, JsonNode> singletonEntry = itr2.next();
                         JsonNode singletonNode = singletonEntry.getValue();
                         CsdlSingleton singleton = new ClientCsdlSingletonDeserializer(singletonEntry.getKey())
@@ -87,7 +89,7 @@ public class ClientCsdlSchemasDeserializer extends JsonDeserializer<ClientJsonSc
                 }
                 if (entityContainer.has("functionImports")) {
                     Iterator<Map.Entry<String, JsonNode>> itr3 = entityContainer.get("functionImports").fields();
-                    while (itr.hasNext()) {
+                    while (itr3.hasNext()) {
                         Map.Entry<String, JsonNode> functionImportEntry = itr3.next();
                         JsonNode functionImportNode = functionImportEntry.getValue();
                         CsdlFunctionImport functionImport = new ClientCsdlFunctionImportDeserializer
@@ -98,7 +100,7 @@ public class ClientCsdlSchemasDeserializer extends JsonDeserializer<ClientJsonSc
                 }
                 if (entityContainer.has("actionImports")) {
                     Iterator<Map.Entry<String, JsonNode>> itr4 = entityContainer.get("actionImports").fields();
-                    while (itr.hasNext()) {
+                    while (itr4.hasNext()) {
                         Map.Entry<String, JsonNode> actionImportEntry = itr4.next();
                         JsonNode actionImportNode = actionImportEntry.getValue();
                         CsdlActionImport actionImport = new ClientCsdlActionImportDeserializer
