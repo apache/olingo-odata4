@@ -85,7 +85,7 @@ public final class SRID implements Serializable {
 //    return value == null ? dimension == Dimension.GEOMETRY
 //        ? "0"
 //            : "4326"
-//        : value.toString();
+//        : value.getName();
   }
 
   private boolean isVariable() {

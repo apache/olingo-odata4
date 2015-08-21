@@ -35,7 +35,7 @@ import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
-import org.apache.olingo.commons.api.ODataError;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;

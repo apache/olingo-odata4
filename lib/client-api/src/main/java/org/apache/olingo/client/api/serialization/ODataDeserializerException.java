@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.serialization;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class ODataDeserializerException extends ODataException {
 

@@ -25,8 +25,8 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataErrorDetail;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 

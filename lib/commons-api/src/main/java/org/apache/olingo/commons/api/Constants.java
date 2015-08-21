@@ -29,279 +29,279 @@ import org.apache.olingo.commons.api.format.ContentType;
 public interface Constants {
 
   // Other stuff
-  public final static String UTF8 = "UTF-8";
+  String UTF8 = "UTF-8";
 
-  public final static String METADATA = "$metadata";
+  String METADATA = "$metadata";
 
-  public final static Integer DEFAULT_PRECISION = 40;
+  Integer DEFAULT_PRECISION = 40;
 
-  public final static Integer DEFAULT_SCALE = 25;
+  Integer DEFAULT_SCALE = 25;
 
   // Common Namespaces
-  public final static String NS_BASE = "http://docs.oasis-open.org/odata/ns/";
+  String NS_BASE = "http://docs.oasis-open.org/odata/ns/";
 
-  public final static String NS_DATASERVICES = "http://docs.oasis-open.org/odata/ns/data";
+  String NS_DATASERVICES = "http://docs.oasis-open.org/odata/ns/data";
 
-  public final static String NS_METADATA = "http://docs.oasis-open.org/odata/ns/metadata";
+  String NS_METADATA = "http://docs.oasis-open.org/odata/ns/metadata";
 
-  public final static String NS_SCHEME = "http://docs.oasis-open.org/odata/ns/scheme";
+  String NS_SCHEME = "http://docs.oasis-open.org/odata/ns/scheme";
 
-  public final static String NS_NAVIGATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/related/";
+  String NS_NAVIGATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/related/";
 
-  public final static String NS_ASSOCIATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/relatedlinks/";
+  String NS_ASSOCIATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/relatedlinks/";
 
-  public final static String NS_MEDIA_EDIT_LINK_REL = "http://docs.oasis-open.org/odata/ns/edit-media/";
+  String NS_MEDIA_EDIT_LINK_REL = "http://docs.oasis-open.org/odata/ns/edit-media/";
 
-  public final static String NS_DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
+  String NS_DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
 
   // XML namespaces and prefixes
-  public final static String NS_ATOM = "http://www.w3.org/2005/Atom";
+  String NS_ATOM = "http://www.w3.org/2005/Atom";
 
-  public static final String NS_GEORSS = "http://www.georss.org/georss";
+  String NS_GEORSS = "http://www.georss.org/georss";
 
-  public static final String NS_GML = "http://www.opengis.net/gml";
+  String NS_GML = "http://www.opengis.net/gml";
 
-  public static final String NS_ATOM_TOMBSTONE = "http://purl.org/atompub/tombstones/1.0";
+  String NS_ATOM_TOMBSTONE = "http://purl.org/atompub/tombstones/1.0";
 
-  public static final String PREFIX_DATASERVICES = "d";
+  String PREFIX_DATASERVICES = "d";
 
-  public static final String PREFIX_METADATA = "m";
+  String PREFIX_METADATA = "m";
 
-  public static final String PREFIX_GEORSS = "georss";
+  String PREFIX_GEORSS = "georss";
 
-  public static final String PREFIX_GML = "gml";
+  String PREFIX_GML = "gml";
 
-  public final static String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
+  String SRS_URLPREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
 
   // Link rel(s)
-  public static final String EDIT_LINK_REL = "edit";
+  String EDIT_LINK_REL = "edit";
 
-  public static final String SELF_LINK_REL = "self";
+  String SELF_LINK_REL = "self";
 
-  public static final String EDITMEDIA_LINK_REL = "edit-media";
+  String EDITMEDIA_LINK_REL = "edit-media";
 
-  public static final String NEXT_LINK_REL = "next";
+  String NEXT_LINK_REL = "next";
 
   // XML elements and attributes
-  public static final String PROPERTIES = "properties";
+  String PROPERTIES = "properties";
 
-  public static final String ELEM_ELEMENT = "element";
+  String ELEM_ELEMENT = "element";
 
-  public final static String ATTR_TYPE = "type";
+  String ATTR_TYPE = "type";
 
-  public final static String ATTR_NULL = "null";
+  String ATTR_NULL = "null";
 
-  public static final String ATTR_XML_BASE = "base";
+  String ATTR_XML_BASE = "base";
 
-  public static final QName QNAME_ATTR_XML_BASE = new QName(XMLConstants.XML_NS_URI, ATTR_XML_BASE);
+  QName QNAME_ATTR_XML_BASE = new QName(XMLConstants.XML_NS_URI, ATTR_XML_BASE);
 
-  public static final String CONTEXT = "context";
+  String CONTEXT = "context";
 
-  public static final String ATTR_REL = "rel";
+  String ATTR_REL = "rel";
 
-  public static final String ATTR_TITLE = "title";
+  String ATTR_TITLE = "title";
 
-  public static final String ATTR_METADATA = "metadata";
+  String ATTR_METADATA = "metadata";
 
-  public static final String ATTR_HREF = "href";
+  String ATTR_HREF = "href";
 
-  public static final String ATTR_REF = "ref";
+  String ATTR_REF = "ref";
 
-  public static final String ATTR_TARGET = "target";
+  String ATTR_TARGET = "target";
 
-  public static final String ATTR_SRSNAME = "srsName";
+  String ATTR_SRSNAME = "srsName";
 
-  public static final QName QNAME_ATTR_SRSNAME = new QName(NS_GML, ATTR_SRSNAME);
+  QName QNAME_ATTR_SRSNAME = new QName(NS_GML, ATTR_SRSNAME);
 
-  public static final String ELEM_POINT = "Point";
+  String ELEM_POINT = "Point";
 
-  public static final String ELEM_MULTIPOINT = "MultiPoint";
+  String ELEM_MULTIPOINT = "MultiPoint";
 
-  public static final String ELEM_POINTMEMBERS = "pointMembers";
+  String ELEM_POINTMEMBERS = "pointMembers";
 
-  public static final QName QNAME_POINTMEMBERS = new QName(NS_GML, ELEM_POINTMEMBERS);
+  QName QNAME_POINTMEMBERS = new QName(NS_GML, ELEM_POINTMEMBERS);
 
-  public static final String ELEM_LINESTRING = "LineString";
+  String ELEM_LINESTRING = "LineString";
 
-  public static final QName QNAME_LINESTRING = new QName(NS_GML, ELEM_LINESTRING);
+  QName QNAME_LINESTRING = new QName(NS_GML, ELEM_LINESTRING);
 
-  public static final String ELEM_MULTILINESTRING = "MultiCurve";
+  String ELEM_MULTILINESTRING = "MultiCurve";
 
-  public static final String ELEM_LINESTRINGMEMBERS = "curveMembers";
+  String ELEM_LINESTRINGMEMBERS = "curveMembers";
 
-  public static final String ELEM_POLYGON = "Polygon";
+  String ELEM_POLYGON = "Polygon";
 
-  public static final QName QNAME_POLYGON = new QName(NS_GML, ELEM_POLYGON);
+  QName QNAME_POLYGON = new QName(NS_GML, ELEM_POLYGON);
 
-  public static final String ELEM_POLYGON_EXTERIOR = "exterior";
+  String ELEM_POLYGON_EXTERIOR = "exterior";
 
-  public static final QName QNAME_POLYGON_EXTERIOR = new QName(NS_GML, ELEM_POLYGON_EXTERIOR);
+  QName QNAME_POLYGON_EXTERIOR = new QName(NS_GML, ELEM_POLYGON_EXTERIOR);
 
-  public static final String ELEM_POLYGON_INTERIOR = "interior";
+  String ELEM_POLYGON_INTERIOR = "interior";
 
-  public static final QName QNAME_POLYGON_INTERIOR = new QName(NS_GML, ELEM_POLYGON_INTERIOR);
+  QName QNAME_POLYGON_INTERIOR = new QName(NS_GML, ELEM_POLYGON_INTERIOR);
 
-  public static final String ELEM_POLYGON_LINEARRING = "LinearRing";
+  String ELEM_POLYGON_LINEARRING = "LinearRing";
 
-  public static final String ELEM_MULTIPOLYGON = "MultiSurface";
+  String ELEM_MULTIPOLYGON = "MultiSurface";
 
-  public static final String ELEM_SURFACEMEMBERS = "surfaceMembers";
+  String ELEM_SURFACEMEMBERS = "surfaceMembers";
 
-  public static final String ELEM_GEOCOLLECTION = "MultiGeometry";
+  String ELEM_GEOCOLLECTION = "MultiGeometry";
 
-  public static final String ELEM_GEOMEMBERS = "geometryMembers";
+  String ELEM_GEOMEMBERS = "geometryMembers";
 
-  public static final QName QNAME_GEOMEMBERS = new QName(NS_GML, ELEM_GEOMEMBERS);
+  QName QNAME_GEOMEMBERS = new QName(NS_GML, ELEM_GEOMEMBERS);
 
-  public static final String ELEM_POS = "pos";
+  String ELEM_POS = "pos";
 
-  public static final String ELEM_PROPERTY = "property";
+  String ELEM_PROPERTY = "property";
 
-  public static final String ELEM_LINKS = "links";
+  String ELEM_LINKS = "links";
 
-  public static final String ELEM_URI = "uri";
+  String ELEM_URI = "uri";
 
-  public final static String ELEM_REASON = "reason";
+  String ELEM_REASON = "reason";
 
-  public static final String ELEM_DELETED_LINK = "deleted-link";
+  String ELEM_DELETED_LINK = "deleted-link";
 
-  public static final String ATTR_SOURCE = "source";
+  String ATTR_SOURCE = "source";
 
-  public static final String ATTR_RELATIONSHIP = "relationship";
+  String ATTR_RELATIONSHIP = "relationship";
 
-  public static final String ANNOTATION = "annotation";
+  String ANNOTATION = "annotation";
 
   // JSON stuff
-  public final static String JSON_METADATA = "odata.metadata";
+  String JSON_METADATA = "odata.metadata";
 
-  public final static String JSON_TYPE = "@odata.type";
+  String JSON_TYPE = "@odata.type";
 
-  public final static String JSON_ID = "@odata.id";
+  String JSON_ID = "@odata.id";
 
-  public final static String JSON_READ_LINK = "@odata.readLink";
+  String JSON_READ_LINK = "@odata.readLink";
 
-  public final static String JSON_EDIT_LINK = "@odata.editLink";
+  String JSON_EDIT_LINK = "@odata.editLink";
 
-  public final static String JSON_CONTEXT = "@odata.context";
+  String JSON_CONTEXT = "@odata.context";
 
-  public final static String JSON_ETAG = "@odata.etag";
+  String JSON_ETAG = "@odata.etag";
 
-  public final static String JSON_MEDIA_ETAG = "@odata.mediaEtag";
+  String JSON_MEDIA_ETAG = "@odata.mediaEtag";
 
-  public final static String JSON_MEDIA_CONTENT_TYPE = "@odata.mediaContentType";
+  String JSON_MEDIA_CONTENT_TYPE = "@odata.mediaContentType";
 
-  public final static String JSON_MEDIA_READ_LINK = "@odata.mediaReadLink";
+  String JSON_MEDIA_READ_LINK = "@odata.mediaReadLink";
 
-  public final static String JSON_MEDIA_EDIT_LINK = "@odata.mediaEditLink";
+  String JSON_MEDIA_EDIT_LINK = "@odata.mediaEditLink";
 
-  public final static String JSON_METADATA_ETAG = "@odata.metadataEtag";
+  String JSON_METADATA_ETAG = "@odata.metadataEtag";
 
-  public final static String JSON_BIND_LINK_SUFFIX = "@odata.bind";
+  String JSON_BIND_LINK_SUFFIX = "@odata.bind";
 
-  public final static String JSON_ASSOCIATION_LINK = "@odata.associationLink";
+  String JSON_ASSOCIATION_LINK = "@odata.associationLink";
 
-  public final static String JSON_NAVIGATION_LINK = "@odata.navigationLink";
+  String JSON_NAVIGATION_LINK = "@odata.navigationLink";
 
-  public final static String JSON_COUNT = "@odata.count";
+  String JSON_COUNT = "@odata.count";
 
-  public final static String JSON_NEXT_LINK = "@odata.nextLink";
+  String JSON_NEXT_LINK = "@odata.nextLink";
 
-  public final static String JSON_DELTA_LINK = "@odata.deltaLink";
+  String JSON_DELTA_LINK = "@odata.deltaLink";
 
-  public final static String JSON_ERROR = "error";
+  String JSON_ERROR = "error";
 
-  public final static String JSON_NULL = "odata.null";
+  String JSON_NULL = "odata.null";
 
-  public final static String VALUE = "value";
+  String VALUE = "value";
 
-  public final static String JSON_URL = "url";
+  String JSON_URL = "url";
 
-  public final static String JSON_COORDINATES = "coordinates";
+  String JSON_COORDINATES = "coordinates";
 
-  public final static String JSON_GEOMETRIES = "geometries";
+  String JSON_GEOMETRIES = "geometries";
 
-  public final static String JSON_CRS = "crs";
+  String JSON_CRS = "crs";
 
-  public final static String JSON_NAME = "name";
+  String JSON_NAME = "name";
 
   // Atom stuff
-  public final static String ATOM_ELEM_ENTRY = "entry";
+  String ATOM_ELEM_ENTRY = "entry";
 
-  public static final QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
+  QName QNAME_ATOM_ELEM_ENTRY = new QName(NS_ATOM, ATOM_ELEM_ENTRY);
 
-  public final static String ATOM_ELEM_ENTRY_REF = "ref";
+  String ATOM_ELEM_ENTRY_REF = "ref";
 
-  public final static String ATOM_ATTR_ID = "id";
+  String ATOM_ATTR_ID = "id";
 
-  public final static QName QNAME_ATOM_ATTR_ID = new QName(ATOM_ATTR_ID);
+  QName QNAME_ATOM_ATTR_ID = new QName(ATOM_ATTR_ID);
 
-  public final static String ATOM_ELEM_FEED = "feed";
+  String ATOM_ELEM_FEED = "feed";
 
-  public static final QName QNAME_ATOM_ELEM_FEED = new QName(NS_ATOM, ATOM_ELEM_FEED);
+  QName QNAME_ATOM_ELEM_FEED = new QName(NS_ATOM, ATOM_ELEM_FEED);
 
-  public final static String ATOM_ELEM_CATEGORY = "category";
+  String ATOM_ELEM_CATEGORY = "category";
 
-  public static final QName QNAME_ATOM_ELEM_CATEGORY = new QName(NS_ATOM, ATOM_ELEM_CATEGORY);
+  QName QNAME_ATOM_ELEM_CATEGORY = new QName(NS_ATOM, ATOM_ELEM_CATEGORY);
 
-  public static final String ATOM_ELEM_COUNT = "count";
+  String ATOM_ELEM_COUNT = "count";
 
-  public final static String ATOM_ELEM_ID = "id";
+  String ATOM_ELEM_ID = "id";
 
-  public static final QName QNAME_ATOM_ELEM_ID = new QName(NS_ATOM, ATOM_ELEM_ID);
+  QName QNAME_ATOM_ELEM_ID = new QName(NS_ATOM, ATOM_ELEM_ID);
 
-  public static final String ATOM_ELEM_TITLE = "title";
+  String ATOM_ELEM_TITLE = "title";
 
-  public static final QName QNAME_ATOM_ELEM_TITLE = new QName(NS_ATOM, ATOM_ELEM_TITLE);
+  QName QNAME_ATOM_ELEM_TITLE = new QName(NS_ATOM, ATOM_ELEM_TITLE);
 
-  public static final String ATOM_ELEM_SUMMARY = "summary";
+  String ATOM_ELEM_SUMMARY = "summary";
 
-  public static final QName QNAME_ATOM_ELEM_SUMMARY = new QName(NS_ATOM, ATOM_ELEM_SUMMARY);
+  QName QNAME_ATOM_ELEM_SUMMARY = new QName(NS_ATOM, ATOM_ELEM_SUMMARY);
 
-  public static final String ATOM_ELEM_UPDATED = "updated";
+  String ATOM_ELEM_UPDATED = "updated";
 
-  public static final QName QNAME_ATOM_ELEM_UPDATED = new QName(NS_ATOM, ATOM_ELEM_UPDATED);
+  QName QNAME_ATOM_ELEM_UPDATED = new QName(NS_ATOM, ATOM_ELEM_UPDATED);
 
-  public final static String ATOM_ELEM_LINK = "link";
+  String ATOM_ELEM_LINK = "link";
 
-  public static final QName QNAME_ATOM_ELEM_LINK = new QName(NS_ATOM, ATOM_ELEM_LINK);
+  QName QNAME_ATOM_ELEM_LINK = new QName(NS_ATOM, ATOM_ELEM_LINK);
 
-  public final static String ATOM_ELEM_CONTENT = "content";
+  String ATOM_ELEM_CONTENT = "content";
 
-  public static final QName QNAME_ATOM_ELEM_CONTENT = new QName(NS_ATOM, ATOM_ELEM_CONTENT);
+  QName QNAME_ATOM_ELEM_CONTENT = new QName(NS_ATOM, ATOM_ELEM_CONTENT);
 
-  public static final String ATOM_ELEM_ACTION = "action";
+  String ATOM_ELEM_ACTION = "action";
 
-  public static final String ATOM_ELEM_INLINE = "inline";
+  String ATOM_ELEM_INLINE = "inline";
 
-  public static final String ATOM_ATTR_TERM = "term";
+  String ATOM_ATTR_TERM = "term";
 
-  public static final String ATOM_ATTR_SCHEME = "scheme";
+  String ATOM_ATTR_SCHEME = "scheme";
 
-  public static final String ATOM_ATTR_SRC = "src";
+  String ATOM_ATTR_SRC = "src";
 
-  public static final String ATOM_ATTR_ETAG = "etag";
+  String ATOM_ATTR_ETAG = "etag";
 
-  public static final String ATOM_ATTR_METADATAETAG = "metadata-etag";
+  String ATOM_ATTR_METADATAETAG = "metadata-etag";
 
-  public static final String ATOM_ELEM_DELETED_ENTRY = "deleted-entry";
+  String ATOM_ELEM_DELETED_ENTRY = "deleted-entry";
 
   // error stuff
-  public static final String ERROR_CODE = "code";
+  String ERROR_CODE = "code";
 
-  public static final String ERROR_MESSAGE = "message";
+  String ERROR_MESSAGE = "message";
 
-  public static final String ERROR_TARGET = "target";
+  String ERROR_TARGET = "target";
 
-  public static final String ERROR_DETAILS = "details";
+  String ERROR_DETAILS = "details";
 
-  public static final String ERROR_INNERERROR = "innererror";
+  String ERROR_INNERERROR = "innererror";
 
   // canonical functions to be applied via dynamic annotation <tt>Apply</tt>
-  public static final String CANONICAL_FUNCTION_CONCAT = "odata.concat";
+  String CANONICAL_FUNCTION_CONCAT = "odata.concat";
 
-  public static final String CANONICAL_FUNCTION_FILLURITEMPLATE = "odata.fillUriTemplate";
+  String CANONICAL_FUNCTION_FILLURITEMPLATE = "odata.fillUriTemplate";
 
-  public static final String CANONICAL_FUNCTION_URIENCODE = "odata.uriEncode";
+  String CANONICAL_FUNCTION_URIENCODE = "odata.uriEncode";
 
   String MEDIA_EDIT_LINK_TYPE = "*/*";
   String ENTITY_NAVIGATION_LINK_TYPE = ContentType.APPLICATION_ATOM_XML_ENTRY.toContentTypeString();

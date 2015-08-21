@@ -16,26 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.uri.queryoption.expression;
-
-import org.apache.olingo.commons.api.ex.ODataException;
+package org.apache.olingo.commons.api.ex;
 
 /**
- * Exception class used by the {@link ExpressionVisitor} to throw exceptions while traversing the expression tree
+ * Core runtime exception for OData.
  */
-public class ExpressionVisitException extends ODataException {
+public class ODataRuntimeException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 5492375572049190883L;
 
-  public ExpressionVisitException(final String msg) {
+  /**
+   * Create with <code>message</code>.
+   *
+   * @param msg message text for exception
+   */
+  public ODataRuntimeException(final String msg) {
     super(msg);
   }
 
-  public ExpressionVisitException(final String msg, final Throwable cause) {
+  /**
+   * Create with <code>message</code> for and <code>cause</code> of exception.
+   *
+   * @param msg message text for exception
+   * @param cause cause of exception
+   */
+  public ODataRuntimeException(final String msg, final Exception cause) {
     super(msg, cause);
   }
 
-  public ExpressionVisitException(final Throwable cause) {
+  /**
+   * Create with <code>cause</code> of exception.
+   *
+   * @param cause cause of exception
+   */
+  public ODataRuntimeException(final Exception cause) {
     super(cause);
   }
+
 }

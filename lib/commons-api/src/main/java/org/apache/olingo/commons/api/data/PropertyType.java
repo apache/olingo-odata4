@@ -16,9 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.commons.api.data;
 
-public enum ODataPropertyType {
+/**
+ * Enumeration for all OData property types.
+ */
+public enum PropertyType {
 
   /**
    * Primitive (including geospatial).
@@ -40,5 +43,4 @@ public enum ODataPropertyType {
    * Empty type (possibly, no type information could be retrieved).
    */
   EMPTY
-
 }

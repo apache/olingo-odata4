@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.olingo.commons.api.ODataPreferenceNames;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
 
 /**
@@ -72,14 +72,14 @@ public final class PreferencesApplied {
 
   private boolean isSafe(String key) {
     if(SAFE_PREFERENCE_NAMES.isEmpty()) {
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.CALLBACK.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.CONTINUE_ON_ERROR.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.MAX_PAGE_SIZE.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.TRACK_CHANGES.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.RETURN.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.RESPOND_ASYNC.toString());
-      SAFE_PREFERENCE_NAMES.add(ODataPreferenceNames.WAIT.toString());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.ALLOW_ENTITY_REFERENCES.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.CALLBACK.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.CONTINUE_ON_ERROR.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.MAX_PAGE_SIZE.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.TRACK_CHANGES.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.RETURN.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.RESPOND_ASYNC.getName());
+      SAFE_PREFERENCE_NAMES.add(PreferenceName.WAIT.getName());
     }
     return SAFE_PREFERENCE_NAMES.contains(key);
   }
@@ -105,49 +105,49 @@ public final class PreferencesApplied {
 
     /** Sets <code>odata.allow-entityreferences</code>. */
     public Builder allowEntityReferences() {
-      add(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString(), null);
+      add(PreferenceName.ALLOW_ENTITY_REFERENCES.getName(), null);
       return this;
     }
 
     /** Sets <code>odata.callback</code>. */
     public Builder callback() {
-      add(ODataPreferenceNames.CALLBACK.toString(), null);
+      add(PreferenceName.CALLBACK.getName(), null);
       return this;
     }
 
     /** Sets <code>odata.continue-on-error</code>. */
     public Builder continueOnError() {
-      add(ODataPreferenceNames.CONTINUE_ON_ERROR.toString(), null);
+      add(PreferenceName.CONTINUE_ON_ERROR.getName(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>odata.maxpagesize</code>. */
     public Builder maxPageSize(final Integer maxPageSize) {
-      add(ODataPreferenceNames.MAX_PAGE_SIZE.toString(), Integer.toString(maxPageSize));
+      add(PreferenceName.MAX_PAGE_SIZE.getName(), Integer.toString(maxPageSize));
       return this;
     }
 
     /** Sets <code>odata.track-changes</code>. */
     public Builder trackChanges() {
-      add(ODataPreferenceNames.TRACK_CHANGES.toString(), null);
+      add(PreferenceName.TRACK_CHANGES.getName(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>return</code>. */
     public Builder returnRepresentation(final Return returnRepresentation) {
-      add(ODataPreferenceNames.RETURN.toString(), returnRepresentation.name().toLowerCase(Locale.ROOT));
+      add(PreferenceName.RETURN.getName(), returnRepresentation.name().toLowerCase(Locale.ROOT));
       return this;
     }
 
     /** Sets <code>odata.respond-async</code>. */
     public Builder respondAsync() {
-      add(ODataPreferenceNames.RESPOND_ASYNC.toString(), null);
+      add(PreferenceName.RESPOND_ASYNC.getName(), null);
       return this;
     }
 
     /** Sets the value of the applied preference <code>wait</code>. */
     public Builder waitPreference(final Integer wait) {
-      add(ODataPreferenceNames.WAIT.toString(), Integer.toString(wait));
+      add(PreferenceName.WAIT.getName(), Integer.toString(wait));
       return this;
     }
 

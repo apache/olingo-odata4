@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,22 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
-
-public class ODataException extends Exception {
-
-  private static final long serialVersionUID = 3057981437954048107L;
-
-  public ODataException(final String msg) {
-    super(msg);
-  }
-
-  public ODataException(final String msg, final Throwable cause) {
-    super(msg, cause);
-  }
-
-  public ODataException(final Throwable cause) {
-    super(cause);
-  }
-
-}
+/**
+ * Contains all the format related objects (also related to http headers <coder>Prefer</coder>, <code>Accepted</code>
+ * and <code>Content-Type</code>) which are used for handling of an OData responses and OData requests.
+ */
+package org.apache.olingo.commons.api.format;

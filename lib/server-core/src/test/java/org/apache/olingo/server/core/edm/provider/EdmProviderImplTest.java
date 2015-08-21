@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -125,24 +125,24 @@ public class EdmProviderImplTest {
     try {
       localEdm.getUnboundAction(fqn);
     } catch (EdmException e) {
-      assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
+      assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
 
     try {
       localEdm.getUnboundFunction(fqn, null);
     } catch (EdmException e) {
-      assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
+      assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
     try {
       localEdm.getBoundAction(fqn, fqn, true);
     } catch (EdmException e) {
-      assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
+      assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
 
     try {
       localEdm.getBoundFunction(fqn, fqn, true, null);
     } catch (EdmException e) {
-      assertEquals("org.apache.olingo.commons.api.ODataException: msg", e.getMessage());
+      assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
   }
 

@@ -50,7 +50,7 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.ODataPreferenceNames;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -317,7 +317,7 @@ public class BatchClientITCase extends AbstractTestITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-    assertEquals(ODataPreferenceNames.CONTINUE_ON_ERROR.toString(),
+    assertEquals(PreferenceName.CONTINUE_ON_ERROR.getName(),
         response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();

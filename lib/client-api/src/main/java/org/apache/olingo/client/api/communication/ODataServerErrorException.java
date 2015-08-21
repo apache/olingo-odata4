@@ -19,7 +19,7 @@
 package org.apache.olingo.client.api.communication;
 
 import org.apache.http.StatusLine;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 /**
  * Represents a server error in OData.

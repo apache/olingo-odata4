@@ -40,8 +40,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.serialization.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataPropertyType;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.data.PropertyType;
 import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -63,7 +63,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 
@@ -222,7 +221,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
     valuable.setValue(valueType, values);
   }
 
-  private ODataPropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
+  private PropertyType guessPropertyType(final XMLEventReader reader, final EdmTypeInfo typeInfo)
       throws XMLStreamException {
 
     XMLEvent child = null;
@@ -235,24 +234,24 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       }
     }
 
-    final ODataPropertyType type;
+    final PropertyType type;
     if (child == null) {
-      type = typeInfo == null || typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.ENUM;
+      type = typeInfo == null || typeInfo.isPrimitiveType() ? PropertyType.PRIMITIVE : PropertyType.ENUM;
     } else {
       if (child.isStartElement()) {
         if (Constants.NS_GML.equals(child.asStartElement().getName().getNamespaceURI())) {
-          type = ODataPropertyType.PRIMITIVE;
+          type = PropertyType.PRIMITIVE;
         } else if (elementQName.equals(child.asStartElement().getName())) {
-          type = ODataPropertyType.COLLECTION;
+          type = PropertyType.COLLECTION;
         } else {
-          type = ODataPropertyType.COMPLEX;
+          type = PropertyType.COMPLEX;
         }
       } else if (child.isCharacters()) {
         type = typeInfo == null || typeInfo.isPrimitiveType()
-            ? ODataPropertyType.PRIMITIVE
-                : ODataPropertyType.ENUM;
+            ? PropertyType.PRIMITIVE
+                : PropertyType.ENUM;
       } else {
-        type = ODataPropertyType.EMPTY;
+        type = PropertyType.EMPTY;
       }
     }
 
@@ -294,9 +293,9 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       valuable.setType(typeInfo.internal());
     }
 
-    final ODataPropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
-      typeInfo.isCollection() ? ODataPropertyType.COLLECTION :
-        typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE : ODataPropertyType.COMPLEX;
+    final PropertyType propType = typeInfo == null ? guessPropertyType(reader, typeInfo) :
+      typeInfo.isCollection() ? PropertyType.COLLECTION :
+        typeInfo.isPrimitiveType() ? PropertyType.PRIMITIVE : PropertyType.COMPLEX;
 
     if (nullAttr == null) {
       switch (propType) {
@@ -324,10 +323,10 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
         valuable.setValue(ValueType.PRIMITIVE, StringUtils.EMPTY);
       }
     } else {
-      valuable.setValue(propType == ODataPropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
-        propType == ODataPropertyType.ENUM ? ValueType.ENUM :
-          propType == ODataPropertyType.COMPLEX ? ValueType.COMPLEX :
-            propType == ODataPropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
+      valuable.setValue(propType == PropertyType.PRIMITIVE ? ValueType.PRIMITIVE :
+        propType == PropertyType.ENUM ? ValueType.ENUM :
+          propType == PropertyType.COMPLEX ? ValueType.COMPLEX :
+            propType == PropertyType.COLLECTION ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE,
                 null);
     }
   }

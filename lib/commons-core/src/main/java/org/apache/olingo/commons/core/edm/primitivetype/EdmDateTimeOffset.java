@@ -216,7 +216,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     if (value instanceof Date) {
       // Although java.util.Date, as stated in its documentation,
       // "is intended to reflect coordinated universal time (UTC)",
-      // its toString() method uses the default time zone. And so do we.
+      // its getName() method uses the default time zone. And so do we.
       dateTimeValue = Calendar.getInstance();
       dateTimeValue.setTime((Date) value);
     } else if (value instanceof Calendar) {

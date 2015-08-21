@@ -19,7 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 import org.apache.olingo.client.api.communication.request.ODataRequest;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 public class ODataResponseError {
 

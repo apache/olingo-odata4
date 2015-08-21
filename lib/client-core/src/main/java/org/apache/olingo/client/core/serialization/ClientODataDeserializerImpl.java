@@ -32,7 +32,7 @@ import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 import org.apache.olingo.client.core.edm.ClientCsdlXMLMetadata;
 import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
-import org.apache.olingo.commons.api.ODataError;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;

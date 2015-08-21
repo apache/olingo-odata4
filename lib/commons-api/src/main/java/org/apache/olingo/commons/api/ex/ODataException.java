@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,31 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.commons.api.ex;
 
-/**
- * Names of preferences defined in the OData standard.
- */
-public enum ODataPreferenceNames {
+public class ODataException extends Exception {
 
-  ALLOW_ENTITY_REFERENCES("odata.allow-entityreferences"),
-  CALLBACK("odata.callback"),
-  CONTINUE_ON_ERROR("odata.continue-on-error"),
-  INCLUDE_ANNOTATIONS("odata.include-annotations"),
-  MAX_PAGE_SIZE("odata.maxpagesize"),
-  TRACK_CHANGES("odata.track-changes"),
-  RETURN("return"),
-  RESPOND_ASYNC("respond-async"),
-  WAIT("wait");
+  private static final long serialVersionUID = 3057981437954048107L;
 
-  private final String preferenceName;
-
-  ODataPreferenceNames(final String preferenceName) {
-    this.preferenceName = preferenceName;
+  public ODataException(final String msg) {
+    super(msg);
   }
 
-  @Override
-  public String toString() {
-    return preferenceName;
+  public ODataException(final String msg, final Throwable cause) {
+    super(msg, cause);
   }
+
+  public ODataException(final Throwable cause) {
+    super(cause);
+  }
+
 }

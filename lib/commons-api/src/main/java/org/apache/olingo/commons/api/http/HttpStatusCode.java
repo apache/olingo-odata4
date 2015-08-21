@@ -81,7 +81,7 @@ public enum HttpStatusCode {
    * @return the status code info
    */
   public String getInfo() {
-    return toString();
+    return info;
   }
 
   /**
@@ -91,7 +91,6 @@ public enum HttpStatusCode {
    */
   @Override
   public String toString() {
-    return info;
+    return getInfo();
   }
-
 }

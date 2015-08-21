@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataErrorDetail;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 
 /**
  * Server error.

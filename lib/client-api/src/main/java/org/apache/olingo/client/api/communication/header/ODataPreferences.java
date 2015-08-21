@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
-import org.apache.olingo.commons.api.ODataPreferenceNames;
+import org.apache.olingo.commons.api.format.PreferenceName;
 
 /**
  * Values of the Prefer header.
@@ -31,7 +31,7 @@ public class ODataPreferences {
    * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnContent() {
-    return PreferenceNames.returnContent.toString();
+    return PreferenceName.RETURN.getName();
   }
 
   /**
@@ -40,7 +40,7 @@ public class ODataPreferences {
    * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnNoContent() {
-    return PreferenceNames.returnNoContent.toString();
+    return PreferenceName.RETURN_NO_CONTENT.getName();
   }
 
   /**
@@ -49,7 +49,7 @@ public class ODataPreferences {
    * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String keyAsSegment() {
-    return PreferenceNames.keyAsSegment.toString();
+    return PreferenceName.KEY_AS_SEGMENT.getName();
   }
 
   /**
@@ -70,7 +70,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String allowEntityReferences() {
-    return ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString();
+    return PreferenceName.ALLOW_ENTITY_REFERENCES.getName();
   }
 
   /**
@@ -133,7 +133,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String callback(final String url) {
-    return ODataPreferenceNames.CALLBACK.toString() + ";url=\"" + url + "\"";
+    return PreferenceName.CALLBACK.getName() + ";url=\"" + url + "\"";
   }
 
   /**
@@ -154,7 +154,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String continueOnError() {
-    return ODataPreferenceNames.CONTINUE_ON_ERROR.toString();
+    return PreferenceName.CONTINUE_ON_ERROR.getName();
   }
 
   /**
@@ -201,7 +201,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String includeAnnotations(final String value) {
-    return ODataPreferenceNames.INCLUDE_ANNOTATIONS.toString() + "=" + value;
+    return PreferenceName.INCLUDE_ANNOTATIONS.getName() + "=" + value;
   }
 
   /**
@@ -234,7 +234,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String maxPageSize(final int size) {
-    return ODataPreferenceNames.MAX_PAGE_SIZE.toString() + "=" + size;
+    return PreferenceName.MAX_PAGE_SIZE.getName() + "=" + size;
   }
 
   /**
@@ -259,7 +259,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String trackChanges() {
-    return ODataPreferenceNames.TRACK_CHANGES.toString();
+    return PreferenceName.TRACK_CHANGES.getName();
   }
 
   /**
@@ -294,7 +294,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String respondAsync() {
-    return ODataPreferenceNames.RESPOND_ASYNC.toString();
+    return PreferenceName.RESPOND_ASYNC.getName();
   }
 
   /**
@@ -314,7 +314,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String wait(final int value) {
-    return ODataPreferenceNames.WAIT.toString() + "=" + value;
+    return PreferenceName.WAIT.getName() + "=" + value;
   }
 
   /**
@@ -344,7 +344,7 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnMinimal() {
-    return ODataPreferenceNames.RETURN.toString() + "=minimal";
+    return PreferenceName.RETURN.getName() + "=minimal";
   }
 
   /**
@@ -374,25 +374,6 @@ public class ODataPreferences {
    * @return preference.
    */
   public String returnRepresentation() {
-    return ODataPreferenceNames.RETURN.toString() + "=representation";
-  }
-
-  /** Preferences not in the OData 4.0 standard. */
-  private static enum PreferenceNames {
-
-    returnContent("return-content"),
-    returnNoContent("return-no-content"),
-    keyAsSegment("KeyAsSegment");
-
-    private final String preferenceName;
-
-    private PreferenceNames(final String preferenceName) {
-      this.preferenceName = preferenceName;
-    }
-
-    @Override
-    public String toString() {
-      return preferenceName;
-    }
+    return PreferenceName.RETURN.getName() + "=representation";
   }
 }

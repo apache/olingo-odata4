@@ -30,7 +30,7 @@ import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.client.core.http.AbstractHttpClientFactory;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 /**
  * Shows how to customize the way how the underlying network socket are managed by the HTTP component; the specific

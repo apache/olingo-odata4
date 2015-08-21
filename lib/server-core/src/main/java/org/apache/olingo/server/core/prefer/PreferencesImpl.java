@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ODataPreferenceNames;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.server.api.prefer.Preferences;
 
 /**
@@ -46,15 +46,15 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasAllowEntityReferences() {
-    return preferences.containsKey(ODataPreferenceNames.ALLOW_ENTITY_REFERENCES.toString());
+    return preferences.containsKey(PreferenceName.ALLOW_ENTITY_REFERENCES.getName());
   }
 
   public URI getCallback() {
-    if (preferences.containsKey(ODataPreferenceNames.CALLBACK.toString())
-        && preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters() != null
-        && preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters().get(URL) != null) {
+    if (preferences.containsKey(PreferenceName.CALLBACK.getName())
+        && preferences.get(PreferenceName.CALLBACK.getName()).getParameters() != null
+        && preferences.get(PreferenceName.CALLBACK.getName()).getParameters().get(URL) != null) {
       try {
-        return URI.create(preferences.get(ODataPreferenceNames.CALLBACK.toString()).getParameters().get(URL));
+        return URI.create(preferences.get(PreferenceName.CALLBACK.getName()).getParameters().get(URL));
       } catch (final IllegalArgumentException e) {
         return null;
       }
@@ -63,20 +63,20 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasContinueOnError() {
-    return preferences.containsKey(ODataPreferenceNames.CONTINUE_ON_ERROR.toString());
+    return preferences.containsKey(PreferenceName.CONTINUE_ON_ERROR.getName());
   }
 
   public Integer getMaxPageSize() {
-    return getNonNegativeIntegerPreference(ODataPreferenceNames.MAX_PAGE_SIZE.toString());
+    return getNonNegativeIntegerPreference(PreferenceName.MAX_PAGE_SIZE.getName());
   }
 
   public boolean hasTrackChanges() {
-    return preferences.containsKey(ODataPreferenceNames.TRACK_CHANGES.toString());
+    return preferences.containsKey(PreferenceName.TRACK_CHANGES.getName());
   }
 
   public Return getReturn() {
-    if (preferences.containsKey(ODataPreferenceNames.RETURN.toString())) {
-      final String value = preferences.get(ODataPreferenceNames.RETURN.toString()).getValue();
+    if (preferences.containsKey(PreferenceName.RETURN.getName())) {
+      final String value = preferences.get(PreferenceName.RETURN.getName()).getValue();
       if (Return.REPRESENTATION.toString().toLowerCase(Locale.ROOT).equals(value)) {
         return Return.REPRESENTATION;
       } else if (Return.MINIMAL.toString().toLowerCase(Locale.ROOT).equals(value)) {
@@ -87,11 +87,11 @@ public class PreferencesImpl implements Preferences {
   }
 
   public boolean hasRespondAsync() {
-    return preferences.containsKey(ODataPreferenceNames.RESPOND_ASYNC.toString());
+    return preferences.containsKey(PreferenceName.RESPOND_ASYNC.getName());
   }
 
   public Integer getWait() {
-    return getNonNegativeIntegerPreference(ODataPreferenceNames.WAIT.toString());
+    return getNonNegativeIntegerPreference(PreferenceName.WAIT.getName());
   }
 
   private Integer getNonNegativeIntegerPreference(final String name) {

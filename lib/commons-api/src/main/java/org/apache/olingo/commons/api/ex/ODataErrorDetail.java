@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.api;
+package org.apache.olingo.commons.api.ex;
 
 /**
  * OData details， for example <tt>{ "error": {..., "details":[
@@ -66,6 +66,12 @@ public class ODataErrorDetail {
     return target;
   }
 
+  /**
+   * Set the error target.
+   *
+   * @param target the error target
+   * @return this ODataErrorDetail instance (fluent builder)
+   */
   public ODataErrorDetail setTarget(final String target) {
     this.target = target;
     return this;

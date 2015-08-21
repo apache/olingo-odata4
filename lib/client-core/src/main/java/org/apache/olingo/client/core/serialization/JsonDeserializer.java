@@ -34,8 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.serialization.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataPropertyType;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.data.PropertyType;
 import org.apache.olingo.commons.api.data.Annotatable;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -188,32 +188,32 @@ public class JsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private Map.Entry<ODataPropertyType, EdmTypeInfo> guessPropertyType(final JsonNode node) {
-    ODataPropertyType type;
+  private Map.Entry<PropertyType, EdmTypeInfo> guessPropertyType(final JsonNode node) {
+    PropertyType type;
     String typeExpression = null;
 
     if (node.isValueNode() || node.isNull()) {
-      type = ODataPropertyType.PRIMITIVE;
+      type = PropertyType.PRIMITIVE;
       typeExpression = guessPrimitiveTypeKind(node).getFullQualifiedName().toString();
     } else if (node.isArray()) {
-      type = ODataPropertyType.COLLECTION;
+      type = PropertyType.COLLECTION;
       if (node.has(0) && node.get(0).isValueNode()) {
         typeExpression = "Collection(" + guessPrimitiveTypeKind(node.get(0)) + ')';
       }
     } else if (node.isObject()) {
       if (node.has(Constants.ATTR_TYPE)) {
-        type = ODataPropertyType.PRIMITIVE;
+        type = PropertyType.PRIMITIVE;
         typeExpression = "Edm.Geography" + node.get(Constants.ATTR_TYPE).asText();
       } else {
-        type = ODataPropertyType.COMPLEX;
+        type = PropertyType.COMPLEX;
       }
     } else {
-      type = ODataPropertyType.EMPTY;
+      type = PropertyType.EMPTY;
     }
 
     final EdmTypeInfo typeInfo = typeExpression == null ? null :
       new EdmTypeInfo.Builder().setTypeExpression(typeExpression).build();
-    return new SimpleEntry<ODataPropertyType, EdmTypeInfo>(type, typeInfo);
+    return new SimpleEntry<PropertyType, EdmTypeInfo>(type, typeInfo);
   }
 
   private EdmPrimitiveTypeKind guessPrimitiveTypeKind(final JsonNode node) {
@@ -336,15 +336,15 @@ public class JsonDeserializer implements ODataDeserializer {
     EdmTypeInfo typeInfo = StringUtils.isBlank(valuable.getType()) ? null
         : new EdmTypeInfo.Builder().setTypeExpression(valuable.getType()).build();
 
-    final Map.Entry<ODataPropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
+    final Map.Entry<PropertyType, EdmTypeInfo> guessed = guessPropertyType(node);
     if (typeInfo == null) {
       typeInfo = guessed.getValue();
     }
 
-    final ODataPropertyType propType = typeInfo == null ? guessed.getKey()
-        : typeInfo.isCollection() ? ODataPropertyType.COLLECTION
-            : typeInfo.isPrimitiveType() ? ODataPropertyType.PRIMITIVE
-                : node.isValueNode() ? ODataPropertyType.ENUM : ODataPropertyType.COMPLEX;
+    final PropertyType propType = typeInfo == null ? guessed.getKey()
+        : typeInfo.isCollection() ? PropertyType.COLLECTION
+            : typeInfo.isPrimitiveType() ? PropertyType.PRIMITIVE
+                : node.isValueNode() ? PropertyType.ENUM : PropertyType.COMPLEX;
 
     switch (propType) {
     case COLLECTION:

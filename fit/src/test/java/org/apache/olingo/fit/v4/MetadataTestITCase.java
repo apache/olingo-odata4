@@ -109,7 +109,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmAnnotation description = core.getAnnotation(descriptionTerm);
     assertNotNull(description);
     // assertEquals("Core terms needed to write vocabularies",
-    // description.getExpression().asConstant().getValue().asPrimitive().toString());
+    // description.getExpression().asConstant().getValue().asPrimitive().getName());
     assertEquals("Core terms needed to write vocabularies",
         description.getExpression().asConstant().getValueAsString());
 

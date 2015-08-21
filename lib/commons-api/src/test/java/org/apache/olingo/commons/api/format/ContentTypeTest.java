@@ -100,6 +100,9 @@ public class ContentTypeTest {
   @Test
   public void testParse() {
     assertNull(ContentType.parse("a"));
+    assertNull(ContentType.parse("a/b;c"));
+    assertNull(ContentType.parse("a/b;c="));
+    assertNull(ContentType.parse("a/b;c= "));
   }
 
   @Test(expected = IllegalArgumentException.class)

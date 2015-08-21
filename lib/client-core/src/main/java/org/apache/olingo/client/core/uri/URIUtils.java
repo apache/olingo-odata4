@@ -262,7 +262,7 @@ public final class URIUtils {
                                                                 : obj.toString();
       }
     } catch (Exception e) {
-      LOG.warn("While escaping '{}', using toString()", obj, e);
+      LOG.warn("While escaping '{}', using getName()", obj, e);
       if (obj == null) {
         value = "null";
       } else {

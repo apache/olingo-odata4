@@ -189,9 +189,9 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        // Need toString on ContextURL class
+        // Need getName on ContextURL class
         // assertEquals("",
-        // request.getContextURL(request.getOdata()).toString());
+        // request.getContextURL(request.getOdata()).getName());
         assertEquals("application/json;odata.metadata=minimal", request.getResponseContentType()
             .toContentTypeString());
       }
@@ -209,9 +209,9 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        // Need toString on ContextURL class
+        // Need getName on ContextURL class
         // assertEquals("",
-        // request.getContextURL(request.getOdata()).toString());
+        // request.getContextURL(request.getOdata()).getName());
         assertEquals("text/plain", request.getResponseContentType().toContentTypeString());
       }
     });

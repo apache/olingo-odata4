@@ -20,7 +20,7 @@ package org.apache.olingo.server.api;
 
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
