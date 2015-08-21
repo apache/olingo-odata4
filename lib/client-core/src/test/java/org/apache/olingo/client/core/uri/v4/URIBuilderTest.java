@@ -24,11 +24,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.client.core.uri.ParameterAlias;
 import org.junit.Test;
 
 public class URIBuilderTest extends AbstractTest {
@@ -38,6 +40,43 @@ public class URIBuilderTest extends AbstractTest {
   @Override
   protected ODataClient getClient() {
     return v4Client;
+  }
+
+  @Test
+  public void metadata() throws URISyntaxException {
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendMetadataSegment().build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/$metadata").build(), uri);
+  }
+
+  @Test
+  public void entity() throws URISyntaxException {
+    final URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
+        appendKeySegment(11).build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet(11)").build(), uri);
+
+    final Map<String, Object> multiKey = new LinkedHashMap<String, Object>();
+    multiKey.put("OrderId", -10);
+    multiKey.put("ProductId", -10);
+    URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
+        appendEntitySetSegment("OrderLine").appendKeySegment(multiKey).
+        appendPropertySegment("Quantity").appendValueSegment();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(
+        SERVICE_ROOT + "/OrderLine(OrderId=-10,ProductId=-10)/Quantity/$value").build(), uriBuilder.build());
+
+    uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
+        appendEntitySetSegment("Customer").appendKeySegment(-10).
+        select("CustomerId", "Name", "Orders").expand("Orders");
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)").
+        addParameter("$select", "CustomerId,Name,Orders").addParameter("$expand", "Orders").build(),
+        uriBuilder.build());
+
+    uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
+        appendEntitySetSegment("Customer").appendKeySegment(-10).appendNavigationSegment("Orders").appendRefSegment();
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)/Orders/$ref").build(),
+        uriBuilder.build());
   }
 
   @Test
@@ -75,6 +114,51 @@ public class URIBuilderTest extends AbstractTest {
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
         addParameter("$count", "true").build(), uri);
+  }
+
+  @Test
+  public void filter() throws URISyntaxException {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
+        filter(getClient().getFilterFactory().lt("VIN", 16));
+
+    assertEquals("http://host/service/AnEntitySet?%24filter=%28VIN%20lt%2016%29", uriBuilder.build().toASCIIString());
+
+//    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet").
+//        addParameter("$filter", "(VIN lt 16)").build(),
+//        uriBuilder.build());
+  }
+
+  @Test
+  public void filterWithParameter() throws URISyntaxException {
+    // http://host/service.svc/Employees?$filter=Region eq @p1&@p1='WA'
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Employees").
+        filter(getClient().getFilterFactory().eq("Region", new ParameterAlias("p1"))).
+        addParameterAlias("p1", "'WA'");
+
+    assertEquals("http://host/service/Employees?%24filter=%28Region%20eq%20%40p1%29&%40p1='WA'", uriBuilder.build()
+        .toASCIIString());
+
+//    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Employees").
+//        addParameter("$filter", "(Region eq @p1)").addParameter("@p1", "'WA'").build(),
+//        uriBuilder.build());
+  }
+
+  @Test
+  public void expandMoreThenOnce() throws URISyntaxException {
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+        expand("Orders", "Customers").expand("Info").build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+        addParameter("$expand", "Orders,Customers,Info").build(), uri);
+  }
+
+  @Test
+  public void selectMoreThenOnce() throws URISyntaxException {
+    URI uri = getClient().newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Customers").appendKeySegment(5).
+        select("Name", "Surname").expand("Info").select("Gender").build();
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customers(5)").
+        addParameter("$select", "Name,Surname,Gender").addParameter("$expand", "Info").build(), uri);
   }
 
   @Test
