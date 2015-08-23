@@ -19,7 +19,7 @@
 		<version>4.0.0-beta-01-SNAPSHOT</version>
 	</parent>
 	<artifactId>odata-jpa-ref-persistence</artifactId>
-	<name>${project-artifactId}</name>
+	<name>${project.artifactId}</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
