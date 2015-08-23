@@ -25,7 +25,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<properties>
-		<version.odata>4.0.0-beta-03-SNAPSHOT</version.odata>
+		<version.odata>4.0.0-beta-03</version.odata>
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
 		<version.javax.servlet>2.5</version.javax.servlet>
@@ -60,6 +60,11 @@
 			<dependency>
 				<groupId>org.apache.olingo</groupId>
 				<artifactId>odata-client-api</artifactId>
+				<version>${version.odata}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.olingo</groupId>
+				<artifactId>odata-server-api</artifactId>
 				<version>${version.odata}</version>
 			</dependency>
 			<dependency>
