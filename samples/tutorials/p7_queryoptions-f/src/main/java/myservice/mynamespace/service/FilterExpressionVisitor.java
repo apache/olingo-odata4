@@ -121,47 +121,26 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 	  //   - Boolean operations like and, or are allowed on Edm.Boolean
 	  // A detailed explanation can be found in OData Version 4.0 Part 2: URL Conventions 
 	  
-    switch (operator) {
-    
-    // Arithmetic operations
-    case ADD:
-      /** Fall through **/
-    case MOD:
-      /** Fall through **/
-    case MUL:
-      /** Fall through **/
-    case DIV:
-      /** Fall through **/
-    case SUB:
+    if (operator == BinaryOperatorKind.ADD
+        || operator == BinaryOperatorKind.MOD
+        || operator == BinaryOperatorKind.MUL
+        || operator == BinaryOperatorKind.DIV
+        || operator == BinaryOperatorKind.SUB) {
       return evaluateArithmeticOperation(operator, left, right);
-
-    // Logical operations
-    case EQ:
-      /** Fall through **/
-    case NE:
-      /** Fall through **/
-    case GE:
-      /** Fall through **/
-    case GT:
-      /** Fall through **/
-    case LE:
-      /** Fall through **/
-    case LT:
-      return evaluateLogicalOperation(operator, left, right);
-      
-    // Boolean operations
-    case AND:
-      /** Fall through **/
-    case OR:
+    } else if (operator == BinaryOperatorKind.EQ
+        || operator == BinaryOperatorKind.NE
+        || operator == BinaryOperatorKind.GE
+        || operator == BinaryOperatorKind.GT
+        || operator == BinaryOperatorKind.LE
+        || operator == BinaryOperatorKind.LT) {
+      return evaluateComparisonOperation(operator, left, right);
+    } else if (operator == BinaryOperatorKind.AND
+        || operator == BinaryOperatorKind.OR) {
       return evaluateBooleanOperation(operator, left, right);
-    
-    case HAS:
-      // Has operation is not supported. We do not use enums in our service.
-      /** fall through **/
-    default:
-      throw new ODataApplicationException("Binary operation " + operator.name() + " is not implemented", 
+	  } else {
+	    throw new ODataApplicationException("Binary operation " + operator.name() + " is not implemented", 
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
-    }
+	  }
   }
 
 	private Object evaluateBooleanOperation(BinaryOperatorKind operator, Object left, Object right)
@@ -186,12 +165,12 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 	}
 
   @SuppressWarnings("unchecked")
-  private Object evaluateLogicalOperation(BinaryOperatorKind operator, Object left, Object right) 
+  private Object evaluateComparisonOperation(BinaryOperatorKind operator, Object left, Object right) 
       throws ODataApplicationException {
     
     // All types in our tutorial supports all logical operations, but we have to make sure that the types are equals
     if(left.getClass().equals(right.getClass())) {
-      // Luckily all used types String, Boolean and also Integer supports the interface Comparable
+      // Luckily all used types String, Boolean and also Integer support the interface Comparable
       // TODO: Is this OK? Otherwise we can infer generic arguments after using an if statement
       @SuppressWarnings("rawtypes")
       int result = ((Comparable) left).compareTo(right);
@@ -212,7 +191,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
       }
       
     } else {
-      throw new ODataApplicationException("Comparision needs to equal types", 
+      throw new ODataApplicationException("Comparision needs two equal types", 
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
     }
   }
@@ -220,7 +199,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
   private Object evaluateArithmeticOperation(BinaryOperatorKind operator, Object left, 
       Object right) throws ODataApplicationException {
 
-	  // First check if the type of of both operands is numerical
+	  // First check if the type of both operands is numerical
 	  if(left instanceof Integer && right instanceof Integer) {
 	    Integer valueLeft = (Integer) left;
 	    Integer valueRight = (Integer) right;

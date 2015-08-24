@@ -41,6 +41,7 @@
     <module>p4_navigation</module>
     <module>p5_queryoptions-tcs</module>
     <module>p6_queryoptions-es</module>
+    <module>p7_queryoptions-f</module>
   </modules>
 
   <build>
