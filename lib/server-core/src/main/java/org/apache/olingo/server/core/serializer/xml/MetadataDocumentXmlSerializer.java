@@ -56,6 +56,7 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 public class MetadataDocumentXmlSerializer {
 
@@ -123,7 +124,11 @@ public class MetadataDocumentXmlSerializer {
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
 
-  public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) {
+  public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) throws SerializerException {
+    if (serviceMetadata == null || serviceMetadata.getEdm() == null) {
+      throw new SerializerException("Service Metadata and EDM must not be null for a service.",
+          SerializerException.MessageKeys.NULL_METADATA_OR_EDM);
+    }
     this.serviceMetadata = serviceMetadata;
   }
 

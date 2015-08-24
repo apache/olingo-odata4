@@ -27,6 +27,7 @@ public class SerializerException extends ODataLibraryException {
 
   /** Keys for exception texts in the resource bundle. */
   public enum MessageKeys implements MessageKey {
+    NULL_METADATA_OR_EDM,
     NOT_IMPLEMENTED,
     /** parameter: format */
     UNSUPPORTED_FORMAT,

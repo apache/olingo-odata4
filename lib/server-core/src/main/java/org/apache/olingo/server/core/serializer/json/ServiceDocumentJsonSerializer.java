@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -42,7 +43,11 @@ public class ServiceDocumentJsonSerializer {
   private final boolean isODataMetadataNone;
 
   public ServiceDocumentJsonSerializer(final ServiceMetadata metadata, final String serviceRoot,
-      final boolean isODataMetadataNone) {
+      final boolean isODataMetadataNone) throws SerializerException {
+    if (metadata == null || metadata.getEdm() == null) {
+      throw new SerializerException("Service Metadata and EDM must not be null for a service.",
+          SerializerException.MessageKeys.NULL_METADATA_OR_EDM);
+    }
     this.metadata = metadata;
     this.serviceRoot = serviceRoot;
     this.isODataMetadataNone = isODataMetadataNone;

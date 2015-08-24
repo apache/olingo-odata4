@@ -267,9 +267,18 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
   
   @Override
+  public int hashCode() {
+    return this.getFullQualifiedName().getFullQualifiedNameAsString().hashCode();
+  }
+  
+  @Override
   public boolean equals(Object obj){
     if(obj == null){
       return false;
+    }
+    
+    if(obj == this){
+      return true;
     }
     
     if(obj instanceof EdmEnumType){

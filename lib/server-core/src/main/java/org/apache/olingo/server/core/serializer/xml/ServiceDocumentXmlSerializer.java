@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 public class ServiceDocumentXmlSerializer {
   public static final String KIND = "kind";
@@ -37,7 +38,7 @@ public class ServiceDocumentXmlSerializer {
   public static final String FUNCTION_IMPORT = "FunctionImport";
   public static final String SINGLETON = "Singleton";
   public static final String SERVICE_DOCUMENT = "ServiceDocument";
-  
+
   private static final String APP = "app";
   private static final String NS_APP = "http://www.w3.org/2007/app";
   private static final String ATOM = "atom";
@@ -48,7 +49,12 @@ public class ServiceDocumentXmlSerializer {
   private final ServiceMetadata metadata;
   private final String serviceRoot;
 
-  public ServiceDocumentXmlSerializer(final ServiceMetadata metadata, final String serviceRoot) {
+  public ServiceDocumentXmlSerializer(final ServiceMetadata metadata, final String serviceRoot)
+      throws SerializerException {
+    if (metadata == null || metadata.getEdm() == null) {
+      throw new SerializerException("Service Metadata and EDM must not be null for a service.",
+          SerializerException.MessageKeys.NULL_METADATA_OR_EDM);
+    }
     this.metadata = metadata;
     this.serviceRoot = serviceRoot;
   }
@@ -56,15 +62,15 @@ public class ServiceDocumentXmlSerializer {
   public void writeServiceDocument(final XMLStreamWriter writer) throws XMLStreamException {
     final String metadataUri =
         (serviceRoot == null ? "" : serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
-        + Constants.METADATA;
-    
+            + Constants.METADATA;
+
     writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
     writer.writeStartElement(APP, "service", NS_APP);
     writer.writeNamespace(ATOM, NS_ATOM);
     writer.writeNamespace(APP, NS_APP);
     writer.writeNamespace(METADATA, NS_METADATA);
     writer.writeAttribute(METADATA, NS_METADATA, "context", metadataUri);
-    
+
     if (metadata != null
         && metadata.getServiceMetadataETagSupport() != null
         && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
@@ -73,25 +79,25 @@ public class ServiceDocumentXmlSerializer {
     }
 
     writer.writeStartElement(APP, "workspace", NS_APP);
-    
+
     final Edm edm = metadata.getEdm();
 
     writer.writeStartElement(ATOM, "title", NS_APP);
     writer.writeCharacters(edm.getEntityContainer(null).getFullQualifiedName().getFullQualifiedNameAsString());
     writer.writeEndElement();
-    
+
     writeEntitySets(writer, edm);
     writeFunctionImports(writer, edm);
     writeSingletons(writer, edm);
     writeServiceDocuments(writer);
     writer.writeEndElement(); // end workspace
-    writer.writeEndElement(); // end service   
+    writer.writeEndElement(); // end service
   }
 
   private void writeServiceDocuments(XMLStreamWriter writer) throws XMLStreamException {
-    
+
     for (EdmxReference reference : this.metadata.getReferences()) {
-      writer.writeStartElement(METADATA , "service-document", NS_METADATA);
+      writer.writeStartElement(METADATA, "service-document", NS_METADATA);
       writer.writeAttribute("href", reference.getUri().toASCIIString());
       writer.writeStartElement(ATOM, "title", NS_ATOM);
       writer.writeCharacters(reference.getUri().toASCIIString());
@@ -124,7 +130,7 @@ public class ServiceDocumentXmlSerializer {
         writer.writeStartElement(ATOM, "title", NS_ATOM);
         writer.writeCharacters(edmFunctionImport.getName());
         writer.writeEndElement();
-        writer.writeEndElement();        
+        writer.writeEndElement();
       }
     }
   }
@@ -135,7 +141,7 @@ public class ServiceDocumentXmlSerializer {
       writer.writeStartElement(METADATA, "singleton", NS_METADATA);
       writer.writeAttribute("href", edmSingleton.getName());
       writer.writeStartElement(ATOM, "title", NS_ATOM);
-      writer.writeCharacters( edmSingleton.getName());
+      writer.writeCharacters(edmSingleton.getName());
       writer.writeEndElement();
       writer.writeEndElement();
     }
