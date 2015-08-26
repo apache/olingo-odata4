@@ -26,7 +26,7 @@ public class DebugTabBodyTest extends AbstractDebugTabTest {
 
   @Test
   public void nullResponseMustNotLeadToException() throws Exception {
-    DebugTabBody tab = new DebugTabBody(null, null);
+    DebugTabBody tab = new DebugTabBody(null);
 
     String expectedHtml = "<pre class=\"code\">\n"
         + "ODataLibrary: No body.</pre>\n";

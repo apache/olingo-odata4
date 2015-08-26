@@ -29,10 +29,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class DebugTabServer implements DebugTab {
 
-  private final Map<String, String> serverEnvironmentVaribles;
+  private final Map<String, String> serverEnvironmentVariables;
 
-  public DebugTabServer(Map<String, String> serverEnvironmentVaribles) {
-    this.serverEnvironmentVaribles = serverEnvironmentVaribles;
+  public DebugTabServer(Map<String, String> serverEnvironmentVariables) {
+    this.serverEnvironmentVariables = serverEnvironmentVariables;
   }
 
   @Override
@@ -42,8 +42,8 @@ public class DebugTabServer implements DebugTab {
 
   @Override
   public void appendJson(JsonGenerator gen) throws IOException {
-    if (serverEnvironmentVaribles != null && !serverEnvironmentVaribles.isEmpty()) {
-      DebugResponseHelperImpl.appendJsonTable(gen, serverEnvironmentVaribles);
+    if (serverEnvironmentVariables != null && !serverEnvironmentVariables.isEmpty()) {
+      DebugResponseHelperImpl.appendJsonTable(gen, serverEnvironmentVariables);
     } else {
       gen.writeNull();
     }
@@ -56,8 +56,8 @@ public class DebugTabServer implements DebugTab {
         .append("<p>").append(pack.getImplementationTitle())
         .append(" Version ").append(pack.getImplementationVersion()).append("</p>\n")
         .append("<h2>Server Environment</h2>\n");
-    if (serverEnvironmentVaribles != null && !serverEnvironmentVaribles.isEmpty()) {
-      DebugResponseHelperImpl.appendHtmlTable(writer, serverEnvironmentVaribles);
+    if (serverEnvironmentVariables != null && !serverEnvironmentVariables.isEmpty()) {
+      DebugResponseHelperImpl.appendHtmlTable(writer, serverEnvironmentVariables);
     }
   }
 }

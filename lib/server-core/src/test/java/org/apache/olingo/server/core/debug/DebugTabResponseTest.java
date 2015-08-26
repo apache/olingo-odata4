@@ -28,7 +28,7 @@ public class DebugTabResponseTest extends AbstractDebugTabTest {
 
   @Test
   public void nullResponseMustNotLeadToException() throws Exception {
-    DebugTabResponse tab = new DebugTabResponse(null, null);
+    DebugTabResponse tab = new DebugTabResponse(null);
 
     String expectedJson = "{\"status\":{\"code\":\"500\",\"info\":\"Internal Server Error\"},\"body\":null}";
     String expectedHtml = "<h2>Status Code</h2>\n"
@@ -54,7 +54,7 @@ public class DebugTabResponseTest extends AbstractDebugTabTest {
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     response.setHeader("headername", "headervalue");
     response.setHeader("headername2", "headervalue2");
-    DebugTabResponse tab = new DebugTabResponse(response, null);
+    DebugTabResponse tab = new DebugTabResponse(response);
 
     String expectedJson = "{\"status\":{\"code\":\"204\",\"info\":\"No Content\"},"
         + "\"headers\":{\"headername\":\"headervalue\",\"headername2\":\"headervalue2\"},\"body\":null}";

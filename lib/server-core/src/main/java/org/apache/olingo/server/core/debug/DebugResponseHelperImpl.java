@@ -107,12 +107,12 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     parts.add(new DebugTabRequest(debugInfo.getRequest()));
 
     // response
-    parts.add(new DebugTabResponse(debugInfo.getApplicationResponse(), debugInfo.getRequest().getRawBaseUri()));
+    parts.add(new DebugTabResponse(debugInfo.getApplicationResponse()));
 
     // server
-    Map<String, String> serverEnvironmentVaribles = debugInfo.getServerEnvironmentVaribles();
-    if (serverEnvironmentVaribles != null && !serverEnvironmentVaribles.isEmpty()) {
-      parts.add(new DebugTabServer(serverEnvironmentVaribles));
+    Map<String, String> serverEnvironmentVariables = debugInfo.getServerEnvironmentVariables();
+    if (serverEnvironmentVariables != null && !serverEnvironmentVariables.isEmpty()) {
+      parts.add(new DebugTabServer(serverEnvironmentVariables));
     }
 
     // URI
@@ -239,7 +239,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         .append("ul, .tree { list-style-type: none; }\n")
         .append("div > ul.expr, div > .expand, .tree { padding-left: 0; }\n")
         .append(".expr, .expand, .null, .numeric { padding-left: 1.5em; }\n")
-        .append(".jsonCode{ white-space: pre-wrap; }")
+        .append(".json { white-space: pre-wrap; }\n")
         .append("</style>\n")
         .append("</head>\n")
         .append("<body>\n");

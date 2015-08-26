@@ -36,11 +36,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class DebugTabResponse implements DebugTab {
 
   private final ODataResponse response;
-  private final String serviceRoot;
   private final HttpStatusCode status;
   private final Map<String, List<String>> headers;
 
-  public DebugTabResponse(final ODataResponse applicationResponse, final String serviceRoot) {
+  public DebugTabResponse(final ODataResponse applicationResponse) {
     this.response = applicationResponse;
     if (response != null) {
       status = HttpStatusCode.fromStatusCode(response.getStatusCode());
@@ -49,7 +48,6 @@ public class DebugTabResponse implements DebugTab {
       status = HttpStatusCode.INTERNAL_SERVER_ERROR;
       headers = Collections.emptyMap();
     }
-    this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
   }
 
   @Override
@@ -76,7 +74,7 @@ public class DebugTabResponse implements DebugTab {
 
     gen.writeFieldName("body");
     if (response != null && response.getContent() != null) {
-      new DebugTabBody(response, serviceRoot).appendJson(gen);
+      new DebugTabBody(response).appendJson(gen);
     } else {
       gen.writeNull();
     }
@@ -105,7 +103,7 @@ public class DebugTabResponse implements DebugTab {
     DebugResponseHelperImpl.appendHtmlTable(writer, map(headers));
     writer.append("<h2>Response Body</h2>\n");
     if (response != null && response.getContent() != null) {
-      new DebugTabBody(response, serviceRoot).appendHtml(writer);
+      new DebugTabBody(response).appendHtml(writer);
     } else {
       writer.append("<p>ODataLibrary: no response body</p>");
     }

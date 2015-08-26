@@ -89,14 +89,14 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     debugger.stopRuntimeMeasurement(processMethodHandel);
 
     if (debugger.isDebugMode()) {
-      Map<String, String> serverEnvironmentVaribles = createEnvironmentVariablesMap(request);
+      Map<String, String> serverEnvironmentVariables = createEnvironmentVariablesMap(request);
       if (exception == null) {
         // This is to ensure that we have access to the thrown OData Exception
         exception = handler.getLastThrownException();
       }
       odResponse =
           debugger.createDebugResponse(request, exception, odRequest, odResponse, handler.getUriInfo(),
-              serverEnvironmentVaribles);
+              serverEnvironmentVariables);
     }
 
     convertToHttp(response, odResponse);

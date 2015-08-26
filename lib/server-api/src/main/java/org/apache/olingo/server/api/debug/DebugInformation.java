@@ -34,7 +34,7 @@ public class DebugInformation {
   private ODataResponse applicationResponse;
   private UriInfo uriInfo;
   private Exception exception;
-  private Map<String, String> serverEnvironmentVaribles;
+  private Map<String, String> serverEnvironmentVariables;
   private List<RuntimeMeasurement> runtimeInformation;
 
   /**
@@ -94,12 +94,12 @@ public class DebugInformation {
    * might contain different information. Will never be null but might be empty.
    * @return environment variables
    */
-  public Map<String, String> getServerEnvironmentVaribles() {
-    return serverEnvironmentVaribles;
+  public Map<String, String> getServerEnvironmentVariables() {
+    return serverEnvironmentVariables;
   }
 
-  public void setServerEnvironmentVaribles(Map<String, String> serverEnvironmentVaribles) {
-    this.serverEnvironmentVaribles = serverEnvironmentVaribles;
+  public void setServerEnvironmentVariables(Map<String, String> serverEnvironmentVariables) {
+    this.serverEnvironmentVariables = serverEnvironmentVariables;
   }
 
   /**

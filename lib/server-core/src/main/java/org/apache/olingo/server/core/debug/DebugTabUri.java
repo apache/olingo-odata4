@@ -79,7 +79,7 @@ public class DebugTabUri implements DebugTab {
     }
 
     if (uriInfo.getSkipTokenOption() != null) {
-      gen.writeStringField("id", uriInfo.getSkipTokenOption().getValue());
+      gen.writeStringField("skiptoken", uriInfo.getSkipTokenOption().getValue());
     }
 
     appendCommonJsonObjects(gen, uriInfo.getCountOption(), uriInfo.getSkipOption(), uriInfo.getTopOption(), uriInfo
@@ -250,7 +250,7 @@ public class DebugTabUri implements DebugTab {
     }
 
     writer.append("<h2>Uri Information</h2>\n")
-        .append("<ul class=\"jsonCode\"><li>");
+        .append("<ul class=\"json\"><li>");
     writer.append(getJsonString());
     writer.append("</li></ul>\n");
   }

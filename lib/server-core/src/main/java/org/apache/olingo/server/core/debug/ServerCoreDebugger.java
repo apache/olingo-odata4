@@ -63,7 +63,7 @@ public class ServerCoreDebugger {
 
   public ODataResponse createDebugResponse(final HttpServletRequest request, final Exception exception,
       final ODataRequest odRequest, final ODataResponse odResponse, UriInfo uriInfo,
-      Map<String, String> serverEnvironmentVaribles) {
+      Map<String, String> serverEnvironmentVariables) {
     //Failsafe so we do not generate unauthorized debug messages
     if(!isDebugMode){
       return odResponse;
@@ -71,7 +71,7 @@ public class ServerCoreDebugger {
     
     try {
       DebugInformation debugInfo =
-          createDebugInformation(request, exception, odRequest, odResponse, uriInfo, serverEnvironmentVaribles);
+          createDebugInformation(request, exception, odRequest, odResponse, uriInfo, serverEnvironmentVariables);
 
       return debugSupport.createDebugResponse(debugFormat, debugInfo);
     } catch (Exception e) {
@@ -97,7 +97,7 @@ public class ServerCoreDebugger {
 
     debugInfo.setException(exception);
 
-    debugInfo.setServerEnvironmentVaribles(serverEnvironmentVaribles);
+    debugInfo.setServerEnvironmentVariables(serverEnvironmentVaribles);
 
     debugInfo.setUriInfo(uriInfo);
 

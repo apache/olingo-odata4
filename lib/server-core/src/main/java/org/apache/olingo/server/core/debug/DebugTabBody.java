@@ -20,13 +20,11 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.debug.DebugSupport;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -42,11 +40,8 @@ public class DebugTabBody implements DebugTab {
   private final ODataResponse response;
   private final ResponseContent responseContent;
 
-  private final String serviceRoot;
-
-  public DebugTabBody(final ODataResponse response, final String serviceRoot) {
+  public DebugTabBody(final ODataResponse response) {
     this.response = response;
-    this.serviceRoot = serviceRoot == null ? "/" : serviceRoot;
     if (response != null) {
       final String contentTypeString = response.getHeader(HttpHeader.CONTENT_TYPE);
       if (contentTypeString != null) {
@@ -109,13 +104,13 @@ public class DebugTabBody implements DebugTab {
         response == null || response.getContent() == null ? "ODataLibrary: No body." : getContentString();
     switch (responseContent) {
     case XML:
-      writer.append("<pre class=\"code").append("xml").append("\">\n");
-      writer.append(addLinks(DebugResponseHelperImpl.escapeHtml(body)));
+      writer.append("<pre class=\"code").append(" xml").append("\">\n");
+      writer.append(DebugResponseHelperImpl.escapeHtml(body));
       writer.append("</pre>\n");
       break;
     case JSON:
-      writer.append("<pre class=\"code").append("json").append("\">\n");
-      writer.append(addLinks(DebugResponseHelperImpl.escapeHtml(body)));
+      writer.append("<pre class=\"code").append(" json").append("\">\n");
+      writer.append(DebugResponseHelperImpl.escapeHtml(body));
       writer.append("</pre>\n");
       break;
     case IMAGE:
@@ -125,24 +120,10 @@ public class DebugTabBody implements DebugTab {
       break;
     case TEXT:
     default:
-      writer.append("<pre class=\"code").append("").append("\">\n");
+      writer.append("<pre class=\"code").append("\">\n");
       writer.append(DebugResponseHelperImpl.escapeHtml(body));
       writer.append("</pre>\n");
       break;
     }
-  }
-
-  private String addLinks(final String source) {
-    final String debugOption = DebugSupport.ODATA_DEBUG_QUERY_PARAMETER + "=" + DebugSupport.ODATA_DEBUG_HTML;
-    final String urlPattern = "("
-        + (responseContent == ResponseContent.XML ?
-            "(?:href|src|base)=" : "\"(?:uri|media_src|edit_media|__next)\":\\p{Space}*")
-        + "\")(.+?)\"";
-    return (responseContent == ResponseContent.XML ?
-        source.replaceAll("(xmlns(?::\\p{Alnum}+)?=\")(.+?)\"", "$1<span class=\"ns\">$2</span>\"") : source)
-        .replaceAll(urlPattern, "$1<a href=\"" + serviceRoot + "$2?" + debugOption + "\">$2</a>\"")
-        .replaceAll("(<a href=\"" + Pattern.quote(serviceRoot) + ')' + Pattern.quote(serviceRoot), "$1")
-        .replaceAll("<a href=\"(.+?)\\?(.+?)\\?" + debugOption, "<a href=\"$1?$2&amp;" + debugOption)
-        .replaceAll("&amp;amp;", "&amp;");
   }
 }
