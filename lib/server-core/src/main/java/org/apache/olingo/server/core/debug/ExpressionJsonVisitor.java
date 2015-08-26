@@ -65,7 +65,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
   private static final String BINARY_NAME = "binary";
   private static final String LEFT_NODE_NAME = "left";
   private static final String RIGHT_NODE_NAME = "right";
-  private static final String IO_EXCEPTION_OCCOURED_MESSAGE = "IOException occoured";
+  private static final String IO_EXCEPTION_OCCURRED_MESSAGE = "IOException occurred";
   private static final String PARAMETERS_NAME = "parameters";
   private static final String METHOD_NAME = "method";
   private static final String OPERAND_NAME = "operand";
@@ -85,7 +85,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -101,7 +101,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -127,7 +127,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -146,7 +146,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -161,7 +161,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE);
     }
   }
 
@@ -193,7 +193,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -207,7 +207,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -221,7 +221,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -235,7 +235,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 
@@ -265,7 +265,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<String> {
       writer.flush();
       return writer.toString();
     } catch (final IOException e) {
-      throw new ExpressionVisitException(IO_EXCEPTION_OCCOURED_MESSAGE, e);
+      throw new ExpressionVisitException(IO_EXCEPTION_OCCURRED_MESSAGE, e);
     }
   }
 

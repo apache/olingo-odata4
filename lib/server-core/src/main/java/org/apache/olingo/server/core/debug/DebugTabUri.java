@@ -205,7 +205,7 @@ public class DebugTabUri implements DebugTab {
     try {
       expressionJsonString = expression.accept(new ExpressionJsonVisitor());
     } catch (Exception e) {
-      expressionJsonString = "Exception in Debug Filter visitor occoured: " + e.getMessage();
+      expressionJsonString = "Exception in Debug Filter visitor occurred: " + e.getMessage();
     }
 
     gen.writeRawValue(expressionJsonString);
