@@ -58,8 +58,14 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     if(uriResourceParts.size() == 1 && uriResourceParts.get(0) instanceof UriResourcePrimitiveProperty) {
       UriResourcePrimitiveProperty uriResourceProperty = (UriResourcePrimitiveProperty) uriResourceParts.get(0);
       return currentEntity.getProperty(uriResourceProperty.getProperty().getName()).getValue();
-      
     } else {
+      // The OData specification allows in addition complex properties and navigation properties 
+      // with a target cardinality 0..1 or 1.
+      // This means any combination can occur e.g. Supplier/Address/City
+      //  -> Navigation properties  Supplier 
+      //  -> Complex Property       Address
+      //  -> Primitive Property     City
+      // For such cases the resource path returns a list of UriResourceParts
       throw new ODataApplicationException("Only primitive properties are implemented in filter expressions", 
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
     }
@@ -164,16 +170,23 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 	  }
 	}
 
-  @SuppressWarnings("unchecked")
   private Object evaluateComparisonOperation(BinaryOperatorKind operator, Object left, Object right) 
       throws ODataApplicationException {
     
     // All types in our tutorial supports all logical operations, but we have to make sure that the types are equals
-    if(left.getClass().equals(right.getClass())) {
+    if(left.getClass().equals(right.getClass()) && left instanceof Comparable) {
       // Luckily all used types String, Boolean and also Integer support the interface Comparable
-      // TODO: Is this OK? Otherwise we can infer generic arguments after using an if statement
-      @SuppressWarnings("rawtypes")
-      int result = ((Comparable) left).compareTo(right);
+      int result;
+      if(left instanceof Integer) {
+        result = ((Comparable<Integer>) (Integer)left).compareTo((Integer) right);
+      } else if(left instanceof String) {
+        result = ((Comparable<String>) (String)left).compareTo((String) right);
+      } else if(left instanceof Boolean) {
+        result = ((Comparable<Boolean>) (Boolean)left).compareTo((Boolean) right);
+      } else {
+        throw new ODataApplicationException("Class " + left.getClass().getCanonicalName() + " not expected", 
+            HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH);
+      }
       
       if (operator == BinaryOperatorKind.EQ) {
         return result == 0;
