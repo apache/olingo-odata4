@@ -75,7 +75,7 @@ public class TypedOperand extends VisitorOperand {
         // Use type conversion of EdmPrimitive types
         try {
           final String literal = getLiteral(value);
-          newValue = tryCast(literal, (EdmPrimitiveType) type);
+          newValue = tryCast(literal, (EdmPrimitiveType) asType);
         } catch (EdmPrimitiveTypeException e) {
           // Nothing to do
         }
@@ -92,8 +92,8 @@ public class TypedOperand extends VisitorOperand {
   public TypedOperand castToCommonType(final VisitorOperand otherOperand) throws ODataApplicationException {
     final TypedOperand other = otherOperand.asTypedOperand();
     final EdmType oType = other.getType();
-
-    // Make sure that the EDM type is equals, check also the java type.
+    
+    // In case of numberic values make sure that the EDM type is equals, check also the java type.
     // So it is possible, that there is an conversation even if the same
     // EdmType is provided.
     // For example consider an Edm16 (internal Integer) and Edm16(internal

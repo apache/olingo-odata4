@@ -63,7 +63,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
-
+  
   @Test
   public void testBooleanLiteral() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
@@ -975,12 +975,65 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
     result = sendRequest("ESKeyNav", "PropertyCompCompNav/PropertyCompNav/PropertyInt16 eq null", cookie);
     assertEquals(1, result.getBody().getEntities().size());
   }
-
+  
   @Test
-  public void testSringFunctionWithoutStringParameters() {
-    fail("ESServerSidePaging", "filter=contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
+  public void testFilterNotBooleanExpression() {
+    // Check that only boolean expression are allowed
+    fail("ESAllPrim", "PropertytString", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt16", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt32", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt64", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyDate", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyDuation", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyTimeOfDay", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyByte", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyDouble", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertySingle", HttpStatusCode.BAD_REQUEST);
+  }
+  
+  @Test
+  public void testComparisonOnStringOperands() {
+    // If check if the expression is true => All entry are returned
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "'Tes' lt 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test' le 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test1' le 'Test'");
+    assertEquals(0, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test1' gt 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Tes' gt 'Test'");
+    assertEquals(0, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test' ge 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test' eq 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+    
+    result = sendRequest(ES_ALL_PRIM, "'Test1' ne 'Test'");
+    assertEquals(3, result.getBody().getEntities().size());
+  }
+  
+  @Test
+  public void testCastException() {
+    fail("ESAllPrim", "PropertyInt16 eq '1'", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt16 eq 03:26:05", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt16 eq true", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt16 eq 2012-12-03T07:16:23Z", HttpStatusCode.BAD_REQUEST);
+    fail("ESAllPrim", "PropertyInt16 eq duration'PT4S'", HttpStatusCode.BAD_REQUEST);
   }
 
+  
+  @Test
+  public void testStringFunctionWithoutStringParameters() {
+    fail("ESServerSidePaging", "contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
+  }
+  
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString) {
     return sendRequest(entitySet, filterString, null);
   }
