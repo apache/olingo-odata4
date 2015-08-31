@@ -47,8 +47,8 @@ public class CircleStreamBuffer {
   private Queue<ByteBuffer> bufferQueue = new LinkedBlockingQueue<ByteBuffer>();
   private ByteBuffer currentWriteBuffer;
 
-  private InternalInputStream inStream;
-  private InternalOutputStream outStream;
+  private final InternalInputStream inStream;
+  private final InternalOutputStream outStream;
 
   /**
    * Creates a {@link CircleStreamBuffer} with default buffer size.
@@ -58,12 +58,12 @@ public class CircleStreamBuffer {
   }
 
   /**
-   * Create a {@link CircleStreamBuffer} with given buffer size in bytes.
+   * Create a {@link CircleStreamBuffer} with given initial buffer size.
    *
-   * @param bufferSize
+   * @param initialCapacity initial capacity of internal buffer
    */
-  public CircleStreamBuffer(final int bufferSize) {
-    currentAllocateCapacity = bufferSize;
+  public CircleStreamBuffer(final int initialCapacity) {
+    currentAllocateCapacity = initialCapacity;
     createNewWriteBuffer();
     inStream = new InternalInputStream(this);
     outStream = new InternalOutputStream(this);
@@ -244,21 +244,27 @@ public class CircleStreamBuffer {
   }
 
   /**
+   * Allocate a new buffer with requested capacity
    *
-   * @param requestedCapacity
+   * @param requestedCapacity minimal capacity of new buffer
    * @return the buffer
    */
   private ByteBuffer allocateBuffer(final int requestedCapacity) {
-    int allocateCapacity = requestedCapacity;
-    if (allocateCapacity < currentAllocateCapacity) {
-      allocateCapacity = currentAllocateCapacity * NEW_BUFFER_RESIZE_FACTOR;
+    if (requestedCapacity > MAX_CAPACITY) {
+      currentAllocateCapacity = MAX_CAPACITY;
+      return ByteBuffer.allocate(requestedCapacity);
     }
-    if (allocateCapacity > MAX_CAPACITY) {
-      allocateCapacity = MAX_CAPACITY;
+
+    if (requestedCapacity <= currentAllocateCapacity) {
+      currentAllocateCapacity *= NEW_BUFFER_RESIZE_FACTOR;
+      if (currentAllocateCapacity > MAX_CAPACITY) {
+        currentAllocateCapacity = MAX_CAPACITY;
+      }
+    } else {
+      currentAllocateCapacity = requestedCapacity;
     }
-    // update current
-    currentAllocateCapacity = allocateCapacity;
-    return ByteBuffer.allocate(allocateCapacity);
+
+    return ByteBuffer.allocate(currentAllocateCapacity);
   }
 
   // #############################################
@@ -289,8 +295,8 @@ public class CircleStreamBuffer {
     }
 
     @Override
-    public int read(final byte[] b, final int off, final int len) throws IOException {
-      return inBuffer.read(b, off, len);
+    public int read(final byte[] buffer, final int off, final int len) throws IOException {
+      return inBuffer.read(buffer, off, len);
     }
 
     @Override
@@ -315,8 +321,8 @@ public class CircleStreamBuffer {
     }
 
     @Override
-    public void write(final byte[] b, final int off, final int len) throws IOException {
-      outBuffer.write(b, off, len);
+    public void write(final byte[] buffer, final int off, final int len) throws IOException {
+      outBuffer.write(buffer, off, len);
     }
 
     @Override
