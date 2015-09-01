@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
@@ -1202,13 +1203,25 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       } else if (ctx.vM != null) {
         LevelsOptionImpl levels = new LevelsOptionImpl().setMax();
         levels.setText(ctx.vM.getText());
-        expandItem.setSystemQueryOption(levels);
+        try {
+          expandItem.setSystemQueryOption(levels);
+        } catch(ODataRuntimeException e) {
+          // Thrown if duplicated system query options are detected
+          throw wrap(new UriParserSyntaxException("Double system query option!", e,
+                UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+        }
       } else if (ctx.vL != null) {
         LevelsOptionImpl levels = new LevelsOptionImpl();
         String text = ctx.vL.getText();
         levels.setText(text);
         levels.setValue(Integer.parseInt(text));
-        expandItem.setSystemQueryOption(levels);
+        try {
+          expandItem.setSystemQueryOption(levels);
+        } catch(ODataRuntimeException e) {
+          // Thrown if duplicated system query options are detected
+          throw wrap(new UriParserSyntaxException("Double system query option!", e,
+                UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
+        }
       }
 
     } else if (ctx.vEP != null) {
@@ -1220,8 +1233,14 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
         @SuppressWarnings("unchecked")
         List<SystemQueryOptionImpl> list = (List<SystemQueryOptionImpl>) ctx.vEPE.accept(this);
-        for (SystemQueryOptionImpl option : list) {
-          expandItem.setSystemQueryOption(option);
+        try {
+          for (SystemQueryOptionImpl option : list) {
+            expandItem.setSystemQueryOption(option);
+          }
+        } catch(ODataRuntimeException e) {
+          // Thrown if duplicated system query options are detected
+          throw wrap(new UriParserSyntaxException("Double system query option!", e,
+                UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
         }
         context.contextExpandItemPath = contextExpandItemPathBU;
       }

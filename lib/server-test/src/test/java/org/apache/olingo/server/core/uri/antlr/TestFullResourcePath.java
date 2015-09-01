@@ -2538,6 +2538,40 @@ public class TestFullResourcePath {
   }
 
   @Test
+  public void runDuplicatedSystemQueryOptionsInExpand() throws UriParserException, UriValidationException {
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyInt16;$select=PropertyInt16)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($filter=true;$filter=true)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($orderby=PropertyInt16;$orderby=PropertyInt16)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($levels=2;$levels=3)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($expand=*;$expand=*)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($count=true;$count=true)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($top=1;$top=1)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+      
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($skip=2;$skip=2)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+  }
+  
+  @Test
+  @Ignore("$search currently not implemented")
+  public void runDuplicatedSearchExpand() throws UriParserException, UriValidationException {
+      testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($search=Test;$search=Test)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+  }
+  
+  @Test
   public void runTop() throws Exception {
     // top
     testUri.run("ESKeyNav", "$top=1")
