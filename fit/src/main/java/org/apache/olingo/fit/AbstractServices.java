@@ -684,7 +684,7 @@ public abstract class AbstractServices {
 
       final String location;
 
-      if ((this instanceof V4KeyAsSegment)) {
+      if ((this instanceof KeyAsSegment)) {
         location = uriInfo.getRequestUri().toASCIIString() + "/" + entityKey;
 
         final Link editLink = new Link();
@@ -1223,7 +1223,7 @@ public abstract class AbstractServices {
       }
       final Entity entry = container.getPayload();
 
-      if ((this instanceof V4KeyAsSegment)) {
+      if ((this instanceof KeyAsSegment)) {
         final Link editLink = new Link();
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);

@@ -57,7 +57,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.apache.olingo.fit.v4.AbstractTestITCase;
+import org.apache.olingo.fit.base.AbstractTestITCase;
 import org.junit.Before;
 import org.junit.Test;
 
