@@ -476,6 +476,77 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
   }
+ 
+  @Test
+  public void expandWithLevels() {
+    final ODataClient client = getClient();
+    final Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+    expandOptions.put(QueryOption.LEVELS, 2);
+    
+    // expand=*($levels=2)
+    URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+            .expandWithOptions("*", expandOptions)
+            .build();
+    
+    try {
+      client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+    
+    // expand=NavPropertyETTwoKeyNavMany($levels=2)
+    expandOptions.clear();
+    expandOptions.put(QueryOption.LEVELS, 2);
+    uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .build();
+    
+    try {
+      client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+    
+    // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
+    expandOptions.clear();
+    expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
+    uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .build();
+    
+    try {
+      client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+    
+    // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2);$levels=3)
+    expandOptions.clear();
+    expandOptions.put(QueryOption.LEVELS, 2);
+    uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .build();
+    
+    try {
+      client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+    
+    // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
+    expandOptions.clear();
+    expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
+    expandOptions.put(QueryOption.LEVELS, 3);
+    uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .build();
+    
+    try {
+      client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    } catch(ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+  }
   
   private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions) {

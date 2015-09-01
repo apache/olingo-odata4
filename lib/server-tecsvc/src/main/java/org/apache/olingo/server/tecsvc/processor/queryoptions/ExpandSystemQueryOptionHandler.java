@@ -75,9 +75,15 @@ public class ExpandSystemQueryOptionHandler {
 
   private void applyExpandOptionToEntity(final Entity entity, final EdmBindingTarget edmBindingTarget,
       final ExpandOption expandOption) throws ODataApplicationException {
+    
     final EdmEntityType entityType = edmBindingTarget.getEntityType();
 
     for (ExpandItem item : expandOption.getExpandItems()) {
+      if(item.getLevelsOption() != null) {
+        throw new ODataApplicationException("$levels is not implemented", 
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+      }
+      
       List<EdmNavigationProperty> navigationProperties = new ArrayList<EdmNavigationProperty>();
       if(item.isStar()) {
         List<EdmNavigationPropertyBinding> bindings = edmBindingTarget.getNavigationPropertyBindings();
