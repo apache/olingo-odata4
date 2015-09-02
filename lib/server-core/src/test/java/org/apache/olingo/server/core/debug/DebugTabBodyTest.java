@@ -28,10 +28,7 @@ public class DebugTabBodyTest extends AbstractDebugTabTest {
   public void nullResponseMustNotLeadToException() throws Exception {
     DebugTabBody tab = new DebugTabBody(null);
 
-    String expectedHtml = "<pre class=\"code\">\n"
-        + "ODataLibrary: No body.</pre>\n";
-
     assertEquals("null", createJson(tab));
-    assertEquals(expectedHtml, createHtml(tab));
+    assertEquals("<pre class=\"code\">\nODataLibrary: No body.\n</pre>\n", createHtml(tab));
   }
 }

@@ -18,41 +18,28 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-
-import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public abstract class AbstractDebugTabTest {
 
-  protected String createHtml(DebugTab tab) throws Exception {
+  protected String createHtml(DebugTab tab) throws IOException {
     StringWriter writer = new StringWriter();
     tab.appendHtml(writer);
     writer.flush();
-    byte[] bytes = writer.toString().getBytes("UTF-8");
-    return IOUtils.toString(new ByteArrayInputStream(bytes));
+    return writer.toString();
   }
 
-  protected String createJson(DebugTab requestTab) throws IOException {
-    CircleStreamBuffer csb = new CircleStreamBuffer();
-    JsonGenerator gen = new JsonFactory().createGenerator(csb.getOutputStream(), JsonEncoding.UTF8);
-    requestTab.appendJson(gen);
+  protected String createJson(DebugTab tab) throws IOException {
+    StringWriter writer = new StringWriter();
+    JsonGenerator gen = new JsonFactory().createGenerator(writer);
+    tab.appendJson(gen);
     gen.flush();
     gen.close();
-    csb.closeWrite();
-    return IOUtils.toString(csb.getInputStream());
+    writer.flush();
+    return writer.toString();
   }
-  
-  protected void print(DebugTab tab) throws Exception{
-    System.out.println(createJson(tab));
-    System.out.println("---------------------------------------------------------");
-    System.out.println(createHtml(tab));
-  }
-
 }

@@ -18,9 +18,10 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.debug.DebugInformation;
@@ -44,11 +46,15 @@ public class ServerCoreDebuggerTest {
   @Before
   public void setupDebugger() {
     debugger = new ServerCoreDebugger(OData.newInstance());
-    debugger.setDebugSupportProcessor(new LocalDebugProcessor());
+    DebugSupport processor = mock(DebugSupport.class);
+    when(processor.isUserAuthorized()).thenReturn(true);
+    when(processor.createDebugResponse(anyString(), any(DebugInformation.class)))
+        .thenThrow(new ODataRuntimeException("Test"));
+    debugger.setDebugSupportProcessor(processor);
   }
 
   @Test
-  public void standardIsDebugModeIsFlase() {
+  public void standardIsDebugModeIsFalse() {
     assertFalse(debugger.isDebugMode());
   }
 
@@ -86,36 +92,20 @@ public class ServerCoreDebuggerTest {
   }
 
   @Test
-  public void testFailResponse() throws IOException {
+  public void failResponse() throws IOException {
     HttpServletRequest request = mock(HttpServletRequest.class);
     when(request.getParameter(DebugSupport.ODATA_DEBUG_QUERY_PARAMETER)).thenReturn(DebugSupport.ODATA_DEBUG_JSON);
     debugger.resolveDebugMode(request);
-    ODataResponse debugResponse = debugger.createDebugResponse(null, null, null, null, null, null);
-    assertEquals(500, debugResponse.getStatusCode());
+    ODataResponse debugResponse = debugger.createDebugResponse(null, null, null, null, null);
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), debugResponse.getStatusCode());
     assertEquals("ODataLibrary: Could not assemble debug response.", IOUtils.toString(debugResponse.getContent()));
   }
 
   @Test
   public void noDebugModeCreateDebugResponseCallMustDoNothing() {
     ODataResponse odResponse = new ODataResponse();
-    ODataResponse debugResponse = debugger.createDebugResponse(null, null, null, odResponse, null, null);
+    ODataResponse debugResponse = debugger.createDebugResponse(null, odResponse, null, null, null);
 
-    assertTrue(odResponse == debugResponse);
-  }
-
-  public class LocalDebugProcessor implements DebugSupport {
-
-    @Override
-    public void init(OData odata) {}
-
-    @Override
-    public boolean isUserAuthorized() {
-      return true;
-    }
-
-    @Override
-    public ODataResponse createDebugResponse(String debugFormat, DebugInformation debugInfo) {
-      throw new ODataRuntimeException("Test");
-    }
+    assertEquals(odResponse, debugResponse);
   }
 }

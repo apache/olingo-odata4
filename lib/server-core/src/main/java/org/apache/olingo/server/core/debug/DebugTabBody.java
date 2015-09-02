@@ -106,12 +106,12 @@ public class DebugTabBody implements DebugTab {
     case XML:
       writer.append("<pre class=\"code").append(" xml").append("\">\n");
       writer.append(DebugResponseHelperImpl.escapeHtml(body));
-      writer.append("</pre>\n");
+      writer.append("\n</pre>\n");
       break;
     case JSON:
       writer.append("<pre class=\"code").append(" json").append("\">\n");
       writer.append(DebugResponseHelperImpl.escapeHtml(body));
-      writer.append("</pre>\n");
+      writer.append("\n</pre>\n");
       break;
     case IMAGE:
       writer.append("<img src=\"data:").append(response.getHeader(HttpHeader.CONTENT_TYPE)).append(";base64,")
@@ -122,7 +122,7 @@ public class DebugTabBody implements DebugTab {
     default:
       writer.append("<pre class=\"code").append("\">\n");
       writer.append(DebugResponseHelperImpl.escapeHtml(body));
-      writer.append("</pre>\n");
+      writer.append("\n</pre>\n");
       break;
     }
   }

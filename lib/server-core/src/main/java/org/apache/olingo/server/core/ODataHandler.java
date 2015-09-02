@@ -74,7 +74,7 @@ public class ODataHandler {
 
   public ODataResponse process(final ODataRequest request) {
     ODataResponse response = new ODataResponse();
-    int measurementHandel = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
+    final int responseHandle = debugger.startRuntimeMeasurement("ODataHandler", "process");
     try {
       processInternal(request, response);
     } catch (final UriValidationException e) {
@@ -111,29 +111,51 @@ public class ODataHandler {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleException(request, response, serverError, e);
     }
-    debugger.stopRuntimeMeasurement(measurementHandel);
+    debugger.stopRuntimeMeasurement(responseHandle);
     return response;
   }
 
   private void processInternal(final ODataRequest request, final ODataResponse response)
       throws ODataApplicationException, ODataLibraryException {
+    final int measurementHandle = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
+
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
+    try {
+      validateODataVersion(request);
+    } catch (final ODataHandlerException e) {
+      debugger.stopRuntimeMeasurement(measurementHandle);
+      throw e;
+    }
 
-    validateODataVersion(request);
-
-    int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
-    uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
-        serviceMetadata.getEdm());
+    final int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
+    try {
+      uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
+          serviceMetadata.getEdm());
+    } catch (final ODataLibraryException e) {
+      debugger.stopRuntimeMeasurement(measurementUriParser);
+      debugger.stopRuntimeMeasurement(measurementHandle);
+      throw e;
+    }
     debugger.stopRuntimeMeasurement(measurementUriParser);
 
-    int measurementUriValidator = debugger.startRuntimeMeasurement("UriValidator", "validate");
+    final int measurementUriValidator = debugger.startRuntimeMeasurement("UriValidator", "validate");
     final HttpMethod method = request.getMethod();
-    new UriValidator().validate(uriInfo, method);
+    try {
+      new UriValidator().validate(uriInfo, method);
+    } catch (final UriValidationException e) {
+      debugger.stopRuntimeMeasurement(measurementUriValidator);
+      debugger.stopRuntimeMeasurement(measurementHandle);
+      throw e;
+    }
     debugger.stopRuntimeMeasurement(measurementUriValidator);
 
-    int measurementDispatcher = debugger.startRuntimeMeasurement("Dispatcher", "dispatch");
-    new ODataDispatcher(uriInfo, this).dispatch(request, response);
-    debugger.stopRuntimeMeasurement(measurementDispatcher);
+    final int measurementDispatcher = debugger.startRuntimeMeasurement("ODataDispatcher", "dispatch");
+    try {
+      new ODataDispatcher(uriInfo, this).dispatch(request, response);
+    } finally {
+      debugger.stopRuntimeMeasurement(measurementDispatcher);
+      debugger.stopRuntimeMeasurement(measurementHandle);
+    }
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
@@ -154,13 +176,12 @@ public class ODataHandler {
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
-    int measurementHandle = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
+    final int measurementHandle = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
     debugger.stopRuntimeMeasurement(measurementHandle);
   }
 
-  private void validateODataVersion(final ODataRequest request)
-      throws ODataHandlerException {
+  private void validateODataVersion(final ODataRequest request) throws ODataHandlerException {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
     if (maxVersion != null && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
         throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,

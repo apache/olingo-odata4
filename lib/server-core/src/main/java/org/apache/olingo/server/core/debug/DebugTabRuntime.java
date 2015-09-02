@@ -89,7 +89,7 @@ public class DebugTabRuntime implements DebugTab {
   private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, final Writer writer)
       throws IOException {
     if (node.className != null) {
-      writer.append("<li>")
+      writer.append("<li>\n")
           .append("<span class=\"code\">")
           .append("<span class=\"draw\">").append(draw)
           .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")

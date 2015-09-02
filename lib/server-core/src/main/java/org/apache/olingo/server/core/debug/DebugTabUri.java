@@ -19,12 +19,9 @@
 package org.apache.olingo.server.core.debug;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
@@ -38,9 +35,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -63,11 +58,6 @@ public class DebugTabUri implements DebugTab {
 
   @Override
   public void appendJson(JsonGenerator gen) throws IOException {
-    if (uriInfo == null) {
-      gen.writeNull();
-      return;
-    }
-
     gen.writeStartObject();
 
     if (uriInfo.getFormatOption() != null) {
@@ -233,7 +223,7 @@ public class DebugTabUri implements DebugTab {
       boolean first = true;
       for (UriResource resourcePart : selectItem.getResourcePath().getUriResourceParts()) {
         if (!first) {
-          selectedProperty = selectedProperty + "/";
+          selectedProperty += "/";
         }
         selectedProperty = resourcePart.toString();
         first = false;
@@ -245,62 +235,12 @@ public class DebugTabUri implements DebugTab {
 
   @Override
   public void appendHtml(final Writer writer) throws IOException {
-    if (uriInfo == null) {
-      return;
-    }
-
     writer.append("<h2>Uri Information</h2>\n")
-        .append("<ul class=\"json\"><li>");
-    writer.append(getJsonString());
-    writer.append("</li></ul>\n");
-  }
-
-  private String getJsonString() throws IOException {
-    CircleStreamBuffer csb = new CircleStreamBuffer();
-    IOException cachedException = null;
-    OutputStream outputStream = csb.getOutputStream();
-    try {
-      JsonGenerator json =
-          new JsonFactory().createGenerator(outputStream, JsonEncoding.UTF8)
-              .setPrettyPrinter(new DefaultPrettyPrinter());
-      appendJson(json);
-      json.close();
-      outputStream.close();
-    } catch (IOException e) {
-      throw e;
-    } finally {
-      if (outputStream != null) {
-        try {
-          outputStream.close();
-        } catch (IOException e) {
-          if (cachedException != null) {
-            throw cachedException;
-          } else {
-            throw e;
-          }
-        }
-      }
-    }
-
-    InputStream inputStream = csb.getInputStream();
-    try {
-      String jsonString = IOUtils.toString(inputStream);
-      inputStream.close();
-      return jsonString;
-    } catch (IOException e) {
-      throw e;
-    } finally {
-      if (inputStream != null) {
-        try {
-          inputStream.close();
-        } catch (IOException e) {
-          if (cachedException != null) {
-            throw cachedException;
-          } else {
-            throw e;
-          }
-        }
-      }
-    }
+        .append("<ul class=\"json\">\n<li>\n");
+    JsonGenerator json = new JsonFactory().createGenerator(writer)
+        .setPrettyPrinter(new DefaultPrettyPrinter());
+    appendJson(json);
+    json.close();
+    writer.append("\n</li>\n</ul>\n");
   }
 }

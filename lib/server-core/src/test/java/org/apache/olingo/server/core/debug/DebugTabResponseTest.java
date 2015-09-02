@@ -42,7 +42,7 @@ public class DebugTabResponseTest extends AbstractDebugTabTest {
         + "</tbody>\n"
         + "</table>\n"
         + "<h2>Response Body</h2>\n"
-        + "<p>ODataLibrary: no response body</p>";
+        + "<p>ODataLibrary: no response body</p>\n";
 
     assertEquals(expectedJson, createJson(tab));
     assertEquals(expectedHtml, createHtml(tab));
@@ -71,7 +71,7 @@ public class DebugTabResponseTest extends AbstractDebugTabTest {
         + "</tbody>\n"
         + "</table>\n"
         + "<h2>Response Body</h2>\n"
-        + "<p>ODataLibrary: no response body</p>";
+        + "<p>ODataLibrary: no response body</p>\n";
     assertEquals(expectedJson, createJson(tab));
     assertEquals(expectedHtml, createHtml(tab));
   }

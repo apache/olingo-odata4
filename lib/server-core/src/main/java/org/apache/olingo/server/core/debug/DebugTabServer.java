@@ -42,22 +42,14 @@ public class DebugTabServer implements DebugTab {
 
   @Override
   public void appendJson(JsonGenerator gen) throws IOException {
-    if (serverEnvironmentVariables != null && !serverEnvironmentVariables.isEmpty()) {
-      DebugResponseHelperImpl.appendJsonTable(gen, serverEnvironmentVariables);
-    } else {
-      gen.writeNull();
-    }
+    DebugResponseHelperImpl.appendJsonTable(gen, serverEnvironmentVariables);
   }
 
   @Override
   public void appendHtml(Writer writer) throws IOException {
-    final Package pack = DebugResponseHelperImpl.class.getPackage();
     writer.append("<h2>Library Version</h2>\n")
-        .append("<p>").append(pack.getImplementationTitle())
-        .append(" Version ").append(pack.getImplementationVersion()).append("</p>\n")
+        .append("<p>").append(DebugResponseHelperImpl.getVersion()).append("</p>\n")
         .append("<h2>Server Environment</h2>\n");
-    if (serverEnvironmentVariables != null && !serverEnvironmentVariables.isEmpty()) {
-      DebugResponseHelperImpl.appendHtmlTable(writer, serverEnvironmentVariables);
-    }
+    DebugResponseHelperImpl.appendHtmlTable(writer, serverEnvironmentVariables);
   }
 }

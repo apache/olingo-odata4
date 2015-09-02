@@ -85,7 +85,7 @@ public class DebugTabResponse implements DebugTab {
   private Map<String, String> map(Map<String, List<String>> headers) {
     Map<String, String> result = new HashMap<String, String>();
     for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-      if(entry.getValue().size() == 1) {
+      if (entry.getValue().size() == 1) {
         result.put(entry.getKey(), entry.getValue().get(0));
       } else {
         result.put(entry.getKey(), entry.getValue().toString());
@@ -105,7 +105,7 @@ public class DebugTabResponse implements DebugTab {
     if (response != null && response.getContent() != null) {
       new DebugTabBody(response).appendHtml(writer);
     } else {
-      writer.append("<p>ODataLibrary: no response body</p>");
+      writer.append("<p>ODataLibrary: no response body</p>\n");
     }
   }
 }

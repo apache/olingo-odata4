@@ -18,7 +18,8 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -35,18 +36,17 @@ public class DebugTabServerTest extends AbstractDebugTabTest {
     assertEquals("null", createJson(serverTab));
     String html = createHtml(serverTab);
     assertTrue(html.startsWith("<h2>Library Version</h2>"));
-    assertTrue(html.endsWith("<h2>Server Environment</h2>\n"));
+    assertTrue(html.contains("<h2>Server Environment</h2>\n"));
   }
 
   @Test
   public void initialServerInformationMustNotleadToException() throws Exception {
-    Map<String, String> env = Collections.emptyMap();
-    DebugTabServer serverTab = new DebugTabServer(env);
+    DebugTabServer serverTab = new DebugTabServer(Collections.<String, String> emptyMap());
 
     assertEquals("null", createJson(serverTab));
     String html = createHtml(serverTab);
     assertTrue(html.startsWith("<h2>Library Version</h2>"));
-    assertTrue(html.endsWith("<h2>Server Environment</h2>\n"));
+    assertTrue(html.contains("<h2>Server Environment</h2>\n"));
   }
 
   @Test

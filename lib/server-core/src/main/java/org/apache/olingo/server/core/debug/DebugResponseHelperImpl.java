@@ -65,7 +65,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
   }
 
   @Override
-  public ODataResponse createDebugResponse(DebugInformation debugInfo) {
+  public ODataResponse createDebugResponse(final DebugInformation debugInfo) {
     try {
       final List<DebugTab> parts = createParts(debugInfo);
 
@@ -100,7 +100,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     }
   }
 
-  private List<DebugTab> createParts(DebugInformation debugInfo) {
+  private List<DebugTab> createParts(final DebugInformation debugInfo) {
     List<DebugTab> parts = new ArrayList<DebugTab>();
 
     // request
@@ -182,20 +182,18 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
   }
 
   /**
-   * Get version field information for response.
-   * Result is never null.
-   *
+   * Gets version field information for response.  Result is never null.
    * @return version field information
    */
-  private String getVersion() {
-    final String version = DebugResponseHelperImpl.class.getPackage().getImplementationVersion();
-    if (version == null) {
-      return "Olingo";
-    }
-    return "Olingo " + version;
+  protected static String getVersion() {
+    final Package pack = DebugResponseHelperImpl.class.getPackage();
+    final String name = pack.getImplementationTitle();
+    final String version = pack.getImplementationVersion();
+    return (name == null ? "Olingo" : name)
+        + (version == null ? "" : " Version " + version);
   }
 
-  private InputStream wrapInHtml(final List<DebugTab> parts, String title) throws IOException {
+  private InputStream wrapInHtml(final List<DebugTab> parts, final String title) throws IOException {
     StringWriter writer = new StringWriter();
 
     writer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n")
@@ -265,33 +263,39 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     return value == null ? null : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
-  protected static void appendJsonTable(final JsonGenerator gen, final Map<String, String> entries)
+  protected static void appendJsonTable(JsonGenerator gen, final Map<String, String> entries)
       throws IOException {
-    gen.writeStartObject();
-
-    for (Map.Entry<String, String> entry : entries.entrySet()) {
-      if (entry.getValue() != null) {
-        gen.writeStringField(entry.getKey(), entry.getValue());
-      } else {
-        gen.writeNullField(entry.getKey());
+    if (entries == null || entries.isEmpty()) {
+      gen.writeNull();
+    } else {
+      gen.writeStartObject();
+      for (Map.Entry<String, String> entry : entries.entrySet()) {
+        gen.writeFieldName(entry.getKey());
+        if (entry.getValue() == null) {
+          gen.writeNull();
+        } else {
+          gen.writeString(entry.getValue());
+        }
       }
+      gen.writeEndObject();
     }
-    gen.writeEndObject();
   }
 
-  protected static void appendHtmlTable(final Writer writer, final Map<String, String> entries) throws IOException {
+  protected static void appendHtmlTable(Writer writer, final Map<String, String> entries) throws IOException {
     writer.append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");
-    for (final Entry<String, String> entry : entries.entrySet()) {
-      writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
-          .append("<td class=\"value\">");
-      if (entry.getValue() != null) {
-        writer.append(escapeHtml(entry.getValue()));
-      } else {
-        writer.append("null");
+    if (entries != null && !entries.isEmpty()) {
+      for (final Entry<String, String> entry : entries.entrySet()) {
+        writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
+            .append("<td class=\"value\">");
+        if (entry.getValue() != null) {
+          writer.append(escapeHtml(entry.getValue()));
+        } else {
+          writer.append("null");
+        }
+        writer.append("</td></tr>\n");
       }
-      writer.append("</td></tr>\n");
     }
     writer.append("</tbody>\n</table>\n");
   }

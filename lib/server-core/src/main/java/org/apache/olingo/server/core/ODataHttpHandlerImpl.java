@@ -45,10 +45,10 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugSupport;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
@@ -72,21 +72,17 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     ODataResponse odResponse;
     debugger.resolveDebugMode(request);
 
-    int processMethodHandel = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "process");
+    final int processMethodHandle = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "process");
     try {
-      int requestHandel = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
       fillODataRequest(odRequest, request, split);
-      debugger.stopRuntimeMeasurement(requestHandel);
 
-      int responseHandel = debugger.startRuntimeMeasurement("ODataHandler", "process");
       odResponse = handler.process(odRequest);
-      debugger.stopRuntimeMeasurement(responseHandel);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
       exception = e;
       odResponse = handleException(odRequest, e);
     }
-    debugger.stopRuntimeMeasurement(processMethodHandel);
+    debugger.stopRuntimeMeasurement(processMethodHandle);
 
     if (debugger.isDebugMode()) {
       Map<String, String> serverEnvironmentVariables = createEnvironmentVariablesMap(request);
@@ -95,7 +91,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
         exception = handler.getLastThrownException();
       }
       odResponse =
-          debugger.createDebugResponse(request, exception, odRequest, odResponse, handler.getUriInfo(),
+          debugger.createDebugResponse(odRequest, odResponse, exception, handler.getUriInfo(),
               serverEnvironmentVariables);
     }
 
@@ -103,7 +99,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   private Map<String, String> createEnvironmentVariablesMap(HttpServletRequest request) {
-    LinkedHashMap<String, String> environment = new LinkedHashMap<String, String>();
+    Map<String, String> environment = new LinkedHashMap<String, String>();
     environment.put("authType", request.getAuthType());
     environment.put("localAddr", request.getLocalAddr());
     environment.put("localName", request.getLocalName());
@@ -186,9 +182,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest fillODataRequest(final ODataRequest odRequest, final HttpServletRequest httpRequest,
-      final int split)
-      throws ODataLibraryException {
+  private ODataRequest fillODataRequest(ODataRequest odRequest, final HttpServletRequest httpRequest,
+      final int split) throws ODataLibraryException {
+    final int requestHandle = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
     try {
       odRequest.setBody(httpRequest.getInputStream());
       odRequest.setProtocol(httpRequest.getProtocol());
@@ -198,13 +194,14 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
       return odRequest;
     } catch (final IOException e) {
-      throw new SerializerException("An I/O exception occurred.", e,
-          SerializerException.MessageKeys.IO_EXCEPTION);
+      throw new DeserializerException("An I/O exception occurred.", e,
+          DeserializerException.MessageKeys.IO_EXCEPTION);
+    } finally {
+      debugger.stopRuntimeMeasurement(requestHandle);
     }
   }
 
-  static HttpMethod extractMethod(final HttpServletRequest httpRequest)
-      throws ODataLibraryException {
+  static HttpMethod extractMethod(final HttpServletRequest httpRequest) throws ODataLibraryException {
     try {
       HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
 

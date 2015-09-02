@@ -61,17 +61,16 @@ public class ServerCoreDebugger {
     }
   }
 
-  public ODataResponse createDebugResponse(final HttpServletRequest request, final Exception exception,
-      final ODataRequest odRequest, final ODataResponse odResponse, UriInfo uriInfo,
-      Map<String, String> serverEnvironmentVariables) {
+  public ODataResponse createDebugResponse(final ODataRequest request, final ODataResponse response,
+      final Exception exception, final UriInfo uriInfo, final Map<String, String> serverEnvironmentVariables) {
     //Failsafe so we do not generate unauthorized debug messages
-    if(!isDebugMode){
-      return odResponse;
+    if (!isDebugMode) {
+      return response;
     }
-    
+
     try {
       DebugInformation debugInfo =
-          createDebugInformation(request, exception, odRequest, odResponse, uriInfo, serverEnvironmentVariables);
+          createDebugInformation(request, response, exception, uriInfo, serverEnvironmentVariables);
 
       return debugSupport.createDebugResponse(debugFormat, debugInfo);
     } catch (Exception e) {
@@ -88,16 +87,15 @@ public class ServerCoreDebugger {
     return odResponse;
   }
 
-  private DebugInformation createDebugInformation(final HttpServletRequest request, final Exception exception,
-      final ODataRequest odRequest, final ODataResponse odResponse, UriInfo uriInfo,
-      Map<String, String> serverEnvironmentVaribles) {
+  private DebugInformation createDebugInformation(final ODataRequest request, final ODataResponse response,
+      final Exception exception, final UriInfo uriInfo, final Map<String, String> serverEnvironmentVariables) {
     DebugInformation debugInfo = new DebugInformation();
-    debugInfo.setRequest(odRequest);
-    debugInfo.setApplicationResponse(odResponse);
+    debugInfo.setRequest(request);
+    debugInfo.setApplicationResponse(response);
 
     debugInfo.setException(exception);
 
-    debugInfo.setServerEnvironmentVariables(serverEnvironmentVaribles);
+    debugInfo.setServerEnvironmentVariables(serverEnvironmentVariables);
 
     debugInfo.setUriInfo(uriInfo);
 
