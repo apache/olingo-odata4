@@ -121,6 +121,7 @@
         <configuration>
           <instructions>
             <Implementation-Version>${project.version}</Implementation-Version>
+            <Implementation-Title>${project.name}</Implementation-Title>
             <Export-Package>
               org.apache.olingo.server.core
             </Export-Package>
