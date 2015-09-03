@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -55,6 +54,7 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 
   private OData odata;
   private Storage storage;
+  private ServiceMetadata serviceMetadata;
 
   public DemoPrimitiveProcessor(Storage storage) {
     this.storage = storage;
@@ -62,7 +62,7 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 
   public void init(OData odata, ServiceMetadata serviceMetadata) {
     this.odata = odata;
-
+    this.serviceMetadata = serviceMetadata;
   }
 
   /*
@@ -114,13 +114,12 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
     Object value = property.getValue();
     if (value != null) {
       // 3.1. configure the serializer
-      ODataFormat format = ODataFormat.fromContentType(responseFormat);
-      ODataSerializer serializer = odata.createSerializer(format);
+      ODataSerializer serializer = odata.createSerializer(responseFormat);
 
       ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).navOrPropertyPath(edmPropertyName).build();
       PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextUrl).build();
       // 3.2. serialize
-      SerializerResult serializerResult = serializer.primitive(edmPropertyType, property, options);
+      SerializerResult serializerResult = serializer.primitive(serviceMetadata, edmPropertyType, property, options);
       InputStream propertyStream = serializerResult.getContent();
 
       // 4. configure the response object

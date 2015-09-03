@@ -25,6 +25,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -33,6 +34,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
+import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
@@ -72,24 +74,25 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
   }
   
   @Override
-  public Object visitLiteral(String literal) throws ExpressionVisitException, ODataApplicationException {
+  public Object visitLiteral(Literal literal) throws ExpressionVisitException, ODataApplicationException {
     // To keep this tutorial simple, our filter expression visitor supports only Edm.Int32 and Edm.String
     // In real world scenarios it can be difficult to guess the type of an literal.
     // We can be sure, that the literal is a valid OData literal because the URI Parser checks 
     // the lexicographical structure
     
     // String literals start and end with an single quotation mark
-    if(literal.startsWith("'") && literal.endsWith("'")) {
+    String literalAsString = literal.getText();
+    if(literal.getType() instanceof EdmString) {
       String stringLiteral = "";
-      if(literal.length() > 2) {
-        stringLiteral = literal.substring(1, literal.length() - 1);
+      if(literal.getText().length() > 2) {
+        stringLiteral = literalAsString.substring(1, literalAsString.length() - 1);
       }
       
       return stringLiteral;
     } else {
       // Try to convert the literal into an Java Integer
       try {
-        return Integer.parseInt(literal);
+        return Integer.parseInt(literalAsString);
       } catch(NumberFormatException e) {
         throw new ODataApplicationException("Only Edm.Int32 and Edm.String literals are implemented", 
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);

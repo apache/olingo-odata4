@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -55,6 +54,7 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 
 	private OData odata;
 	private Storage storage;
+  private ServiceMetadata serviceMetadata;
 
 	public DemoPrimitiveProcessor(Storage storage) {
 		this.storage = storage;
@@ -62,7 +62,7 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 
 	public void init(OData odata, ServiceMetadata serviceMetadata) {
 		this.odata = odata;
-
+    this.serviceMetadata = serviceMetadata;
 	}
 
 	/*
@@ -73,9 +73,8 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 	 *	  value: "Notebook Basic 15"
 	 * }
 	 * */
-	public void readPrimitive(ODataRequest request, ODataResponse response,
-								UriInfo uriInfo, ContentType responseFormat)
-								throws ODataApplicationException, SerializerException {
+	public void readPrimitive(ODataRequest request, ODataResponse response,UriInfo uriInfo, ContentType responseFormat) 
+	    throws ODataApplicationException, SerializerException {
 
 		// 1. Retrieve info from URI
 		// 1.1. retrieve the info about the requested entity set
@@ -87,7 +86,8 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 		List<UriParameter> keyPredicates = uriEntityset.getKeyPredicates();
 
 		// 1.2. retrieve the requested (Edm) property
-		UriResourceProperty uriProperty = (UriResourceProperty)resourceParts.get(resourceParts.size() -1); // the last segment is the Property
+		// the last segment is the Property
+		UriResourceProperty uriProperty = (UriResourceProperty)resourceParts.get(resourceParts.size() -1); 
 		EdmProperty edmProperty = uriProperty.getProperty();
 		String edmPropertyName = edmProperty.getName();
 		// in our example, we know we have only primitive types in our model
@@ -104,20 +104,20 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 		// 2.2. retrieve the property data from the entity
 		Property property = entity.getProperty(edmPropertyName);
 		if (property == null) {
-			throw new ODataApplicationException("Property not found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
+			throw new ODataApplicationException("Property not found", HttpStatusCode.NOT_FOUND.getStatusCode(), 
+			                                    Locale.ENGLISH);
 		}
 
 		// 3. serialize
 		Object value = property.getValue();
 		if (value != null) {
 			// 3.1. configure the serializer
-			ODataFormat format = ODataFormat.fromContentType(responseFormat);
-			ODataSerializer serializer = odata.createSerializer(format);
+			ODataSerializer serializer = odata.createSerializer(responseFormat);
 
 			ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).navOrPropertyPath(edmPropertyName).build();
 			PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextUrl).build();
 			// 3.2. serialize
-			SerializerResult serializerResult = serializer.primitive(edmPropertyType, property, options);
+			SerializerResult serializerResult = serializer.primitive(serviceMetadata, edmPropertyType, property, options);
 			InputStream propertyStream = serializerResult.getContent();
 
 			//4. configure the response object
@@ -136,12 +136,13 @@ public class DemoPrimitiveProcessor implements PrimitiveProcessor {
 	 * These processor methods are not handled in this tutorial
 	 * */
 
-	public void updatePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, ContentType responseFormat)
-								throws ODataApplicationException, DeserializerException, SerializerException {
+	public void updatePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType requestFormat, 
+	    ContentType responseFormat) throws ODataApplicationException, DeserializerException, SerializerException {
 		throw new ODataApplicationException("Not supported.", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
 	}
 
-	public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) throws ODataApplicationException {
+	public void deletePrimitive(ODataRequest request, ODataResponse response, UriInfo uriInfo) 
+	    throws ODataApplicationException {
 		throw new ODataApplicationException("Not supported.", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
 	}
 }

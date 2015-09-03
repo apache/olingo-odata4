@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
@@ -58,7 +57,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
 
   @Override
-  public List<CsdlSchema> getSchemas() throws ODataException {
+  public List<CsdlSchema> getSchemas() {
 
     // create Schema
     CsdlSchema schema = new CsdlSchema();
@@ -81,7 +80,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
 
 
   @Override
-  public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) throws ODataException {
+  public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) {
 
     // this method is called for one of the EntityTypes that are configured in the Schema
     if(entityTypeName.equals(ET_PRODUCT_FQN)){
@@ -108,7 +107,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   }
 
   @Override
-  public CsdlEntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) throws ODataException {
+  public CsdlEntitySet getEntitySet(FullQualifiedName entityContainer, String entitySetName) {
 
     if(entityContainer.equals(CONTAINER)){
       if(entitySetName.equals(ES_PRODUCTS_NAME)){
@@ -124,7 +123,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   }
 
   @Override
-  public CsdlEntityContainer getEntityContainer() throws ODataException {
+  public CsdlEntityContainer getEntityContainer() {
 
     // create EntitySets
     List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
@@ -139,7 +138,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   }
 
   @Override
-  public CsdlEntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) throws ODataException {
+  public CsdlEntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) {
 
     // This method is invoked when displaying the service document at e.g. http://localhost:8080/DemoService/DemoService.svc
     if(entityContainerName == null || entityContainerName.equals(CONTAINER)){

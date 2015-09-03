@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -121,8 +120,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     }
 
     // 4th: create a serializer based on the requested format (json)
-    ODataFormat format = ODataFormat.fromContentType(responseFormat);
-    ODataSerializer serializer = odata.createSerializer(format);
+    ODataSerializer serializer = odata.createSerializer(responseFormat);
 
     // and serialize the content: transform from the EntitySet object to InputStream
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();

@@ -35,13 +35,15 @@
   </parent>
 
   <modules>
+    <module>p0_all</module>
     <module>p1_read</module>
     <module>p2_readep</module>
     <module>p3_write</module>
     <module>p4_navigation</module>
     <module>p5_queryoptions-tcs</module>
     <module>p6_queryoptions-es</module>
-    <module>p7_queryoptions-f</module>
+    <module>p7_queryoptions-o</module>
+    <module>p8_queryoptions-f</module>
   </modules>
 
   <build>

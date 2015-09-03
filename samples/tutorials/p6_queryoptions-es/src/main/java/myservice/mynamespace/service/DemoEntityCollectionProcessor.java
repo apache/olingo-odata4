@@ -33,7 +33,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -170,7 +169,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         .expand(expandOption)
         .build();
 
-    ODataSerializer serializer = odata.createSerializer(ODataFormat.fromContentType(responseFormat));
+    ODataSerializer serializer = odata.createSerializer(responseFormat);
     SerializerResult serializerResult = serializer.entityCollection(srvMetadata, edmEntityType, entityCollection, opts);
 
     // 5th: configure the response object: set the body, headers and status code
