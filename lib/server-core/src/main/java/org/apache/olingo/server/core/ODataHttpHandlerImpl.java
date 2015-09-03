@@ -149,7 +149,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    copyContent(odResponse, response);
+    if (odResponse.getContent() != null) {
+      copyContent(odResponse, response);
+    }
   }
 
   static void copyContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {

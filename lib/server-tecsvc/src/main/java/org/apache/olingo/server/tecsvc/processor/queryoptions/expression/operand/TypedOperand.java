@@ -75,7 +75,7 @@ public class TypedOperand extends VisitorOperand {
         // Use type conversion of EdmPrimitive types
         try {
           final String literal = getLiteral(value);
-          newValue = tryCast(literal, (EdmPrimitiveType) asType);
+          newValue = tryCast(literal, asType);
         } catch (EdmPrimitiveTypeException e) {
           // Nothing to do
         }
@@ -86,7 +86,7 @@ public class TypedOperand extends VisitorOperand {
       }
     }
 
-    throw new ODataApplicationException("Cast failed ", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    throw new ODataApplicationException("Cast failed", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
   }
 
   public TypedOperand castToCommonType(final VisitorOperand otherOperand) throws ODataApplicationException {
