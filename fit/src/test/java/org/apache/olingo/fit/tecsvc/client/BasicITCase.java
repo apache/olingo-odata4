@@ -1105,10 +1105,10 @@ public class BasicITCase extends AbstractTecSvcITCase {
                                                      .appendKeySegment(0)
                                                      .appendPropertySegment(PROPERTY_INT64).build();
     
-    final ODataPropertyUpdateRequest requestUpdate = edmEnabledClient.getCUDRequestFactory()
-                                                     .getPropertyPrimitiveValueUpdateRequest(uri, 
-                                                         factory.newPrimitiveProperty(PROPERTY_INT64, 
-                                                            factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    final ODataPropertyUpdateRequest requestUpdate =
+        edmEnabledClient.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uri,
+            factory.newPrimitiveProperty(PROPERTY_INT64,
+            factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
     
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);

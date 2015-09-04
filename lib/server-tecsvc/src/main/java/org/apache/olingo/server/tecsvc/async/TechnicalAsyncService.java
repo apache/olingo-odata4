@@ -20,6 +20,7 @@ package org.apache.olingo.server.tecsvc.async;
 
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -32,6 +33,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +65,7 @@ import java.util.regex.Pattern;
  *   <li>start the async processing via the <code>processAsync()</code> methods</li>
  * </ul>
  * A short code snippet is shown below:
- * <p>
+ * <pre>
  * <code>
  * TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
  * TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
@@ -72,7 +74,7 @@ import java.util.regex.Pattern;
  * asyncProcessor.prepareFor().readEntity(request, response, uriInfo, requestedFormat);
  * String location = asyncProcessor.processAsync();
  * </code>
- * </p>
+ * </pre>
  */
 public class TechnicalAsyncService {
 
@@ -91,7 +93,7 @@ public class TechnicalAsyncService {
   public static void updateHeader(ODataResponse response, HttpStatusCode status, String location) {
     response.setStatusCode(status.getStatusCode());
     response.setHeader(HttpHeader.LOCATION, location);
-    response.setHeader(HttpHeader.PREFERENCE_APPLIED, "respond-async");
+    response.setHeader(HttpHeader.PREFERENCE_APPLIED, PreferenceName.RESPOND_ASYNC.toString());
 
   }
 
@@ -131,10 +133,10 @@ public class TechnicalAsyncService {
     String location = getAsyncLocation(request);
     AsyncRunner runner = LOCATION_2_ASYNC_RUNNER.get(location);
 
-    if(runner == null) {
+    if (runner == null) {
       response.setStatus(HttpStatusCode.NOT_FOUND.getStatusCode());
     } else {
-      if(runner.isFinished()) {
+      if (runner.isFinished()) {
         ODataResponse wrapResult = runner.getDispatched().getProcessResponse();
         wrapToAsyncHttpResponse(wrapResult, response);
         LOCATION_2_ASYNC_RUNNER.remove(location);
@@ -271,8 +273,7 @@ public class TechnicalAsyncService {
 
     private int getSleepTime(AsyncProcessor<?> wrap) {
       String preferHeader = wrap.getPreferHeader();
-      Matcher matcher = Pattern.compile("(" + TEC_ASYNC_SLEEP +
-              "=)(\\d*)").matcher(preferHeader);
+      Matcher matcher = Pattern.compile("(" + TEC_ASYNC_SLEEP + "=)(\\d*)").matcher(preferHeader);
       if (matcher.find()) {
         String waitTimeAsString = matcher.group(2);
         return Integer.parseInt(waitTimeAsString);

@@ -20,7 +20,9 @@ package org.apache.olingo.server.core.uri.validator;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -38,6 +40,7 @@ import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
@@ -469,8 +472,9 @@ public class UriValidator {
         // Only $id allowed as SystemQueryOption for DELETE and references
         for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
           if (SystemQueryOptionKind.ID != option.getKind()) {
-            throw new UriValidationException("System query option " + option.getName() + " not allowed for method "
-                + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
+            throw new UriValidationException(
+                "System query option " + option.getName() + " not allowed for method " + httpMethod,
+                UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
                 option.getName(), httpMethod.toString());
           }
         }
@@ -522,15 +526,20 @@ public class UriValidator {
 
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
-      if (pathSegment.getKind() == UriResourceKind.entitySet) {
-        UriResourceEntitySet pathEntitySet = (UriResourceEntitySet) pathSegment;
-        List<UriParameter> keyPredicates = pathEntitySet.getKeyPredicates();
+      final boolean isEntitySet = pathSegment.getKind() == UriResourceKind.entitySet;
+      if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty) {
+        final List<UriParameter> keyPredicates = isEntitySet ?
+            ((UriResourceEntitySet) pathSegment).getKeyPredicates() :
+            ((UriResourceNavigation) pathSegment).getKeyPredicates();
 
         if (keyPredicates != null) {
 
-          final List<String> keyPredicateNames = pathEntitySet.getEntityType().getKeyPredicateNames();
-          HashMap<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
-          for (EdmKeyPropertyRef key : pathEntitySet.getEntityType().getKeyPropertyRefs()) {
+          final EdmEntityType entityType = isEntitySet ?
+              ((UriResourceEntitySet) pathSegment).getEntityType() :
+              (EdmEntityType) ((UriResourceNavigation) pathSegment).getType();
+          final List<String> keyPredicateNames = entityType.getKeyPredicateNames();
+          Map<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
+          for (EdmKeyPropertyRef key : entityType.getKeyPropertyRefs()) {
             edmKeys.put(key.getName(), key);
             final String alias = key.getAlias();
             if (alias != null) {
@@ -541,33 +550,36 @@ public class UriValidator {
           for (UriParameter keyPredicate : keyPredicates) {
             final String name = keyPredicate.getName();
             final String alias = keyPredicate.getAlias();
-            final String value = alias == null ?
-                keyPredicate.getText() :
-                uriInfo.getValueForAlias(alias);
 
-            EdmKeyPropertyRef edmKey = edmKeys.get(name);
-            if (edmKey == null) {
-              if (keyPredicateNames.contains(name)) {
-                throw new UriValidationException("Double key property: " + name,
-                    UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY, name);
-              } else {
-                throw new UriValidationException("Unknown key property: " + name,
+            if (keyPredicate.getReferencedProperty() == null) {
+              final String value = alias == null ?
+                  keyPredicate.getText() :
+                  uriInfo.getValueForAlias(alias);
+
+              EdmKeyPropertyRef edmKey = edmKeys.get(name);
+              if (edmKey == null) {
+                if (keyPredicateNames.contains(name)) {
+                  throw new UriValidationException("Double key property: " + name,
+                      UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY, name);
+                } else {
+                  throw new UriValidationException("Unknown key property: " + name,
+                      UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
+                }
+              }
+
+              final EdmProperty property = edmKey.getProperty();
+              final EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) property.getType();
+              try {
+                if (!edmPrimitiveType.validate(edmPrimitiveType.fromUriLiteral(value),
+                    property.isNullable(), property.getMaxLength(),
+                    property.getPrecision(), property.getScale(), property.isUnicode())) {
+                  throw new UriValidationException("PrimitiveTypeException",
+                      UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
+                }
+              } catch (EdmPrimitiveTypeException e) {
+                throw new UriValidationException("PrimitiveTypeException", e,
                     UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
               }
-            }
-
-            final EdmProperty property = edmKey.getProperty();
-            final EdmPrimitiveType edmPrimitiveType = (EdmPrimitiveType) property.getType();
-            try {
-              if (!edmPrimitiveType.validate(edmPrimitiveType.fromUriLiteral(value),
-                  property.isNullable(), property.getMaxLength(),
-                  property.getPrecision(), property.getScale(), property.isUnicode())) {
-                throw new UriValidationException("PrimitiveTypeException",
-                    UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
-              }
-            } catch (EdmPrimitiveTypeException e) {
-              throw new UriValidationException("PrimitiveTypeException", e,
-                  UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, name);
             }
 
             edmKeys.remove(name);

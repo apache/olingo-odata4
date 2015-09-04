@@ -510,6 +510,11 @@ public class UriValidatorTest {
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyInt16=1)")
         .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
+
+    testUri.runEx("ESAllPrim(0)/NavPropertyETTwoPrimMany(xxx=42)")
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    testUri.runEx("ESAllPrim(0)/NavPropertyETTwoPrimMany(PropertyInt16='1')")
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
   }
 
   @Test
