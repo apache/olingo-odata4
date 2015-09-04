@@ -112,11 +112,7 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
     try {
-      if (value instanceof Timestamp) {
-        EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, precision);
-      } else {
-        EdmDateTimeOffset.appendMilliseconds(result, fractionalSecs, precision);
-      }
+      EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
     }

@@ -80,8 +80,13 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     final String time = date.toString().substring(11, 19);
     assertTrue(instance.valueToString(date, null, null, 3, null, null).contains(time));
 
+    Timestamp timestamp = new Timestamp(0);
+    timestamp.setNanos(120);
+    assertEquals("1970-01-01T00:00:00.00000012Z", instance.valueToString(timestamp, null, null, 8, null, null));
+
     expectFacetsErrorInValueToString(instance, millis, null, null, null, null, null);
     expectFacetsErrorInValueToString(instance, 3L, null, null, 2, null, null);
+    expectFacetsErrorInValueToString(instance, timestamp, null, null, 7, null, null);
 
     expectTypeErrorInValueToString(instance, 0);
   }
@@ -114,7 +119,7 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     dateTime.add(Calendar.MILLISECOND, 7);
     assertEquals(dateTime, instance.valueOfString("2012-02-29T01:02:03.007+11:00", null, null, 3, null, null,
         Calendar.class));
-    assertEquals(530000000, instance.valueOfString("2012-02-29T01:02:03.53+11:00", null, null, 9, null, null,
+    assertEquals(530000001, instance.valueOfString("2012-02-29T01:02:03.530000001+11:00", null, null, 9, null, null,
         Timestamp.class).getNanos());
 
     assertEquals(Long.valueOf(120000L), instance.valueOfString("1970-01-01T00:02", null, null, null, null, null,

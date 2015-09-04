@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -32,13 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
  * Implementation of the EDM primitive type DateTimeOffset.
  */
 public final class EdmDateTimeOffset extends SingletonPrimitiveType {
-
-  public static final ThreadLocal<DecimalFormat> NANO_FORMAT = new ThreadLocal<DecimalFormat>() {
-    @Override
-    protected DecimalFormat initialValue() {
-      return new DecimalFormat("000000000");
-    }
-  };
 
   private static final Pattern PATTERN = Pattern.compile(
       "(-?\\p{Digit}{4,})-(\\p{Digit}{2})-(\\p{Digit}{2})"
@@ -93,14 +85,15 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       }
       if (returnType.isAssignableFrom(Timestamp.class)) {
         if (!decimals.isEmpty()) {
-          nanoSeconds = Integer.parseInt(decimals.length() > 9 ? decimals.substring(0, 9)
-              : decimals + "000000000".substring(decimals.length()));
+          nanoSeconds = Integer.parseInt(decimals.length() > 9 ?
+              decimals.substring(0, 9) :
+              decimals + "000000000".substring(decimals.length()));
         }
       } else {
-        final String milliSeconds = decimals.length() > 3
-            ? decimals.substring(0, 3)
-            : decimals + "000".substring(decimals.length());
-            dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+        final String milliSeconds = decimals.length() > 3 ?
+            decimals.substring(0, 3) :
+            decimals + "000".substring(decimals.length());
+        dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
       }
     }
 
@@ -157,19 +150,16 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue;
-    final int fractionalSecs;
+    Calendar dateTimeValue;
     if (value instanceof Timestamp) {
       final Calendar tmp = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       tmp.setTimeInMillis(((Timestamp) value).getTime());
       dateTimeValue = createDateTime(tmp);
-      fractionalSecs = ((Timestamp) value).getNanos();
     } else {
       dateTimeValue = createDateTime(value);
-      fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
     }
 
-    final StringBuilder result = new StringBuilder();
+    StringBuilder result = new StringBuilder();
     final int year = dateTimeValue.get(Calendar.YEAR);
     appendTwoDigits(result, year / 100);
     appendTwoDigits(result, year % 100);
@@ -184,12 +174,11 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     result.append(':');
     appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
+    final int fractionalSecs = value instanceof Timestamp ?
+        ((Timestamp) value).getNanos() :
+        dateTimeValue.get(Calendar.MILLISECOND);
     try {
-      if (value instanceof Timestamp) {
-        appendFractionalSeconds(result, fractionalSecs, precision);
-      } else {
-        appendMilliseconds(result, fractionalSecs, precision);
-      }
+      appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
     }
@@ -243,61 +232,35 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   }
 
   /**
-   * Appends the given number of milliseconds to the given string builder, assuming that the number has at most three
-   * digits, performance-optimized.
-   *
+   * Appends the given milli- or nanoseconds to the given string builder, performance-optimized.
    * @param result a {@link StringBuilder}
-   * @param milliseconds an integer that must satisfy <code>0 &lt;= milliseconds &lt;= 999</code>
+   * @param fractionalSeconds fractional seconds (nonnegative and assumed to be in the valid range)
+   * @param isNano whether the value is to be interpreted as nanoseconds (milliseconds if false)
    * @param precision the upper limit for decimal digits (optional, defaults to zero)
    * @throws IllegalArgumentException if precision is not met
    */
-  protected static void appendMilliseconds(final StringBuilder result, final int milliseconds,
-      final Integer precision) throws IllegalArgumentException {
+  protected static void appendFractionalSeconds(StringBuilder result, final int fractionalSeconds,
+      final boolean isNano, final Integer precision) throws IllegalArgumentException {
+    if (fractionalSeconds > 0) {
+      // Determine the number of trailing zeroes.
+      int nonSignificant = 0;
+      int output = fractionalSeconds;
+      while (output % 10 == 0) {
+        output /= 10;
+        nonSignificant++;
+      }
 
-    final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
-    if (digits > 0) {
-      if (precision == null || precision < digits) {
+      if (precision == null || precision < (isNano ? 9 : 3) - nonSignificant) {
         throw new IllegalArgumentException();
       }
 
       result.append('.');
-      for (int d = 100; d > 0; d /= 10) {
-        final byte digit = (byte) (milliseconds % (d * 10) / d);
-        if (digit > 0 || milliseconds % d > 0) {
+      for (int d = 100 * (isNano ? 1000 * 1000 : 1); d > 0; d /= 10) {
+        final byte digit = (byte) (fractionalSeconds % (d * 10) / d);
+        if (digit > 0 || fractionalSeconds % d > 0) {
           result.append((char) ('0' + digit));
         }
       }
-    }
-  }
-
-  /**
-   * Appends the given fractional seconds to the given string builder.
-   *
-   * @param result a {@link StringBuilder}
-   * @param fractionalSeconds fractional seconds
-   * @param precision the upper limit for decimal digits (optional, defaults to zero)
-   * @throws IllegalArgumentException if precision is not met
-   */
-  protected static void appendFractionalSeconds(final StringBuilder result, final int fractionalSeconds,
-      final Integer precision) throws IllegalArgumentException {
-
-    if (fractionalSeconds > 0) {
-      String formatted = NANO_FORMAT.get().format(fractionalSeconds);
-      int actualLength = formatted.length();
-      boolean nonZeroFound = false;
-      for (int i = formatted.length() - 1; i >= 0 && !nonZeroFound; i--) {
-        if ('0' == formatted.charAt(i)) {
-          actualLength--;
-        } else {
-          nonZeroFound = true;
-        }
-      }
-
-      if (precision == null || precision < actualLength) {
-        throw new IllegalArgumentException();
-      }
-
-      result.append('.').append(formatted.substring(0, actualLength));
     }
   }
 }
