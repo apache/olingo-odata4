@@ -22,36 +22,23 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
+public class OrderBySystemQueryITCase extends AbstractTecSvcITCase {
 
   private static final String ES_TWO_PRIM = "ESTwoPrim";
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
-
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-    // no teardown needed
-  }
-
   @Test
-  public void testSimpleOrderBy() {
+  public void simpleOrderBy() {
     ODataRetrieveResponse<ClientEntitySet> response = null;
 
     response = sendRequest(ES_ALL_PRIM, "PropertyDate");
@@ -68,10 +55,8 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSimpleOrderByDecending() {
-    ODataRetrieveResponse<ClientEntitySet> response = null;
-
-    response = sendRequest(ES_ALL_PRIM, "PropertyDate desc");
+  public void simpleOrderByDescending() {
+    ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyDate desc");
     assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
@@ -85,7 +70,7 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMultipleOrderBy() {
+  public void multipleOrderBy() {
     final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16");
     assertEquals(3, response.getBody().getEntities().size());
 
@@ -100,7 +85,7 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMultipleOrderByDecending() {
+  public void multipleOrderByDescending() {
     final ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16 desc");
     assertEquals(3, response.getBody().getEntities().size());
@@ -116,7 +101,7 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testOrderByWithNull() {
+  public void orderByWithNull() {
     final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_TWO_PRIM, "PropertyString");
     assertEquals(4, response.getBody().getEntities().size());
 
@@ -134,13 +119,11 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testOrderByInvalidExpression() {
+  public void orderByInvalidExpression() {
     fail(ES_TWO_PRIM, "PropertyString add 10", HttpStatusCode.BAD_REQUEST);
   }
 
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString) {
-    final ODataClient client = getClient();
-
     final URI uri =
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
@@ -148,8 +131,11 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
         .build();
 
     ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    setCookieHeader(request);
 
-    return request.execute();
+    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    return response;
   }
 
   private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
@@ -159,12 +145,5 @@ public class OrderBySystemQueryITCase extends AbstractBaseTestITCase {
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }
-  }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
   }
 }

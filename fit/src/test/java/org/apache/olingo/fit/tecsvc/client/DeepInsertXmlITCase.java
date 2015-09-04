@@ -56,19 +56,14 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * see the class comment on {@link DeepInsertITCase}
  */
-public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
+public class DeepInsertXmlITCase extends AbstractTecSvcITCase {
 
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
-  private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String ET_KEY_NAV_NAME = "ETKeyNav";
@@ -95,16 +90,8 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   private static final String COL_PROPERTY_COMP_NAV = "CollPropertyCompNav";
   private static final String EDM_STRING = "Edm.String";
 
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
-  
   @Test
-  public void testDeepInsertExpandedResponse() {
+  public void deepInsertExpandedResponse() {
     final ODataClient client = getClient(SERVICE_URI);
     client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
@@ -260,7 +247,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSimpleDeepInsert() throws EdmPrimitiveTypeException {
+  public void simpleDeepInsert() throws EdmPrimitiveTypeException {
     final ODataClient client = getClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ClientObjectFactory of = client.getObjectFactory();
@@ -461,7 +448,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDeepInsertSameEntitySet() throws EdmPrimitiveTypeException {
+  public void deepInsertSameEntitySet() throws EdmPrimitiveTypeException {
     final ODataClient client = getClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ClientObjectFactory of = client.getObjectFactory();
@@ -581,7 +568,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testConsistency() throws EdmPrimitiveTypeException {
+  public void consistency() throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
@@ -610,7 +597,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testInvalidType() throws EdmPrimitiveTypeException {
+  public void invalidType() throws EdmPrimitiveTypeException {
     final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
     final String cookie = getCookie();
@@ -650,7 +637,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
 
   @Test
   @Ignore
-  public void testDeepInsertOnNavigationPropertyInComplexProperty() {
+  public void deepInsertOnNavigationPropertyInComplexProperty() {
     final EdmEnabledODataClient client = getClient(SERVICE_URI);
     final ClientObjectFactory of = client.getObjectFactory();
 
@@ -705,7 +692,7 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDeepUpsert() {
+  public void deepUpsert() {
     final ODataClient client = getClient();
     final URI updateURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
@@ -943,18 +930,21 @@ public class DeepInsertXmlITCase extends AbstractBaseTestITCase {
       }
     }
   }
-  
+
+  @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
     odata.getConfiguration().setDefaultPubFormat(ContentType.APPLICATION_ATOM_XML);
     return odata;
   }  
-  
-  protected void assertContentType(String content) {
+
+  @Override
+  protected void assertContentType(final String content) {
     assertThat(content, containsString(ContentType.APPLICATION_ATOM_XML.toContentTypeString()));
   }
-  
-  protected EdmEnabledODataClient getClient(String serviceURI) {
-    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.APPLICATION_ATOM_XML);
+
+  @Override
+  protected EdmEnabledODataClient getClient(final String serviceRoot) {
+    return ODataClientFactory.getEdmEnabledClient(serviceRoot, ContentType.APPLICATION_ATOM_XML);
   }  
 }

@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -35,37 +34,22 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
+public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
 
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String NAV_PROPERTY_ET_KEY_NAV_MANY = "NavPropertyETKeyNavMany";
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
 
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
-  
   @Test
-  public void testFilter() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void filter() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
 
     final ODataRetrieveResponse<ClientEntitySet> response =
@@ -102,8 +86,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testOrderBy() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void orderBy() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.ORDERBY, "PropertyString desc");
 
     final ODataRetrieveResponse<ClientEntitySet> response =
@@ -132,8 +116,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSkip() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void skip() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.SKIP, "1");
 
     final ODataRetrieveResponse<ClientEntitySet> response =
@@ -163,8 +147,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testTop() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void top() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.TOP, "1");
 
     final ODataRetrieveResponse<ClientEntitySet> response =
@@ -194,8 +178,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testCombinedSystemQueryOptions() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void combinedSystemQueryOptions() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.SELECT, "PropertyInt16,PropertyString");
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1");
     options.put(QueryOption.SKIP, "1");
@@ -231,9 +215,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
 
   @Test
   @Ignore("Server do not support navigation property count annotations")
-  public void testCount() {
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void count() {
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.SELECT, "PropertyInt16");
     options.put(QueryOption.COUNT, true);
 
@@ -268,12 +252,12 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSingleEntiyWithExpand() {
+  public void singleEntityWithExpand() {
     /* A single entity request will be dispatched to a different processor method than entity set request */
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyInt16 lt 2");
-    final Map<String, Object> keys = new HashMap<String, Object>();
+    Map<String, Object> keys = new HashMap<String, Object>();
     keys.put("PropertyInt16", 1);
     keys.put("PropertyString", "1");
 
@@ -290,8 +274,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testURIEscaping() {
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void URIEscaping() {
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1"
         + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S' and length(PropertyString) gt 4");
     final ODataRetrieveResponse<ClientEntitySet> response =
@@ -303,7 +287,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testCyclicExpand() {
+  public void cyclicExpand() {
     // Expand entity in the following order
     // 1 => 2 => 1
     // Entity with Key (PropertyInt16=1, PrroperyString='1') holds references to (PropertyInt16=1, PropertyString='1')
@@ -311,14 +295,14 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     // Entity with Key (PropertyInt16=1, PropertyString='2') holds references to (PropertyInt16=1, PropertyString='1')
     // Define filters to select explicit the entities at any level => Circle
 
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "))");
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
 
-    final Map<String, Object> keys = new HashMap<String, Object>();
+    Map<String, Object> keys = new HashMap<String, Object>();
     keys.put(PROPERTY_INT16, 1);
     keys.put(PROPERTY_STRING, "1");
 
@@ -385,16 +369,16 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSystemQueryOptionOnThirdLevel() {
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+  public void systemQueryOptionOnThirdLevel() {
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + ";$filter=PropertyString eq '1'))");
     options.put(QueryOption.FILTER, "PropertyString eq '2'");
 
-    final Map<String, Object> keys = new HashMap<String, Object>();
+    Map<String, Object> keys = new HashMap<String, Object>();
     keys.put(PROPERTY_INT16, 1);
     keys.put(PROPERTY_STRING, "1");
 
@@ -459,8 +443,8 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
 
   @Test
   public void expandWithSearchQuery() {
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
     expandOptions.put(QueryOption.SEARCH, "abc");
     expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
     
@@ -479,60 +463,60 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
  
   @Test
   public void expandWithLevels() {
-    final ODataClient client = getClient();
-    final Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+    final ODataClient client = getClient(SERVICE_URI);
+    Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
     expandOptions.put(QueryOption.LEVELS, 2);
-    
+
     // expand=*($levels=2)
     URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
             .expandWithOptions("*", expandOptions)
             .build();
-    
+
     try {
       client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    } catch(ODataServerErrorException e) {
+    } catch (ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
-    
+
     // expand=NavPropertyETTwoKeyNavMany($levels=2)
     expandOptions.clear();
     expandOptions.put(QueryOption.LEVELS, 2);
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
             .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
             .build();
-    
+
     try {
       client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    } catch(ODataServerErrorException e) {
+    } catch (ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
-    
+
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
     expandOptions.clear();
     expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
             .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
             .build();
-    
+
     try {
       client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    } catch(ODataServerErrorException e) {
+    } catch (ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
-    
+
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2);$levels=3)
     expandOptions.clear();
     expandOptions.put(QueryOption.LEVELS, 2);
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
             .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
             .build();
-    
+
     try {
       client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    } catch(ODataServerErrorException e) {
+    } catch (ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
-    
+
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
     expandOptions.clear();
     expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
@@ -540,43 +524,25 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractBaseTestITCase {
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
             .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
             .build();
-    
+
     try {
       client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    } catch(ODataServerErrorException e) {
+    } catch (ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
     }
   }
-  
-  private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
-      final Map<QueryOption, Object> expandOptions) {
-    return buildRequest(entitySet, navigationProperty, expandOptions, null);
-  }
 
   private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
-      final Map<QueryOption, Object> expandOptions, final String cookie) {
-    final ODataClient client = getClient();
+      final Map<QueryOption, Object> expandOptions) {
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(entitySet)
         .expandWithOptions(navigationProperty, expandOptions)
         .build();
 
-    final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-
-    if (cookie != null) {
-      request.addCustomHeader(HttpHeader.COOKIE, cookie);
-    }
-
-    return request.execute();
+    ODataEntitySetRequest<ClientEntitySet> request =
+        edmEnabledClient.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    return response;
   }
-
-  @Override
-  protected ODataClient getClient() {
-    EdmEnabledODataClient odata = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, ContentType.JSON);
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
-  }
-  
-  protected EdmEnabledODataClient getClient(String serviceURI) {
-    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
-  }   
 }

@@ -18,6 +18,17 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
@@ -33,67 +44,50 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+public final class AsyncSupportITCase extends AbstractTecSvcITCase {
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-public final class AsyncSupportITCase extends AbstractBaseTestITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
   private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
-  public static final int SLEEP_TIMEOUT_IN_MS = 100;
+  private static final String TEC_ASYNC_SLEEP = "tec.sleep";  // see TechnicalAsyncService
+  private static final int SLEEP_TIMEOUT_IN_MS = 100;
 
   @Test
   public void readEntity() throws Exception {
-    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .appendKeySegment(32767).build();
 
-    //
-    final ODataRetrieveResponse<ClientEntity> response = getClient().getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
         .getEntityRequest(uri).execute();
     assertEquals(32767, response.getBody().getProperty("PropertyInt16").getPrimitiveValue().toValue());
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // first async request
 
-    ODataRequest re1 = getClient().getRetrieveRequestFactory()
+    ODataRequest re1 = client.getRetrieveRequestFactory()
             .getEntityRequest(uri)
-            .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+            .setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     AsyncResponseWrapper<ODataResponse> first = client.getAsyncRequestFactory().getAsyncRequestWrapper(re1).execute();
 
     assertTrue(first.isPreferenceApplied());
 
     // second async request
-    ODataRequest re2 = getClient().getRetrieveRequestFactory()
+    ODataRequest re2 = client.getRetrieveRequestFactory()
             .getEntityRequest(uri)
-            .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+            .setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     AsyncResponseWrapper<ODataResponse> second = client.getAsyncRequestFactory().getAsyncRequestWrapper(re2).execute();
     assertTrue(second.isPreferenceApplied());
 
@@ -105,8 +99,8 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
     assertNotNull(first.getODataResponse());
     ODataResponse firstResponse = first.getODataResponse();
-    assertEquals(200, firstResponse.getStatusCode());
-    ResWrap<Entity> entity = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+    assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
+    ResWrap<Entity> entity = client.getDeserializer(ContentType.APPLICATION_JSON)
         .toEntity(firstResponse.getRawResponse());
     assertEquals(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", entity.getPayload().getProperty("PropertyString").asPrimitive());
@@ -114,31 +108,29 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readEntitySet() throws Exception {
-    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .build();
 
-    //
-    final ODataRetrieveResponse<ClientEntitySet> response = getClient().getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri).execute();
-    assertEquals(200, response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet responseBody = response.getBody();
     assertEquals(3, responseBody.getEntities().size());
     checkEntityAvailableWith(responseBody, "PropertyInt16", 32767);
 
     // first async request
-    ODataRequest re1 = getClient().getRetrieveRequestFactory()
+    ODataRequest re1 = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
-        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+        .setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     AsyncResponseWrapper<ODataResponse> first = client.getAsyncRequestFactory().getAsyncRequestWrapper(re1).execute();
 
     assertTrue(first.isPreferenceApplied());
 
     // second async request
-    ODataRequest re2 = getClient().getRetrieveRequestFactory()
+    ODataRequest re2 = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
-        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+        .setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     AsyncResponseWrapper<ODataResponse> second = client.getAsyncRequestFactory().getAsyncRequestWrapper(re2).execute();
     assertTrue(second.isPreferenceApplied());
 
@@ -150,10 +142,10 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
     assertNotNull(first.getODataResponse());
     ODataResponse firstResponse = first.getODataResponse();
-    assertEquals(200, firstResponse.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
     assertEquals(2, firstResponse.getHeaderNames().size());
-    assertEquals("4.0", firstResponse.getHeader("OData-Version").iterator().next());
-    ResWrap<EntityCollection> firWrap = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+    assertEquals("4.0", firstResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
+    ResWrap<EntityCollection> firWrap = client.getDeserializer(ContentType.APPLICATION_JSON)
         .toEntitySet(firstResponse.getRawResponse());
     EntityCollection firstResponseEntitySet = firWrap.getPayload();
     assertEquals(3, firstResponseEntitySet.getEntities().size());
@@ -164,12 +156,9 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void createEntity() throws Exception {
-    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM).build();
 
-    //
-    final ClientObjectFactory factory = client.getObjectFactory();
     ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
         factory.newPrimitiveValueBuilder().buildInt32(42)));
@@ -181,7 +170,7 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
-    createRequest.addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+    createRequest.setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     assertNotNull(createRequest);
     AsyncResponseWrapper<ODataResponse> asyncResponse =
         client.getAsyncRequestFactory().getAsyncRequestWrapper(createRequest).execute();
@@ -196,7 +185,7 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
         (ODataEntityCreateResponse<ClientEntity>) asyncResponse.getODataResponse();
 
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), createResponse.getStatusCode());
-    assertEquals(SERVICE_URI + "/ESAllPrim(1)", createResponse.getHeader(HttpHeader.LOCATION).iterator().next());
+    assertEquals(SERVICE_URI + "ESAllPrim(1)", createResponse.getHeader(HttpHeader.LOCATION).iterator().next());
     final ClientEntity createdEntity = createResponse.getBody();
     assertNotNull(createdEntity);
     final ClientProperty property1 = createdEntity.getProperty("PropertyInt64");
@@ -208,9 +197,8 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  @Ignore("mibo: Does currently not work as expected -> issue in ODataClient?")
+  @Ignore("Does currently not work as expected -> issue in ODataClient?")
   public void getBatchRequest() throws Exception {
-    ODataClient client = getClient();
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
 //    final BatchManager payload = request.payloadManager();
@@ -219,9 +207,7 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 //    ODataEntityRequest<ClientEntity> getRequest = appendGetRequest(client, payload, "ESAllPrim", 32767, false);
 //    payload.addRequest(getRequest);
 
-    //
-    request.addCustomHeader(HttpHeader.PREFER,
-        "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=1");
+    request.setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     ODataBatchableRequest getRequest = appendGetRequest(client, "ESAllPrim", 32767, false);
     AsyncBatchRequestWrapper asyncRequest =
         client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(request);
@@ -232,7 +218,6 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 //    ODataBatchResponse res = payload.getResponse();
 //
 //    while(!test.isDone()) {
-//      System.out.println("Wait...");
 //      TimeUnit.SECONDS.sleep(1);
 //    }
 
@@ -244,13 +229,13 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 //    assertEquals("Accepted", response.getStatusMessage());
 
     ODataResponse firstResponse = asyncResponse.getODataResponse();
-    assertEquals(200, firstResponse.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
     assertEquals(2, firstResponse.getHeaderNames().size());
-    assertEquals("4.0", firstResponse.getHeader("OData-Version").iterator().next());
+    assertEquals("4.0", firstResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
 
-    ResWrap<Entity> firWrap = getClient().getDeserializer(ContentType.APPLICATION_JSON)
+    ResWrap<Entity> firstWrap = client.getDeserializer(ContentType.APPLICATION_JSON)
         .toEntity(firstResponse.getRawResponse());
-    Entity entity = firWrap.getPayload();
+    Entity entity = firstWrap.getPayload();
     assertEquals(32767, entity.getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", entity.getProperty("PropertyString").asPrimitive());
   }
@@ -261,14 +246,13 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
    */
   @Test
   public void deleteEntity() throws Exception {
-    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .appendKeySegment(32767).build();
 
     // asyncDeleteRequest async request
-    ODataRequest deleteRequest = getClient().getCUDRequestFactory().getDeleteRequest(uri)
-        .addCustomHeader(HttpHeader.PREFER, "respond-async; " + TechnicalAsyncService.TEC_ASYNC_SLEEP + "=5");
+    ODataRequest deleteRequest = client.getCUDRequestFactory().getDeleteRequest(uri)
+        .setPrefer("respond-async; " + TEC_ASYNC_SLEEP + "=5");
     AsyncResponseWrapper<ODataResponse> asyncDeleteRequest =
         client.getAsyncRequestFactory().getAsyncRequestWrapper(deleteRequest).execute();
 
@@ -289,9 +273,8 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
     }
   }
 
-  private ODataEntityRequest<ClientEntity> appendGetRequest(final ODataClient client, final String segment,
-                                                            final Object key, final boolean isRelative)
-      throws URISyntaxException {
+  private ODataEntityRequest<ClientEntity> appendGetRequest(final ODataClient client,
+      final String segment, final Object key, final boolean isRelative) throws URISyntaxException {
 
     final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
     targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
@@ -303,10 +286,9 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
   }
 
   private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {
-    List<ClientEntity> entities = entitySet.getEntities();
-    for (ClientEntity entity : entities) {
+    for (ClientEntity entity : entitySet.getEntities()) {
       ClientProperty ep = entity.getProperty("PropertyInt16");
-      if(ep != null) {
+      if (ep != null) {
         assertEquals(value, ep.getPrimitiveValue().toValue());
         return;
       }
@@ -317,16 +299,9 @@ public final class AsyncSupportITCase extends AbstractBaseTestITCase {
 
   private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds) throws InterruptedException {
     int waitCounter = maxWaitInSeconds * 1000;
-    while(!async.isDone() && waitCounter > 0) {
+    while (!async.isDone() && waitCounter > 0) {
       TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);
       waitCounter -= SLEEP_TIMEOUT_IN_MS;
     }
-  }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
   }
 }

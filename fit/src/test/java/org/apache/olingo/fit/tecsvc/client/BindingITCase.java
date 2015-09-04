@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import org.apache.olingo.client.api.EdmEnabledODataClient;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -37,21 +35,14 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientLink;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class BindingITCase extends AbstractBaseTestITCase {
-  protected static final String SERVICE_URI = TecSvcConst.BASE_URI;
+public class BindingITCase extends AbstractTecSvcITCase {
 
-  private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String ET_KEY_NAV_NAME = "ETKeyNav";
@@ -72,35 +63,35 @@ public class BindingITCase extends AbstractBaseTestITCase {
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
 
   @Test
-  public void testCreateBindingSimple() throws EdmPrimitiveTypeException {
-    final ODataClient client = getClient();
+  public void createBindingSimple() throws EdmPrimitiveTypeException {
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
-    final ClientObjectFactory of = client.getObjectFactory();
 
     // Create entity (EntitySet: ESKeyNav, Type: ETKeyNav)
-    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
+    final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
     entity.getProperties()
-    .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)));
     entity.getProperties()
-    .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")));
+    .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
-    .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+    .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties()
-    .add(of.newComplexProperty(PROPERTY_COMP_ALL_PRIM, of.newComplexValue(CT_ALL_PRIM)
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    .add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM, factory.newComplexValue(CT_ALL_PRIM)
+        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
-    .add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))));
+    .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
+        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
+        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
-    .add(of.newComplexProperty(PROPERTY_COMP_COMP_NAV, of.newComplexValue(CT_PRIM_COMP)
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("42")))
-        .add(of.newComplexProperty(PROPERTY_COMP_NAV, of.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+    .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
+        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))
+        .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Bind existing entities via binding synatx
-    entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
+    entity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(new LinkedHashMap<String, Object>() {
@@ -113,23 +104,23 @@ public class BindingITCase extends AbstractBaseTestITCase {
         }).build()));
 
     final ClientLink navLinkOne =
-        of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
+        factory.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(
                 ES_KEY_NAV).appendKeySegment(1).build());
     final ClientLink navLinkMany1 =
-        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+        factory.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(
                 ES_KEY_NAV).appendKeySegment(2).build());
     final ClientLink navLinkMany2 =
-        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+        factory.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(
                 ES_KEY_NAV).appendKeySegment(3).build());
 
-    final HashMap<String, Object> combinedKey = new HashMap<String, Object>();
+    HashMap<String, Object> combinedKey = new HashMap<String, Object>();
     combinedKey.put(PROPERTY_INT16, 1);
     combinedKey.put(PROPERTY_STRING, "1");
     final ClientLink navLink2Many =
-        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+        factory.newEntitySetNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(combinedKey).build());
 
     entity.addLink(navLinkOne);
@@ -138,37 +129,37 @@ public class BindingITCase extends AbstractBaseTestITCase {
     entity.addLink(navLink2Many);
 
     final ODataEntityCreateResponse<ClientEntity> createResponse =
-        client.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
+        edmEnabledClient.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
     final String cookie = createResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     final Short entityInt16Key =
         createResponse.getBody().getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class);
 
     // Check the just created entity
     final URI entityGetURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(entityInt16Key).expand(
-            NAV_PROPERTY_ET_KEY_NAV_ONE, NAV_PROPERTY_ET_KEY_NAV_MANY, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
+        edmEnabledClient.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(entityInt16Key)
+        .expand(NAV_PROPERTY_ET_KEY_NAV_ONE, NAV_PROPERTY_ET_KEY_NAV_MANY, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
     final ODataEntityRequest<ClientEntity> entityGetRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(entityGetURI);
+        edmEnabledClient.getRetrieveRequestFactory().getEntityRequest(entityGetURI);
     entityGetRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> entityGetResponse = entityGetRequest.execute();
 
     // NAV_PROPERTY_ET_KEY_NAV_ONE
-    assertEquals(Short.valueOf((short) 1), entityGetResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+    assertShortOrInt(1, entityGetResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
         .asInlineEntity().getEntity().getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class));
 
     // NAV_PROPERTY_ET_KEY_NAV_MANY(0)
     Iterator<ClientEntity> iterator = entityGetResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
         .asInlineEntitySet().getEntitySet().getEntities().iterator();
-    assertEquals(Short.valueOf((short) 2), iterator.next().getProperty(PROPERTY_INT16).getPrimitiveValue()
+    assertShortOrInt(2, iterator.next().getProperty(PROPERTY_INT16).getPrimitiveValue()
         .toCastValue(Short.class));
 
     // NAV_PROPERTY_ET_KEY_NAV_MANY(1)
-    assertEquals(Short.valueOf((short) 3), iterator.next().getProperty(PROPERTY_INT16).getPrimitiveValue()
+    assertShortOrInt(3, iterator.next().getProperty(PROPERTY_INT16).getPrimitiveValue()
         .toCastValue(Short.class));
 
     // NAV_PROPERTY_ET_TWO_KEY_NAV_MANY(0)
-    assertEquals(Short.valueOf((short)1), entityGetResponse.getBody()
+    assertShortOrInt(1, entityGetResponse.getBody()
         .getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet().getEntities()
         .iterator().next().getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class));
     assertEquals("1", entityGetResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
@@ -180,7 +171,7 @@ public class BindingITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(combinedKey).expand(
             NAV_PROPERTY_ET_KEY_NAV_ONE).build();
     final ODataEntityRequest<ClientEntity> etTwoKeyNavEntityRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(etTwoKeyNavEntityURI);
+        edmEnabledClient.getRetrieveRequestFactory().getEntityRequest(etTwoKeyNavEntityURI);
     etTwoKeyNavEntityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> etTwoKeyNavEntityResponse = etTwoKeyNavEntityRequest.execute();
 
@@ -189,32 +180,30 @@ public class BindingITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUpdateBinding() throws Exception {
+  public void updateBinding() throws Exception {
     // The entity MUST NOT contain related entities as inline content. It MAY contain binding information
     // for navigation properties. For single-valued navigation properties this replaces the relationship.
     // For collection-valued navigation properties this adds to the relationship.
 
-    final ODataClient client = getClient();
     final URI entityURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
-    final ClientObjectFactory of = client.getObjectFactory();
 
     // ESKeyNav(1).NavPropertyETKeyNavOne = ESKeyNav(2)
     // ESKeyNav(1).NavPropertyETKeyNavMany = { ESKeyNav(1), ESKeyNav(2) }
     // => Replace NavPropertyETKeyNavOne with ESKeyNav(3)
     // => Add to NavPropertyETKeyNavOne ESKeyNav(3)
-    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
+    final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
     final ClientLink navLinkOne =
-        of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
+        factory.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(3).build());
     final ClientLink navLinkMany =
-        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+        factory.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(3).build());
     entity.addLink(navLinkOne);
     entity.addLink(navLinkMany);
 
     final ODataEntityUpdateResponse<ClientEntity> updateResponse =
-        client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+        edmEnabledClient.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
     final String cookie = updateResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     // Check if update was successful
@@ -222,11 +211,11 @@ public class BindingITCase extends AbstractBaseTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).expand(
             NAV_PROPERTY_ET_KEY_NAV_ONE, NAV_PROPERTY_ET_KEY_NAV_MANY).build();
     final ODataEntityRequest<ClientEntity> entityRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(entityGetURI);
+        edmEnabledClient.getRetrieveRequestFactory().getEntityRequest(entityGetURI);
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
-    assertEquals(Short.valueOf((short) 3), entityResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+    assertShortOrInt(3, entityResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
           .asInlineEntity().getEntity().getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class));
     assertEquals(3, entityResponse.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY).asInlineEntitySet()
         .getEntitySet().getEntities().size());
@@ -242,64 +231,60 @@ public class BindingITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMissingEntity() {
+  public void missingEntity() {
     // Update an existing entity, use a URI to a not existing entity
     // Perform the request to a single navigation property and a collection navigation property as well.
     // Expected: Not Found (404)
 
-    final ODataClient client = getClient();
     final URI entityURI =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
-    final ClientObjectFactory of = client.getObjectFactory();
 
     // Request to single (non collection) navigation property
-    ClientEntity entity = of.newEntity(ET_KEY_NAV);
+    ClientEntity entity = factory.newEntity(ET_KEY_NAV);
     final ClientLink navLinkOne =
-        of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
+        factory.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(42).build());
     entity.addLink(navLinkOne);
 
     try {
-      client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      edmEnabledClient.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
     }
 
     // Request to collection navigation propetry
-    entity = of.newEntity(ET_KEY_NAV);
+    entity = factory.newEntity(ET_KEY_NAV);
     final ClientLink navLinkMany =
-        of.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
+        factory.newEntitySetNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY, client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(3).build());
     entity.addLink(navLinkMany);
 
     try {
-      client.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
+      edmEnabledClient.getCUDRequestFactory().getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
 
   @Test
-  public void testDeepInsertWithBindingSameNavigationProperty() {
-    final EdmEnabledODataClient client = getClient();
-    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    final ClientObjectFactory of = client.getObjectFactory();
-
-    final ClientEntity entity = of.newEntity(ET_KEY_NAV);
-    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+  public void deepInsertWithBindingSameNavigationProperty() {
+    final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
+    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
         .buildString("1")));
-    entity.getProperties().add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("1")))));
+    entity.getProperties().add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
+        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("1")))));
 
-    final ClientEntity innerEntity = of.newEntity(ET_KEY_NAV);
-    innerEntity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+    final ClientEntity innerEntity = factory.newEntity(ET_KEY_NAV);
+    innerEntity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
         .buildString("2")));
-    innerEntity.getProperties().add(of.newComplexProperty(PROPERTY_COMP_TWO_PRIM, of.newComplexValue(CT_TWO_PRIM)
-        .add(of.newPrimitiveProperty(PROPERTY_INT16, of.newPrimitiveValueBuilder().buildInt16((short) 1)))
-        .add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder().buildString("2")))));
-    innerEntity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
+    innerEntity.getProperties().add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM,
+        factory.newComplexValue(CT_TWO_PRIM)
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("2")))));
+    innerEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(new LinkedHashMap<String, Object>() {
@@ -311,10 +296,10 @@ public class BindingITCase extends AbstractBaseTestITCase {
           }
         }).build()));
 
-    final ClientInlineEntity inlineLink = of.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
+    final ClientInlineEntity inlineLink = factory.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineLink);
 
-    entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
+    entity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(new LinkedHashMap<String, Object>() {
@@ -330,27 +315,23 @@ public class BindingITCase extends AbstractBaseTestITCase {
         .appendKeySegment(3)
         .build();
 
-    entity.addLink(of.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, bindingURI));
+    entity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE, bindingURI));
 
     final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ODataEntityCreateResponse<ClientEntity> response =
-        client.getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
+        edmEnabledClient.getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
 
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
 
-    assertEquals(1, response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
-        .asInlineEntity()
-        .getEntity()
-        .getProperty(PROPERTY_COMP_TWO_PRIM)
-        .getComplexValue()
-        .get(PROPERTY_INT16)
-        .getPrimitiveValue()
-        .toValue());
-  }
-
-  protected EdmEnabledODataClient getClient() {
-    EdmEnabledODataClient odata = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
+    if (isJson()) {
+      assertEquals(1, response.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+          .asInlineEntity()
+          .getEntity()
+          .getProperty(PROPERTY_COMP_TWO_PRIM)
+          .getComplexValue()
+          .get(PROPERTY_INT16)
+          .getPrimitiveValue()
+          .toValue());
+    }
   }
 }

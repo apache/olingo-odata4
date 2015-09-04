@@ -18,18 +18,15 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
@@ -46,23 +43,20 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.apache.olingo.fit.base.AbstractTestITCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BatchClientITCase extends AbstractTestITCase {
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
+public class BatchClientITCase extends AbstractTecSvcITCase {
+
   private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_NOT_AVAILABLE_NAME = "ESNotAvailable";
   private static final FullQualifiedName ES_NOT_AVAILABLE = new FullQualifiedName(SERVICE_NAMESPACE,
@@ -76,7 +70,7 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testBadRequestInChangeSet() {
+  public void badRequestInChangeSet() {
     /*
      * A bad request (status code >= 400) without "continue on error prefer header" in a changeset
      * should return a single response with Content-Type: application/http
@@ -92,12 +86,9 @@ public class BatchClientITCase extends AbstractTestITCase {
      * for the particular response format.
      */
 
-    final ODataClient client = getClient();
-    final ClientObjectFactory of = client.getObjectFactory();
-
     // Try to create entity, with invalid type
-    final ClientEntity entity = of.newEntity(ES_NOT_AVAILABLE);
-    entity.getProperties().add(of.newPrimitiveProperty(PROPERTY_STRING, of.newPrimitiveValueBuilder()
+    final ClientEntity entity = factory.newEntity(ES_NOT_AVAILABLE);
+    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
         .buildString("1")));
     final ODataBatchRequest batchRequest = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
     final BatchManager payloadManager = batchRequest.payloadManager();
@@ -127,10 +118,6 @@ public class BatchClientITCase extends AbstractTestITCase {
     assertContentType(updateResponse.getContentType());
   }
 
-  protected void assertContentType(String content) {
-    assertThat(content, containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
-  }
-  
   @Test
   public void emptyBatchRequest() {
     // create your request
@@ -209,7 +196,7 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testErrorWithoutContinueOnErrorPreferHeader() throws URISyntaxException {
+  public void errorWithoutContinueOnErrorPreferHeader() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
     final BatchManager payload = request.payloadManager();
@@ -252,11 +239,11 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void testInvalidAbsoluteUri() throws URISyntaxException {
+  public void invalidAbsoluteUri() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
     final BatchManager payload = request.payloadManager();
-    final URI uri = new URI(SERVICE_URI + "/../ESAllPrim(32767)");
+    final URI uri = new URI(SERVICE_URI + "../ESAllPrim(32767)");
     final ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
     queryReq.setFormat(ContentType.JSON);
     payload.addRequest(queryReq);
@@ -276,7 +263,7 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test(expected = HttpClientException.class)
-  public void testInvalidHost() throws URISyntaxException {
+  public void invalidHost() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
     final BatchManager payload = request.payloadManager();
@@ -290,7 +277,7 @@ public class BatchClientITCase extends AbstractTestITCase {
   }
 
   @Test(expected = HttpClientException.class)
-  public void testInvalidAbsoluteRequest() throws URISyntaxException {
+  public void invalidAbsoluteRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
     final BatchManager payload = request.payloadManager();
@@ -364,19 +351,16 @@ public class BatchClientITCase extends AbstractTestITCase {
   public void changesetWithReferences() throws EdmPrimitiveTypeException, URISyntaxException {
     // create your request
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    final ClientObjectFactory of = client.getObjectFactory();
     final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
-    final ClientEntity entityESAllPrim = getClient().getObjectFactory().
-        newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    final ClientEntity entityESAllPrim = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
 
-    entityESAllPrim.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyDouble",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
+    entityESAllPrim.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
+        factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     entityESAllPrim.addLink(
-        of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+        factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(-365)
             .build()));
@@ -393,9 +377,8 @@ public class BatchClientITCase extends AbstractTestITCase {
     int createRequestRef = changeset.getLastContentId();
 
     // add update request
-    final ClientEntity entityUpdate = client.getObjectFactory().newEntity(entityESAllPrim.getTypeName());
-    entityUpdate.addLink(client.getObjectFactory().newEntitySetNavigationLink(
-        "NavPropertyETTwoPrimMany",
+    final ClientEntity entityUpdate = factory.newEntity(entityESAllPrim.getTypeName());
+    entityUpdate.addLink(factory.newEntitySetNavigationLink("NavPropertyETTwoPrimMany",
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767).build()));
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().getEntityUpdateRequest(
@@ -441,8 +424,6 @@ public class BatchClientITCase extends AbstractTestITCase {
   @Test
   public void changesetBatchRequest() throws URISyntaxException {
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    final ClientObjectFactory of = client.getObjectFactory();
-
     final BatchManager payload = request.payloadManager();
     // -----------------------------
     // - Append get request
@@ -460,16 +441,14 @@ public class BatchClientITCase extends AbstractTestITCase {
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim");
     URI editLink = targetURI.build();
 
-    ClientEntity postEntity = client.getObjectFactory().newEntity(
-        new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
-    postEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+    ClientEntity postEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
+    postEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
         .appendKeySegment(32766)
         .build()));
 
-    postEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyDouble",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
+    postEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
+        factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
         client.getCUDRequestFactory().getEntityCreateRequest(editLink, postEntity);
@@ -482,13 +461,11 @@ public class BatchClientITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(0);
     editLink = targetURI.build();
 
-    ClientEntity patchEntity = client.getObjectFactory()
-        .newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    ClientEntity patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
     patchEntity.setEditLink(editLink);
 
-    patchEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyDouble",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
+    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
+        factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     ODataEntityUpdateRequest<ClientEntity> changeReq =
         client.getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
@@ -500,14 +477,13 @@ public class BatchClientITCase extends AbstractTestITCase {
     targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(15);
     editLink = targetURI.build();
 
-    patchEntity = client.getObjectFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ESAllPrim"));
+    patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
     patchEntity.setEditLink(editLink);
 
-    patchEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty(
-        "PropertyDouble",
-        client.getObjectFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
+    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
+        factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
-    patchEntity.addLink(of.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
+    patchEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
         .appendKeySegment(32766)
         .build()));

@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
@@ -39,60 +38,39 @@ import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class ActionImportITCase extends AbstractBaseTestITCase {
+public class ActionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void noReturnTypeAction() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRT").build();
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class).execute();
+    final ODataInvokeResponse<ClientProperty> response = callAction("AIRT", ClientProperty.class, null, false);
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
   }
 
   @Test
   public void primitiveAction() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTString").build();
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class).execute();
+    final ODataInvokeResponse<ClientProperty> response = callAction("AIRTString", ClientProperty.class, null, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals("UARTString string value", response.getBody().getPrimitiveValue().toValue());
   }
 
   @Test
   public void primitiveActionMinimalResponse() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTString").build();
-    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
-        .getActionInvokeRequest(actionURI, ClientProperty.class);
-    request.setPrefer(getClient().newPreferences().returnMinimal());
-    final ODataInvokeResponse<ClientProperty> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    callAction("AIRTString", ClientProperty.class, null, true);
   }
 
   @Test
   public void primitiveActionInvalidParameters() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTString").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("Invalid",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt32(1));
     try {
-      getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-          .execute();
+      callAction("AIRTString", ClientProperty.class, buildParameterInt16(42), false);
       fail("Expected an ODataClientErrorException");
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
@@ -101,15 +79,12 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void primitiveCollectionAction() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollStringTwoParam").build();
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    parameters.put("ParameterInt16", getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
-    parameters.put("ParameterDuration", getClient().getObjectFactory().newPrimitiveValueBuilder()
+    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 3));
+    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder()
         .setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal(1)).build());
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientCollectionValue<ClientValue> valueArray = response.getBody().getCollectionValue();
     assertEquals(3, valueArray.size());
@@ -121,13 +96,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void complexAction() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCTTwoPrimParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCTTwoPrimParam", ClientProperty.class, buildParameterInt16(3), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientComplexValue complexValue = response.getBody().getComplexValue();
     ClientProperty propInt16 = complexValue.get("PropertyInt16");
@@ -140,13 +110,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void complexCollectionActionNoContent() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollCTTwoPrimParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 0));
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollCTTwoPrimParam", ClientProperty.class, buildParameterInt16(0), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(0, complexValueCollection.size());
@@ -154,13 +119,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void complexCollectionActionSubContent() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollCTTwoPrimParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 1));
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollCTTwoPrimParam", ClientProperty.class, buildParameterInt16(1), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(1, complexValueCollection.size());
@@ -173,13 +133,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void complexCollectionActionAllContent() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollCTTwoPrimParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
-    ODataInvokeResponse<ClientProperty> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollCTTwoPrimParam", ClientProperty.class, buildParameterInt16(3), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientCollectionValue<ClientValue> complexValueCollection = response.getBody().getCollectionValue();
     assertEquals(3, complexValueCollection.size());
@@ -200,13 +155,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityActionETTwoKeyTwoPrim() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTETTwoKeyTwoPrimParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -365));
-    ODataInvokeResponse<ClientEntity> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntity.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntity> response =
+        callAction("AIRTETTwoKeyTwoPrimParam", ClientEntity.class, buildParameterInt16(-365), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntity entity = response.getBody();
     ClientProperty propInt16 = entity.getProperty("PropertyInt16");
@@ -219,13 +169,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityCollectionActionETKeyNav() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollETKeyNavParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
-    ODataInvokeResponse<ClientEntitySet> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntitySet> response =
+        callAction("AIRTCollETKeyNavParam", ClientEntitySet.class, buildParameterInt16(3), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(3, entitySet.getEntities().size());
@@ -238,13 +183,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityCollectionActionETKeyNavEmptyCollection() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollETKeyNavParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) 0));
-    ODataInvokeResponse<ClientEntitySet> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntitySet> response =
+        callAction("AIRTCollETKeyNavParam", ClientEntitySet.class, buildParameterInt16(0), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(0, entitySet.getEntities().size());
@@ -252,13 +192,8 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityCollectionActionETKeyNavNegativeParam() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollETKeyNavParam").build();
-    Map<String, ClientValue> parameters = Collections.singletonMap("ParameterInt16",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildInt16((short) -10));
-    ODataInvokeResponse<ClientEntitySet> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntitySet> response =
+        callAction("AIRTCollETKeyNavParam", ClientEntitySet.class, buildParameterInt16(-10), false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(0, entitySet.getEntities().size());
@@ -266,8 +201,6 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityCollectionActionETAllPrim() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTCollESAllPrimParam").build();
     Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     time.clear();
     time.set(Calendar.HOUR_OF_DAY, 3);
@@ -275,11 +208,10 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     time.set(Calendar.SECOND, 0);
     Map<String, ClientValue> parameters = Collections.singletonMap(
         "ParameterTimeOfDay",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder()
+        (ClientValue) factory.newPrimitiveValueBuilder()
             .setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(time).build());
-    ODataInvokeResponse<ClientEntitySet> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntitySet.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntitySet> response =
+        callAction("AIRTCollESAllPrimParam", ClientEntitySet.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet entitySet = response.getBody();
     assertEquals(3, entitySet.getEntities().size());
@@ -292,72 +224,56 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
 
   @Test
   public void entityActionETAllPrim() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTESAllPrimParam").build();
     Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.clear();
     dateTime.set(1012, 2, 0, 0, 0, 0);
-    Map<String, ClientValue> parameters = Collections.singletonMap(
+    final Map<String, ClientValue> parameters = Collections.singletonMap(
         "ParameterDate",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder()
+        (ClientValue) factory.newPrimitiveValueBuilder()
             .setType(EdmPrimitiveTypeKind.Date).setValue(dateTime).build());
-    ODataInvokeResponse<ClientEntity> response =
-        getClient().getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientEntity.class, parameters)
-            .execute();
+    final ODataInvokeResponse<ClientEntity> response =
+        callAction("AIRTESAllPrimParam", ClientEntity.class, parameters, false);
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
     assertEquals(TecSvcConst.BASE_URI + "/ESAllPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
   }
 
   @Test
   public void entityActionETAllPrimNoContent() throws Exception {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-        .appendActionCallSegment("AIRTESAllPrimParam").build();
-    final Map<String, ClientValue> parameters = Collections.singletonMap(
-        "ParameterDate",
-        (ClientValue) getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("2000-02-29"));
-    ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
-        .getActionInvokeRequest(actionURI, ClientEntity.class, parameters);
-    request.setPrefer(getClient().newPreferences().returnMinimal());
-    final ODataInvokeResponse<ClientEntity> response = request.execute();
-    assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-    assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    final ODataInvokeResponse<ClientEntity> response =
+        callAction("AIRTESAllPrimParam", ClientEntity.class,
+            Collections.singletonMap("ParameterDate",
+                (ClientValue) factory.newPrimitiveValueBuilder().buildString("2000-02-29")),
+            true);
     final String location = TecSvcConst.BASE_URI + "/ESAllPrim(1)";
     assertEquals(location, response.getHeader(HttpHeader.LOCATION).iterator().next());
     assertEquals(location, response.getHeader(HttpHeader.ODATA_ENTITY_ID).iterator().next());
   }
-  
+
   @Test
-  public void airtCollStringTwoParanNotNull() {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-                                     .appendActionCallSegment("AIRTCollStringTwoParam").build();
-    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    final ClientObjectFactory of = getClient().getObjectFactory();
-    parameters.put("ParameterInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2));
-    parameters.put("ParameterDuration", of.newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
-    final ODataInvokeResponse<ClientProperty> response = getClient()
-        .getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters).execute();
-    
+  public void airtCollStringTwoParamNotNull() {
+    Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
     ClientCollectionValue<ClientValue> collectionValue = response.getBody().getCollectionValue().asCollection();
     assertEquals(2, collectionValue.size());
     final Iterator<ClientValue> iter = collectionValue.iterator();
-    
     assertEquals("UARTCollStringTwoParam duration value: PT1S", iter.next().asPrimitive().toValue());
     assertEquals("UARTCollStringTwoParam duration value: PT2S", iter.next().asPrimitive().toValue());
   }
-  
+
   @Test
-  public void airtCollStringTwoParanNull() {
-    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI)
-                                     .appendActionCallSegment("AIRTCollStringTwoParam").build();
-    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    final ClientObjectFactory of = getClient().getObjectFactory();
-    parameters.put("ParameterInt16", of.newPrimitiveValueBuilder().buildInt16((short) 2));
-    parameters.put("ParameterDuration", of.newPrimitiveValueBuilder().buildDuration(null));
-    final ODataInvokeResponse<ClientProperty> response = getClient()
-        .getInvokeRequestFactory().getActionInvokeRequest(actionURI, ClientProperty.class, parameters).execute();
-    
+  public void airtCollStringTwoParamNull() {
+    Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder().buildDuration(null));
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
     ClientCollectionValue<ClientValue> collectionValue = response.getBody().getCollectionValue().asCollection();
     assertEquals(2, collectionValue.size());
     final Iterator<ClientValue> iter = collectionValue.iterator();
@@ -365,12 +281,28 @@ public class ActionImportITCase extends AbstractBaseTestITCase {
     assertEquals("UARTCollStringTwoParam int16 value: 2", iter.next().asPrimitive().toValue());
     assertEquals("UARTCollStringTwoParam duration value: null", iter.next().asPrimitive().toValue());
   }
-  
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
+
+  private Map<String, ClientValue> buildParameterInt16(final int value) {
+    return Collections.singletonMap("ParameterInt16",
+        (ClientValue) factory.newPrimitiveValueBuilder().buildInt16((short) value));
   }
 
+  private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
+      final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
+    final URI actionURI = client.newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
+    ODataInvokeRequest<T> request = client.getInvokeRequestFactory()
+        .getActionInvokeRequest(actionURI, resultRef, parameters);
+    if (returnMinimal) {
+      request.setPrefer(client.newPreferences().returnMinimal());
+    }
+    // We can re-use the session since our actions don't (yet?!) modify existing data.
+    setCookieHeader(request);
+    final ODataInvokeResponse<T> response = request.execute();
+    saveCookieHeader(response);
+    if (returnMinimal) {
+      assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
+      assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    }
+    return response;
+  }
 }

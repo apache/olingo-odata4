@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
@@ -41,26 +40,16 @@ import org.apache.olingo.client.api.communication.response.ODataMediaEntityUpdat
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class MediaITCase extends AbstractBaseTestITCase {
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
+public class MediaITCase extends AbstractTecSvcITCase {
+
   @Test
   public void read() throws Exception {
-    final ODataClient client = getClient();
     final ODataMediaRequest request = client.getRetrieveRequestFactory().getMediaRequest(
         client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build());
@@ -78,7 +67,6 @@ public class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void delete() {
-    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
@@ -102,7 +90,6 @@ public class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void update() throws Exception {
-    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     ODataMediaEntityUpdateRequest<ClientEntity> request =
@@ -129,7 +116,6 @@ public class MediaITCase extends AbstractBaseTestITCase {
 
   @Test
   public void create() throws Exception {
-    final ODataClient client = getClient();
     ODataMediaEntityCreateRequest<ClientEntity> request =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
@@ -157,12 +143,5 @@ public class MediaITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());
     assertEquals(ContentType.TEXT_PLAIN.toContentTypeString(), mediaResponse.getContentType());
     assertEquals("just a test", IOUtils.toString(mediaResponse.getBody()));
-  }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
   }
 }

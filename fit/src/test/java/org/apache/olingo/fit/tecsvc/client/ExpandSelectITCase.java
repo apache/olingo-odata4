@@ -19,13 +19,12 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
-import org.apache.olingo.client.api.EdmEnabledODataClient;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -34,35 +33,24 @@ import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientLinkType;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class ExpandSelectITCase extends AbstractBaseTestITCase {
+public class ExpandSelectITCase extends AbstractTecSvcITCase {
 
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
-  
   @Test
   public void readSelect() {
-    final ODataClient client = getClient();
-    final ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
+    ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(Short.MAX_VALUE)
             .select("PropertyInt32,PropertyInt16")
             .build());
     assertNotNull(request);
+    setCookieHeader(request);
 
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final ClientEntity entity = response.getBody();
@@ -83,22 +71,19 @@ public class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertEquals(Integer.MAX_VALUE, property.getPrimitiveValue().toValue());
   }
 
-  private boolean isJson() {
-    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
-  }
-  
   @Test
   public void readExpandSelect() {
-    final ODataClient client = getClient();
-    final ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
+    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(-365)
             .expand("NavPropertyETAllPrimMany($select=PropertyTimeOfDay,PropertySByte)")
             .select("PropertyString")
             .build());
     assertNotNull(request);
+    setCookieHeader(request);
 
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final ClientEntity entity = response.getBody();
@@ -111,12 +96,12 @@ public class ExpandSelectITCase extends AbstractBaseTestITCase {
     assertNotNull(property.getPrimitiveValue());
     assertEquals("Test String2", property.getPrimitiveValue().toValue());
 
-    if(isJson()) {
+    if (isJson()) {
       assertNull(entity.getNavigationLink("NavPropertyETAllPrimOne"));
     } else {
-      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // in xml the links will be always present; but the content will not be if no $expand unlike
       // json;metadata=minimal; json=full is same as application/xml
-      Assert.assertFalse(entity.getNavigationLink("NavPropertyETAllPrimOne") instanceof ClientInlineEntity);
+      assertFalse(entity.getNavigationLink("NavPropertyETAllPrimOne") instanceof ClientInlineEntity);
     }
 
     final ClientLink link = entity.getNavigationLink("NavPropertyETAllPrimMany");
@@ -136,27 +121,28 @@ public class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Test
   public void readExpandTwoLevels() {
-    final ODataClient client = getClient();
-    final ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
+    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
             .expand("NavPropertyETAllPrimOne($expand=NavPropertyETTwoPrimOne)")
             .build());
     assertNotNull(request);
+    setCookieHeader(request);
 
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     assertEquals(2, entity.getProperties().size());
 
-    if(isJson()) {
+    if (isJson()) {
       assertNull(entity.getNavigationLink("NavPropertyETAllPrimMany"));
     } else {
       // in xml the links will be always present; but the content will not be if no $expand unlike 
       // json;metadata=minimal; json=full is same as application/xml
-      Assert.assertFalse(entity.getNavigationLink("NavPropertyETAllPrimMany") instanceof ClientInlineEntity);
+      assertFalse(entity.getNavigationLink("NavPropertyETAllPrimMany") instanceof ClientInlineEntity);
     }
 
     final ClientLink link = entity.getNavigationLink("NavPropertyETAllPrimOne");
@@ -178,13 +164,14 @@ public class ExpandSelectITCase extends AbstractBaseTestITCase {
 
   @Test
   public void expandSingleValuedNavigationPropertyWithNullValue() {
-    final ODataClient client = getClient();
-    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
+    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
         .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build())
-            .execute();
-    
-    if(isJson()) {
+            .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build());
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
+
+    if (isJson()) {
       // this will be only true in the json;metadata=minimal case not always
       assertEquals(0, response.getBody().getNavigationLinks().size());
       assertNull(response.getBody().getNavigationLink("NavPropertyETKeyNavOne"));
@@ -192,17 +179,8 @@ public class ExpandSelectITCase extends AbstractBaseTestITCase {
       // in xml the links will be always present; but the content will not be if no $expand unlike 
       // json;metadata=minimal; json=full is same as application/xml
       assertEquals(6, response.getBody().getNavigationLinks().size());
-      Assert.assertFalse(response.getBody()
+      assertFalse(response.getBody()
           .getNavigationLink("NavPropertyETKeyNavOne") instanceof ClientInlineEntity);
     }    
   }
-
-  @Override
-  protected ODataClient getClient() {
-    return ODataClientFactory.getEdmEnabledClient(TecSvcConst.BASE_URI, ContentType.JSON);
-  }
-  
-  protected EdmEnabledODataClient getClient(String serviceURI) {
-    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
-  } 
 }

@@ -24,63 +24,47 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
-import org.apache.olingo.client.api.ODataClient;
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.apache.olingo.fit.util.StringHelper;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class NavigationITCase extends AbstractBaseTestITCase {
+public class NavigationITCase extends AbstractTecSvcITCase {
 
-  private final ODataClient client = getClient();
-
-  
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
-  
   @Test
   public void navigationToEntityWithRelativeContextUrl() throws Exception {
     // zero navigation
     final InputStream zeroLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
-                    .appendEntitySetSegment("ESAllPrim").
-                    appendKeySegment(32767).build()).rawExecute();
+        client.newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).build())
+        .rawExecute();
 
-    String zeroLevelResponseBody = StringHelper.asString(zeroLevelResponse);
+    final String zeroLevelResponseBody = IOUtils.toString(zeroLevelResponse);
     assertTrue(zeroLevelResponseBody.contains("\"$metadata#ESAllPrim/$entity\""));
 
     // one navigation
     final InputStream oneLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-                    client.newURIBuilder(TecSvcConst.BASE_URI)
-                            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
-                            .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
-                    .rawExecute();
+        client.newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
+        .rawExecute();
 
-    String oneLevelResponseBody = StringHelper.asString(oneLevelResponse);
+    final String oneLevelResponseBody = IOUtils.toString(oneLevelResponse);
     assertTrue(oneLevelResponseBody.contains("\"../$metadata#ESTwoPrim/$entity\""));
 
     // two navigation
     final InputStream twoLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-                    client.newURIBuilder(TecSvcConst.BASE_URI)
-                            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
-                            .appendNavigationSegment("NavPropertyETAllPrimOne")
-                            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
-                    .rawExecute();
+        client.newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+            .appendNavigationSegment("NavPropertyETAllPrimOne")
+            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+        .rawExecute();
 
-    String twoLevelResponseBody = StringHelper.asString(twoLevelResponse);
+    final String twoLevelResponseBody = IOUtils.toString(twoLevelResponse);
     assertTrue(twoLevelResponseBody.contains("\"../../$metadata#ESTwoPrim/$entity\""));
   }
 
@@ -89,8 +73,8 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
-            .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
+                .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+                .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -107,8 +91,8 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
-            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+                .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+                .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -125,9 +109,9 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> response =
         client.getRetrieveRequestFactory().getEntityRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
-            .appendNavigationSegment("NavPropertyETAllPrimOne")
-            .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
+                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+                .appendNavigationSegment("NavPropertyETAllPrimOne")
+                .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -144,9 +128,9 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntitySet> response =
         client.getRetrieveRequestFactory().getEntitySetRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
-            .appendNavigationSegment("NavPropertyETAllPrimOne")
-            .appendNavigationSegment("NavPropertyETTwoPrimMany").build())
+                .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
+                .appendNavigationSegment("NavPropertyETAllPrimOne")
+                .appendNavigationSegment("NavPropertyETTwoPrimMany").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -166,10 +150,10 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientProperty> response =
         client.getRetrieveRequestFactory().getPropertyRequest(
             client.newURIBuilder(TecSvcConst.BASE_URI)
-            .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
-            .appendNavigationSegment("NavPropertyETKeyNavOne")
-            .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
-            .appendPropertySegment("PropertyCompNav").appendPropertySegment("PropertyInt16").build())
+                .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
+                .appendNavigationSegment("NavPropertyETKeyNavOne")
+                .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
+                .appendPropertySegment("PropertyCompNav").appendPropertySegment("PropertyInt16").build())
             .execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -177,12 +161,5 @@ public class NavigationITCase extends AbstractBaseTestITCase {
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
     assertShortOrInt(1, property.getPrimitiveValue().toValue());
-  }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
   }
 }

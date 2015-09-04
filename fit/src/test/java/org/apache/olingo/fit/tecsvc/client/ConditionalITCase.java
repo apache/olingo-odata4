@@ -29,7 +29,6 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -46,22 +45,18 @@ import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEnt
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class ConditionalITCase extends AbstractBaseTestITCase {
-
-  private final ODataClient client = getClient();
+public class ConditionalITCase extends AbstractTecSvcITCase {
 
   private final URI uriEntity = client.newURIBuilder(TecSvcConst.BASE_URI)
       .appendEntitySetSegment("ESCompAllPrim").appendKeySegment(0).build();
@@ -75,30 +70,42 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
   public void readServiceDocument() throws Exception {
     ODataServiceDocumentRequest request = client.getRetrieveRequestFactory()
         .getServiceDocumentRequest(TecSvcConst.BASE_URI);
+    setCookieHeader(request);
     ODataRetrieveResponse<ClientServiceDocument> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     request = client.getRetrieveRequestFactory().getServiceDocumentRequest(TecSvcConst.BASE_URI);
     request.setIfNoneMatch(response.getETag());
-    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+    setCookieHeader(request);
+    response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), response.getStatusCode());
 
     request = client.getRetrieveRequestFactory().getServiceDocumentRequest(TecSvcConst.BASE_URI);
     request.setIfMatch("W/\"0\"");
+    setCookieHeader(request);
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
 
   @Test
   public void readMetadataDocument() throws Exception {
     EdmMetadataRequest request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
+    setCookieHeader(request);
     ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
     request.setIfNoneMatch(response.getETag());
-    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+    setCookieHeader(request);
+    response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), response.getStatusCode());
 
     request = client.getRetrieveRequestFactory().getMetadataRequest(TecSvcConst.BASE_URI);
     request.setIfMatch("W/\"0\"");
+    setCookieHeader(request);
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
 
@@ -107,6 +114,7 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
     ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory().getEntityRequest(uriEntity);
     request.setIfMatch("W/\"1\"");
     assertNotNull(request);
+    setCookieHeader(request);
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
 
@@ -115,8 +123,9 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
     ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory().getEntityRequest(uriEntity);
     request.setIfNoneMatch("W/\"0\"");
     assertNotNull(request);
-
+    setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), response.getStatusCode());
   }
 
@@ -124,14 +133,14 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
   public void updateWithoutIfMatch() throws Exception {
     executeAndExpectError(
         client.getCUDRequestFactory().getEntityUpdateRequest(
-            uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order"))),
+            uriEntity, UpdateType.PATCH, factory.newEntity(new FullQualifiedName("olingo.Order"))),
         HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
   @Test
   public void updateWithWrongIfMatch() throws Exception {
     ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order")));
+        uriEntity, UpdateType.PATCH, factory.newEntity(new FullQualifiedName("olingo.Order")));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
@@ -174,7 +183,7 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
     final ODataDeleteResponse response = deleteRequest.execute();
 
     ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, client.getObjectFactory().newEntity(new FullQualifiedName("olingo.Order")));
+        uriEntity, UpdateType.PATCH, factory.newEntity(new FullQualifiedName("olingo.Order")));
     request.setIfMatch(eTag);
     // This request has to be in the same session as the first in order to access the same data provider.
     request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
@@ -185,22 +194,28 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
   public void readPropertyNotModified() throws Exception {
     ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory().getPropertyRequest(uriProperty);
     request.setIfNoneMatch("W/\"0\"");
-    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), response.getStatusCode());
   }
 
   @Test
   public void readPropertyValueNotModified() throws Exception {
     ODataValueRequest request = client.getRetrieveRequestFactory().getPropertyValueRequest(uriPropertyValue);
     request.setIfNoneMatch("W/\"0\"");
-    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), request.execute().getStatusCode());
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.NOT_MODIFIED.getStatusCode(), response.getStatusCode());
   }
 
   @Test
   public void updatePropertyWithoutIfMatch() throws Exception {
     final ODataPropertyUpdateRequest request = client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
         uriProperty,
-        client.getObjectFactory().newPrimitiveProperty("PropertyDuration",
-            client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S")));
+        factory.newPrimitiveProperty("PropertyDuration",
+            factory.newPrimitiveValueBuilder().buildString("PT42S")));
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
@@ -208,8 +223,8 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
   public void updatePropertyWithWrongIfMatch() throws Exception {
     ODataPropertyUpdateRequest request = client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
         uriProperty,
-        client.getObjectFactory().newPrimitiveProperty("PropertyDuration",
-            client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S")));
+        factory.newPrimitiveProperty("PropertyDuration",
+            factory.newPrimitiveValueBuilder().buildString("PT42S")));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
@@ -219,7 +234,7 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
     final ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
         uriPropertyValue,
         UpdateType.REPLACE,
-        client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S"));
+        factory.newPrimitiveValueBuilder().buildString("PT42S"));
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
@@ -228,7 +243,7 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
     ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
         uriPropertyValue,
         UpdateType.REPLACE,
-        client.getObjectFactory().newPrimitiveValueBuilder().buildString("PT42S"));
+        factory.newPrimitiveValueBuilder().buildString("PT42S"));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
@@ -277,12 +292,5 @@ public class ConditionalITCase extends AbstractBaseTestITCase {
       assertEquals(status.getStatusCode(), e.getStatusLine().getStatusCode());
       assertThat(e.getODataError().getMessage(), anyOf(containsString("condition"), containsString("match")));
     }
-  }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
   }
 }

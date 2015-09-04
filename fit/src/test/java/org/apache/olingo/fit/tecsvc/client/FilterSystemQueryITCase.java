@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.URI;
 import java.util.LinkedHashMap;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -31,41 +30,29 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.client.api.domain.ClientObjectFactory;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
+public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
 
   private static final String ES_COMP_ALL_PRIM = "ESCompAllPrim";
-  private static final String SERVICE_URI = TecSvcConst.BASE_URI;
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
-  @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-    // Nothing here.
-  }
-
   @Test
-  public void testTimeOfDayLiteral() {
+  public void timeOfDayLiteral() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyTimeOfDay eq 03:26:05");
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
-  
+
   @Test
-  public void testBooleanLiteral() {
+  public void booleanLiteral() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
     assertEquals(2, response.getBody().getEntities().size());
 
@@ -82,7 +69,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateLiteral() {
+  public void dateLiteral() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -91,7 +78,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateTimeOffsetLiteral() {
+  public void dateTimeOffsetLiteral() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:23Z");
     assertEquals(1, result.getBody().getEntities().size());
@@ -101,7 +88,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testInt64Literal() {
+  public void int64Literal() {
     long value = Integer.MAX_VALUE + 1L;
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 gt " + value);
@@ -112,7 +99,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDoubleLiteral() {
+  public void doubleLiteral() {
     Double value = -17900000000000000000.0;
 
     ODataRetrieveResponse<ClientEntitySet> result =
@@ -124,7 +111,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSimpleEq() {
+  public void simpleEq() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq 1");
 
     assertEquals(2, result.getBody().getEntities().size());
@@ -138,7 +125,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testBinaryIntegerOperations() {
+  public void binaryIntegerOperations() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add 1 eq (1 sub 3) div 2 mul 3 add 7");
 
@@ -149,8 +136,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testClientEscaping() {
-    final ODataClient client = getClient();
+  public void clientEscaping() {
     final String filter = client.getFilterFactory().eq(
         client.getFilterFactory().getArgFactory().property("PropertyString"),
         client.getFilterFactory().getArgFactory().literal("First Resource - positive values")).build();
@@ -160,8 +146,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
         .filter(filter)
         .build();
 
-    final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(uri).execute();
+    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
+        .getEntitySetRequest(uri);
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
 
     assertEquals(1, response.getBody().getEntities().size());
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
@@ -169,7 +158,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testStringProperty() {
+  public void stringProperty() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2'");
 
     assertEquals(1, result.getBody().getEntities().size());
@@ -178,7 +167,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testBooleanOperator() {
+  public void booleanOperator() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' and PropertyInt16 eq 1");
     assertEquals(1, result.getBody().getEntities().size());
@@ -198,7 +187,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testBooleanOperatorWithNull() {
+  public void booleanOperatorWithNull() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq null");
     assertEquals(0, result.getBody().getEntities().size());
 
@@ -210,7 +199,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUnaryWithNullLiterals() {
+  public void unaryWithNullLiterals() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyBoolean eq not null");
     assertEquals(0, result.getBody().getEntities().size());
@@ -220,13 +209,13 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUnaryWithWrongTypes() {
+  public void unaryWithWrongTypes() {
     fail(ES_ALL_PRIM, "PropertyInt16 eq 6 add - 'test'", HttpStatusCode.BAD_REQUEST);
     fail(ES_ALL_PRIM, "PropertyBoolean eq not 'test'", HttpStatusCode.BAD_REQUEST);
   }
 
   @Test
-  public void testMethodCallsWithNull() {
+  public void methodCallsWithNull() {
     // One representative of "stringFuntion" "residue class"
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "endswith(PropertyString, null) eq null"); // null eq null => true
@@ -245,7 +234,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSubstringWithNegativeValues() {
+  public void substringWithNegativeValues() {
     // See OASIS JIRA ODATA-781
 
     // -1 should be treated as 0
@@ -261,13 +250,13 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUnknownLiteral() {
+  public void unknownLiteral() {
     // Check if the error code is equals to 400
     fail(ES_ALL_PRIM, "PropertyInt16 eq ThisIsNotAValidLiteral", HttpStatusCode.BAD_REQUEST);
   }
 
   @Test
-  public void testErrorCodeArithmetic() {
+  public void errorCodeArithmetic() {
     fail(ES_ALL_PRIM, "PropertyInt16 eq 'hey' add 5", HttpStatusCode.BAD_REQUEST);
     fail(ES_ALL_PRIM, "PropertyDate eq 5.0 add 2012-12-03", HttpStatusCode.BAD_REQUEST);
     fail(ES_ALL_PRIM, "PropertyDouble mod 5 eq 0", HttpStatusCode.BAD_REQUEST);
@@ -275,19 +264,16 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testNumericBinaryOperationWithNullValues() {
+  public void numericBinaryOperationWithNullValues() {
     // Create new Entries
     final String filterString = "PropertyString eq null";
 
-    ODataClient client = getClient();
-    ClientObjectFactory objectFactory = client.getObjectFactory();
-
-    ClientEntity entity = objectFactory.newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
+    ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
 
     entity.getProperties().add(
-        objectFactory.newPrimitiveProperty("PropertyInt16", objectFactory.newPrimitiveValueBuilder()
+        factory.newPrimitiveProperty("PropertyInt16", factory.newPrimitiveValueBuilder()
             .buildInt16((short) 1)));
-    entity.addLink(objectFactory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
+    entity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
         .appendKeySegment(32766)
@@ -330,7 +316,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testBinaryOperationIntegerDecimalWithPromotion() {
+  public void binaryOperationIntegerDecimalWithPromotion() {
     String filterString = ""
         + "PropertyInt16 mod 2 eq " // Choose mod 2 == 1 => { 1, 3, .. }
         + "(((5 sub 1) div 5) " // Integer Division 4 / 5 == 0
@@ -362,7 +348,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testNotOperator() {
+  public void notOperator() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not (PropertyInt16 eq 1)");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -376,7 +362,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUnaryMinusOperator() {
+  public void unaryMinusOperator() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2 add - -3");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -390,7 +376,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testUnaryMinusOperatorDecimal() {
+  public void unaryMinusOperatorDecimal() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2.0 add - -3.0");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -404,25 +390,25 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testStringPropertyEqualsNull() {
+  public void stringPropertyEqualsNull() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq null");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
-  public void testAddNullLiteral() {
+  public void addNullLiteral() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq 1");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
-  public void testAddNullLiteralEqualsNull() {
+  public void addNullLiteralEqualsNull() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq null");
     assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
-  public void testSubstringStartAndEndGiven() {
+  public void substringStartAndEndGiven() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "substring(PropertyString, length('First') add 1, 8) eq ('Resource')");
 
@@ -433,7 +419,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSubstringStartGiven() {
+  public void substringStartGiven() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "substring(PropertyComp/PropertyComp/PropertyString, 6) eq 'Value'");
 
@@ -457,31 +443,23 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSubstringDouble() {
+  public void substringDouble() {
     fail(ES_ALL_PRIM,
         "substring(PropertyString, length('First') add 1, 2.0 * 4) eq ('Resource')",
         HttpStatusCode.BAD_REQUEST);
   }
 
   @Test
-  public void testYearFunctionDate() {
+  public void yearFunctionDate() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDate) eq 2015");
     assertEquals(1, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
   }
-  
-  void assertShortOrInt(int value, Object n) {
-    if (n instanceof Number) {
-      assertEquals(value, ((Number)n).intValue());
-    } else {
-      Assert.fail();
-    }
-  }
 
   @Test
-  public void testYearFunctionDateTimeOffset() {
+  public void yearFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDateTimeOffset) eq 2012");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -490,7 +468,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMonthFunctionDateTimeOffset() {
+  public void monthFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDateTimeOffset) eq 12");
     assertEquals(3, result.getBody().getEntities().size());
 
@@ -505,7 +483,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMonthFunctionDate() {
+  public void monthFunctionDate() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDate) eq 11");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -514,7 +492,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDayFunctionDateTimeOffset() {
+  public void dayFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDateTimeOffset) eq 3");
     assertEquals(3, result.getBody().getEntities().size());
 
@@ -529,7 +507,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDayFunctionDate() {
+  public void dayFunctionDate() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDate) eq 5");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -538,7 +516,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testHourFunctionDateTimeOffset() {
+  public void hourFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyDateTimeOffset) eq 7");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -550,7 +528,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testHourFuntionTimeOfDay() {
+  public void hourFunctionTimeOfDay() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyTimeOfDay) eq 3");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -559,7 +537,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMinuteFunctionDateTimeOffset() {
+  public void minuteFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyDateTimeOffset) eq 17");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -568,7 +546,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testMinuteFuntionTimeOfDay() {
+  public void minuteFunctionTimeOfDay() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyTimeOfDay) eq 49");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -577,7 +555,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSecondFunctionDateTimeOffset() {
+  public void secondFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyDateTimeOffset) eq 8");
     assertEquals(1, response.getBody().getEntities().size());
 
@@ -586,7 +564,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testSecondFuntionTimeOfDay() {
+  public void secondFunctionTimeOfDay() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyTimeOfDay) eq 14");
     assertEquals(1, response.getBody().getEntities().size());
 
@@ -595,7 +573,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testFractionalsecondsDateTimeOffset() {
+  public void fractionalsecondsDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_COMP_ALL_PRIM, "fractionalseconds(PropertyComp/PropertyDateTimeOffset) eq 0.1234567");
     assertEquals(2, response.getBody().getEntities().size());
@@ -610,14 +588,14 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testFractionalsecondsDateOfTime() {
+  public void fractionalsecondsDateOfTime() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "fractionalseconds(PropertyTimeOfDay) eq 0");
     assertEquals(3, response.getBody().getEntities().size());
   }
 
   @Test
-  public void testDateTimeFunctionsNull() {
+  public void dateTimeFunctionsNull() {
     ODataRetrieveResponse<ClientEntitySet> response;
 
     response = sendRequest(ES_ALL_PRIM, "year(null) eq null");
@@ -640,7 +618,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testFloor() {
+  public void floor() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.8)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -657,7 +635,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testCeiling() {
+  public void ceiling() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -674,7 +652,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testRound() {
+  public void round() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.5)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -705,7 +683,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testEndsWith() {
+  public void endsWith() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "endswith(PropertyString, 'values')");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -717,7 +695,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testIndexOf() {
+  public void indexOf() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "indexof(PropertyString, 'positive') eq 17");
     assertEquals(1, result.getBody().getEntities().size());
@@ -727,7 +705,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testStartsWith() {
+  public void startsWith() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "startswith(PropertyString, 'First')");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -736,7 +714,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testToLower() {
+  public void toLower() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString, tolower('POSITIVE'))");
     assertEquals(1, result.getBody().getEntities().size());
@@ -746,7 +724,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testToUpper() {
+  public void toUpper() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString, concat(toupper('f'), 'irst'))");
     assertEquals(1, result.getBody().getEntities().size());
@@ -756,7 +734,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testTrim() {
+  public void trim() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "trim(substring(PropertyString, 0, 6)) eq 'First'");
     assertEquals(1, result.getBody().getEntities().size());
@@ -766,7 +744,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDecimalDiv() {
+  public void decimalDiv() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDouble eq 0 sub (358000 div 2)");
     assertEquals(1, result.getBody().getEntities().size());
@@ -776,7 +754,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testNumericPromotionToInt64() {
+  public void numericPromotionToInt64() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 eq 0");
     assertEquals(1, result.getBody().getEntities().size());
@@ -794,7 +772,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateTimeOffsetAddDuraton() {
+  public void dateTimeOffsetAddDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:19Z add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -804,7 +782,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDurrationAddDuration() {
+  public void durationAddDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'PT2S' add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -814,14 +792,14 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDurrationLiteral() {
+  public void durationLiteral() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'P1DT'");
     assertEquals(0, response.getBody().getEntities().size());
   }
 
   @Test
-  public void testDateAddDuration() {
+  public void dateAddDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-02 add duration'P1DT7H16M23S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -831,7 +809,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateTimeOffsetSubDuration() {
+  public void dateTimeOffsetSubDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:27Z sub duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -841,7 +819,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDurrationSubDuration() {
+  public void durationSubDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration sub duration'PT2S' eq duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -851,7 +829,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateSubDuration() {
+  public void dateSubDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-04 sub duration'P0DT16H43M37S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -861,7 +839,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateSubDate() {
+  public void dateSubDate() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2012-12-04 sub 2012-12-04");
     assertEquals(1, response.getBody().getEntities().size());
@@ -871,7 +849,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testDateTimeOffsetSubDateTimeOffset() {
+  public void dateTimeOffsetSubDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2005-12-03T00:00:00Z sub 2005-12-03T00:00:00Z");
     assertEquals(1, response.getBody().getEntities().size());
@@ -881,7 +859,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testNumericPromotion() {
+  public void numericPromotion() {
     /*
      * The idea is use the largest possible number of a specific type and add a another number to force an
      * implicit conversion to an higher type
@@ -915,13 +893,11 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
 
   @Test
-  public void testNullComplexProperty() {
+  public void nullComplexProperty() {
     // Create a new entry.The complex property PropertyCompComp is set to null. So the structure of the property
     // is still there, but filled is null values (primitive types)
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
 
-    final ODataClient client = getClient();
-    final ClientObjectFactory factory = client.getObjectFactory();
     ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
     newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt16",
@@ -977,7 +953,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
   
   @Test
-  public void testFilterNotBooleanExpression() {
+  public void filterNotBooleanExpression() {
     // Check that only boolean expression are allowed
     fail("ESAllPrim", "PropertytString", HttpStatusCode.BAD_REQUEST);
     fail("ESAllPrim", "PropertyInt16", HttpStatusCode.BAD_REQUEST);
@@ -992,7 +968,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
   
   @Test
-  public void testComparisonOnStringOperands() {
+  public void comparisonOnStringOperands() {
     // If check if the expression is true => All entry are returned
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "'Tes' lt 'Test'");
     assertEquals(3, result.getBody().getEntities().size());
@@ -1020,7 +996,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
   }
   
   @Test
-  public void testCastException() {
+  public void castException() {
     fail("ESAllPrim", "PropertyInt16 eq '1'", HttpStatusCode.BAD_REQUEST);
     fail("ESAllPrim", "PropertyInt16 eq 03:26:05", HttpStatusCode.BAD_REQUEST);
     fail("ESAllPrim", "PropertyInt16 eq true", HttpStatusCode.BAD_REQUEST);
@@ -1030,7 +1006,7 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   
   @Test
-  public void testStringFunctionWithoutStringParameters() {
+  public void stringFunctionWithoutStringParameters() {
     fail("ESServerSidePaging", "contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
   }
   
@@ -1040,8 +1016,6 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
 
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString,
       final String cookie) {
-    final ODataClient client = getClient();
-
     final URI uri =
         client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
@@ -1049,11 +1023,17 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
         .build();
 
     ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
-    if (cookie != null) {
+    if (cookie == null) {
+      setCookieHeader(request);
+    } else {
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
     }
 
-    return request.execute();
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    if (cookie == null) {
+      saveCookieHeader(response);
+    }
+    return response;
   }
 
   private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
@@ -1064,12 +1044,4 @@ public class FilterSystemQueryITCase extends AbstractBaseTestITCase {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
-
-  @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
-    return odata;
-  }
-
 }
