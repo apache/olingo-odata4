@@ -36,5 +36,9 @@
 			<artifactId>odata-jpa-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+		</dependency>
 	</dependencies>
 </project>

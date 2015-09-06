@@ -16,36 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.core.edm;
+package org.apache.olingo.jpa.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-import org.apache.olingo.jpa.api.ODataJPAAbstractEdmProvider;
-import org.apache.olingo.jpa.api.ODataJPAContext;
+import org.apache.olingo.jpa.api.exception.ODataJPAException;
 import org.apache.olingo.jpa.api.model.JPACsdlBuilder;
 import org.apache.olingo.jpa.api.model.JPACsdlMetaModelAccessor;
+import org.apache.olingo.jpa.api.model.JPACsdlMetaModelContext;
 import org.apache.olingo.jpa.api.model.JPACsdlSchemaAccessor;
-import org.apache.olingo.jpa.core.model.JPACsdlMetaModel;
 
-public class ODataJPAEdmProvider extends ODataJPAAbstractEdmProvider {
+public class JPACsdlSchema implements JPACsdlSchemaAccessor {
+  private CsdlSchema csdlSchema;
+  private JPACsdlBuilder builder = null;
+  private JPACsdlMetaModelContext context = null;
 
-  private List<CsdlSchema> csdlSchemas = new ArrayList<CsdlSchema>();
-
-  public ODataJPAEdmProvider(ODataJPAContext context) {
-    super(context);
+  public JPACsdlSchema(JPACsdlMetaModelContext context) {
+    this.context = context;
   }
 
   @Override
-  public List<CsdlSchema> getSchemas() throws ODataException {
-    // Build CSDL Schema if not yet built
-    if (csdlSchemas.isEmpty()) {
-      JPACsdlBuilder jpaCsdlMetaModelBuilder = JPACsdlMetaModel.newJPACsdlMetaModelBuilder(this.getODataJPAContext());
-      JPACsdlMetaModelAccessor metaModelAccessor = jpaCsdlMetaModelBuilder.build();
-      csdlSchemas.add(((JPACsdlSchemaAccessor) metaModelAccessor).getCsdlSchema());
+  public CsdlSchema getCsdlSchema() {
+    return this.csdlSchema;
+  }
+
+  @Override
+  public JPACsdlBuilder getJPACsdlBuilder() {
+    if (builder == null) {
+      builder = new JPACsdlSchemaBuilder();
     }
-    return csdlSchemas;
+    return builder;
+  }
+
+  private class JPACsdlSchemaBuilder implements JPACsdlBuilder {
+
+    @Override
+    public JPACsdlMetaModelAccessor build() throws ODataJPAException {
+      csdlSchema = new CsdlSchema();
+      csdlSchema.setNamespace(JPACsdlNameBuilder.buildSchemaNamespace(context));
+      return JPACsdlSchema.this;
+    }
+
   }
 }

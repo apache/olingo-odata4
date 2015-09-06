@@ -25,6 +25,7 @@ import org.apache.olingo.jpa.api.ODataJPAContext;
 import org.apache.olingo.jpa.api.ODataJPAProcessor;
 import org.apache.olingo.jpa.api.factory.ODataJPAFactory;
 import org.apache.olingo.jpa.core.ODataJPAContextImpl;
+import org.apache.olingo.jpa.core.ODataJPAProcessorDefault;
 import org.apache.olingo.jpa.core.edm.ODataJPAEdmProvider;
 import org.apache.olingo.jpa.core.exception.ODataJPARuntimeException;
 
@@ -34,15 +35,17 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
       new HashMap<String, ODataJPAAbstractEdmProvider>();
 
   @Override
-  public ODataJPAAbstractEdmProvider getODataJPAEdmProvider(String pUnitName) throws ODataJPARuntimeException {
+  public ODataJPAAbstractEdmProvider getODataJPAEdmProvider(ODataJPAContext odataJPAContext)
+      throws ODataJPARuntimeException {
     ODataJPAAbstractEdmProvider odataJPAEdmProvider = null;
-    if (pUnitName == null) {
+    String pUnitName = odataJPAContext.getPersistenceUnitName();
+    if (odataJPAContext == null || pUnitName == null) {
       throw new ODataJPARuntimeException("Unable to create Edm Provider", null,
           ODataJPARuntimeException.MessageKeys.NULL_PUNIT, null);
     } else {
       odataJPAEdmProvider = edmProviderMap.get(pUnitName);
       if (odataJPAEdmProvider == null) {
-        odataJPAEdmProvider = new ODataJPAEdmProvider();
+        odataJPAEdmProvider = new ODataJPAEdmProvider(odataJPAContext);
         edmProviderMap.put(pUnitName, odataJPAEdmProvider);
       }
     }
@@ -52,8 +55,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
 
   @Override
   public ODataJPAProcessor getODataJPAProcessor(ODataJPAContext odataJPAContext) {
-    // TODO Auto-generated method stub
-    return null;
+    return new ODataJPAProcessorDefault();
   }
 
   @Override

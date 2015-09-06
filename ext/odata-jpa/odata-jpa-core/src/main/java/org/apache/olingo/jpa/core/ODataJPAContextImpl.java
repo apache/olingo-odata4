@@ -18,20 +18,44 @@
  */
 package org.apache.olingo.jpa.core;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.olingo.jpa.api.ODataJPAContext;
+import org.apache.olingo.jpa.api.extension.JPACsdlMetaModelExtension;
 
 public class ODataJPAContextImpl implements ODataJPAContext {
 
+  private String pUnitName;
+  private EntityManagerFactory emf;
+  private JPACsdlMetaModelExtension extension = null;
+
   @Override
   public String getPersistenceUnitName() {
-    // TODO Auto-generated method stub
-    return null;
+    return pUnitName;
   }
 
   @Override
-  public void setPersistenceUnitName() {
-    // TODO Auto-generated method stub
-    
+  public void setPersistenceUnitName(final String pUnitName) {
+    this.pUnitName = pUnitName;
   }
 
+  @Override
+  public EntityManagerFactory getEntityManagerFactory() {
+    return emf;
+  }
+
+  @Override
+  public void setEntityManagerFactory(final EntityManagerFactory emf) {
+    this.emf = emf;
+  }
+
+  @Override
+  public JPACsdlMetaModelExtension getJPACsdlMetaModelExtension() {
+    return extension;
+  }
+
+  @Override
+  public void setJPACsdlMetaModelExtension(JPACsdlMetaModelExtension extension) {
+    this.extension = extension;
+  }
 }
