@@ -16,6 +16,13 @@
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>org.apache.olingo.jpa.ref.model.Customer</class>
+		<class>org.apache.olingo.jpa.ref.model.BusinessPartner</class>
+		<class>org.apache.olingo.jpa.ref.model.Address</class>
+		<class>org.apache.olingo.jpa.ref.model.Employee</class>
+		<class>org.apache.olingo.jpa.ref.model.LineItem</class>
+		<class>org.apache.olingo.jpa.ref.model.Product</class>
+		<class>org.apache.olingo.jpa.ref.model.SalesOrder</class>
+		<class>org.apache.olingo.jpa.ref.model.Supplier</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:apache.olingo.jpa.sample" />

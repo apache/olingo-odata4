@@ -18,12 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.jpa.ref.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -34,6 +36,8 @@ import javax.persistence.TemporalType;
  * <li>M..N bidirectional relationship</li>
  * </ol>
  */
+@Entity
+@Table(name = "T_PRODUCT")
 public class Product {
 
   @Id

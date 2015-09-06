@@ -20,10 +20,12 @@ package org.apache.olingo.jpa.ref.model;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
 /**
@@ -34,6 +36,8 @@ import javax.validation.constraints.Digits;
  * <li>1..1 unidirectional relationship with "JoinColumns" annotation</li>
  * </ol>
  */
+@Entity
+@Table(name = "T_LINEITEM")
 public class LineItem {
   @EmbeddedId
   private LineItemKey key;
@@ -43,12 +47,12 @@ public class LineItem {
   private float netAmount;
 
   private Currency currency;
-  
+
   @Column(name = "QUANTITY")
   private int quantity;
 
   @ManyToOne
-  @JoinColumn(name = "SO_ID", referencedColumnName = "ID")
+  @JoinColumn(name = "SO_ID", referencedColumnName = "ID", insertable = false, updatable = false)
   private SalesOrder order;
 
   @Column(name = "DELIVERED")
