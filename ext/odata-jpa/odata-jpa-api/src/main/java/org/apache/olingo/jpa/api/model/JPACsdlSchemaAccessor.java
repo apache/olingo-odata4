@@ -16,21 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.api;
+package org.apache.olingo.jpa.api.model;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
-public abstract class ODataJPAAbstractEdmProvider extends CsdlAbstractEdmProvider {
-  private ODataJPAContext odataJPAContext = null;
+/**
+ * The interface provides methods to access CSDL Schema generated from JPA Meta model.
+ */
+public interface JPACsdlSchemaAccessor extends JPACsdlMetaModelAccessor {
+  /**
+   * The method returns a CSDL Schema element built from JPA Meta Model.
+   * @return an instance of type {@link org.apache.olingo.commons.api.edm.provider.CsdlSchema}
+   */
+  CsdlSchema getCsdlSchema();
 
-  public ODataJPAAbstractEdmProvider(ODataJPAContext context) {
-    if (context == null) {
-      throw new IllegalArgumentException();
-    }
-    this.odataJPAContext = context;
-  }
+  JPACsdlBuilder getJPACsdlBuilder();
 
-  public ODataJPAContext getODataJPAContext() {
-    return odataJPAContext;
-  }
 }

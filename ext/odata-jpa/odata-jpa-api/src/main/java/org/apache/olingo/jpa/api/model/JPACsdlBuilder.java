@@ -16,28 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.api.factory;
+package org.apache.olingo.jpa.api.model;
 
-import java.util.ServiceLoader;
-
-import org.apache.olingo.jpa.api.ODataJPAAbstractEdmProvider;
-import org.apache.olingo.jpa.api.ODataJPAContext;
-import org.apache.olingo.jpa.api.ODataJPAProcessor;
 import org.apache.olingo.jpa.api.exception.ODataJPAException;
 
-public abstract class ODataJPAFactory {
+/**
+ * JPAEdmBuilder interface provides methods for building elements of an Entity Data Model (EDM) from
+ * a Java Persistence Model.
+ */
+public interface JPACsdlBuilder {
 
-  public static ODataJPAFactory newInstance() {
-    ServiceLoader<ODataJPAFactory> odataJPAFactoryLoader = ServiceLoader.load(ODataJPAFactory.class);
-    ODataJPAFactory odataJPAFactory = odataJPAFactoryLoader.iterator().next();
-    return odataJPAFactory;
-  }
-
-  public abstract ODataJPAAbstractEdmProvider getODataJPAEdmProvider(ODataJPAContext odataJPAContext)
-      throws ODataJPAException;
-
-  public abstract ODataJPAProcessor getODataJPAProcessor(ODataJPAContext odataJPAContext) throws ODataJPAException;
-
-  public abstract ODataJPAContext newODataJPAContext();
-
+  /**
+   * the method builds an returns a reference to JPAEdm MetaModel accessor
+   * @return a reference to {@link org.apache.olingo.jpa.api.model.JPACsdlMetaModelAccessor}
+   * @throws ODataJPAException
+   */
+  JPACsdlMetaModelAccessor build() throws ODataJPAException;
 }

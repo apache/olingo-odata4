@@ -93,7 +93,7 @@ public abstract class ODataJPAServlet extends HttpServlet {
     odataJPAService = new ODataJPAService();
     odataJPAContext = getODataJPAContext();
     initializeODataJPAContext(odataJPAContext);
-    odataJPAService.setODataJPAEdmProvider(odataJPAFactory.getODataJPAEdmProvider(persistenceUnitName));
+    odataJPAService.setODataJPAEdmProvider(odataJPAFactory.getODataJPAEdmProvider(odataJPAContext));
     odataJPAService.setODataJPAProcessor(odataJPAFactory.getODataJPAProcessor(odataJPAContext));
     return odataJPAService;
   }

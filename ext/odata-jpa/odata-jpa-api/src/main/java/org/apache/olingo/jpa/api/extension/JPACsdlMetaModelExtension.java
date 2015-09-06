@@ -16,21 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.api;
+package org.apache.olingo.jpa.api.extension;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+public interface JPACsdlMetaModelExtension {
 
-public abstract class ODataJPAAbstractEdmProvider extends CsdlAbstractEdmProvider {
-  private ODataJPAContext odataJPAContext = null;
-
-  public ODataJPAAbstractEdmProvider(ODataJPAContext context) {
-    if (context == null) {
-      throw new IllegalArgumentException();
-    }
-    this.odataJPAContext = context;
-  }
-
-  public ODataJPAContext getODataJPAContext() {
-    return odataJPAContext;
-  }
 }

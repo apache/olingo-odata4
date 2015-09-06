@@ -16,21 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.api;
+package org.apache.olingo.jpa.api.model;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+import javax.persistence.metamodel.Metamodel;
 
-public abstract class ODataJPAAbstractEdmProvider extends CsdlAbstractEdmProvider {
-  private ODataJPAContext odataJPAContext = null;
+import org.apache.olingo.jpa.api.extension.JPACsdlMetaModelExtension;
 
-  public ODataJPAAbstractEdmProvider(ODataJPAContext context) {
-    if (context == null) {
-      throw new IllegalArgumentException();
-    }
-    this.odataJPAContext = context;
-  }
+public interface JPACsdlMetaModelContext {
+  String getPersistenceUnit();
 
-  public ODataJPAContext getODataJPAContext() {
-    return odataJPAContext;
-  }
+  Metamodel getJPAMetaModel();
+
+  JPACsdlMetaModelExtension getJPACsdlMetaModelExtension();
 }

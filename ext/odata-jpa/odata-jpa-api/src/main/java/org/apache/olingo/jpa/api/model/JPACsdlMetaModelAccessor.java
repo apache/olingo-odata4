@@ -16,21 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.jpa.api;
+package org.apache.olingo.jpa.api.model;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
+/**
+ * The interface is a tag interface for Metadata/Model needed for transforming JPA entities into CSDL
+ * elements
+ */
+public interface JPACsdlMetaModelAccessor {
 
-public abstract class ODataJPAAbstractEdmProvider extends CsdlAbstractEdmProvider {
-  private ODataJPAContext odataJPAContext = null;
-
-  public ODataJPAAbstractEdmProvider(ODataJPAContext context) {
-    if (context == null) {
-      throw new IllegalArgumentException();
-    }
-    this.odataJPAContext = context;
-  }
-
-  public ODataJPAContext getODataJPAContext() {
-    return odataJPAContext;
-  }
 }

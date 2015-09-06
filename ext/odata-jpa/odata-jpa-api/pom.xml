@@ -45,5 +45,9 @@
 			<groupId>org.apache.olingo</groupId>
 			<artifactId>odata-server-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+		</dependency>
 	</dependencies>
 </project>

@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.jpa.api;
 
+import javax.persistence.EntityManagerFactory;
+
+import org.apache.olingo.jpa.api.extension.JPACsdlMetaModelExtension;
+
 /**
  * This class does the compilation of context objects required for OData JPA
  * Runtime. The context object should be properly initialized with values else
@@ -32,8 +36,52 @@ package org.apache.olingo.jpa.api;
  */
 public interface ODataJPAContext {
 
+  /**
+   * The method gets the Java Persistence Unit Name set into the context.
+   * 
+   * @return Java Persistence Unit Name
+   */
   String getPersistenceUnitName();
 
-  void setPersistenceUnitName();
+  /**
+   * The method sets the Java Persistence Unit Name into the context.
+   * 
+   * @param pUnitName
+   * is the Java Persistence Unit Name.
+   * 
+   */
+  void setPersistenceUnitName(String pUnitName);
 
+  /**
+   * The method gets the Java Persistence Entity Manager factory from the
+   * context. <br>
+   * <b>CAUTION:-</b> Don't use the Entity Manager Factory to instantiate
+   * Entity Managers. Instead get reference to Entity Manager using
+   * {@link org.apache.olingo.jpa.api.ODataJPAContext#getEntityManager()}
+   * 
+   * @return an instance of Java Persistence Entity Manager Factory
+   */
+  EntityManagerFactory getEntityManagerFactory();
+
+  /**
+   * The method sets the Java Persistence Entity Manager factory into the
+   * context.
+   * 
+   * @param emf
+   * is of type {@link javax.persistence.EntityManagerFactory}
+   * 
+   */
+  void setEntityManagerFactory(EntityManagerFactory emf);
+
+  /**
+   * The method returns the extension for JPA Csdl Meta Model.
+   * @return
+   */
+  JPACsdlMetaModelExtension getJPACsdlMetaModelExtension();
+
+  /**
+   * The method sets the extension for JPA Csdl Meta model
+   * @param extension
+   */
+  void setJPACsdlMetaModelExtension(JPACsdlMetaModelExtension extension);
 }
