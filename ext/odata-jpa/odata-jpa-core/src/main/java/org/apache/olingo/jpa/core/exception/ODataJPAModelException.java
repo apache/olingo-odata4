@@ -16,34 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.olingo.jpa.core.exception;
 
 import org.apache.olingo.jpa.api.exception.ODataJPAException;
 
-public class ODataJPARuntimeException extends ODataJPAException {
+public class ODataJPAModelException extends ODataJPAException {
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
-  private static final String DEFAULT_BUNDLE_NAME = "odata-jpa-rt-exception-i18n";
+  private static final String DEFAULT_BUNDLE_NAME = "odata-jpa-model-exception-i18n";
 
   public static enum MessageKeys implements MessageKey {
-    NULL_PUNIT;
-
+    INVALID_PERSISTENCE_UNIT;
+    
     @Override
     public String getKey() {
       return name();
     }
   }
 
-  public ODataJPARuntimeException(String developmentMessage, Throwable cause, MessageKey messageKey,
+  public ODataJPAModelException(String developmentMessage, Throwable cause, MessageKey messageKey,
       String[] parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
 
   @Override
   protected String getBundleName() {
-    return DEFAULT_BUNDLE_NAME;
+    return DEFAULT_BUNDLE_NAME ;
   }
+
 }
