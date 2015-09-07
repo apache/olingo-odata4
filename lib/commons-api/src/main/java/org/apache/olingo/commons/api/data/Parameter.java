@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
+/**
+ * Data representation for a parameter.
+ */
 public class Parameter extends Valuable {
 
   private String name;

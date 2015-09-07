@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 
+/**
+ * Data representation for a operation.
+ */
 public class Operation {
 
   private String metadataAnchor;

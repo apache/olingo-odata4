@@ -21,22 +21,36 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A Delta instance contains all added and deleted links and all deleted entities.
+ */
 public class Delta extends EntityCollection {
 
   private final List<DeletedEntity> deletedEntities = new ArrayList<DeletedEntity>();
   private final List<DeltaLink> addedLinks = new ArrayList<DeltaLink>();
   private final List<DeltaLink> deletedLinks = new ArrayList<DeltaLink>();
 
+  /**
+   * Get list of deleted entities (must not be NULL).
+   * @return list of deleted entities (must not be NULL)
+   */
   public List<DeletedEntity> getDeletedEntities() {
     return deletedEntities;
   }
 
+  /**
+   * Get list of added links (must not be NULL).
+   * @return list of added links (must not be NULL)
+   */
   public List<DeltaLink> getAddedLinks() {
     return addedLinks;
   }
 
+  /**
+   * Get list of deleted links (must not be NULL).
+   * @return list of deleted links (must not be NULL)
+   */
   public List<DeltaLink> getDeletedLinks() {
     return deletedLinks;
   }
-
 }

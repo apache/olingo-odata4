@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
+/**
+ * Defines the type of a value (see Valuable).
+ */
 public enum ValueType {
   PRIMITIVE, GEOSPATIAL, ENUM, COMPLEX, ENTITY,
   COLLECTION_PRIMITIVE(PRIMITIVE),
@@ -28,14 +31,18 @@ public enum ValueType {
 
   private final ValueType baseType;
 
-  private ValueType() {
+  ValueType() {
     baseType = this;
   }
 
-  private ValueType(final ValueType baseType) {
+  ValueType(final ValueType baseType) {
     this.baseType = baseType;
   }
 
+  /**
+   * Get base type for this value type.
+   * @return base type
+   */
   public ValueType getBaseType() {
     return baseType;
   }

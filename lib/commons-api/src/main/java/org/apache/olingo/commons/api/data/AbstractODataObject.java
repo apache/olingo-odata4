@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.data;
 import java.net.URI;
 import java.text.ParseException;
 
+/**
+ * Abstract OData object with basic values (<code>id</code>, <code>baseURI</code>, <code>title</code>).
+ */
 public abstract class AbstractODataObject extends Annotatable {
 
   private URI baseURI;
@@ -28,20 +31,25 @@ public abstract class AbstractODataObject extends Annotatable {
   private String title;
 
   /**
-   * Gets base URI.
+   * Get base URI.
    *
-   * @return base URI.
+   * @return base URI
    */
   public URI getBaseURI() {
     return baseURI;
   }
 
+  /**
+   * Set base URI.
+   *
+   * @param baseURI new base URI
+   */
   public void setBaseURI(final URI baseURI) {
     this.baseURI = baseURI;
   }
 
   /**
-   * Gest ID.
+   * Get ID.
    *
    * @return ID.
    */
@@ -49,14 +57,31 @@ public abstract class AbstractODataObject extends Annotatable {
     return id;
   }
 
+  /**
+   * Set ID.
+   *
+   * @param id new ID value
+   */
   public void setId(final URI id) {
     this.id = id;
   }
 
+  /**
+   * Get tile.
+   *
+   * @return title
+   */
   public String getTitle() {
     return title;
   }
 
+  /**
+   * Set property with given key to given value.
+   *
+   * @param key key of property
+   * @param value new value for property
+   * @throws ParseException if value can not be parsed
+   */
   public void setCommonProperty(final String key, final String value) throws ParseException {
     if ("id".equals(key)) {
       id = URI.create(value);

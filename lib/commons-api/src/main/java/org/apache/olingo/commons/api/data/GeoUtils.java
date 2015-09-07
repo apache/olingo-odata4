@@ -22,8 +22,17 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
+/**
+ * Utilities class for Geography data types.
+ */
 public final class GeoUtils {
 
+  /**
+   * Get dimension based on given Geography / Geometry type.
+   *
+   * @param type a geography / geometry type
+   * @return dimension according to given geography / geometry type
+   */
   public static Geospatial.Dimension getDimension(final EdmPrimitiveTypeKind type) {
     Geospatial.Dimension dimension;
 
@@ -46,6 +55,12 @@ public final class GeoUtils {
     return dimension;
   }
 
+  /**
+   * Get type based on given dimension (Geography / Geometry) and element name.
+   *
+   * @param dimension either geography or geometry
+   * @return elementName name of type
+   */
   public static EdmPrimitiveTypeKind getType(final Geospatial.Dimension dimension, final String elementName) {
     EdmPrimitiveTypeKind type = null;
 

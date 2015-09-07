@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.data;
 
+/**
+ * Data representation for a property.
+ */
 public class Property extends Valuable {
 
   private String name;
@@ -34,14 +37,27 @@ public class Property extends Valuable {
     setValue(valueType, value);
   }
 
+  /**
+   * Get name of property.
+   * @return name of property
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Set name of property.
+   * @param name name of property
+   */
   public void setName(final String name) {
     this.name = name;
   }
 
+  /**
+   * Check if this property is <code>null</code> (value == null) or the type is <code>"Edm.Null"</code>.
+   * @return <code>true</code> if this property is <code>null</code> (value == null)
+   *          or the type is <code>"Edm.Null"</code>. Otherwise <code>false</code>.
+   */
   @Override
   public boolean isNull() {
     return getValue() == null || "Edm.Null".equals(getType());

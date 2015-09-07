@@ -22,6 +22,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data representation for a collection of single entities.
+ */
 public class EntityCollection extends AbstractODataObject {
 
   private Integer count;

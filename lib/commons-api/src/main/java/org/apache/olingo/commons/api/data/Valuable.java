@@ -26,20 +26,35 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
+/**
+ * Defines a value with an according type.
+ */
 public abstract class Valuable extends Annotatable {
 
   private ValueType valueType = null;
   private Object value = null;
   private String type;
 
+  /**
+   * Check if according value is <code>null</code>.
+   * @return <code>true</code> if value is <code>null</code>, otherwise <code>false</code>
+   */
   public boolean isNull() {
     return value == null;
   }
 
+  /**
+   * Get string representation of type (can be null if not set).
+   * @return string representation of type (can be null if not set)
+   */
   public String getType() {
     return type;
   }
 
+  /**
+   * Set string representation of type.
+   * @param type string representation of type
+   */
   public void setType(final String type) {
     this.type = type;
   }
@@ -167,11 +182,20 @@ public abstract class Valuable extends Annotatable {
     return value;
   }
 
+  /**
+   * Set value and value type.
+   * @param valueType value type
+   * @param value value
+   */
   public void setValue(final ValueType valueType, final Object value) {
     this.valueType = valueType;
     this.value = value;
   }
 
+  /**
+   * Get value type for this valuable.
+   * @return value type for this valuable
+   */
   public ValueType getValueType() {
     return valueType;
   }

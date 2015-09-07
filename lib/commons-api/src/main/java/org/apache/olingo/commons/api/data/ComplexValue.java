@@ -25,6 +25,11 @@ public class ComplexValue extends Linked {
 
   private final List<Property> value = new ArrayList<Property>();
 
+  /**
+   * Get list of all values for this ComplexValue.
+   *
+   * @return all values for this ComplexValue (can not be null).
+   */
   public List<Property> getValue() {
     return value;
   }

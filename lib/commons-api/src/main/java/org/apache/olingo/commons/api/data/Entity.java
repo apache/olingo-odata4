@@ -22,6 +22,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data representation for a single entity.
+ */
 public class Entity extends Linked {
 
   private String eTag;

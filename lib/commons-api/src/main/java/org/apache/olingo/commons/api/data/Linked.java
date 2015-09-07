@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data representation for a linked object.
+ */
 public abstract class Linked extends AbstractODataObject {
 
   private final List<Link> associationLinks = new ArrayList<Link>();

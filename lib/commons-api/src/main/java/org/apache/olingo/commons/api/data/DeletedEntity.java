@@ -20,10 +20,12 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 
+/**
+ * A deleted entity contains the reason for deletion and the id.
+ */
 public class DeletedEntity {
 
   public enum Reason {
-
     deleted,
     changed
 
@@ -32,18 +34,34 @@ public class DeletedEntity {
   private URI id;
   private Reason reason;
 
+  /**
+   * Get id.
+   * @return id
+   */
   public URI getId() {
     return id;
   }
 
+  /**
+   * Set id.
+   * @param id id
+   */
   public void setId(final URI id) {
     this.id = id;
   }
 
+  /**
+   * Get reason for deletion.
+   * @return reason for deletion
+   */
   public Reason getReason() {
     return reason;
   }
 
+  /**
+   * Set reason for deletion.
+   * @param reason for deletion
+   */
   public void setReason(final Reason reason) {
     this.reason = reason;
   }

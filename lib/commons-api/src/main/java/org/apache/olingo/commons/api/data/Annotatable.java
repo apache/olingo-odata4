@@ -33,15 +33,30 @@ public abstract class Annotatable {
 
   private final List<Annotation> annotations = new ArrayList<Annotation>();
 
+  /**
+   * Get Annotations.
+   *
+   * @return annotations
+   */
   public List<Annotation> getAnnotations() {
     return annotations;
   }
 
+  /**
+   * Compare for equality.
+   *
+   * @param obj to compared with
+   * @return <code>true</code> if equal, otherwise <code>false</code>
+   */
   @Override
   public boolean equals(final Object obj) {
     return EqualsBuilder.reflectionEquals(this, obj);
   }
 
+  /**
+   * Create the hash code.
+   * @return hash code for this instance.
+   */
   @Override
   public int hashCode() {
     return HashCodeBuilder.reflectionHashCode(this);

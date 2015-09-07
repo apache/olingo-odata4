@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data representation for a link.
+ */
 public class Link extends Annotatable {
 
   private String title;
@@ -177,7 +180,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets the binding link.
-   * @param bindingLink
+   * @param bindingLink name of binding link
    */
   public void setBindingLink(final String bindingLink) {
     this.bindingLink = bindingLink;
@@ -185,7 +188,7 @@ public class Link extends Annotatable {
 
   /**
    * Sets the binding links. List MUST NOT be <tt>null</tt>.
-   * @param bindingLinks
+   * @param bindingLinks list of binding link names
    */
   public void setBindingLinks(final List<String> bindingLinks) {
     this.bindingLinks = bindingLinks;

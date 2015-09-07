@@ -25,10 +25,18 @@ public class Annotation extends Valuable {
 
   private String term;
 
+  /**
+   * Get term for Annotation.
+   * @return term for Annotation.
+   */
   public String getTerm() {
     return term;
   }
 
+  /**
+   * Set term for Annotation.
+   * @param term term for Annotation.
+   */
   public void setTerm(final String term) {
     this.term = term;
   }
