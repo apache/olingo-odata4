@@ -89,25 +89,32 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         returnEntityCollection.setCount(entityList.size());
       }
     }
-
+    
     // handle $skip
     SkipOption skipOption = uriInfo.getSkipOption();
     if (skipOption != null) {
       int skipNumber = skipOption.getValue();
-      if (skipNumber >= 0 && skipNumber <= entityList.size()) {
-        entityList = entityList.subList(skipNumber, entityList.size());
+      if (skipNumber >= 0) {
+        if(skipNumber <= entityList.size()) {
+          entityList = entityList.subList(skipNumber, entityList.size());
+        } else {
+          // The client skipped all entities
+          entityList.clear();
+        }
       } else {
         throw new ODataApplicationException("Invalid value for $skip", HttpStatusCode.BAD_REQUEST.getStatusCode(),
             Locale.ROOT);
       }
     }
-
+    
     // handle $top
     TopOption topOption = uriInfo.getTopOption();
     if (topOption != null) {
       int topNumber = topOption.getValue();
-      if (topNumber >= 0 && topNumber <= entityList.size()) {
-        entityList = entityList.subList(0, topNumber);
+      if (topNumber >= 0) {
+        if(topNumber <= entityList.size()) {
+          entityList = entityList.subList(0, topNumber);
+        }  // else the client has requested more entities than available => return what we have
       } else {
         throw new ODataApplicationException("Invalid value for $top", HttpStatusCode.BAD_REQUEST.getStatusCode(),
             Locale.ROOT);
