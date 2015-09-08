@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
@@ -59,6 +60,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
@@ -75,7 +77,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class BasicITCase extends AbstractTecSvcITCase {
+public class BasicITCase extends AbstractParamTecSvcITCase {
   
   private static final String CONTENT_TYPE_JSON_IEEE754_COMPATIBLE =
       ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true").toContentTypeString();
@@ -95,7 +97,7 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readServiceDocument() {
-    ODataServiceDocumentRequest request = client.getRetrieveRequestFactory()
+    ODataServiceDocumentRequest request = getClient().getRetrieveRequestFactory()
         .getServiceDocumentRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
@@ -113,7 +115,7 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readMetadata() {
-    EdmMetadataRequest request = client.getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
 
@@ -133,7 +135,7 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readViaXmlMetadata() {
-    XMLMetadataRequest request = client.getRetrieveRequestFactory().getXMLMetadataRequest(SERVICE_URI);
+    XMLMetadataRequest request = getClient().getRetrieveRequestFactory().getXMLMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
 
@@ -153,8 +155,8 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntitySet() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp").build());
     assertNotNull(request);
     setCookieHeader(request);
@@ -189,8 +191,8 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntityCollectionCount() {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
-        .getValueRequest(client.newURIBuilder(SERVICE_URI)
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESServerSidePaging").appendCountSegment().build());
     assertNotNull(request);
     setCookieHeader(request);
@@ -207,8 +209,8 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readException() throws Exception {
-    ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment("42").build());
     assertNotNull(request);
     setCookieHeader(request);
@@ -225,9 +227,9 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntity() throws Exception {
-    ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
+                .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1).build());
     assertNotNull(request);
     setCookieHeader(request);
 
@@ -256,15 +258,15 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deleteEntity() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
         .build();
-    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    final ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
     final ODataDeleteResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the deleted entity is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataEntityRequest<ClientEntity> entityRequest = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    ODataEntityRequest<ClientEntity> entityRequest = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
     entityRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     try {
       entityRequest.execute();
@@ -276,16 +278,16 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void patchEntity() throws Exception {
-    ClientEntity patchEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
-    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString("new")));
-    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDecimal",
-        factory.newPrimitiveValueBuilder().buildDecimal(new BigDecimal(42.875))));
-    patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt64(null)));
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+    ClientEntity patchEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    patchEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+        getFactory().newPrimitiveValueBuilder().buildString("new")));
+    patchEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyDecimal",
+        getFactory().newPrimitiveValueBuilder().buildDecimal(new BigDecimal(42.875))));
+    patchEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt64",
+        getFactory().newPrimitiveValueBuilder().buildInt64(null)));
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
         .build();
-    final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+    final ODataEntityUpdateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.PATCH, patchEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -318,13 +320,13 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void updateEntity() throws Exception {
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt64((long)42)));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt64",
+            getFactory().newPrimitiveValueBuilder().buildInt64((long) 42)));
 
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
         .build();
-    final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
+    final ODataEntityUpdateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -346,13 +348,14 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void patchEntityWithComplex() throws Exception {
-    ClientEntity patchEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
-    patchEntity.getProperties().add(factory.newComplexProperty("PropertyComp",
-        factory.newComplexValue("olingo.odata.test1.CTCompComp").add(
-            factory.newComplexProperty("PropertyComp",
-                factory.newComplexValue("olingo.odata.test1.CTTwoPrim").add(
-                    factory.newPrimitiveProperty("PropertyInt16",
-                        factory.newPrimitiveValueBuilder().buildInt16((short)42)))))));
+    ClientEntity patchEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETCompComp"));
+    patchEntity.getProperties().add(getFactory().newComplexProperty("PropertyComp",
+        getFactory().newComplexValue("olingo.odata.test1.CTCompComp").add(
+            getFactory().newComplexProperty("PropertyComp",
+                getFactory().newComplexValue("olingo.odata.test1.CTTwoPrim").add(
+                    getFactory().newPrimitiveProperty("PropertyInt16",
+                        getFactory().newPrimitiveValueBuilder().buildInt16((short)42)))))));
+    ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESCompComp").appendKeySegment(1).build();
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.PATCH, patchEntity);
@@ -379,24 +382,25 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void updateEntityWithComplex() throws Exception {
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
-    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    newEntity.getProperties().add(getFactory().newComplexProperty("PropertyCompCompNav", null));
     // The following properties must not be null
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString("Test")));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+            getFactory().newPrimitiveValueBuilder().buildString("Test")));
     newEntity.getProperties().add(
-        factory.newComplexProperty("PropertyCompTwoPrim",
-            factory.newComplexValue("CTTwoPrim")
-            .add(factory.newPrimitiveProperty(
-                "PropertyInt16",
-                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
-                .add(factory.newPrimitiveProperty(
-                    "PropertyString",
-                    factory.newPrimitiveValueBuilder().buildString("Test2")))));
+            getFactory().newComplexProperty("PropertyCompTwoPrim",
+                    getFactory().newComplexValue("CTTwoPrim")
+                            .add(getFactory().newPrimitiveProperty(
+                                    "PropertyInt16",
+                                    getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
+                            .add(getFactory().newPrimitiveProperty(
+                                    "PropertyString",
+                                    getFactory().newPrimitiveValueBuilder().buildString("Test2")))));
 
+    ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").appendKeySegment(1).build();
     final ODataEntityUpdateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityUpdateRequest(
-        uri, UpdateType.REPLACE, newEntity);
+            uri, UpdateType.REPLACE, newEntity);
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
@@ -413,18 +417,19 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void createEntity() throws Exception {
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt64((long)42)));
-    newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
-        client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment("ESTwoPrim")
-        .appendKeySegment(32766)
-        .build()));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt64",
+            getFactory().newPrimitiveValueBuilder().buildInt64((long) 42)));
+    final ODataClient client = getClient();
+    newEntity.addLink(getFactory().newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
+            client.newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment("ESTwoPrim")
+                    .appendKeySegment(32766)
+                    .build()));
 
     final ODataEntityCreateRequest<ClientEntity> createRequest = client.getCUDRequestFactory().getEntityCreateRequest(
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build(),
-        newEntity);
+            client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build(),
+            newEntity);
     assertNotNull(createRequest);
     final ODataEntityCreateResponse<ClientEntity> createResponse = createRequest.execute();
 
@@ -446,13 +451,13 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void createEntityMinimalResponse() throws Exception {
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString("new")));
-    ODataEntityCreateRequest<ClientEntity> request = client.getCUDRequestFactory().getEntityCreateRequest(
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").build(),
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+            getFactory().newPrimitiveValueBuilder().buildString("new")));
+    ODataEntityCreateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityCreateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").build(),
         newEntity);
-    request.setPrefer(client.newPreferences().returnMinimal());
+    request.setPrefer(getClient().newPreferences().returnMinimal());
 
     final ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
@@ -464,13 +469,13 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntityWithExpandedNavigationProperty() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(1)
         .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
         .build();
 
-    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory().getEntityRequest(uri);
+    ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory().getEntityRequest(uri);
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
     saveCookieHeader(response);
@@ -500,41 +505,41 @@ public class BasicITCase extends AbstractTecSvcITCase {
         .toValue());
 
     assertShortOrInt(2, inlineEntitySet.getEntitySet()
-        .getEntities()
-        .get(1)
-        .getProperty("PropertyInt16")
-        .getPrimitiveValue()
-        .toValue());
+            .getEntities()
+            .get(1)
+            .getProperty("PropertyInt16")
+            .getPrimitiveValue()
+            .toValue());
   }
 
   @Test
   public void updateCollectionOfComplexCollection() {
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETKeyNav"));
+    final ClientEntity entity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETKeyNav"));
 
     entity.getProperties().add(
-        factory.newCollectionProperty("CollPropertyComp",
-            factory.newCollectionValue("CTPrimComp")
-                .add(factory.newComplexValue("CTPrimComp")
-                    .add(factory.newPrimitiveProperty("PropertyInt16",
-                        factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
-                    .add(factory.newComplexProperty("PropertyComp",
-                        factory.newComplexValue("CTAllPrim")
-                            .add(factory.newPrimitiveProperty("PropertyString",
-                                factory.newPrimitiveValueBuilder().buildString("42"))))))
-                .add(factory.newComplexValue("CTPrimComp")
-                    .add(factory.newPrimitiveProperty("PropertyInt16",
-                        factory.newPrimitiveValueBuilder().buildInt16((short) 43)))
-                    .add(factory.newComplexProperty("PropertyComp",
-                        factory.newComplexValue("CTAllPrim")
-                            .add(factory.newPrimitiveProperty("PropertyString",
-                                factory.newPrimitiveValueBuilder().buildString("43"))))))));
+        getFactory().newCollectionProperty("CollPropertyComp",
+            getFactory().newCollectionValue("CTPrimComp")
+                .add(getFactory().newComplexValue("CTPrimComp")
+                    .add(getFactory().newPrimitiveProperty("PropertyInt16",
+                        getFactory().newPrimitiveValueBuilder().buildInt16((short) 42)))
+                    .add(getFactory().newComplexProperty("PropertyComp",
+                        getFactory().newComplexValue("CTAllPrim")
+                            .add(getFactory().newPrimitiveProperty("PropertyString",
+                                getFactory().newPrimitiveValueBuilder().buildString("42"))))))
+                .add(getFactory().newComplexValue("CTPrimComp")
+                    .add(getFactory().newPrimitiveProperty("PropertyInt16",
+                        getFactory().newPrimitiveValueBuilder().buildInt16((short) 43)))
+                    .add(getFactory().newComplexProperty("PropertyComp",
+                        getFactory().newComplexValue("CTAllPrim")
+                            .add(getFactory().newPrimitiveProperty("PropertyString",
+                                getFactory().newPrimitiveValueBuilder().buildString("43"))))))));
 
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(3)
         .build();
 
-    final ODataEntityUpdateResponse<ClientEntity> response = client.getCUDRequestFactory()
+    final ODataEntityUpdateResponse<ClientEntity> response = getClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity)
             .execute();
 
@@ -576,36 +581,36 @@ public class BasicITCase extends AbstractTecSvcITCase {
      * Create a new entity which contains a collection of complex collections
      * Check if all not filled fields are created by the server
      */
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    final ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     entity.getProperties().add(
-        factory.newPrimitiveProperty("PropertyString",
-            factory.newPrimitiveValueBuilder().buildString("Complex collection test")));
-    entity.getProperties().add(factory.newComplexProperty("PropertyCompTwoPrim",
-        factory.newComplexValue("CTTwoPrim")
-            .add(factory.newPrimitiveProperty("PropertyInt16",
-                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
-            .add(factory.newPrimitiveProperty("PropertyString",
-                factory.newPrimitiveValueBuilder().buildString("1")))));
+        getFactory().newPrimitiveProperty("PropertyString",
+            getFactory().newPrimitiveValueBuilder().buildString("Complex collection test")));
+    entity.getProperties().add(getFactory().newComplexProperty("PropertyCompTwoPrim",
+        getFactory().newComplexValue("CTTwoPrim")
+            .add(getFactory().newPrimitiveProperty("PropertyInt16",
+                getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(getFactory().newPrimitiveProperty("PropertyString",
+                getFactory().newPrimitiveValueBuilder().buildString("1")))));
 
-    entity.getProperties().add(factory.newCollectionProperty("CollPropertyComp",
-        factory.newCollectionValue("CTPrimComp")
-            .add(factory.newComplexValue("CTPrimComp")
-                .add(factory.newPrimitiveProperty("PropertyInt16",
-                    factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
-                .add(factory.newComplexProperty("PropertyComp", factory.newComplexValue("CTAllPrim")
-                    .add(factory.newPrimitiveProperty("PropertyString",
-                        factory.newPrimitiveValueBuilder().buildString("1"))))))
-            .add(factory.newComplexValue("CTPrimComp")
-                .add(factory.newComplexProperty("PropertyComp", factory.newComplexValue("CTAllPrim")
-                    .add(factory.newPrimitiveProperty("PropertyString",
-                        factory.newPrimitiveValueBuilder().buildString("2")))
-                    .add(factory.newPrimitiveProperty("PropertyInt16",
-                        factory.newPrimitiveValueBuilder().buildInt16((short) 2)))
-                    .add(factory.newPrimitiveProperty("PropertySingle",
-                        factory.newPrimitiveValueBuilder().buildSingle(2.0f))))))));
+    entity.getProperties().add(getFactory().newCollectionProperty("CollPropertyComp",
+        getFactory().newCollectionValue("CTPrimComp")
+            .add(getFactory().newComplexValue("CTPrimComp")
+                .add(getFactory().newPrimitiveProperty("PropertyInt16",
+                    getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
+                .add(getFactory().newComplexProperty("PropertyComp", getFactory().newComplexValue("CTAllPrim")
+                    .add(getFactory().newPrimitiveProperty("PropertyString",
+                        getFactory().newPrimitiveValueBuilder().buildString("1"))))))
+            .add(getFactory().newComplexValue("CTPrimComp")
+                .add(getFactory().newComplexProperty("PropertyComp", getFactory().newComplexValue("CTAllPrim")
+                    .add(getFactory().newPrimitiveProperty("PropertyString",
+                        getFactory().newPrimitiveValueBuilder().buildString("2")))
+                    .add(getFactory().newPrimitiveProperty("PropertyInt16",
+                        getFactory().newPrimitiveValueBuilder().buildInt16((short) 2)))
+                    .add(getFactory().newPrimitiveProperty("PropertySingle",
+                        getFactory().newPrimitiveValueBuilder().buildSingle(2.0f))))))));
 
-    entity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
-        client.newURIBuilder(SERVICE_URI)
+    entity.addLink(getFactory().newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoKeyNav")
         .appendKeySegment(new LinkedHashMap<String, Object>() {
           private static final long serialVersionUID = 1L;
@@ -616,8 +621,8 @@ public class BasicITCase extends AbstractTecSvcITCase {
           }
         }).build()));
 
-    final ODataEntityCreateResponse<ClientEntity> response = client.getCUDRequestFactory().getEntityCreateRequest(
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build(), entity)
+    final ODataEntityCreateResponse<ClientEntity> response = getClient().getCUDRequestFactory().getEntityCreateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build(), entity)
         .execute();
 
     // Check if not declared fields are also available
@@ -686,12 +691,13 @@ public class BasicITCase extends AbstractTecSvcITCase {
   @Test
   public void complexPropertyWithNotNullablePrimitiveValue() {
     // PropertyComp is null, but the primitive values in PropertyComp must not be null
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETMixPrimCollComp"));
-    final URI targetURI = edmEnabledClient.newURIBuilder(SERVICE_URI)
+    final ClientEntity entity = getFactory().newEntity(
+            new FullQualifiedName("olingo.odata.test1", "ETMixPrimCollComp"));
+    final URI targetURI = getEdmEnabledClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESMixPrimCollComp").build();
 
     try {
-      edmEnabledClient.getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
+      getEdmEnabledClient().getCUDRequestFactory().getEntityCreateRequest(targetURI, entity).execute();
       fail("Expecting bad request");
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
@@ -700,13 +706,14 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void upsert() throws EdmPrimitiveTypeException {
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
-    entity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString("Test")));
+    final ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETTwoPrim"));
+    entity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+        getFactory().newPrimitiveValueBuilder().buildString("Test")));
 
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(33).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(33)
+            .build();
     final ODataEntityUpdateResponse<ClientEntity> updateResponse =
-        edmEnabledClient.getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.PATCH, entity).execute();
+        getEdmEnabledClient().getCUDRequestFactory().getEntityUpdateRequest(uri, UpdateType.PATCH, entity).execute();
 
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), updateResponse.getStatusCode());
     assertEquals("Test", updateResponse.getBody().getProperty("PropertyString").getPrimitiveValue().toValue());
@@ -716,11 +723,11 @@ public class BasicITCase extends AbstractTecSvcITCase {
         .getPrimitiveValue()
         .toCastValue(Short.class);
 
-    final ODataEntityRequest<ClientEntity> entityRequest = edmEnabledClient.getRetrieveRequestFactory()
-        .getEntityRequest(edmEnabledClient.newURIBuilder()
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(key)
-            .build());
+    final ODataEntityRequest<ClientEntity> entityRequest = getEdmEnabledClient().getRetrieveRequestFactory()
+        .getEntityRequest(getEdmEnabledClient().newURIBuilder()
+                .appendEntitySetSegment("ESTwoPrim")
+                .appendKeySegment(key)
+                .build());
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseEntityRequest = entityRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), responseEntityRequest.getStatusCode());
@@ -729,18 +736,18 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void updatePropertyWithNull() {
-    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESAllPrim")
         .appendKeySegment(32767)
         .build();
 
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
-    entity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString(null)));
+    final ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    entity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+        getFactory().newPrimitiveValueBuilder().buildString(null)));
 
-    ODataEntityUpdateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+    ODataEntityUpdateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity);
-    request.setPrefer(client.newPreferences().returnRepresentation());
+    request.setPrefer(getClient().newPreferences().returnRepresentation());
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -751,47 +758,49 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test(expected = ODataClientErrorException.class)
   public void updatePropertyWithNullNotAllowed() {
-    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(32767)
         .build();
 
-    final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
-    entity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString(null)));
+    final ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    entity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+        getFactory().newPrimitiveValueBuilder().buildString(null)));
 
-    edmEnabledClient.getCUDRequestFactory().getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity).execute();
+    getEdmEnabledClient().getCUDRequestFactory().getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity).execute();
   }
 
   @Test
   public void updateMerge() {
-    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(1)
         .build();
 
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     entity.addLink(factory.newEntityNavigationLink("NavPropertyETKeyNavOne", targetURI));
-    entity.addLink(factory.newEntitySetNavigationLink("NavPropertyETKeyNavMany", client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
+    entity.addLink(factory.newEntitySetNavigationLink("NavPropertyETKeyNavMany", getClient().newURIBuilder
+            (SERVICE_URI)
+            .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
     entity.getProperties().add(factory.newCollectionProperty("CollPropertyString",
-        factory.newCollectionValue("Edm.String").add(
-            factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
+            factory.newCollectionValue("Edm.String").add(
+                    factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(factory.newComplexProperty("PropertyCompAllPrim",
-        factory.newComplexValue("CTAllPrim")
-        .add(factory.newPrimitiveProperty("PropertyString",
-                factory.newPrimitiveValueBuilder().buildString("Changed")))));
+            factory.newComplexValue("CTAllPrim")
+                    .add(factory.newPrimitiveProperty("PropertyString",
+                            factory.newPrimitiveValueBuilder().buildString("Changed")))));
 
-    final ODataEntityUpdateResponse<ClientEntity> response = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityUpdateResponse<ClientEntity> response = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(targetURI, UpdateType.PATCH, entity)
         .execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final ODataEntityRequest<ClientEntity> entityRequest = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> entityRequest = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(
-            edmEnabledClient.newURIBuilder()
+            getEdmEnabledClient().newURIBuilder()
                 .appendEntitySetSegment("ESKeyNav")
                 .appendKeySegment(1)
                 .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
@@ -857,31 +866,35 @@ public class BasicITCase extends AbstractTecSvcITCase {
 
   @Test
   public void updateReplace() {
+    final ODataClient client = getClient();
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav")
         .appendKeySegment(1)
         .build();
 
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
     entity.addLink(factory.newEntityNavigationLink("NavPropertyETKeyNavOne", targetURI));
     entity.addLink(factory.newEntitySetNavigationLink("NavPropertyETKeyNavMany", client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
-    entity.getProperties().add(factory.newPrimitiveProperty("PropertyString", factory.newPrimitiveValueBuilder()
-        .buildString("Must not be null")));
-    entity.getProperties().add(factory.newComplexProperty("PropertyCompTwoPrim", factory.newComplexValue("CTTwoPrim")
-        .add(factory.newPrimitiveProperty("PropertyString", factory.newPrimitiveValueBuilder()
-            .buildString("Must not be null")))
+            .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).build()));
+    entity.getProperties().add(factory.newPrimitiveProperty("PropertyString", factory
+            .newPrimitiveValueBuilder()
+            .buildString("Must not be null")));
+    entity.getProperties().add(factory.newComplexProperty("PropertyCompTwoPrim", factory.newComplexValue
+            ("CTTwoPrim")
+            .add(factory.newPrimitiveProperty("PropertyString", factory.newPrimitiveValueBuilder()
+                    .buildString("Must not be null")))
             .add(factory.newPrimitiveProperty("PropertyInt16",
-                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties().add(factory.newCollectionProperty("CollPropertyString",
-        factory.newCollectionValue("Edm.String")
-            .add(factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
+            factory.newCollectionValue("Edm.String")
+                    .add(factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(factory.newComplexProperty("PropertyCompAllPrim",
-        factory.newComplexValue("CTAllPrim").add(
-            factory.newPrimitiveProperty("PropertyString",
-                factory.newPrimitiveValueBuilder().buildString("Changed")))));
+            factory.newComplexValue("CTAllPrim").add(
+                    factory.newPrimitiveProperty("PropertyString",
+                            factory.newPrimitiveValueBuilder().buildString("Changed")))));
 
-    ODataEntityUpdateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+    ODataEntityUpdateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(targetURI, UpdateType.REPLACE, entity);
     request.setPrefer(client.newPreferences().returnMinimal());
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
@@ -889,9 +902,9 @@ public class BasicITCase extends AbstractTecSvcITCase {
     assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final ODataEntityRequest<ClientEntity> entityRequest = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> entityRequest = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(
-            edmEnabledClient.newURIBuilder()
+            getEdmEnabledClient().newURIBuilder()
                 .appendEntitySetSegment("ESKeyNav")
                 .appendKeySegment(1)
                 .expand("NavPropertyETKeyNavOne", "NavPropertyETKeyNavMany")
@@ -973,18 +986,18 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createEntityWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
-    final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
+    final URI linkURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
                                                          .appendKeySegment(32767).build();
     
-    final ClientEntity newEntity = factory.newEntity(ET_ALL_PRIM);
-    newEntity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_INT64, 
-        factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
-    newEntity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_DECIMAL, 
-        factory.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(34))));
-    newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
+    final ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+        getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(34))));
+    newEntity.addLink(getFactory().newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
     
-    final ODataEntityCreateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityCreateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityCreateRequest(uri, newEntity);
     request.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -992,23 +1005,23 @@ public class BasicITCase extends AbstractTecSvcITCase {
     
     assertEquals(Long.MAX_VALUE, response.getBody().getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
     assertEquals(BigDecimal.valueOf(34), response.getBody().getProperty(PROPERTY_DECIMAL)
-                                                           .getPrimitiveValue().toValue());
+            .getPrimitiveValue().toValue());
   }
   
   @Test
   public void createEntityWithIEEE754CompatibleParameterNull() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
-    final URI linkURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
+    final URI linkURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_PRIM)
         .appendKeySegment(32767).build();
     
-    final ClientEntity newEntity = factory.newEntity(ET_ALL_PRIM);
-    newEntity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_INT64, 
-        factory.newPrimitiveValueBuilder().buildInt64(null)));
-    newEntity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_DECIMAL, 
-        factory.newPrimitiveValueBuilder().buildDecimal(null)));
-    newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
+    final ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+            getFactory().newPrimitiveValueBuilder().buildInt64(null)));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+            getFactory().newPrimitiveValueBuilder().buildDecimal(null)));
+    newEntity.addLink(getFactory().newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE, linkURI));
     
-    final ODataEntityCreateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityCreateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityCreateRequest(uri, newEntity);
     request.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1020,15 +1033,16 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
     
-    final ClientEntity entity = factory.newEntity(ET_ALL_PRIM);
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_INT64, 
-        factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_DECIMAL, 
-        factory.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(Long.MAX_VALUE))));
+    final ClientEntity entity = getFactory().newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+        getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(Long.MAX_VALUE))));
 
-    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1036,7 +1050,7 @@ public class BasicITCase extends AbstractTecSvcITCase {
     
     String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uri);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1044,21 +1058,22 @@ public class BasicITCase extends AbstractTecSvcITCase {
     
     assertEquals(Long.MAX_VALUE, responseGet.getBody().getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
     assertEquals(BigDecimal.valueOf(Long.MAX_VALUE), responseGet.getBody().getProperty(PROPERTY_DECIMAL)
-                                                                          .getPrimitiveValue()
-                                                                          .toValue());
+            .getPrimitiveValue()
+            .toValue());
   }
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameterNull() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
     
-    final ClientEntity entity = factory.newEntity(ET_ALL_PRIM);
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_INT64, 
-        factory.newPrimitiveValueBuilder().buildInt64(null)));
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_DECIMAL, 
-        factory.newPrimitiveValueBuilder().buildDecimal(null)));
+    final ClientEntity entity = getFactory().newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+        getFactory().newPrimitiveValueBuilder().buildInt64(null)));
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+        getFactory().newPrimitiveValueBuilder().buildDecimal(null)));
 
-    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1066,7 +1081,7 @@ public class BasicITCase extends AbstractTecSvcITCase {
     
     String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uri);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1078,15 +1093,16 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateEntityWithIEEE754CompatibleParameterWithNullString() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0).build();
     
-    final ClientEntity entity = factory.newEntity(ET_ALL_PRIM);
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_INT64, 
-        factory.newPrimitiveValueBuilder().buildString("null")));
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_DECIMAL, 
-        factory.newPrimitiveValueBuilder().buildString("null")));
+    final ClientEntity entity = getFactory().newEntity(ET_ALL_PRIM);
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+            getFactory().newPrimitiveValueBuilder().buildString("null")));
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+            getFactory().newPrimitiveValueBuilder().buildString("null")));
 
-    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = edmEnabledClient.getCUDRequestFactory()
+    final ODataEntityUpdateRequest<ClientEntity> requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1101,21 +1117,21 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateEdmInt64PropertyWithIEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
                                                      .appendKeySegment(0)
                                                      .appendPropertySegment(PROPERTY_INT64).build();
     
     final ODataPropertyUpdateRequest requestUpdate =
-        edmEnabledClient.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uri,
-            factory.newPrimitiveProperty(PROPERTY_INT64,
-            factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+        getEdmEnabledClient().getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(uri,
+            getFactory().newPrimitiveProperty(PROPERTY_INT64,
+            getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
     
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
     String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final ODataPropertyRequest<ClientProperty> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1123,30 +1139,30 @@ public class BasicITCase extends AbstractTecSvcITCase {
     
     assertEquals(Long.MAX_VALUE, responseGet.getBody().getPrimitiveValue().toValue());
   }
-  
+
   @Test
   public void updateComplexPropertyWithIEEE754CompatibleParamter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendPropertySegment(PROPERTY_COMP_ALL_PRIM).build();
     
-    final ODataPropertyUpdateRequest requestUpdate = edmEnabledClient.getCUDRequestFactory()
+    final ODataPropertyUpdateRequest requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getPropertyComplexValueUpdateRequest(uri, UpdateType.PATCH,
-            factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM,
-                factory.newComplexValue("CTAllPrim")
-                    .add(factory.newPrimitiveProperty(PROPERTY_INT64,
-                        factory.newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
-                    .add(factory.newPrimitiveProperty(PROPERTY_DECIMAL,
-                        factory.newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(12345678912L))))
-                    .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                        factory.newPrimitiveValueBuilder().buildInt16((short) 2)))));
+            getFactory().newComplexProperty(PROPERTY_COMP_ALL_PRIM,
+                getFactory().newComplexValue("CTAllPrim")
+                    .add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+                            getFactory().newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
+                    .add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+                            getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(12345678912L))))
+                    .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
+                            getFactory().newPrimitiveValueBuilder().buildInt16((short) 2)))));
                                                          
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
     String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final ODataPropertyRequest<ClientProperty> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1161,21 +1177,21 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updatePropertyEdmDecimalWithIEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
                                                      .appendKeySegment(0)
                                                      .appendPropertySegment(PROPERTY_DECIMAL).build();
     
-    final ODataPropertyUpdateRequest requestUpdate = edmEnabledClient.getCUDRequestFactory()
+    final ODataPropertyUpdateRequest requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getPropertyPrimitiveValueUpdateRequest(uri,
-            factory.newPrimitiveProperty(PROPERTY_DECIMAL,
-                factory.newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+            getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
+                getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
 
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     final ODataPropertyUpdateResponse responseUpdate = requestUpdate.execute();
     String cookie = responseUpdate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final ODataPropertyRequest<ClientProperty> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataPropertyRequest<ClientProperty> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1186,11 +1202,11 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void readESAllPrimCollectionWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
                                                      .orderBy(PROPERTY_INT16)
                                                      .build();
 
-    ODataEntitySetRequest<ClientEntitySet> request = edmEnabledClient.getRetrieveRequestFactory()
+    ODataEntitySetRequest<ClientEntitySet> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntitySetRequest(uri);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     setCookieHeader(request);
@@ -1219,9 +1235,10 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void readESKeyNavCheckComplexPropertyWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
     
-    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory().getEntityRequest(uri);
+    ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory().getEntityRequest(uri);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
@@ -1245,11 +1262,11 @@ public class BasicITCase extends AbstractTecSvcITCase {
   
   @Test
   public void readESKEyNavComplexPropertyWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(PROPERTY_COMP_ALL_PRIM)
                                                      .build();
-    ODataPropertyRequest<ClientProperty> request = edmEnabledClient.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     setCookieHeader(request);
@@ -1271,12 +1288,12 @@ public class BasicITCase extends AbstractTecSvcITCase {
   @Test
   @Ignore
   public void readEdmInt64PropertyWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
                                                      .appendPropertySegment(PROPERTY_INT64)
                                                      .build();
-    ODataPropertyRequest<ClientProperty> request = edmEnabledClient.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     setCookieHeader(request);
@@ -1290,12 +1307,12 @@ public class BasicITCase extends AbstractTecSvcITCase {
   @Test
   @Ignore
   public void readEdmDecimalPropertyWithIEEE754CompatibleParameter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendPropertySegment(PROPERTY_COMP_ALL_PRIM)
                                                      .appendPropertySegment(PROPERTY_DECIMAL)
                                                      .build();
-    ODataPropertyRequest<ClientProperty> request = edmEnabledClient.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     request.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     setCookieHeader(request);

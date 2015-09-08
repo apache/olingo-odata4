@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -43,7 +44,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class EntityReferencesITCase extends AbstractTecSvcITCase {
+public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   
   private static final String INVALID_HOST = "http://otherhost.com/service.svc";
   private static final String ES_KEY_NAV = "ESKeyNav";
@@ -61,7 +62,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
 
   @Test
   public void orderBy() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16).build();
@@ -71,7 +72,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void orderByReverse() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16 + DESCENDING).build();
@@ -81,11 +82,11 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void navigationToOne() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(32767)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE).appendRefSegment().build();
     
-    final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntity> response = getClient().getRetrieveRequestFactory()
                                                                 .getEntityRequest(uri)
                                                                 .execute();
     
@@ -94,7 +95,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void navigationToMany() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_MANY).orderBy(PROPERTY_INT16)
                           .appendRefSegment().build();
@@ -104,7 +105,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void filter() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendRefSegment()
                           .filter("PropertyDecimal eq 34").build();
 
@@ -113,10 +114,10 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void count() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendRefSegment().count(true).build();
     
-    final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
+    final ODataRetrieveResponse<ClientEntitySet> response = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(uri)
         .execute();
     
@@ -125,7 +126,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void skip() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16).skip(2).build();
@@ -135,14 +136,14 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void serverDrivenPaging() {
-    URI uri = client.newURIBuilder(SERVICE_URI)
+    URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
                           .appendRefSegment().build();
     
     int entityId = 1;
     final int EXPECTED_REQUESTS = 51;
     for(int requestCount = 0; requestCount < EXPECTED_REQUESTS; requestCount++) {
-      ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
+      ODataRetrieveResponse<ClientEntitySet> response = getClient().getRetrieveRequestFactory()
                                                                     .getEntitySetRequest(uri)
                                                                     .execute();
       
@@ -165,12 +166,12 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void responseNonExistingEntity() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE).appendRefSegment().build();
     
     try {
-      client.getRetrieveRequestFactory()
+      getClient().getRetrieveRequestFactory()
             .getEntityRequest(uri)
             .execute();
       fail();
@@ -181,7 +182,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     
   @Test
   public void emptyCollection() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendKeySegment(-32768)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_MANY)
@@ -192,7 +193,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
 
   @Test
   public void twoNavigationStepsBeforeRead() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -205,26 +206,26 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceRelativeUri() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                      .appendRefSegment()
                                                      .build();
     final URI reference = new URI(ES_KEY_NAV + "(3)");
     
-    final ODataReferenceAddingResponse response = edmEnabledClient.getCUDRequestFactory()
+    final ODataReferenceAddingResponse response = getEdmEnabledClient().getCUDRequestFactory()
                                                         .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
                                                         .execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
-    final URI getURI = client.newURIBuilder(SERVICE_URI)
+    final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                              .appendEntitySetSegment(ES_KEY_NAV)
                              .appendKeySegment(1)
                              .expand(NAV_PROPERTY_ET_KEY_NAV_MANY)
                              .build();
     
-    final ODataEntityRequest<ClientEntity> getRequest = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> getRequest = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getURI);
     getRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> getResponse = getRequest.execute();
@@ -244,28 +245,28 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceAbsoluteUri() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                      .appendRefSegment()
                                                      .build();
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     
-    final ODataReferenceAddingResponse response = client.getCUDRequestFactory()
+    final ODataReferenceAddingResponse response = getClient().getCUDRequestFactory()
                                                         .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
                                                         .execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
-    final URI getURI = client.newURIBuilder(SERVICE_URI)
+    final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                              .appendEntitySetSegment(ES_KEY_NAV)
                              .appendKeySegment(1)
                              .expand(NAV_PROPERTY_ET_KEY_NAV_MANY)
                              .build();
     
-    final ODataEntityRequest<ClientEntity> getRequest = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> getRequest = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getURI);
     getRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> getResponse = getRequest.execute();
@@ -285,17 +286,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceNonExistingEntityId() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                      .appendRefSegment()
                                                      .build();
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(35)
                                                            .build();
     
     try {
-      client.getCUDRequestFactory()
+      getClient().getCUDRequestFactory()
             .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
             .execute();
       fail();
@@ -306,16 +307,16 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceInvalidEntityId() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                      .appendRefSegment()
                                                      .build();
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("NotExisting")
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("NotExisting")
                                                            .build();
     
     try {
-      client.getCUDRequestFactory()
+      getClient().getCUDRequestFactory()
             .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
             .execute();
       fail();
@@ -326,17 +327,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceInvalidHost() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                      .appendRefSegment()
                                                      .build();
-    final URI reference = client.newURIBuilder(INVALID_HOST)
+    final URI reference = getClient().newURIBuilder(INVALID_HOST)
                                 .appendEntitySetSegment("NotExisting")
                                 .build();
     
     try {
-      client.getCUDRequestFactory()
+      getClient().getCUDRequestFactory()
             .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
             .execute();
       fail();
@@ -347,27 +348,27 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceAbsoluteURI() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
                                                      .build();
     
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     
-    final ODataReferenceAddingResponse response = client.getCUDRequestFactory()
+    final ODataReferenceAddingResponse response = getClient().getCUDRequestFactory()
                                                .getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                                .execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final URI getURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI getURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                         .appendKeySegment(1)
                                                         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                         .build();
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getURI);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
@@ -383,7 +384,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceRelativeURI() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
@@ -391,17 +392,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     
     final URI reference = new URI(ES_KEY_NAV + "(3)");
     
-    final ODataReferenceAddingResponse response = client.getCUDRequestFactory()
+    final ODataReferenceAddingResponse response = getClient().getCUDRequestFactory()
                                                .getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                                .execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final URI getURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI getURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                         .appendKeySegment(1)
                                                         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                         .build();
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getURI);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
@@ -417,7 +418,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceInvalidEntityID() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
@@ -426,7 +427,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     final URI reference = new URI("NonExistingEntity" + "(3)");
     
     try {
-      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
+      getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                    .execute();
       fail();
     } catch(ODataClientErrorException ex) {
@@ -436,7 +437,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceNotExistingEntityId() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
@@ -445,7 +446,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     final URI reference = new URI(ES_KEY_NAV + "(42)");
     
     try {
-      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
+      getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                    .execute();
       fail();
     } catch (ODataClientErrorException ex) {
@@ -455,17 +456,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceInvalidHost() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
                                                      .build();
     
-    final URI reference = client.newURIBuilder(INVALID_HOST).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(INVALID_HOST).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     try{
-      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
+      getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                   .execute();
       fail();
     } catch (ODataClientErrorException ex) {
@@ -475,17 +476,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceNull() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
                                                      .build();
     
-    final URI reference = client.newURIBuilder(INVALID_HOST).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(INVALID_HOST).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     try{
-      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
+      getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                   .execute();
       fail();
     } catch (ODataClientErrorException ex) {
@@ -495,17 +496,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateReferenceToPrimitiveProperty() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(PROPERTY_INT16)
                                                      .appendRefSegment()
                                                      .build();
     
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     try{
-      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
+      getClient().getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
                                   .execute();
       fail();
     } catch (ODataClientErrorException ex) {
@@ -515,17 +516,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createReferenceToPrimitiveProperty() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendNavigationSegment(PROPERTY_INT16)
                                                      .appendRefSegment()
                                                      .build();
     
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                            .appendKeySegment(3)
                                                            .build();
     try{
-      edmEnabledClient.getCUDRequestFactory().getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
+      getEdmEnabledClient().getCUDRequestFactory().getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
           .execute();
       fail();
     } catch (ODataClientErrorException ex) {
@@ -539,16 +540,16 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     esTwoKeyNavKey.put(PROPERTY_INT16, 1);
     esTwoKeyNavKey.put(PROPERTY_STRING, "1");
     
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(esTwoKeyNavKey)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY).appendKeySegment(1)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE).appendRefSegment().build();
    
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(3)
         .build();
 
-      final ODataReferenceAddingResponse response = edmEnabledClient.getCUDRequestFactory()
+      final ODataReferenceAddingResponse response = getEdmEnabledClient().getCUDRequestFactory()
            .getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
            .execute();
       assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
@@ -557,13 +558,13 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
       Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
       expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_KEY_NAV_ONE);
       
-      final URI getURI = client.newURIBuilder(SERVICE_URI)
+      final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                                .appendEntitySetSegment(ES_TWO_KEY_NAV)
                                .appendKeySegment(esTwoKeyNavKey)
                                .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, expandOptions)
                                .build();
       
-      final ODataEntityRequest<ClientEntity> getRequest = edmEnabledClient.getRetrieveRequestFactory()
+      final ODataEntityRequest<ClientEntity> getRequest = getEdmEnabledClient().getRetrieveRequestFactory()
           .getEntityRequest(getURI);
       getRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
       final ODataRetrieveResponse<ClientEntity> getResponse = getRequest.execute();
@@ -587,16 +588,16 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     esTwoKeyNavKey.put(PROPERTY_INT16, 1);
     esTwoKeyNavKey.put(PROPERTY_STRING, "1");
     
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(esTwoKeyNavKey)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY).appendKeySegment(1)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY).appendRefSegment().build();
    
-    final URI reference = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI reference = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(3)
         .build();
 
-      final ODataReferenceAddingResponse response = client.getCUDRequestFactory()
+      final ODataReferenceAddingResponse response = getClient().getCUDRequestFactory()
            .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
            .execute();
       assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
@@ -606,13 +607,13 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
       expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_KEY_NAV_MANY);
       expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
       
-      final URI getURI = client.newURIBuilder(SERVICE_URI)
+      final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                                .appendEntitySetSegment(ES_TWO_KEY_NAV)
                                .appendKeySegment(esTwoKeyNavKey)
                                .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, expandOptions)
                                .build();
       
-      final ODataEntityRequest<ClientEntity> getRequest = edmEnabledClient.getRetrieveRequestFactory()
+      final ODataEntityRequest<ClientEntity> getRequest = getEdmEnabledClient().getRetrieveRequestFactory()
           .getEntityRequest(getURI);
       getRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
       final ODataRetrieveResponse<ClientEntity> getResponse = getRequest.execute();
@@ -638,7 +639,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceInCollectionNavigationProperty() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -646,15 +647,15 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .id("ESKeyNav(1)")
                           .build();
     
-    final ODataDeleteResponse deleteResponse = client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+    final ODataDeleteResponse deleteResponse = getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
     final String cookie = deleteResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final URI uriGet = client.newURIBuilder(SERVICE_URI)
+    final URI uriGet = getClient().newURIBuilder(SERVICE_URI)
                              .appendEntitySetSegment(ES_KEY_NAV)
                              .appendKeySegment(1)
                              .expand(NAV_PROPERTY_ET_KEY_NAV_MANY)
                              .build();
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uriGet);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
@@ -677,6 +678,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceOnSingleNavigationProperty() {
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
@@ -708,7 +710,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceNotExistingEntity() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(3)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -717,7 +719,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+      getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
@@ -726,7 +728,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceNotExistingEntityInCollection() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(2)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -735,7 +737,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+      getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
@@ -744,7 +746,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceInvalidEntityId() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(2)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -753,7 +755,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+      getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
@@ -762,7 +764,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceInvalidHost() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(2)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -771,7 +773,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+      getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
@@ -780,7 +782,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteReferenceOnNonNullableSingleNavigationProperty() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendKeySegment(32767)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE)
@@ -788,7 +790,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+      getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
@@ -797,6 +799,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
 
   @Test
   public void navigateTwoTimesThanDeleteReferenceInCollection() {
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
@@ -833,7 +836,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void navigateTwoTimeThanDeleteReference() {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
                           .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
@@ -843,17 +846,17 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                           .id("ESKeyNav(2)")
                           .build();
     
-    final ODataDeleteResponse deleteResponse = client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+    final ODataDeleteResponse deleteResponse = getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
     final String cookie = deleteResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
-    final URI uriGet = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uriGet = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                         .appendKeySegment(1)
                                                         .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                         .appendKeySegment(2)
                                                         .expand(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                                         .build();
     
-    final ODataEntityRequest<ClientEntity> requestGet = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGet = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uriGet);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
@@ -879,22 +882,22 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     Map<String, Object> esTwoKEyNavKey = new HashMap<String, Object>();
     esTwoKEyNavKey.put("PropertyInt16", 1);
     esTwoKEyNavKey.put("PropertyString", "1");
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV)
                                                      .appendKeySegment(esTwoKEyNavKey)
                                                      .appendNavigationSegment(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                      .appendRefSegment()
                                                      .build();
     
-    final ODataDeleteResponse responseDelete = client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+    final ODataDeleteResponse responseDelete = getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
     final String cookie = responseDelete.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final URI uriGetESTwoKeyNav = client.newURIBuilder(SERVICE_URI)
+    final URI uriGetESTwoKeyNav = getClient().newURIBuilder(SERVICE_URI)
                                         .appendEntitySetSegment(ES_TWO_KEY_NAV)
                                         .appendKeySegment(esTwoKEyNavKey)
                                         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                         .build();
     
-    final ODataEntityRequest<ClientEntity> getRequestESTwoKeyNav = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> getRequestESTwoKeyNav = getClient().getRetrieveRequestFactory()
                                                                          .getEntityRequest(uriGetESTwoKeyNav);
     getRequestESTwoKeyNav.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetRequestESTwoKeyNav = getRequestESTwoKeyNav.execute();
@@ -909,13 +912,13 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     }    
     
     
-    final URI uriGetESKeyNav = client.newURIBuilder(SERVICE_URI)
+    final URI uriGetESKeyNav = getClient().newURIBuilder(SERVICE_URI)
                                      .appendEntitySetSegment(ES_KEY_NAV)
                                      .appendKeySegment(1)
                                      .expand(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
                                      .build();
     
-    final ODataEntityRequest<ClientEntity> requestGetESKeyNav = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGetESKeyNav = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uriGetESKeyNav);
     requestGetESKeyNav.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetESKeyNav = requestGetESKeyNav.execute();
@@ -937,7 +940,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteCollectionValuedNavigationPropertyReferenceWithSingleValuedNavigationPropertyPartner() {
-    final URI uriDelete = client.newURIBuilder(SERVICE_URI)
+    final URI uriDelete = getClient().newURIBuilder(SERVICE_URI)
                                 .appendEntitySetSegment(ES_KEY_NAV)
                                 .appendKeySegment(1)
                                 .appendNavigationSegment(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
@@ -945,16 +948,16 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
                                 .id("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')")
                                 .build();
     
-    final ODataDeleteResponse responseDelete = client.getCUDRequestFactory().getDeleteRequest(uriDelete).execute();
+    final ODataDeleteResponse responseDelete = getClient().getCUDRequestFactory().getDeleteRequest(uriDelete).execute();
     final String cookie = responseDelete.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     
-    final URI uriGetESKeyNav = client.newURIBuilder(SERVICE_URI)
+    final URI uriGetESKeyNav = getClient().newURIBuilder(SERVICE_URI)
                                      .appendEntitySetSegment(ES_KEY_NAV)
                                      .appendKeySegment(1)
                                      .expand(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
                                      .build();
     
-    final ODataEntityRequest<ClientEntity> requestGetESKeyNav = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGetESKeyNav = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(uriGetESKeyNav);
     requestGetESKeyNav.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseESKeyNav = requestGetESKeyNav.execute();
@@ -971,11 +974,11 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
     final Map<String, Object> esTwoKEyNavKey = new HashMap<String, Object>();
     esTwoKEyNavKey.put("PropertyInt16", 1);
     esTwoKEyNavKey.put("PropertyString", "1");
-    final URI uriGetESTwoKeyNav = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV)
+    final URI uriGetESTwoKeyNav = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV)
                                                                 .appendKeySegment(esTwoKEyNavKey)
                                                                 .expand(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                                                 .build();
-    final ODataEntityRequest<ClientEntity> requestGetESTwoKey = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> requestGetESTwoKey = getClient().getRetrieveRequestFactory()
                                                                       .getEntityRequest(uriGetESTwoKeyNav);
     requestGetESTwoKey.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetESTwoKeyNav = requestGetESTwoKey.execute();
@@ -992,6 +995,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void createMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendRefSegment().build();
     final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
     
@@ -1004,6 +1008,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void updateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendKeySegment(1)
                                                      .appendRefSegment()
@@ -1019,12 +1024,12 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   @Test
   public void deleteMissingNavigationProperty() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
                                                      .appendRefSegment()
                                                      .build();
     
     try {
-      client.getCUDRequestFactory().getDeleteRequest(uri);
+      getClient().getCUDRequestFactory().getDeleteRequest(uri);
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
@@ -1032,7 +1037,7 @@ public class EntityReferencesITCase extends AbstractTecSvcITCase {
   
   private void sendRequest(final URI uri, final int count, final String... expected) {
     ODataEntitySetRequest<ClientEntitySet> request =
-        edmEnabledClient.getRetrieveRequestFactory().getEntitySetRequest(uri);
+        getEdmEnabledClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);

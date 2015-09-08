@@ -43,6 +43,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
 import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -94,28 +95,30 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deepInsertExpandedResponse() {
-    final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final URI createURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
 
     // Root entity
     entity.getProperties().add(
         factory.newPrimitiveProperty(PROPERTY_STRING,
-            factory.newPrimitiveValueBuilder().buildString("String Property level 0")));
+                factory.newPrimitiveValueBuilder().buildString("String Property level 0")));
     entity.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 41)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 0, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 41)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 0, complex level " +
+                                "1")))));
 
     // First level NavPropertyETTwoKeyNavOne => Type ETTwoKeyNav
     final ClientEntity firstLevelTwoKeyNav = factory.newEntity(ET_TWO_KEY_NAV);
     firstLevelTwoKeyNav.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 1, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 1, complex level 1")))));
     firstLevelTwoKeyNav.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
     firstLevelTwoKeyNav.getProperties().add(
@@ -128,24 +131,27 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     final ClientEntity secondLevelTwoKeyNav = factory.newEntity(ET_TWO_KEY_NAV);
     secondLevelTwoKeyNav.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 421)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 2, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 421)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 2, complex level 1")))));
     secondLevelTwoKeyNav.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
     secondLevelTwoKeyNav.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
 
     // Binding links
-    secondLevelTwoKeyNav.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, client.newURIBuilder(
-        SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String, Object>() {
-          private static final long serialVersionUID = 3109256773218160485L;
-          {
-            put(PROPERTY_INT16, 3);
-            put(PROPERTY_STRING, "1");
-          }
-        }).build()));
+    secondLevelTwoKeyNav.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, getClient()
+            .newURIBuilder(
+                    SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(new LinkedHashMap<String,
+                    Object>() {
+              private static final long serialVersionUID = 3109256773218160485L;
+
+              {
+                put(PROPERTY_INT16, 3);
+                put(PROPERTY_STRING, "1");
+              }
+            }).build()));
 
     final ClientInlineEntity secondLevelTwoKeyOneInline =
         factory.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, secondLevelTwoKeyNav);
@@ -155,10 +161,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     final ClientEntity thirdLevelTwoKeyNavMany1 = factory.newEntity(ET_TWO_KEY_NAV);
     thirdLevelTwoKeyNavMany1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 431)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 3, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 431)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 3, complex level " +
+                                "1")))));
     thirdLevelTwoKeyNavMany1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
     thirdLevelTwoKeyNavMany1.getProperties().add(
@@ -167,10 +174,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     final ClientEntity thirdLevelTwoKeyNavMany2 = factory.newEntity(ET_TWO_KEY_NAV);
     thirdLevelTwoKeyNavMany2.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 432)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 3, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 432)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 3, complex level " +
+                                "1")))));
     thirdLevelTwoKeyNavMany2.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
     thirdLevelTwoKeyNavMany2.getProperties().add(
@@ -180,16 +188,16 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany1);
     entitySetThirdLevelTwoKeyNavMany.getEntities().add(thirdLevelTwoKeyNavMany2);
     secondLevelTwoKeyNav.addLink(factory.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
-        entitySetThirdLevelTwoKeyNavMany));
+            entitySetThirdLevelTwoKeyNavMany));
 
     // First level NavPropertyETTwoKeyNavMany => Type ETTwoKeyNav
     final ClientEntity firstLevelTwoKeyNavMany1 = factory.newEntity(ET_TWO_KEY_NAV);
     firstLevelTwoKeyNavMany1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 422)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("String Property level 1, complex level 1")))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 422)))
+                .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                        factory.newPrimitiveValueBuilder().buildString("String Property level 1, complex level 1")))));
     firstLevelTwoKeyNavMany1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
     firstLevelTwoKeyNavMany1.getProperties().add(
@@ -198,10 +206,10 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     final ClientEntitySet entitySetfirstLevelTwoKeyNavMany = factory.newEntitySet();
     entitySetfirstLevelTwoKeyNavMany.getEntities().add(firstLevelTwoKeyNavMany1);
     entity.addLink(factory.newDeepInsertEntitySet(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
-        entitySetfirstLevelTwoKeyNavMany));
+            entitySetfirstLevelTwoKeyNavMany));
 
     final ODataEntityCreateResponse<ClientEntity> createResponse =
-        edmEnabledClient.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
+        getEdmEnabledClient().getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
 
     // Check response
     final ClientEntity resultEntityFirstLevel =
@@ -246,31 +254,36 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
 
   @Test
   public void simpleDeepInsert() throws Exception {
-    final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final URI createURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            42)));
     entity.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM, factory.newComplexValue(CT_ALL_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    42)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))
-        .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("42")))
+            .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+                    .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
@@ -281,16 +294,19 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 430)))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 430)))));
     inlineEntitySingle.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 432)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("432")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    432)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                    factory.newPrimitiveValueBuilder().buildString("432")))));
 
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
@@ -302,34 +318,40 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)
-          .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-              factory.newPrimitiveValueBuilder().buildInt16((short) 440)))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 440)))));
     inlineEntityCol1.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 442)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("442")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short) 442)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("442"))
+            )));
 
     final ClientEntity inlineEntityCol2 = factory.newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 45)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            45)));
     inlineEntityCol2.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)
-          .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-              factory.newPrimitiveValueBuilder().buildInt16((short) 450)))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 450)))));
     inlineEntityCol2.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 452)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("452")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    452)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("452")))));
 
     final ClientInlineEntity newDeepInsertEntityLink =
         factory.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
@@ -343,7 +365,7 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     entity.addLink(newDeepInsertEntitySetLink);
 
     // Perform create request
-    final ODataEntityCreateResponse<ClientEntity> responseCreate = client.getCUDRequestFactory()
+    final ODataEntityCreateResponse<ClientEntity> responseCreate = getClient().getCUDRequestFactory()
         .getEntityCreateRequest(createURI, entity)
         .execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), responseCreate.getStatusCode());
@@ -353,11 +375,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     // Fetch ESKeyNav entity with expand of NavPropertyETTwoKeyNavOne nav. property
     ClientProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
     final URI esKeyNavURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
                 NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
-    final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esKeyNavRequest = getClient().getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
     esKeyNavRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esKeyNavResponse = esKeyNavRequest.execute();
@@ -390,12 +412,12 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .getComplexValue().get(PROPERTY_STRING)
         .getPrimitiveValue().toValue());
 
-    final URI esTwoKeyNavEntitySingleURI = client.newURIBuilder(SERVICE_URI)
+    final URI esTwoKeyNavEntitySingleURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(composedKey)
         .build();
 
-    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = getClient().getRetrieveRequestFactory()
         .getEntityRequest(esTwoKeyNavEntitySingleURI);
     esTwoKeyNavSingleRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
@@ -409,11 +431,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .toValue());
 
     URI esTwoKeyNavEntityManyOneURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
     esTwoKeyNavManyOneRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
 
@@ -430,11 +452,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .toValue());
 
     URI esTwoKeyNavEntityManyTwoURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
     esTwoKeyNavManyTwoRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
 
@@ -447,98 +469,109 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deepInsertSameEntitySet() throws EdmPrimitiveTypeException {
-    final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final URI createURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            42)));
     entity.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
 
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM, factory.newComplexValue(CT_ALL_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    42)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))
-        .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("42")))
+            .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+                    .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
     entity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
-        client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment(ES_TWO_KEY_NAV)
-        .appendKeySegment(new LinkedHashMap<String, Object>() {
-          private static final long serialVersionUID = 1L;
+            getClient().newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment(ES_TWO_KEY_NAV)
+                    .appendKeySegment(new LinkedHashMap<String, Object>() {
+                      private static final long serialVersionUID = 1L;
 
-          {
-            put(PROPERTY_INT16, 1);
-            put(PROPERTY_STRING, "1");
-          }
-        })
-        .build()));
+                      {
+                        put(PROPERTY_INT16, 1);
+                        put(PROPERTY_STRING, "1");
+                      }
+                    })
+                    .build()));
 
     // Prepare inline entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     final ClientEntity innerEntity = factory.newEntity(ET_KEY_NAV);
     innerEntity.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 43)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            43)));
     innerEntity.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("43")));
     innerEntity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     innerEntity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM, factory.newComplexValue(CT_ALL_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("431")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("431"))
+            )));
     innerEntity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 431)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("431")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    431)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("431"))
+            )));
     innerEntity
     .getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("431")))
-        .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder()
-                .buildInt16((short) 431)))))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("431")))
+            .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+                    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder()
+                            .buildInt16((short) 431)))))));
     innerEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
-        client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment(ES_TWO_KEY_NAV)
-        .appendKeySegment(new LinkedHashMap<String, Object>() {
-          private static final long serialVersionUID = 1L;
+            getClient().newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment(ES_TWO_KEY_NAV)
+                    .appendKeySegment(new LinkedHashMap<String, Object>() {
+                      private static final long serialVersionUID = 1L;
 
-          {
-            put(PROPERTY_INT16, 1);
-            put(PROPERTY_STRING, "1");
-          }
-        })
-        .build()));
+                      {
+                        put(PROPERTY_INT16, 1);
+                        put(PROPERTY_STRING, "1");
+                      }
+                    })
+                    .build()));
 
     ClientInlineEntity inlineEntity = factory.newDeepInsertEntity(NAV_PROPERTY_ET_KEY_NAV_ONE, innerEntity);
     entity.addLink(inlineEntity);
 
     final ODataEntityCreateResponse<ClientEntity> responseCreate =
-        client.getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
+        getClient().getCUDRequestFactory().getEntityCreateRequest(createURI, entity).execute();
     final String cookie = responseCreate.getHeader(HttpHeader.SET_COOKIE).iterator().next();
     final Short esKeyNavEntityKey =
         responseCreate.getBody().getProperty(PROPERTY_INT16).getPrimitiveValue().toCastValue(Short.class);
 
     // Fetch Entity
     URI fetchEntityURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(esKeyNavEntityKey)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(esKeyNavEntityKey)
         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     ODataEntityRequest<ClientEntity> entityRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(fetchEntityURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(fetchEntityURI);
     entityRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> entityResponse = entityRequest.execute();
 
@@ -551,10 +584,10 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .getPrimitiveValue().toCastValue(Short.class);
 
     final URI innerEntityURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(innerEntityInt16Key)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(innerEntityInt16Key)
         .build();
     final ODataEntityRequest<ClientEntity> innerRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(innerEntityURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(innerEntityURI);
     innerRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     ODataRetrieveResponse<ClientEntity> innerResponse = innerRequest.execute();
 
@@ -567,16 +600,16 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     final String cookie = getCookie();
 
     // Do not set PropertyString(Nullable=false)
-    final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
+    final ClientEntity entity = getFactory().newEntity(ET_KEY_NAV);
     entity.getProperties().add(
-        factory.newCollectionProperty(COL_PROPERTY_STRING,
-            factory.newCollectionValue(EDM_STRING).add(
-                factory.newPrimitiveValueBuilder().buildString("Test"))));
+        getFactory().newCollectionProperty(COL_PROPERTY_STRING,
+            getFactory().newCollectionValue(EDM_STRING).add(
+                getFactory().newPrimitiveValueBuilder().buildString("Test"))));
 
-    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
 
     try {
-      ODataEntityCreateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -593,13 +626,13 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
   public void invalidType() throws EdmPrimitiveTypeException {
     final String cookie = getCookie();
 
-    final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING,
-        factory.newPrimitiveValueBuilder().buildInt32(1)));
-    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
+    final ClientEntity entity = getFactory().newEntity(ET_KEY_NAV);
+    entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
+        getFactory().newPrimitiveValueBuilder().buildInt32(1)));
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
 
     try {
-      ODataEntityCreateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -611,12 +644,12 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     validateSet(targetURI, cookie, (short) 1, (short) 2, (short) 3);
 
     entity.getProperties().add(
-        factory.newCollectionProperty(PROPERTY_STRING,
-            factory.newCollectionValue(EDM_STRING).add(
-                factory.newPrimitiveValueBuilder().buildString("Test"))));
+        getFactory().newCollectionProperty(PROPERTY_STRING,
+            getFactory().newCollectionValue(EDM_STRING).add(
+                getFactory().newPrimitiveValueBuilder().buildString("Test"))));
 
     try {
-      ODataEntityCreateRequest<ClientEntity> request = edmEnabledClient.getCUDRequestFactory()
+      ODataEntityCreateRequest<ClientEntity> request = getEdmEnabledClient().getCUDRequestFactory()
           .getEntityCreateRequest(targetURI, entity);
       request.addCustomHeader(HttpHeader.COOKIE, cookie);
       request.execute();
@@ -631,40 +664,40 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
   @Test
   @Ignore
   public void deepInsertOnNavigationPropertyInComplexProperty() {
-    final ClientEntity inlineEntity = factory.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity inlineEntity = getFactory().newEntity(ET_TWO_KEY_NAV);
     inlineEntity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
+        getFactory().newComplexProperty(PROPERTY_COMP, getFactory().newComplexValue(CT_PRIM_COMP)));
     inlineEntity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+        getFactory().newComplexProperty(PROPERTY_COMP_NAV, getFactory().newComplexValue(CT_BASE_PRIM_COMP_NAV)));
     inlineEntity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("1")))));
+        getFactory().newComplexProperty(PROPERTY_COMP_TWO_PRIM, getFactory().newComplexValue(CT_TWO_PRIM)
+            .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
+                getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
+            .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
+                getFactory().newPrimitiveValueBuilder().buildString("1")))));
 
-    final ClientEntity entity = factory.newEntity(ET_TWO_KEY_NAV);
+    final ClientEntity entity = getFactory().newEntity(ET_TWO_KEY_NAV);
     entity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)));
+        getFactory().newComplexProperty(PROPERTY_COMP, getFactory().newComplexValue(CT_PRIM_COMP)));
     entity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)));
+        getFactory().newComplexProperty(PROPERTY_COMP_NAV, getFactory().newComplexValue(CT_BASE_PRIM_COMP_NAV)));
     entity.getProperties().add(
-        factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 2)))
-            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
-                factory.newPrimitiveValueBuilder().buildString("2")))));
+        getFactory().newComplexProperty(PROPERTY_COMP_TWO_PRIM, getFactory().newComplexValue(CT_TWO_PRIM)
+            .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
+                getFactory().newPrimitiveValueBuilder().buildInt16((short) 2)))
+            .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
+                getFactory().newPrimitiveValueBuilder().buildString("2")))));
 
-    final ClientLink link = factory.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntity);
-    final ClientComplexValue complexValueCreate = factory.newComplexValue(CT_NAV_FIVE_PROP);
+    final ClientLink link = getFactory().newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntity);
+    final ClientComplexValue complexValueCreate = getFactory().newComplexValue(CT_NAV_FIVE_PROP);
     complexValueCreate.getNavigationLinks().add(link);
 
     entity.getProperties().add(
-        factory.newCollectionProperty(COL_PROPERTY_COMP_NAV, factory.newCollectionValue(CT_NAV_FIVE_PROP)
+        getFactory().newCollectionProperty(COL_PROPERTY_COMP_NAV, getFactory().newCollectionValue(CT_NAV_FIVE_PROP)
             .add(complexValueCreate)));
 
-    final URI targetURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).build();
-    final ODataEntityCreateResponse<ClientEntity> response = edmEnabledClient.getCUDRequestFactory()
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).build();
+    final ODataEntityCreateResponse<ClientEntity> response = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityCreateRequest(targetURI, entity)
         .execute();
 
@@ -687,34 +720,39 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deepUpsert() {
-    final URI updateURI = client.newURIBuilder(SERVICE_URI)
+    final URI updateURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(815)
         .build();
+    final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
 
     // Prepare entity(EntitySet: ESKeyNav, Type: ETKeyNav)
     entity.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            42)));
     entity.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 42)))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM, factory.newComplexValue(CT_ALL_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 42)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short)
+                    42)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))
-        .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("42")))
+            .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)
+                    .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                            factory.newPrimitiveValueBuilder().buildInt16((short) 42)))))));
 
     // Non collection navigation property
     // Create related entity(EntitySet: ESTwoKeyNav, Type: ETTwoKeyNav, Nav. Property: NavPropertyETTwoKeyNavOne)
@@ -724,17 +762,19 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     inlineEntitySingle.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("43")));
     inlineEntitySingle.getProperties().add(factory.newComplexProperty(PROPERTY_COMP,
-        factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 43)))));
+            factory.newComplexValue(CT_PRIM_COMP)
+                    .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                            factory.newPrimitiveValueBuilder().buildInt16((short) 43)))));
     inlineEntitySingle.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 432)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("432")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short) 432)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING,
+                    factory.newPrimitiveValueBuilder().buildString("432")))));
 
     // Collection navigation property
     // The navigation property has a partner navigation property named "NavPropertyETKeyNavOne"
@@ -746,34 +786,39 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 442)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("442")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short) 442)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("442"))
+            )));
 
     final ClientEntity inlineEntityCol2 = factory.newEntity(ET_TWO_KEY_NAV);
     inlineEntityCol2.getProperties()
-    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 45)));
+    .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short)
+            45)));
     inlineEntityCol2.getProperties()
     .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-            factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                    factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties().add(
         factory.newComplexProperty(PROPERTY_COMP, factory.newComplexValue(CT_PRIM_COMP)
-            .add(factory.newPrimitiveProperty(PROPERTY_INT16,
-                factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
+                .add(factory.newPrimitiveProperty(PROPERTY_INT16,
+                        factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties()
     .add(factory.newComplexProperty(PROPERTY_COMP_TWO_PRIM, factory.newComplexValue(CT_TWO_PRIM)
-        .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16((short) 452)))
-        .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("452")))));
+            .add(factory.newPrimitiveProperty(PROPERTY_INT16, factory.newPrimitiveValueBuilder().buildInt16
+                    ((short) 452)))
+            .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
+                    .buildString("452")))));
 
     final ClientInlineEntity newDeepInsertEntityLink =
         factory.newDeepInsertEntity(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE, inlineEntitySingle);
@@ -787,7 +832,7 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     entity.addLink(newDeepInsertEntitySetLink);
 
     // Perform update request (upsert)
-    final ODataEntityUpdateResponse<ClientEntity> responseCreate = client.getCUDRequestFactory()
+    final ODataEntityUpdateResponse<ClientEntity> responseCreate = getClient().getCUDRequestFactory()
         .getEntityUpdateRequest(updateURI, UpdateType.PATCH, entity)
         .execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), responseCreate.getStatusCode());
@@ -797,11 +842,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
     // Fetch ESKeyNav entity with expand of NavPropertyETTwoKeyNavOne nav. property
     ClientProperty propertyInt16 = responseCreate.getBody().getProperty(PROPERTY_INT16);
     final URI esKeyNavURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(
             propertyInt16.getPrimitiveValue().toValue()).expand(NAV_PROPERTY_ET_TWO_KEY_NAV_ONE,
                 NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).build();
 
-    final ODataEntityRequest<ClientEntity> esKeyNavRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esKeyNavRequest = getClient().getRetrieveRequestFactory()
         .getEntityRequest(esKeyNavURI);
     esKeyNavRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esKeyNavResponse = esKeyNavRequest.execute();
@@ -834,12 +879,12 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .getComplexValue().get(PROPERTY_STRING)
         .getPrimitiveValue().toValue());
 
-    final URI esTwoKeyNavEntitySingleURI = client.newURIBuilder(SERVICE_URI)
+    final URI esTwoKeyNavEntitySingleURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(composedKey)
         .build();
 
-    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = client.getRetrieveRequestFactory()
+    final ODataEntityRequest<ClientEntity> esTwoKeyNavSingleRequest = getClient().getRetrieveRequestFactory()
         .getEntityRequest(esTwoKeyNavEntitySingleURI);
     esTwoKeyNavSingleRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavSingleResponse = esTwoKeyNavSingleRequest.execute();
@@ -853,11 +898,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .toValue());
 
     URI esTwoKeyNavEntityManyOneURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyOneRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyOneURI);
     esTwoKeyNavManyOneRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyOneResponse = esTwoKeyNavManyOneRequest.execute();
 
@@ -874,11 +919,11 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
         .toValue());
 
     URI esTwoKeyNavEntityManyTwoURI =
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(composedKey)
         .expand(NAV_PROPERTY_ET_KEY_NAV_ONE).build();
 
     final ODataEntityRequest<ClientEntity> esTwoKeyNavManyTwoRequest =
-        client.getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
+        getClient().getRetrieveRequestFactory().getEntityRequest(esTwoKeyNavEntityManyTwoURI);
     esTwoKeyNavManyTwoRequest.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> esTwoKeyNavManyTwoResponse = esTwoKeyNavManyTwoRequest.execute();
 
@@ -891,15 +936,15 @@ public class DeepInsertITCase extends AbstractTecSvcITCase {
   }
 
   private String getCookie() {
-    final ODataRetrieveResponse<ClientEntitySet> response = edmEnabledClient.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build())
+    final ODataRetrieveResponse<ClientEntitySet> response = getEdmEnabledClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build())
         .execute();
 
     return response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
   }
 
   private void validateSet(final URI uri, final String cookie, final short... keys) throws EdmPrimitiveTypeException {
-    final ODataEntitySetRequest<ClientEntitySet> request = edmEnabledClient.getRetrieveRequestFactory()
+    final ODataEntitySetRequest<ClientEntitySet> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntitySetRequest(uri);
     request.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();

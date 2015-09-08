@@ -18,28 +18,36 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-
-import org.apache.olingo.client.api.EdmEnabledODataClient;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-public class MediaXmlITCase extends MediaITCase {
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertTrue;
+
+@RunWith(Parameterized.class)
+public class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
+
+  @Parameterized.Parameter
+  public ContentType contentType;
+
+  @Parameterized.Parameters
+  public static Collection paras() {
+    return Arrays.asList(new Object[][]{
+            {ContentType.APPLICATION_JSON}, {ContentType.APPLICATION_XML}
+    });
+  }
 
   @Override
-  protected ODataClient getClient() {
-    ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.APPLICATION_ATOM_XML);
-    return odata;
-  }  
-  
-  protected void assertContentType(String content) {
-    assertThat(content, containsString(ContentType.APPLICATION_ATOM_XML.toContentTypeString()));
+  protected ContentType getContentType() {
+    return contentType;
   }
-  
-  protected EdmEnabledODataClient getClient(String serviceURI) {
-    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.APPLICATION_ATOM_XML);
-  }  
+
+  @Test
+  public void dummyTest() {
+    assertTrue("Dummy Test method to please Junit.", true);
+  }
 }

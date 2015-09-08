@@ -33,15 +33,15 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Test;
 
-public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
+public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String ES_SERVER_SIDE_PAGING = "ESServerSidePaging";
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
   @Test
   public void countSimple() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
             .count(true)
             .build());
@@ -55,8 +55,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void serverSidePagingCount() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .count(true)
             .build());
@@ -70,8 +70,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void topSimple() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .top(5)
             .build());
@@ -89,8 +89,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void skipSimple() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .skip(5)
             .build());
@@ -108,8 +108,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void topNothing() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .top(20)
             .skip(503)
@@ -123,8 +123,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void skipNothing() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .skip(10000)
             .build());
@@ -137,8 +137,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void filterWithTopSkipOrderByAndServerSidePaging() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .filter("PropertyInt16 le 105") // 1, 2, ... , 105
             .orderBy("PropertyInt16 desc") // 105, 104, ..., 2, 1
@@ -164,7 +164,7 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
     // Get 3 * 10 = 30 Entities and check the key
     for (int j = 0; j < 3; j++) {
-      request = client.getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
+      request = getClient().getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
       setCookieHeader(request);
       response = request.execute();
       saveCookieHeader(response);
@@ -178,7 +178,7 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
     }
 
     // Get the last 3 items
-    request = client.getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
+    request = getClient().getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
     setCookieHeader(request);
     response = request.execute();
     saveCookieHeader(response);
@@ -196,8 +196,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void nextLinkFormat() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .build());
     setCookieHeader(request);
@@ -209,7 +209,7 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
     assertEquals(SERVICE_URI + "ESServerSidePaging?%24skiptoken=1%2A10", nextLink.toASCIIString());
 
     // Check subsequent next links.
-    request = client.getRetrieveRequestFactory().getEntitySetRequest(nextLink);
+    request = getClient().getRetrieveRequestFactory().getEntitySetRequest(nextLink);
     setCookieHeader(request);
     response = request.execute();
     saveCookieHeader(response);
@@ -220,8 +220,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void nextLinkFormatWithQueryOptions() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
             .count(true)
             .build());
@@ -239,7 +239,7 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
       token++;
 
       // Check subsequent next links.
-      request = client.getRetrieveRequestFactory().getEntitySetRequest(nextLink);
+      request = getClient().getRetrieveRequestFactory().getEntitySetRequest(nextLink);
       setCookieHeader(request);
       response = request.execute();
       saveCookieHeader(response);
@@ -256,8 +256,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void nextLinkFormatWithClientPageSize() {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_SERVER_SIDE_PAGING).build();
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_SERVER_SIDE_PAGING).build();
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     request.setPrefer(getClient().newPreferences().maxPageSize(7));
     setCookieHeader(request);
 
@@ -270,8 +270,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void negativeSkip() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
             .skip(-5)
             .build());
@@ -286,8 +286,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
 
   @Test
   public void negativeTop() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
             .top(-5)
             .build());
@@ -302,8 +302,8 @@ public class SystemQueryOptionITCase extends AbstractTecSvcITCase {
   
   @Test
   public void negativeSearch() {
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
-        .getEntitySetRequest(client.newURIBuilder(SERVICE_URI)
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
             .search("ABC")
             .build());

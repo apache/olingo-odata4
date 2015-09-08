@@ -42,6 +42,7 @@ import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -80,8 +81,8 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
   @Test
   public void primitiveCollectionAction() throws Exception {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 3));
-    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder()
+    parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt16((short) 3));
+    parameters.put("ParameterDuration", getFactory().newPrimitiveValueBuilder()
         .setType(EdmPrimitiveTypeKind.Duration).setValue(new BigDecimal(1)).build());
     final ODataInvokeResponse<ClientProperty> response =
         callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
@@ -208,7 +209,7 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
     time.set(Calendar.SECOND, 0);
     Map<String, ClientValue> parameters = Collections.singletonMap(
         "ParameterTimeOfDay",
-        (ClientValue) factory.newPrimitiveValueBuilder()
+        (ClientValue) getFactory().newPrimitiveValueBuilder()
             .setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(time).build());
     final ODataInvokeResponse<ClientEntitySet> response =
         callAction("AIRTCollESAllPrimParam", ClientEntitySet.class, parameters, false);
@@ -229,7 +230,7 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
     dateTime.set(1012, 2, 0, 0, 0, 0);
     final Map<String, ClientValue> parameters = Collections.singletonMap(
         "ParameterDate",
-        (ClientValue) factory.newPrimitiveValueBuilder()
+        (ClientValue) getFactory().newPrimitiveValueBuilder()
             .setType(EdmPrimitiveTypeKind.Date).setValue(dateTime).build());
     final ODataInvokeResponse<ClientEntity> response =
         callAction("AIRTESAllPrimParam", ClientEntity.class, parameters, false);
@@ -242,7 +243,7 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
     final ODataInvokeResponse<ClientEntity> response =
         callAction("AIRTESAllPrimParam", ClientEntity.class,
             Collections.singletonMap("ParameterDate",
-                (ClientValue) factory.newPrimitiveValueBuilder().buildString("2000-02-29")),
+                (ClientValue) getFactory().newPrimitiveValueBuilder().buildString("2000-02-29")),
             true);
     final String location = TecSvcConst.BASE_URI + "/ESAllPrim(1)";
     assertEquals(location, response.getHeader(HttpHeader.LOCATION).iterator().next());
@@ -252,8 +253,8 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
   @Test
   public void airtCollStringTwoParamNotNull() {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 2));
-    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
+    parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", getFactory().newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
     final ODataInvokeResponse<ClientProperty> response =
         callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -268,8 +269,8 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
   @Test
   public void airtCollStringTwoParamNull() {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
-    parameters.put("ParameterInt16", factory.newPrimitiveValueBuilder().buildInt16((short) 2));
-    parameters.put("ParameterDuration", factory.newPrimitiveValueBuilder().buildDuration(null));
+    parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt16((short) 2));
+    parameters.put("ParameterDuration", getFactory().newPrimitiveValueBuilder().buildDuration(null));
     final ODataInvokeResponse<ClientProperty> response =
         callAction("AIRTCollStringTwoParam", ClientProperty.class, parameters, false);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -284,16 +285,16 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
 
   private Map<String, ClientValue> buildParameterInt16(final int value) {
     return Collections.singletonMap("ParameterInt16",
-        (ClientValue) factory.newPrimitiveValueBuilder().buildInt16((short) value));
+        (ClientValue) getFactory().newPrimitiveValueBuilder().buildInt16((short) value));
   }
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
       final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
-    final URI actionURI = client.newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
-    ODataInvokeRequest<T> request = client.getInvokeRequestFactory()
+    final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
+    ODataInvokeRequest<T> request = getClient().getInvokeRequestFactory()
         .getActionInvokeRequest(actionURI, resultRef, parameters);
     if (returnMinimal) {
-      request.setPrefer(client.newPreferences().returnMinimal());
+      request.setPrefer(getClient().newPreferences().returnMinimal());
     }
     // We can re-use the session since our actions don't (yet?!) modify existing data.
     setCookieHeader(request);
@@ -304,5 +305,10 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
       assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     }
     return response;
+  }
+
+  @Override
+  protected ContentType getContentType() {
+    return ContentType.APPLICATION_JSON;
   }
 }

@@ -46,12 +46,12 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class MediaITCase extends AbstractTecSvcITCase {
+public class MediaITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void read() throws Exception {
-    final ODataMediaRequest request = client.getRetrieveRequestFactory().getMediaRequest(
-        client.newURIBuilder(TecSvcConst.BASE_URI)
+    final ODataMediaRequest request = getClient().getRetrieveRequestFactory().getMediaRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(1).appendValueSegment().build());
     assertNotNull(request);
 
@@ -67,9 +67,9 @@ public class MediaITCase extends AbstractTecSvcITCase {
 
   @Test
   public void delete() {
-    final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
+    final URI uri = getClient().newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
-    ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
     request.setIfMatch("W/\"4\"");
     assertNotNull(request);
 
@@ -78,7 +78,7 @@ public class MediaITCase extends AbstractTecSvcITCase {
 
     // Check that the media stream is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(uri);
+    ODataMediaRequest mediaRequest = getClient().getRetrieveRequestFactory().getMediaRequest(uri);
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     try {
       mediaRequest.execute();
@@ -90,10 +90,10 @@ public class MediaITCase extends AbstractTecSvcITCase {
 
   @Test
   public void update() throws Exception {
-    final URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
+    final URI uri = getClient().newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     ODataMediaEntityUpdateRequest<ClientEntity> request =
-        client.getCUDRequestFactory().getMediaEntityUpdateRequest(uri,
+        getClient().getCUDRequestFactory().getMediaEntityUpdateRequest(uri,
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     request.setIfMatch("W/\"4\"");
@@ -104,7 +104,7 @@ public class MediaITCase extends AbstractTecSvcITCase {
 
     // Check that the media stream has changed.
     // This check has to be in the same session in order to access the same data provider.
-    ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(uri);
+    ODataMediaRequest mediaRequest = getClient().getRetrieveRequestFactory().getMediaRequest(uri);
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), mediaResponse.getStatusCode());
@@ -117,8 +117,8 @@ public class MediaITCase extends AbstractTecSvcITCase {
   @Test
   public void create() throws Exception {
     ODataMediaEntityCreateRequest<ClientEntity> request =
-        client.getCUDRequestFactory().getMediaEntityCreateRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
+        getClient().getCUDRequestFactory().getMediaEntityCreateRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia").build(),
             IOUtils.toInputStream("just a test"));
     request.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     assertNotNull(request);
@@ -135,8 +135,8 @@ public class MediaITCase extends AbstractTecSvcITCase {
 
     // Check that the media stream has been created.
     // This check has to be in the same session in order to access the same data provider.
-    ODataMediaRequest mediaRequest = client.getRetrieveRequestFactory().getMediaRequest(
-        client.newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia")
+    ODataMediaRequest mediaRequest = getClient().getRetrieveRequestFactory().getMediaRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESMedia")
             .appendKeySegment(5).appendValueSegment().build());
     mediaRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     ODataRetrieveResponse<InputStream> mediaResponse = mediaRequest.execute();

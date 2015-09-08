@@ -41,10 +41,6 @@ public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
   protected static final String SERVICE_URI = TecSvcConst.BASE_URI + '/';
   protected static final String SERVICE_NAMESPACE = "olingo.odata.test1";
 
-  protected final ODataClient client = getClient();
-  protected final EdmEnabledODataClient edmEnabledClient = getClient(SERVICE_URI);
-  protected final ClientObjectFactory factory = client.getObjectFactory();
-
   // Read-only tests can re-use the server session via the session cookie.
   // JUnit constructs a fresh instance for each test method, so we have to
   // use static storage; a thread-local variable seems safer as a simple static one. 
@@ -71,21 +67,33 @@ public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
   }
 
   protected void assertContentType(final String content) {
-    assertThat(content, containsString(ContentType.APPLICATION_JSON.toContentTypeString()));
+    assertThat(content, containsString(getContentType().toContentTypeString()));
+  }
+
+  protected ContentType getContentType() {
+    return ContentType.APPLICATION_JSON;
   }
 
   protected boolean isJson() {
-    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
+    return ContentType.JSON.isCompatible(getContentType());
   }
 
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
+    odata.getConfiguration().setDefaultPubFormat(getContentType());
     return odata;
   }
 
   protected EdmEnabledODataClient getClient(final String serviceRoot) {
-    return ODataClientFactory.getEdmEnabledClient(serviceRoot, ContentType.JSON);
-  } 
+    return ODataClientFactory.getEdmEnabledClient(serviceRoot, getContentType());
+  }
+
+  protected EdmEnabledODataClient getEdmEnabledClient() {
+    return getClient(SERVICE_URI);
+  }
+
+  protected ClientObjectFactory getFactory() {
+    return getClient().getObjectFactory();
+  }
 }

@@ -66,6 +66,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntity() throws Exception {
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .appendKeySegment(32767).build();
@@ -108,6 +109,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readEntitySet() throws Exception {
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .build();
@@ -156,17 +158,18 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void createEntity() throws Exception {
+    ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM).build();
 
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt64",
-        factory.newPrimitiveValueBuilder().buildInt32(42)));
-    newEntity.addLink(factory.newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
-        client.newURIBuilder(SERVICE_URI)
-            .appendEntitySetSegment("ESTwoPrim")
-            .appendKeySegment(32766)
-            .build()));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt64",
+            getFactory().newPrimitiveValueBuilder().buildInt32(42)));
+    newEntity.addLink(getFactory().newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,
+            client.newURIBuilder(SERVICE_URI)
+                    .appendEntitySetSegment("ESTwoPrim")
+                    .appendKeySegment(32766)
+                    .build()));
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
         client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
@@ -199,12 +202,13 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
   @Test
   @Ignore("Does currently not work as expected -> issue in ODataClient?")
   public void getBatchRequest() throws Exception {
+    ODataClient client = getClient();
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
 
 //    final BatchManager payload = request.payloadManager();
 
     // create new request
-//    ODataEntityRequest<ClientEntity> getRequest = appendGetRequest(client, payload, "ESAllPrim", 32767, false);
+//    ODataEntityRequest<ClientEntity> getRequest = appendGetRequest(getClient(), payload, "ESAllPrim", 32767, false);
 //    payload.addRequest(getRequest);
 
     request.setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
@@ -246,6 +250,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
    */
   @Test
   public void deleteEntity() throws Exception {
+    final ODataClient client = getClient();
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .appendKeySegment(32767).build();
@@ -276,11 +281,11 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
   private ODataEntityRequest<ClientEntity> appendGetRequest(final ODataClient client,
       final String segment, final Object key, final boolean isRelative) throws URISyntaxException {
 
-    final URIBuilder targetURI = client.newURIBuilder(SERVICE_URI);
+    final URIBuilder targetURI = getClient().newURIBuilder(SERVICE_URI);
     targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
     final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
 
-    ODataEntityRequest<ClientEntity> queryReq = client.getRetrieveRequestFactory().getEntityRequest(uri);
+    ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
     queryReq.setFormat(ContentType.JSON);
     return queryReq;
   }

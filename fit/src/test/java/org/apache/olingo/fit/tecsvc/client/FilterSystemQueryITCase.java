@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
+public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_COMP_ALL_PRIM = "ESCompAllPrim";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
@@ -137,16 +137,16 @@ public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
 
   @Test
   public void clientEscaping() {
-    final String filter = client.getFilterFactory().eq(
-        client.getFilterFactory().getArgFactory().property("PropertyString"),
-        client.getFilterFactory().getArgFactory().literal("First Resource - positive values")).build();
+    final String filter = getClient().getFilterFactory().eq(
+        getClient().getFilterFactory().getArgFactory().property("PropertyString"),
+        getClient().getFilterFactory().getArgFactory().literal("First Resource - positive values")).build();
 
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .filter(filter)
         .build();
 
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(uri);
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
@@ -268,20 +268,20 @@ public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
     // Create new Entries
     final String filterString = "PropertyString eq null";
 
-    ClientEntity entity = factory.newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
+    ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
 
     entity.getProperties().add(
-        factory.newPrimitiveProperty("PropertyInt16", factory.newPrimitiveValueBuilder()
+        getFactory().newPrimitiveProperty("PropertyInt16", getFactory().newPrimitiveValueBuilder()
             .buildInt16((short) 1)));
-    entity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne",
-        client.newURIBuilder(SERVICE_URI)
+    entity.addLink(getFactory().newEntityNavigationLink("NavPropertyETTwoPrimOne",
+        getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim")
         .appendKeySegment(32766)
         .build()));
 
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
     ODataEntityCreateResponse<ClientEntity> createResponse =
-        client.getCUDRequestFactory().getEntityCreateRequest(uri, entity).execute();
+        getClient().getCUDRequestFactory().getEntityCreateRequest(uri, entity).execute();
 
     ODataRetrieveResponse<ClientEntitySet> filterResponse = sendRequest(ES_ALL_PRIM, filterString,
         createResponse.getHeader(HttpHeader.SET_COOKIE).iterator().next());
@@ -898,31 +898,31 @@ public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
     // is still there, but filled is null values (primitive types)
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
 
-    ClientEntity newEntity = factory.newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
-    newEntity.getProperties().add(factory.newComplexProperty("PropertyCompCompNav", null));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyInt16",
-        factory.newPrimitiveValueBuilder().buildInt16((short) 4)));
-    newEntity.getProperties().add(factory.newPrimitiveProperty("PropertyString",
-        factory.newPrimitiveValueBuilder().buildString("Test")));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    newEntity.getProperties().add(getFactory().newComplexProperty("PropertyCompCompNav", null));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt16",
+        getFactory().newPrimitiveValueBuilder().buildInt16((short) 4)));
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyString",
+        getFactory().newPrimitiveValueBuilder().buildString("Test")));
     newEntity.getProperties().add(
-        factory.newComplexProperty("PropertyCompAllPrim",
-            factory.newComplexValue("CTAllPrim")
-            .add(factory.newPrimitiveProperty(
+        getFactory().newComplexProperty("PropertyCompAllPrim",
+            getFactory().newComplexValue("CTAllPrim")
+            .add(getFactory().newPrimitiveProperty(
                 "PropertyString",
-                factory.newPrimitiveValueBuilder().buildString("Test 3")))));
+                getFactory().newPrimitiveValueBuilder().buildString("Test 3")))));
 
     newEntity.getProperties().add(
-        factory.newComplexProperty("PropertyCompTwoPrim",
-            factory.newComplexValue("CTTwoPrim")
-            .add(factory.newPrimitiveProperty(
+        getFactory().newComplexProperty("PropertyCompTwoPrim",
+            getFactory().newComplexValue("CTTwoPrim")
+            .add(getFactory().newPrimitiveProperty(
                 "PropertyInt16",
-                factory.newPrimitiveValueBuilder().buildInt16((short) 1)))
-                .add(factory.newPrimitiveProperty(
+                getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
+                .add(getFactory().newPrimitiveProperty(
                     "PropertyString",
-                    factory.newPrimitiveValueBuilder().buildString("Test2")))));
+                    getFactory().newPrimitiveValueBuilder().buildString("Test2")))));
 
-    newEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
-        client.newURIBuilder(SERVICE_URI)
+    newEntity.addLink(getFactory().newEntityNavigationLink("NavPropertyETTwoKeyNavOne",
+        getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(new LinkedHashMap<String, Object>() {
           private static final long serialVersionUID = 1L;
@@ -934,9 +934,9 @@ public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
         })
         .build()));
 
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build();
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESKeyNav").build();
     ODataEntityCreateRequest<ClientEntity> request =
-        client.getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
+        getClient().getCUDRequestFactory().getEntityCreateRequest(uri, newEntity);
     ODataEntityCreateResponse<ClientEntity> response = request.execute();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
 
@@ -1017,12 +1017,12 @@ public class FilterSystemQueryITCase extends AbstractTecSvcITCase {
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString,
       final String cookie) {
     final URI uri =
-        client.newURIBuilder(SERVICE_URI)
+        getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
         .filter(filterString)
         .build();
 
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     if (cookie == null) {
       setCookieHeader(request);
     } else {

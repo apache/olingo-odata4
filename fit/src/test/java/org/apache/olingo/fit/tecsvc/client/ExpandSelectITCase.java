@@ -37,12 +37,12 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class ExpandSelectITCase extends AbstractTecSvcITCase {
+public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void readSelect() {
-    ODataEntityRequest<ClientEntity> request = client.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(Short.MAX_VALUE)
             .select("PropertyInt32,PropertyInt16")
             .build());
@@ -73,8 +73,8 @@ public class ExpandSelectITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readExpandSelect() {
-    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(-365)
             .expand("NavPropertyETAllPrimMany($select=PropertyTimeOfDay,PropertySByte)")
             .select("PropertyString")
@@ -121,8 +121,8 @@ public class ExpandSelectITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readExpandTwoLevels() {
-    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
             .expand("NavPropertyETAllPrimOne($expand=NavPropertyETTwoPrimOne)")
             .build());
@@ -164,8 +164,8 @@ public class ExpandSelectITCase extends AbstractTecSvcITCase {
 
   @Test
   public void expandSingleValuedNavigationPropertyWithNullValue() {
-    ODataEntityRequest<ClientEntity> request = edmEnabledClient.getRetrieveRequestFactory()
-        .getEntityRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntity> response = request.execute();

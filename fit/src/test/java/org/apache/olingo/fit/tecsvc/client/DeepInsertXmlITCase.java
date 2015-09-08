@@ -62,7 +62,7 @@ import org.junit.Test;
 /**
  * see the class comment on {@link DeepInsertITCase}
  */
-public class DeepInsertXmlITCase extends AbstractTecSvcITCase {
+public class DeepInsertXmlITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";

@@ -46,13 +46,13 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class FunctionImportITCase extends AbstractTecSvcITCase {
+public class FunctionImportITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void entity() throws Exception {
-    ODataInvokeRequest<ClientEntity> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTESTwoKeyNav").build(),
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTESTwoKeyNav").build(),
             ClientEntity.class);
     assertNotNull(request);
     setCookieHeader(request);
@@ -70,9 +70,9 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void entityWithoutEntitySet() throws Exception {
-    ODataInvokeRequest<ClientEntity> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTETKeyNav").build(),
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTETKeyNav").build(),
             ClientEntity.class);
     assertNotNull(request);
     setCookieHeader(request);
@@ -90,13 +90,13 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void entityCollection() {
-    ODataInvokeRequest<ClientEntitySet> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientEntitySet> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendOperationCallSegment("FICRTCollESTwoKeyNavParam").build(),
             ClientEntitySet.class,
             Collections.<String, ClientValue> singletonMap("ParameterInt16",
-                factory.newPrimitiveValueBuilder().buildInt32(2)));
+                getFactory().newPrimitiveValueBuilder().buildInt32(2)));
     assertNotNull(request);
     setCookieHeader(request);
 
@@ -120,10 +120,10 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
   @Test
   public void entityCollectionWithAppendedKey() {
     // .../odata.svc/FICRTCollESMedia()(1)
-    ODataInvokeRequest<ClientEntity> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
-                .appendKeySegment(factory.newPrimitiveValueBuilder().buildInt32(1))
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+                .appendKeySegment(getFactory().newPrimitiveValueBuilder().buildInt32(1))
                 .build(),
             ClientEntity.class);
     assertNotNull(request);
@@ -144,10 +144,10 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
   @Test
   public void entityCollectionWithAppendedKeyAndProperty() {
     // .../odata.svc/FICRTCollESMedia()(2)/PropertyInt16
-    ODataInvokeRequest<ClientProperty> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
-                .appendKeySegment(factory.newPrimitiveValueBuilder().buildInt32(2))
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+                .appendKeySegment(getFactory().newPrimitiveValueBuilder().buildInt32(2))
                 .appendPropertySegment("PropertyInt16")
                 .build(),
             ClientProperty.class);
@@ -166,8 +166,8 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void countEntityCollection() throws Exception {
-    final ODataRawRequest request = client.getRetrieveRequestFactory()
-        .getRawRequest(client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
+    final ODataRawRequest request = getClient().getRetrieveRequestFactory()
+        .getRawRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollESMedia")
             .count().build());
     final ODataRawResponse response = request.execute();
     assertEquals("4", IOUtils.toString(response.getRawResponse()));
@@ -175,9 +175,9 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void complexWithPath() throws Exception {
-    ODataInvokeRequest<ClientProperty> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
                 .appendPropertySegment("PropertyInt16").build(),
             ClientProperty.class);
     assertNotNull(request);
@@ -194,9 +194,9 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void primitiveCollection() throws Exception {
-    ODataInvokeRequest<ClientProperty> request = client.getInvokeRequestFactory()
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollString").build(),
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCollString").build(),
             ClientProperty.class);
     assertNotNull(request);
     setCookieHeader(request);
@@ -217,9 +217,9 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void primitiveValue() throws Exception {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getPropertyValueRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTString")
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTString")
                 .appendValueSegment().build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
@@ -229,9 +229,9 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
 
   @Test
   public void primitiveValueWithPath() throws Exception {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getPropertyValueRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FICRTCTTwoPrim")
                 .appendPropertySegment("PropertyString").appendValueSegment().build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientPrimitiveValue> response = request.execute();
@@ -245,8 +245,8 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
     keys.put("ParameterInt16", 3);
     keys.put("ParameterString", "ab");
 
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendPropertySegment("FICRTStringTwoParam").appendKeySegment(keys).build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientProperty> response = request.execute();
@@ -259,8 +259,8 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
     Map<String, Object> keys = new HashMap<String, Object>();
     keys.put("ParameterInt16", 1);
 
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendPropertySegment("FICRTStringTwoParam").appendKeySegment(keys).build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientProperty> response = request.execute();
@@ -274,8 +274,8 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
     keys.put("ParameterInt16", 2);
     keys.put("ParameterString", "TestString");
 
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("FICRTCollCTTwoPrimTwoParam").appendKeySegment(keys).build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientProperty> response = request.execute();
@@ -299,8 +299,8 @@ public class FunctionImportITCase extends AbstractTecSvcITCase {
     keys.put("ParameterInt16", 2);
     keys.put("ParameterString", null);
 
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(TecSvcConst.BASE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("FICRTCollCTTwoPrimTwoParam").appendKeySegment(keys).build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientProperty> response = request.execute();

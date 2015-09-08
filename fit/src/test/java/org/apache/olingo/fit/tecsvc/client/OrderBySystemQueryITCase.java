@@ -32,7 +32,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class OrderBySystemQueryITCase extends AbstractTecSvcITCase {
+public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_TWO_PRIM = "ESTwoPrim";
   private static final String ES_ALL_PRIM = "ESAllPrim";
@@ -125,12 +125,12 @@ public class OrderBySystemQueryITCase extends AbstractTecSvcITCase {
 
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString) {
     final URI uri =
-        client.newURIBuilder(SERVICE_URI)
+        getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
         .orderBy(orderByString)
         .build();
 
-    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     setCookieHeader(request);
 
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();

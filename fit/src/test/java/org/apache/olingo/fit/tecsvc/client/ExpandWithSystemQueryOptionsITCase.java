@@ -38,7 +38,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
+public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
@@ -264,7 +264,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(keys)
         .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, options).build();
     final ODataRetrieveResponse<ClientEntity> response =
-        client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
+            client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final ClientEntitySet entitySet =
@@ -307,13 +307,13 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
     keys.put(PROPERTY_STRING, "1");
 
     final URI uri = client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+            .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(keys)
         .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
         .build();
 
     final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
-        .getEntityRequest(uri)
+            .getEntityRequest(uri)
         .execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -383,13 +383,13 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
     keys.put(PROPERTY_STRING, "1");
 
     final URI uri = client.newURIBuilder(SERVICE_URI)
-        .appendEntitySetSegment(ES_TWO_KEY_NAV)
+            .appendEntitySetSegment(ES_TWO_KEY_NAV)
         .appendKeySegment(keys)
         .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options)
         .build();
 
     final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
-        .getEntityRequest(uri)
+            .getEntityRequest(uri)
         .execute();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -534,12 +534,12 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractTecSvcITCase {
 
   private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
       final Map<QueryOption, Object> expandOptions) {
-    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(entitySet)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(entitySet)
         .expandWithOptions(navigationProperty, expandOptions)
         .build();
 
     ODataEntitySetRequest<ClientEntitySet> request =
-        edmEnabledClient.getRetrieveRequestFactory().getEntitySetRequest(uri);
+        getEdmEnabledClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);

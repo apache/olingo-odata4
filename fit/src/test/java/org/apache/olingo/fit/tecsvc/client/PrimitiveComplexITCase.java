@@ -50,12 +50,12 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Test;
 
-public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
+public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void readSimpleProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
@@ -76,8 +76,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readSimplePropertyContextURL() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
@@ -98,22 +98,22 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deletePrimitive() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766).appendPropertySegment("PropertyString")
         .build();
-    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    final ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
     final ODataDeleteResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the property is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ClientProperty> propertyRequest = client.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> propertyRequest = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     propertyRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), propertyRequest.execute().getStatusCode());
 
     try {
-      client.getCUDRequestFactory().getDeleteRequest(client.newURIBuilder(SERVICE_URI)
+      getClient().getCUDRequestFactory().getDeleteRequest(getClient().newURIBuilder(SERVICE_URI)
           .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766).appendPropertySegment("PropertyInt16")
           .build()).execute();
       fail("Expected exception not thrown!");
@@ -124,15 +124,15 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deletePrimitiveCollection() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7).appendPropertySegment("CollPropertyString")
         .build();
-    final ODataDeleteResponse response = client.getCUDRequestFactory().getDeleteRequest(uri).execute();
+    final ODataDeleteResponse response = getClient().getCUDRequestFactory().getDeleteRequest(uri).execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the property is not gone but empty now.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     final ODataRetrieveResponse<ClientProperty> propertyResponse = request.execute();
@@ -145,8 +145,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readComplexProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
             .appendPropertySegment("PropertyComp")
@@ -165,8 +165,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readComplexPropertyContextURL() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp")
             .appendKeySegment(7)
             .appendPropertySegment("PropertyComp")
@@ -188,16 +188,16 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deleteComplex() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7).appendPropertySegment("PropertyComp")
         .build();
-    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    final ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
     final ODataDeleteResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the property is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataPropertyRequest<ClientProperty> propertyRequest = client.getRetrieveRequestFactory()
+    ODataPropertyRequest<ClientProperty> propertyRequest = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(uri);
     propertyRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), propertyRequest.execute().getStatusCode());
@@ -205,8 +205,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readUnknownProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(32766)
             .appendPropertySegment("Unknown")
@@ -222,8 +222,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readNoContentProperty() throws Exception {
-    ODataPropertyRequest<ClientProperty> request = client.getRetrieveRequestFactory()
-        .getPropertyRequest(client.newURIBuilder(SERVICE_URI)
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
             .appendKeySegment(-32766)
             .appendPropertySegment("PropertyString")
@@ -237,13 +237,13 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
   @Test
   public void updatePrimitiveProperty() throws Exception {
     final ODataPropertyUpdateRequest request =
-        client.getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
-            client.newURIBuilder(SERVICE_URI)
+        getClient().getCUDRequestFactory().getPropertyPrimitiveValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
                 .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
                 .appendPropertySegment("PropertyString")
                 .build(),
-            factory.newPrimitiveProperty("PropertyString",
-                factory.newPrimitiveValueBuilder().buildString("Test String1")));
+            getFactory().newPrimitiveProperty("PropertyString",
+                getFactory().newPrimitiveValueBuilder().buildString("Test String1")));
     assertNotNull(request);
 
     final ODataPropertyUpdateResponse response = request.execute();
@@ -259,16 +259,16 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
   @Test
   public void patchComplexProperty() throws Exception {
     final ODataPropertyUpdateRequest request =
-        client.getCUDRequestFactory().getPropertyComplexValueUpdateRequest(
-            client.newURIBuilder(SERVICE_URI)
+        getClient().getCUDRequestFactory().getPropertyComplexValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
                 .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
                 .appendPropertySegment("PropertyComp")
                 .build(),
             UpdateType.PATCH,
-            factory.newComplexProperty("PropertyComp",
-                factory.newComplexValue(null).add(
-                    factory.newPrimitiveProperty("PropertyString",
-                        factory.newPrimitiveValueBuilder().buildString("Test String42")))));
+            getFactory().newComplexProperty("PropertyComp",
+                getFactory().newComplexValue(null).add(
+                    getFactory().newPrimitiveProperty("PropertyString",
+                        getFactory().newPrimitiveValueBuilder().buildString("Test String42")))));
     assertNotNull(request);
 
     final ODataPropertyUpdateResponse response = request.execute();
@@ -289,15 +289,15 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
   @Test
   public void updatePrimitiveCollection() throws Exception {
     final ODataPropertyUpdateRequest request =
-        client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
-            client.newURIBuilder(SERVICE_URI)
+        getClient().getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
                 .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
                 .appendPropertySegment("CollPropertyString")
                 .build(),
-            factory.newCollectionProperty("CollPropertyString",
-                factory.newCollectionValue(null)
-                    .add(factory.newPrimitiveValueBuilder().buildString("Test String1"))
-                    .add(factory.newPrimitiveValueBuilder().buildString("Test String2"))));
+            getFactory().newCollectionProperty("CollPropertyString",
+                getFactory().newCollectionValue(null)
+                    .add(getFactory().newPrimitiveValueBuilder().buildString("Test String1"))
+                    .add(getFactory().newPrimitiveValueBuilder().buildString("Test String2"))));
     assertNotNull(request);
 
     final ODataPropertyUpdateResponse response = request.execute();
@@ -317,12 +317,12 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
   @Test
   public void updateComplexCollection() throws Exception {
     final ODataPropertyUpdateRequest request =
-        client.getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
-            client.newURIBuilder(SERVICE_URI)
+        getClient().getCUDRequestFactory().getPropertyCollectionValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
                 .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(7)
                 .appendPropertySegment("CollPropertyComp")
                 .build(),
-            factory.newCollectionProperty("CollPropertyComp", factory.newCollectionValue(null)));
+            getFactory().newCollectionProperty("CollPropertyComp", getFactory().newCollectionValue(null)));
     assertNotNull(request);
 
     final ODataPropertyUpdateResponse response = request.execute();
@@ -337,8 +337,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readPropertyValue() throws Exception {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
-        .getPropertyValueRequest(client.newURIBuilder(SERVICE_URI)
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getPropertyValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
             .appendPropertySegment("PropertyString").appendValueSegment()
             .build());
@@ -350,18 +350,18 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void deletePropertyValue() throws Exception {
-    final URI uri = client.newURIBuilder(SERVICE_URI)
+    final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
         .appendPropertySegment("PropertyCompAllPrim").appendPropertySegment("PropertyString")
         .appendValueSegment()
         .build();
-    final ODataDeleteRequest request = client.getCUDRequestFactory().getDeleteRequest(uri);
+    final ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);
     final ODataDeleteResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
 
     // Check that the property is really gone.
     // This check has to be in the same session in order to access the same data provider.
-    ODataValueRequest valueRequest = client.getRetrieveRequestFactory().getPropertyValueRequest(uri);
+    ODataValueRequest valueRequest = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uri);
     valueRequest.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), valueRequest.execute().getStatusCode());
   }
@@ -369,13 +369,13 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
   @Test
   public void updatePropertyValue() throws Exception {
     final ODataValueUpdateRequest request =
-        client.getCUDRequestFactory().getValueUpdateRequest(
-            client.newURIBuilder(SERVICE_URI)
+        getClient().getCUDRequestFactory().getValueUpdateRequest(
+            getClient().newURIBuilder(SERVICE_URI)
                 .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
                 .appendPropertySegment("PropertyString")
                 .build(),
             UpdateType.REPLACE,
-            factory.newPrimitiveValueBuilder().buildString("Test String1"));
+            getFactory().newPrimitiveValueBuilder().buildString("Test String1"));
     assertNotNull(request);
 
     final ODataValueUpdateResponse response = request.execute();
@@ -389,13 +389,13 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void updatePropertyValueMinimalResponse() throws Exception {
-    ODataValueUpdateRequest request = client.getCUDRequestFactory().getValueUpdateRequest(
-        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
+    ODataValueUpdateRequest request = getClient().getCUDRequestFactory().getValueUpdateRequest(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32766)
             .appendPropertySegment("PropertyString")
             .build(),
         UpdateType.REPLACE,
-        factory.newPrimitiveValueBuilder().buildString("Test String1"));
-    request.setPrefer(client.newPreferences().returnMinimal());
+        getFactory().newPrimitiveValueBuilder().buildString("Test String1"));
+    request.setPrefer(getClient().newPreferences().returnMinimal());
 
     final ODataValueUpdateResponse response = request.execute();
     assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
@@ -404,8 +404,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readPrimitiveCollectionCount() {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
-        .getValueRequest(client.newURIBuilder(SERVICE_URI)
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1)
             .appendPropertySegment("CollPropertyBoolean").appendCountSegment().build());
     assertNotNull(request);
@@ -423,8 +423,8 @@ public class PrimitiveComplexITCase extends AbstractTecSvcITCase {
 
   @Test
   public void readComplexCollectionCount() {
-    ODataValueRequest request = client.getRetrieveRequestFactory()
-        .getValueRequest(client.newURIBuilder(SERVICE_URI)
+    ODataValueRequest request = getClient().getRetrieveRequestFactory()
+        .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCompCollAllPrim").appendKeySegment(5678)
             .appendPropertySegment("PropertyComp").appendPropertySegment("CollPropertyBoolean").appendCountSegment()
             .build());

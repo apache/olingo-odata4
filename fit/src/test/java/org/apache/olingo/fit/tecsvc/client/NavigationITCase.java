@@ -33,13 +33,13 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class NavigationITCase extends AbstractTecSvcITCase {
+public class NavigationITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void navigationToEntityWithRelativeContextUrl() throws Exception {
     // zero navigation
-    final InputStream zeroLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-        client.newURIBuilder(TecSvcConst.BASE_URI)
+    final InputStream zeroLevelResponse = getClient().getRetrieveRequestFactory().getEntityRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).build())
         .rawExecute();
 
@@ -47,8 +47,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
     assertTrue(zeroLevelResponseBody.contains("\"$metadata#ESAllPrim/$entity\""));
 
     // one navigation
-    final InputStream oneLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-        client.newURIBuilder(TecSvcConst.BASE_URI)
+    final InputStream oneLevelResponse = getClient().getRetrieveRequestFactory().getEntityRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
             .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
         .rawExecute();
@@ -57,8 +57,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
     assertTrue(oneLevelResponseBody.contains("\"../$metadata#ESTwoPrim/$entity\""));
 
     // two navigation
-    final InputStream twoLevelResponse = client.getRetrieveRequestFactory().getEntityRequest(
-        client.newURIBuilder(TecSvcConst.BASE_URI)
+    final InputStream twoLevelResponse = getClient().getRetrieveRequestFactory().getEntityRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
             .appendNavigationSegment("NavPropertyETAllPrimOne")
             .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
@@ -71,8 +71,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
   @Test
   public void oneLevelToEntity() throws Exception {
     final ODataRetrieveResponse<ClientEntity> response =
-        client.getRetrieveRequestFactory().getEntityRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+        getClient().getRetrieveRequestFactory().getEntityRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
                 .appendNavigationSegment("NavPropertyETTwoPrimOne").build())
             .execute();
@@ -89,8 +89,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
   @Test
   public void oneLevelToEntityWithKey() throws Exception {
     final ODataRetrieveResponse<ClientEntity> response =
-        client.getRetrieveRequestFactory().getEntityRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+        getClient().getRetrieveRequestFactory().getEntityRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendEntitySetSegment("ESAllPrim").appendKeySegment(32767)
                 .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
             .execute();
@@ -107,8 +107,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
   @Test
   public void twoLevelsToEntityWithKey() throws Exception {
     final ODataRetrieveResponse<ClientEntity> response =
-        client.getRetrieveRequestFactory().getEntityRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+        getClient().getRetrieveRequestFactory().getEntityRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
                 .appendNavigationSegment("NavPropertyETAllPrimOne")
                 .appendNavigationSegment("NavPropertyETTwoPrimMany").appendKeySegment(-365).build())
@@ -126,8 +126,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
   @Test
   public void twoLevelsToEntitySet() throws Exception {
     final ODataRetrieveResponse<ClientEntitySet> response =
-        client.getRetrieveRequestFactory().getEntitySetRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+        getClient().getRetrieveRequestFactory().getEntitySetRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
                 .appendNavigationSegment("NavPropertyETAllPrimOne")
                 .appendNavigationSegment("NavPropertyETTwoPrimMany").build())
@@ -148,8 +148,8 @@ public class NavigationITCase extends AbstractTecSvcITCase {
   @Test
   public void twoLevelsToProperty() throws Exception {
     final ODataRetrieveResponse<ClientProperty> response =
-        client.getRetrieveRequestFactory().getPropertyRequest(
-            client.newURIBuilder(TecSvcConst.BASE_URI)
+        getClient().getRetrieveRequestFactory().getPropertyRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI)
                 .appendEntitySetSegment("ESKeyNav").appendKeySegment(1)
                 .appendNavigationSegment("NavPropertyETKeyNavOne")
                 .appendNavigationSegment("NavPropertyETKeyNavMany").appendKeySegment(3)
