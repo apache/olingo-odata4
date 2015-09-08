@@ -68,6 +68,11 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.olingo.client.api.serialization.ODataDeserializer;
+import org.apache.olingo.client.api.serialization.ODataSerializer;
+import org.apache.olingo.client.core.serialization.AtomSerializer;
+import org.apache.olingo.client.core.serialization.JsonDeserializer;
+import org.apache.olingo.client.core.serialization.JsonSerializer;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -79,12 +84,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.serialization.ODataDeserializer;
-import org.apache.olingo.commons.api.serialization.ODataSerializer;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.serialization.AtomSerializer;
-import org.apache.olingo.commons.core.serialization.JsonDeserializer;
-import org.apache.olingo.commons.core.serialization.JsonSerializer;
 import org.apache.olingo.fit.metadata.EntityType;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
@@ -148,7 +148,7 @@ public abstract class AbstractServices {
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);
-    jsonSerializer = new JsonSerializer(true);
+    jsonSerializer = new JsonSerializer(true, ContentType.JSON_FULL_METADATA);
 
     xml = new XMLUtilities(metadata);
     json = new JSONUtilities(metadata);
@@ -684,7 +684,7 @@ public abstract class AbstractServices {
 
       final String location;
 
-      if ((this instanceof V4KeyAsSegment)) {
+      if ((this instanceof KeyAsSegment)) {
         location = uriInfo.getRequestUri().toASCIIString() + "/" + entityKey;
 
         final Link editLink = new Link();
@@ -1223,7 +1223,7 @@ public abstract class AbstractServices {
       }
       final Entity entry = container.getPayload();
 
-      if ((this instanceof V4KeyAsSegment)) {
+      if ((this instanceof KeyAsSegment)) {
         final Link editLink = new Link();
         editLink.setRel("edit");
         editLink.setTitle(entitySetName);

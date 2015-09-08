@@ -27,8 +27,8 @@ import java.nio.charset.CodingErrorAction;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.olingo.client.core.serialization.AtomDeserializer;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.core.serialization.AtomDeserializer;
 
 public class FITAtomDeserializer extends AtomDeserializer {
 

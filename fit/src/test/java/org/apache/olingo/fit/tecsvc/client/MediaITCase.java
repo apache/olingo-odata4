@@ -43,15 +43,21 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
 
-public final class MediaITCase extends AbstractBaseTestITCase {
-
+public class MediaITCase extends AbstractBaseTestITCase {
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
   @Test
   public void read() throws Exception {
     final ODataClient client = getClient();
@@ -139,7 +145,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
     final ClientProperty property = entity.getProperty("PropertyInt16");
     assertNotNull(property);
     assertNotNull(property.getPrimitiveValue());
-    assertEquals(5, property.getPrimitiveValue().toValue());
+    assertShortOrInt(5, property.getPrimitiveValue().toValue());
 
     // Check that the media stream has been created.
     // This check has to be in the same session in order to access the same data provider.
@@ -156,7 +162,7 @@ public final class MediaITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 }

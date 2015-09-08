@@ -55,7 +55,7 @@ public abstract class ServiceResponse {
     if (!this.closed) {
       if (this.strictApplyPreferences) {
         if (!preferences.isEmpty()) {
-          assert(this.response.getHeaders().get("Preference-Applied") != null);
+          assert(this.response.getAllHeaders().get("Preference-Applied") != null);
         }
       }
       this.closed = true;
@@ -97,7 +97,7 @@ public abstract class ServiceResponse {
 
   public void writeHeader(String key, String value) {
     if ("Preference-Applied".equals(key)) {
-      String previous = this.response.getHeaders().get(key);
+      String previous = this.response.getHeader(key);
       if (previous != null) {
         value = previous+";"+value;
       }

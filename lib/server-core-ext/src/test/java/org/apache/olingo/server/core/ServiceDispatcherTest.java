@@ -69,6 +69,7 @@ public class ServiceDispatcherTest {
   private Tomcat tomcat = new Tomcat();
 
   public class SampleODataServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     private final ServiceHandler handler; // must be stateless
     private final CsdlEdmProvider provider; // must be stateless
 
@@ -158,7 +159,7 @@ public class ServiceDispatcherTest {
       request = delete;
     }
     request.setHeader("Content-Type", "application/json;odata.metadata=minimal");
-    HttpResponse response = http.execute(getLocalhost(), request);
+    http.execute(getLocalhost(), request);
 
     validator.validate();
     afterTest();
@@ -188,9 +189,9 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        // Need toString on ContextURL class
+        // Need getName on ContextURL class
         // assertEquals("",
-        // request.getContextURL(request.getOdata()).toString());
+        // request.getContextURL(request.getOdata()).getName());
         assertEquals("application/json;odata.metadata=minimal", request.getResponseContentType()
             .toContentTypeString());
       }
@@ -208,9 +209,9 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        // Need toString on ContextURL class
+        // Need getName on ContextURL class
         // assertEquals("",
-        // request.getContextURL(request.getOdata()).toString());
+        // request.getContextURL(request.getOdata()).getName());
         assertEquals("text/plain", request.getResponseContentType().toContentTypeString());
       }
     });
@@ -325,7 +326,7 @@ public class ServiceDispatcherTest {
         ArgumentCaptor<HttpMethod> arg2 = ArgumentCaptor.forClass(HttpMethod.class);
         Mockito.verify(handler).invoke(arg1.capture(), arg2.capture(), arg3.capture());
 
-        FunctionRequest request = arg1.getValue();
+        arg1.getValue();
       }
     });
   }
@@ -340,7 +341,7 @@ public class ServiceDispatcherTest {
         ArgumentCaptor<NoContentResponse> arg2 = ArgumentCaptor.forClass(NoContentResponse.class);
         Mockito.verify(handler).invoke(arg1.capture(), Mockito.anyString(), arg2.capture());
 
-        ActionRequest request = arg1.getValue();
+        arg1.getValue();
       }
     });
   }
@@ -403,7 +404,6 @@ public class ServiceDispatcherTest {
     final ServiceHandler handler = Mockito.mock(ServiceHandler.class);
     helpTest(handler, "trippin/People('russelwhyte')/Friends/$ref", "POST", payload,
         new TestResult() {
-          @SuppressWarnings({ "unchecked", "rawtypes" })
           @Override
           public void validate() throws Exception {
             ArgumentCaptor<DataRequest> arg1 = ArgumentCaptor.forClass(DataRequest.class);

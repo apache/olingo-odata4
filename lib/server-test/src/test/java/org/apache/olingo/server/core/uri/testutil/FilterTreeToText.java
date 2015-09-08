@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKin
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
+import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
@@ -82,8 +83,8 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitLiteral(final String literal) throws ExpressionVisitException {
-    return "<" + literal + ">";
+  public String visitLiteral(final Literal literal) throws ExpressionVisitException {
+    return "<" + literal.getText() + ">";
   }
 
   @Override
@@ -97,7 +98,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
         tmp = visitLambdaExpression("ALL", all.getLambdaVariable(), all.getExpression());
       } else if (item instanceof UriResourceLambdaAny) {
         UriResourceLambdaAny any = (UriResourceLambdaAny) item;
-        tmp = visitLambdaExpression("ANY", any.getLamdaVariable(), any.getExpression());
+        tmp = visitLambdaExpression("ANY", any.getLambdaVariable(), any.getExpression());
       } else if (item instanceof UriResourcePartTyped) {
         UriResourcePartTyped typed = (UriResourcePartTyped) item;
         tmp = typed.toString(true);

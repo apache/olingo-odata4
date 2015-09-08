@@ -37,13 +37,15 @@ import org.apache.olingo.client.api.communication.response.ODataReferenceAddingR
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class EntityReferencesITCase extends AbstractBaseTestITCase {
@@ -62,6 +64,15 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
   private static final String DESCENDING = " desc";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
+  
+  
+  void assertShortOrInt(int value, Object n) {
+    if (n instanceof Number) {
+      assertEquals(value, ((Number)n).intValue());
+    } else {
+      Assert.fail();
+    }
+  }
   
   @Test
   public void testOrderBy() {
@@ -249,9 +260,12 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
                                                        .asInlineEntitySet()
                                                        .getEntitySet();
     assertEquals(3, inlineEntitySet.getEntities().size());
-    assertEquals(1, inlineEntitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals(2, inlineEntitySet.getEntities().get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals(3, inlineEntitySet.getEntities().get(2).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(1, inlineEntitySet.getEntities().get(0)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(2, inlineEntitySet.getEntities().get(1)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(3, inlineEntitySet.getEntities().get(2)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
   
   @Test
@@ -287,9 +301,12 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
                                                        .asInlineEntitySet()
                                                        .getEntitySet();
     assertEquals(3, inlineEntitySet.getEntities().size());
-    assertEquals(1, inlineEntitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals(2, inlineEntitySet.getEntities().get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals(3, inlineEntitySet.getEntities().get(2).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(1, inlineEntitySet.getEntities().get(0)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(2, inlineEntitySet.getEntities().get(1)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(3, inlineEntitySet.getEntities().get(2)
+        .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
   
   @Test
@@ -385,7 +402,7 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), responseGet.getStatusCode());
     
-    assertEquals(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+    assertShortOrInt(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                          .asInlineEntity()
                                          .getEntity()
                                          .getProperty(PROPERTY_INT16)
@@ -419,7 +436,7 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), responseGet.getStatusCode());
     
-    assertEquals(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
+    assertShortOrInt(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
                                          .asInlineEntity()
                                          .getEntity()
                                          .getProperty(PROPERTY_INT16)
@@ -595,7 +612,8 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
           .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE)
           .asInlineEntity().getEntity();
       
-      assertEquals(3, inlineEntity.getProperty(PROPERTY_INT16).getPrimitiveValue().asPrimitive().toValue());
+      assertShortOrInt(3, inlineEntity.getProperty(PROPERTY_INT16)
+          .getPrimitiveValue().asPrimitive().toValue());
   }
   
   @Test
@@ -645,9 +663,12 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
           .getEntitySet();
       
       assertEquals(3, inlineEntitySet.getEntities().size());
-      assertEquals(1, inlineEntitySet.getEntities().get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-      assertEquals(2, inlineEntitySet.getEntities().get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-      assertEquals(3, inlineEntitySet.getEntities().get(2).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+      assertShortOrInt(1, inlineEntitySet.getEntities().get(0)
+          .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+      assertShortOrInt(2, inlineEntitySet.getEntities().get(1)
+          .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+      assertShortOrInt(3, inlineEntitySet.getEntities().get(2)
+          .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
   
   @Test
@@ -673,13 +694,13 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
     
-    assertEquals(1, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
+    assertShortOrInt(1, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                          .asInlineEntitySet()
                                          .getEntitySet()
                                          .getEntities()
                                          .size());
     
-    assertEquals(2, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
+    assertShortOrInt(2, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                          .asInlineEntitySet()
                                          .getEntitySet()
                                          .getEntities()
@@ -711,7 +732,14 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
     
-    assertEquals(0, responseGet.getBody().getNavigationLinks().size());
+    
+    if(isJson()) {
+      assertEquals(0, responseGet.getBody().getNavigationLinks().size());
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      assertEquals(6, responseGet.getBody().getNavigationLinks().size());
+    }
   }
   
   @Test
@@ -807,7 +835,11 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
     }
   }
- 
+  
+  private boolean isJson() {
+    return getClient().getConfiguration().getDefaultPubFormat().equals(ContentType.JSON);
+  }
+  
   @Test
   public void testNavigateTwoTimesThanDeleteReferenceInCollection() {
     final ODataClient client = getClient();
@@ -834,8 +866,15 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     final ODataEntityRequest<ClientEntity> requestGet = client.getRetrieveRequestFactory().getEntityRequest(uriGet);
     requestGet.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
+    if(isJson()) {
+      assertNull(responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      Assert.assertFalse(responseGet.getBody()
+          .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
+    }
     
-    assertNull(responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
   }
   
   @Test
@@ -872,7 +911,7 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
                                          .getEntities()
                                          .size());
     
-    assertEquals(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
+    assertShortOrInt(3, responseGet.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_MANY)
                                          .asInlineEntitySet()
                                          .getEntitySet()
                                          .getEntities()
@@ -908,7 +947,15 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     getRequestESTwoKeyNav.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetRequestESTwoKeyNav = getRequestESTwoKeyNav.execute();
     // Entity has been removed
-    assertNull(responseGetRequestESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+    if(isJson()) {
+      assertNull(responseGetRequestESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      Assert.assertFalse(responseGetRequestESTwoKeyNav.getBody()
+          .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
+    }    
+    
     
     final URI uriGetESKeyNav = client.newURIBuilder(SERVICE_URI)
                                      .appendEntitySetSegment(ES_KEY_NAV)
@@ -929,10 +976,10 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
     
     // The Entities in the collection are still there
     assertEquals(2, navEntities.size());
-    assertEquals(1, navEntities.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(1, navEntities.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("1", navEntities.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
     
-    assertEquals(1, navEntities.get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(1, navEntities.get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("2", navEntities.get(1).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
   }
   
@@ -967,7 +1014,7 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
                                                            .getEntities();
     
     assertEquals(1, navEntities.size());
-    assertEquals(1, navEntities.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertShortOrInt(1, navEntities.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals("2", navEntities.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
     
     final Map<String, Object> esTwoKEyNavKey = new HashMap<String, Object>();
@@ -981,7 +1028,58 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
                                                                       .getEntityRequest(uriGetESTwoKeyNav);
     requestGetESTwoKey.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntity> responseGetESTwoKeyNav = requestGetESTwoKey.execute();
-    assertNull(responseGetESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+    
+    if(isJson()) {
+      assertNull(responseGetESTwoKeyNav.getBody().getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE));
+    } else {
+      // in xml the links will be always present; but the content will not be if no $expand unlike 
+      // json;metadata=minimal; json=full is same as application/xml
+      Assert.assertFalse(responseGetESTwoKeyNav.getBody()
+          .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
+    }    
+  }
+  
+  @Test
+  public void testCreateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendRefSegment().build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceAddingRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testUpdateMissingNavigationProperty() throws Exception {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendKeySegment(1)
+                                                     .appendRefSegment()
+                                                     .build();
+    final URI ref = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).appendKeySegment(1).build();
+    
+    try {
+      client.getCUDRequestFactory().getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, ref).execute();
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
+  }
+  
+  @Test
+  public void testDeleteMissingNavigationProperty() {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
+                                                     .appendRefSegment()
+                                                     .build();
+    
+    try {
+      client.getCUDRequestFactory().getDeleteRequest(uri);
+    } catch (ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    }
   }
   
   private void sendRequest(final URI uri, final int count, final String... expected) {
@@ -1001,9 +1099,13 @@ public class EntityReferencesITCase extends AbstractBaseTestITCase {
   
   @Override
   protected ODataClient getClient() {
-    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI);
-    client.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    final EdmEnabledODataClient client = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, ContentType.JSON);
+    client.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     
     return client;
   }
+  
+  protected EdmEnabledODataClient getClient(String serviceURI) {
+    return ODataClientFactory.getEdmEnabledClient(serviceURI, ContentType.JSON);
+  }   
 }

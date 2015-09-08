@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,10 +20,11 @@ package org.apache.olingo.server.api;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpHeaders;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -31,13 +32,14 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  */
 public class ODataRequest {
   private HttpMethod method;
-  private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+  private HttpHeaders headers = new HttpHeaders();
   private InputStream body;
   private String rawQueryPath;
   private String rawRequestUri;
   private String rawODataPath;
   private String rawBaseUri;
   private String rawServiceResolutionUri;
+  private String protocol;
 
   /**
    * Gets the HTTP method.
@@ -56,6 +58,30 @@ public class ODataRequest {
   }
 
   /**
+   * <p>Set a header to the response.</p>
+   * <p>The header name will be handled as case-insensitive key.</p>
+   * <p>If a header already exists then the header will be replaced by this new value.</p>
+   * @param name case-insensitive header name
+   * @param value value for the given header name
+   * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
+   */
+  public void setHeader(final String name, final String value) {
+    headers.setHeader(name, value);
+  }
+
+  /**
+   * <p>Adds a header to the request.</p>
+   * <p>The header name will be handled as case-insensitive key.</p>
+   * <p>If a header already exists then the list of values will just be extended.</p>
+   * @param name case-insensitive header name
+   * @param value value for the given header name
+   * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
+   */
+  public void addHeader(final String name, final String value) {
+    headers.addHeader(name, value);
+  }
+
+  /**
    * <p>Adds a header to the request.</p>
    * <p>The header name will be handled as case-insensitive key.</p>
    * <p>If a header already exists then the list of values will just be extended.</p>
@@ -64,31 +90,24 @@ public class ODataRequest {
    * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
    */
   public void addHeader(final String name, final List<String> values) {
-    String key = name.toUpperCase();
-    if (headers.containsKey(key)) {
-      List<String> oldValues = headers.get(key);
-
-      List<String> newValues = new ArrayList<String>();
-      newValues.addAll(oldValues);
-      newValues.addAll(values);
-
-      headers.put(name.toUpperCase(), newValues);
-    } else {
-      headers.put(name.toUpperCase(), values);
-    }
+    headers.addHeader(name, values);
   }
 
   /**
-   * Gets header value for a given name.
+   * Get header values for a given name.
    * @param name the header name as a case-insensitive key
    * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
-    return headers.get(name.toUpperCase());
+    HttpHeader h = headers.getHeader(name);
+    if(h == null) {
+      return null;
+    }
+    return new ArrayList<String>(h.getValues());
   }
 
   /**
-   * Gets first header value for a given name.
+   * Get first header value for a given name.
    * @param name the header name as a case-insensitive key
    * @return the first header value or null if not found
    */
@@ -96,6 +115,15 @@ public class ODataRequest {
     final List<String> values = getHeaders(name);
     return values == null ? null : values.get(0);
   }
+
+  /**
+   * Gets all headers.
+   * @return an unmodifiable Map of header names/values
+   */
+  public Map<String, List<String>> getAllHeaders() {
+    return headers.getHeaderToValues();
+  }
+
 
   /**
    * Gets the body of the request.
@@ -193,4 +221,21 @@ public class ODataRequest {
   public void setRawServiceResolutionUri(final String rawServiceResolutionUri) {
     this.rawServiceResolutionUri = rawServiceResolutionUri;
   }
+
+  /**
+   * @return the protocol version used e.g. HTTP/1.1
+   */
+  public String getProtocol() {
+    return protocol;
+  }
+
+  /**
+   * Sets the HTTP protocol used
+   * @param protocol
+   * @see #getProtocol()
+   */
+  public void setProtocol(String protocol) {
+    this.protocol = protocol;
+  }
+
 }

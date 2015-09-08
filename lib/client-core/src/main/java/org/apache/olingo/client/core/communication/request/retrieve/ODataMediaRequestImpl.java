@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataMediaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements an OData media query request.
@@ -44,12 +44,12 @@ public class ODataMediaRequestImpl extends AbstractODataRetrieveRequest<InputStr
   ODataMediaRequestImpl(final ODataClient odataClient, final URI query) {
     super(odataClient, query);
 
-    setAccept(ODataFormat.APPLICATION_OCTET_STREAM.toString());
-    setContentType(ODataFormat.APPLICATION_OCTET_STREAM.toString());
+    setAccept(ContentType.APPLICATION_OCTET_STREAM.toString());
+    setContentType(ContentType.APPLICATION_OCTET_STREAM.toString());
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultMediaFormat();
   }
 

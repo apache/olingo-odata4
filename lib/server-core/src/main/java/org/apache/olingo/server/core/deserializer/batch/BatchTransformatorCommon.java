@@ -19,32 +19,31 @@
 package org.apache.olingo.server.core.deserializer.batch;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 
 public class BatchTransformatorCommon {
+  
+  private BatchTransformatorCommon() {
+    //Private Utility Constructor
+  }
 
-  public static void validateContentType(final Header headers, final Pattern pattern)
+  public static void validateContentType(final Header headers, final ContentType expected)
       throws BatchDeserializerException {
-    List<String> contentTypes = headers.getHeaders(HttpHeader.CONTENT_TYPE);
+    final List<String> contentTypes = headers.getHeaders(HttpHeader.CONTENT_TYPE);
 
-    if (contentTypes.size() == 0) {
-      throw new BatchDeserializerException("Missing content type", MessageKeys.MISSING_CONTENT_TYPE, headers
-          .getLineNumber());
+    if (contentTypes.isEmpty()) {
+      throw new BatchDeserializerException("Missing content type", MessageKeys.MISSING_CONTENT_TYPE,
+          Integer.toString(headers.getLineNumber()));
     }
-    if (!headers.isHeaderMatching(HttpHeader.CONTENT_TYPE, pattern)) {
-
-      throw new BatchDeserializerException("Invalid content type", MessageKeys.INVALID_CONTENT_TYPE,
-          HttpContentType.MULTIPART_MIXED + " or " + HttpContentType.APPLICATION_HTTP);
-    }
+    BatchParserCommon.parseContentType(contentTypes.get(0), expected, headers.getLineNumber());
   }
 
   public static void validateContentTransferEncoding(final Header headers) throws BatchDeserializerException {
-    final HeaderField contentTransferField = headers.getHeaderField(BatchParserCommon.HTTP_CONTENT_TRANSFER_ENCODING);
+    final HeaderField contentTransferField = headers.getHeaderField(BatchParserCommon.CONTENT_TRANSFER_ENCODING);
 
     if (contentTransferField != null) {
       final List<String> contentTransferValues = contentTransferField.getValues();
@@ -54,15 +53,16 @@ public class BatchTransformatorCommon {
         if (!BatchParserCommon.BINARY_ENCODING.equalsIgnoreCase(encoding)) {
           throw new BatchDeserializerException("Invalid content transfer encoding",
               MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
-              headers.getLineNumber());
+              Integer.toString(headers.getLineNumber()));
         }
       } else {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER, headers.getLineNumber());
+        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER,
+            Integer.toString(headers.getLineNumber()));
       }
     } else {
       throw new BatchDeserializerException("Missing mandatory content transfer encoding",
           MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING,
-          headers.getLineNumber());
+          Integer.toString(headers.getLineNumber()));
     }
   }
 
@@ -77,14 +77,13 @@ public class BatchTransformatorCommon {
 
         if (contentLength < 0) {
           throw new BatchDeserializerException("Invalid content length", MessageKeys.INVALID_CONTENT_LENGTH,
-              contentLengthField
-              .getLineNumber());
+              Integer.toString(contentLengthField.getLineNumber()));
         }
 
         return contentLength;
       } catch (NumberFormatException e) {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER, contentLengthField
-            .getLineNumber());
+        throw new BatchDeserializerException("Invalid header", e, MessageKeys.INVALID_HEADER,
+            Integer.toString(contentLengthField.getLineNumber()));
       }
     }
 

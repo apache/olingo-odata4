@@ -55,10 +55,10 @@ public interface ClientValue {
   /**
    * Casts to collection value.
    * 
-   * @param <OV> The actual ODataValue interface.
+   * @param <T> The actual ODataValue interface.
    * @return collection value.
    */
-  <OV extends ClientValue> ClientCollectionValue<OV> asCollection();
+  <T extends ClientValue> ClientCollectionValue<T> asCollection();
 
   /**
    * Casts to complex value.

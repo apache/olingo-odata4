@@ -51,6 +51,7 @@ import org.mockito.Mockito;
 public class EdmEnumTest {
 
   private final EdmEnumType instance;
+  private final EdmEnumType otherInstance;
   private final EdmEnumType nonFlagsInstance;
   private final EdmEnumType int16EnumType;
   private final EdmEnumType int32EnumType;
@@ -64,6 +65,10 @@ public class EdmEnumTest {
     final FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
 
     instance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
+        new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
+            .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
+    
+    otherInstance = new EdmEnumTypeImpl(mock(EdmProviderImpl.class), enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
 
@@ -128,6 +133,7 @@ public class EdmEnumTest {
   @Test
   public void compatibility() {
     assertTrue(instance.isCompatible(instance));
+    assertTrue(instance.isCompatible(otherInstance));
     assertFalse(instance.isCompatible(instance.getUnderlyingType()));
   }
 

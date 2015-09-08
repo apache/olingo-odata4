@@ -24,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -136,7 +137,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
   }
 
   @SuppressWarnings("unchecked")
-  public <NE extends EntityType> NE newEntityInstance(final Class<NE> ref) {
+  public <NE extends EntityType<?>> NE newEntityInstance(final Class<NE> ref) {
     final EntityInvocationHandler handler = EntityInvocationHandler.getInstance(ref, getService());
 
     return (NE) Proxy.newProxyInstance(

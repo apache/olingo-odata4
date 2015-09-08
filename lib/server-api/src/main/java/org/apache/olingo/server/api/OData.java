@@ -18,19 +18,22 @@
  */
 package org.apache.olingo.server.api;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.debug.DebugResponseHelper;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
+import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -45,6 +48,10 @@ public abstract class OData {
 
   private static final String IMPLEMENTATION = "org.apache.olingo.server.core.ODataImpl";
 
+  /**
+   * Use this method to create a new OData instance. Each thread/request should keep its own instance.
+   * @return a new OData instance
+   */
   public static OData newInstance() {
     try {
       final Class<?> clazz = Class.forName(OData.IMPLEMENTATION);
@@ -66,12 +73,13 @@ public abstract class OData {
    * Creates a new serializer object for rendering content in the specified format.
    * Serializers are used in Processor implementations.
    *
-   * @param format any format supported by Olingo (XML, JSON ...)
+   * @param contentType any format supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataSerializer createSerializer(ODataFormat format) throws SerializerException;
+  public abstract ODataSerializer createSerializer(ContentType contentType) throws SerializerException;
 
   /**
-   * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output.
+   * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output or multipart/mixed
+   * outpu.
    * Serializers are used in Processor implementations.
    */
   public abstract FixedFormatSerializer createFixedFormatSerializer();
@@ -119,9 +127,9 @@ public abstract class OData {
    * Creates a new deserializer object for reading content in the specified format.
    * Deserializer are used in Processor implementations.
    *
-   * @param format any format supported by Olingo (XML, JSON ...)
+   * @param contentType any content type supported by Olingo (XML, JSON ...)
    */
-  public abstract ODataDeserializer createDeserializer(ODataFormat format) throws DeserializerException;
+  public abstract ODataDeserializer createDeserializer(ContentType contentType) throws DeserializerException;
 
   /**
    * Creates a primitive-type instance.
@@ -135,4 +143,18 @@ public abstract class OData {
    * It can be used in Processor implementations.
    */
   public abstract ETagHelper createETagHelper();
+
+  /**
+   * Creates a new Preferences object out of Prefer HTTP request headers.
+   * It can be used in Processor implementations.
+   */
+  public abstract Preferences createPreferences(Collection<String> preferHeaders);
+
+  /**
+   * This method creates a DebugResponseHelper for the given debugFormat. If the format is not supported no
+   * exception is thrown. Instead we give back the implementation for the json format.
+   * @param debugFormat to be used.
+   * @return a debug response serializer
+   */
+  public abstract DebugResponseHelper createDebugResponseHelper(String debugFormat);
 }

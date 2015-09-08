@@ -29,11 +29,11 @@ public interface UriInfoMetadata {
   /**
    * @return Object containing information of the $id option
    */
-  public FormatOption getFormatOption();
+  FormatOption getFormatOption();
 
   /**
    * @return Object containing information of the URI fragment
    */
-  public String getFragment();
+  String getFragment();
 
 }

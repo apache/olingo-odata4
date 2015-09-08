@@ -64,7 +64,12 @@ public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements Ur
   }
 
   @Override
-  public String toString() {
+  public String getSegmentValue(){
     return variableText;
+  }
+  
+  @Override
+  public String toString() {
+    return getSegmentValue();
   }
 }

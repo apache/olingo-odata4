@@ -23,16 +23,16 @@ import java.util.Collection;
 /**
  * OData collection property value.
  * 
- * @param <OV> The actual ODataValue interface.
+ * @param <T> The actual ODataValue interface.
  */
-public interface ClientCollectionValue<OV extends ClientValue> extends ClientValue, Iterable<OV> {
+public interface ClientCollectionValue<T extends ClientValue> extends ClientValue, Iterable<T> {
 
   /**
    * Adds a value to the collection.
    * 
    * @param value value to be added.
    */
-  ClientCollectionValue<OV> add(ClientValue value);
+  ClientCollectionValue<T> add(ClientValue value);
 
   /**
    * Checks if collection is empty.

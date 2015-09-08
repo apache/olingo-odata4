@@ -32,37 +32,20 @@ import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class PreconditionsValidator {
 
-  private final CustomETagSupport customETagSupport;
-  private final UriInfo uriInfo;
-  private final String ifMatch;
-  private final String ifNoneMatch;
+  private final EdmBindingTarget affectedEntitySetOrSingleton;
 
-  public PreconditionsValidator(CustomETagSupport customETagSupport, UriInfo uriInfo, String ifMatch,
-      String ifNoneMatch) {
-    this.customETagSupport = customETagSupport;
-    this.uriInfo = uriInfo;
-    this.ifMatch = ifMatch;
-    this.ifNoneMatch = ifNoneMatch;
+  public PreconditionsValidator(final UriInfo uriInfo) throws PreconditionException {
+    affectedEntitySetOrSingleton = extractInformation(uriInfo);
   }
 
-  public void validatePreconditions(boolean isMediaValue) throws PreconditionException {
-    EdmBindingTarget affectedEntitySetOrSingleton = extractInformation();
-    if (affectedEntitySetOrSingleton != null) {
-      if ((isMediaValue && customETagSupport.hasMediaETag(affectedEntitySetOrSingleton)) ||
-          (!isMediaValue && customETagSupport.hasETag(affectedEntitySetOrSingleton))) {
-        checkETagHeaderPresent();
-      }
-    }
+  public boolean mustValidatePreconditions(final CustomETagSupport customETagSupport, final boolean isMediaValue) {
+    return affectedEntitySetOrSingleton != null
+        && (isMediaValue ?
+            customETagSupport.hasMediaETag(affectedEntitySetOrSingleton) :
+            customETagSupport.hasETag(affectedEntitySetOrSingleton));
   }
 
-  private void checkETagHeaderPresent() throws PreconditionException {
-    if (ifMatch == null && ifNoneMatch == null) {
-      throw new PreconditionException("Expected an if-match or if-none-match header",
-          PreconditionException.MessageKeys.MISSING_HEADER);
-    }
-  }
-
-  private EdmBindingTarget extractInformation() throws PreconditionException {
+  private EdmBindingTarget extractInformation(final UriInfo uriInfo) throws PreconditionException {
     EdmBindingTarget lastFoundEntitySetOrSingleton = null;
     int counter = 0;
     for (UriResource uriResourcePart : uriInfo.getUriResourceParts()) {
@@ -78,13 +61,16 @@ public class PreconditionsValidator {
         break;
       case navigationProperty:
         lastFoundEntitySetOrSingleton = getEntitySetFromNavigation(lastFoundEntitySetOrSingleton,
-                (UriResourceNavigation) uriResourcePart);
+            (UriResourceNavigation) uriResourcePart);
+        break;
+      case primitiveProperty:
+      case complexProperty:
         break;
       case value:
       case action:
         // This should not be possible since the URI Parser validates this but to be sure we throw an exception.
         if (counter != uriInfo.getUriResourceParts().size() - 1) {
-          throw new PreconditionException("$Value or Action must be the last segment in the URI.",
+          throw new PreconditionException("$value or Action must be the last segment in the URI.",
               PreconditionException.MessageKeys.INVALID_URI);
         }
         break;
@@ -111,14 +97,11 @@ public class PreconditionsValidator {
   }
 
   private EdmBindingTarget getEntitySet(UriResourceEntitySet uriResourceEntitySet) {
-    if (!uriResourceEntitySet.isCollection()) {
-      return uriResourceEntitySet.getEntitySet();
-    }
-    return null;
+    return uriResourceEntitySet.isCollection() ? null : uriResourceEntitySet.getEntitySet();
   }
 
   private EdmBindingTarget getEntitySetFromNavigation(EdmBindingTarget lastFoundEntitySetOrSingleton,
-                                                      UriResourceNavigation uriResourceNavigation) {
+      UriResourceNavigation uriResourceNavigation) {
     if (lastFoundEntitySetOrSingleton != null && !uriResourceNavigation.isCollection()) {
       EdmNavigationProperty navProp = uriResourceNavigation.getProperty();
       return lastFoundEntitySetOrSingleton.getRelatedBindingTarget(navProp.getName());

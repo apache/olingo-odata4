@@ -75,4 +75,64 @@ public class ClientDeltaLinkImpl extends ClientItem implements ClientDeltaLink {
     return annotations;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
+    result = prime * result + ((source == null) ? 0 : source.hashCode());
+    result = prime * result + ((target == null) ? 0 : target.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientDeltaLinkImpl)) {
+      return false;
+    }
+    ClientDeltaLinkImpl other = (ClientDeltaLinkImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
+      return false;
+    }
+    if (relationship == null) {
+      if (other.relationship != null) {
+        return false;
+      }
+    } else if (!relationship.equals(other.relationship)) {
+      return false;
+    }
+    if (source == null) {
+      if (other.source != null) {
+        return false;
+      }
+    } else if (!source.equals(other.source)) {
+      return false;
+    }
+    if (target == null) {
+      if (other.target != null) {
+        return false;
+      }
+    } else if (!target.equals(other.target)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientDeltaLinkImpl [source=" + source + ", relationship=" + relationship + ", target=" + target
+        + ", annotations=" + annotations + "super[" + super.toString() + "]]";
+  }
+
 }

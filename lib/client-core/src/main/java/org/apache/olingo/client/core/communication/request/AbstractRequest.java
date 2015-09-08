@@ -22,7 +22,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

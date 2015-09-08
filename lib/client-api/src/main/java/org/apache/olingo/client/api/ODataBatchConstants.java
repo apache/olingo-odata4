@@ -21,31 +21,30 @@ package org.apache.olingo.client.api;
 /**
  * Constant values related to the OData protocol.
  */
-public class ODataBatchConstants {
+public interface ODataBatchConstants {
 
   /**
    * Batch item content type.
    */
-  public static final String ITEM_CONTENT_TYPE = "application/http";
+  String ITEM_CONTENT_TYPE = "application/http";
 
   /**
    * Boundary key.
    */
-  public static final String BOUNDARY = "boundary";
+  String BOUNDARY = "boundary";
 
   /**
    * Item content type.
    */
-  public static String ITEM_CONTENT_TYPE_LINE = "Content-Type: application/http";
+  String ITEM_CONTENT_TYPE_LINE = "Content-Type: application/http";
 
   /**
    * Item transfer encoding.
    */
-  public static String ITEM_TRANSFER_ENCODING_LINE = "Content-Transfer-Encoding: binary";
+  String ITEM_TRANSFER_ENCODING_LINE = "Content-Transfer-Encoding: binary";
 
   /**
    * Content id header name.
    */
-  public static String CHANGESET_CONTENT_ID_NAME = "Content-ID";
-
+  String CHANGESET_CONTENT_ID_NAME = "Content-ID";
 }

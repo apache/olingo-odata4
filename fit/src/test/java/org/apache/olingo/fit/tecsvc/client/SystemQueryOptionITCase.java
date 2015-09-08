@@ -25,11 +25,14 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
+import org.apache.olingo.client.api.communication.ODataServerErrorException;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.core.ODataClientFactory;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
@@ -211,7 +214,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=1", nextLink.toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=1%2A10", nextLink.toASCIIString());
 
     // Check subsequent next links
     response = client.getRetrieveRequestFactory()
@@ -219,7 +222,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
         .execute();
 
     nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=2", nextLink.toASCIIString());
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24skiptoken=2%2A10", nextLink.toASCIIString());
   }
 
   @Test
@@ -236,7 +239,7 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
     // Check initial next link format
     URI nextLink = response.getBody().getNext();
-    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=1",
+    assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=1%2A10",
         nextLink.toASCIIString());
 
     int token = 1;
@@ -250,12 +253,25 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
 
       nextLink = response.getBody().getNext();
       if (nextLink != null) {
-        assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=" + token,
+        assertEquals(SERVICE_URI + "/ESServerSidePaging?%24count=true&%24skiptoken=" + token + "%2A10",
             nextLink.toASCIIString());
       }
     }
 
     assertEquals(50 + 1, token);
+  }
+
+  @Test
+  public void nextLinkFormatWithClientPageSize() {
+    final ODataClient client = getClient();
+    final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_SERVER_SIDE_PAGING).build();
+    ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory().getEntitySetRequest(uri);
+    request.setPrefer(getClient().newPreferences().maxPageSize(7));
+
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    assertEquals("odata.maxpagesize=7", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
+    assertEquals(SERVICE_URI + '/' + ES_SERVER_SIDE_PAGING + "?%24skiptoken=1%2A" + 7,
+        response.getBody().getNext().toASCIIString());
   }
 
   @Test
@@ -292,11 +308,28 @@ public class SystemQueryOptionITCase extends AbstractBaseTestITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
-
+  
+  @Test
+  public void testNegativeSearch() {
+    ODataClient client = getClient();
+    URI uri = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(ES_ALL_PRIM)
+        .search("ABC")
+        .build();
+    try {
+      client.getRetrieveRequestFactory()
+      .getEntitySetRequest(uri)
+      .execute();
+      fail();
+    } catch (ODataServerErrorException e) {
+      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    }
+  }
+  
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
-    odata.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
+    odata.getConfiguration().setDefaultPubFormat(ContentType.JSON);
     return odata;
   }
 }

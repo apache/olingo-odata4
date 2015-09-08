@@ -168,6 +168,7 @@ public class BinaryOperator {
     return new TypedOperand(result, primBoolean);
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   private boolean binaryComparison(final int... expect) {
     int result;
 
@@ -179,10 +180,13 @@ public class BinaryOperator {
         result = left.getTypedValue(BigInteger.class).compareTo(right.getTypedValue(BigInteger.class));
       } else if (left.isDecimalType()) {
         result = left.getTypedValue(BigDecimal.class).compareTo(right.getTypedValue(BigDecimal.class));
+      } else if(left.getValue().getClass() == right.getValue().getClass() && left.getValue() instanceof Comparable) {
+        result = ((Comparable)left.getValue()).compareTo(right.getValue());
       } else {
         result = left.getValue().equals(right.getValue()) ? 0 : 1;
       }
-    }
+    } 
+    
     for (int expectedValue : expect) {
       if (expectedValue == result) {
         return true;

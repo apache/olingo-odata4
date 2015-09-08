@@ -59,8 +59,13 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
   }
 
   @Override
-  public String toString() {
+  public String getSegmentValue(){
     return type.getNamespace() + "." + type.getName();
+  }
+  
+  @Override
+  public String toString() {
+    return getSegmentValue();
   }
 
 }

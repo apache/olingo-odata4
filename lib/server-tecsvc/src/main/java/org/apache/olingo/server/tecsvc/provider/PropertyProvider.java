@@ -687,9 +687,9 @@ public class PropertyProvider {
           .setType(EntityTypeProvider.nameETAllPrim)
           .setCollection(true);
 
-  public static final CsdlNavigationProperty collectionNavPropertySINav = new CsdlNavigationProperty()
+  public static final CsdlNavigationProperty navPropertySINav = new CsdlNavigationProperty()
       .setName("NavPropertySINav")
-      .setCollection(true)
+      .setCollection(false)
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   public static final CsdlNavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav =

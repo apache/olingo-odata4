@@ -23,7 +23,6 @@ import java.net.URI;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrieveRequest<V> {
 
@@ -34,8 +33,8 @@ public abstract class AbstractMetadataRequestImpl<V> extends AbstractODataRetrie
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
-    return ODataFormat.XML;
+  public ContentType getDefaultFormat() {
+    return ContentType.APPLICATION_XML;
   }
 
   @Override

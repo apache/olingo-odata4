@@ -24,9 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-public class Header implements Iterable<HeaderField> {
+public class Header implements Iterable<HeaderField>, Cloneable {
   private final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
   private int lineNumber;
 
@@ -64,14 +63,6 @@ public class Header implements Iterable<HeaderField> {
     return field != null && field.getValues().size() != 0;
   }
 
-  public boolean isHeaderMatching(final String name, final Pattern pattern) {
-    if (getHeaders(name).size() != 1) {
-      return false;
-    } else {
-      return pattern.matcher(getHeaders(name).get(0)).matches();
-    }
-  }
-
   public void removeHeader(final String name) {
     headers.remove(name.toLowerCase(Locale.ENGLISH));
   }
@@ -80,12 +71,6 @@ public class Header implements Iterable<HeaderField> {
     final HeaderField headerField = getHeaderField(name);
 
     return (headerField == null) ? null : headerField.getValue();
-  }
-
-  public String getHeaderNotNull(final String name) {
-    final HeaderField headerField = getHeaderField(name);
-
-    return (headerField == null) ? "" : headerField.getValueNotNull();
   }
 
   public List<String> getHeaders(final String name) {
@@ -105,9 +90,9 @@ public class Header implements Iterable<HeaderField> {
   public Map<String, String> toSingleMap() {
     final Map<String, String> singleMap = new HashMap<String, String>();
 
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
-      singleMap.put(field.getFieldName(), getHeader(key));
+    for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
+      HeaderField field = entries.getValue();
+      singleMap.put(field.getFieldName(), getHeader(entries.getKey()));
     }
 
     return singleMap;
@@ -116,8 +101,8 @@ public class Header implements Iterable<HeaderField> {
   public Map<String, List<String>> toMultiMap() {
     final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
 
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
+    for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
+      HeaderField field = entries.getValue();
       singleMap.put(field.getFieldName(), field.getValues());
     }
 
@@ -139,8 +124,8 @@ public class Header implements Iterable<HeaderField> {
   public Header clone() {
     final Header newInstance = new Header(lineNumber);
 
-    for (final String key : headers.keySet()) {
-      newInstance.headers.put(key, headers.get(key).clone());
+    for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
+      newInstance.headers.put(entries.getKey(), entries.getValue().clone());
     }
 
     return newInstance;

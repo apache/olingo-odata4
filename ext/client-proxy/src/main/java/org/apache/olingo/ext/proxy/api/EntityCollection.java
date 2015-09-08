@@ -21,7 +21,7 @@ package org.apache.olingo.ext.proxy.api;
 import java.util.Collection;
 
 public interface EntityCollection<
-        T extends StructuredType, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
+        T extends StructuredType<?>, EC extends Collection<T>, CT extends StructuredCollection<T, EC, ?>>
         extends StructuredCollection<T, EC, CT> {
 
   /**

@@ -22,15 +22,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
 import org.apache.olingo.commons.api.Constants;
 
-public class ServiceDocumentImpl implements ServiceDocument {
+public final class ServiceDocumentImpl implements ServiceDocument {
 
   private String title;
 
@@ -125,17 +121,56 @@ public class ServiceDocumentImpl implements ServiceDocument {
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    ServiceDocumentImpl that = (ServiceDocumentImpl) o;
+
+    if (title != null ? !title.equals(that.title) : that.title != null) {
+      return false;
+    }
+    if (entitySets != null ? !entitySets.equals(that.entitySets) : that.entitySets != null) {
+      return false;
+    }
+    if (functionImports != null ? !functionImports.equals(that.functionImports) : that.functionImports != null) {
+      return false;
+    }
+    if (singletons != null ? !singletons.equals(that.singletons) : that.singletons != null) {
+      return false;
+    }
+    if (relatedServiceDocuments != null ?
+        !relatedServiceDocuments.equals(that.relatedServiceDocuments) : that.relatedServiceDocuments != null) {
+      return false;
+    }
+    return !(metadata != null ? !metadata.equals(that.metadata) : that.metadata != null);
+
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    int result = title != null ? title.hashCode() : 0;
+    result = 31 * result + (entitySets != null ? entitySets.hashCode() : 0);
+    result = 31 * result + (functionImports != null ? functionImports.hashCode() : 0);
+    result = 31 * result + (singletons != null ? singletons.hashCode() : 0);
+    result = 31 * result + (relatedServiceDocuments != null ? relatedServiceDocuments.hashCode() : 0);
+    result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
+    return result;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "ServiceDocumentImpl{" +
+        "title='" + title + '\'' +
+        ", entitySets=" + entitySets +
+        ", functionImports=" + functionImports +
+        ", singletons=" + singletons +
+        ", relatedServiceDocuments=" + relatedServiceDocuments +
+        ", metadata='" + metadata + '\'' +
+        '}';
   }
 }

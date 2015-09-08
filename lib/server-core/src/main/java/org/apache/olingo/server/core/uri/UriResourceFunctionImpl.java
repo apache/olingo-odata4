@@ -95,13 +95,18 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
   }
 
   @Override
-  public String toString() {
+  public String getSegmentValue(){
     if (functionImport != null) {
       return functionImport.getName();
     } else if (function != null) {
       return function.getName();
     }
     return "";
+  }
+  
+  @Override
+  public String toString() {
+    return getSegmentValue();
   }
 
   public boolean isParameterListFilled() {

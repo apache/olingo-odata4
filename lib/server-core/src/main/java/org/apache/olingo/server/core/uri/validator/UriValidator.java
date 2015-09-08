@@ -502,22 +502,22 @@ public class UriValidator {
   private void validateNoQueryOptionsForHttpMethod(final UriInfo uriInfo, final HttpMethod httpMethod)
       throws UriValidationException {
     if (!uriInfo.getSystemQueryOptions().isEmpty()) {
-      String options = "";
+      StringBuilder options = new StringBuilder();
       for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
-        options = options + option.getName() + " ";
+        options.append(option.getName()).append(" ");
       }
-      throw new UriValidationException("System query option " + options + " not allowed for method "
+      throw new UriValidationException("System query option " + options.toString() + " not allowed for method "
           + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
-          options, httpMethod.toString());
+          options.toString(), httpMethod.toString());
     }
   }
 
   private boolean isAction(final UriInfo uriInfo) {
     List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
-    if (!uriResourceParts.isEmpty()) {
-      return UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
+    if (uriResourceParts.isEmpty()) {
+      return false;
     }
-    return false;
+    return UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
   }
 
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
@@ -586,7 +586,8 @@ public class UriValidator {
     if (last != null
         && (last.getKind() == UriResourceKind.primitiveProperty
             || last.getKind() == UriResourceKind.complexProperty
-            || last.getKind() == UriResourceKind.value && previous.getKind() == UriResourceKind.primitiveProperty)) {
+            || (last.getKind() == UriResourceKind.value
+                          && previous != null && previous.getKind() == UriResourceKind.primitiveProperty))) {
       final EdmProperty property = ((UriResourceProperty)
           (last.getKind() == UriResourceKind.value ? previous : last)).getProperty();
       if (method == HttpMethod.PATCH && property.isCollection()) {

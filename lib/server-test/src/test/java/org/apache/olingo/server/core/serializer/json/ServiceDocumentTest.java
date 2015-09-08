@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -47,7 +47,7 @@ public class ServiceDocumentTest {
     OData server = OData.newInstance();
     assertNotNull(server);
 
-    ODataSerializer serializer = server.createSerializer(ODataFormat.JSON);
+    ODataSerializer serializer = server.createSerializer(ContentType.JSON);
     assertNotNull(serializer);
 
     InputStream result = serializer.serviceDocument(metadata, serviceRoot).getContent();
@@ -71,5 +71,16 @@ public class ServiceDocumentTest {
     assertTrue(jsonString.contains("SINav"));
     assertTrue(jsonString.contains("SIMedia"));
     assertTrue(jsonString.contains("Singleton"));
+  }
+
+  @Test
+  public void serviceDocumentNoMetadata() throws Exception {
+    final String serviceRoot = "http://localhost:8080/odata.svc";
+    final String result = IOUtils.toString(
+        OData.newInstance().createSerializer(ContentType.JSON_NO_METADATA)
+            .serviceDocument(metadata, serviceRoot).getContent());
+    assertFalse(result.contains("odata.context"));
+    assertFalse(result.contains("odata.metadata"));
+    assertTrue(result.contains("ESAllPrim"));
   }
 }

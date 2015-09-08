@@ -50,7 +50,7 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
   }
 
   @Override
-  public String getLamdaVariable() {
+  public String getLambdaVariable() {
     return lambdaVariable;
   }
 
@@ -68,9 +68,14 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
     this.expression = expression;
     return this;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return "any";
+  }
 
   @Override
   public String toString() {
-    return "any";
+    return getSegmentValue();
   }
 }

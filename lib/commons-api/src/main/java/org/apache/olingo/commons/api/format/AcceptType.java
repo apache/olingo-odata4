@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Internally used {@link AcceptType} for OData library.
@@ -43,7 +43,7 @@ import java.util.TreeMap;
  *
  * Once created an {@link AcceptType} is <b>IMMUTABLE</b>.
  */
-public class AcceptType {
+public final class AcceptType {
 
   private final String type;
   private final String subtype;
@@ -54,18 +54,9 @@ public class AcceptType {
       final Float quality) {
     this.type = type;
     this.subtype = subtype;
-    this.parameters = createParameterMap();
+    this.parameters = TypeUtil.createParameterMap();
     this.parameters.putAll(parameters);
     this.quality = quality;
-  }
-
-  private static TreeMap<String, String> createParameterMap() {
-    return new TreeMap<String, String>(new Comparator<String>() {
-      @Override
-      public int compare(final String o1, final String o2) {
-        return o1.compareToIgnoreCase(o2);
-      }
-    });
   }
 
   private AcceptType(final String type) {
@@ -73,7 +64,7 @@ public class AcceptType {
       throw new IllegalArgumentException("Type parameter MUST NOT be null.");
     }
     List<String> typeSubtype = new ArrayList<String>();
-    parameters = createParameterMap();
+    parameters = TypeUtil.createParameterMap();
 
     parse(type, typeSubtype, parameters);
     this.type = typeSubtype.get(0);
@@ -121,15 +112,15 @@ public class AcceptType {
   }
 
   /**
-   * Creates a list of {@link AcceptType} objects based on given input string (<code>format</code>).
-   * @param format accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
+   * Creates a list of {@link AcceptType} objects based on given input string.
+   * @param acceptTypes accept types, comma-separated, as specified for the HTTP header <code>Accept</code>
    * @return a list of <code>AcceptType</code> objects
    * @throws IllegalArgumentException if input string is not parseable
    */
-  public static List<AcceptType> create(final String format) {
+  public static List<AcceptType> create(final String acceptTypes) {
     List<AcceptType> result = new ArrayList<AcceptType>();
 
-    String[] values = format.split(",");
+    String[] values = acceptTypes.split(",");
     for (String value : values) {
       result.add(new AcceptType(value.trim()));
     }
@@ -158,7 +149,11 @@ public class AcceptType {
   }
 
   public Map<String, String> getParameters() {
-    return parameters;
+    return Collections.unmodifiableMap(parameters);
+  }
+
+  public String getParameter(final String name) {
+    return parameters.get(name.toLowerCase(Locale.ROOT));
   }
 
   public Float getQuality() {
@@ -169,8 +164,8 @@ public class AcceptType {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append(type).append('/').append(subtype);
-    for (final String key : parameters.keySet()) {
-      result.append(';').append(key).append('=').append(parameters.get(key));
+    for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+      result.append(';').append(entry.getKey()).append('=').append(entry.getValue());
     }
 
     return result.toString();
@@ -184,7 +179,7 @@ public class AcceptType {
    * <li>the subtype must be '*' or equal to the content-type's subtype,</li>
    * <li>all parameters must have the same value as in the content-type's parameter map.</li>
    * </ul></p>
-   * @param contentType
+   * @param contentType content type against which is matched
    * @return whether this accept type matches the given content type
    */
   public boolean matches(final ContentType contentType) {
@@ -201,10 +196,10 @@ public class AcceptType {
       return false;
     }
     Map<String, String> compareParameters = contentType.getParameters();
-    for (final String key : parameters.keySet()) {
-      if (compareParameters.containsKey(key) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
-        if (!parameters.get(key).equalsIgnoreCase(compareParameters.get(key))
-            && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(key)) {
+    for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+      if (compareParameters.containsKey(entry.getKey()) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
+        String compare = compareParameters.get(entry.getKey());
+        if (!entry.getValue().equalsIgnoreCase(compare) && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
           return false;
         }
       } else {
@@ -215,12 +210,12 @@ public class AcceptType {
   }
 
   /**
-   * Sort given list of Accept types
+   * Sorts given list of Accept types
    * according to their quality-parameter values and their specificity
    * as defined in RFC 7231, chapters 3.1.1.1, 5.3.1, and 5.3.2.
    * @param toSort list which is sorted and hence re-arranged
    */
-  private static void sort(final List<AcceptType> toSort) {
+  private static void sort(List<AcceptType> toSort) {
     Collections.sort(toSort,
         new Comparator<AcceptType>() {
       @Override

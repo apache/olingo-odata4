@@ -51,6 +51,11 @@ public class ODataHandlerException extends ODataLibraryException {
     super(developmentMessage, messageKey, parameters);
   }
 
+  public ODataHandlerException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
+      final String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
+  }
+  
   @Override
   protected String getBundleName() {
     return DEFAULT_SERVER_BUNDLE_NAME;

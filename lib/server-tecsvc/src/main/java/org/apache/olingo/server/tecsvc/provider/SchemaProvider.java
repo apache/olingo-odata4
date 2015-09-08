@@ -21,7 +21,7 @@ package org.apache.olingo.server.tecsvc.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
@@ -146,8 +146,8 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollStringTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollString));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTAllPrimTwoParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrimParam));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrimParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrimTwoParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrimTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETMedia));

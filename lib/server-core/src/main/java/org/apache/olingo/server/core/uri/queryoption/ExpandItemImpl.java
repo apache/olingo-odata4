@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.uri.queryoption;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -31,7 +32,7 @@ import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
-import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 
 public class ExpandItemImpl implements ExpandItem {
@@ -54,28 +55,45 @@ public class ExpandItemImpl implements ExpandItem {
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
 
-    if (sysItem.getKind() == SystemQueryOptionKind.EXPAND) {
+    if (sysItem instanceof ExpandOptionImpl) {
+      validateDoubleSystemQueryOption(expandOption, sysItem);
       expandOption = (ExpandOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.FILTER) {
+    } else if (sysItem instanceof FilterOptionImpl) {
+      validateDoubleSystemQueryOption(filterOption, sysItem);
       filterOption = (FilterOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.COUNT) {
+    } else if (sysItem instanceof CountOptionImpl) {
+      validateDoubleSystemQueryOption(inlineCountOption, sysItem);
       inlineCountOption = (CountOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.ORDERBY) {
+    } else if (sysItem instanceof OrderByOptionImpl) {
+      validateDoubleSystemQueryOption(orderByOption, sysItem);
       orderByOption = (OrderByOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SEARCH) {
+    } else if (sysItem instanceof SearchOptionImpl) {
+      validateDoubleSystemQueryOption(searchOption, sysItem);
       searchOption = (SearchOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SELECT) {
+    } else if (sysItem instanceof SelectOptionImpl) {
+      validateDoubleSystemQueryOption(selectOption, sysItem);
       selectOption = (SelectOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.SKIP) {
+    } else if (sysItem instanceof SkipOptionImpl) {
+      validateDoubleSystemQueryOption(skipOption, sysItem);
       skipOption = (SkipOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.TOP) {
+    } else if (sysItem instanceof TopOptionImpl) {
+      validateDoubleSystemQueryOption(topOption, sysItem);
       topOption = (TopOptionImpl) sysItem;
-    } else if (sysItem.getKind() == SystemQueryOptionKind.LEVELS) {
+    } else if (sysItem instanceof LevelsExpandOption) {
+      if(levelsExpandOption != null) {
+        throw new ODataRuntimeException("$levels"); 
+      }
       levelsExpandOption = (LevelsExpandOption) sysItem;
     }
     return this;
   }
-
+  
+  private void validateDoubleSystemQueryOption(final SystemQueryOption oldOption, final SystemQueryOption newOption) {
+    if(oldOption != null) {
+      throw new ODataRuntimeException(newOption.getName()); 
+    }
+  }
+  
   public ExpandItemImpl setSystemQueryOptions(final List<SystemQueryOptionImpl> list) {
 
     for (SystemQueryOptionImpl item : list) {

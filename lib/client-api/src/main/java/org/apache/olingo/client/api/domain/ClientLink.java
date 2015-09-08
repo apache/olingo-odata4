@@ -31,11 +31,11 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
 
   public static class Builder {
 
-    protected URI uri;
+    private URI uri;
 
-    protected ClientLinkType type;
+    private ClientLinkType type;
 
-    protected String title;
+    private String title;
 
     public Builder setURI(final URI uri) {
       this.uri = uri;
@@ -88,17 +88,17 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
   /**
    * Link type.
    */
-  protected final ClientLinkType type;
+  private final ClientLinkType type;
 
   /**
    * Link rel.
    */
-  protected final String rel;
+  private final String rel;
 
   /**
    * ETag for media edit links.
    */
-  protected String mediaETag;
+  private String mediaETag;
 
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
 
@@ -112,8 +112,8 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
   public ClientLink(final URI uri, final ClientLinkType type, final String title) {
     super(title);
 
-    link = uri;
     this.type = type;
+    setLink(uri);
 
     switch (this.type) {
     case ASSOCIATION:

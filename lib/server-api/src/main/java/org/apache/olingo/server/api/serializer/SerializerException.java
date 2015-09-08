@@ -26,7 +26,8 @@ public class SerializerException extends ODataLibraryException {
   private static final long serialVersionUID = 5358683245923127425L;
 
   /** Keys for exception texts in the resource bundle. */
-  public static enum MessageKeys implements MessageKey {
+  public enum MessageKeys implements MessageKey {
+    NULL_METADATA_OR_EDM,
     NOT_IMPLEMENTED,
     /** parameter: format */
     UNSUPPORTED_FORMAT,
@@ -45,7 +46,9 @@ public class SerializerException extends ODataLibraryException {
     /** parameters: primitive-type name, value */
     WRONG_PRIMITIVE_VALUE,
     UNKNOWN_TYPE,
-    WRONG_BASE_TYPE;
+    WRONG_BASE_TYPE,
+    /** parameter: encoding-name */
+    UNSUPPORTED_ENCODING;
 
     @Override
     public String getKey() {

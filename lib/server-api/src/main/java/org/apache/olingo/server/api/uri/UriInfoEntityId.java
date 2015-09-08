@@ -36,33 +36,32 @@ public interface UriInfoEntityId {
   /**
    * @return List of custom query options used in the URI
    */
-  public List<CustomQueryOption> getCustomQueryOptions();
+  List<CustomQueryOption> getCustomQueryOptions();
 
   /**
    * Behind $entity a optional type cast can be used in the URI.
    * For example: http://.../serviceroot/$entity/namespace.entitytype
    * @return Type cast if found, otherwise null
    */
-  public EdmEntityType getEntityTypeCast();
+  EdmEntityType getEntityTypeCast();
 
   /**
    * @return Object containing information of the $expand option
    */
-  public ExpandOption getExpandOption();
+  ExpandOption getExpandOption();
 
   /**
    * @return Object containing information of the $format option
    */
-  public FormatOption getFormatOption();
+  FormatOption getFormatOption();
 
   /**
    * @return Object containing information of the $id option
    */
-  public IdOption getIdOption();
+  IdOption getIdOption();
 
   /**
    * @return Object containing information of the $select option
    */
-  public SelectOption getSelectOption();
-
+  SelectOption getSelectOption();
 }

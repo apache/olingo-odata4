@@ -22,12 +22,12 @@ import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ClientInvokeResult;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class ODataInvokeRequestImpl<T extends ClientInvokeResult> extends AbstractODataInvokeRequest<T> {
 
-  private ODataFormat format;
+  private ContentType contentType;
 
   public ODataInvokeRequestImpl(final ODataClient odataClient, final Class<T> reference,
           final HttpMethod method, final URI uri) {
@@ -36,13 +36,13 @@ public class ODataInvokeRequestImpl<T extends ClientInvokeResult> extends Abstra
   }
 
   @Override
-  public void setFormat(final ODataFormat format) {
-    super.setFormat(format);
-    this.format = format;
+  public void setFormat(final ContentType contentType) {
+    super.setFormat(contentType);
+    this.contentType = contentType;
   }
 
   @Override
-  protected ODataFormat getPOSTParameterFormat() {
-    return format == null ? getDefaultFormat() : format;
+  protected ContentType getPOSTParameterFormat() {
+    return contentType == null ? getDefaultFormat() : contentType;
   }
 }

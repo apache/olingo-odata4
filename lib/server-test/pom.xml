@@ -66,8 +66,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+    </dependency>    
   </dependencies>
 
   <build>
@@ -91,6 +95,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
+              <skip>${cobertura.skip}</skip>
               <!--<includes>**/olingo/**/*.class</includes>-->
               <!--<excludes>**/*.properties</excludes>-->
               <includeGroupIds>${project.groupId}</includeGroupIds>

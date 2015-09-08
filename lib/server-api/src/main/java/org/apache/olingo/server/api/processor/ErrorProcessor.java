@@ -36,6 +36,6 @@ public interface ErrorProcessor extends Processor {
    * @param serverError the server error
    * @param responseFormat requested content type after content negotiation
    */
-  public void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
+  void processError(ODataRequest request, ODataResponse response, ODataServerError serverError,
       ContentType responseFormat);
 }

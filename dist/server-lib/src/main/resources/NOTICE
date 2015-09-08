@@ -20,18 +20,6 @@ A list of contributors may be found from CREDITS file, which is included
 in some artifacts (usually source distributions); but is always available
 from the source code management (SCM) system project uses.
 
-This distribution includes SLF4J
-Copyright (c) 2004-2013 QOS.ch
- All rights reserved.
- Permission is hereby granted, free  of charge, to any person obtaining
- a  copy  of this  software  and  associated  documentation files  (the
- "Software"), to  deal in  the Software without  restriction, including
- without limitation  the rights to  use, copy, modify,  merge, publish,
- distribute,  sublicense, and/or sell  copies of  the Software,  and to
- permit persons to whom the Software  is furnished to do so, subject to
- the following conditions.
- http://slf4j.org/license.html
-
 This distribution includes TreeLayout Core (http://code.google.com/p/treelayout/)
 Copyright (c) 2011, abego Software GmbH, Germany (http://www.abego.org)
 All rights reserved.

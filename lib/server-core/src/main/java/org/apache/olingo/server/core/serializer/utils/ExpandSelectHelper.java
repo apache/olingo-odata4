@@ -127,14 +127,9 @@ public abstract class ExpandSelectHelper {
     Set<String> expanded = new HashSet<String>();
     for (final ExpandItem item : expandItems) {
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
-      if (resourceParts.size() == 1) {
-        final UriResource resource = resourceParts.get(0);
-        if (resource instanceof UriResourceNavigation) {
-          expanded.add(((UriResourceNavigation) resource).getProperty().getName());
-        }
-      } else {
-        throw new SerializerException("Expand is not supported within complex properties.",
-            SerializerException.MessageKeys.NOT_IMPLEMENTED);
+      final UriResource resource = resourceParts.get(0);
+      if (resource instanceof UriResourceNavigation) {
+        expanded.add(((UriResourceNavigation) resource).getProperty().getName());
       }
     }
     return expanded;

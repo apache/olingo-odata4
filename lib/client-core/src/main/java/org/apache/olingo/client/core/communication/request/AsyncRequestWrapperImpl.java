@@ -27,12 +27,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -41,7 +42,9 @@ import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
         implements AsyncRequestWrapper<R> {
@@ -75,7 +78,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.odataRequest.setAccept(this.odataRequest.getAccept());
     this.odataRequest.setContentType(this.odataRequest.getContentType());
 
-    extendHeader(HeaderName.prefer.toString(), new ODataPreferences().respondAsync());
+    extendHeader(HttpHeader.PREFER, new ODataPreferences().respondAsync());
 
     this.odataClient = odataClient;
     final HttpMethod method = odataRequest.getMethod();
@@ -90,18 +93,25 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.httpClient = _httpClient;
 
     this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(method, this.uri);
+
+    if(request instanceof HttpEntityEnclosingRequestBase) {
+      if(odataRequest instanceof AbstractODataBasicRequest) {
+        AbstractODataBasicRequest<?> br = (AbstractODataBasicRequest<?>) odataRequest;
+        HttpEntityEnclosingRequestBase httpRequest = ((HttpEntityEnclosingRequestBase) request);
+        httpRequest.setEntity(new InputStreamEntity(br.getPayload(), -1));
+      }
+    }
   }
 
   @Override
   public final AsyncRequestWrapper<R> wait(final int waitInSeconds) {
-    extendHeader(HeaderName.prefer.toString(), new ODataPreferences().wait(waitInSeconds));
+    extendHeader(HttpHeader.PREFER, new ODataPreferences().wait(waitInSeconds));
     return this;
   }
 
   @Override
   public final AsyncRequestWrapper<R> callback(URI url) {
-    extendHeader(HeaderName.prefer.toString(),
-            new ODataPreferences().callback(url.toASCIIString()));
+    extendHeader(HttpHeader.PREFER, new ODataPreferences().callback(url.toASCIIString()));
     return this;
   }
 
@@ -184,9 +194,9 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       for (int i = 0; response == null && i < MAX_RETRY; i++) {
         res = checkMonitor(location);
 
-        if (res.getStatusLine().getStatusCode() == 202) {
+        if (res.getStatusLine().getStatusCode() == HttpStatusCode.ACCEPTED.getStatusCode()) {
 
-          final Header[] headers = res.getHeaders(HeaderName.retryAfter.toString());
+          final Header[] headers = res.getHeaders(HttpHeader.RETRY_AFTER);
           if (ArrayUtils.isNotEmpty(headers)) {
             this.retryAfter = Integer.parseInt(headers[0].getValue());
           }
@@ -211,27 +221,18 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       return response;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ODataDeleteResponse delete() {
       final ODataDeleteRequest deleteRequest = odataClient.getCUDRequestFactory().getDeleteRequest(location);
       return deleteRequest.execute();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public AsyncResponseWrapper<ODataDeleteResponse> asyncDelete() {
       return odataClient.getAsyncRequestFactory().<ODataDeleteResponse>getAsyncRequestWrapper(
               odataClient.getCUDRequestFactory().getDeleteRequest(location)).execute();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public AsyncResponseWrapper<R> forceNextMonitorCheck(final URI uri) {
       this.location = uri;
@@ -255,7 +256,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     private void retrieveMonitorDetails(final HttpResponse res) {
-      Header[] headers = res.getHeaders(HeaderName.location.toString());
+      Header[] headers = res.getHeaders(HttpHeader.LOCATION);
       if (ArrayUtils.isNotEmpty(headers)) {
         this.location = URI.create(headers[0].getValue());
       } else {
@@ -263,12 +264,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
                 "Invalid async request response. Monitor URL '" + headers[0].getValue() + "'");
       }
 
-      headers = res.getHeaders(HeaderName.retryAfter.toString());
+      headers = res.getHeaders(HttpHeader.RETRY_AFTER);
       if (ArrayUtils.isNotEmpty(headers)) {
         this.retryAfter = Integer.parseInt(headers[0].getValue());
       }
 
-      headers = res.getHeaders(HeaderName.preferenceApplied.toString());
+      headers = res.getHeaders(HttpHeader.PREFERENCE_APPLIED);
       if (ArrayUtils.isNotEmpty(headers)) {
         for (Header header : headers) {
           if (header.getValue().equalsIgnoreCase(new ODataPreferences().respondAsync())) {

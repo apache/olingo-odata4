@@ -41,14 +41,13 @@ import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmStream;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
@@ -318,7 +317,7 @@ public class DataRequest extends ServiceRequest {
               getContextURL(odata), false, response, getReturnRepresentation());
           handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
         } else {
-          handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
+          handler.upsertEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
               entityResponse);
         }
       } else if (isPOST()) {
@@ -331,8 +330,7 @@ public class DataRequest extends ServiceRequest {
     }
 
     private Entity getEntityFromClient() throws DeserializerException {
-      ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-          .fromContentType(getRequestContentType()));
+      ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
       return deserializer.entity(getODataRequest().getBody(), getEntitySet().getEntityType()).getEntity();
     }
 
@@ -459,8 +457,7 @@ public class DataRequest extends ServiceRequest {
     // /odata-json-format-v4.0-errata02-os-complete.html#_Toc403940643
     // The below code reads as property and converts to an URI
     private List<URI> getPayload() throws DeserializerException {
-      ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-          .fromContentType(getRequestContentType()));
+      ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
       return deserializer.entityReferences(getODataRequest().getBody()).getEntityReferences();
     }
 
@@ -700,8 +697,7 @@ public class DataRequest extends ServiceRequest {
 
   private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(
       EdmProperty edmProperty) throws DeserializerException {
-    ODataDeserializer deserializer = odata.createDeserializer(ODataFormat
-        .fromContentType(getRequestContentType()));
+    ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
     return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
   

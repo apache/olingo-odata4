@@ -19,13 +19,17 @@
 package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -39,13 +43,11 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
     URL url = new URL(SERVICE_URI + "?$format=json");
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
-    String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
   }
 
   @Test
@@ -54,15 +56,13 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;q=0.2;odata.metadata=minimal");
 
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
-    String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
   }
 
   @Test
@@ -71,15 +71,13 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
 
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
-    String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals(ContentType.create("application/json;odata.metadata=minimal"), ContentType.create(ct));
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
   }
 
   @Test
@@ -88,15 +86,14 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;q=0.2;odata.metadata=minimal;charset=utf-8");
 
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
-    String ct = connection.getHeaderField(HttpHeader.CONTENT_TYPE);
-    assertEquals(ContentType.create("application/json;odata.metadata=minimal;charset=utf-8"), ContentType.create(ct));
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.create(ContentType.JSON, ContentType.PARAMETER_CHARSET, "utf-8"),
+        ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
   }
 
   @Test
@@ -105,16 +102,48 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-    connection.setRequestMethod("GET");
+    connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ODATA_MAX_VERSION, "4.0");
     connection.setRequestProperty(HttpHeader.ACCEPT, "*/*");
 
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(200, code);
-    String v = connection.getHeaderField(HttpHeader.ODATA_VERSION);
-    assertEquals("4.0", v);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
+  }
+
+  @Test
+  public void testIEEE754ParameterContentNegotiation() throws Exception {
+    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)?$format=application/json;IEEE754Compatible=true");
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=false");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"),
+        ContentType.create(connection.getContentType()));
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyDecimal\":\"34\""));
+    assertTrue(content.contains("\"PropertyInt64\":\"9223372036854775807\""));
+  }
+
+  @Test
+  public void testIEEE754ParameterViaAcceptHeader() throws Exception {
+    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)");
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=true");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"),
+        ContentType.create(connection.getContentType()));
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyDecimal\":\"34\""));
+    assertTrue(content.contains("\"PropertyInt64\":\"9223372036854775807\""));
   }
 
   @Override

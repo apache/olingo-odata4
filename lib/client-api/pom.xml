@@ -41,6 +41,10 @@
       <version>${project.version}</version>
     </dependency>
 
+	<dependency>
+     <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -55,6 +59,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+		<version>${maven.bundle.plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>

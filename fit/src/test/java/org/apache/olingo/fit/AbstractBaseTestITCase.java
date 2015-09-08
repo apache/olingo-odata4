@@ -33,12 +33,14 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.server.TomcatTestServer;
 import org.apache.olingo.server.tecsvc.TechnicalServlet;
+import org.apache.olingo.server.tecsvc.async.TechnicalStatusMonitorServlet;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,28 +53,30 @@ public abstract class AbstractBaseTestITCase {
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractBaseTestITCase.class);
 
   protected abstract ODataClient getClient();
+  private static TomcatTestServer server;
 
   @BeforeClass
   public static void init()
       throws LifecycleException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-    TomcatTestServer.init(9080)
-    .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
-    .addServlet(StaticContent.create("org-odata-core-v1.xml"),
-        "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
+    server = TomcatTestServer.init(9080)
+      .addServlet(TechnicalServlet.class, "/odata-server-tecsvc/odata.svc/*")
+      .addServlet(TechnicalStatusMonitorServlet.class, "/odata-server-tecsvc/status/*")
+      .addServlet(StaticContent.create("org-odata-core-v1.xml"),
+                  "/odata-server-tecsvc/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml")
         .addWebApp(false)
         .start();
   }
 
-  // @AfterClass
-  // public static void cleanUp() throws LifecycleException {
-  // server.stop();
-  // }
+  @AfterClass
+  public static void cleanUp() throws LifecycleException {
+    server.invalidateAllSessions();
+  }
 
   protected void debugEntity(final Entity entity, final String message) {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, entity);
+        getClient().getSerializer(ContentType.JSON).write(writer, entity);
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -85,7 +89,7 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, entitySet);
+        getClient().getSerializer(ContentType.JSON).write(writer, entitySet);
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -106,7 +110,8 @@ public abstract class AbstractBaseTestITCase {
     if (LOG.isDebugEnabled()) {
       StringWriter writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.ATOM).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ContentType.APPLICATION_ATOM_XML).write(writer, getClient().getBinder()
+            .getEntity(entity));
       } catch (final ODataSerializerException e) {
         // Debug
       }
@@ -115,7 +120,7 @@ public abstract class AbstractBaseTestITCase {
 
       writer = new StringWriter();
       try {
-        getClient().getSerializer(ODataFormat.JSON).write(writer, getClient().getBinder().getEntity(entity));
+        getClient().getSerializer(ContentType.JSON).write(writer, getClient().getBinder().getEntity(entity));
       } catch (final ODataSerializerException e) {
         // Debug
       }

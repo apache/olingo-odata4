@@ -25,6 +25,7 @@ import java.net.URL;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
@@ -44,8 +45,7 @@ public class BasicHttpExceptionHandlingITCase extends AbstractBaseTestITCase {
     connection.setRequestProperty(HttpHeader.X_HTTP_METHOD_OVERRIDE, "differentValue");
     connection.connect();
 
-    int code = connection.getResponseCode();
-    assertEquals(400, code);
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
   }
 
   @Override

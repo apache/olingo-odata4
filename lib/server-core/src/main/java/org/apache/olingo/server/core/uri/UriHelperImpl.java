@@ -85,7 +85,7 @@ public class UriHelperImpl implements UriHelper {
                 edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode()));
         result.append(Encoder.encode(value));
       } catch (final EdmPrimitiveTypeException e) {
-        throw new SerializerException("Wrong key value!",
+        throw new SerializerException("Wrong key value!", e,
             SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, edmProperty.getName(), propertyValue.toString());
       }
     }
@@ -114,7 +114,7 @@ public class UriHelperImpl implements UriHelper {
       throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
           entityId);
     } catch (UriParserException e) {
-      throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
+      throw new DeserializerException("Invalid entity binding link", e, MessageKeys.INVALID_ENTITY_BINDING_LINK,
           entityId);
     }
   }

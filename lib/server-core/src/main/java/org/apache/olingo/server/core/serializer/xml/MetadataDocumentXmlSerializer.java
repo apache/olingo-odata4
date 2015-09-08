@@ -56,6 +56,7 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 public class MetadataDocumentXmlSerializer {
 
@@ -112,18 +113,22 @@ public class MetadataDocumentXmlSerializer {
   private static final String DATA_SERVICES = "DataServices";
   private static final String ABSTRACT = "Abstract";
 
-  private final static String EDMX = "Edmx";
-  private final static String PREFIX_EDMX = "edmx";
-  private final static String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
+  private static final String EDMX = "Edmx";
+  private static final String PREFIX_EDMX = "edmx";
+  private static final String NS_EDMX = "http://docs.oasis-open.org/odata/ns/edmx";
 
-  private final static String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
+  private static final String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
   private static final String XML_ENTITY_SET_PATH = "EntitySetPath";
   private static final String XML_CONTAINS_TARGET = "ContainsTarget";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
 
-  public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) {
+  public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) throws SerializerException {
+    if (serviceMetadata == null || serviceMetadata.getEdm() == null) {
+      throw new SerializerException("Service Metadata and EDM must not be null for a service.",
+          SerializerException.MessageKeys.NULL_METADATA_OR_EDM);
+    }
     this.serviceMetadata = serviceMetadata;
   }
 
@@ -401,7 +406,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendReturnTypeFacets(final XMLStreamWriter writer, final EdmReturnType returnType)
       throws XMLStreamException {
-    if (returnType.isNullable() == false) {
+    if (!returnType.isNullable()) {
       writer.writeAttribute(XML_NULLABLE, "" + returnType.isNullable());
     }
     if (returnType.getMaxLength() != null) {
@@ -417,7 +422,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendParameterFacets(final XMLStreamWriter writer, final EdmParameter parameter)
       throws XMLStreamException {
-    if (parameter.isNullable() == false) {
+    if (!parameter.isNullable()) {
       writer.writeAttribute(XML_NULLABLE, "" + parameter.isNullable());
     }
     if (parameter.getMaxLength() != null) {
@@ -494,7 +499,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_NAME, navigationPropertyName);
       writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(navigationProperty.getType(), navigationProperty
           .isCollection()));
-      if (navigationProperty.isNullable() == false) {
+      if (!navigationProperty.isNullable()) {
         writer.writeAttribute(XML_NULLABLE, "" + navigationProperty.isNullable());
       }
 
@@ -537,11 +542,11 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_TYPE, fqnString);
 
       // Facets
-      if (property.isNullable() == false) {
+      if (!property.isNullable()) {
         writer.writeAttribute(XML_NULLABLE, "" + property.isNullable());
       }
 
-      if (property.isUnicode() == false) {
+      if (!property.isUnicode()) {
         writer.writeAttribute(XML_UNICODE, "" + property.isUnicode());
       }
 

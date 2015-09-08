@@ -20,12 +20,12 @@ package org.apache.olingo.client.core.communication.request.batch;
 
 import java.util.UUID;
 
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataChangeset;
 import org.apache.olingo.client.core.communication.request.AbstractODataRequest;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -99,7 +99,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     }
 
     if (!hasStreamedSomething) {
-      stream((HeaderName.contentType.toString() + ": "
+      stream((HttpHeader.CONTENT_TYPE + ": "
               + ContentType.MULTIPART_MIXED + ";boundary=" + boundary).getBytes());
 
       newLine();

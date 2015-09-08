@@ -54,10 +54,15 @@ public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl i
     }
     return navigationProperty.isCollection();
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return navigationProperty.getName();
+  }
 
   @Override
   public String toString() {
-    return navigationProperty.getName();
+    return getSegmentValue();
   }
 
 }

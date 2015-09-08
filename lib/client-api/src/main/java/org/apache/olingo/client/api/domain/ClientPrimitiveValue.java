@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface ClientPrimitiveValue extends ClientValue {
@@ -54,6 +55,10 @@ public interface ClientPrimitiveValue extends ClientValue {
     ClientPrimitiveValue buildGuid(UUID value);
 
     ClientPrimitiveValue buildBinary(byte[] value);
+    
+    ClientPrimitiveValue buildDecimal(BigDecimal value);
+    
+    ClientPrimitiveValue buildDuration(BigDecimal value);
   }
 
   EdmPrimitiveTypeKind getTypeKind();

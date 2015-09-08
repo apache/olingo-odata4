@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
-public interface AnnotationExpression {
+import java.io.Serializable;
+
+public interface AnnotationExpression extends Serializable {
 
   boolean isConstant();
 

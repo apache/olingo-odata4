@@ -28,26 +28,25 @@ public interface UriParameter {
   /**
    * @return Alias name if the parameters values is an alias, otherwise null
    */
-  public String getAlias();
+  String getAlias();
 
   /**
    * @return Text of the parameters value
    */
-  public String getText();
+  String getText();
 
   /**
    * @return If the parameters value is a expression and expression is returned, otherwise null
    */
-  public Expression getExpression();
+  Expression getExpression();
 
   /**
    * @return Name of the parameter
    */
-  public String getName();
+  String getName();
 
   /**
    * @return Name of the referenced property when referential constrains are used
    */
-  public String getReferencedProperty();
-
+  String getReferencedProperty();
 }

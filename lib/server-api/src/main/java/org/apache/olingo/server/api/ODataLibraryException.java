@@ -25,9 +25,7 @@ import java.util.MissingFormatArgumentException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.olingo.commons.api.ODataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 /**
  * Abstract superclass of all translatable server exceptions.
@@ -35,15 +33,14 @@ import org.slf4j.LoggerFactory;
 public abstract class ODataLibraryException extends ODataException {
 
   private static final long serialVersionUID = -1210541002198287561L;
-  private static final Logger LOG = LoggerFactory.getLogger(ODataLibraryException.class);
   private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
   protected static final String DEFAULT_SERVER_BUNDLE_NAME = "server-core-exceptions-i18n";
 
   /** Key for the exception text in the resource bundle. */
-  public static interface MessageKey {
+  public interface MessageKey {
     /** Gets this key. */
-    public String getKey();
+    String getKey();
   }
 
   private MessageKey messageKey;
@@ -109,7 +106,6 @@ public abstract class ODataLibraryException extends ODataException {
     try {
       return ResourceBundle.getBundle(getBundleName(), locale == null ? DEFAULT_LOCALE : locale);
     } catch (final MissingResourceException e) {
-      LOG.error(e.getMessage(), e);
       return null;
     }
   }
@@ -137,9 +133,9 @@ public abstract class ODataLibraryException extends ODataException {
   }
 
   /** Error message text and {@link Locale} used for it. */
-  public class ODataErrorMessage {
-    String message;
-    Locale locale;
+  public static class ODataErrorMessage {
+    private String message;
+    private Locale locale;
 
     public ODataErrorMessage(final String message, final Locale usedLocale) {
       this.message = message;

@@ -28,7 +28,7 @@ public class EntitySerializerOptions {
   private ExpandOption expand;
   private SelectOption select;
   private boolean onlyReferences;
-
+  
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -88,7 +88,7 @@ public class EntitySerializerOptions {
       options.onlyReferences = ref;
       return this;
     }
-
+    
     /** Builds the OData serializer options. */
     public EntitySerializerOptions build() {
       return options;

@@ -55,7 +55,10 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -68,11 +71,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -118,9 +116,12 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+    		<version>${maven.bundle.plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Implementation-Title>${project.name}</Implementation-Title>
             <Export-Package>
               org.apache.olingo.server.core
             </Export-Package>

@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
@@ -46,32 +45,41 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_MIN_UTF8 = "application/json;charset=UTF-8;odata.metadata=minimal";
   static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
   static final private String ACCEPT_CASE_NONE = "application/json;odata.metadata=none";
+  static final private String ACCEPT_CASE_MIN_UTF8_IEEE754
+  = "application/json;charset=UTF-8;odata.metadata=minimal;IEEE754Compatible=true";
+  static final private String ACCEPT_CASE_MIN_IEEE754 
+  = "application/json;odata.metadata=minimal;IEEE754Compatible=true";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = HttpContentType.APPLICATION_XML;
   static final private String ACCEPT_CASE_WILDCARD1 = HttpContentType.WILDCARD;
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
-
+  
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
 
   String[][] casesServiceDocument = {
-      /* expected               $format           accept                 modified content types */
-      { ACCEPT_CASE_MIN,        null,             null,                  null             },
-      { ACCEPT_CASE_MIN,        "json",           null,                  null             },
-      { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_JSONQ,     null             },
-      { ACCEPT_CASE_NONE,       ACCEPT_CASE_NONE, null,                  null             },
-      { "a/a",                  "a/a",            null,                  "a/a"            },
-      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_JSONQ,     null             },
-      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD1, null             },
-      { ACCEPT_CASE_MIN,        null,             ACCEPT_CASE_WILDCARD2, null             },
-      { ACCEPT_CASE_MIN,        null,             null,                  ACCEPT_CASE_MIN  },
-      { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
-      { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        },
-      { "a/a;v=w;x=y",          null,             "a/a;x=y",             "a/a;b=c,a/a;v=w;x=y" },
-      { "a/a;v=w;x=y",          "a/a;x=y",        null,                  "a/a;b=c,a/a;v=w;x=y" },
-      { ACCEPT_CASE_MIN,        "json",           ACCEPT_CASE_MIN,       null             },
-      { ACCEPT_CASE_FULL,       null,             ACCEPT_CASE_FULL,      ACCEPT_CASE_FULL },
-      { ACCEPT_CASE_MIN_UTF8,   null,             ACCEPT_CASE_MIN_UTF8,  null             }
+      /* expected                     $format           accept                          modified content types */
+      { ACCEPT_CASE_MIN,              null,             null,                           null                  },
+      { ACCEPT_CASE_MIN,              "json",           null,                           null                  },
+      { ACCEPT_CASE_MIN,              "json",           ACCEPT_CASE_JSONQ,              null                  },
+      { ACCEPT_CASE_NONE,             ACCEPT_CASE_NONE, null,                           null                  },
+      { "a/a",                        "a/a",            null,                           "a/a"                 },
+      { ACCEPT_CASE_MIN,              null,             ACCEPT_CASE_JSONQ,              null                  },
+      { ACCEPT_CASE_MIN,              null,             ACCEPT_CASE_WILDCARD1,          null                  },
+      { ACCEPT_CASE_MIN,              null,             ACCEPT_CASE_WILDCARD2,          null                  },
+      { ACCEPT_CASE_MIN,              null,             null,                           ACCEPT_CASE_MIN       },
+      { "a/a",                        "a/a",            null,                           "a/a,b/b"             },
+      { "a/a;x=y",                    "a/a",            ACCEPT_CASE_WILDCARD1,          "a/a;x=y"             },
+      { "a/a;v=w;x=y",                null,             "a/a;x=y",                      "a/a;b=c,a/a;v=w;x=y" },
+      { "a/a;v=w;x=y",                "a/a;x=y",        null,                           "a/a;b=c,a/a;v=w;x=y" },
+      { ACCEPT_CASE_MIN,              "json",           ACCEPT_CASE_MIN,                null                  },
+      { ACCEPT_CASE_FULL,             null,             ACCEPT_CASE_FULL,               ACCEPT_CASE_FULL      },
+      { ACCEPT_CASE_MIN_UTF8,         null,             ACCEPT_CASE_MIN_UTF8,           null                  },
+      { ACCEPT_CASE_MIN_IEEE754,      null,             ACCEPT_CASE_MIN_IEEE754,        null                  },
+      { ACCEPT_CASE_MIN_UTF8_IEEE754, null,             ACCEPT_CASE_MIN_UTF8_IEEE754,   null                  },
+      { ACCEPT_CASE_MIN_IEEE754,      ACCEPT_CASE_MIN_IEEE754, ACCEPT_CASE_MIN ,        null                  },
+      { ACCEPT_CASE_XML,              "xml",            null,                           null                  },
+      { ACCEPT_CASE_XML,              null,             ACCEPT_CASE_XML,                null                  }      
   };
 
   String[][] casesMetadata = {
@@ -93,7 +101,6 @@ public class ContentNegotiatorTest {
       { null,                   "a/a",            null,                  "b/b"            },
       { null,                   "a/a;x=y",        null,                  "a/a;v=w"        },
       { null,                   null,             "a/a;x=y",             "a/a;v=w"        },
-      { null,                   "atom",           null,                  null             }, // not yet supported
       { null,                   null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
       { null,                   "a/b;charset=ISO-8859-1", null,          "a/b"            },
       { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         },
@@ -147,7 +154,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void checkSupport() throws Exception {
-    ContentNegotiator.checkSupport(ODataFormat.JSON.getContentType(), null,
+    ContentNegotiator.checkSupport(ContentType.JSON, null,
         RepresentationType.ENTITY);
     ContentNegotiator.checkSupport(ContentType.TEXT_PLAIN, null, RepresentationType.VALUE);
     try {
@@ -159,7 +166,8 @@ public class ContentNegotiatorTest {
 
     ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b"),
         RepresentationType.ENTITY);
-    ContentNegotiator.checkSupport(ContentType.create("a/b", "c=d"), createCustomContentTypeSupport("a/b"),
+    ContentNegotiator.checkSupport(ContentType.create(ContentType.create("a/b"), "c", "d"),
+        createCustomContentTypeSupport("a/b"),
         RepresentationType.ENTITY);
     try {
       ContentNegotiator.checkSupport(ContentType.create("a/b"), createCustomContentTypeSupport("a/b;c=d"),

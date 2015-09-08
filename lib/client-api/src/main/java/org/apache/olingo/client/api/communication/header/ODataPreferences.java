@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.header;
 
+import org.apache.olingo.commons.api.format.PreferenceName;
 
 /**
  * Values of the Prefer header.
@@ -27,26 +28,28 @@ public class ODataPreferences {
   /**
    * <code>Prefer</code> header, return content.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnContent() {
-    return PreferenceNames.returnContent.toString();
+    return PreferenceName.RETURN.getName();
   }
 
   /**
    * <code>Prefer</code> header, return no content.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String returnNoContent() {
-    return PreferenceNames.returnNoContent.toString();
+    return PreferenceName.RETURN_NO_CONTENT.getName();
   }
 
   /**
-   * @see HeaderName#dataServiceUrlConventions
+   * Gets the value of the non-standard preference that the URL should follow the convention
+   * that keys are formatted as separate segments.
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    */
   public String keyAsSegment() {
-    return PreferenceNames.keyAsSegment.toString();
+    return PreferenceName.KEY_AS_SEGMENT.getName();
   }
 
   /**
@@ -63,11 +66,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String allowEntityReferences() {
-    return PreferenceNames.allowEntityReferences.toString();
+    return PreferenceName.ALLOW_ENTITY_REFERENCES.getName();
   }
 
   /**
@@ -126,11 +129,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String callback(final String url) {
-    return PreferenceNames.callback.toString() + ";url=\"" + url + "\"";
+    return PreferenceName.CALLBACK.getName() + ";url=\"" + url + "\"";
   }
 
   /**
@@ -147,11 +150,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String continueOnError() {
-    return PreferenceNames.continueOnError.toString();
+    return PreferenceName.CONTINUE_ON_ERROR.getName();
   }
 
   /**
@@ -194,11 +197,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String includeAnnotations(final String value) {
-    return PreferenceNames.includeAnnotations.toString() + "=" + value;
+    return PreferenceName.INCLUDE_ANNOTATIONS.getName() + "=" + value;
   }
 
   /**
@@ -227,11 +230,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String maxPageSize(final int size) {
-    return PreferenceNames.maxPageSize.toString() + "=" + size;
+    return PreferenceName.MAX_PAGE_SIZE.getName() + "=" + size;
   }
 
   /**
@@ -252,11 +255,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String trackChanges() {
-    return PreferenceNames.trackChanges.toString();
+    return PreferenceName.TRACK_CHANGES.getName();
   }
 
   /**
@@ -287,11 +290,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String respondAsync() {
-    return PreferenceNames.respondAsync.toString();
+    return PreferenceName.RESPOND_ASYNC.getName();
   }
 
   /**
@@ -307,11 +310,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String wait(final int value) {
-    return PreferenceNames.wait.toString() + "=" + value;
+    return PreferenceName.WAIT.getName() + "=" + value;
   }
 
   /**
@@ -337,11 +340,11 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String returnMinimal() {
-    return PreferenceNames.odataReturn.toString() + "=minimal";
+    return PreferenceName.RETURN.getName() + "=minimal";
   }
 
   /**
@@ -367,37 +370,10 @@ public class ODataPreferences {
    * <br/><br/>
    * Supported by OData version 4.0 only.
    *
-   * @see HeaderName#prefer
+   * @see org.apache.olingo.commons.api.http.HttpHeader#PREFER
    * @return preference.
    */
   public String returnRepresentation() {
-    return PreferenceNames.odataReturn.toString() + "=representation";
-  }
-
-  private static enum PreferenceNames {
-
-    returnContent("return-content"),
-    returnNoContent("return-no-content"),
-    keyAsSegment("KeyAsSegment"),
-    allowEntityReferences("odata.allow-entityreferences"),
-    callback("odata.callback"),
-    continueOnError("odata.continue-on-error"),
-    includeAnnotations("odata.include-annotations"),
-    maxPageSize("odata.maxpagesize"),
-    trackChanges("odata.track-changes"),
-    respondAsync("respond-async"),
-    wait("wait"),
-    odataReturn("return");
-
-    private final String preferenceName;
-
-    private PreferenceNames(final String preferenceName) {
-      this.preferenceName = preferenceName;
-    }
-
-    @Override
-    public String toString() {
-      return preferenceName;
-    }
+    return PreferenceName.RETURN.getName() + "=representation";
   }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,7 +20,7 @@ package org.apache.olingo.server.api;
 
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
@@ -97,14 +97,27 @@ public class ODataApplicationException extends ODataException {
     this.oDataErrorCode = oDataErrorCode;
   }
 
+  /**
+   * Will return the status code which will be used as a status code for the HTTP response. If not set the default is a
+   * 500 Internal Server Error.
+   * @return status code for this exception
+   */
   public int getStatusCode() {
     return statusCode;
   }
 
+  /**
+   * Returns the Locale which was used for the error message. The default is null.
+   * @return locale used for the error message
+   */
   public Locale getLocale() {
     return locale;
   }
 
+  /**
+   * This method will return the error code specified by the application. The default is null.
+   * @return the applications error code.
+   */
   public String getODataErrorCode() {
     return oDataErrorCode;
   }

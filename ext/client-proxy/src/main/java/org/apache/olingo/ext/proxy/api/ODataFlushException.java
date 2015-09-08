@@ -19,7 +19,7 @@
 package org.apache.olingo.ext.proxy.api;
 
 import java.util.List;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 public class ODataFlushException extends ODataRuntimeException {
 

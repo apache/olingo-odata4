@@ -28,7 +28,7 @@ public class ComplexSerializerOptions {
   private ContextURL contextURL;
   private ExpandOption expand;
   private SelectOption select;
-
+  
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -43,7 +43,7 @@ public class ComplexSerializerOptions {
   public SelectOption getSelect() {
     return select;
   }
-
+  
   private ComplexSerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -77,7 +77,7 @@ public class ComplexSerializerOptions {
       options.select = select;
       return this;
     }
-
+    
     /** Builds the OData serializer options. */
     public ComplexSerializerOptions build() {
       return options;

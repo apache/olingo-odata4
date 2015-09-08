@@ -27,12 +27,16 @@
 	<packaging>war</packaging>
 	<name>${project.artifactId}</name>
 
-  <parent>
-    <groupId>org.apache.olingo</groupId>
-    <artifactId>odata-samples</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
-    <relativePath>..</relativePath>
-  </parent>
+	<parent>
+		<groupId>org.apache.olingo</groupId>
+		<artifactId>odata-samples</artifactId>
+		<version>4.0.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<properties>
+		<version.slf4j>1.7.7</version.slf4j>
+	</properties>
 
 	<build>
 		<plugins>
@@ -79,8 +83,14 @@
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.7</version>
+			<version>${version.slf4j}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

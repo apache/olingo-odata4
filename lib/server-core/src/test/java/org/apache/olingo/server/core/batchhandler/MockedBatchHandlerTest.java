@@ -26,9 +26,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,15 +45,15 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
+import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.apache.olingo.server.core.deserializer.batch.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -148,8 +148,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -219,8 +219,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     int line = 0;
@@ -298,8 +298,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -364,7 +364,7 @@ public class MockedBatchHandlerTest {
   }
 
   @Test
-  public void testMineBodyPartTransitiv() throws Exception {
+  public void mimeBodyPartTransitive() throws Exception {
     final String content = ""
         + "--batch_12345" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
@@ -416,8 +416,8 @@ public class MockedBatchHandlerTest {
 
     batchHandler.process(request, response, true);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(response.getContent()));
+    BatchLineReader reader =
+        new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -528,7 +528,7 @@ public class MockedBatchHandlerTest {
     assertEquals("Content-Type: application/http" + CRLF, response.get(lineNumber++));
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, response.get(lineNumber++));
 
-    assertTrue(response.get(lineNumber).contains("Content-Id:"));
+    assertTrue(response.get(lineNumber).contains("Content-ID:"));
     String contentId = response.get(lineNumber).split(":")[1].trim();
     lineNumber++;
 
@@ -538,10 +538,7 @@ public class MockedBatchHandlerTest {
   }
 
   private Map<String, List<String>> getMimeHeader() {
-    final Map<String, List<String>> header = new HashMap<String, List<String>>();
-    header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { BATCH_CONTENT_TYPE }));
-
-    return header;
+    return Collections.singletonMap(HttpHeader.CONTENT_TYPE, Collections.singletonList(BATCH_CONTENT_TYPE));
   }
 
   private ODataRequest buildODataRequest(final String content, final Map<String, List<String>> header)
@@ -640,9 +637,9 @@ public class MockedBatchHandlerTest {
       oDataResponse.setStatusCode(HttpStatusCode.OK.getStatusCode());
     }
 
-    final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
+    final String contentId = request.getHeader(HttpHeader.CONTENT_ID);
     if (contentId != null) {
-      oDataResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, contentId);
+      oDataResponse.setHeader(HttpHeader.CONTENT_ID, contentId);
     }
 
     return oDataResponse;

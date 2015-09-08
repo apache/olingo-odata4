@@ -26,24 +26,20 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
+import org.apache.olingo.client.api.serialization.ODataDeserializer;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
-import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
 import org.apache.olingo.client.core.edm.ClientCsdlXMLMetadata;
+import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializer;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.core.serialization.AtomDeserializer;
-import org.apache.olingo.commons.core.serialization.JsonDeltaDeserializer;
-import org.apache.olingo.commons.core.serialization.JsonDeserializer;
-
+import org.apache.olingo.commons.api.format.ContentType;
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import com.fasterxml.jackson.core.JsonParser;
@@ -58,12 +54,13 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   private final ODataDeserializer deserializer;
+  private final ContentType contentType;
 
-  private final ODataFormat format;
-
-  public ClientODataDeserializerImpl(final boolean serverMode, final ODataFormat format) {
-    this.format = format;
-    if (format == ODataFormat.XML || format == ODataFormat.ATOM) {
+  public ClientODataDeserializerImpl(final boolean serverMode, final ContentType contentType) {
+    this.contentType = contentType;
+    if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_XML)) {
       deserializer = new AtomDeserializer();
     } else {
       deserializer = new JsonDeserializer(serverMode);
@@ -122,7 +119,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   @Override
   public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
-    return format == ODataFormat.XML ?
+    return contentType.isCompatible(ContentType.APPLICATION_XML) ?
         new XMLServiceDocumentDeserializer(false).toServiceDocument(input) :
         new JSONServiceDocumentDeserializer(false).toServiceDocument(input);
   }
@@ -130,10 +127,11 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {
     try {
-      return format == ODataFormat.ATOM ?
+      return contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+          || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML) ?
           new AtomDeserializer().delta(input) :
           new JsonDeltaDeserializer(false).toDelta(input);
-    } catch (XMLStreamException e) {
+    } catch (final XMLStreamException e) {
       throw new ODataDeserializerException(e);
     } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);

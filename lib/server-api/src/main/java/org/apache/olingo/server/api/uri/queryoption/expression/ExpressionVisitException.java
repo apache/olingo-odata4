@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 /**
  * Exception class used by the {@link ExpressionVisitor} to throw exceptions while traversing the expression tree

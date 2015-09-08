@@ -27,6 +27,5 @@ public interface UriResourceLambdaVariable extends UriResourcePartTyped {
   /**
    * @return Name of the lambda variable
    */
-  public String getVariableName();
-
+  String getVariableName();
 }

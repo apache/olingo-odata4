@@ -59,10 +59,7 @@ public class ODataHttpHandlerImplTest {
       when(hr.getHeader("X-HTTP-Method")).thenReturn(m[1]);
       when(hr.getHeader("X-HTTP-Method-Override")).thenReturn(m[2]);
 
-      ODataRequest odr = new ODataRequest();
-      ODataHttpHandlerImpl.extractMethod(odr, hr);
-
-      assertEquals(HttpMethod.valueOf(m[3]), odr.getMethod());
+      assertEquals(HttpMethod.valueOf(m[3]), ODataHttpHandlerImpl.extractMethod(hr));
     }
   }
 
@@ -83,9 +80,8 @@ public class ODataHttpHandlerImplTest {
       when(hr.getHeader("X-HTTP-Method")).thenReturn(m[1]);
       when(hr.getHeader("X-HTTP-Method-Override")).thenReturn(m[2]);
 
-      ODataRequest odr = new ODataRequest();
       try {
-        ODataHttpHandlerImpl.extractMethod(odr, hr);
+        ODataHttpHandlerImpl.extractMethod(hr);
         fail();
       } catch (ODataLibraryException e) {
         // expected
@@ -153,7 +149,7 @@ public class ODataHttpHandlerImplTest {
       when(hr.getServletPath()).thenReturn(p[2]);
 
       ODataRequest odr = new ODataRequest();
-      ODataHttpHandlerImpl.extractUri(odr, hr, Integer.parseInt(p[6]));
+      ODataHttpHandlerImpl.fillUriInformation(odr, hr, Integer.parseInt(p[6]));
 
       String rawBaseUri = p[0] + p[1] + p[2] + p[3];
       String rawODataPath = p[4];

@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ActionComplexProcessor;
@@ -72,12 +73,11 @@ import org.apache.olingo.server.core.etag.PreconditionsValidator;
 
 public class ODataDispatcher {
 
-  private final HttpMethod method;
+  private static final String NOT_IMPLEMENTED_MESSAGE = "not implemented";
   private final UriInfo uriInfo;
   private final ODataHandler handler;
 
-  public ODataDispatcher(HttpMethod method, UriInfo uriInfo, ODataHandler handler) {
-    this.method = method;
+  public ODataDispatcher(UriInfo uriInfo, ODataHandler handler) {
     this.uriInfo = uriInfo;
     this.handler = handler;
   }
@@ -86,7 +86,7 @@ public class ODataDispatcher {
       ODataLibraryException {
     switch (uriInfo.getKind()) {
     case metadata:
-      checkMethod(method, HttpMethod.GET);
+      checkMethod(request.getMethod(), HttpMethod.GET);
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.METADATA);
       handler.selectProcessor(MetadataProcessor.class)
@@ -94,7 +94,7 @@ public class ODataDispatcher {
       break;
 
     case service:
-      checkMethod(method, HttpMethod.GET);
+      checkMethod(request.getMethod(), HttpMethod.GET);
       if ("".equals(request.getRawODataPath())) {
         handler.selectProcessor(RedirectProcessor.class)
             .redirect(request, response);
@@ -111,13 +111,13 @@ public class ODataDispatcher {
       break;
 
     case batch:
-      checkMethod(method, HttpMethod.POST);
+      checkMethod(request.getMethod(), HttpMethod.POST);
       new BatchHandler(handler, handler.selectProcessor(BatchProcessor.class))
           .process(request, response, true);
       break;
 
     default:
-      throw new ODataHandlerException("not implemented",
+      throw new ODataHandlerException(NOT_IMPLEMENTED_MESSAGE,
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
@@ -169,7 +169,7 @@ public class ODataDispatcher {
       break;
 
     default:
-      throw new ODataHandlerException("not implemented",
+      throw new ODataHandlerException(NOT_IMPLEMENTED_MESSAGE,
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
@@ -194,7 +194,7 @@ public class ODataDispatcher {
       handleComplexDispatching(request, response, returnType.isCollection());
       break;
     default:
-      throw new ODataHandlerException("not implemented",
+      throw new ODataHandlerException(NOT_IMPLEMENTED_MESSAGE,
           ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
     }
   }
@@ -203,7 +203,7 @@ public class ODataDispatcher {
       final UriResourceAction uriResourceAction) throws ODataApplicationException, ODataLibraryException {
     final EdmAction action = uriResourceAction.getAction();
     if (action.isBound()) {
-      // Only bound actions can have etag control for the binding parameter
+      // Only bound actions can have ETag control for the binding parameter.
       validatePreconditions(request, false);
     }
     final EdmReturnType returnType = action.getReturnType();
@@ -257,7 +257,7 @@ public class ODataDispatcher {
         break;
 
       default:
-        throw new ODataHandlerException("not implemented",
+        throw new ODataHandlerException(NOT_IMPLEMENTED_MESSAGE,
             ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
       }
     }
@@ -265,42 +265,46 @@ public class ODataDispatcher {
 
   private void handleReferenceDispatching(final ODataRequest request, final ODataResponse response,
       final int lastPathSegmentIndex) throws ODataApplicationException, ODataLibraryException {
-    final HttpMethod method = request.getMethod();
+    final HttpMethod httpMethod = request.getMethod();
     final boolean isCollection = ((UriResourcePartTyped) uriInfo.getUriResourceParts()
         .get(lastPathSegmentIndex - 1))
         .isCollection();
 
-    if (isCollection && method == HttpMethod.GET) {
+    if (isCollection && httpMethod == HttpMethod.GET) {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_REFERENCE);
       handler.selectProcessor(ReferenceCollectionProcessor.class)
           .readReferenceCollection(request, response, uriInfo, responseFormat);
 
-    } else if (isCollection && method == HttpMethod.POST) {
+    } else if (isCollection && httpMethod == HttpMethod.POST) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
       handler.selectProcessor(ReferenceProcessor.class)
           .createReference(request, response, uriInfo, requestFormat);
 
-    } else if (!isCollection && method == HttpMethod.GET) {
+    } else if (!isCollection && httpMethod == HttpMethod.GET) {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.REFERENCE);
       handler.selectProcessor(ReferenceProcessor.class).readReference(request, response, uriInfo, responseFormat);
 
-    } else if (!isCollection && (method == HttpMethod.PUT || method == HttpMethod.PATCH)) {
+    } else if (!isCollection && (httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH)) {
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, RepresentationType.REFERENCE);
       handler.selectProcessor(ReferenceProcessor.class)
           .updateReference(request, response, uriInfo, requestFormat);
 
-    } else if (method == HttpMethod.DELETE) {
+    } else if (httpMethod == HttpMethod.DELETE) {
       handler.selectProcessor(ReferenceProcessor.class)
           .deleteReference(request, response, uriInfo);
 
     } else {
-      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+      throw new ODataHandlerException(getMethodNotAllowedStringMessage(httpMethod),
+          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, httpMethod.toString());
     }
+  }
+
+  private String getMethodNotAllowedStringMessage(final HttpMethod httpMethod) {
+    return "HTTP method " + httpMethod + " is not allowed.";
   }
 
   private void handleValueDispatching(final ODataRequest request, final ODataResponse response,
@@ -322,6 +326,7 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .readPrimitiveValue(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.PUT && resource instanceof UriResourceProperty) {
+        validatePreconditions(request, false);
         final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
         checkContentTypeSupport(requestFormat, valueRepresentationType);
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -329,10 +334,11 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .updatePrimitiveValue(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE && resource instanceof UriResourceProperty) {
+        validatePreconditions(request, false);
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .deletePrimitiveValue(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
       }
     } else {
@@ -353,7 +359,7 @@ public class ODataDispatcher {
         handler.selectProcessor(MediaEntityProcessor.class)
             .deleteMediaEntity(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
       }
     }
@@ -375,6 +381,7 @@ public class ODataDispatcher {
             .readComplex(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+      validatePreconditions(request, false);
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, complexRepresentationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -387,6 +394,7 @@ public class ODataDispatcher {
             .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
             .deleteComplexCollection(request, response, uriInfo);
@@ -395,7 +403,7 @@ public class ODataDispatcher {
             .deleteComplex(request, response, uriInfo);
       }
     } else {
-      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+      throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
           ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
     }
   }
@@ -416,6 +424,7 @@ public class ODataDispatcher {
             .readPrimitive(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+      validatePreconditions(request, false);
       final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
       checkContentTypeSupport(requestFormat, representationType);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -428,6 +437,7 @@ public class ODataDispatcher {
             .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
             .deletePrimitiveCollection(request, response, uriInfo);
@@ -436,34 +446,28 @@ public class ODataDispatcher {
             .deletePrimitive(request, response, uriInfo);
       }
     } else {
-      throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+      throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
           ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
     }
   }
 
   private void handleCountDispatching(final ODataRequest request, final ODataResponse response,
       final int lastPathSegmentIndex) throws ODataApplicationException, ODataLibraryException {
-    final HttpMethod method = request.getMethod();
-    if (method == HttpMethod.GET) {
-      final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
-      if (resource instanceof UriResourceEntitySet
-          || resource instanceof UriResourceNavigation
-          || resource instanceof UriResourceFunction
-          && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.ENTITY) {
-        handler.selectProcessor(CountEntityCollectionProcessor.class)
-            .countEntityCollection(request, response, uriInfo);
-      } else if (resource instanceof UriResourcePrimitiveProperty
-          || resource instanceof UriResourceFunction
-          && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.PRIMITIVE) {
-        handler.selectProcessor(CountPrimitiveCollectionProcessor.class)
-            .countPrimitiveCollection(request, response, uriInfo);
-      } else {
-        handler.selectProcessor(CountComplexCollectionProcessor.class)
-            .countComplexCollection(request, response, uriInfo);
-      }
+    final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
+    if (resource instanceof UriResourceEntitySet
+        || resource instanceof UriResourceNavigation
+        || resource instanceof UriResourceFunction
+        && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.ENTITY) {
+      handler.selectProcessor(CountEntityCollectionProcessor.class)
+          .countEntityCollection(request, response, uriInfo);
+    } else if (resource instanceof UriResourcePrimitiveProperty
+        || resource instanceof UriResourceFunction
+        && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.PRIMITIVE) {
+      handler.selectProcessor(CountPrimitiveCollectionProcessor.class)
+          .countPrimitiveCollection(request, response, uriInfo);
     } else {
-      throw new ODataHandlerException("HTTP method " + method + " is not allowed for count.",
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+      handler.selectProcessor(CountComplexCollectionProcessor.class)
+          .countComplexCollection(request, response, uriInfo);
     }
   }
 
@@ -489,7 +493,7 @@ public class ODataDispatcher {
               .createEntity(request, response, uriInfo, requestFormat, responseFormat);
         }
       } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
       }
     } else {
@@ -511,25 +515,29 @@ public class ODataDispatcher {
         handler.selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
             .deleteEntity(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException("HTTP method " + method + " is not allowed.",
+        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
             ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
       }
     }
   }
 
-  private void validatePreconditions(ODataRequest request, boolean isMediaValue) throws PreconditionException {
-    // If needed perform preconditions validation
-    if (handler.getCustomETagSupport() != null) {
-      new PreconditionsValidator(handler.getCustomETagSupport(), uriInfo,
-          request.getHeader(HttpHeader.IF_MATCH),
-          request.getHeader(HttpHeader.IF_NONE_MATCH)).validatePreconditions(isMediaValue);
+  private void validatePreconditions(final ODataRequest request, final boolean isMediaValue)
+      throws PreconditionException {
+    // If needed perform preconditions validation.
+    final CustomETagSupport eTagSupport = handler.getCustomETagSupport();
+    if (eTagSupport != null
+        && new PreconditionsValidator(uriInfo).mustValidatePreconditions(eTagSupport, isMediaValue)
+        && request.getHeader(HttpHeader.IF_MATCH) == null
+        && request.getHeader(HttpHeader.IF_NONE_MATCH) == null) {
+      throw new PreconditionException("Expected an if-match or if-none-match header.",
+          PreconditionException.MessageKeys.MISSING_HEADER);
     }
   }
 
   private void checkMethod(final HttpMethod requestMethod, final HttpMethod allowedMethod)
       throws ODataHandlerException {
     if (requestMethod != allowedMethod) {
-      throw new ODataHandlerException("HTTP method " + requestMethod + " is not allowed.",
+      throw new ODataHandlerException(getMethodNotAllowedStringMessage(requestMethod),
           ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, requestMethod.toString());
     }
   }

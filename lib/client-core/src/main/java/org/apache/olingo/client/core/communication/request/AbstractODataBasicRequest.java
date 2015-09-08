@@ -32,7 +32,7 @@ import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -55,9 +55,9 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
   }
 
   @Override
-  public void setFormat(final ODataFormat format) {
-    if (format != null) {
-      final String formatString = format.getContentType().toContentTypeString();
+  public void setFormat(final ContentType contentType) {
+    if (contentType != null) {
+      final String formatString = contentType.toContentTypeString();
       setAccept(formatString);
       setContentType(formatString);
     }

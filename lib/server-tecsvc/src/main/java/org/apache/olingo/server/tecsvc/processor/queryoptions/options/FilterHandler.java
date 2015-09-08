@@ -59,10 +59,14 @@ public class FilterHandler {
         final VisitorOperand operand = filterOption.getExpression()
             .accept(new ExpressionVisitorImpl(iter.next(), edmEntitySet));
         final TypedOperand typedOperand = operand.asTypedOperand();
-
-        if (!(typedOperand.is(primBoolean)
-        && Boolean.TRUE.equals(typedOperand.getTypedValue(Boolean.class)))) {
-          iter.remove();
+        
+        if(typedOperand.is(primBoolean)) {
+          if(Boolean.FALSE.equals(typedOperand.getTypedValue(Boolean.class))) {
+            iter.remove();
+          }
+        } else {
+          throw new ODataApplicationException("Invalid filter expression. Filter expressions must return a value of " 
+                + "type Edm.Boolean", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
         }
       }
 

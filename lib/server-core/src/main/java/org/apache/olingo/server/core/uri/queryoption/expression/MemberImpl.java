@@ -25,6 +25,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.UriResourceActionImpl;
 import org.apache.olingo.server.core.uri.UriResourceImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
@@ -69,6 +70,8 @@ public class MemberImpl extends ExpressionImpl implements Member {
         return type;
       }
       return lastTyped.getType();
+    } else if (lastResourcePart instanceof UriResourceActionImpl) {
+      return ((UriResourceActionImpl) lastResourcePart).getType();
     } else {
       return null;
     }
@@ -81,6 +84,8 @@ public class MemberImpl extends ExpressionImpl implements Member {
     if (lastResourcePart instanceof UriResourceTypedImpl) {
       UriResourceTypedImpl lastTyped = (UriResourceTypedImpl) lastResourcePart;
       return lastTyped.isCollection();
+    } else if (lastResourcePart instanceof UriResourceActionImpl) {
+      return ((UriResourceActionImpl) lastResourcePart).isCollection();
     }
     return false;
   }

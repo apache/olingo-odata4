@@ -53,10 +53,15 @@ public class UriResourceRootImpl extends UriResourceWithKeysImpl implements UriR
     this.isCollection = isCollection;
     return this;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return "$root";
+  }
 
   @Override
   public String toString() {
-    return "$root";
+    return getSegmentValue();
   }
 
 }

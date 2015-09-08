@@ -25,10 +25,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements an OData EntitySet query request.
@@ -50,7 +50,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends ClientEntitySet, E ext
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
@@ -75,7 +75,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends ClientEntitySet, E ext
     public ClientEntitySetIterator<ES, E> getBody() {
       if (entitySetIterator == null) {
         entitySetIterator = new ClientEntitySetIterator<ES, E>(
-                odataClient, getRawResponse(), ODataFormat.fromString(getContentType()));
+                odataClient, getRawResponse(), ContentType.parse(getContentType()));
       }
       return entitySetIterator;
     }

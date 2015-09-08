@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 
 /** Options for the OData serializer. */
-public class PrimitiveSerializerOptions {
+public final class PrimitiveSerializerOptions {
 
   private ContextURL contextURL;
   private Boolean isNullable;
@@ -30,7 +30,7 @@ public class PrimitiveSerializerOptions {
   private Integer precision;
   private Integer scale;
   private Boolean isUnicode;
-
+  
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -60,7 +60,7 @@ public class PrimitiveSerializerOptions {
   public Boolean isUnicode() {
     return isUnicode;
   }
-
+  
   private PrimitiveSerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -112,7 +112,7 @@ public class PrimitiveSerializerOptions {
       options.isUnicode = isUnicode;
       return this;
     }
-
+    
     /** Sets all facets from an EDM property. */
     public Builder facetsFrom(final EdmProperty property) {
       options.isNullable = property.isNullable();

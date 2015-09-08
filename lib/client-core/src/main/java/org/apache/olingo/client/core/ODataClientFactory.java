@@ -21,7 +21,7 @@ package org.apache.olingo.client.core;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 
 public final class ODataClientFactory {
 
@@ -30,18 +30,27 @@ public final class ODataClientFactory {
   }
 
   public static EdmEnabledODataClient getEdmEnabledClient(final String serviceRoot) {
-    return getEdmEnabledClient(serviceRoot, null, null);
+    return getEdmEnabledClient(serviceRoot, null, null, ContentType.JSON);
+  }
+
+  public static EdmEnabledODataClient getEdmEnabledClient(final String serviceRoot, ContentType contentType) {
+    return getEdmEnabledClient(serviceRoot, null, null, contentType);
   }
 
   public static EdmEnabledODataClient getEdmEnabledClient(
           final String serviceRoot, final Edm edm, final String metadataETag) {
-
-    final EdmEnabledODataClient instance =
-            new EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
-    instance.getConfiguration().setDefaultPubFormat(ODataFormat.JSON);
-    return instance;
+    return getEdmEnabledClient(serviceRoot, edm, metadataETag, ContentType.JSON);
   }
 
+  
+  public static EdmEnabledODataClient getEdmEnabledClient(
+      final String serviceRoot, final Edm edm, final String metadataETag, ContentType contentType) {
+
+    final EdmEnabledODataClient instance =
+        new EdmEnabledODataClientImpl(serviceRoot, edm, metadataETag);
+    instance.getConfiguration().setDefaultPubFormat(contentType);
+    return instance;
+  }  
   private ODataClientFactory() {
     // empty constructory for static utility class
   }

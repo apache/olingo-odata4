@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.client.core.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.olingo.client.api.domain.ClientAnnotatable;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -33,8 +28,10 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 
-public class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, ClientValuable {
+import java.util.ArrayList;
+import java.util.List;
 
+public final class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, ClientValuable {
 
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
   private final String name;
@@ -118,13 +115,57 @@ public class ClientPropertyImpl implements ClientProperty, ClientAnnotatable, Cl
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof ClientPropertyImpl)) {
+      return false;
+    }
+    ClientPropertyImpl other = (ClientPropertyImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    if (valuable == null) {
+      if (other.valuable != null) {
+        return false;
+      }
+    } else if (!valuable.equals(other.valuable)) {
+      return false;
+    }
+    if (value == null) {
+      if (other.value != null) {
+        return false;
+      }
+    } else if (!value.equals(other.value)) {
+      return false;
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((valuable == null) ? 0 : valuable.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    return result;
   }
 
   @Override

@@ -20,7 +20,9 @@ package org.apache.olingo.server.tecsvc.data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +37,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class ActionData {
 
@@ -52,9 +57,18 @@ public class ActionData {
     if ("UARTCollStringTwoParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
       Parameter paramDuration = parameters.get("ParameterDuration");
-      if (paramInt16 == null || paramDuration == null) {
-        throw new DataProviderException("Missing parameters for action: UARTCollStringTwoParam",
-            HttpStatusCode.BAD_REQUEST);
+      if ((paramInt16 == null || paramInt16.isNull()) || (paramDuration == null || paramDuration.isNull())) {
+        try {
+          String param16String = valueAsString(paramInt16, EdmPrimitiveTypeKind.Int16);
+          String paramDurationString = valueAsString(paramDuration, EdmPrimitiveTypeKind.Duration);
+          
+          return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(new String[] {
+              name + " int16 value: " + param16String,
+              name + " duration value: " + paramDurationString
+          }));
+        } catch(EdmPrimitiveTypeException e) {
+          throw new DataProviderException("EdmPrimitiveTypeException", e);
+        }
       }
       short loopCount = (Short) paramInt16.asPrimitive();
       BigDecimal duration = (BigDecimal) paramDuration.asPrimitive();
@@ -64,7 +78,7 @@ public class ActionData {
       for (int i = 0; i < loopCount; i++) {
         try {
           String value = primDuration.valueToString(duration, false, null, null, null, null);
-          collectionValues.add(value);
+          collectionValues.add(name + " duration value: " + value);
         } catch (EdmPrimitiveTypeException e) {
           throw new DataProviderException("EdmPrimitiveTypeException", e);
         }
@@ -73,6 +87,13 @@ public class ActionData {
       return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, collectionValues);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
+  }
+
+  private static <T> String valueAsString(final Parameter parameter, final EdmPrimitiveTypeKind kind) 
+      throws EdmPrimitiveTypeException {
+    return parameter == null ? "null" 
+         : OData.newInstance().createPrimitiveTypeInstance(kind)
+                              .valueToString(parameter.asPrimitive(), null, null, null, null, null);
   }
 
   protected static Property complexAction(final String name, final Map<String, Parameter> parameters)
@@ -134,6 +155,9 @@ public class ActionData {
 
   protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
+    final ServiceMetadata metadata = OData.newInstance().createServiceMetadata(new EdmTechProvider(), 
+        Collections.<EdmxReference> emptyList(),null);
+    
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
       Parameter parameter = parameters.get("ParameterInt16");
       Short number;
@@ -143,7 +167,7 @@ public class ActionData {
         number = (short) 0;
       }
 
-      EntityCollection entityCollection = new DataCreator().getData().get("ESTwoKeyTwoPrim");
+      EntityCollection entityCollection = new DataCreator(metadata.getEdm()).getData().get("ESTwoKeyTwoPrim");
       for (Entity entity : entityCollection.getEntities()) {
         Object asPrimitive = entity.getProperty("PropertyInt16").asPrimitive();
         if (number.equals(asPrimitive)) {
@@ -154,7 +178,7 @@ public class ActionData {
       throw new DataProviderException("Entity not found with key: " + number, HttpStatusCode.NOT_FOUND);
     } else if ("UARTETAllPrimParam".equals(name)) {
       Parameter paramDate = parameters.get("ParameterDate");
-      EntityCollection entityCollection = new DataCreator().getData().get("ESAllPrim");
+      EntityCollection entityCollection = new DataCreator(metadata.getEdm()).getData().get("ESAllPrim");
       if (paramDate != null) {
         Calendar date = (Calendar) paramDate.asPrimitive();
         boolean freeKey;
@@ -235,17 +259,19 @@ public class ActionData {
     return new Entity()
         .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
         .addProperty(DataCreator.createPrimitive("PropertyString", "UARTCollETKeyNavParam int16 value: " + number))
-        .addProperty(
-            DataCreator.createComplex("PropertyCompNav", DataCreator.createPrimitive("PropertyInt16", 0)))
-        .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim")).addProperty(
-            DataCreator.createComplex("PropertyCompTwoPrim", DataCreator.createPrimitive("PropertyInt16", 0),
-                DataCreator.createPrimitive("PropertyString", ""))).addProperty(
-            DataCreator.createPrimitiveCollection("CollPropertyString"))
-        .addProperty(DataCreator.createPrimitiveCollection("CollPropertyInt16")).addProperty(
-            DataCreator.createComplexCollection("CollPropertyComp"))
-        .addProperty(
-            DataCreator.createComplex("PropertyCompCompNav", DataCreator.createPrimitive("PropertyString", ""),
-                DataCreator.createComplex("PropertyCompNav", DataCreator.createPrimitive("PropertyInt16", 0))));
+        .addProperty(DataCreator.createComplex("PropertyCompNav", 
+            DataCreator.createPrimitive("PropertyInt16", (short) 0)))
+        .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
+        .addProperty(DataCreator.createComplex("PropertyCompTwoPrim", 
+              DataCreator.createPrimitive("PropertyInt16", (short) 0),
+              DataCreator.createPrimitive("PropertyString", ""))).addProperty(
+              DataCreator.createPrimitiveCollection("CollPropertyString"))
+        .addProperty(DataCreator.createPrimitiveCollection("CollPropertyInt16"))
+        .addProperty(DataCreator.createComplexCollection("CollPropertyComp"))
+        .addProperty(DataCreator.createComplex("PropertyCompCompNav", 
+            DataCreator.createPrimitive("PropertyString", ""),
+            DataCreator.createComplex("PropertyCompNav", 
+                DataCreator.createPrimitive("PropertyInt16", (short) 0))));
   }
 
   protected static Property createKeyNavAllPrimComplexValue(final String name) {
@@ -253,13 +279,13 @@ public class ActionData {
         DataCreator.createPrimitive("PropertyString", ""),
         DataCreator.createPrimitive("PropertyBinary", new byte[] {}),
         DataCreator.createPrimitive("PropertyBoolean", false),
-        DataCreator.createPrimitive("PropertyByte", 0),
+        DataCreator.createPrimitive("PropertyByte", (short) 0),
         DataCreator.createPrimitive("PropertyDate", null),
         DataCreator.createPrimitive("PropertyDateTimeOffset", null),
-        DataCreator.createPrimitive("PropertyDecimal", 0),
-        DataCreator.createPrimitive("PropertySingle", 0),
-        DataCreator.createPrimitive("PropertyDouble", 0),
-        DataCreator.createPrimitive("PropertyDuration", 0),
+        DataCreator.createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)),
+        DataCreator.createPrimitive("PropertySingle", (float) 0),
+        DataCreator.createPrimitive("PropertyDouble", 0D),
+        DataCreator.createPrimitive("PropertyDuration", BigDecimal.valueOf(0)),
         DataCreator.createPrimitive("PropertyGuid", null),
         DataCreator.createPrimitive("PropertyInt16", null),
         DataCreator.createPrimitive("PropertyInt32", null),

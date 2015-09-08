@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,6 +28,13 @@ public interface UriResource {
    * @return Kind of the resource part
    */
   UriResourceKind getKind();
+
+  /**
+   * In case of an EntitySet this method will return the EntitySet name. In Case of $ref this method will return '$ref"
+   * as a String.
+   * @return the value of this URI Resource Segment
+   */
+  String getSegmentValue();
 
   @Override
   String toString();

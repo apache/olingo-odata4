@@ -68,10 +68,15 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
     this.expression = expression;
     return this;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return "all";
+  }
 
   @Override
   public String toString() {
-    return "all";
+    return getSegmentValue();
   }
 
 }

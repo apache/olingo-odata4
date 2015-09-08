@@ -28,7 +28,7 @@ import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -42,7 +42,7 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 

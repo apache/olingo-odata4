@@ -18,9 +18,8 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
-import java.io.Serializable;
 
-public interface CsdlNamed extends Serializable {
+public interface CsdlNamed {
 
   String getName();
 }

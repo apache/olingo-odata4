@@ -20,7 +20,7 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import java.util.Arrays;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
@@ -371,7 +371,7 @@ public class EntityTypeProvider {
               PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav,
               PropertyProvider.navPropertyETTwoKeyNavOne_ETTwoKeyNav,
               PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertySINav));
+              PropertyProvider.navPropertySINav));
 
     } else if (entityTypeName.equals(nameETBaseTwoKeyNav)) {
       return new CsdlEntityType()

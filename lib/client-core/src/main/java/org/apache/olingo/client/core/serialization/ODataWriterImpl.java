@@ -29,14 +29,14 @@ import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.serialization.ODataWriter;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
+import org.apache.olingo.client.api.serialization.ODataWriter;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
 
 public class ODataWriterImpl implements ODataWriter {
 
@@ -47,7 +47,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntities(final Collection<ClientEntity> entities, final ODataFormat format)
+  public InputStream writeEntities(final Collection<ClientEntity> entities, final ContentType contentType)
       throws ODataSerializerException {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -58,7 +58,7 @@ public class ODataWriterImpl implements ODataWriter {
     }
     try {
       for (ClientEntity entity : entities) {
-        client.getSerializer(format).write(writer, client.getBinder().getEntity(entity));
+        client.getSerializer(contentType).write(writer, client.getBinder().getEntity(entity));
       }
 
       return new ByteArrayInputStream(output.toByteArray());
@@ -68,13 +68,13 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeEntity(final ClientEntity entity, final ODataFormat format)
+  public InputStream writeEntity(final ClientEntity entity, final ContentType contentType)
       throws ODataSerializerException {
-    return writeEntities(Collections.<ClientEntity>singleton(entity), format);
+    return writeEntities(Collections.<ClientEntity>singleton(entity), contentType);
   }
 
   @Override
-  public InputStream writeProperty(final ClientProperty property, final ODataFormat format)
+  public InputStream writeProperty(final ClientProperty property, final ContentType contentType)
       throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
@@ -84,7 +84,7 @@ public class ODataWriterImpl implements ODataWriter {
       writer = null;
     }
     try {
-      client.getSerializer(format).write(writer, client.getBinder().getProperty(property));
+      client.getSerializer(contentType).write(writer, client.getBinder().getProperty(property));
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
@@ -93,7 +93,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeLink(final ClientLink link, final ODataFormat format) throws ODataSerializerException {
+  public InputStream writeLink(final ClientLink link, final ContentType contentType) throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
     try {
@@ -102,7 +102,7 @@ public class ODataWriterImpl implements ODataWriter {
       writer = null;
     }
     try {
-      client.getSerializer(format).write(writer, client.getBinder().getLink(link));
+      client.getSerializer(contentType).write(writer, client.getBinder().getLink(link));
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {
@@ -111,7 +111,7 @@ public class ODataWriterImpl implements ODataWriter {
   }
 
   @Override
-  public InputStream writeReference(ResWrap<URI> reference, ODataFormat format) throws ODataSerializerException {
+  public InputStream writeReference(ResWrap<URI> reference, ContentType contenType) throws ODataSerializerException {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
     OutputStreamWriter writer;
     
@@ -122,7 +122,7 @@ public class ODataWriterImpl implements ODataWriter {
     }
     
     try {
-      client.getSerializer(format).write(writer, reference);
+      client.getSerializer(contenType).write(writer, reference);
 
       return new ByteArrayInputStream(output.toByteArray());
     } finally {

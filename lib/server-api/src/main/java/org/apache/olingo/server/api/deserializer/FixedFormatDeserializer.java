@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
@@ -42,6 +42,13 @@ public interface FixedFormatDeserializer {
    */
   public Object primitiveValue(InputStream content, EdmProperty property) throws DeserializerException;
 
+  /**
+   * Reads batch data from an InputStream.
+   * @param content  the data as multipart input stream
+   * @param boundary the boundary between the parts
+   * @param options  options for the deserializer
+   * @return a list of batch-request parts
+   */
   public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)
       throws BatchDeserializerException;
 }

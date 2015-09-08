@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+/**
+ * Enumeration of all primitive type kinds.
+ */
 public enum EdmPrimitiveTypeKind {
 
   Binary,
@@ -71,10 +74,6 @@ public enum EdmPrimitiveTypeKind {
   public FullQualifiedName getFullQualifiedName() {
     return new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, toString());
   }
-
-  // public static EdmPrimitiveTypeKind valueOf(final ODataServiceVersion version, final String name) {
-  // return valueOf(name);
-  // }
 
   /**
    * Gets <tt>EdmPrimitiveTypeKind</tt> from a full-qualified type name, for the given OData protocol version.

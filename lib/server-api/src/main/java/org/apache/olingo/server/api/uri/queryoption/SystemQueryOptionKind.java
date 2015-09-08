@@ -84,9 +84,9 @@ public enum SystemQueryOptionKind {
    */
   LEVELS("$level");
 
-  String syntax;
+  private String syntax;
 
-  private SystemQueryOptionKind(final String syntax) {
+  SystemQueryOptionKind(final String syntax) {
     this.syntax = syntax;
   }
 

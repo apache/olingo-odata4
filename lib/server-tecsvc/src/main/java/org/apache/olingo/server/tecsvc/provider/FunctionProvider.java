@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
@@ -125,8 +125,8 @@ public class FunctionProvider {
   // Unbound Functions
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrim");
-  public static final FullQualifiedName nameUFCRTCollCTTwoPrimParam =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrimParam");
+  public static final FullQualifiedName nameUFCRTCollCTTwoPrimTwoParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollCTTwoPrimTwoParam");
   public static final FullQualifiedName nameUFCRTCollString = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTCollString");
   public static final FullQualifiedName nameUFCRTCollStringTwoParam =
@@ -135,8 +135,8 @@ public class FunctionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTAllPrimTwoParam");
   public static final FullQualifiedName nameUFCRTCTTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UFCRTCTTwoPrim");
-  public static final FullQualifiedName nameUFCRTCTTwoPrimParam =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTTwoPrimParam");
+  public static final FullQualifiedName nameUFCRTCTTwoPrimTwoParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTTwoPrimTwoParam");
   public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESMixPrimCollCompTwoParam");
   public static final FullQualifiedName nameUFCRTCollETTwoKeyNavParam =
@@ -243,7 +243,7 @@ public class FunctionProvider {
                       .setNullable(false)))
               .setComposable(true)
               .setReturnType(
-                  new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(false)),
+                  new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(true)),
           new CsdlFunction()
               .setName("UFCRTStringTwoParam")
               .setParameters(Arrays.asList(
@@ -256,7 +256,7 @@ public class FunctionProvider {
                       .setType(PropertyProvider.nameInt16)
                       .setNullable(false)))
               .setComposable(true)
-              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(false))
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(true))
 
           );
 
@@ -360,10 +360,10 @@ public class FunctionProvider {
                       .setNullable(false)
                       .setCollection(true))
           );
-    } else if (functionName.equals(nameUFCRTCTTwoPrimParam)) {
+    } else if (functionName.equals(nameUFCRTCTTwoPrimTwoParam)) {
       return Arrays.asList(
           new CsdlFunction()
-              .setName("UFCRTCTTwoPrimParam")
+              .setName("UFCRTCTTwoPrimTwoParam")
               .setParameters(
                   Arrays.asList(
                       new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(
@@ -374,10 +374,10 @@ public class FunctionProvider {
               .setReturnType(
                   new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setNullable(false))
           );
-    } else if (functionName.equals(nameUFCRTCollCTTwoPrimParam)) {
+    } else if (functionName.equals(nameUFCRTCollCTTwoPrimTwoParam)) {
       return Arrays.asList(
           new CsdlFunction()
-              .setName("UFCRTCollCTTwoPrimParam")
+              .setName("UFCRTCollCTTwoPrimTwoParam")
               .setParameters(
                   Arrays.asList(
                       new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16).setNullable(

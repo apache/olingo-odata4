@@ -64,7 +64,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
     ((ODataRequest) request).setAccept(
             service.getClient().getConfiguration().getDefaultBatchAcceptFormat().toContentTypeString());
 
-    final BatchManager batchManager = (BatchManager) ((ODataStreamedRequest) request).payloadManager();
+    final BatchManager batchManager = (BatchManager) ((ODataStreamedRequest<?,?>) request).payloadManager();
 
     final List<ODataRequest> requests = new ArrayList<ODataRequest>(changes.getChanges().size());
     final ODataChangeset changeset = batchManager.addChangeset();
@@ -117,10 +117,10 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
 
         if (handler != null) {
           if (res instanceof ODataEntityCreateResponse && res.getStatusCode() == 201) {
-            handler.setEntity(((ODataEntityCreateResponse) res).getBody());
+            handler.setEntity(((ODataEntityCreateResponse<?>) res).getBody());
             LOG.debug("Upgrade created object '{}'", handler);
           } else if (res instanceof ODataEntityUpdateResponse && res.getStatusCode() == 200) {
-            handler.setEntity(((ODataEntityUpdateResponse) res).getBody());
+            handler.setEntity(((ODataEntityUpdateResponse<?>) res).getBody());
             LOG.debug("Upgrade updated object '{}'", handler);
           }
         }

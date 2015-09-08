@@ -28,14 +28,14 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataReferenceAddingRequest;
 import org.apache.olingo.client.api.communication.response.ODataReferenceAddingResponse;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.communication.response.AbstractODataResponse;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataFormat;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
 
 /**
  * See {@link ODataReferenceAddingRequest}
@@ -54,7 +54,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
@@ -68,7 +68,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
     } else {
       ODataWriter writer = odataClient.getWriter();
       try {
-        return writer.writeReference(reference, ODataFormat.fromString(getContentType()));
+        return writer.writeReference(reference, ContentType.parse(getContentType()));
       } catch (ODataSerializerException e) {
         LOG.warn("Error serializing reference {}", reference);
         throw new IllegalArgumentException(e);

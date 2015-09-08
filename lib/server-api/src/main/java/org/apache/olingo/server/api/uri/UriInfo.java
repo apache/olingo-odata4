@@ -31,22 +31,57 @@ public interface UriInfo extends
 UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
 UriInfoEntityId, UriInfoMetadata, UriInfoResource {
 
-  public UriInfoKind getKind();
+  /**
+   * See {@link UriInfoKind} for more details which kinds are allowed.
+   * @return the kind of this URI info object.
+   */
+  UriInfoKind getKind();
 
-  public UriInfoService asUriInfoService();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoService} object
+   */
+  UriInfoService asUriInfoService();
 
-  public UriInfoAll asUriInfoAll();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoAll} object
+   */
+  UriInfoAll asUriInfoAll();
 
-  public UriInfoBatch asUriInfoBatch();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoBatch} object
+   */
+  UriInfoBatch asUriInfoBatch();
 
-  public UriInfoCrossjoin asUriInfoCrossjoin();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoCrossjoin} object
+   */
+  UriInfoCrossjoin asUriInfoCrossjoin();
 
-  public UriInfoEntityId asUriInfoEntityId();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoEntityId} object
+   */
+  UriInfoEntityId asUriInfoEntityId();
 
-  public UriInfoMetadata asUriInfoMetadata();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoMetadata} object
+   */
+  UriInfoMetadata asUriInfoMetadata();
 
-  public UriInfoResource asUriInfoResource();
+  /**
+   * Convenience casting method.
+   * @return this as a {@link UriInfoResource} object
+   */
+  UriInfoResource asUriInfoResource();
 
-  public Collection<SystemQueryOption> getSystemQueryOptions();
-
+  /**
+   * A collection of all system query options which were in the URI.
+   * @return a collection of all system query options used.
+   */
+  Collection<SystemQueryOption> getSystemQueryOptions();
 }

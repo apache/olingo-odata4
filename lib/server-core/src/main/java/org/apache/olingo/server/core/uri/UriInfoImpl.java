@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoAll;
@@ -65,7 +65,7 @@ public class UriInfoImpl implements UriInfo {
   private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
   private Map<String, String> aliasToValue = new HashMap<String, String>();
 
-  Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
+  private Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
       new HashMap<SystemQueryOptionKind, SystemQueryOption>();
 
   private String fragment;
@@ -227,14 +227,14 @@ public class UriInfoImpl implements UriInfo {
       if (item instanceof SystemQueryOptionImpl) {
         setSystemQueryOption((SystemQueryOptionImpl) item);
       } else if (item instanceof CustomQueryOptionImpl) {
-        addCustomQueryOption(item);
+        addCustomQueryOption((CustomQueryOptionImpl) item);
       }
     }
     return this;
   }
 
-  public void addCustomQueryOption(final QueryOptionImpl item) {
-    customQueryOptions.add((CustomQueryOptionImpl) item);
+  public void addCustomQueryOption(final CustomQueryOptionImpl item) {
+    customQueryOptions.add(item);
     if (item.getName().startsWith("@")) {
       aliasToValue.put(item.getName(), item.getText());
     }
@@ -249,27 +249,27 @@ public class UriInfoImpl implements UriInfo {
    */
   public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
     final SystemQueryOptionKind kind = systemOption.getKind();
+    if (systemQueryOptions.containsKey(kind)) {
+      throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
+    }
+
     switch (kind) {
-    case EXPAND:
-    case FILTER:
-    case FORMAT:
-    case ID:
-    case COUNT:
-    case ORDERBY:
-    case SEARCH:
-    case SELECT:
-    case SKIP:
-    case SKIPTOKEN:
-    case TOP:
-    case LEVELS:
-      if (systemQueryOptions.containsKey(kind)) {
-        throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
-      } else {
+      case EXPAND:
+      case FILTER:
+      case FORMAT:
+      case ID:
+      case COUNT:
+      case ORDERBY:
+      case SEARCH:
+      case SELECT:
+      case SKIP:
+      case SKIPTOKEN:
+      case TOP:
+      case LEVELS:
         systemQueryOptions.put(kind, systemOption);
-      }
-      break;
-    default:
-      throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
+        break;
+      default:
+        throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
     }
     return this;
   }

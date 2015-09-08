@@ -63,7 +63,19 @@ public class UriContext {
    */
   public ExpandItemImpl contextExpandItemPath;
   // CHECKSTYLE:ON (Maven checkstyle)
-
+  
+  //CHECKSTYLE:OFF (Maven checkstyle)
+  /**
+   * Set to true in method {@link UriParseTreeVisitor#visitExpandPath} right before 
+   * calling {@link  org.apache.olingo.server.core.uri.parser.UriParseTreeVisitor#readResourcePathSegment}
+   * After reading the path the variable is set back to false
+   * 
+   * readResourcePathSegment handles all navigation properties, it depends on the context if key predicates are allowed or not.
+   * In case of expand 
+   */
+  public boolean contextVisitExpandResourcePath;
+  //CHECKSTYLE:ON (Maven checkstyle)
+  
   // CHECKSTYLE:OFF (Maven checkstyle)
   /**
    * Set within method

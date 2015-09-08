@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata"
+       xmlns:d="http://docs.oasis-open.org/odata/ns/data"
+       xml:base="http://host/service/"
+       m:context="$metadata#Customers/$entity"
+       m:metadata-etag="W/&quot;MjAxMy0wNS0xM1QxNDo1NFo=&quot;">
+  <id>http://host/service/$metadata#Customers('ALFKI')</id>
+  <title/>
+  <summary/>
+  <updated>2012-03-30T07:11:05Z</updated>
+  <author>
+    <name/>
+  </author>
+  <link rel="edit" title="Customer" href="Customers('ALFKI')"/>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders"
+        type="application/atom+xml;type=feed"
+        title="Orders">
+        <m:inline><feed><m:ref id="Customers('ALFKI')/Orders"/></feed></m:inline> </link>        
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Supplier"
+        type="application/atom+xml;type=entry"
+        title="Supplier" href="Customers('ALFKI')/Supplier"/>
+  <category term="#ODataDemo.Customer"
+            scheme="http://docs.oasis-open.org/odata/ns/scheme"/>
+  <content type="application/xml">
+    <m:properties>
+      <d:ID>ALFKI</d:ID>
+      <d:CompanyName>Alfreds Futterkiste</d:CompanyName>
+      <d:ContactName>Maria Anders</d:ContactName>
+      <d:ContactTitle>Sales Representative</d:ContactTitle>
+      <d:Phone>030-0074321</d:Phone>
+      <d:Fax>030-0076545</d:Fax>
+      <d:Address>
+        <d:Street>Obere Str. 57</d:Street>
+        <d:City>Berlin</d:City>
+        <d:Region m:null="true"/>
+        <d:PostalCode>D-12209</d:PostalCode>
+        <link rel="http://docs.oasis-open.org/odata/ns/related/Country"
+              type="application/atom+xml;type=entry"
+              title="Country"
+              href="Customers('ALFKI')/Address/Country"/>
+      </d:Address>
+    </m:properties>
+  </content>
+</entry>

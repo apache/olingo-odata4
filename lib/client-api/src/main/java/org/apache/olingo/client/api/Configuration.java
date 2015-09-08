@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 
 /**
  * Configuration wrapper.
@@ -49,16 +48,15 @@ public interface Configuration {
    * JSON_FULL_METADATA format will be used as default.
    *
    * @return configured OData format for AtomPub if specified; JSON_FULL_METADATA format otherwise.
-   * @see ODataFormat#JSON_FULL_METADATA
    */
-  ODataFormat getDefaultPubFormat();
+  ContentType getDefaultPubFormat();
 
   /**
    * Sets the default OData format for AtomPub exchanges.
    *
    * @param format default format.
    */
-  void setDefaultPubFormat(ODataFormat format);
+  void setDefaultPubFormat(ContentType format);
 
   /**
    * Gets the configured OData format. This value depends on what is returned from <tt>getDefaultPubFormat()</tt>.
@@ -66,23 +64,22 @@ public interface Configuration {
    * @return configured OData format
    * @see #getDefaultPubFormat()
    */
-  ODataFormat getDefaultFormat();
+  ContentType getDefaultFormat();
 
   /**
    * Gets the configured OData value format. If this configuration parameter doesn't exist the TEXT format will be used
    * as default.
    *
    * @return configured OData value format if specified; TEXT_PLAIN format otherwise.
-   * @see ODataFormat#TEXT_PLAIN
    */
-  ODataFormat getDefaultValueFormat();
+  ContentType getDefaultValueFormat();
 
   /**
    * Sets the default OData value format.
    *
    * @param format default format.
    */
-  void setDefaultValueFormat(ODataFormat format);
+  void setDefaultValueFormat(ContentType format);
 
   /**
    * Gets the configured OData media format. If this configuration parameter doesn't exist the APPLICATION_OCTET_STREAM
@@ -90,14 +87,14 @@ public interface Configuration {
    *
    * @return configured OData media format if specified; APPLICATION_OCTET_STREAM format otherwise.
    */
-  ODataFormat getDefaultMediaFormat();
+  ContentType getDefaultMediaFormat();
 
   /**
    * Sets the default OData media format.
    *
    * @param format default format.
    */
-  void setDefaultMediaFormat(ODataFormat format);
+  void setDefaultMediaFormat(ContentType format);
 
   /**
    * Gets the HttpClient factory to be used for executing requests.

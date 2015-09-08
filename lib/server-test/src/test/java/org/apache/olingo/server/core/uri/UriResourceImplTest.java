@@ -125,7 +125,7 @@ public class UriResourceImplTest {
 
     assertEquals(false, impl.isCollection());
     assertEquals(expression, impl.getExpression());
-    assertEquals("A", impl.getLamdaVariable());
+    assertEquals("A", impl.getLambdaVariable());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), impl.getType());
     assertEquals("any", impl.toString());
   }
@@ -267,6 +267,11 @@ public class UriResourceImplTest {
 
       @Override
       public String toString() {
+        return getSegmentValue();
+      }
+
+      @Override
+      public String getSegmentValue() {
         return "mock";
       }
     }
@@ -342,10 +347,15 @@ public class UriResourceImplTest {
         this.type = type;
         return this;
       }
+      
+      @Override
+      public String getSegmentValue() {
+        return "mock";
+      }
 
       @Override
       public String toString() {
-        return "mock";
+        return getSegmentValue();
       }
 
     }

@@ -25,8 +25,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.server.api.batch.exception.BatchSerializerException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
+import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -40,7 +41,12 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
 
   @Override
   public InputStream count(final Integer count) throws SerializerException {
-    return new ByteArrayInputStream(count.toString().getBytes());
+    try {
+      return new ByteArrayInputStream(count.toString().getBytes("UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new SerializerException("UTF-8 is nott supprted as an encoding", e,
+          SerializerException.MessageKeys.UNSUPPORTED_ENCODING, "UTF-8");
+    }
   }
 
   @Override
@@ -58,6 +64,12 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
     } catch (final UnsupportedEncodingException e) {
       throw new SerializerException("Encoding exception.", e, SerializerException.MessageKeys.IO_EXCEPTION);
     }
+  }
+
+  @Override
+  public InputStream asyncResponse(ODataResponse odataResponse) throws SerializerException {
+    AsyncResponseSerializer serializer = new AsyncResponseSerializer();
+    return serializer.serialize(odataResponse);
   }
 
   // TODO: Signature refactoring for writeBatchResponse

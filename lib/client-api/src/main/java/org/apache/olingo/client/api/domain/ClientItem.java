@@ -20,22 +20,10 @@ package org.apache.olingo.client.api.domain;
 
 import java.net.URI;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Abstract representation of OData entities and links.
  */
 public abstract class ClientItem {
-
-  /**
-   * Logger.
-   */
-  protected static final Logger LOG = LoggerFactory.getLogger(ClientItem.class);
 
   /**
    * OData entity name/type.
@@ -45,7 +33,7 @@ public abstract class ClientItem {
   /**
    * OData item self link.
    */
-  protected URI link;
+  private URI link;
 
   /**
    * Constructor.
@@ -79,18 +67,48 @@ public abstract class ClientItem {
     this.link = link;
   }
 
+
+
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof ClientItem)) {
+      return false;
+    }
+    ClientItem other = (ClientItem) obj;
+    if (link == null) {
+      if (other.link != null) {
+        return false;
+      }
+    } else if (!link.equals(other.link)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((link == null) ? 0 : link.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return "ClientItem [name=" + name + ", link=" + link + "]";
   }
 }

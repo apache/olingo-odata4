@@ -140,19 +140,19 @@ public abstract class AbstractUtility {
       return getNavigationBindings(sourceEntityType, property);
     } catch (Exception e) {
       // maybe source entity type without entity set ...
-      return getNavigationBindings(property.getType());
+      return getNavigationBindings(property.getType(), property.getName());
     }
   }
 
-  private NavPropertyBindingDetails getNavigationBindings(final EdmStructuredType type) {
+  private NavPropertyBindingDetails getNavigationBindings(final EdmStructuredType type, String propertyName) {
     if (type == null) {
-      throw new IllegalStateException("Invalid navigation property");
+      throw new IllegalStateException("No EntitySet defined. Invalid navigation property: " + propertyName);
     }
 
     try {
       return new NavPropertyBindingDetails(edm, type);
     } catch (IllegalStateException ignore) {
-      return getNavigationBindings(type.getBaseType());
+      return getNavigationBindings(type.getBaseType(), propertyName);
     }
   }
 

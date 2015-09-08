@@ -20,7 +20,7 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public interface CsdlEdmProvider {

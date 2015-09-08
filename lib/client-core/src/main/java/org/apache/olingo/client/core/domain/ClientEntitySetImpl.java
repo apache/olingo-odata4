@@ -62,4 +62,55 @@ public class ClientEntitySetImpl extends AbstractClientEntitySet implements Clie
     return annotations;
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    result = prime * result + ((deltaLink == null) ? 0 : deltaLink.hashCode());
+    result = prime * result + ((entities == null) ? 0 : entities.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (!(obj instanceof ClientEntitySetImpl)) {
+      return false;
+    }
+    ClientEntitySetImpl other = (ClientEntitySetImpl) obj;
+    if (annotations == null) {
+      if (other.annotations != null) {
+        return false;
+      }
+    } else if (!annotations.equals(other.annotations)) {
+      return false;
+    }
+    if (deltaLink == null) {
+      if (other.deltaLink != null) {
+        return false;
+      }
+    } else if (!deltaLink.equals(other.deltaLink)) {
+      return false;
+    }
+    if (entities == null) {
+      if (other.entities != null) {
+        return false;
+      }
+    } else if (!entities.equals(other.entities)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "ClientEntitySetImpl [deltaLink=" + deltaLink + ", entities=" + entities + ", annotations=" + annotations
+        + "super[" + super.toString() + "]]";
+  }
 }

@@ -33,7 +33,7 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
@@ -165,9 +165,9 @@ public class BatchRequest extends ServiceRequest {
   }
 
   private void addContentID(ODataRequest batchPartRequest, ODataResponse batchPartResponse) {
-    final String contentId = batchPartRequest.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
+    final String contentId = batchPartRequest.getHeader(HttpHeader.CONTENT_ID);
     if (contentId != null) {
-      batchPartResponse.setHeader(BatchParserCommon.HTTP_CONTENT_ID, contentId);
+      batchPartResponse.setHeader(HttpHeader.CONTENT_ID, contentId);
     }
   }
 
@@ -177,12 +177,10 @@ public class BatchRequest extends ServiceRequest {
   }
 
   private void validateContentType() throws ODataApplicationException {
-    final String contentType = getRequestContentType().toContentTypeString();
-
-    if (contentType == null
-        || !BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches()) {
+    final ContentType contentType = getRequestContentType();
+    if (contentType == null || !contentType.isCompatible(ContentType.MULTIPART_MIXED)) {
       throw new ODataApplicationException("Invalid content type",
-          HttpStatusCode.PRECONDITION_FAILED.getStatusCode(), Locale.getDefault());
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.getDefault());
     }
   }
 

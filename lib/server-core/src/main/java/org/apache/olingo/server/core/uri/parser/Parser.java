@@ -30,9 +30,8 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -68,6 +67,9 @@ import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
 
 public class Parser {
+  private static final String ATOM = "atom";
+  private static final String JSON = "json";
+  private static final String XML = "xml";
   int logLevel = 0;
 
   private enum ParserEntryRules {
@@ -177,9 +179,9 @@ public class Parser {
             FormatOptionImpl formatOption = new FormatOptionImpl();
             formatOption.setName(option.name);
             formatOption.setText(option.value);
-            if (option.value.equalsIgnoreCase(ODataFormat.JSON.name())
-                || option.value.equalsIgnoreCase(ODataFormat.XML.name())
-                || option.value.equalsIgnoreCase(ODataFormat.ATOM.name())
+            if (option.value.equalsIgnoreCase(JSON)
+                || option.value.equalsIgnoreCase(XML)
+                || option.value.equalsIgnoreCase(ATOM)
                 || isFormatSyntaxValid(option.value)) {
               formatOption.setFormat(option.value);
             } else {
@@ -209,7 +211,8 @@ public class Parser {
 
             systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
-            throw new RuntimeException("System query option '$search' not implemented!");
+            throw new UriParserSemanticException("System query option '$search' not implemented!", 
+                UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option '$search");
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
@@ -310,6 +313,7 @@ public class Parser {
 
       // create parser
       if (logLevel > 0) {
+        //TODO: Discuss if we should keep this code
         lexer = new UriLexer(new ANTLRInputStream(input));
         showTokens(input, lexer.getAllTokens());
       }
@@ -463,22 +467,23 @@ public class Parser {
     boolean first = true;
     System.out.println("input: " + input);
     String nL = "\n";
-    String out = "[" + nL;
+    StringBuilder out = new StringBuilder("[").append(nL);
     for (Token token : list) {
       if (!first) {
-        out += ",";
+        out.append(",");
         first = false;
       }
       int index = token.getType();
+      out.append("\"").append(token.getText()).append("\"").append("     ");
       if (index != -1) {
-        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
+        out.append(UriLexer.VOCABULARY.getDisplayName(index));
       } else {
-        out += "\"" + token.getText() + "\"" + "     " + index + nL;
+        out.append(index);
       }
+        out.append(nL);
     }
-    out += ']';
-    System.out.println("tokens: " + out);
-    return;
+    out.append(']');
+    System.out.println("tokens: " + out.toString());
   }
 
 }

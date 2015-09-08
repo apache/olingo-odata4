@@ -42,19 +42,20 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.olingo.client.api.serialization.ODataDeserializer;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.client.api.serialization.ODataSerializer;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
+import org.apache.olingo.client.core.serialization.AtomSerializer;
+import org.apache.olingo.client.core.serialization.JsonDeserializer;
+import org.apache.olingo.client.core.serialization.JsonSerializer;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
-import org.apache.olingo.commons.api.serialization.ODataDeserializer;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
-import org.apache.olingo.commons.api.serialization.ODataSerializer;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.commons.core.serialization.AtomSerializer;
-import org.apache.olingo.commons.core.serialization.JsonDeserializer;
-import org.apache.olingo.commons.core.serialization.JsonSerializer;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
@@ -104,7 +105,7 @@ public abstract class AbstractUtilities {
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);
-    jsonSerializer = new JsonSerializer(true);
+    jsonSerializer = new JsonSerializer(true, ContentType.JSON_FULL_METADATA);
   }
 
   public boolean isMediaContent(final String entityName) {

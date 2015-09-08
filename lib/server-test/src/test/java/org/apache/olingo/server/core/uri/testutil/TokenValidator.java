@@ -145,7 +145,7 @@ public class TokenValidator {
   }
 
   public TokenValidator isType(final int expected) {
-    assertEquals(UriLexer.tokenNames[expected], UriLexer.tokenNames[curToken.getType()]);
+    assertEquals(UriLexer.VOCABULARY.getDisplayName(expected), UriLexer.VOCABULARY.getDisplayName(curToken.getType()));
     return this;
   }
 
@@ -180,7 +180,7 @@ public class TokenValidator {
       }
       int index = token.getType();
       if (index != -1) {
-        out += "\"" + token.getText() + "\"" + "     " + UriLexer.tokenNames[index] + nL;
+        out += "\"" + token.getText() + "\"" + "     " + UriLexer.VOCABULARY.getDisplayName(index) + nL;
       } else {
         out += "\"" + token.getText() + "\"" + "     " + index + nL;
       }

@@ -21,7 +21,7 @@ package org.apache.olingo.server.sample.data;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.olingo.commons.api.ODataException;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;

@@ -23,17 +23,26 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -298,6 +307,7 @@ public class TomcatTestServer {
       if (server != null) {
         return server;
       }
+      baseContext.addApplicationListener(SessionHolder.class.getName());
       tomcat.start();
 
       LOG.info("Started server at endpoint "
@@ -321,6 +331,47 @@ public class TomcatTestServer {
         tomcat.stop();
       }
       tomcat.destroy();
+    }
+  }
+
+  public void invalidateAllSessions() {
+    SessionHolder.invalidateAllSession();
+  }
+
+  public static class SessionHolder implements HttpSessionListener {
+
+    private static final Map<ServletContext, Set<HttpSession>> ALL_SESSIONS =
+            Collections.synchronizedMap(new HashMap<ServletContext, Set<HttpSession>>());
+
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+      LOG.info("Created session: {}", se);
+
+      ServletContext c = se.getSession().getServletContext();
+      Set<HttpSession> set = ALL_SESSIONS.get(c);
+      if (set == null) {
+        set = new HashSet<HttpSession>();
+        ALL_SESSIONS.put(c, set);
+      }
+      set.add(se.getSession());
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+      LOG.info("Destroy session: {}", se);
+    }
+
+    public static void invalidateAllSession() {
+      synchronized (ALL_SESSIONS) {
+        LOG.info("Invalidated sessions...");
+        for (Map.Entry<ServletContext, Set<HttpSession>> e : ALL_SESSIONS.entrySet()) {
+          for (HttpSession s : e.getValue()) {
+            s.invalidate();
+          }
+        }
+        ALL_SESSIONS.clear();
+        LOG.info("...Invalidated all sessions.");
+      }
     }
   }
 }

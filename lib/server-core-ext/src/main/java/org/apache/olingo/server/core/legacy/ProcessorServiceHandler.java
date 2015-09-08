@@ -430,4 +430,11 @@ public class ProcessorServiceHandler implements ServiceHandler {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
   }
+
+  @Override
+  public void upsertEntity(DataRequest request, Entity entity, boolean merge, String entityETag, 
+      EntityResponse response) throws ODataLibraryException, ODataApplicationException {
+    throw new ODataHandlerException("not implemented",
+        ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+  }
 }

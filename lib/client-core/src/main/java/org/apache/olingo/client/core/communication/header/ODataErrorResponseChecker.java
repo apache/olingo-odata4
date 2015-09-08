@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -24,10 +24,11 @@ import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
-import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,29 +44,29 @@ public final class ODataErrorResponseChecker {
   }
 
   public static ODataRuntimeException checkResponse(
-          final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
-          final String accept) {
+      final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
+      final String accept) {
 
     ODataRuntimeException result = null;
 
     if (entity == null) {
       result = new ODataClientErrorException(statusLine);
     } else {
-      final ODataFormat format = accept.contains("xml") ? ODataFormat.XML : ODataFormat.JSON;
+      final ContentType contentType = accept.contains("xml") ? ContentType.APPLICATION_ATOM_XML : ContentType.JSON;
 
       ODataError error;
       try {
-        error = odataClient.getReader().readError(entity, format);
+        error = odataClient.getReader().readError(entity, contentType);
       } catch (final RuntimeException e) {
         LOG.warn("Error deserializing error response", e);
         error = getGenericError(
-                statusLine.getStatusCode(),
-                statusLine.getReasonPhrase());
+            statusLine.getStatusCode(),
+            statusLine.getReasonPhrase());
       } catch (final ODataDeserializerException e) {
         LOG.warn("Error deserializing error response", e);
         error = getGenericError(
-                statusLine.getStatusCode(),
-                statusLine.getReasonPhrase());
+            statusLine.getStatusCode(),
+            statusLine.getReasonPhrase());
       }
 
       if (statusLine.getStatusCode() >= 500) {

@@ -21,16 +21,16 @@ package org.apache.olingo.client.api.serialization;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.ODataError;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.format.ContentType;
+
 
 /**
  * OData reader.
@@ -61,51 +61,52 @@ public interface ODataReader {
    * Parses an OData service document.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize as XML or JSON
+   * @param contentType de-serialize as XML or JSON
    * @return List of URIs.
    * @throws ODataDeserializerException
    */
-  ClientServiceDocument readServiceDocument(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientServiceDocument readServiceDocument(InputStream input, ContentType contentType) 
+      throws ODataDeserializerException;
 
   /**
    * De-Serializes a stream into an OData entity set.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize format
+   * @param contentType de-serialize format
    * @return de-serialized entity set.
    * @throws ODataDeserializerException
    */
-  ClientEntitySet readEntitySet(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientEntitySet readEntitySet(InputStream input, ContentType contentType) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serializes the first OData entity found.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize format
+   * @param contentType de-serialize format
    * @return entity de-serialized.
    * @throws ODataDeserializerException
    */
-  ClientEntity readEntity(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientEntity readEntity(InputStream input, ContentType contentType) throws ODataDeserializerException;
 
   /**
    * Parses a stream taking care to de-serialize the first OData entity property found.
    *
    * @param input stream to de-serialize.
-   * @param format de-serialize as XML or JSON
+   * @param contentType de-serialize as XML or JSON
    * @return OData entity property de-serialized.
    * @throws ODataDeserializerException
    */
-  ClientProperty readProperty(InputStream input, ODataFormat format) throws ODataDeserializerException;
+  ClientProperty readProperty(InputStream input, ContentType contentType) throws ODataDeserializerException;
 
   /**
    * Parses a stream into an OData error.
    *
    * @param inputStream stream to de-serialize.
-   * @param format format
+   * @param contentType format
    * @return OData error.
    * @throws ODataDeserializerException
    */
-  ODataError readError(InputStream inputStream, ODataFormat format) throws ODataDeserializerException;
+  ODataError readError(InputStream inputStream, ContentType contentType) throws ODataDeserializerException;
 
   /**
    * Parses a stream into the object type specified by the given reference.

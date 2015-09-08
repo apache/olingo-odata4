@@ -21,7 +21,7 @@ package org.apache.olingo.client.api.uri;
 
 public interface FilterArgFactory {
 
-  FilterArg _null();
+  FilterArg nullValue();
 
   FilterArg add(FilterArg first, FilterArg second);
 

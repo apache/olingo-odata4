@@ -31,6 +31,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -40,12 +41,16 @@ import org.junit.Test;
 
 public class BasicBatchITCase extends AbstractBaseTestITCase {
 
-  private static final String HEADER_CONTENT_TRANSFER_ENCODING_BINARY = "Content-Transfer-Encoding: binary";
-  private static final String HEADER_CONTENT_TYPE_HTTP = "Content-Type: application/http";
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
-  private static final String CONTENT_TYPE_HEADER_VALUE = " multipart/mixed;boundary=batch_123";
+
+  private static final String HEADER_CONTENT_TRANSFER_ENCODING_BINARY = "Content-Transfer-Encoding: binary";
+  private static final String HEADER_CONTENT_TYPE_HTTP =
+      HttpHeader.CONTENT_TYPE + ": " + ContentType.APPLICATION_HTTP.toContentTypeString();
+  private static final String CONTENT_TYPE_HEADER_VALUE = " "
+      + ContentType.create(ContentType.MULTIPART_MIXED, "boundary", "batch_123").toContentTypeString();
+  private static final String ACCEPT_HEADER_VALUE = ContentType.APPLICATION_JSON.toContentTypeString();
+
   private static final String CRLF = "\r\n";
-  private static final String ACCEPT_HEADER_VALUE = "application/json";
 
   @Test
   public void test() throws IOException {
@@ -110,7 +115,7 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
   }
 
   private void blankLine(final BufferedReader reader) throws IOException {
-    assertEquals("", reader.readLine()); // CRLF becomes to an empty string
+    assertEquals("", reader.readLine()); // CRLF becomes an empty string
   }
 
   private String getRequest(final String uri) {

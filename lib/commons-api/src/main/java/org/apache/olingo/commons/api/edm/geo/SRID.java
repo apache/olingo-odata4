@@ -18,11 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
+
+import java.io.Serializable;
 
 /**
  * A geometry or geography property MAY define a value for the SRID attribute. The value of this attribute identifies
@@ -34,7 +32,7 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
  * Standards Track Work Product Copyright © OASIS Open 2013. All Rights Reserved. 19 November 2013 Page 22 of 83The
  * valid values of the SRID attribute and their meanings are as defined by the European Petroleum Survey Group [EPSG].
  */
-public class SRID implements Serializable {
+public final class SRID implements Serializable {
 
   private static final String VARIABLE = "variable";
 
@@ -75,11 +73,19 @@ public class SRID implements Serializable {
   }
 
   private String getValue() {
-    return value == null
-        ? dimension == Dimension.GEOMETRY
-        ? "0"
-            : "4326"
-        : value.toString();
+    if (value == null) {
+      if (dimension == Dimension.GEOMETRY) {
+        return "0";
+      } else {
+        return "4326";
+      }
+    }
+
+    return value.toString();
+//    return value == null ? dimension == Dimension.GEOMETRY
+//        ? "0"
+//            : "4326"
+//        : value.getName();
   }
 
   private boolean isVariable() {
@@ -91,13 +97,32 @@ public class SRID implements Serializable {
   }
 
   @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    SRID srid = (SRID) o;
+
+    if (dimension != srid.dimension) {
+      return false;
+    }
+    if (value != null ? !value.equals(srid.value) : srid.value != null) {
+      return false;
+    }
+    return !(variable != null ? !variable.equals(srid.variable) : srid.variable != null);
+
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public int hashCode() {
+    int result = dimension != null ? dimension.hashCode() : 0;
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    result = 31 * result + (variable != null ? variable.hashCode() : 0);
+    return result;
   }
 
   @Override
@@ -106,5 +131,4 @@ public class SRID implements Serializable {
         ? VARIABLE
         : getValue();
   }
-
 }

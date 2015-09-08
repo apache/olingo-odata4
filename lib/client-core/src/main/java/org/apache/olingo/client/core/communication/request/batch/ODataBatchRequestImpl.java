@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
@@ -68,7 +67,7 @@ public class ODataBatchRequestImpl
   @Override
   protected HttpResponse doExecute() {
     if (odataClient.getConfiguration().isContinueOnError()) {
-      addCustomHeader(HeaderName.prefer, new ODataPreferences().continueOnError());
+      setPrefer(new ODataPreferences().continueOnError());
     }
 
     return super.doExecute();

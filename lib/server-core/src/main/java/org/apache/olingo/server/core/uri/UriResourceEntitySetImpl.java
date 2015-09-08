@@ -55,9 +55,15 @@ public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements
   public boolean isCollection() {
     return keyPredicates == null;
   }
+  
+  @Override
+  public String getSegmentValue(){
+    return edmEntitySet.getName();
+  }
+  
 
   @Override
   public String toString() {
-    return edmEntitySet.getName();
+    return getSegmentValue();
   }
 }

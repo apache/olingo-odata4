@@ -34,6 +34,10 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ODataExceptionHelper {
+  
+  private ODataExceptionHelper() {
+    //Private Constructor
+  }
 
   public static ODataServerError createServerErrorObject(final UriValidationException e,
       final Locale requestedLocale) {
@@ -48,6 +52,8 @@ public class ODataExceptionHelper {
     if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
+    } else if(UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED.equals(e.getMessageKey())) {
+      serverError.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
     } else {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     }

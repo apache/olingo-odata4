@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 
 public class ODataHeadersImpl implements ODataHeaders {
@@ -39,24 +38,8 @@ public class ODataHeadersImpl implements ODataHeaders {
   }
 
   @Override
-  public ODataHeaders setHeader(final HeaderName name, final String value) {
-    headers.put(name.toString(), value);
-    return this;
-  }
-
-  @Override
-  public String getHeader(final HeaderName name) {
-    return headers.get(name.toString());
-  }
-
-  @Override
   public String getHeader(final String name) {
     return headers.get(name);
-  }
-
-  @Override
-  public String removeHeader(final HeaderName name) {
-    return headers.remove(name.toString());
   }
 
   @Override

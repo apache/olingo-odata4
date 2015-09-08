@@ -30,11 +30,11 @@ import java.util.NoSuchElementException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
  * <b>Please don't forget to call the <tt>close()>/</tt> method when not needed any more.</b>
  *
  * @param <E> concrete ODataEntity implementation
- * @param <ES> concrete ODataEntitySet implementation
+ * @param <T> concrete ODataEntitySet implementation
  */
-public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends ClientEntity>
+public class ClientEntitySetIterator<T extends ClientEntitySet, E extends ClientEntity>
         implements Iterator<E> {
 
   /**
@@ -60,9 +60,9 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
 
   private final InputStream stream;
 
-  private final ODataFormat format;
+  private final ContentType contentType;
 
-  private ES entitySet;
+  private T entitySet;
 
   private final ByteArrayOutputStream osEntitySet;
 
@@ -75,17 +75,18 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
    *
    * @param odataClient client instance getting this request
    * @param stream source stream.
-   * @param format OData format.
+   * @param contentType OData format.
    */
   public ClientEntitySetIterator(final ODataClient odataClient, final InputStream stream,
-                                 final ODataFormat format) {
+                                 final ContentType contentType) {
 
     this.odataClient = odataClient;
     this.stream = stream;
-    this.format = format;
+    this.contentType = contentType;
     this.osEntitySet = new ByteArrayOutputStream();
-
-    if (format == ODataFormat.ATOM) {
+    
+    if(contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
       namespaces = getAllElementAttributes(stream, "feed", osEntitySet);
     } else {
       namespaces = null;
@@ -103,14 +104,12 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
-  @Override
   @SuppressWarnings("unchecked")
+  @Override
   public boolean hasNext() {
     if (available && cached == null) {
-      if (format == ODataFormat.ATOM) {
+      if (contentType.isCompatible(ContentType.APPLICATION_ATOM_SVC)
+          || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
         cached = nextAtomEntityFromEntitySet(stream, osEntitySet, namespaces);
       } else {
         cached = nextJSONEntityFromEntitySet(stream, osEntitySet);
@@ -119,8 +118,8 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
       if (cached == null) {
         available = false;
         try {
-          entitySet = (ES) odataClient.getReader().
-                  readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), format);
+          entitySet = (T) odataClient.getReader().
+                  readEntitySet(new ByteArrayInputStream(osEntitySet.toByteArray()), contentType);
         } catch (final ODataDeserializerException e) {
           available = false;
         }
@@ -131,9 +130,6 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
     return available;
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public E next() {
     if (hasNext()) {
@@ -211,7 +207,7 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
         }
 
         if (c >= 0) {
-          jsonEntity = odataClient.getDeserializer(ODataFormat.JSON).toEntity(
+          jsonEntity = odataClient.getDeserializer(ContentType.JSON).toEntity(
                   new ByteArrayInputStream(entity.toByteArray()));
         }
       } else {
@@ -240,7 +236,7 @@ public class ClientEntitySetIterator<ES extends ClientEntitySet, E extends Clien
         entity.write(">".getBytes(Constants.UTF8));
 
         if (consume(input, "</entry>", entity, true) >= 0) {
-          atomEntity = odataClient.getDeserializer(ODataFormat.ATOM).
+          atomEntity = odataClient.getDeserializer(ContentType.APPLICATION_ATOM_XML).
                   toEntity(new ByteArrayInputStream(entity.toByteArray()));
         }
       }

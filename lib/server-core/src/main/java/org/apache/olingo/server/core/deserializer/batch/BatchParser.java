@@ -20,12 +20,11 @@ package org.apache.olingo.server.core.deserializer.batch;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ODataRuntimeException;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
@@ -74,7 +73,7 @@ public class BatchParser {
 
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary) throws IOException,
       BatchDeserializerException {
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
+    final BatchLineReader reader = new BatchLineReader(in);
     final List<Line> message = reader.toLineList();
     reader.close();
 

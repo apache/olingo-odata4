@@ -38,6 +38,11 @@ public interface UriResourcePartTyped extends UriResource {
   /**
    * @return String representation of the type
    */
+  public String getSegmentValue(final boolean includeFilters);
+  
+  /**
+   * @return String representation of the type
+   */
   String toString(boolean includeFilters);
 
 }

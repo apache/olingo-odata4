@@ -30,25 +30,6 @@ import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.data.ServiceDocumentItem;
-import org.apache.olingo.client.api.serialization.ODataBinder;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Annotatable;
-import org.apache.olingo.commons.api.data.Annotation;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.DeletedEntity;
-import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.DeltaLink;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.Operation;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.client.api.domain.ClientAnnotatable;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
@@ -68,6 +49,30 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.serialization.ODataBinder;
+import org.apache.olingo.client.api.serialization.ODataSerializerException;
+import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
+import org.apache.olingo.client.core.domain.ClientDeletedEntityImpl;
+import org.apache.olingo.client.core.domain.ClientDeltaLinkImpl;
+import org.apache.olingo.client.core.domain.ClientPropertyImpl;
+import org.apache.olingo.client.core.uri.URIUtils;
+import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotatable;
+import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.Delta;
+import org.apache.olingo.commons.api.data.DeltaLink;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.Operation;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.Valuable;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -86,15 +91,9 @@ import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataSerializerException;
-import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
-import org.apache.olingo.client.core.domain.ClientDeletedEntityImpl;
-import org.apache.olingo.client.core.domain.ClientDeltaLinkImpl;
-import org.apache.olingo.client.core.domain.ClientPropertyImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
-import org.apache.olingo.commons.core.serialization.ContextURLParser;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -392,7 +391,7 @@ public class ODataBinderImpl implements ODataBinder {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
+        client.getSerializer(ContentType.JSON).write(writer, resource.getPayload());
       } catch (final ODataSerializerException e) {
         LOG.debug("EntitySet -> ODataEntitySet:\n{}", writer.toString());
       }
@@ -457,7 +456,7 @@ public class ODataBinderImpl implements ODataBinder {
         odataLinked.addLink(createODataInlineEntity(inlineEntity,
             URIUtils.getURI(base, href), title, metadataETag));
       } else {
-        odataLinked.addLink(createODataInlineEntitySet(inlineEntitySet,
+        odataLinked.addLink(createODataInlineEntitySet(inlineEntitySet, href == null?null:
             URIUtils.getURI(base, href), title, metadataETag));
       }
     }
@@ -589,7 +588,7 @@ public class ODataBinderImpl implements ODataBinder {
     if (LOG.isDebugEnabled()) {
       final StringWriter writer = new StringWriter();
       try {
-        client.getSerializer(ODataFormat.JSON).write(writer, resource.getPayload());
+        client.getSerializer(ContentType.JSON).write(writer, resource.getPayload());
       } catch (final ODataSerializerException e) {
         LOG.debug("EntityResource -> ODataEntity:\n{}", writer.toString());
       }
@@ -714,11 +713,22 @@ public class ODataBinderImpl implements ODataBinder {
     } else {
       if (propertyType == null || propertyType.equals(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString())) {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
+      } else if(isPrimiteveType(typeName)) {
+        // Inheritance is not allowed for primitve types, so we use the type given by the EDM
+        typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
       } else {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();
       }
     }
     return typeInfo;
+  }
+
+  private boolean isPrimiteveType(final FullQualifiedName typeName) {
+    try {
+      return EdmPrimitiveTypeKind.valueOfFQN(typeName) != null;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
   }
 
   protected ClientProperty getODataProperty(final EdmType type, final Property resource) {

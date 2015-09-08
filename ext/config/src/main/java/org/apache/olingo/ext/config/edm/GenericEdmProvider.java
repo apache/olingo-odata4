@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.ext.config.edm;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.commons.api.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
@@ -39,216 +35,213 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.ex.ODataException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenericEdmProvider extends CsdlAbstractEdmProvider {
 
-	private String containerName = "default";
+  private String containerName = "default";
 
-	private List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+  private List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
 
-	// OData
+  // OData
 
-	@Override
-	public List<CsdlSchema> getSchemas() throws ODataException {
-		return schemas;
-	}
+  @Override
+  public List<CsdlSchema> getSchemas() {
+    return schemas;
+  }
 
-	@Override
-	public CsdlEntityContainer getEntityContainer() throws ODataException {
-		CsdlEntityContainer container = new CsdlEntityContainer();
-		container.setName(containerName);
+  @Override
+  public CsdlEntityContainer getEntityContainer() {
+    CsdlEntityContainer container = new CsdlEntityContainer();
+    container.setName(containerName);
 
-		// EntitySets
-		List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
-		container.setEntitySets(entitySets);
+    // EntitySets
+    List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
+    container.setEntitySets(entitySets);
 
-		// Load entity sets per index
-		for (CsdlSchema schema : schemas) {
+    // Load entity sets per index
+    for (CsdlSchema schema : schemas) {
 
-			if (schema.getEntityContainer() != null
-					&& schema.getEntityContainer().getEntitySets() != null) {
-				for (CsdlEntitySet schemaEntitySet : schema.getEntityContainer()
-						.getEntitySets()) {
-					CsdlEntitySet entitySet = new CsdlEntitySet().setName(
-							schemaEntitySet.getName()).setType(
-							new FullQualifiedName(
-									schemaEntitySet.getTypeFQN().getNamespace(),
-									schemaEntitySet.getTypeFQN().getName()));
-					entitySets.add(entitySet);
-				}
-			}
-		}
+      if (schema.getEntityContainer() != null
+          && schema.getEntityContainer().getEntitySets() != null) {
+        for (CsdlEntitySet schemaEntitySet : schema.getEntityContainer()
+            .getEntitySets()) {
+          CsdlEntitySet entitySet = new CsdlEntitySet().setName(
+              schemaEntitySet.getName()).setType(
+              new FullQualifiedName(
+                  schemaEntitySet.getTypeFQN().getNamespace(),
+                  schemaEntitySet.getTypeFQN().getName()));
+          entitySets.add(entitySet);
+        }
+      }
+    }
 
-		return container;
-	}
+    return container;
+  }
 
-	private CsdlSchema findSchema(String namespace) {
-		for (CsdlSchema schema : schemas) {
-			if (schema.getNamespace().equals(namespace)) {
-				return schema;
-			}
-		}
+  private CsdlSchema findSchema(String namespace) {
+    for (CsdlSchema schema : schemas) {
+      if (schema.getNamespace().equals(namespace)) {
+        return schema;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	private CsdlEntityType findEntityType(CsdlSchema schema, String entityTypeName) {
-		for (CsdlEntityType entityType : schema.getEntityTypes()) {
-			if (entityType.getName().equals(entityTypeName)) {
-				return entityType;
-			}
-		}
+  private CsdlEntityType findEntityType(CsdlSchema schema, String entityTypeName) {
+    for (CsdlEntityType entityType : schema.getEntityTypes()) {
+      if (entityType.getName().equals(entityTypeName)) {
+        return entityType;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	@Override
-	public CsdlEntityType getEntityType(FullQualifiedName entityTypeName)
-			throws ODataException {
-		CsdlSchema schema = findSchema(entityTypeName.getNamespace());
-		return findEntityType(schema, entityTypeName.getName());
-	}
+  @Override
+  public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) {
+    CsdlSchema schema = findSchema(entityTypeName.getNamespace());
+    return findEntityType(schema, entityTypeName.getName());
+  }
 
-	private CsdlEnumType findEnumType(CsdlSchema schema, String enumTypeName) {
-		for (CsdlEnumType enumType : schema.getEnumTypes()) {
-			if (enumType.getName().equals(enumTypeName)) {
-				return enumType;
-			}
-		}
+  private CsdlEnumType findEnumType(CsdlSchema schema, String enumTypeName) {
+    for (CsdlEnumType enumType : schema.getEnumTypes()) {
+      if (enumType.getName().equals(enumTypeName)) {
+        return enumType;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	@Override
-	public CsdlEnumType getEnumType(FullQualifiedName enumTypeName)
-			throws ODataException {
-		CsdlSchema schema = findSchema(enumTypeName.getNamespace());
-		return findEnumType(schema, enumTypeName.getName());
-	}
+  @Override
+  public CsdlEnumType getEnumType(FullQualifiedName enumTypeName) {
+    CsdlSchema schema = findSchema(enumTypeName.getNamespace());
+    return findEnumType(schema, enumTypeName.getName());
+  }
 
-	@Override
-	public CsdlTypeDefinition getTypeDefinition(FullQualifiedName typeDefinitionName)
-			throws ODataException {
-		System.out.println(">> getTypeDefinition");
-		// TODO Auto-generated method stub
-		return super.getTypeDefinition(typeDefinitionName);
-	}
+  @Override
+  public CsdlTypeDefinition getTypeDefinition(FullQualifiedName typeDefinitionName) throws ODataException {
+    System.out.println(">> getTypeDefinition");
+    // TODO Auto-generated method stub
+    return super.getTypeDefinition(typeDefinitionName);
+  }
 
-	private CsdlComplexType findComplexType(CsdlSchema schema, String complexTypeName) {
-		for (CsdlComplexType complexType : schema.getComplexTypes()) {
-			if (complexType.getName().equals(complexTypeName)) {
-				return complexType;
-			}
-		}
+  private CsdlComplexType findComplexType(CsdlSchema schema, String complexTypeName) {
+    for (CsdlComplexType complexType : schema.getComplexTypes()) {
+      if (complexType.getName().equals(complexTypeName)) {
+        return complexType;
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	@Override
-	public CsdlComplexType getComplexType(FullQualifiedName complexTypeName)
-			throws ODataException {
-		CsdlSchema schema = findSchema(complexTypeName.getNamespace());
-		return findComplexType(schema, complexTypeName.getName());
-	}
+  @Override
+  public CsdlComplexType getComplexType(FullQualifiedName complexTypeName) {
+    CsdlSchema schema = findSchema(complexTypeName.getNamespace());
+    return findComplexType(schema, complexTypeName.getName());
+  }
 
-	@Override
-	public List<CsdlAction> getActions(FullQualifiedName actionName)
-			throws ODataException {
-		System.out.println(">> getActions");
-		// TODO Auto-generated method stub
-		return super.getActions(actionName);
-	}
+  @Override
+  public List<CsdlAction> getActions(FullQualifiedName actionName) throws ODataException {
+    System.out.println(">> getActions");
+    // TODO Auto-generated method stub
+    return super.getActions(actionName);
+  }
 
-	@Override
-	public List<CsdlFunction> getFunctions(FullQualifiedName functionName)
-			throws ODataException {
-		System.out.println(">> getFunctions");
-		// TODO Auto-generated method stub
-		return super.getFunctions(functionName);
-	}
+  @Override
+  public List<CsdlFunction> getFunctions(FullQualifiedName functionName) throws ODataException {
+    System.out.println(">> getFunctions");
+    // TODO Auto-generated method stub
+    return super.getFunctions(functionName);
+  }
 
-	@Override
-	public CsdlTerm getTerm(FullQualifiedName termName) throws ODataException {
-		System.out.println(">> getTerm");
-		// TODO Auto-generated method stub
-		return super.getTerm(termName);
-	}
+  @Override
+  public CsdlTerm getTerm(FullQualifiedName termName) throws ODataException {
+    System.out.println(">> getTerm");
+    // TODO Auto-generated method stub
+    return super.getTerm(termName);
+  }
 
-	private CsdlEntitySet findEntitySetInSchemas(String entitySetName)
-			throws ODataException {
-		List<CsdlSchema> schemas = getSchemas();
-		for (CsdlSchema schema : schemas) {
-			CsdlEntityContainer entityContainer = schema.getEntityContainer();
-			List<CsdlEntitySet> entitySets = entityContainer.getEntitySets();
-			for (CsdlEntitySet entitySet : entitySets) {
-				if (entitySet.getName().equals(entitySetName)) {
-					return entitySet;
-				}
-			}
-		}
-		return null;
-	}
+  private CsdlEntitySet findEntitySetInSchemas(String entitySetName) {
+    List<CsdlSchema> schemas = getSchemas();
+    for (CsdlSchema schema : schemas) {
+      CsdlEntityContainer entityContainer = schema.getEntityContainer();
+      List<CsdlEntitySet> entitySets = entityContainer.getEntitySets();
+      for (CsdlEntitySet entitySet : entitySets) {
+        if (entitySet.getName().equals(entitySetName)) {
+          return entitySet;
+        }
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public CsdlEntitySet getEntitySet(FullQualifiedName entityContainer,
-			String entitySetName) throws ODataException {
-		return findEntitySetInSchemas(entitySetName);
-	}
+  @Override
+  public CsdlEntitySet getEntitySet(FullQualifiedName entityContainer,
+                                    String entitySetName) {
+    return findEntitySetInSchemas(entitySetName);
+  }
 
-	@Override
-	public CsdlSingleton getSingleton(FullQualifiedName entityContainer,
-			String singletonName) throws ODataException {
-		System.out.println(">> getSingleton");
-		// TODO Auto-generated method stub
-		return super.getSingleton(entityContainer, singletonName);
-	}
+  @Override
+  public CsdlSingleton getSingleton(FullQualifiedName entityContainer,
+                                    String singletonName) throws ODataException {
+    System.out.println(">> getSingleton");
+    // TODO Auto-generated method stub
+    return super.getSingleton(entityContainer, singletonName);
+  }
 
-	@Override
-	public CsdlActionImport getActionImport(FullQualifiedName entityContainer,
-			String actionImportName) throws ODataException {
-		System.out.println(">> getActionImport");
-		// TODO Auto-generated method stub
-		return super.getActionImport(entityContainer, actionImportName);
-	}
+  @Override
+  public CsdlActionImport getActionImport(FullQualifiedName entityContainer,
+                                          String actionImportName) throws ODataException {
+    System.out.println(">> getActionImport");
+    // TODO Auto-generated method stub
+    return super.getActionImport(entityContainer, actionImportName);
+  }
 
-	@Override
-	public CsdlFunctionImport getFunctionImport(FullQualifiedName entityContainer,
-			String functionImportName) throws ODataException {
-		System.out.println(">> getFunctionImport");
-		// TODO Auto-generated method stub
-		return super.getFunctionImport(entityContainer, functionImportName);
-	}
+  @Override
+  public CsdlFunctionImport getFunctionImport(FullQualifiedName entityContainer,
+                                              String functionImportName) throws ODataException {
+    System.out.println(">> getFunctionImport");
+    // TODO Auto-generated method stub
+    return super.getFunctionImport(entityContainer, functionImportName);
+  }
 
-	@Override
-	public CsdlEntityContainerInfo getEntityContainerInfo(
-			FullQualifiedName entityContainerName) throws ODataException {
-		CsdlEntityContainer container = getEntityContainer();
-		FullQualifiedName fqName = new FullQualifiedName(container.getName(),
-				container.getName());
-		CsdlEntityContainerInfo info = new CsdlEntityContainerInfo();
-		info.setContainerName(fqName);
-		return info;
-	}
+  @Override
+  public CsdlEntityContainerInfo getEntityContainerInfo(
+      FullQualifiedName entityContainerName) {
+    CsdlEntityContainer container = getEntityContainer();
+    FullQualifiedName fqName = new FullQualifiedName(container.getName(),
+        container.getName());
+    CsdlEntityContainerInfo info = new CsdlEntityContainerInfo();
+    info.setContainerName(fqName);
+    return info;
+  }
 
-	@Override
-	public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-		System.out.println(">> getAliasInfos");
-		// TODO Auto-generated method stub
-		return super.getAliasInfos();
-	}
+  @Override
+  public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
+    System.out.println(">> getAliasInfos");
+    // TODO Auto-generated method stub
+    return super.getAliasInfos();
+  }
 
-	// DI
+  // DI
 
-	public void setSchemas(List<CsdlSchema> schemas) {
-		this.schemas = schemas;
-	}
+  public void setSchemas(List<CsdlSchema> schemas) {
+    this.schemas = schemas;
+  }
 
-	public String getContainerName() {
-		return containerName;
-	}
+  public String getContainerName() {
+    return containerName;
+  }
 
-	public void setContainerName(String containerName) {
-		this.containerName = containerName;
-	}
+  public void setContainerName(String containerName) {
+    this.containerName = containerName;
+  }
 
 }

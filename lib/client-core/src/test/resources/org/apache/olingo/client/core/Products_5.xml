@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://odatae2etest.azurewebsites.net/javatest/DefaultService/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" m:context="http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Products/$entity">
+  <id>http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)</id>
+  <category term="#Microsoft.Test.OData.Services.ODataWCFService.Product" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <link rel="edit" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Details" type="application/atom+xml;type=feed" title="Details"><m:inline><feed><ref xmlns="http://docs.oasis-open.org/odata/ns/metadata" id="http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Details"/></feed></m:inline></link>
+  <title />
+  <updated>2014-03-28T11:24:49Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductID m:type="Int32">5</d:ProductID>
+      <d:Name>Cheetos</d:Name>
+      <d:QuantityPerUnit>100g Bag</d:QuantityPerUnit>
+      <d:UnitPrice m:type="Single">3.24</d:UnitPrice>
+      <d:QuantityInStock m:type="Int32">100</d:QuantityInStock>
+      <d:Discontinued m:type="Boolean">true</d:Discontinued>
+      <d:UserAccess m:type="#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel">None</d:UserAccess>
+      <d:SkinColor m:type="#Microsoft.Test.OData.Services.ODataWCFService.Color">Red</d:SkinColor>
+      <d:CoverColors m:type="#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)">
+        <m:element>Green</m:element>
+        <m:element>Blue</m:element>
+        <m:element>Blue</m:element>
+      </d:CoverColors>
+    </m:properties>
+  </content>
+</entry>

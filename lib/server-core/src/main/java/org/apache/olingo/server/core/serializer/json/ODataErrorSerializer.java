@@ -21,8 +21,8 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.IOException;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ODataError;
-import org.apache.olingo.commons.api.ODataErrorDetail;
+import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
 import com.fasterxml.jackson.core.JsonGenerator;

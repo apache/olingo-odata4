@@ -35,7 +35,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.HeaderName;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -44,7 +43,8 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchContr
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ODataRuntimeException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,76 +112,46 @@ public abstract class AbstractODataResponse implements ODataResponse {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Collection<String> getHeaderNames() {
     return headers.keySet();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Collection<String> getHeader(final String name) {
     return headers.get(name);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Collection<String> getHeader(final HeaderName name) {
-    return headers.get(name.toString());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getETag() {
-    final Collection<String> etag = getHeader(HeaderName.etag);
-    return etag == null || etag.isEmpty()
-            ? null
-            : etag.iterator().next();
+    final Collection<String> etag = getHeader(HttpHeader.ETAG);
+    return etag == null || etag.isEmpty() ? null : etag.iterator().next();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getContentType() {
-    final Collection<String> contentTypes = getHeader(HeaderName.contentType);
-    return contentTypes == null || contentTypes.isEmpty()
-            ? null
-            : contentTypes.iterator().next();
+    final Collection<String> contentTypes = getHeader(HttpHeader.CONTENT_TYPE);
+    return contentTypes == null || contentTypes.isEmpty() ? null : contentTypes.iterator().next();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public int getStatusCode() {
     return statusCode;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getStatusMessage() {
     return statusMessage;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public final ODataResponse initFromHttpResponse(final HttpResponse res) {
     try {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
-    } catch (Exception e) {
+    } catch (final IllegalStateException e) {
+      LOG.error("Error retrieving payload", e);
+      throw new ODataRuntimeException(e);
+    } catch (final IOException e) {
       LOG.error("Error retrieving payload", e);
       throw new ODataRuntimeException(e);
     }
@@ -205,9 +175,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataResponse initFromBatch(
           final Map.Entry<Integer, String> responseLine,
@@ -229,9 +196,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public ODataResponse initFromEnclosedPart(final InputStream part) {
     try {
@@ -275,9 +239,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public void close() {
     odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
@@ -287,9 +248,6 @@ public abstract class AbstractODataResponse implements ODataResponse {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public InputStream getRawResponse() {
     if (HttpStatus.SC_NO_CONTENT == getStatusCode()) {

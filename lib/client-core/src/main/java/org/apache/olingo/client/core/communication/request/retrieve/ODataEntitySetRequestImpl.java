@@ -25,11 +25,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.format.ODataFormat;
-import org.apache.olingo.commons.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 
 /**
  * This class implements an OData EntitySet query request.
@@ -52,7 +52,7 @@ public class ODataEntitySetRequestImpl<ES extends ClientEntitySet>
   }
 
   @Override
-  public ODataFormat getDefaultFormat() {
+  public ContentType getDefaultFormat() {
     return odataClient.getConfiguration().getDefaultPubFormat();
   }
 
@@ -79,7 +79,7 @@ public class ODataEntitySetRequestImpl<ES extends ClientEntitySet>
       if (entitySet == null) {
         try {
           final ResWrap<EntityCollection> resource =
-              odataClient.getDeserializer(ODataFormat.fromString(getContentType())).
+              odataClient.getDeserializer(ContentType.parse(getContentType())).
                   toEntitySet(getRawResponse());
 
           entitySet = (ES) odataClient.getBinder().getODataEntitySet(resource);

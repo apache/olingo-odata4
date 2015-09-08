@@ -55,7 +55,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrimEntity() throws Exception {
-    final DataProvider dataProvider = new DataProvider();
+    final DataProvider dataProvider = new DataProvider(edm);
     final Entity entity = dataProvider.readAll(esAllPrim).getEntities().get(2);
     Assert.assertEquals(16, entity.getProperties().size());
 
@@ -65,7 +65,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllKeyEntity() throws Exception {
-    final DataProvider dataProvider = new DataProvider();
+    final DataProvider dataProvider = new DataProvider(edm);
     final Entity entity = dataProvider.readAll(esAllKey).getEntities().get(0);
     Assert.assertEquals(13, entity.getProperties().size());
 
@@ -87,7 +87,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrim() throws Exception {
-    final DataProvider data = new DataProvider();
+    final DataProvider data = new DataProvider(edm);
     EntityCollection outSet = data.readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
@@ -107,7 +107,8 @@ public class DataProviderTest {
 
   @Test
   public void esCollAllPrim() throws Exception {
-    EntityCollection outSet = new DataProvider().readAll(esCollAllPrim);
+    final DataProvider dataProvider = new DataProvider(edm);
+    EntityCollection outSet = dataProvider.readAll(esCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
@@ -120,9 +121,11 @@ public class DataProviderTest {
 
   @Test
   public void esCompAllPrim() throws Exception {
-    EntityCollection outSet = new DataProvider().readAll(esCompAllPrim);
+    final DataProvider dataProvider = new DataProvider(edm);
+    
+    EntityCollection outSet = dataProvider.readAll(esCompAllPrim);
 
-    Assert.assertEquals(3, outSet.getEntities().size());
+    Assert.assertEquals(4, outSet.getEntities().size());
     Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(1);
     Assert.assertTrue(complex.isComplex());
@@ -133,7 +136,9 @@ public class DataProviderTest {
 
   @Test
   public void esMixPrimCollComp() throws Exception {
-    EntityCollection outSet = new DataProvider().readAll(esMixPrimCollComp);
+    final DataProvider dataProvider = new DataProvider(edm);
+    
+    EntityCollection outSet = dataProvider.readAll(esMixPrimCollComp);
 
     Assert.assertEquals(3, outSet.getEntities().size());
     Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
@@ -148,7 +153,7 @@ public class DataProviderTest {
     Assert.assertEquals(2, linkedComplexValue.getValue().size());
     Property lcProp = linkedComplexValue.getValue().get(0);
     Assert.assertFalse(lcProp.isCollection());
-    Assert.assertEquals(123, lcProp.getValue());
+    Assert.assertEquals((short) 123, lcProp.getValue());
     //
     Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
     Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
@@ -156,13 +161,14 @@ public class DataProviderTest {
 
   @Test
   public void esMedia() throws Exception {
-    DataProvider dataProvider = new DataProvider();
+    DataProvider dataProvider = new DataProvider(edm);
+    
     Entity entity = dataProvider.read(esMedia, Arrays.asList(mockParameter("PropertyInt16", "3")));
     Assert.assertNotNull(dataProvider.readMedia(entity));
     dataProvider.delete(esMedia, entity);
     Assert.assertEquals(3, dataProvider.readAll(esMedia).getEntities().size());
     entity = dataProvider.create(esMedia);
-    Assert.assertEquals(3, entity.getProperty("PropertyInt16").getValue());
+    Assert.assertEquals((short) 3, entity.getProperty("PropertyInt16").getValue());
     dataProvider.setMedia(entity, new byte[] { 1, 2, 3, 4 }, "x/y");
     Assert.assertArrayEquals(new byte[] { 1, 2, 3, 4 }, dataProvider.readMedia(entity));
     Assert.assertEquals("x/y", entity.getMediaContentType());

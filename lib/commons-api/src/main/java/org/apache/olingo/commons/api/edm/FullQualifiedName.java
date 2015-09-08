@@ -20,13 +20,10 @@ package org.apache.olingo.commons.api.edm;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 /**
  * A full qualified name of any element in the EDM consists of a name and a namespace.
  */
-public class FullQualifiedName implements Serializable {
+public final class FullQualifiedName implements Serializable {
 
   private static final long serialVersionUID = -4063629050858999076L;
 
@@ -83,13 +80,32 @@ public class FullQualifiedName implements Serializable {
   }
 
   @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    FullQualifiedName that = (FullQualifiedName) o;
+
+    if (namespace != null ? !namespace.equals(that.namespace) : that.namespace != null) {
+      return false;
+    }
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    return !(fqn != null ? !fqn.equals(that.fqn) : that.fqn != null);
+
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public int hashCode() {
+    int result = namespace != null ? namespace.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (fqn != null ? fqn.hashCode() : 0);
+    return result;
   }
 
   @Override

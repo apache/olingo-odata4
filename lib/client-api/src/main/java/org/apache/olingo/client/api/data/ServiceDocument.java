@@ -18,15 +18,13 @@
  */
 package org.apache.olingo.client.api.data;
 
-import org.apache.olingo.client.api.domain.ClientServiceDocument;
-
 import java.net.URI;
 import java.util.List;
 
 /**
  * REST resource for an <tt>ODataServiceDocument</tt>.
  *
- * @see ClientServiceDocument
+ * @see org.apache.olingo.client.api.domain.ClientServiceDocument
  */
 public interface ServiceDocument {
 

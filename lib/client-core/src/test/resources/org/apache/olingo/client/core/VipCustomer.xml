@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xml:base="http://odatae2etest.azurewebsites.net/javatest/DefaultService/" 
+       xmlns="http://www.w3.org/2005/Atom" 
+       xmlns:d="http://docs.oasis-open.org/odata/ns/data" 
+       xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" 
+       xmlns:georss="http://www.georss.org/georss" 
+       xmlns:gml="http://www.opengis.net/gml" 
+       m:context="http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#VipCustomer">
+  <id>http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer</id>
+  <category term="#Microsoft.Test.OData.Services.ODataWCFService.Customer" scheme="http://docs.oasis-open.org/odata/ns/scheme" />
+  <link rel="edit" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Parent" type="application/atom+xml;type=entry" title="Parent" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Parent" />
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Orders" type="application/atom+xml;type=feed" title="Orders"><m:inline><feed><ref xmlns="http://docs.oasis-open.org/odata/ns/metadata" id="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Orders"/></feed></m:inline></link>
+  <link rel="http://docs.oasis-open.org/odata/ns/related/Company" type="application/atom+xml;type=entry" title="Company" href="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Company" />
+  <title />
+  <updated>2014-03-28T13:03:32Z</updated>
+  <author>
+    <name />
+  </author>
+  <m:action metadata="#Microsoft.Test.OData.Services.ODataWCFService.ResetAddress" 
+            target="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Microsoft.Test.OData.Services.ODataWCFService.ResetAddress" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.ResetAddress"/>
+  <m:action metadata="#Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress" 
+            target="http://odatae2etest.azurewebsites.net/javatest/DefaultService/VipCustomer/Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress" 
+            title="Microsoft.Test.OData.Services.ODataWCFService.GetHomeAddress"/>
+  <content type="application/xml">
+    <m:properties>
+      <d:PersonID m:type="Int32">1</d:PersonID>
+      <d:FirstName>Bob</d:FirstName>
+      <d:LastName>Cat</d:LastName>
+      <d:MiddleName>Vat</d:MiddleName>
+      <d:HomeAddress m:type="#Microsoft.Test.OData.Services.ODataWCFService.Address">
+        <d:Street>1 Microsoft Way</d:Street>
+        <d:City>London</d:City>
+        <d:PostalCode>98052</d:PostalCode>
+      </d:HomeAddress>
+      <d:Home m:type="GeographyPoint">
+        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>32.1 23.1</gml:pos>
+        </gml:Point>
+      </d:Home>
+      <d:Numbers m:type="#Collection(String)">
+        <m:element>111-111-1111</m:element>
+      </d:Numbers>
+      <d:Emails m:type="#Collection(String)">
+        <m:element>abc@abc.com</m:element>
+      </d:Emails>
+      <d:City>London</d:City>
+      <d:Birthday m:type="DateTimeOffset">1957-04-03T00:00:00Z</d:Birthday>
+      <d:TimeBetweenLastTwoOrders m:type="Duration">PT0.0000001S</d:TimeBetweenLastTwoOrders>
+    </m:properties>
+  </content>
+</entry>

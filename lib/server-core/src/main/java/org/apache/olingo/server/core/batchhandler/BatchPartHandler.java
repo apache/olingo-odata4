@@ -18,30 +18,30 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.batch.BatchFacade;
-import org.apache.olingo.server.api.batch.exception.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.core.ODataHandler;
 import org.apache.olingo.server.core.batchhandler.referenceRewriting.BatchReferenceRewriter;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchPartHandler {
   private final ODataHandler oDataHandler;
   private final BatchProcessor batchProcessor;
-  private final BatchFacade batchFascade;
+  private final BatchFacade batchFacade;
   private final BatchReferenceRewriter rewriter;
 
   public BatchPartHandler(final ODataHandler oDataHandler, final BatchProcessor processor,
-      final BatchFacade batchFascade) {
+      final BatchFacade batchFacade) {
     this.oDataHandler = oDataHandler;
     batchProcessor = processor;
-    this.batchFascade = batchFascade;
+    this.batchFacade = batchFacade;
     rewriter = new BatchReferenceRewriter();
   }
 
@@ -49,8 +49,8 @@ public class BatchPartHandler {
     return handle(request, true);
   }
 
-  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws ODataApplicationException,
-      ODataLibraryException {
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request)
+      throws ODataApplicationException, ODataLibraryException {
     if (request.isChangeSet()) {
       return handleChangeSet(request);
     } else {
@@ -62,7 +62,7 @@ public class BatchPartHandler {
 
   public ODataResponse handle(final ODataRequest request, final boolean isChangeSet)
       throws BatchDeserializerException {
-    final ODataResponse response;
+    ODataResponse response;
 
     if (isChangeSet) {
       rewriter.replaceReference(request);
@@ -75,9 +75,9 @@ public class BatchPartHandler {
     }
 
     // Add content id to response
-    final String contentId = request.getHeader(BatchParserCommon.HTTP_CONTENT_ID);
+    final String contentId = request.getHeader(HttpHeader.CONTENT_ID);
     if (contentId != null) {
-      response.setHeader(BatchParserCommon.HTTP_CONTENT_ID, contentId);
+      response.setHeader(HttpHeader.CONTENT_ID, contentId);
     }
 
     return response;
@@ -85,7 +85,7 @@ public class BatchPartHandler {
 
   private ODataResponsePart handleChangeSet(final BatchRequestPart request) throws ODataApplicationException,
       ODataLibraryException {
-    return batchProcessor.processChangeSet(batchFascade, request.getRequests());
+    return batchProcessor.processChangeSet(batchFacade, request.getRequests());
   }
 
 }
