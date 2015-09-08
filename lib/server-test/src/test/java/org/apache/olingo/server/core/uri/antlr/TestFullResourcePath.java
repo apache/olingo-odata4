@@ -48,6 +48,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
@@ -5346,6 +5347,26 @@ public class TestFullResourcePath {
   public void testNavigationWithMoreThanOneKey() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
         + "(PropertyInt=1,PropertyString='2')");
+  }
+  
+  @Test
+  public void testEntitySetsInsteadOfNavigationProperties() {
+    testUri.runEx("ESAllPrim(0)/ESAllPrim(0)/ESAllPrim(0)")
+      .isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+  }
+  
+  @Test
+  public void testNavPropertySameNameAsEntitySet() throws Exception {
+    
+    testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
+      .goPath()
+      .at(0).isEntitySet("ESNavProp")
+      .at(0).isKeyPredicate(0, "a", "1")
+      .at(1).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
+      .at(1).isKeyPredicate(0, "a", "2")    
+      .at(2).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
+      .at(2).isKeyPredicate(0, "a", "3")
+      .at(3).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, true);
   }
   
   @Test

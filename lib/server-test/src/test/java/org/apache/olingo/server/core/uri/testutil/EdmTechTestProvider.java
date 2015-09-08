@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -34,8 +35,10 @@ import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 /**
  * Implement the EdmTechProvider and
  * <li>adds a entity type <b>ETabc with</b> properties a,b,c,d,e,f</li>
+ * <li>adds a entity type <b>ETNavProp with</b> with a navigation property ESNavProp (named like the entity set)</li>
  * <li>adds a complex type <b>CTabc</b> with properties a,b,c,d,e,f</li>
  * <li>adds a <b>abc</b> entity set of type <b>ETabc</b></li>
+ * <li>adds a <b>ESNavProp</b> entity set of type <b>ETNavProp</b></li>
  */
 public class EdmTechTestProvider extends EdmTechProvider {
 
@@ -50,6 +53,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
   CsdlProperty propertyEInt16 = new CsdlProperty().setName("e").setType(nameInt16);
   CsdlProperty propertyFInt16 = new CsdlProperty().setName("f").setType(nameInt16);
 
+  public static final FullQualifiedName nameETNavProp = new FullQualifiedName(NAMESPACE, "ETNavProp");
   public static final FullQualifiedName nameCTabc = new FullQualifiedName(NAMESPACE, "CTabc");
   public static final FullQualifiedName nameETabc = new FullQualifiedName(NAMESPACE, "ETabc");
 
@@ -73,8 +77,12 @@ public class EdmTechTestProvider extends EdmTechProvider {
     if (nameContainer.equals(entityContainer)) {
       if (name.equals("ESabc")) {
         return new CsdlEntitySet()
-        .setName("ESabc")
-        .setType(nameETabc);
+            .setName("ESabc")
+            .setType(nameETabc);
+      } else if(name.equals("ESNavProp")) {
+        return new CsdlEntitySet()
+            .setName("ESNavProp")
+            .setType(nameETNavProp);
       }
     }
 
@@ -92,6 +100,17 @@ public class EdmTechTestProvider extends EdmTechProvider {
           propertyAInt16, propertyBInt16, propertyCInt16,
           propertyDInt16, propertyEInt16, propertyFInt16))
           .setKey(oneKeyPropertyInt16);
+    } else if(entityTypeName.equals(nameETNavProp)) {
+      return new CsdlEntityType()
+          .setName("ETNavProp")
+          .setProperties(Arrays.asList(propertyAInt16))
+          .setKey(oneKeyPropertyInt16)
+          .setNavigationProperties(Arrays.asList(new CsdlNavigationProperty[] {
+              new CsdlNavigationProperty()
+                .setCollection(true)
+                .setName("ESNavProp")
+                .setType(nameETNavProp)
+          }));
     }
 
     return super.getEntityType(entityTypeName);

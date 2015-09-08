@@ -323,13 +323,18 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     if (searchInContainer) {
       // check EntitySet
       EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
-      if (edmEntitySet != null) {
-        UriResourceEntitySetImpl uriResource = new UriResourceEntitySetImpl()
-            .setEntitSet(edmEntitySet);
-        context.contextUriInfo.addResourcePart(uriResource);
-        return null;
+      if( !context.contextUriInfo.getUriResourceParts().isEmpty() 
+          && context.contextUriInfo.getUriResourceParts().get(0) instanceof UriResourceEntitySet) {
+        edmEntitySet = null;
+      } else {
+        if (edmEntitySet != null) {
+          UriResourceEntitySetImpl uriResource = new UriResourceEntitySetImpl()
+              .setEntitSet(edmEntitySet);
+          context.contextUriInfo.addResourcePart(uriResource);
+          return null;
+        }
       }
-
+      
       // check Singleton
       EdmSingleton edmSingleton = edmEntityContainer.getSingleton(odi);
       if (edmSingleton != null) {
