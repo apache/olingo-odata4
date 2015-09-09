@@ -18,7 +18,14 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * Represents a logical edm:Le expression
+ */
 public interface EdmNot extends EdmDynamicAnnotationExpression {
-
+  
+  /**
+   * Returns a boolean value
+   * @return either true or false
+   */
   EdmDynamicAnnotationExpression getExpression();
 }

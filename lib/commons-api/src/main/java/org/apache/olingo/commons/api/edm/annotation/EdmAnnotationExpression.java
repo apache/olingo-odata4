@@ -18,13 +18,33 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * Super type of all annotation expressions
+ * A expression is either constant or dynamic
+ */
 public interface EdmAnnotationExpression {
 
+  /**
+   * Return true if the expression is constant
+   * @return true if the expression is constant
+   */
   boolean isConstant();
-
+  
+  /**
+   * Casts the expression to {@link EdmConstantAnnotationExpression}
+   * @return Constant Expression
+   */
   EdmConstantAnnotationExpression asConstant();
-
+  
+  /**
+   * Return true if the expression is dynamic
+   * @return true if the expression is dynamic
+   */
   boolean isDynamic();
-
+  
+  /**
+   * Cast the expression to {@link EdmDynamicAnnotationExpression}
+   * @return Dynamic Expression
+   */
   EdmDynamicAnnotationExpression asDynamic();
 }

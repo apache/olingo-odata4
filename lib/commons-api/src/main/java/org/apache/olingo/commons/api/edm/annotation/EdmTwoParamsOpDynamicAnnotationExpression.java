@@ -18,9 +18,20 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * Represents a generic expression with two child exprssions
+ */
 public interface EdmTwoParamsOpDynamicAnnotationExpression extends EdmDynamicAnnotationExpression {
 
+  /**
+   * Returns the first expression (left child)
+   * @return Child expression
+   */
   EdmDynamicAnnotationExpression getLeftExpression();
-
+  
+  /**
+   * Returns the second expression (right child)
+   * @return Child expression
+   */
   EdmDynamicAnnotationExpression getRightExpression();
 }

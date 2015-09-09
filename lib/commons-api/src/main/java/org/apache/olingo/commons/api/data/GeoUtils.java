@@ -59,6 +59,16 @@ public final class GeoUtils {
    * Get type based on given dimension (Geography / Geometry) and element name.
    *
    * @param dimension either geography or geometry
+   * @param elementName Element of return. Can be one of the following constants 
+   *        <ul>
+   *           <li>{@link Constants#ELEM_POINT}</li>
+   *           <li>{@link Constants#ELEM_MULTIPOINT}</li>
+   *           <li>{@link Constants#ELEM_LINESTRING}</li>
+   *           <li>{@link Constants#ELEM_MULTILINESTRING}</li> 
+   *           <li>{@link Constants#ELEM_POLYGON}</li>
+   *           <li>{@link Constants#ELEM_MULTIPOLYGON}</li>
+   *           <li>{@link Constants#ELEM_GEOCOLLECTION}</li>
+   *        </ul>
    * @return elementName name of type
    */
   public static EdmPrimitiveTypeKind getType(final Geospatial.Dimension dimension, final String elementName) {

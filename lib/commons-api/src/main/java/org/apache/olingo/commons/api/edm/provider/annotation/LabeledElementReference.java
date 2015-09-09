@@ -18,8 +18,16 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
+/**
+ *  The edm:LabeledElementReference expression returns the value of an 
+ *  edm:LabeledElement (see {@link LabeledElement}) expression.
+ */
 public interface LabeledElementReference extends DynamicAnnotationExpression {
-
+  
+  /**
+   * Returns the value of the edm:LabeledElement expression
+   * @return value of the edm:LabeledElement expression
+   */
   String getValue();
 
 }

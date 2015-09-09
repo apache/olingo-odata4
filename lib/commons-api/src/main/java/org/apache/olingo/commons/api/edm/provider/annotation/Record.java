@@ -22,10 +22,22 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
+/**
+ * The edm:Record expression enables a new entity type or complex type instance to be constructed.
+ * A record expression contains zero or more edm:PropertyValue (See {@link Record} )elements.
+ */
 public interface Record extends DynamicAnnotationExpression, CsdlAnnotatable {
-
+  
+  /**
+   * List of edm:PropertyValues (See {@link PropertyValue}
+   * @return List of edm:PropertyValues (See {@link PropertyValue}
+   */
   List<PropertyValue> getPropertyValues();
-
+  
+  /**
+   * Returns the entity type or complex type to be constructed.
+   * @return Entity type or complex type
+   */
   String getType();
 
 }

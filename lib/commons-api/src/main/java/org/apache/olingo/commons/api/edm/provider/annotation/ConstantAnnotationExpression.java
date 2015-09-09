@@ -18,23 +18,69 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
+/**
+ * Represents a constant expression
+ */
 public interface ConstantAnnotationExpression extends AnnotationExpression {
-
+  
+  /**
+   * Type of the constant expression
+   */
   public enum Type {
-
+    /**
+     * Type Edm.binary
+     */
     Binary,
+    /**
+     * Type Edm.Bool
+     */
     Bool,
+    /**
+     * Type Edm.Date
+     */
     Date,
+    /**
+     * Type Edm.DateTimeOffset
+     */
     DateTimeOffset,
+    /**
+     * Type Edm.Decimal
+     */
     Decimal,
+    /**
+     * Type Edm.Duration
+     */
     Duration,
+    /**
+     * Type Edm.EnumMeber
+     */
     EnumMember,
+    /**
+     * Type Edm.Float
+     */
     Float,
+    /**
+     * Type Edm.GUID
+     */
     Guid,
+    /**
+     * Type Integer
+     */
     Int,
+    /**
+     * Type Edm.String
+     */
     String,
+    /**
+     * Type Edm.TimeOfDay
+     */
     TimeOfDay;
-
+    
+    /**
+     * Creates a new type by a given string e.g. "TimeOfDay"
+     * @param value Type as string
+     * @return  Type
+     */
     public static Type fromString(final String value) {
       Type result = null;
       try {
@@ -46,11 +92,27 @@ public interface ConstantAnnotationExpression extends AnnotationExpression {
     }
   }
 
+  /**
+   * Returns the type of the constant exprssion
+   * @return type of the constant expresion
+   */
   Type getType();
-
+  
+  /**
+   * Sets the type of the constant expression
+   * @param type
+   */
   void setType(Type type);
-
+  
+  /**
+   * Value of the constant expression
+   * @return value of the constant expression as String
+   */
   String getValue();
-
+  
+  /**
+   * Sets the value of the constant expression
+   * @param value value of the constant expression
+   */
   void setValue(String value);
 }

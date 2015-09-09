@@ -22,10 +22,21 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
+/**
+ * Represents a MuliLineString.
+ * Either Edm.GeometryMultiLineString or Edm.GeographyMultiLineString
+ */
 public class MultiLineString extends ComposedGeospatial<LineString> {
 
   private static final long serialVersionUID = -5042414471218124125L;
-
+  
+  /**
+   * Creates a new MultiLineString
+   * 
+   * @param dimension     Dimension of the MultiLineString
+   * @param srid          SRID value
+   * @param lineStrings   List of lineStrings
+   */
   public MultiLineString(final Dimension dimension, final SRID srid, final List<LineString> lineStrings) {
     super(dimension, Type.MULTILINESTRING, srid, lineStrings);
   }

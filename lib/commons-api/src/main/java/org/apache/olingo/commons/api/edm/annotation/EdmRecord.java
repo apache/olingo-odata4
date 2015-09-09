@@ -23,10 +23,21 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 
+/**
+ * The edm:Record expression enables a new entity type or complex type instance to be constructed.
+ * A record expression contains zero or more edm:PropertyValue (See {@link EdmPropertyValue} )elements.
+ */
 public interface EdmRecord extends EdmDynamicAnnotationExpression, EdmAnnotatable {
-
+  
+  /**
+   * List of edm:PropertyValues (See {@link EdmPropertyValue}
+   * @return List of edm:PropertyValues (See {@link EdmPropertyValue}
+   */
   List<EdmPropertyValue> getPropertyValues();
-
+  
+  /**
+   * Returns the entity type or complex type to be constructed.
+   * @return Entity type or complex type
+   */
   EdmStructuredType getType();
-
 }

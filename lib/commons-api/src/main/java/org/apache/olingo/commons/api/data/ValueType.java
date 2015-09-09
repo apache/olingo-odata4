@@ -22,11 +22,45 @@ package org.apache.olingo.commons.api.data;
  * Defines the type of a value (see Valuable).
  */
 public enum ValueType {
-  PRIMITIVE, GEOSPATIAL, ENUM, COMPLEX, ENTITY,
+  /**
+   * Primitive value
+   */
+  PRIMITIVE, 
+  /**
+   * Geospatial value
+   */
+  GEOSPATIAL, 
+  /**
+   * Enum type
+   */
+  ENUM, 
+  /**
+   * Complex value
+   */
+  COMPLEX, 
+  /**
+   * Entity value
+   */
+  ENTITY,
+  /**
+   * Collection of primitive values
+   */
   COLLECTION_PRIMITIVE(PRIMITIVE),
+  /**
+   * Collection of geospatial values
+   */
   COLLECTION_GEOSPATIAL(GEOSPATIAL),
+  /**
+   * Collection of enum values
+   */
   COLLECTION_ENUM(ENUM),
+  /**
+   * Collection of complex values
+   */
   COLLECTION_COMPLEX(COMPLEX),
+  /**
+   * Collection of entities
+   */
   COLLECTION_ENTITY(ENTITY);
 
   private final ValueType baseType;

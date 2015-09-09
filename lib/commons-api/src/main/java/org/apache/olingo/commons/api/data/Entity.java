@@ -50,7 +50,11 @@ public class Entity extends Linked {
   public String getETag() {
     return eTag;
   }
-
+  
+  /**
+   * Sets ETag
+   * @param eTag ETag
+   */
   public void setETag(final String eTag) {
     this.eTag = eTag;
   }

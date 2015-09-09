@@ -22,10 +22,21 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
+/**
+ * Represents a collection of polygons.
+ * Either Edm.GeographyMultiPolygon or Edm.GeometryMultiPolygon
+ */
 public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
   private static final long serialVersionUID = -160184788048512883L;
-
+  
+  /**
+   * Creates a collection of polygons
+   * 
+   * @param dimension   Dimension of the polygons
+   * @param srid        SRID value
+   * @param polygons    List of polygons
+   */
   public MultiPolygon(final Dimension dimension, final SRID srid, final List<Polygon> polygons) {
     super(dimension, Type.MULTIPOLYGON, srid, polygons);
   }

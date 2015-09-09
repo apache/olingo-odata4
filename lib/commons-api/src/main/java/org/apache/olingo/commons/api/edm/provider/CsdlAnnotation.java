@@ -23,6 +23,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 
+/**
+ * Represents a CSDL annotation
+ */
 public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private static final long serialVersionUID = -7137313445729486860L;
@@ -34,33 +37,64 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
   private List<CsdlAnnotation> annotation = new ArrayList<CsdlAnnotation>();
 
   private AnnotationExpression annotationExpression;
-
+  
+  /**
+   * Returns the annotated expression
+   * @return expression annotated expression
+   */
   public AnnotationExpression getExpression() {
     return annotationExpression;
   }
-
+  
+  /**
+   * Sets the annotated expression
+   * @param annotationExpression  annotated expression
+   */
   public void setExpression(final AnnotationExpression annotationExpression) {
     this.annotationExpression = annotationExpression;
   }
-
+  
+  /**
+   * Returns the annotated term
+   * @return Term
+   */
   public String getTerm() {
     return term;
   }
-
+  
+  /**
+   * Sets the annotated expression
+   * @param term term
+   * @return this instance
+   */
   public CsdlAnnotation setTerm(final String term) {
     this.term = term;
     return this;
   }
-
+  
+  /**
+   * Returns the annotated qualifier
+   * @return annotated qualifier
+   */
   public String getQualifier() {
     return qualifier;
   }
-
+  
+  /**
+   * Sets the annotated qualifier
+   * @param qualifier annotated qualifier
+   * @return this instance
+   */
   public CsdlAnnotation setQualifier(final String qualifier) {
     this.qualifier = qualifier;
     return this;
   }
-
+  
+  /**
+   * Sets a list of annotations
+   * @param annotation list of annotations
+   * @return this instance
+   */
   public CsdlAnnotation setAnnotations(final List<CsdlAnnotation> annotation) {
     this.annotation = annotation;
     return this;

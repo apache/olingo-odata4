@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * Represents an action import CSDL item
+ */
 public class CsdlActionImport extends CsdlOperationImport {
 
   private static final long serialVersionUID = 9186148718228340987L;
@@ -37,20 +40,38 @@ public class CsdlActionImport extends CsdlOperationImport {
     this.entitySet = entitySet;
     return this;
   }
-
+  
+  /**
+   * Returns the full qualified name of the action as string
+   * @return full qualified name
+   */
   public String getAction() {
     return action.getFullQualifiedNameAsString();
   }
-
+  
+  /**
+   * Returns the full qualified name of the action 
+   * @return full qualified name
+   */
   public FullQualifiedName getActionFQN() {
     return action;
   }
-
+  
+  /**
+   * Sets the full qualified name of the action as string
+   * @param action full qualified name
+   * @return this instance
+   */
   public CsdlActionImport setAction(final String action) {
     this.action = new FullQualifiedName(action);
     return this;
   }
 
+  /**
+   * Sets the full qualified name of the action
+   * @param action full qualified name
+   * @return this instance
+   */
   public CsdlActionImport setAction(final FullQualifiedName action) {
     this.action = action;
     return this;

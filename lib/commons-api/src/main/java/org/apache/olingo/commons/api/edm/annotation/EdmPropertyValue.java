@@ -20,10 +20,21 @@ package org.apache.olingo.commons.api.edm.annotation;
 
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
+/**
+ * The edm:PropertyValue element supplies a value to a property on the type instantiated by an 
+ * edm:Record expression (See {@link EdmRecord}). The value is obtained by evaluating an expression.
+ */
 public interface EdmPropertyValue extends EdmDynamicAnnotationExpression, EdmAnnotatable {
-
+  /**
+   * Property name
+   * @return Property name
+   */
   String getProperty();
-
+  
+  /**
+   * Evaluated value of the expression (property value)
+   * @return evaluated value of the expression
+   */
   EdmAnnotationExpression getValue();
 
 }

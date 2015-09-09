@@ -30,7 +30,14 @@ public class ResWrap<T> {
   private final URI contextURL;
   private final String metadataETag;
   private final T payload;
-
+  
+  /**
+   * Creates a new response payload wrapper
+   * 
+   * @param contextURL    Context URI of the response
+   * @param metadataETag  ETag of the payload
+   * @param payload       Payload of the response
+   */
   public ResWrap(final URI contextURL, final String metadataETag, final T payload) {
     this.contextURL = contextURL;
     this.metadataETag = metadataETag;

@@ -22,10 +22,20 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
+/**
+ * Represents a line string. 
+ * Either of type Edm.GeographyLineString or Edm.GeometryLineString
+ */
 public class LineString extends ComposedGeospatial<Point> {
 
   private static final long serialVersionUID = 3207958185407535907L;
-
+  
+  /**
+   * Creates a new LineString
+   * @param dimension     Dimension of the LineString
+   * @param srid          SRID value
+   * @param points        List of Points
+   */
   public LineString(final Dimension dimension, final SRID srid, final List<Point> points) {
     super(dimension, Type.LINESTRING, srid, points);
   }

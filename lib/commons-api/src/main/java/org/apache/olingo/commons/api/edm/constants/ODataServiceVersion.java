@@ -25,10 +25,21 @@ import java.util.regex.Pattern;
  * This class is a container for the supported ODataServiceVersions.
  */
 public enum ODataServiceVersion {
-
+  /**
+   * OData Version 1.0
+   */
   V10("1.0"),
+  /**
+   * OData Version 2.0
+   */
   V20("2.0"),
+  /**
+   * OData Version 3.0
+   */
   V30("3.0"),
+  /**
+   * OData Version 4.0
+   */
   V40("4.0");
 
   private static final Pattern DATASERVICEVERSIONPATTERN = Pattern.compile("(\\p{Digit}+\\.\\p{Digit}+)(:?;.*)?");

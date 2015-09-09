@@ -24,11 +24,19 @@ import java.net.URI;
  * A deleted entity contains the reason for deletion and the id.
  */
 public class DeletedEntity {
-
+  
+  /**
+   * Reason of the removal from the list
+   */
   public enum Reason {
+    /**
+     * The entity was deleted
+     */
     deleted,
+    /**
+     * The data of the entity as changed and not any longer part of the response
+     */
     changed
-
   }
 
   private URI id;

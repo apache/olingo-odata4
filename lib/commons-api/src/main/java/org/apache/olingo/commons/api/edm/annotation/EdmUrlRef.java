@@ -18,7 +18,15 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * The edm:UrlRef expression enables a value to be obtained by sending a GET request to the value of 
+ * the UrlRef expression. 
+ */
 public interface EdmUrlRef extends EdmDynamicAnnotationExpression {
-
+  
+  /**
+   * Returns a expression of type Edm.String
+   * @return expression of type Edm.String
+   */
   EdmAnnotationExpression getValue();
 }

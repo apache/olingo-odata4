@@ -32,7 +32,15 @@ public class Polygon extends Geospatial {
   final ComposedGeospatial<Point> interior;
 
   final ComposedGeospatial<Point> exterior;
-
+  
+  /**
+   * Creates a new polygon
+   * 
+   * @param dimension   Dimension of the polygon
+   * @param srid        SRID values
+   * @param interior    List of interior points
+   * @param exterior    List of exterior point
+   */
   public Polygon(final Dimension dimension, final SRID srid,
       final List<Point> interior, final List<Point> exterior) {
 
@@ -42,7 +50,7 @@ public class Polygon extends Geospatial {
   }
 
   /**
-   * Gest interior points.
+   * Gets interior points.
    *
    * @return interior points.
    */

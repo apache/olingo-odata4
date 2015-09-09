@@ -18,8 +18,14 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * Represents an annotation path
+ */
 public interface EdmAnnotationPath extends EdmDynamicAnnotationExpression {
-
+  
+  /**
+   * Value of the path
+   * @return value of the path
+   */
   String getValue();
-
 }

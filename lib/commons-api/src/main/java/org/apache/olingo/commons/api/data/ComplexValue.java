@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the value of a complex property.
+ */
 public class ComplexValue extends Linked {
 
   private final List<Property> value = new ArrayList<Property>();

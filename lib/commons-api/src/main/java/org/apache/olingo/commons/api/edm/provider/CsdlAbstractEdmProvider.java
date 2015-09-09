@@ -23,6 +23,9 @@ import java.util.List;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * Dummy implementation of {@link CsdlEdmProvider}
+ */
 public abstract class CsdlAbstractEdmProvider implements CsdlEdmProvider {
 
   @Override

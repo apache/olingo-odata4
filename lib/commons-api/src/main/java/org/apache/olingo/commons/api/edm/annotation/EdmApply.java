@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
+/**
+ * Represents an Edm:Apply expression
+ */
 public interface EdmApply extends EdmDynamicAnnotationExpression, EdmAnnotatable {
 
   /**
@@ -37,6 +40,10 @@ public interface EdmApply extends EdmDynamicAnnotationExpression, EdmAnnotatable
    * @return function full qualified name
    */
   String getFunction();
-
+  
+  /**
+   * Returns the expressions applied to the parameters of the function
+   * @return List of expression
+   */
   List<EdmAnnotationExpression> getParameters();
 }

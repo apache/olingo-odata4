@@ -18,12 +18,25 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
+import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
+/**
+ * The edm:PropertyValue element supplies a value to a property on the type instantiated by an 
+ * edm:Record expression (See {@link EdmRecord}). The value is obtained by evaluating an expression.
+ */
 public interface PropertyValue extends DynamicAnnotationExpression, CsdlAnnotatable {
-
+  
+  /**
+   * Property name
+   * @return Property name
+   */
   String getProperty();
-
+  
+  /**
+   * Evaluated value of the expression (property value)
+   * @return evaluated value of the expression
+   */
   AnnotationExpression getValue();
 
 }

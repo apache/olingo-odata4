@@ -22,17 +22,44 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
+/**
+ * Represents an edm:Cast expression.
+ * Casts the value obtained from its single child expression to the specified type
+ */
 public interface EdmCast extends EdmDynamicAnnotationExpression, EdmAnnotatable {
-
+  /**
+   * Returns the facet attribute MaxLength
+   * @return Returns the facet attribute MaxLength
+   */
   Integer getMaxLength();
-
+  
+  /**
+   * Returns the facet attribute Precision
+   * @return Returns the facet attribute Precision
+   */
   Integer getPrecision();
-
+  
+  /**
+   * Returns the facet attribute Scale
+   * @return Returns the facet attribute Scale
+   */
   Integer getScale();
 
+  /**
+   * Returns the facet attribute SRID
+   * @return Returns the facet attribute SRID
+   */
   SRID getSrid();
 
+  /**
+   * Value cast to
+   * @return value cast to
+   */
   EdmType getType();
-
+  
+  /**
+   * Cast value of the expression
+   * @return Cast value
+   */
   EdmDynamicAnnotationExpression getValue();
 }

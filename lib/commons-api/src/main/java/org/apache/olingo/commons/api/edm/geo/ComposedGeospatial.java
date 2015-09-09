@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
+ /**
  * Abstract base class for all Geometries that are composed out of other geospatial elements.
+ *
+ * @param <T> Type of the contained geospatial elements
  */
 public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatial implements Iterable<T> {
 

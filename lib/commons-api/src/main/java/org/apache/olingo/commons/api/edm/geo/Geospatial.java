@@ -32,14 +32,24 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 public abstract class Geospatial implements Serializable {
 
   private static final long serialVersionUID = 5409612902190067390L;
-
+  
+  /**
+   * Dimension of the geospatial type
+   */
   public enum Dimension {
-
+    /**
+     * Geometry type
+     */
     GEOMETRY,
+    /**
+     * Geography type
+     */
     GEOGRAPHY
-
   }
-
+  
+  /**
+   * Type of the geospatial type
+   */
   public enum Type {
 
     /**
@@ -126,7 +136,11 @@ public abstract class Geospatial implements Serializable {
   public SRID getSrid() {
     return srid;
   }
-
+  
+  /**
+   * Returns the {@link EdmPrimitiveTypeKind}
+   * @return Edm primitve type kind
+   */
   public abstract EdmPrimitiveTypeKind getEdmPrimitiveTypeKind();
 
   @Override

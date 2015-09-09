@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.List;
 
+/**
+ * Represents an action CSDL item
+ */
 public class CsdlAction extends CsdlOperation {
 
   private static final long serialVersionUID = 211295197043448841L;

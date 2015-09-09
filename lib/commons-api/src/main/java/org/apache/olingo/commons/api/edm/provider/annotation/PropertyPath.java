@@ -18,8 +18,16 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
+/**
+ * The edm:PropertyPath expression provides a value for terms or term properties that specify the built-in 
+ * abstract type Edm.PropertyPath.
+ */
 public interface PropertyPath extends DynamicAnnotationExpression {
 
+  /**
+   * Returns the property path itself.
+   * @return the property path itself
+   */
   String getValue();
 
 }

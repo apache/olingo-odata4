@@ -28,7 +28,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
   private static final long serialVersionUID = -9181547636133878977L;
-
+  
+  /**
+   * Creates a new collection of geospatial types
+   * @param dimension     Dimension of the collection
+   * @param srid          SRID Value
+   * @param geospatials   Members of the collection
+   */
   public GeospatialCollection(final Dimension dimension, final SRID srid, final List<Geospatial> geospatials) {
     super(dimension, Type.GEOSPATIALCOLLECTION, srid, geospatials);
   }

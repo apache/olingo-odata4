@@ -28,6 +28,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+/**
+ * Super type of all CsdlEdmItems
+ */
 public abstract class CsdlAbstractEdmItem implements Serializable {
 
   private static final long serialVersionUID = 241190986363884784L;

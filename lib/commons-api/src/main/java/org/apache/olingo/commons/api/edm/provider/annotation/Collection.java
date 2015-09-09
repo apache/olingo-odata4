@@ -20,8 +20,17 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import java.util.List;
 
+/**
+ * The edm:Collection expression enables a value to be obtained from zero or more child expressions. 
+ * The value calculated by the collection expression is the collection of the values calculated 
+ * by each of the child expressions.
+ */
 public interface Collection extends DynamicAnnotationExpression {
-
+  
+  /**
+   * Returns a list of child expression
+   * @return List of child expression
+   */
   List<AnnotationExpression> getItems();
 
 }

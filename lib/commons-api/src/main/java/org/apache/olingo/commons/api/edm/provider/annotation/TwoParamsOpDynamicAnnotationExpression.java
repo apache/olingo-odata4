@@ -18,19 +18,53 @@
  */
 package org.apache.olingo.commons.api.edm.provider.annotation;
 
+/**
+ * Represents a generic expression with two child exprssions
+ */
 public interface TwoParamsOpDynamicAnnotationExpression extends DynamicAnnotationExpression {
 
+  /**
+   * Type (Operator) of the expression
+   */
   public static enum Type {
-
+    /**
+     * Logical And
+     */
     And,
+    /**
+     * Logical Or
+     */
     Or,
+    /**
+     * Equals
+     */
     Eq,
+    /**
+     * Not equals
+     */
     Ne,
+    /**
+     * Greater than
+     */
     Gt,
+    /**
+     * Greater or equals than
+     */
     Ge,
+    /**
+     * Less than
+     */
     Lt,
+    /**
+     * Less or equals than
+     */
     Le;
-
+    
+    /**
+     * Creates the type(Operator) of a expressin
+     * @param value Value of the operator like "And" or "Eq"
+     * @return  Type(Operator) of the expression
+     */
     public static Type fromString(final String value) {
       Type result = null;
       for (Type type : values()) {
@@ -41,10 +75,22 @@ public interface TwoParamsOpDynamicAnnotationExpression extends DynamicAnnotatio
       return result;
     }
   }
-
+  
+  /**
+   * Returns the type of the expression result
+   * @return Type of the result
+   */
   Type getType();
-
+  
+  /**
+   * Returns the first expression (left child)
+   * @return Child expression
+   */
   DynamicAnnotationExpression getLeftExpression();
-
+  
+  /**
+   * Returns the second expression (right child)
+   * @return Child expression
+   */
   DynamicAnnotationExpression getRightExpression();
 }

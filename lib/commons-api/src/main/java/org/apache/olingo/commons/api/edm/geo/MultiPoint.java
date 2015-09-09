@@ -22,10 +22,20 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
+/**
+ * Represents a collection of points
+ * Either Edm.GeographyMultiPoint or Edm.GeometryMultiPoint
+ */
 public class MultiPoint extends ComposedGeospatial<Point> {
 
   private static final long serialVersionUID = 4951011255142116129L;
-
+  
+  /**
+   * Creates a new collection of points
+   * @param dimension   Dimension of the points
+   * @param srid        SRID value
+   * @param points      List of points
+   */
   public MultiPoint(final Dimension dimension, final SRID srid, final List<Point> points) {
     super(dimension, Type.MULTIPOINT, srid, points);
   }

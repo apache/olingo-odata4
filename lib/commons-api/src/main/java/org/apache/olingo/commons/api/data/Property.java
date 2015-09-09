@@ -24,14 +24,31 @@ package org.apache.olingo.commons.api.data;
 public class Property extends Valuable {
 
   private String name;
-
+  
+  /**
+   * Creates a new property
+   */
   public Property() {}
-
+  
+  /**
+   * Creates a new property
+   * 
+   * @param type  String representation of type (can be null)
+   * @param name  Name of the property
+   */
   public Property(final String type, final String name) {
     this.name = name;
     super.setType(type);
   }
-
+  
+  /**
+   * Creates a new property
+   * 
+   * @param type        String representation of type (can be null)
+   * @param name        Name of the property
+   * @param valueType   Kind of the property e.g. primitive property, complex property
+   * @param value       Value of the property.
+   */
   public Property(final String type, final String name, final ValueType valueType, final Object value) {
     this(type, name);
     setValue(valueType, value);

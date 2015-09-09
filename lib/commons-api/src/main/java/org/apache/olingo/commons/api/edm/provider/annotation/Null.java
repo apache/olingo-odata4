@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 
+/**
+ * The edm:Null expression returns an untyped null value.
+ */
 public interface Null extends DynamicAnnotationExpression, CsdlAnnotatable {
   // No additional methods needed for now.
 }

@@ -49,17 +49,47 @@ public final class ContextURL {
   private Suffix suffix;
 
   private String odataPath;
-
+  
+  /**
+   * Suffix of the OData Context URL
+   */
   public enum Suffix {
-    ENTITY("$entity"), REFERENCE("$ref"),
-    DELTA("$delta"), DELTA_DELETED_ENTITY("$deletedEntity"), DELTA_LINK("$link"), DELTA_DELETED_LINK("$deletedLink");
+    /**
+     * Suffix for Entities
+     */
+    ENTITY("$entity"), 
+    /**
+     * Suffix for References
+     */
+    REFERENCE("$ref"),
+    /**
+     * Suffix for deltas (changes)
+     */
+    DELTA("$delta"), 
+    /**
+     * Suffix for deleted entities in deltas
+     */
+    DELTA_DELETED_ENTITY("$deletedEntity"), 
+    /**
+     * New links in deltas
+     */
+    DELTA_LINK("$link"), 
+    /**
+     * Deleted links in deltas
+     */
+    DELTA_DELETED_LINK("$deletedLink");
 
     private final String representation;
 
     Suffix(final String representation) {
       this.representation = representation;
     }
-
+    
+    /**
+     * Returns OData representation of the suffix 
+     * 
+     * @return Representation of the suffix 
+     */
     public String getRepresentation() {
       return representation;
     }
@@ -205,6 +235,7 @@ public final class ContextURL {
     /**
      * Set the OData path.
      * @param oDataPath the OData path
+     * @return Builder
      */
     public Builder oDataPath(String oDataPath) {
       contextURL.odataPath = oDataPath;
@@ -214,6 +245,7 @@ public final class ContextURL {
     /**
      * Set the service root.
      * @param serviceRoot the service root
+     * @return Builder
      */
     public Builder serviceRoot(final URI serviceRoot) {
       contextURL.serviceRoot = serviceRoot;
@@ -223,6 +255,7 @@ public final class ContextURL {
     /**
      * Set the edm entity set.
      * @param entitySet the edm entity set
+     * @return Builder
      */
     public Builder entitySet(final EdmEntitySet entitySet) {
       contextURL.entitySetOrSingletonOrType = entitySet.getName();
@@ -232,6 +265,7 @@ public final class ContextURL {
     /**
      * Set the key path.
      * @param keyPath the key path
+     * @return Builder
      */
     public Builder keyPath(final String keyPath) {
       contextURL.keyPath = keyPath;
@@ -241,6 +275,7 @@ public final class ContextURL {
     /**
      * Set the entity set / singleton / type name.
      * @param entitySetOrSingletonOrType the entity set / singleton / type name
+     * @return Builder
      */
     public Builder entitySetOrSingletonOrType(final String entitySetOrSingletonOrType) {
       contextURL.entitySetOrSingletonOrType = entitySetOrSingletonOrType;
@@ -250,6 +285,7 @@ public final class ContextURL {
     /**
      * Set the edm entity type.
      * @param type the edm entity type
+     * @return Builder
      */
     public Builder type(final EdmType type) {
       contextURL.entitySetOrSingletonOrType = type.getFullQualifiedName().toString();
@@ -258,6 +294,7 @@ public final class ContextURL {
 
     /**
      * Define the result as a collection.
+     * @return Builder
      */
     public Builder asCollection() {
       contextURL.isCollection = true;
@@ -267,6 +304,7 @@ public final class ContextURL {
     /**
      * Set the derived edm entity type.
      * @param derivedType the derived edm entity type
+     * @return Builder
      */
     public Builder derived(final EdmEntityType derivedType) {
       contextURL.derivedEntity = derivedType.getFullQualifiedName().getFullQualifiedNameAsString();
@@ -276,6 +314,7 @@ public final class ContextURL {
     /**
      * Set the derived entity name.
      * @param derivedEntity the derived entity name
+     * @return Builder
      */
     public Builder derivedEntity(final String derivedEntity) {
       contextURL.derivedEntity = derivedEntity;
@@ -285,6 +324,7 @@ public final class ContextURL {
     /**
      * Set the navigation or property path.
      * @param navOrPropertyPath the navigation or property path
+     * @return Builder
      */
     public Builder navOrPropertyPath(final String navOrPropertyPath) {
       contextURL.navOrPropertyPath = navOrPropertyPath;
@@ -294,6 +334,7 @@ public final class ContextURL {
     /**
      * Set the select list.
      * @param selectList the select list
+     * @return Builder
      */
     public Builder selectList(final String selectList) {
       contextURL.selectList = selectList;
@@ -303,6 +344,7 @@ public final class ContextURL {
     /**
      * Set the suffix.
      * @param suffix the suffix
+     * @return Builder
      */
     public Builder suffix(final Suffix suffix) {
       contextURL.suffix = suffix;

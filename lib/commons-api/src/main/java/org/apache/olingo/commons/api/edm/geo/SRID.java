@@ -43,7 +43,12 @@ public final class SRID implements Serializable {
   private Integer value;
 
   private Boolean variable;
-
+  
+  /**
+   * Creates a new SRID instance from a given 
+   * @param exp Either "variable" or a numeric non-negative SRID value
+   * @return SRID instance
+   */
   public static SRID valueOf(final String exp) {
     final SRID instance = new SRID();
 
@@ -64,10 +69,18 @@ public final class SRID implements Serializable {
     // empty constructor for package instantiation
   }
 
+  /**
+   * Returns the dimension of the SRID instance
+   * @return dimension of the SRID instance
+   */
   public Dimension getDimension() {
     return dimension;
   }
-
+  
+  /**
+   * Sets the dimension of the SRID instance
+   * @param dimension dimension of the SRID instance
+   */
   public void setDimension(final Dimension dimension) {
     this.dimension = dimension;
   }
@@ -91,7 +104,11 @@ public final class SRID implements Serializable {
   private boolean isVariable() {
     return variable != null && variable;
   }
-
+  
+  /**
+   * Returns true if the value of the instance is not equals to the default (uninitialized)
+   * @return true if the value of the instance is not equals to the default (uninitialized)
+   */
   public boolean isNotDefault() {
     return value != null || variable != null;
   }

@@ -20,9 +20,20 @@ package org.apache.olingo.commons.api.edm.annotation;
 
 import org.apache.olingo.commons.api.data.Valuable;
 
+/**
+ * Represents a constant expression
+ */
 public interface EdmConstantAnnotationExpression extends EdmAnnotationExpression {
-
+  
+  /**
+   * Value of the constant expression
+   * @return value of the constant expression
+   */
   Valuable getValue();
 
+  /**
+   * Returns the value of the expression as String
+   * @return String representation of the expression
+   */
   String getValueAsString();
 }

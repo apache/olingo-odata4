@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.edm.annotation;
 
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 
+/**
+ * The edm:Null expression returns an untyped null value.
+ */
 public interface EdmNull extends EdmDynamicAnnotationExpression, EdmAnnotatable {
   // No additional methods needed for now.
 }

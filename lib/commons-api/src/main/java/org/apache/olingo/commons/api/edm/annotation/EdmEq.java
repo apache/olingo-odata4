@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+/**
+ * Represents a edm:Eq expression
+ */
 public interface EdmEq extends EdmTwoParamsOpDynamicAnnotationExpression {
   // No additional methods needed for now.
 }
