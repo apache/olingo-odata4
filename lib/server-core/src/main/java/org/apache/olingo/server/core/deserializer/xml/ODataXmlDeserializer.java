@@ -159,9 +159,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           values.add(complex(reader, event.asStartElement(), (EdmComplexType) edmType));                    
         } else if (edmType instanceof EdmEnumType) {
           values.add(readEnum(reader, event.asStartElement()));          
-        } else {
-          // do not add null or empty values
         }
+        // do not add null or empty values
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -247,9 +246,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     } else if (edmType instanceof EdmEnumType) {
       valuable.setValue(ValueType.ENUM, readEnum(reader, start));
       valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
-    } else {
-      // do not add null or empty values
     }
+    // do not add null or empty values    
   }
 
   @Override

@@ -588,18 +588,14 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final ExpandOption innerExpand, final SelectOption innerSelect, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
-      if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
-        // nothing to write.
-      } else {
+      if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
         writer.writeStartElement(ATOM, "feed", NS_ATOM);
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
             innerSelect, writer);
         writer.writeEndElement();
       }
     } else {
-      if (navigationLink == null || navigationLink.getInlineEntity() == null) {
-        // nothing to write
-      } else {
+      if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
             innerExpand, innerSelect, writer, false);
       }
@@ -756,9 +752,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
       writer.writeAttribute(DATA, NS_DATA, "null", "true");
-    } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)) {
-      writer.writeCharacters(value);
     } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
+        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
         || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)

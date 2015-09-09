@@ -164,25 +164,26 @@ public class EntityResponse extends ServiceResponse {
   }  
   
   public static String buildLocation(String baseURL, Entity entity, String enitySetName, EdmEntityType type) {
-    String location = baseURL + "/" + enitySetName + "(";
+    StringBuilder location = new StringBuilder();
+    location.append(baseURL).append("/").append(enitySetName).append("(");
     int i = 0;
     boolean usename = type.getKeyPredicateNames().size() > 1;
 
     for (String key : type.getKeyPredicateNames()) {
       if (i > 0) {
-        location += ",";
+        location.append(",");
       }
       i++;
       if (usename) {
-        location += (key + "=");
+        location.append(key).append("=");
       }
       if (entity.getProperty(key).getType().equals("Edm.String")) {
-        location = location + "'" + entity.getProperty(key).getValue().toString() + "'";
+        location.append("'").append(entity.getProperty(key).getValue().toString()).append("'");
       } else {
-        location = location + entity.getProperty(key).getValue().toString();
+        location.append(entity.getProperty(key).getValue().toString());
       }
     }
-    location += ")";
-    return location;
+    location.append(")");
+    return location.toString();
   }  
 }

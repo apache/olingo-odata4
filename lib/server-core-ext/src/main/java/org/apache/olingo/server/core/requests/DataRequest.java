@@ -714,7 +714,7 @@ public class DataRequest extends ServiceRequest {
           break;
         }
       } catch (IOException e) {
-        new DeserializerException("Error reading raw value",
+        throw new DeserializerException("Error reading raw value",
             SerializerException.MessageKeys.IO_EXCEPTION);
       }
     } while (true);
