@@ -125,10 +125,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     return value;
   }
 
-  private Object complex(final XMLEventReader reader, final StartElement start, EdmComplexType edmComplex, 
-      boolean validateType)
+  private Object complex(final XMLEventReader reader, final StartElement start, EdmComplexType edmComplex)
       throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
-
     ComplexValue value = new ComplexValue();
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -158,9 +156,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         if (edmType instanceof SingletonPrimitiveType) {
           values.add(primitive(reader, event.asStartElement(), edmProperty));          
         } else if (edmType instanceof EdmComplexType) {
-          values.add(complex(reader, event.asStartElement(), (EdmComplexType)edmType, false));                    
+          values.add(complex(reader, event.asStartElement(), (EdmComplexType) edmType));                    
         } else if (edmType instanceof EdmEnumType) {
-          values.add(readEnum(reader, event.asStartElement(), edmProperty));          
+          values.add(readEnum(reader, event.asStartElement()));          
         } else {
           // do not add null or empty values
         }
@@ -173,8 +171,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     valuable.setValue(getValueType(edmType, true), values);
   }
 
-  private Object readEnum(XMLEventReader reader, StartElement start, EdmProperty edmProperty) 
-      throws XMLStreamException {
+  private Object readEnum(XMLEventReader reader, StartElement start) throws XMLStreamException {
     boolean foundEndProperty = false;
     Object value = null;
     while (reader.hasNext() && !foundEndProperty) {
@@ -245,10 +242,10 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
       valuable.setValue(ValueType.PRIMITIVE, primitive(reader, start, edmProperty));          
     } else if (edmType instanceof EdmComplexType) {
-      valuable.setValue(ValueType.COMPLEX, complex(reader, start, (EdmComplexType)edmType, true));
+      valuable.setValue(ValueType.COMPLEX, complex(reader, start, (EdmComplexType) edmType));
       valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     } else if (edmType instanceof EdmEnumType) {
-      valuable.setValue(ValueType.ENUM, readEnum(reader, start, edmProperty));
+      valuable.setValue(ValueType.ENUM, readEnum(reader, start));
       valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     } else {
       // do not add null or empty values

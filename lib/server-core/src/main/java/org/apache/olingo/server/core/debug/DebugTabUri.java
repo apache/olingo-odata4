@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
@@ -194,7 +195,7 @@ public class DebugTabUri implements DebugTab {
     String expressionJsonString;
     try {
       expressionJsonString = expression.accept(new ExpressionJsonVisitor());
-    } catch (Exception e) {
+    } catch (final ODataException e) {
       expressionJsonString = "Exception in Debug Filter visitor occurred: " + e.getMessage();
     }
 

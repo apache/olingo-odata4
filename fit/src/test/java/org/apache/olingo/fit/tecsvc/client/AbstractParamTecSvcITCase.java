@@ -18,36 +18,31 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.junit.Assert.assertTrue;
-
 @RunWith(Parameterized.class)
-public class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
+public abstract class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
 
   @Parameterized.Parameter
   public ContentType contentType;
 
-  @Parameterized.Parameters
-  public static Collection paras() {
-    return Arrays.asList(new Object[][]{
-            {ContentType.APPLICATION_JSON}, {ContentType.APPLICATION_XML}
-    });
+  /**
+   * Returns a list of parameter arrays, in this case a list of one-element arrays
+   * containing the content types to be used.
+   */
+  @Parameterized.Parameters(name = "{0}")
+  public static List<ContentType[]> parameters() {
+    return Arrays.asList(new ContentType[] { ContentType.APPLICATION_JSON },
+        new ContentType[] { ContentType.APPLICATION_XML });
   }
 
   @Override
   protected ContentType getContentType() {
     return contentType;
-  }
-
-  @Test
-  public void dummyTest() {
-    assertTrue("Dummy Test method to please Junit.", true);
   }
 }

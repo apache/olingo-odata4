@@ -37,12 +37,13 @@ import org.junit.Test;
 
 public class UriHelperTest {
 
-  private static final Edm edm = OData.newInstance().createServiceMetadata(
+  private static final OData odata = OData.newInstance();
+  private static final Edm edm = odata.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
   private static final EdmEntityContainer container = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
-  private static final UriHelper helper = new UriHelperImpl();
-  private final DataProvider data = new DataProvider(edm);
+  private static final UriHelper helper = odata.createUriHelper();
+  private final DataProvider data = new DataProvider(odata, edm);
 
   @Test
   public void canonicalURL() throws Exception {

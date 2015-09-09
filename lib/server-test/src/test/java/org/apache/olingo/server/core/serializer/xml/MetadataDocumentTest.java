@@ -43,9 +43,8 @@ public class MetadataDocumentTest {
   @Test
   public void writeMetadataWithTechnicalScenario() throws Exception {
     final OData odata = OData.newInstance();
-    final List<EdmxReference> references = getEdmxReferences();
     final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
-        new EdmTechProvider(references), references);
+        new EdmTechProvider(), getEdmxReferences());
 
     final String metadata = IOUtils.toString(
         odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());

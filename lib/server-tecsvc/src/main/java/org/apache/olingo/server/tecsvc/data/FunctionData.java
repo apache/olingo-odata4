@@ -77,7 +77,7 @@ public class FunctionData {
 
   @SuppressWarnings("unchecked")
   protected static Property primitiveComplexFunction(final String name, final List<UriParameter> parameters,
-      final Map<String, EntityCollection> data) throws DataProviderException {
+      final Map<String, EntityCollection> data, final OData oData) throws DataProviderException {
     if (name.equals("UFNRTInt16")) {
       return DataCreator.createPrimitive(name, (short) 12345);
     } else if (name.equals("UFCRTString")) {
@@ -90,17 +90,15 @@ public class FunctionData {
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       try {
-
-        OData oData = OData.newInstance();
         return DataCreator.createComplex(name,
             DataCreator.createPrimitive("PropertyInt16", oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16)
                 .valueOfString(getParameterText("ParameterInt16", parameters),
                     null, null, null, null, null, Short.class)),
-            DataCreator.createPrimitive("PropertyString", oData
-                .createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
-                .valueOfString(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
-                    .fromUriLiteral(getParameterText("ParameterString", parameters)),
-                    null, null, null, null, null, String.class)));
+            DataCreator.createPrimitive("PropertyString",
+                oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
+                    .valueOfString(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String)
+                        .fromUriLiteral(getParameterText("ParameterString", parameters)),
+                        null, null, null, null, null, String.class)));
       } catch (final EdmPrimitiveTypeException e) {
         throw new DataProviderException("Error in function " + name + ".", e);
       }
@@ -117,19 +115,19 @@ public class FunctionData {
       final String parameterInt16Raw = getParameterText("ParameterInt16", parameters);
       
       // ParameterString is not provided
-      if(parameterStringRaw == null) {
+      if (parameterStringRaw == null) {
         return new Property(null, "value", ValueType.PRIMITIVE, null);
       } else {
         try {
-          EdmPrimitiveType edmInt16 = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
-          EdmPrimitiveType edmString = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
-          Short parameterInt16 =  edmInt16.valueOfString(parameterInt16Raw, null, null, null, null, null, Short.class);
-          String parameterString = edmString.fromUriLiteral(parameterStringRaw);
+          final EdmPrimitiveType edmInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+          final EdmPrimitiveType edmString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+          final Short parameterInt16 =  edmInt16.valueOfString(parameterInt16Raw, null, null, null, null, null,
+              Short.class);
+          final String parameterString = edmString.fromUriLiteral(parameterStringRaw);
           final StringBuilder builder = new StringBuilder();
-          
           // if parameterInt16 <= 0 return an empty string
-          for(short i = parameterInt16; i > 0; i--) {
-            if(builder.length() != 0) {
+          for (short i = parameterInt16; i > 0; i--) {
+            if (builder.length() != 0) {
               builder.append(',');
             }
             builder.append('"');
@@ -137,15 +135,15 @@ public class FunctionData {
             builder.append('"');
           }
           return new Property(null, "value", ValueType.PRIMITIVE, builder.toString());
-        } catch (EdmPrimitiveTypeException e) {
+        } catch (final EdmPrimitiveTypeException e) {
           throw new DataProviderException("Invalid function parameter.");
         }
       }
-    } else if(name.equals("UFCRTCollCTTwoPrimTwoParam")) {
+    } else if (name.equals("UFCRTCollCTTwoPrimTwoParam")) {
       String parameterStringRaw = getParameterText("ParameterString", parameters);
       String parameteInt16Raw = getParameterText("ParameterInt16", parameters);
-      EdmPrimitiveType edmInt16 = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
-      EdmPrimitiveType edmString = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+      EdmPrimitiveType edmInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+      EdmPrimitiveType edmString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
       try {
         Short parameterInt16 = edmInt16.valueOfString(parameteInt16Raw, null, null, null, null, null, Short.class);
 

@@ -67,7 +67,6 @@ public abstract class TechnicalProcessor implements Processor {
   public void init(final OData odata, final ServiceMetadata serviceMetadata) {
     this.odata = odata;
     this.serviceMetadata = serviceMetadata;
-    dataProvider.setOData(odata);
   }
 
   protected EdmEntitySet getEdmEntitySet(final UriInfoResource uriInfo) throws ODataApplicationException {

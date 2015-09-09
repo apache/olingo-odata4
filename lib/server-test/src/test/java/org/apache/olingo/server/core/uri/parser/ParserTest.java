@@ -120,7 +120,7 @@ public class ParserTest {
           .goPath().first()
           .isType(new FullQualifiedName("NS", "Category"), false);
       fail("Expected exception was not thrown.");
-    } catch (Exception e) {
+    } catch (final UriParserException e) {
       assertEquals("NavigationProperty 'Category' not found in type 'NS.Products'", e.getMessage());
     }
   }

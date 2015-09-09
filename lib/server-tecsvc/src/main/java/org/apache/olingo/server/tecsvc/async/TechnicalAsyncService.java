@@ -38,6 +38,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -243,18 +244,19 @@ public class TechnicalAsyncService {
    * Runnable for the AsyncProcessor.
    */
   static class AsyncRunner implements Runnable {
-    private final AsyncProcessor<?> dispatched;
+    private static final Pattern PATTERN = Pattern.compile("(" + TEC_ASYNC_SLEEP + "=)(\\d*)");
+    private final AsyncProcessor<? extends Processor> dispatched;
     private int defaultSleepTimeInSeconds = 0;
     private Exception exception;
     boolean finished = false;
 
-    public AsyncRunner(AsyncProcessor<?> wrap) {
+    public AsyncRunner(AsyncProcessor<? extends Processor> wrap) {
       this(wrap, 0);
     }
 
-    public AsyncRunner(AsyncProcessor<?> wrap, int defaultSleepTimeInSeconds) {
+    public AsyncRunner(AsyncProcessor<? extends Processor> wrap, int defaultSleepTimeInSeconds) {
       this.dispatched = wrap;
-      if(defaultSleepTimeInSeconds > 0) {
+      if (defaultSleepTimeInSeconds > 0) {
         this.defaultSleepTimeInSeconds = defaultSleepTimeInSeconds;
       }
     }
@@ -265,15 +267,19 @@ public class TechnicalAsyncService {
         int sleep = getSleepTime(dispatched);
         TimeUnit.SECONDS.sleep(sleep);
         dispatched.process();
-      } catch (Exception e) {
+      } catch (final InterruptedException e) {
+        exception = e;
+      } catch (final InvocationTargetException e) {
+        exception = e;
+      } catch (final IllegalAccessException e) {
         exception = e;
       }
       finished = true;
     }
 
-    private int getSleepTime(AsyncProcessor<?> wrap) {
+    private int getSleepTime(AsyncProcessor<? extends Processor> wrap) {
       String preferHeader = wrap.getPreferHeader();
-      Matcher matcher = Pattern.compile("(" + TEC_ASYNC_SLEEP + "=)(\\d*)").matcher(preferHeader);
+      Matcher matcher = PATTERN.matcher(preferHeader);
       if (matcher.find()) {
         String waitTimeAsString = matcher.group(2);
         return Integer.parseInt(waitTimeAsString);
@@ -289,7 +295,7 @@ public class TechnicalAsyncService {
       return finished;
     }
 
-    public AsyncProcessor<?> getDispatched() {
+    public AsyncProcessor<? extends Processor> getDispatched() {
       return dispatched;
     }
   }

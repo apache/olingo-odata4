@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -56,7 +57,6 @@ import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
-import org.apache.olingo.server.core.uri.UriHelperImpl;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
@@ -69,12 +69,13 @@ public class ODataJsonSerializerTest {
   private static final ServiceMetadata metadata = new ServiceMetadataImpl(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
-  private final DataProvider data = new DataProvider(metadata.getEdm());
+  private final OData odata = OData.newInstance();
+  private final DataProvider data = new DataProvider(odata, metadata.getEdm());
   private final ODataSerializer serializer = new ODataJsonSerializer(ContentType.JSON);
   private final ODataSerializer serializerNoMetadata = new ODataJsonSerializer(ContentType.JSON_NO_METADATA);
   private final ODataSerializer serializerIEEECompatible =
       new ODataJsonSerializer(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"));
-  private final UriHelper helper = new UriHelperImpl();
+  private final UriHelper helper = odata.createUriHelper();
 
   @Test
   public void entitySimple() throws Exception {

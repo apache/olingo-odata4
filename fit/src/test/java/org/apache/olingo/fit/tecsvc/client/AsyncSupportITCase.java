@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -35,6 +33,7 @@ import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapp
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
+import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
@@ -45,7 +44,6 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.ResWrap;
@@ -54,7 +52,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class AsyncSupportITCase extends AbstractTecSvcITCase {
@@ -200,50 +197,33 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
   }
 
   @Test
-  @Ignore("Does currently not work as expected -> issue in ODataClient?")
   public void getBatchRequest() throws Exception {
     ODataClient client = getClient();
     final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-//    final BatchManager payload = request.payloadManager();
-
-    // create new request
-//    ODataEntityRequest<ClientEntity> getRequest = appendGetRequest(getClient(), payload, "ESAllPrim", 32767, false);
-//    payload.addRequest(getRequest);
-
     request.setPrefer(PreferenceName.RESPOND_ASYNC + "; " + TEC_ASYNC_SLEEP + "=1");
     ODataBatchableRequest getRequest = appendGetRequest(client, "ESAllPrim", 32767, false);
     AsyncBatchRequestWrapper asyncRequest =
         client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(request);
     asyncRequest.addRetrieve(getRequest);
     AsyncResponseWrapper<ODataBatchResponse> asyncResponse = asyncRequest.execute();
-
-//    Future<ODataBatchResponse> test = payload.getAsyncResponse();
-//    ODataBatchResponse res = payload.getResponse();
-//
-//    while(!test.isDone()) {
-//      TimeUnit.SECONDS.sleep(1);
-//    }
-
-//    // Fetch result
-//    final ODataBatchResponse response = asyncResponse.getODataResponse();
+    assertTrue(asyncResponse.isPreferenceApplied());
+    assertFalse(asyncResponse.isDone());
 
     waitTillDone(asyncResponse, 3);
-//    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-//    assertEquals("Accepted", response.getStatusMessage());
 
-    ODataResponse firstResponse = asyncResponse.getODataResponse();
+    final ODataBatchResponse response = asyncResponse.getODataResponse();
+    final ODataBatchResponseItem item = response.getBody().next();
+    @SuppressWarnings("unchecked")
+    final ODataRetrieveResponse<ClientEntity> firstResponse = (ODataRetrieveResponse<ClientEntity>) item.next();
     assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
-    assertEquals(2, firstResponse.getHeaderNames().size());
+    assertEquals(3, firstResponse.getHeaderNames().size());
     assertEquals("4.0", firstResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
 
-    ResWrap<Entity> firstWrap = client.getDeserializer(ContentType.APPLICATION_JSON)
-        .toEntity(firstResponse.getRawResponse());
-    Entity entity = firstWrap.getPayload();
-    assertEquals(32767, entity.getProperty("PropertyInt16").asPrimitive());
-    assertEquals("First Resource - positive values", entity.getProperty("PropertyString").asPrimitive());
+    final ClientEntity entity = firstResponse.getBody();
+    assertEquals(32767, entity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertEquals("First Resource - positive values",
+        entity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
-
 
   /**
    * Test delete with async prefer header but without async support from TecSvc.
@@ -279,15 +259,11 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
   }
 
   private ODataEntityRequest<ClientEntity> appendGetRequest(final ODataClient client,
-      final String segment, final Object key, final boolean isRelative) throws URISyntaxException {
-
-    final URIBuilder targetURI = getClient().newURIBuilder(SERVICE_URI);
-    targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
-    final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
-
-    ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ContentType.JSON);
-    return queryReq;
+      final String segment, final Object key, final boolean isRelative) {
+    final URI targetURI = client.newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(segment).appendKeySegment(key).build();
+    final URI uri = isRelative ? URI.create(SERVICE_URI).relativize(targetURI) : targetURI;
+    return client.getRetrieveRequestFactory().getEntityRequest(uri);
   }
 
   private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {
@@ -305,7 +281,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
   private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds) throws InterruptedException {
     int waitCounter = maxWaitInSeconds * 1000;
     while (!async.isDone() && waitCounter > 0) {
-      TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);
+      Thread.sleep(SLEEP_TIMEOUT_IN_MS);
       waitCounter -= SLEEP_TIMEOUT_IN_MS;
     }
   }

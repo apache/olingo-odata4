@@ -54,6 +54,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 
@@ -66,16 +67,13 @@ public class DataProvider {
   private AtomicLong KEY_STRING = new AtomicLong(0);
 
   private Map<String, EntityCollection> data;
-  private Edm edm;
-  private OData odata;
+  private final OData odata;
+  private final Edm edm;
 
-  public DataProvider(final Edm edm) {
-    this.edm = edm;
-    data = new DataCreator(edm).getData();
-  }
-
-  public void setOData(final OData odata) {
+  public DataProvider(final OData odata, final Edm edm) {
     this.odata = odata;
+    this.edm = edm;
+    data = new DataCreator(odata, edm).getData();
   }
 
   public EntityCollection readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
@@ -143,7 +141,7 @@ public class DataProvider {
       }
     }
   }
-  
+
   public Entity create(final EdmEntitySet edmEntitySet) throws DataProviderException {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
     EntityCollection entitySet = readAll(edmEntitySet);
@@ -156,7 +154,11 @@ public class DataProvider {
     }
 
     createProperties(edmEntityType, newEntity.getProperties());
-    DataCreator.createEntityId(edmEntitySet.getName(), newEntity, edmEntityType.getKeyPropertyRefs());
+    try {
+      newEntity.setId(URI.create(odata.createUriHelper().buildCanonicalURL(edmEntitySet, newEntity)));
+    } catch (final SerializerException e) {
+      throw new DataProviderException("Unable to set entity ID!", e);
+    }
     entities.add(newEntity);
 
     return newEntity;
@@ -518,7 +520,7 @@ public class DataProvider {
 
   public Property readFunctionPrimitiveComplex(final EdmFunction function, final List<UriParameter> parameters)
       throws DataProviderException {
-    return FunctionData.primitiveComplexFunction(function.getName(), parameters, data);
+    return FunctionData.primitiveComplexFunction(function.getName(), parameters, data, odata);
   }
 
   public Property processActionPrimitive(final String name, final Map<String, Parameter> actionParameters)
@@ -538,12 +540,12 @@ public class DataProvider {
 
   public Property processActionPrimitiveCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
-    return ActionData.primitiveCollectionAction(name, actionParameters);
+    return ActionData.primitiveCollectionAction(name, actionParameters, odata);
   }
 
   public EntityActionResult processActionEntity(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
-    return ActionData.entityAction(name, actionParameters);
+    return ActionData.entityAction(name, actionParameters, data);
   }
 
   public EntityCollection processActionEntityCollection(final String name,

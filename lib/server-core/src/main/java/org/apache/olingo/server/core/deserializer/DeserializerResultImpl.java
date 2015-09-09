@@ -36,7 +36,7 @@ public class DeserializerResultImpl implements DeserializerResult {
   private EntityCollection entitySet;
   private ExpandOption expandOption;
   private Property property;
-  private Map<String, Parameter> actionParametes;
+  private Map<String, Parameter> actionParameters;
   private List<URI> entityReferences;
 
   private DeserializerResultImpl() {}
@@ -58,7 +58,7 @@ public class DeserializerResultImpl implements DeserializerResult {
 
   @Override
   public Map<String, Parameter> getActionParameters() {
-    return actionParametes;
+    return actionParameters;
   }
 
   @Override
@@ -80,7 +80,7 @@ public class DeserializerResultImpl implements DeserializerResult {
     private EntityCollection entitySet;
     private ExpandOption expandOption;
     private Property property;
-    private Map<String, Parameter> actionParametes;
+    private Map<String, Parameter> actionParameters;
     private List<URI> entityReferences;
 
     public DeserializerResult build() {
@@ -90,7 +90,7 @@ public class DeserializerResultImpl implements DeserializerResult {
       result.expandOption = expandOption;
       result.property = property;
       result.entityReferences = (entityReferences == null) ? new ArrayList<URI>() : entityReferences;
-      result.actionParametes = (actionParametes == null) ? new LinkedHashMap<String, Parameter>() : actionParametes;
+      result.actionParameters = (actionParameters == null) ? new LinkedHashMap<String, Parameter>() : actionParameters;
 
       return result;
     }
@@ -121,7 +121,7 @@ public class DeserializerResultImpl implements DeserializerResult {
     }
 
     public DeserializerResultBuilder actionParameters(final Map<String, Parameter> actionParameters) {
-      actionParametes = actionParameters;
+      this.actionParameters = actionParameters;
       return this;
     }
   }

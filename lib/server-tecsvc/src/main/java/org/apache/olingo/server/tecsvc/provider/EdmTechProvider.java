@@ -18,11 +18,9 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
@@ -40,7 +38,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
-import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
@@ -56,10 +54,6 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
   private final TypeDefinitionProvider typeDefinitionProvider;
 
   public EdmTechProvider() {
-    this(Collections.<EdmxReference> emptyList());
-  }
-
-  public EdmTechProvider(final List<EdmxReference> references) {
     containerProvider = new ContainerProvider(this);
     entityTypeProvider = new EntityTypeProvider();
     complexTypeProvider = new ComplexTypeProvider();
@@ -72,9 +66,8 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-    return Arrays.asList(
-        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace)
-        );
+    return Collections.singletonList(
+        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace));
   }
 
   @Override

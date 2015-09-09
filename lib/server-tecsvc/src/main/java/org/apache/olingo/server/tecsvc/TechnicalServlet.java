@@ -21,7 +21,6 @@ package org.apache.olingo.server.tecsvc;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -61,34 +60,35 @@ public class TechnicalServlet extends HttpServlet {
   private static final String metadataETag = "W/\"" + UUID.randomUUID() + "\"";
 
   @Override
-  protected void service(final HttpServletRequest request, final HttpServletResponse response)
+  protected void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
       OData odata = OData.newInstance();
       EdmxReference reference = new EdmxReference(URI.create("../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml"));
       reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));
-      final List<EdmxReference> references = Collections.singletonList(reference);
       final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
-          new EdmTechProvider(references), references, new MetadataETagSupport(metadataETag));
+          new EdmTechProvider(),
+          Collections.singletonList(reference),
+          new MetadataETagSupport(metadataETag));
 
       HttpSession session = request.getSession(true);
       DataProvider dataProvider = (DataProvider) session.getAttribute(DataProvider.class.getName());
       if (dataProvider == null) {
-        dataProvider = new DataProvider(serviceMetadata.getEdm());
+        dataProvider = new DataProvider(odata, serviceMetadata.getEdm());
         session.setAttribute(DataProvider.class.getName(), dataProvider);
         LOG.info("Created new data provider.");
       }
 
       ODataHttpHandler handler = odata.createHandler(serviceMetadata);
-      // Register processors
+      // Register processors.
       handler.register(new TechnicalEntityProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalPrimitiveComplexProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalActionProcessor(dataProvider, serviceMetadata));
       handler.register(new TechnicalBatchProcessor(dataProvider));
-      // Register Helper
+      // Register helpers.
       handler.register(new ETagSupport());
       handler.register(new DefaultDebugSupport());
-      // Process the request
+      // Process the request.
       handler.process(request, response);
     } catch (final RuntimeException e) {
       LOG.error("Server Error", e);

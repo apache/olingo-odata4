@@ -33,42 +33,38 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
  */
 public interface DeserializerResult {
   /**
-   * Return an entity
+   * Returns an entity.
    * @return an {@link Entity} or null
    */
   Entity getEntity();
 
   /**
-   * Returns a entity set
+   * Returns an entity collection.
    * @return an {@link EntityCollection} or null
    */
   EntityCollection getEntityCollection();
 
   /**
-   * Returns the ExpandOptions for serialized entities
+   * Returns the ExpandOptions for the deserialized entity.
    * @return an {@link ExpandOption} or null
    */
   ExpandOption getExpandTree();
 
   /**
-   * Returns the deserialized action-parameters of an {@link Entity} object.
-   * @return a collection {@link Parameter}
-   */
-  /**
-   * Returns the deserialized action-parameters as key value pairs.
+   * Returns the deserialized action parameters of an {@link Entity} as key/value pairs.
    * @return the action parameters
    */
   Map<String, Parameter> getActionParameters();
 
   /**
-   * Returns a Property or collections of properties (primitive & complex)
+   * Returns a Property or collections of properties (primitive & complex).
    * @return {@link Property} or collections of properties (primitive & complex) or null
    */
   Property getProperty();
 
   /**
-   * Returns the entity references from the provided document
-   * @return a collection of entity reference
+   * Returns the entity references from the provided document.
+   * @return a collection of entity references
    */
   List<URI> getEntityReferences();
 }

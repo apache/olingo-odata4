@@ -76,6 +76,10 @@ public class UriHelperImpl implements UriHelper {
         result.append(Encoder.encode(keyName)).append('=');
       }
       final EdmProperty edmProperty = edmEntityType.getStructuralProperty(keyName);
+      if (edmProperty == null) {
+        throw new SerializerException("Property not found (possibly an alias): " + keyName,
+            SerializerException.MessageKeys.MISSING_PROPERTY, keyName);
+      }
       final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
       final Object propertyValue = entity.getProperty(keyName).getValue();
       try {

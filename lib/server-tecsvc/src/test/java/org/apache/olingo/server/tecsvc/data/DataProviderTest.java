@@ -40,8 +40,9 @@ import org.mockito.Mockito;
 
 public class DataProviderTest {
 
-  private final Edm edm = OData.newInstance().createServiceMetadata(new EdmTechProvider(
-      Collections.<EdmxReference> emptyList()), Collections.<EdmxReference> emptyList())
+  private final OData oData = OData.newInstance();
+  private final Edm edm =
+      oData.createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
       .getEdm();
   private final EdmEntityContainer entityContainer = edm.getEntityContainer(
       new FullQualifiedName("olingo.odata.test1", "Container"));
@@ -55,7 +56,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrimEntity() throws Exception {
-    final DataProvider dataProvider = new DataProvider(edm);
+    final DataProvider dataProvider = new DataProvider(oData, edm);
     final Entity entity = dataProvider.readAll(esAllPrim).getEntities().get(2);
     Assert.assertEquals(16, entity.getProperties().size());
 
@@ -65,7 +66,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllKeyEntity() throws Exception {
-    final DataProvider dataProvider = new DataProvider(edm);
+    final DataProvider dataProvider = new DataProvider(oData, edm);
     final Entity entity = dataProvider.readAll(esAllKey).getEntities().get(0);
     Assert.assertEquals(13, entity.getProperties().size());
 
@@ -87,7 +88,7 @@ public class DataProviderTest {
 
   @Test
   public void esAllPrim() throws Exception {
-    final DataProvider data = new DataProvider(edm);
+    final DataProvider data = new DataProvider(oData, edm);
     EntityCollection outSet = data.readAll(esAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
@@ -107,7 +108,7 @@ public class DataProviderTest {
 
   @Test
   public void esCollAllPrim() throws Exception {
-    final DataProvider dataProvider = new DataProvider(edm);
+    final DataProvider dataProvider = new DataProvider(oData, edm);
     EntityCollection outSet = dataProvider.readAll(esCollAllPrim);
 
     Assert.assertEquals(3, outSet.getEntities().size());
@@ -121,7 +122,7 @@ public class DataProviderTest {
 
   @Test
   public void esCompAllPrim() throws Exception {
-    final DataProvider dataProvider = new DataProvider(edm);
+    final DataProvider dataProvider = new DataProvider(oData, edm);
     
     EntityCollection outSet = dataProvider.readAll(esCompAllPrim);
 
@@ -136,7 +137,7 @@ public class DataProviderTest {
 
   @Test
   public void esMixPrimCollComp() throws Exception {
-    final DataProvider dataProvider = new DataProvider(edm);
+    final DataProvider dataProvider = new DataProvider(oData, edm);
     
     EntityCollection outSet = dataProvider.readAll(esMixPrimCollComp);
 
@@ -161,8 +162,8 @@ public class DataProviderTest {
 
   @Test
   public void esMedia() throws Exception {
-    DataProvider dataProvider = new DataProvider(edm);
-    
+    DataProvider dataProvider = new DataProvider(oData, edm);
+
     Entity entity = dataProvider.read(esMedia, Arrays.asList(mockParameter("PropertyInt16", "3")));
     Assert.assertNotNull(dataProvider.readMedia(entity));
     dataProvider.delete(esMedia, entity);

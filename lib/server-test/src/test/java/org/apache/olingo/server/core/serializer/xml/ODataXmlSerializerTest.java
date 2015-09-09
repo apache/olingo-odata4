@@ -41,6 +41,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -85,8 +86,8 @@ public class ODataXmlSerializerTest {
   private static final DifferenceListener DIFFERENCE_LISTENER = new CustomDifferenceListener();
   private static final int MAX_ALLOWED_UPDATED_DIFFERENCE = 2000;
   private static final String UPDATED_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-  
-  private final DataProvider data = new DataProvider(metadata.getEdm());
+
+  private final DataProvider data = new DataProvider(OData.newInstance(), metadata.getEdm());
   private final ODataSerializer serializer = new ODataXmlSerializer();
   private final UriHelper helper = new UriHelperImpl();
 

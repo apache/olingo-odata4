@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -574,13 +575,13 @@ public class MockedBatchHandlerTest {
     }
 
     @Override
-    public ODataResponsePart processChangeSet(final BatchFacade fascade, final List<ODataRequest> requests) {
+    public ODataResponsePart processChangeSet(final BatchFacade facade, final List<ODataRequest> requests) {
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
 
       for (ODataRequest request : requests) {
         try {
-          responses.add(fascade.handleODataRequest(request));
-        } catch (Exception e) {
+          responses.add(facade.handleODataRequest(request));
+        } catch (final ODataException e) {
           fail();
         }
       }
