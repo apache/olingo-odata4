@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 /**
  * The interface Csdl edm provider.
  */
-interface CsdlEdmProvider {
+public interface CsdlEdmProvider {
 
   /**
    * This method should return an {@link CsdlEnumType} or <b>null</b> if nothing is found
