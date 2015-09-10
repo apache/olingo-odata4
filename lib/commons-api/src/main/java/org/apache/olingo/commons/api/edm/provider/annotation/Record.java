@@ -27,13 +27,13 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
  * A record expression contains zero or more edm:PropertyValue (See {@link Record} )elements.
  */
 public interface Record extends DynamicAnnotationExpression, CsdlAnnotatable {
-  
+
   /**
    * List of edm:PropertyValues (See {@link PropertyValue}
-   * @return List of edm:PropertyValues (See {@link PropertyValue}
+   * @return List of edm:PropertyValues (See
    */
   List<PropertyValue> getPropertyValues();
-  
+
   /**
    * Returns the entity type or complex type to be constructed.
    * @return Entity type or complex type

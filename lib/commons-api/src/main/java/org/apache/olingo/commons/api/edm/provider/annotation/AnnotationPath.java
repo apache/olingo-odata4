@@ -22,7 +22,7 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  * Represents an annotation path
  */
 public interface AnnotationPath extends DynamicAnnotationExpression {
- 
+
   /**
    * Value of the path
    * @return value of the path

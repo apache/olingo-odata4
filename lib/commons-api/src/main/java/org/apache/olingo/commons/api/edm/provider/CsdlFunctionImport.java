@@ -20,6 +20,9 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl function import.
+ */
 public class CsdlFunctionImport extends CsdlOperationImport {
 
   private static final long serialVersionUID = 8479762299534736719L;
@@ -46,28 +49,61 @@ public class CsdlFunctionImport extends CsdlOperationImport {
     return this;
   }
 
+  /**
+   * Gets function.
+   *
+   * @return the function
+   */
   public String getFunction() {
     return function.getFullQualifiedNameAsString();
   }
 
+  /**
+   * Gets function fQN.
+   *
+   * @return the function fQN
+   */
   public FullQualifiedName getFunctionFQN() {
     return function;
   }
 
+  /**
+   * Sets function.
+   *
+   * @param function the function
+   * @return the function
+   */
   public CsdlFunctionImport setFunction(final FullQualifiedName function) {
     this.function = function;
     return this;
   }
 
+  /**
+   * Sets function.
+   *
+   * @param function the function
+   * @return the function
+   */
   public CsdlFunctionImport setFunction(final String function) {
     this.function = new FullQualifiedName(function);
     return this;
   }
 
+  /**
+   * Is include in service document.
+   *
+   * @return the boolean
+   */
   public boolean isIncludeInServiceDocument() {
     return includeInServiceDocument;
   }
 
+  /**
+   * Sets include in service document.
+   *
+   * @param includeInServiceDocument the include in service document
+   * @return the include in service document
+   */
   public CsdlFunctionImport setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
     return this;

@@ -362,7 +362,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
     try {
-      CsdlAnnotatable providerAnnotatable = provider.getAnnoatatable(annotatedName);
+      CsdlAnnotatable providerAnnotatable = provider.getAnnotatable(annotatedName);
       if (providerAnnotatable != null && providerAnnotatable.getAnnotations() != null) {
         List<EdmAnnotation> result = new ArrayList<EdmAnnotation>();
         for (CsdlAnnotation annotation : providerAnnotatable.getAnnotations()) {

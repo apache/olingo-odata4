@@ -26,37 +26,37 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
  *  the child expression returns the specified type
  */
 public interface IsOf extends DynamicAnnotationExpression, CsdlAnnotatable {
-  
+
   /**
    * Facet MaxLength
    * @return fact MaxLength
    */
   Integer getMaxLength();
-  
+
   /**
    * Facet Precision
    * @return fact Precision
    */
   Integer getPrecision();
-  
+
   /**
    * Facet Scale
    * @return facet Scale
    */
   Integer getScale();
-  
+
   /**
    * Facet SRID
    * @return facet SRID
    */
   SRID getSrid();
-  
+
   /**
    * The type which is checked again the child expression
-   * @return EdmType
+   * @return EdmType type
    */
   String getType();
-  
+
   /**
    * Returns true if the child expression returns the specified typed 
    * @return Returns true if the child expression returns the specified typed 

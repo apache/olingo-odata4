@@ -28,7 +28,7 @@ public interface If extends DynamicAnnotationExpression, CsdlAnnotatable {
   /**
    * Returns the first expression of the edm:If expression.
    * This expression represents the condition of the if expression
-   * 
+   *
    * @return First expression of the if expression
    */
   AnnotationExpression getGuard();
@@ -37,16 +37,16 @@ public interface If extends DynamicAnnotationExpression, CsdlAnnotatable {
    * Return the second expression of the edm:If expression.
    * If the condition of the condition is evaluated to true,
    * this expression as to be executed.
-   * 
+   *
    * @return Second Expression of the edm:If expression
    */
   AnnotationExpression getThen();
-  
+
   /**
    * Return the third expression of the edm:If expression.
    * If the condition of the condition is evaluated to false,
    * this expression as to be executed.
-   * 
+   *
    * @return Third Expression of the edm:If expression
    */
   AnnotationExpression getElse();

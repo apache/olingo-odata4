@@ -26,7 +26,7 @@ import java.util.List;
  * by each of the child expressions.
  */
 public interface Collection extends DynamicAnnotationExpression {
-  
+
   /**
    * Returns a list of child expression
    * @return List of child expression

@@ -24,6 +24,9 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
+/**
+ * The type Csdl parameter.
+ */
 public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = -7360900923880732015L;
@@ -54,78 +57,172 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlParameter setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets type.
+   *
+   * @return the type
+   */
   public String getType() {
     return type.getFullQualifiedNameAsString();
   }
 
+  /**
+   * Gets type fQN.
+   *
+   * @return the type fQN
+   */
   public FullQualifiedName getTypeFQN() {
     return type;
   }
 
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   * @return the type
+   */
   public CsdlParameter setType(final String type) {
     this.type = new FullQualifiedName(type);
     return this;
   }
 
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   * @return the type
+   */
   public CsdlParameter setType(final FullQualifiedName type) {
     this.type = type;
     return this;
   }
 
+  /**
+   * Is collection.
+   *
+   * @return the boolean
+   */
   public boolean isCollection() {
     return isCollection;
   }
 
+  /**
+   * Sets collection.
+   *
+   * @param isCollection the is collection
+   * @return the collection
+   */
   public CsdlParameter setCollection(final boolean isCollection) {
     this.isCollection = isCollection;
     return this;
   }
 
+  /**
+   * Is nullable.
+   *
+   * @return the boolean
+   */
   public boolean isNullable() {
     return nullable;
   }
 
+  /**
+   * Sets nullable.
+   *
+   * @param nullable the nullable
+   * @return the nullable
+   */
   public CsdlParameter setNullable(final boolean nullable) {
     this.nullable = nullable;
     return this;
   }
 
+  /**
+   * Gets max length.
+   *
+   * @return the max length
+   */
   public Integer getMaxLength() {
     return maxLength;
   }
 
+  /**
+   * Sets max length.
+   *
+   * @param maxLength the max length
+   * @return the max length
+   */
   public CsdlParameter setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
     return this;
   }
 
+  /**
+   * Gets precision.
+   *
+   * @return the precision
+   */
   public Integer getPrecision() {
     return precision;
   }
 
+  /**
+   * Sets precision.
+   *
+   * @param precision the precision
+   * @return the precision
+   */
   public CsdlParameter setPrecision(final Integer precision) {
     this.precision = precision;
     return this;
   }
 
+  /**
+   * Gets scale.
+   *
+   * @return the scale
+   */
   public Integer getScale() {
     return scale;
   }
 
+  /**
+   * Sets scale.
+   *
+   * @param scale the scale
+   * @return the scale
+   */
   public CsdlParameter setScale(final Integer scale) {
     this.scale = scale;
     return this;
   }
 
+  /**
+   * Gets srid.
+   *
+   * @return the srid
+   */
   public SRID getSrid() {
     return srid;
   }
 
+  /**
+   * Sets srid.
+   *
+   * @param srid the srid
+   * @return the srid
+   */
   public CsdlParameter setSrid(final SRID srid) {
     this.srid = srid;
     return this;
@@ -136,10 +233,21 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
     return annotations;
   }
 
+  /**
+   * Gets mapping.
+   *
+   * @return the mapping
+   */
   public CsdlMapping getMapping() {
     return mapping;
   }
 
+  /**
+   * Sets mapping.
+   *
+   * @param mapping the mapping
+   * @return the mapping
+   */
   public CsdlParameter setMapping(final CsdlMapping mapping) {
     this.mapping = mapping;
     return this;

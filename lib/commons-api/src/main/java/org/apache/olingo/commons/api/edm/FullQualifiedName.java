@@ -34,8 +34,9 @@ public final class FullQualifiedName implements Serializable {
   private final String fqn;
 
   /**
-   * @param namespace
-   * @param name
+   * Create the FQN with given namespace and name
+   * @param namespace namespace of FQN
+   * @param name name of FQN
    */
   public FullQualifiedName(final String namespace, final String name) {
     this.namespace = namespace;
@@ -44,7 +45,8 @@ public final class FullQualifiedName implements Serializable {
   }
 
   /**
-   * @param namespaceAndName
+   * Create the FQN with given namespace and name (which is split of last <code>.</code> of the parameter).
+   * @param namespaceAndName namespace and name of FQN
    */
   public FullQualifiedName(final String namespaceAndName) {
     final int dotIdx = namespaceAndName.lastIndexOf('.');

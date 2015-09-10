@@ -59,11 +59,11 @@ public interface TwoParamsOpDynamicAnnotationExpression extends DynamicAnnotatio
      * Less or equals than
      */
     Le;
-    
+
     /**
      * Creates the type(Operator) of a expressin
      * @param value Value of the operator like "And" or "Eq"
-     * @return  Type(Operator) of the expression
+     * @return Type(Operator) of the expression
      */
     public static Type fromString(final String value) {
       Type result = null;
@@ -75,19 +75,19 @@ public interface TwoParamsOpDynamicAnnotationExpression extends DynamicAnnotatio
       return result;
     }
   }
-  
+
   /**
    * Returns the type of the expression result
    * @return Type of the result
    */
   Type getType();
-  
+
   /**
    * Returns the first expression (left child)
    * @return Child expression
    */
   DynamicAnnotationExpression getLeftExpression();
-  
+
   /**
    * Returns the second expression (right child)
    * @return Child expression

@@ -64,23 +64,29 @@ public enum ODataServiceVersion {
   }
 
   /**
-   * actual > comparedTo
+   * Check if <code>firstValue</code> is bigger then  <code>secondValue</code>
    *
-   * @param actual
-   * @param comparedTo
-   * @return <code>true</code> if actual is bigger than comparedTo
+   * @param firstValue first value which is compared
+   * @param secondValue second value which is compared
+   * @return <code>true</code> if firstValue is bigger than secondValue
    */
-  public static boolean isBiggerThan(final String actual, final String comparedTo) {
-    if (!validateDataServiceVersion(comparedTo) || !validateDataServiceVersion(actual)) {
-      throw new IllegalArgumentException("Illegal arguments: " + comparedTo + " and " + actual);
+  public static boolean isBiggerThan(final String firstValue, final String secondValue) {
+    if (!validateDataServiceVersion(secondValue) || !validateDataServiceVersion(firstValue)) {
+      throw new IllegalArgumentException("Illegal arguments: " + secondValue + " and " + firstValue);
     }
 
-    final double me = Double.parseDouble(extractDataServiceVersionString(actual));
-    final double other = Double.parseDouble(extractDataServiceVersionString(comparedTo));
+    final double me = Double.parseDouble(extractDataServiceVersionString(firstValue));
+    final double other = Double.parseDouble(extractDataServiceVersionString(secondValue));
 
     return me > other;
   }
 
+  /**
+   * Extract data service version and return it.
+   *
+   * @param rawDataServiceVersion raw data service version from which the service version gets extracted
+   * @return the extracted data service version
+   */
   private static String extractDataServiceVersionString(final String rawDataServiceVersion) {
     if (rawDataServiceVersion != null) {
       final String[] pattern = rawDataServiceVersion.split(";");

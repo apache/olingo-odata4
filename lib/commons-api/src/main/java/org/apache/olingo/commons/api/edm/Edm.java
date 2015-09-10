@@ -56,7 +56,7 @@ public interface Edm {
    * <br/>
    * See {@link EdmEntityContainer} for more information.
    *
-   * @param name
+   * @param name full qualified name of entity container
    * @return {@link EdmEntityContainer}
    */
   EdmEntityContainer getEntityContainer(FullQualifiedName name);
@@ -66,7 +66,7 @@ public interface Edm {
    * <br/>
    * See {@link EdmEnumType} for more information
    *
-   * @param name
+   * @param name full qualified name of enum type
    * @return {@link EdmEnumType}
    */
   EdmEnumType getEnumType(FullQualifiedName name);
@@ -76,7 +76,7 @@ public interface Edm {
    * <br/>
    * See {@link EdmTypeDefinition} for more information
    *
-   * @param name
+   * @param name full qualified name of type definition
    * @return {@link EdmTypeDefinition}
    */
   EdmTypeDefinition getTypeDefinition(FullQualifiedName name);
@@ -86,7 +86,7 @@ public interface Edm {
    * <br/>
    * See {@link EdmEntityType} for more information.
    *
-   * @param name
+   * @param name full qualified name of entity type
    * @return {@link EdmEntityType}
    */
   EdmEntityType getEntityType(FullQualifiedName name);
@@ -96,7 +96,7 @@ public interface Edm {
    * <br/>
    * See {@link EdmComplexType} for more information.
    *
-   * @param name
+   * @param name full qualified name of complex type
    * @return {@link EdmComplexType}
    */
   EdmComplexType getComplexType(FullQualifiedName name);

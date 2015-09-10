@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl complex type.
+ */
 public class CsdlComplexType extends CsdlStructuralType {
 
   private static final long serialVersionUID = 1089771609327713928L;

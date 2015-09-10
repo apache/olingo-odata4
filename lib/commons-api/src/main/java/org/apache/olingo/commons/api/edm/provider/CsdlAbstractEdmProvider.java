@@ -114,7 +114,7 @@ public abstract class CsdlAbstractEdmProvider implements CsdlEdmProvider {
   }
 
   @Override
-  public CsdlAnnotatable getAnnoatatable(final FullQualifiedName annotatedName) throws ODataException {
+  public CsdlAnnotatable getAnnotatable(final FullQualifiedName annotatedName) throws ODataException {
     return null;
   }
 }

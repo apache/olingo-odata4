@@ -309,7 +309,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   }
 
   @Override
-  public CsdlAnnotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
+  public CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException {
     return null;
   }
 }

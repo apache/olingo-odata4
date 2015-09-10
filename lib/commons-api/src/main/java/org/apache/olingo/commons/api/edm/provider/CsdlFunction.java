@@ -20,16 +20,30 @@ package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.List;
 
+/**
+ * The type Csdl function.
+ */
 public class CsdlFunction extends CsdlOperation {
 
   private static final long serialVersionUID = 673858921468578957L;
 
   private boolean isComposable = false;
 
+  /**
+   * Is composable.
+   *
+   * @return the boolean
+   */
   public boolean isComposable() {
     return isComposable;
   }
 
+  /**
+   * Sets composable.
+   *
+   * @param isComposable the is composable
+   * @return the composable
+   */
   public CsdlFunction setComposable(final boolean isComposable) {
     this.isComposable = isComposable;
     return this;

@@ -29,7 +29,7 @@ public interface EdmBindingTarget extends EdmNamed, EdmAnnotationsTarget, EdmAnn
   /**
    * Returns the target for a given path.
    *
-   * @param path
+   * @param path path for which the target is returned
    * @return {@link EdmBindingTarget}
    */
   EdmBindingTarget getRelatedBindingTarget(String path);

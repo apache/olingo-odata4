@@ -25,7 +25,16 @@ import java.util.List;
  */
 public interface EdmAnnotatable {
 
+  /**
+   * @param term term for annotation
+   * @return annotation according to term
+   */
   EdmAnnotation getAnnotation(EdmTerm term);
 
+  /**
+   * Get list of all annotations.
+   *
+   * @return list of all annotations
+   */
   List<EdmAnnotation> getAnnotations();
 }

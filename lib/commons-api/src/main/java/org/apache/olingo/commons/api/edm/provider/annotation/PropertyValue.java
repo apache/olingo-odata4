@@ -26,13 +26,13 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
  * edm:Record expression (See {@link EdmRecord}). The value is obtained by evaluating an expression.
  */
 public interface PropertyValue extends DynamicAnnotationExpression, CsdlAnnotatable {
-  
+
   /**
    * Property name
    * @return Property name
    */
   String getProperty();
-  
+
   /**
    * Evaluated value of the expression (property value)
    * @return evaluated value of the expression

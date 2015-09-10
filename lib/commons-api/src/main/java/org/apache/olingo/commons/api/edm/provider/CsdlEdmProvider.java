@@ -23,157 +23,169 @@ import java.util.List;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
-public interface CsdlEdmProvider {
+/**
+ * The interface Csdl edm provider.
+ */
+interface CsdlEdmProvider {
 
   /**
    * This method should return an {@link CsdlEnumType} or <b>null</b> if nothing is found
    *
-   * @param enumTypeName
-   * @return {@link CsdlEnumType} for given name
-   * @throws ODataException
+   * @param enumTypeName full qualified name of enum type
+   * @return for given name
+   * @throws ODataException the o data exception
    */
-  public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException;
+  CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException;
 
   /**
    * This method should return an {@link CsdlTypeDefinition} or <b>null</b> if nothing is found
    *
-   * @param typeDefinitionName
-   * @return {@link CsdlTypeDefinition} for given name
-   * @throws ODataException
+   * @param typeDefinitionName full qualified name of type definition
+   * @return for given name
+   * @throws ODataException the o data exception
    */
-  public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException;
+  CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException;
 
   /**
    * This method should return an {@link CsdlEntityType} or <b>null</b> if nothing is found
    *
-   * @param entityTypeName
-   * @return {@link CsdlEntityType} for the given name
-   * @throws ODataException
+   * @param entityTypeName full qualified name of entity type
+   * @return for the given name
+   * @throws ODataException the o data exception
    */
-  public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException;
+  CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException;
 
   /**
    * This method should return a {@link CsdlComplexType} or <b>null</b> if nothing is found.
    *
-   * @param complexTypeName
-   * @return {@link CsdlComplexType} for the given name
-   * @throws ODataException
+   * @param complexTypeName full qualified name of complex type
+   * @return for the given name
+   * @throws ODataException the o data exception
    */
-  public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException;
+  CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException;
 
   /**
    * This method should return a list of all {@link CsdlAction} for the FullQualifiedname
    * or <b>null</b> if nothing is found
    *
-   * @param actionName
-   * @return List of {@link CsdlAction} or null
-   * @throws ODataException
+   * @param actionName full qualified name of action
+   * @return List of
+   * or null
+   * @throws ODataException the o data exception
    */
-  public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException;
+  List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException;
 
   /**
    * This method should return a list of all {@link CsdlFunction} for the FullQualifiedname or <b>null</b> if nothing is
    * found
    *
-   * @param functionName
-   * @return List of {@link CsdlFunction} or null
-   * @throws ODataException
+   * @param functionName full qualified name of function
+   * @return List of
+   * or null
+   * @throws ODataException the o data exception
    */
-  public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException;
+  List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException;
 
   /**
    * This method should return a {@link CsdlTerm} for the FullQualifiedName or <b>null</b> if nothing is found.
    * @param termName the name of the Term
-   * @return {@link CsdlTerm} or null
-   * @throws ODataException
+   * @return or null
+   * @throws ODataException the o data exception
    */
-  public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException;
+  CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException;
 
   /**
    * This method should return an {@link CsdlEntitySet} or <b>null</b> if nothing is found
    *
    * @param entityContainer this EntitySet is contained in
-   * @param entitySetName
-   * @return {@link CsdlEntitySet} for the given container and entityset name
-   * @throws ODataException
+   * @param entitySetName name of entity set
+   * @return for the given container and entityset name
+   * @throws ODataException the o data exception
    */
-  public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+  CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
       throws ODataException;
 
   /**
    * This method should return an {@link CsdlSingleton} or <b>null</b> if nothing is found
    *
    * @param entityContainer this Singleton is contained in
-   * @param singletonName
-   * @return {@link CsdlSingleton} for given container and singleton name
-   * @throws ODataException
+   * @param singletonName name of singleton
+   * @return for given container and singleton name
+   * @throws ODataException the o data exception
    */
-  public CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
+  CsdlSingleton getSingleton(final FullQualifiedName entityContainer, final String singletonName)
       throws ODataException;
 
   /**
    * This method should return an {@link CsdlActionImport} or <b>null</b> if nothing is found
    *
    * @param entityContainer this ActionImport is contained in
-   * @param actionImportName
-   * @return {@link CsdlActionImport} for the given container and ActionImport name
-   * @throws ODataException
+   * @param actionImportName name of action import
+   * @return for the given container and ActionImport name
+   * @throws ODataException the o data exception
    */
-  public CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
+  CsdlActionImport getActionImport(final FullQualifiedName entityContainer, final String actionImportName)
       throws ODataException;
 
   /**
    * This method should return a {@link CsdlFunctionImport} or <b>null</b> if nothing is found
    *
    * @param entityContainer this FunctionImport is contained in
-   * @param functionImportName
-   * @return {@link CsdlFunctionImport} for the given container name and function import name
-   * @throws ODataException
+   * @param functionImportName name of function import
+   * @return for the given container name and function import name
+   * @throws ODataException the o data exception
    */
-  public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
+  CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer, final String functionImportName)
       throws ODataException;
 
   /**
    * This method should return an {@link CsdlEntityContainerInfo} or <b>null</b> if nothing is found
    *
    * @param entityContainerName (null for default container)
-   * @return {@link CsdlEntityContainerInfo} for the given name
-   * @throws ODataException
+   * @return for the given name
+   * @throws ODataException the o data exception
    */
-  public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
+  CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
       throws ODataException;
 
   /**
    * This method should return a list of all namespaces which have an alias
    *
    * @return List of alias info
-   * @throws ODataException
+   * @throws ODataException the o data exception
    */
-  public List<CsdlAliasInfo> getAliasInfos() throws ODataException;
+  List<CsdlAliasInfo> getAliasInfos() throws ODataException;
 
   /**
    * This method should return a collection of all {@link CsdlSchema}
    *
-   * @return List<{@link CsdlSchema}>
-   * @throws ODataException
+   * @return List of
+   * @throws ODataException the o data exception
    */
-  public List<CsdlSchema> getSchemas() throws ODataException;
+  List<CsdlSchema> getSchemas() throws ODataException;
 
   /**
    * Returns the entity container of this edm
-   * @return {@link CsdlEntityContainer} of this edm
+   * @return of this edm
+   * @throws ODataException the o data exception
    */
-  public CsdlEntityContainer getEntityContainer() throws ODataException;
+  CsdlEntityContainer getEntityContainer() throws ODataException;
 
   /**
-   * @param targetName
-   * @return {@link CsdlAnnotations} group for the given Target
+   * Gets annotations group.
+   *
+   * @param targetName full qualified name of target
+   * @return group for the given Target
+   * @throws ODataException the o data exception
    */
-  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException;
+  CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException;
 
   /**
-   * @param annotatedName
-   * @return Annotatble element by target name
+   * Gets annotatable.
+   *
+   * @param annotatedName full qualified name of annotatable
+   * @return Annotatable element by target name
+   * @throws ODataException the o data exception
    */
-  public CsdlAnnotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException;
+  CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException;
 }

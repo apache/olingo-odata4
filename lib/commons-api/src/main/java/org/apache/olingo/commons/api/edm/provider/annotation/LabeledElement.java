@@ -25,16 +25,16 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
  * then be reused elsewhere with an edm:LabeledElementReference (See {@link LabeledElementReference}) expression.
  */
 public interface LabeledElement extends DynamicAnnotationExpression, CsdlAnnotatable {
-  
+
   /**
    * Returns the assigned name
    * @return assigned name
    */
   String getName();
-  
+
   /**
    * Returns the child expression
-   * 
+   *
    * @return child expression
    */
   DynamicAnnotationExpression getValue();

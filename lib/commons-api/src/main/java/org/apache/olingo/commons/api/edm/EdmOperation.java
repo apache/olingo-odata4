@@ -26,7 +26,8 @@ import java.util.List;
 public interface EdmOperation extends EdmType, EdmAnnotatable {
 
   /**
-   * @param name
+   * Get parameter for given name
+   * @param name name of parameter
    * @return {@link EdmParameter} for this name
    */
   EdmParameter getParameter(String name);
@@ -39,7 +40,9 @@ public interface EdmOperation extends EdmType, EdmAnnotatable {
   List<String> getParameterNames();
 
   /**
-   * @param bindingParameterEntitySet
+   * Get EdmEntitySet for the given binding parameters EntitySet
+   *
+   * @param bindingParameterEntitySet EntitySet of binding parameter
    * @return {@link EdmEntitySet} for this binding
    */
   EdmEntitySet getReturnedEntitySet(EdmEntitySet bindingParameterEntitySet);

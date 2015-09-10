@@ -25,7 +25,7 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 public interface NavigationPropertyPath extends DynamicAnnotationExpression {
   /**
    * Returns the navigation property path itself.
-   * 
+   *
    * @return navigation property
    */
   String getValue();

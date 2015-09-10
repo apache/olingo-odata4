@@ -23,6 +23,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl enum type.
+ */
 public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = -718032622783883403L;
@@ -42,20 +45,42 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlEnumType setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Is flags.
+   *
+   * @return the boolean
+   */
   public boolean isFlags() {
     return isFlags;
   }
 
+  /**
+   * Sets flags.
+   *
+   * @param isFlags the is flags
+   * @return the flags
+   */
   public CsdlEnumType setFlags(final boolean isFlags) {
     this.isFlags = isFlags;
     return this;
   }
 
+  /**
+   * Gets underlying type.
+   *
+   * @return the underlying type
+   */
   public String getUnderlyingType() {
     if (underlyingType != null) {
       return underlyingType.getFullQualifiedNameAsString();
@@ -63,20 +88,43 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     return null;
   }
 
+  /**
+   * Sets underlying type.
+   *
+   * @param underlyingType the underlying type
+   * @return the underlying type
+   */
   public CsdlEnumType setUnderlyingType(final String underlyingType) {
     this.underlyingType = new FullQualifiedName(underlyingType);
     return this;
   }
 
+  /**
+   * Sets underlying type.
+   *
+   * @param underlyingType the underlying type
+   * @return the underlying type
+   */
   public CsdlEnumType setUnderlyingType(final FullQualifiedName underlyingType) {
     this.underlyingType = underlyingType;
     return this;
   }
 
+  /**
+   * Gets members.
+   *
+   * @return the members
+   */
   public List<CsdlEnumMember> getMembers() {
     return members;
   }
 
+  /**
+   * Gets member.
+   *
+   * @param name the name
+   * @return the member
+   */
   public CsdlEnumMember getMember(final String name) {
     CsdlEnumMember result = null;
     if (getMembers() != null) {
@@ -89,6 +137,12 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     return result;
   }
 
+  /**
+   * Gets member.
+   *
+   * @param value the value
+   * @return the member
+   */
   public CsdlEnumMember getMember(final Integer value) {
     CsdlEnumMember result = null;
     if (getMembers() != null) {
@@ -101,6 +155,12 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
     return result;
   }
 
+  /**
+   * Sets members.
+   *
+   * @param members the members
+   * @return the members
+   */
   public CsdlEnumType setMembers(final List<CsdlEnumMember> members) {
     this.members = members;
     return this;

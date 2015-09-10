@@ -44,7 +44,7 @@ public class ODataError {
   /**
    * The value for the code name/value pair is a language-independent string. Its value is a service-defined error code.
    * This code serves as a sub-status for the HTTP error code specified in the response. MAY be null.
-   * @param code
+   * @param code the service defined error code for this error
    * @return this for method chaining
    */
   public ODataError setCode(final String code) {
@@ -64,7 +64,7 @@ public class ODataError {
   /**
    * The value for the message name/value pair MUST be a human-readable, language-dependent representation of the error.
    * MUST not be null
-   * @param message
+   * @param message message for this error
    * @return this for method chaining
    */
   public ODataError setMessage(final String message) {
@@ -84,7 +84,7 @@ public class ODataError {
   /**
    * The value for the target name/value pair is the target of the particular error (for example, the name of the
    * property in error). MAY be null.
-   * @param target
+   * @param target target to which this error is related to
    * @return this for method chaining
    */
   public ODataError setTarget(final String target) {

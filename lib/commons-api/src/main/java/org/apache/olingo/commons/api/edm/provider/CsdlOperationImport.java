@@ -21,12 +21,24 @@ package org.apache.olingo.commons.api.edm.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Csdl operation import.
+ */
 public abstract class CsdlOperationImport extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = -8928186067970681061L;
 
+  /**
+   * The Name.
+   */
   protected String name;
+  /**
+   * The Entity set.
+   */
   protected String entitySet;
+  /**
+   * The Annotations.
+   */
   protected final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
@@ -34,15 +46,32 @@ public abstract class CsdlOperationImport extends CsdlAbstractEdmItem implements
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlOperationImport setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets entity set.
+   *
+   * @return the entity set
+   */
   public String getEntitySet() {
     return entitySet;
   }
 
+  /**
+   * Sets entity set.
+   *
+   * @param entitySet the entity set
+   * @return the entity set
+   */
   public CsdlOperationImport setEntitySet(final String entitySet) {
     this.entitySet = entitySet;
     return this;

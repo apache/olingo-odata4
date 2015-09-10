@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The type Csdl navigation property binding.
+ */
 public class CsdlNavigationPropertyBinding extends CsdlAbstractEdmItem {
 
   private static final long serialVersionUID = 770380971233808502L;
@@ -26,19 +29,41 @@ public class CsdlNavigationPropertyBinding extends CsdlAbstractEdmItem {
 
   private String target;
 
+  /**
+   * Gets path.
+   *
+   * @return the path
+   */
   public String getPath() {
     return path;
   }
 
+  /**
+   * Sets path.
+   *
+   * @param path the path
+   * @return the path
+   */
   public CsdlNavigationPropertyBinding setPath(final String path) {
     this.path = path;
     return this;
   }
 
+  /**
+   * Gets target.
+   *
+   * @return the target
+   */
   public String getTarget() {
     return target;
   }
 
+  /**
+   * Sets target.
+   *
+   * @param target the target
+   * @return the target
+   */
   public CsdlNavigationPropertyBinding setTarget(final String target) {
     this.target = target;
     return this;

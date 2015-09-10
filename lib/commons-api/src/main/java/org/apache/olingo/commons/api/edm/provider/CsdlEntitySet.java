@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl entity set.
+ */
 public class CsdlEntitySet extends CsdlBindingTarget {
 
   private static final long serialVersionUID = 5291570018480936643L;
@@ -54,10 +57,21 @@ public class CsdlEntitySet extends CsdlBindingTarget {
     return this;
   }
 
+  /**
+   * Is include in service document.
+   *
+   * @return the boolean
+   */
   public boolean isIncludeInServiceDocument() {
     return includeInServiceDocument;
   }
 
+  /**
+   * Sets include in service document.
+   *
+   * @param includeInServiceDocument the include in service document
+   * @return the include in service document
+   */
   public CsdlEntitySet setIncludeInServiceDocument(final boolean includeInServiceDocument) {
     this.includeInServiceDocument = includeInServiceDocument;
     return this;

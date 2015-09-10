@@ -23,14 +23,26 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl binding target.
+ */
 public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = -7011724617956042182L;
 
+  /**
+   * The Name.
+   */
   protected String name;
 
+  /**
+   * The Type.
+   */
   protected FullQualifiedName type;
 
+  /**
+   * The Navigation property bindings.
+   */
   protected List<CsdlNavigationPropertyBinding> navigationPropertyBindings =
       new ArrayList<CsdlNavigationPropertyBinding>();
 
@@ -41,33 +53,72 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlBindingTarget setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets type.
+   *
+   * @return the type
+   */
   public String getType() {
     return type.getFullQualifiedNameAsString();
   }
 
+  /**
+   * Gets type fQN.
+   *
+   * @return the type fQN
+   */
   public FullQualifiedName getTypeFQN() {
     return type;
   }
 
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   * @return the type
+   */
   public CsdlBindingTarget setType(final String type) {
     this.type = new FullQualifiedName(type);
     return this;
   }
 
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   * @return the type
+   */
   public CsdlBindingTarget setType(final FullQualifiedName type) {
     this.type = type;
     return this;
   }
 
+  /**
+   * Gets navigation property bindings.
+   *
+   * @return the navigation property bindings
+   */
   public List<CsdlNavigationPropertyBinding> getNavigationPropertyBindings() {
     return navigationPropertyBindings;
   }
 
+  /**
+   * Sets navigation property bindings.
+   *
+   * @param navigationPropertyBindings the navigation property bindings
+   * @return the navigation property bindings
+   */
   public CsdlBindingTarget setNavigationPropertyBindings(
       final List<CsdlNavigationPropertyBinding> navigationPropertyBindings) {
     this.navigationPropertyBindings = navigationPropertyBindings;

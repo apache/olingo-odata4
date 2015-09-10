@@ -23,6 +23,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl entity container.
+ */
 public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = 5384682515007129458L;
@@ -47,11 +50,22 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlEntityContainer setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets extends container.
+   *
+   * @return the extends container
+   */
   public String getExtendsContainer() {
     if (extendsContainer != null) {
       return extendsContainer.getFullQualifiedNameAsString();
@@ -59,28 +73,61 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
     return null;
   }
 
+  /**
+   * Gets extends container fQN.
+   *
+   * @return the extends container fQN
+   */
   public FullQualifiedName getExtendsContainerFQN() {
     return extendsContainer;
   }
 
+  /**
+   * Sets extends container.
+   *
+   * @param extendsContainer the extends container
+   * @return the extends container
+   */
   public CsdlEntityContainer setExtendsContainer(final String extendsContainer) {
     this.extendsContainer = new FullQualifiedName(extendsContainer);
     return this;
   }
 
+  /**
+   * Gets entity sets.
+   *
+   * @return the entity sets
+   */
   public List<CsdlEntitySet> getEntitySets() {
     return entitySets;
   }
 
+  /**
+   * Gets entity set.
+   *
+   * @param name the name
+   * @return the entity set
+   */
   public CsdlEntitySet getEntitySet(final String name) {
     return getOneByName(name, getEntitySets());
   }
 
+  /**
+   * Sets entity sets.
+   *
+   * @param entitySets the entity sets
+   * @return the entity sets
+   */
   public CsdlEntityContainer setEntitySets(final List<CsdlEntitySet> entitySets) {
     this.entitySets = entitySets;
     return this;
   }
 
+  /**
+   * Gets action imports.
+   *
+   * @return the action imports
+   */
   public List<CsdlActionImport> getActionImports() {
     return actionImports;
   }
@@ -105,11 +152,22 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
     return getAllByName(name, getActionImports());
   }
 
+  /**
+   * Sets action imports.
+   *
+   * @param actionImports the action imports
+   * @return the action imports
+   */
   public CsdlEntityContainer setActionImports(final List<CsdlActionImport> actionImports) {
     this.actionImports = actionImports;
     return this;
   }
 
+  /**
+   * Gets function imports.
+   *
+   * @return the function imports
+   */
   public List<CsdlFunctionImport> getFunctionImports() {
     return functionImports;
   }
@@ -134,19 +192,42 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
     return getAllByName(name, getFunctionImports());
   }
 
+  /**
+   * Sets function imports.
+   *
+   * @param functionImports the function imports
+   * @return the function imports
+   */
   public CsdlEntityContainer setFunctionImports(final List<CsdlFunctionImport> functionImports) {
     this.functionImports = functionImports;
     return this;
   }
 
+  /**
+   * Gets singletons.
+   *
+   * @return the singletons
+   */
   public List<CsdlSingleton> getSingletons() {
     return singletons;
   }
 
+  /**
+   * Gets singleton.
+   *
+   * @param name the name
+   * @return the singleton
+   */
   public CsdlSingleton getSingleton(final String name) {
     return getOneByName(name, getSingletons());
   }
 
+  /**
+   * Sets singletons.
+   *
+   * @param singletons the singletons
+   * @return the singletons
+   */
   public CsdlEntityContainer setSingletons(final List<CsdlSingleton> singletons) {
     this.singletons = singletons;
     return this;

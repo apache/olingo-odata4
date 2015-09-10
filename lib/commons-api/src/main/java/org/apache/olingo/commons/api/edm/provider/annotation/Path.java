@@ -27,7 +27,7 @@ public interface Path extends DynamicAnnotationExpression {
 
   /**
    * Returns the target value of the expression
-   * 
+   *
    * @return target value of the expression
    */
   String getValue();

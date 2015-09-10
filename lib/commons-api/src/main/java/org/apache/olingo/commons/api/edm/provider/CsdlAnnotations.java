@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.edm.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Csdl annotations.
+ */
 public class CsdlAnnotations extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private static final long serialVersionUID = 8283036066408166150L;
@@ -31,19 +34,41 @@ public class CsdlAnnotations extends CsdlAbstractEdmItem implements CsdlAnnotata
 
   private String qualifier;
 
+  /**
+   * Gets target.
+   *
+   * @return the target
+   */
   public String getTarget() {
     return target;
   }
 
+  /**
+   * Sets target.
+   *
+   * @param target the target
+   * @return the target
+   */
   public CsdlAnnotations setTarget(final String target) {
     this.target = target;
     return this;
   }
 
+  /**
+   * Gets qualifier.
+   *
+   * @return the qualifier
+   */
   public String getQualifier() {
     return qualifier;
   }
 
+  /**
+   * Sets qualifier.
+   *
+   * @param qualifier the qualifier
+   * @return the qualifier
+   */
   public CsdlAnnotations setQualifier(final String qualifier) {
     this.qualifier = qualifier;
     return this;
@@ -54,6 +79,12 @@ public class CsdlAnnotations extends CsdlAbstractEdmItem implements CsdlAnnotata
     return annotations;
   }
 
+  /**
+   * Gets annotation.
+   *
+   * @param term the term
+   * @return the annotation
+   */
   public CsdlAnnotation getAnnotation(final String term) {
     CsdlAnnotation result = null;
     for (CsdlAnnotation annotation : getAnnotations()) {

@@ -46,7 +46,9 @@ public interface EdmNavigationProperty extends EdmElement, EdmAnnotationsTarget,
   EdmNavigationProperty getPartner();
 
   /**
-   * @param referencedPropertyName
+   * Get property name for referenced property
+   *
+   * @param referencedPropertyName name of referenced property
    * @return propertyName for this referenced property
    */
   String getReferencingPropertyName(String referencedPropertyName);

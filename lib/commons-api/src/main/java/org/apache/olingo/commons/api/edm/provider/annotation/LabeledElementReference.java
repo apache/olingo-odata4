@@ -23,7 +23,7 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  *  edm:LabeledElement (see {@link LabeledElement}) expression.
  */
 public interface LabeledElementReference extends DynamicAnnotationExpression {
-  
+
   /**
    * Returns the value of the edm:LabeledElement expression
    * @return value of the edm:LabeledElement expression

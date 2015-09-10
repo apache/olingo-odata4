@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.edm.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Csdl enum member.
+ */
 public class CsdlEnumMember extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
   private static final long serialVersionUID = 5618984420582832094L;
@@ -36,15 +39,32 @@ public class CsdlEnumMember extends CsdlAbstractEdmItem implements CsdlNamed, Cs
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlEnumMember setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets value.
+   *
+   * @return the value
+   */
   public String getValue() {
     return value;
   }
 
+  /**
+   * Sets value.
+   *
+   * @param value the value
+   * @return the value
+   */
   public CsdlEnumMember setValue(final String value) {
     this.value = value;
     return this;

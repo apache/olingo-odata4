@@ -23,7 +23,7 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  * the UrlRef expression. 
  */
 public interface UrlRef extends DynamicAnnotationExpression {
-  
+
   /**
    * Returns a expression of type Edm.String
    * @return expression of type Edm.String

@@ -31,7 +31,7 @@ public interface Cast extends DynamicAnnotationExpression, CsdlAnnotatable {
    * @return Returns the facet attribute MaxLength
    */
   Integer getMaxLength();
-  
+
   /**
    * Returns the facet attribute Precision
    * @return Returns the facet attribute Precision
@@ -49,13 +49,13 @@ public interface Cast extends DynamicAnnotationExpression, CsdlAnnotatable {
    * @return Returns the facet attribute SRID
    */
   SRID getSrid();
-  
+
   /**
    * Value cast to
    * @return value cast to
    */
   String getType();
-  
+
   /**
    * Cast value of the expression
    * @return Cast value

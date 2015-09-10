@@ -41,7 +41,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
   /**
    * Get contained Singleton by name.
    *
-   * @param name
+   * @param name name of contained Singleton
    * @return {@link EdmSingleton}
    */
   EdmSingleton getSingleton(String name);
@@ -49,7 +49,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
   /**
    * Get contained EntitySet by name.
    *
-   * @param name
+   * @param name name of contained EntitySet
    * @return {@link EdmEntitySet}
    */
   EdmEntitySet getEntitySet(String name);
@@ -57,7 +57,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
   /**
    * Get contained ActionImport by name.
    *
-   * @param name
+   * @param name name of contained ActionImport
    * @return {@link EdmActionImport}
    */
   EdmActionImport getActionImport(String name);
@@ -65,7 +65,7 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmA
   /**
    * Get contained FunctionImport by name.
    *
-   * @param name
+   * @param name name of contained FunctionImport
    * @return {@link EdmFunctionImport}
    */
   EdmFunctionImport getFunctionImport(String name);

@@ -18,16 +18,30 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The type Csdl on delete.
+ */
 public class CsdlOnDelete extends CsdlAbstractEdmItem {
 
   private static final long serialVersionUID = -7130889202653716784L;
 
   private CsdlOnDeleteAction action = CsdlOnDeleteAction.None;
 
+  /**
+   * Gets action.
+   *
+   * @return the action
+   */
   public CsdlOnDeleteAction getAction() {
     return action;
   }
 
+  /**
+   * Sets action.
+   *
+   * @param action the action
+   * @return the action
+   */
   public CsdlOnDelete setAction(final CsdlOnDeleteAction action) {
     this.action = action;
     return this;

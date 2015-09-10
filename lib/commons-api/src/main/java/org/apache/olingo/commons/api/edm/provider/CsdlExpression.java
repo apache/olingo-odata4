@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The type Csdl expression.
+ */
 public class CsdlExpression {
   // TODO: Expression implementation
 }

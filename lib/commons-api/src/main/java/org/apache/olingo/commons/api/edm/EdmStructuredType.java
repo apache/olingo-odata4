@@ -30,7 +30,7 @@ public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnn
   /**
    * Get property by name
    *
-   * @param name
+   * @param name name of property
    * @return simple, complex or navigation property as {@link EdmTyped}
    */
   EdmElement getProperty(String name);
@@ -45,7 +45,7 @@ public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnn
   /**
    * Get structural property by name.
    *
-   * @param name
+   * @param name name of structural property
    * @return simple or complex property as {@link EdmTyped}
    */
   EdmProperty getStructuralProperty(String name);
@@ -53,7 +53,7 @@ public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnn
   /**
    * Get navigation property by name.
    *
-   * @param name
+   * @param name name of navigation property
    * @return navigation property as {@link EdmTyped}
    */
   EdmNavigationProperty getNavigationProperty(String name);
@@ -75,7 +75,7 @@ public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnn
   /**
    * Checks if this type is convertible to parameter {@code targetType}
    *
-   * @param targetType
+   * @param targetType target type for which compatibility is checked
    * @return true if this type is compatible to the testType (i.e., this type is a subtype of targetType)
    */
   boolean compatibleTo(EdmType targetType);

@@ -40,7 +40,7 @@ public class CsdlActionImport extends CsdlOperationImport {
     this.entitySet = entitySet;
     return this;
   }
-  
+
   /**
    * Returns the full qualified name of the action as string
    * @return full qualified name
@@ -48,7 +48,7 @@ public class CsdlActionImport extends CsdlOperationImport {
   public String getAction() {
     return action.getFullQualifiedNameAsString();
   }
-  
+
   /**
    * Returns the full qualified name of the action 
    * @return full qualified name
@@ -56,7 +56,7 @@ public class CsdlActionImport extends CsdlOperationImport {
   public FullQualifiedName getActionFQN() {
     return action;
   }
-  
+
   /**
    * Sets the full qualified name of the action as string
    * @param action full qualified name

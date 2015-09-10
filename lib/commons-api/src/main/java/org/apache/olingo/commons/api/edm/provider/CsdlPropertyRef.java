@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The type Csdl property ref.
+ */
 public class CsdlPropertyRef extends CsdlAbstractEdmItem implements CsdlNamed {
 
   private static final long serialVersionUID = 9082892362895660037L;
@@ -31,15 +34,32 @@ public class CsdlPropertyRef extends CsdlAbstractEdmItem implements CsdlNamed {
     return name;
   }
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   public CsdlPropertyRef setName(final String name) {
     this.name = name;
     return this;
   }
 
+  /**
+   * Gets alias.
+   *
+   * @return the alias
+   */
   public String getAlias() {
     return alias;
   }
 
+  /**
+   * Sets alias.
+   *
+   * @param alias the alias
+   * @return the alias
+   */
   public CsdlPropertyRef setAlias(final String alias) {
     this.alias = alias;
     return this;

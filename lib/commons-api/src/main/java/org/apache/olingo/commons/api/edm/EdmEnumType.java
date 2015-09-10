@@ -26,7 +26,9 @@ import java.util.List;
 public interface EdmEnumType extends EdmPrimitiveType, EdmAnnotationsTarget {
 
   /**
-   * @param name
+   * Get member according to given name
+   *
+   * @param name name of member
    * @return {@link EdmMember} for the given name
    */
   EdmMember getMember(String name);

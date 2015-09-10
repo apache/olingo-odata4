@@ -18,8 +18,15 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
-
+/**
+ * The interface Csdl named.
+ */
 public interface CsdlNamed {
 
+  /**
+   * Gets name.
+   *
+   * @return the name
+   */
   String getName();
 }

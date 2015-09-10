@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
  * Represents an Edm:Apply expression
  */
 public interface Apply extends DynamicAnnotationExpression, CsdlAnnotatable {
-  
+
   /**
    * A QualifiedName specifying the name of the client-side function to apply.
    * <br/>
@@ -34,13 +34,13 @@ public interface Apply extends DynamicAnnotationExpression, CsdlAnnotatable {
    * namespace or alias other than odata. Function names qualified with odata are reserved for this specification and
    * its future versions.
    *
+   * @return function full qualified name
    * @see org.apache.olingo.commons.api.Constants#CANONICAL_FUNCTION_CONCAT
    * @see org.apache.olingo.commons.api.Constants#CANONICAL_FUNCTION_FILLURITEMPLATE
    * @see org.apache.olingo.commons.api.Constants#CANONICAL_FUNCTION_URIENCODE
-   * @return function full qualified name
    */
   String getFunction();
-  
+
   /**
    * Returns the expressions applied to the parameters of the function
    * @return List of expression

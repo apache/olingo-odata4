@@ -37,7 +37,7 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
   private List<CsdlAnnotation> annotation = new ArrayList<CsdlAnnotation>();
 
   private AnnotationExpression annotationExpression;
-  
+
   /**
    * Returns the annotated expression
    * @return expression annotated expression
@@ -45,23 +45,23 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
   public AnnotationExpression getExpression() {
     return annotationExpression;
   }
-  
+
   /**
    * Sets the annotated expression
-   * @param annotationExpression  annotated expression
+   * @param annotationExpression annotated expression
    */
   public void setExpression(final AnnotationExpression annotationExpression) {
     this.annotationExpression = annotationExpression;
   }
-  
+
   /**
    * Returns the annotated term
-   * @return Term
+   * @return Term term
    */
   public String getTerm() {
     return term;
   }
-  
+
   /**
    * Sets the annotated expression
    * @param term term
@@ -71,7 +71,7 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
     this.term = term;
     return this;
   }
-  
+
   /**
    * Returns the annotated qualifier
    * @return annotated qualifier
@@ -79,7 +79,7 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
   public String getQualifier() {
     return qualifier;
   }
-  
+
   /**
    * Sets the annotated qualifier
    * @param qualifier annotated qualifier
@@ -89,7 +89,7 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
     this.qualifier = qualifier;
     return this;
   }
-  
+
   /**
    * Sets a list of annotations
    * @param annotation list of annotations

@@ -35,11 +35,25 @@ public abstract class CsdlAbstractEdmItem implements Serializable {
 
   private static final long serialVersionUID = 241190986363884784L;
 
+  /**
+   * Gets one by name.
+   *
+   * @param name the name
+   * @param items the items
+   * @return the one by name
+   */
   protected <T extends CsdlNamed> T getOneByName(final String name, final Collection<T> items) {
     final List<T> result = getAllByName(name, items);
     return result.isEmpty() ? null : result.get(0);
   }
 
+  /**
+   * Gets all by name.
+   *
+   * @param name the name
+   * @param items the items
+   * @return the all by name
+   */
   protected <T extends CsdlNamed> List<T> getAllByName(final String name, final Collection<T> items) {
     final List<T> result = new ArrayList<T>();
     for (T type : items) {

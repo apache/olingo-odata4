@@ -21,6 +21,9 @@ package org.apache.olingo.commons.api.edm.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Csdl referential constraint.
+ */
 public class CsdlReferentialConstraint extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private static final long serialVersionUID = -7467707499798840075L;
@@ -31,19 +34,41 @@ public class CsdlReferentialConstraint extends CsdlAbstractEdmItem implements Cs
 
   private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  /**
+   * Gets property.
+   *
+   * @return the property
+   */
   public String getProperty() {
     return property;
   }
 
+  /**
+   * Sets property.
+   *
+   * @param property the property
+   * @return the property
+   */
   public CsdlReferentialConstraint setProperty(final String property) {
     this.property = property;
     return this;
   }
 
+  /**
+   * Gets referenced property.
+   *
+   * @return the referenced property
+   */
   public String getReferencedProperty() {
     return referencedProperty;
   }
 
+  /**
+   * Sets referenced property.
+   *
+   * @param referencedProperty the referenced property
+   * @return the referenced property
+   */
   public CsdlReferentialConstraint setReferencedProperty(final String referencedProperty) {
     this.referencedProperty = referencedProperty;
     return this;

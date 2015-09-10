@@ -18,11 +18,25 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The enum Csdl on delete action.
+ */
 public enum CsdlOnDeleteAction {
 
+  /**
+   * The Cascade.
+   */
   Cascade,
+  /**
+   * The None.
+   */
   None,
+  /**
+   * The SetNull.
+   */
   SetNull,
+  /**
+   * The SetDefault.
+   */
   SetDefault
-
 }

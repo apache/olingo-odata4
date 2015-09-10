@@ -18,25 +18,50 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+/**
+ * The type Csdl entity set path.
+ */
 public class CsdlEntitySetPath {
 
   private String bindingParameter;
 
   private String path;
 
+  /**
+   * Gets binding parameter.
+   *
+   * @return the binding parameter
+   */
   public String getBindingParameter() {
     return bindingParameter;
   }
 
+  /**
+   * Sets binding parameter.
+   *
+   * @param bindingParameter the binding parameter
+   * @return the binding parameter
+   */
   public CsdlEntitySetPath setBindingParameter(final String bindingParameter) {
     this.bindingParameter = bindingParameter;
     return this;
   }
 
+  /**
+   * Gets path.
+   *
+   * @return the path
+   */
   public String getPath() {
     return path;
   }
 
+  /**
+   * Sets path.
+   *
+   * @param path the path
+   * @return the path
+   */
   public CsdlEntitySetPath setPath(final String path) {
     this.path = path;
     return this;

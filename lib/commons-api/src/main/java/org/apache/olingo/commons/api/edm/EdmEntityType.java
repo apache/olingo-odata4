@@ -42,7 +42,7 @@ public interface EdmEntityType extends EdmStructuredType {
   /**
    * Get a key property ref by its name.
    *
-   * @param keyPredicateName
+   * @param keyPredicateName name of key property
    * @return {@link EdmKeyPropertyRef} for given name
    */
   EdmKeyPropertyRef getKeyPropertyRef(String keyPredicateName);

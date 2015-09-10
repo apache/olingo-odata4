@@ -51,6 +51,7 @@ public class CsdlAction extends CsdlOperation {
     return this;
   }
 
+
   @Override
   public CsdlAction setReturnType(final CsdlReturnType returnType) {
     this.returnType = returnType;

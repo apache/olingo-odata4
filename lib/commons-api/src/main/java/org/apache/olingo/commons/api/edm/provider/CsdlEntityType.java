@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
+/**
+ * The type Csdl entity type.
+ */
 public class CsdlEntityType extends CsdlStructuralType {
 
   private static final long serialVersionUID = -1564752618679704024L;
@@ -30,19 +33,41 @@ public class CsdlEntityType extends CsdlStructuralType {
 
   private boolean hasStream = false;
 
+  /**
+   * Has stream.
+   *
+   * @return the boolean
+   */
   public boolean hasStream() {
     return hasStream;
   }
 
+  /**
+   * Sets has stream.
+   *
+   * @param hasStream the has stream
+   * @return the has stream
+   */
   public CsdlEntityType setHasStream(final boolean hasStream) {
     this.hasStream = hasStream;
     return this;
   }
 
+  /**
+   * Gets key.
+   *
+   * @return the key
+   */
   public List<CsdlPropertyRef> getKey() {
     return key;
   }
 
+  /**
+   * Sets key.
+   *
+   * @param key the key
+   * @return the key
+   */
   public CsdlEntityType setKey(final List<CsdlPropertyRef> key) {
     this.key = key;
     return this;

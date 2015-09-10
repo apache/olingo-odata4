@@ -202,7 +202,7 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
   }
 
   @Override
-  public CsdlAnnotatable getAnnoatatable(FullQualifiedName annotatedName) throws ODataException {
+  public CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException {
     final CsdlSchema schema = xmlSchemas.get(annotatedName.getNamespace());
     if (schema != null) {
       return schema.getAnnotatables().get(annotatedName.getName());
