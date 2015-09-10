@@ -105,6 +105,7 @@
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.source>1.6</project.build.source>
+    <olingo.deploy.skip>true</olingo.deploy.skip>
   </properties>
 
   <dependencyManagement>
@@ -397,6 +398,13 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>${olingo.deploy.skip}</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
         <version>1.5</version>
         <dependencies>
@@ -593,7 +601,16 @@
 
   <profiles>
     <profile>
+      <id>apache.deploy</id>
+      <properties>
+        <olingo.deploy.skip>false</olingo.deploy.skip>
+      </properties>
+    </profile>
+    <profile>
       <id>apache-release</id>
+      <properties>
+        <olingo.deploy.skip>false</olingo.deploy.skip>
+      </properties>
       <build>
         <plugins>
           <plugin>
