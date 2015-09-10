@@ -61,8 +61,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * URI utilities.
@@ -72,7 +70,7 @@ public final class URIUtils {
   /**
    * Logger.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(URIUtils.class);
+//  private static final Logger LOG = LoggerFactory.getLogger(URIUtils.class);
 
   private static final Pattern ENUM_VALUE = Pattern.compile("(.+\\.)?.+'.+'");
 
@@ -262,12 +260,7 @@ public final class URIUtils {
                                                                 : obj.toString();
       }
     } catch (Exception e) {
-      LOG.warn("While escaping '{}', using getName()", obj, e);
-      if (obj == null) {
-        value = "null";
-      } else {
-        value = obj.toString();
-      }
+      value = obj.toString();
     }
 
     return value;
@@ -298,7 +291,7 @@ public final class URIUtils {
         bytes = IOUtils.toByteArray(input);
         IOUtils.closeQuietly(input);
       } catch (IOException e) {
-        LOG.error("While reading input for not chunked encoding", e);
+        throw new RuntimeException("While reading input for not chunked encoding", e);
       }
 
       entity = new ByteArrayEntity(bytes);
@@ -307,7 +300,6 @@ public final class URIUtils {
     }
 
     if (!useChunked && entity.getContentLength() < 0) {
-      LOG.error("Could not determine length - request will be sent as chunked.");
       useChunked = true;
     }
     // both entities can be sent in chunked way or not

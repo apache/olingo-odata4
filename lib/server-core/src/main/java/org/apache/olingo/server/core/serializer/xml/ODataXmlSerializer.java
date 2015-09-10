@@ -752,16 +752,6 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
       writer.writeAttribute(DATA, NS_DATA, "null", "true");
-    } else if (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
-        || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)) {
-      writer.writeCharacters(value);
     } else {
       writer.writeCharacters(value);
     }

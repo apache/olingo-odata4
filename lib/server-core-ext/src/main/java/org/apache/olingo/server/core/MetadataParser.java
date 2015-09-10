@@ -20,7 +20,7 @@ package org.apache.olingo.server.core;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -33,6 +33,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
@@ -74,7 +75,7 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
           String name) throws XMLStreamException {
         String version = attr(element, "Version");
-        if (version.equals("4.0")) {
+        if ("4.0".equals(version)) {
           readDataServicesAndReference(reader, element, provider);
         }
       }
@@ -140,10 +141,9 @@ public class MetadataParser {
           throws XMLStreamException {
         if (name.equals("Action")) {
           readAction(reader, element, schema);
-        } else if (name.equals("Annotations")) {
-          // TODO:
-        } else if (name.equals("Annotation")) {
-          // TODO:
+//        } else if (name.equals("Annotations")) {
+//        } else if (name.equals("Annotation")) {
+          // TODO: Add support for annotations
         } else if (name.equals("ComplexType")) {
           readComplexType(reader, element, schema);
         } else if (name.equals("EntityContainer")) {
@@ -182,7 +182,7 @@ public class MetadataParser {
 
   private FullQualifiedName readType(StartElement element) {
     String type = attr(element, "Type");
-    if (type.startsWith("Collection(") && type.endsWith(")")) {
+    if (type != null && type.startsWith("Collection(") && type.endsWith(")")) {
       return new FullQualifiedName(type.substring(11, type.length() - 1));
     }
     return new FullQualifiedName(type);
@@ -190,7 +190,7 @@ public class MetadataParser {
 
   private boolean isCollectionType(StartElement element) {
     String type = attr(element, "Type");
-    if (type.startsWith("Collection(") && type.endsWith(")")) {
+    if (type != null && type.startsWith("Collection(") && type.endsWith(")")) {
       return true;
     }
     return false;
@@ -217,6 +217,7 @@ public class MetadataParser {
     String srid = attr(element, "SRID");
     if (srid != null) {
       // TODO: no olingo support yet.
+      returnType.setSrid(SRID.valueOf(srid));
     }
     operation.setReturnType(returnType);
   }
@@ -243,6 +244,7 @@ public class MetadataParser {
     String srid = attr(element, "SRID");
     if (srid != null) {
       // TODO: no olingo support yet.
+      parameter.setSrid(SRID.valueOf(srid));
     }
     operation.getParameters().add(parameter);
   }
@@ -268,6 +270,7 @@ public class MetadataParser {
     String srid = attr(element, "SRID");
     if (srid != null) {
       // TODO: no olingo support yet.
+      td.setSrid(SRID.valueOf(srid));
     }
     return td;
   }
@@ -283,7 +286,7 @@ public class MetadataParser {
       term.setDefaultValue(attr(element, "DefaultValue"));
     }
     if (attr(element, "AppliesTo") != null) {
-      term.setAppliesTo(Arrays.asList(attr(element, "AppliesTo")));
+      term.setAppliesTo(Collections.singletonList(attr(element, "AppliesTo")));
     }
     term.setNullable(Boolean.parseBoolean(attr(element, "Nullable")));
     String maxLength = attr(element, "MaxLength");
@@ -301,6 +304,7 @@ public class MetadataParser {
     String srid = attr(element, "SRID");
     if (srid != null) {
       // TODO: no olingo support yet.
+      term.setSrid(SRID.valueOf(srid));
     }
     return term;
   }
@@ -473,6 +477,7 @@ public class MetadataParser {
     String srid = attr(element, "SRID");
     if (srid != null) {
       // TODO: no olingo support yet.
+      property.setSrid(SRID.valueOf(srid));
     }
     String defaultValue = attr(element, "DefaultValue");
     if (defaultValue != null) {
@@ -570,7 +575,6 @@ public class MetadataParser {
           }
 
         }.read(reader, element, bindings, "NavigationPropertyBinding");
-        ;
       }
     }.read(reader, element, schema, "EntitySet", "Singleton", "ActionImport", "FunctionImport");
     schema.setEntityContainer(container);
@@ -622,19 +626,19 @@ public class MetadataParser {
 
         boolean hit = false;
 
-        for (int i = 0; i < names.length; i++) {
+        for (String name : names) {
           if (event.isStartElement()) {
             element = event.asStartElement();
-            if (element.getName().getLocalPart().equals(names[i])) {
+            if (element.getName().getLocalPart().equals(name)) {
               reader.nextEvent(); // advance cursor
               // System.out.println("reading = "+names[i]);
-              build(reader, element, t, names[i]);
+              build(reader, element, t, name);
               hit = true;
             }
           }
           if (event.isEndElement()) {
             EndElement e = event.asEndElement();
-            if (e.getName().getLocalPart().equals(names[i])) {
+            if (e.getName().getLocalPart().equals(name)) {
               reader.nextEvent(); // advance cursor
               // System.out.println("done reading = "+names[i]);
               hit = true;

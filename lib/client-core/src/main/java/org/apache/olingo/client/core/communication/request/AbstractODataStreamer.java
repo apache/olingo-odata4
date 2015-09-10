@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedOutputStream;
+import java.util.Arrays;
 
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.slf4j.Logger;
@@ -87,7 +88,7 @@ public abstract class AbstractODataStreamer implements ODataStreamer {
 
     public Writer(final byte[] src, final OutputStream os) {
       this.os = os;
-      this.src = src;
+      this.src = Arrays.copyOf(src, src.length);
     }
 
     @Override

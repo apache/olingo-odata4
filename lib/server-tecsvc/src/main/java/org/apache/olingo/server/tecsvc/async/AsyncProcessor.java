@@ -39,6 +39,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public class AsyncProcessor<T extends Processor> {
     public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
       if (Processor.class.isAssignableFrom(method.getDeclaringClass())) {
         invokeMethod = method;
-        invokeParameters = objects;
+        invokeParameters = Arrays.copyOf(objects, objects.length);
       } else {
         throw new ODataRuntimeException("Invalid class '" + method.getDeclaringClass() +
             "' can not wrapped for asynchronous processing.");
