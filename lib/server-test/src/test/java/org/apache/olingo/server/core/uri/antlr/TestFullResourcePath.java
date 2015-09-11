@@ -5279,40 +5279,42 @@ public class TestFullResourcePath {
     .goUpUriValidator()
     .isCustomParameter(0, "@A", "'2'");
   }
-  
-  @Test(expected=UriParserException.class)
-  public void testDoublePercentDecoding() throws Exception {
-    testUri.run("ESAllPrim%252832767%29");
-  }
-  
-  @Test(expected=UriParserException.class)
-  public void testMultipleKeysInResourcePath() throws Exception {
-    // See OLINGO-730
-    testUri.run("ESAllPrim(32767)(1)(2)");
-  }
-  
-  @Test(expected=UriParserException.class)
-  public void testSimpleKeyInExpandSystemQueryOption() throws Exception {
-    testUri.run("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(-365)($filter=PropertyString eq 'Test String1')");
-  }
-  
-  @Test(expected=UriParserException.class)
-  public void testCompountKeyInExpandSystemQueryOption() throws Exception {
-    testUri.run("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(PropertyInt16=1,PropertyString=2)" 
-             + "($filter=PropertyString eq 'Test String1')");
-  }
-  
+
   @Test
-  public void testKeyPredicatesInExpandFilter() throws Exception {
+  public void doublePercentDecoding() throws Exception {
+    testUri.runEx("ESAllPrim%252832767%29").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+
+  @Test
+  public void multipleKeysInResourcePath() throws Exception {
+    // See OLINGO-730
+    testUri.runEx("ESAllPrim(32767)(1)(2)").isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+  }
+
+  @Test
+  public void simpleKeyInExpandSystemQueryOption() throws Exception {
+    testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(-365)($filter=PropertyString eq 'Test String1')")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  }
+
+  @Test
+  public void compoundKeyInExpandSystemQueryOption() throws Exception {
+    testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(PropertyInt16=1,PropertyString=2)"
+        + "($filter=PropertyString eq 'Test String1')")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  }
+
+  @Test
+  public void keyPredicatesInExpandFilter() throws Exception {
     testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($filter=NavPropertyETTwoKeyNavMany" 
         + "(PropertyInt16=1,PropertyString='2')/PropertyInt16 eq 1)").goPath().goExpand()
         .first().goPath().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .goUpExpandValidator()
         .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
   }
-  
+
   @Test
-  public void testKeyPredicatesInDoubleExpandedFilter() throws Exception {
+  public void KeyPredicatesInDoubleExpandedFilter() throws Exception {
     testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany" 
         + "($filter=NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='2')/PropertyInt16 eq 1))")
         .goPath().goExpand()
@@ -5322,61 +5324,75 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isFilterSerialized("<<NavPropertyETTwoKeyNavMany/PropertyInt16> eq <1>>");
   }
-  
-  @Test(expected=UriParserException.class)
-  public void testFilterSystemQueryOptionAnyWithKeyAny() throws Exception {
-    testUri.run("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)" 
-              + "/any(d:d/PropertyInt16 eq 0)");
-  }
-  
-  @Test(expected=UriParserException.class)
-  public void testFilterSystemQueryOptionAnyWithKeyAll() throws Exception {
-    testUri.run("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)" 
-              + "/all(d:d/PropertyInt16 eq 0)");
-  }
-  
+
   @Test
-  public void testNavigationPropertyWithCount() throws Exception {
+  public void filterSystemQueryOptionAnyWithKeyAny() throws Exception {
+    testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/any(d:d/PropertyInt16 eq 0)")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  }
+
+  @Test
+  public void filterSystemQueryOptionAnyWithKeyAll() throws Exception {
+    testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/all(d:d/PropertyInt16 eq 0)")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  }
+
+  @Test
+  public void navigationPropertyWithCount() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany/$count")
            .goPath().at(0).isEntitySet("ESKeyNav").isKeyPredicate(0, "PropertyInt16", "1")
            .at(1).isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
            .at(2).isCount();
   }
-  
-  @Test(expected=UriParserException.class)
-  public void testNavigationWithMoreThanOneKey() throws Exception {
-    testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
-        + "(PropertyInt=1,PropertyString='2')");
-  }
-  
+
   @Test
-  public void testEntitySetsInsteadOfNavigationProperties() {
-    testUri.runEx("ESAllPrim(0)/ESAllPrim(0)/ESAllPrim(0)")
-      .isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+  public void navigationWithMoreThanOneKey() throws Exception {
+    testUri.runEx("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt=1,PropertyString='2')" 
+        + "(PropertyInt=1,PropertyString='2')")
+        .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
   }
-  
+
   @Test
-  public void testNavPropertySameNameAsEntitySet() throws Exception {
-    
+  public void startElementsInsteadOfNavigationProperties() {
+    testUri.runEx("ESAllPrim(0)/ESAllPrim(0)/ESAllPrim(0)").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESAllPrim(0)/SINav").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESAllPrim(0)/FICRTString()").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESAllPrim(0)/AIRTString").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("SI/ESAllPrim(0)").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("SI/SINav").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("SI/FICRTString()").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("SI/AIRTString").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("FICRTETKeyNav()/ESAllPrim(0)").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("FICRTETKeyNav()/SINav").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("FICRTETKeyNav()/FICRTString()").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("FICRTETKeyNav()/AIRTString").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("AIRTESAllPrimParam/ESAllPrim(0)").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("AIRTESAllPrimParam/SINav").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("AIRTESAllPrimParam/FICRTString()").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("AIRTESAllPrimParam/AIRTString").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+  }
+
+  @Test
+  public void navPropertySameNameAsEntitySet() throws Exception {
     testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
-      .goPath()
-      .at(0).isEntitySet("ESNavProp")
-      .at(0).isKeyPredicate(0, "a", "1")
-      .at(1).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
-      .at(1).isKeyPredicate(0, "a", "2")    
-      .at(2).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
-      .at(2).isKeyPredicate(0, "a", "3")
-      .at(3).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, true);
+        .goPath()
+        .at(0).isEntitySet("ESNavProp")
+        .at(0).isKeyPredicate(0, "a", "1")
+        .at(1).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
+        .at(1).isKeyPredicate(0, "a", "2")
+        .at(2).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
+        .at(2).isKeyPredicate(0, "a", "3")
+        .at(3).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, true);
   }
-  
+
   @Test
-  public void testFilterLiteralTypes() throws Exception {
+  public void filterLiteralTypes() throws Exception {
     testUri.run("ESAllPrim", "$filter='1' eq 42")
       .goFilter().isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("'1'").isLiteralType(EdmString.getInstance())
         .root()
         .right().isLiteral("42").isLiteralType(EdmSByte.getInstance());
-    
+
     testUri.run("ESAllPrim", "$filter=127 eq 128")
       .goFilter().isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("127").isLiteralType(EdmSByte.getInstance())
@@ -5445,7 +5461,7 @@ public class TestFullResourcePath {
       .root()
       .right().isLiteral("" + Long.MAX_VALUE).isLiteralType(EdmInt64.getInstance());
   }
-  
+
   public static String encode(final String decoded) throws UnsupportedEncodingException {
     return Encoder.encode(decoded);
   }

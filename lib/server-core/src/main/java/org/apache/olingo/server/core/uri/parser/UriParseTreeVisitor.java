@@ -52,6 +52,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceRoot;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
@@ -76,9 +77,7 @@ import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceValueImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
-import org.apache.olingo.server.core.uri.antlr.UriLexer;
-import org.apache.olingo.server.core.uri.antlr.UriParserBaseVisitor;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser;
+import org.apache.olingo.server.core.uri.antlr.*;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllExprContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AltAddContext;
@@ -321,41 +320,42 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     }
 
     if (searchInContainer) {
+      final List<UriResource> parts = context.contextUriInfo.getUriResourceParts();
       // check EntitySet
       EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(odi);
-      if( !context.contextUriInfo.getUriResourceParts().isEmpty() 
-          && context.contextUriInfo.getUriResourceParts().get(0) instanceof UriResourceEntitySet) {
-        edmEntitySet = null;
-      } else {
-        if (edmEntitySet != null) {
-          UriResourceEntitySetImpl uriResource = new UriResourceEntitySetImpl()
-              .setEntitSet(edmEntitySet);
-          context.contextUriInfo.addResourcePart(uriResource);
-          return null;
-        }
+      if (edmEntitySet != null
+          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
+              || parts.get(0) instanceof UriResourceRoot)) {
+        context.contextUriInfo.addResourcePart(
+            new UriResourceEntitySetImpl().setEntitSet(edmEntitySet));
+        return null;
       }
-      
+
       // check Singleton
       EdmSingleton edmSingleton = edmEntityContainer.getSingleton(odi);
-      if (edmSingleton != null) {
-        UriResourceSingletonImpl uriResource = new UriResourceSingletonImpl()
-            .setSingleton(edmSingleton);
-        context.contextUriInfo.addResourcePart(uriResource);
+      if (edmSingleton != null
+          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
+              || parts.get(0) instanceof UriResourceRoot)) {
+        context.contextUriInfo.addResourcePart(
+            new UriResourceSingletonImpl().setSingleton(edmSingleton));
         return null;
       }
 
       // check ActionImport
       EdmActionImport edmActionImport = edmEntityContainer.getActionImport(odi);
-      if (edmActionImport != null) {
-        UriResourceActionImpl uriResource = new UriResourceActionImpl()
-            .setActionImport(edmActionImport);
-        context.contextUriInfo.addResourcePart(uriResource);
+      if (edmActionImport != null
+          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
+              || parts.get(0) instanceof UriResourceRoot)) {
+        context.contextUriInfo.addResourcePart(
+            new UriResourceActionImpl().setActionImport(edmActionImport));
         return null;
       }
 
       // check FunctionImport
       EdmFunctionImport edmFunctionImport = edmEntityContainer.getFunctionImport(odi);
-      if (edmFunctionImport != null) {
+      if (edmFunctionImport != null
+          && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
+              || parts.get(0) instanceof UriResourceRoot)) {
 
         // read the URI parameters
         if (ctx.vlNVO.isEmpty()) {
