@@ -19,11 +19,9 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -93,26 +91,22 @@ public class ODataRequest {
   }
 
   /**
-   * Get header values for a given name.
+   * Gets header values for a given name.
    * @param name the header name as a case-insensitive key
    * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
-    HttpHeader h = headers.getHeader(name);
-    if(h == null) {
-      return null;
-    }
-    return new ArrayList<String>(h.getValues());
+    return headers.getHeader(name);
   }
 
   /**
-   * Get first header value for a given name.
+   * Gets first header value for a given name.
    * @param name the header name as a case-insensitive key
    * @return the first header value or null if not found
    */
   public String getHeader(final String name) {
     final List<String> values = getHeaders(name);
-    return values == null ? null : values.get(0);
+    return values == null || values.isEmpty() ? null : values.get(0);
   }
 
   /**
@@ -122,7 +116,6 @@ public class ODataRequest {
   public Map<String, List<String>> getAllHeaders() {
     return headers.getHeaderToValues();
   }
-
 
   /**
    * Gets the body of the request.

@@ -125,7 +125,7 @@ public abstract class OData {
 
   /**
    * Creates a new deserializer object for reading content in the specified format.
-   * Deserializer are used in Processor implementations.
+   * Deserializers are used in Processor implementations.
    *
    * @param contentType any content type supported by Olingo (XML, JSON ...)
    */
@@ -151,10 +151,11 @@ public abstract class OData {
   public abstract Preferences createPreferences(Collection<String> preferHeaders);
 
   /**
-   * This method creates a DebugResponseHelper for the given debugFormat. If the format is not supported no
-   * exception is thrown. Instead we give back the implementation for the json format.
-   * @param debugFormat to be used.
-   * @return a debug response serializer
+   * Creates a DebugResponseHelper for the given debugFormat.
+   * If the format is not supported no exception is thrown.
+   * Instead we give back the implementation for the JSON format.
+   * @param debugFormat format to be used
+   * @return a debug-response helper
    */
   public abstract DebugResponseHelper createDebugResponseHelper(String debugFormat);
 }

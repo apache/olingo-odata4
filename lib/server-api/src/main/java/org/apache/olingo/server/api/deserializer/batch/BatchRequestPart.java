@@ -25,16 +25,14 @@ import java.util.List;
 import org.apache.olingo.server.api.ODataRequest;
 
 /**
- * A BatchPart
- * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be a ChangeSet or a Query Operation
+ * Represents a distinct MIME part of a Batch Request body - either a Change Set or a Query Operation
  */
 public class BatchRequestPart {
   private List<ODataRequest> requests = new ArrayList<ODataRequest>();
   private boolean isChangeSet;
 
   /**
-   * Creates a new instance of BachRequestPart
-   *
+   * Creates a new instance of BachRequestPart.
    * @param isChangeSet True, if this instance represents a change set
    * @param requests A list of {@link ODataRequest}
    */
@@ -44,8 +42,7 @@ public class BatchRequestPart {
   }
 
   /**
-   * Creates a new instance of BachRequestPart
-   *
+   * Creates a new instance of BachRequestPart.
    * @param isChangeSet True, if this instance represents a change set
    * @param request A single {@link ODataRequest}
    */
@@ -56,7 +53,7 @@ public class BatchRequestPart {
   }
 
   /**
-   * Get the info if a BatchPart is a ChangeSet
+   * Gets the info if a BatchPart is a ChangeSet.
    * @return true or false
    */
   public boolean isChangeSet() {
@@ -64,7 +61,7 @@ public class BatchRequestPart {
   }
 
   /**
-   * Get requests. If a BatchPart is a Query Operation, the list contains one request.
+   * Gets all requests of this part. If a BatchPart is a Query Operation, the list contains one request.
    * @return a list of {@link ODataRequest}
    */
   public List<ODataRequest> getRequests() {

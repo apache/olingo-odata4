@@ -93,7 +93,8 @@ public class BatchParserCommon {
       return type;
     } else {
       throw new BatchDeserializerException("Content type is not the expected content type",
-          BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, expected.toContentTypeString());
+          BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE,
+          Integer.toString(line), expected.toContentTypeString(), type.toContentTypeString());
     }
   }
 

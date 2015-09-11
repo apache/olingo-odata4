@@ -56,7 +56,8 @@ public class BatchTransformatorCommon {
               Integer.toString(headers.getLineNumber()));
         }
       } else {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER,
+        throw new BatchDeserializerException("Invalid Content-Transfer-Encoding header",
+            MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
             Integer.toString(headers.getLineNumber()));
       }
     } else {
@@ -82,7 +83,7 @@ public class BatchTransformatorCommon {
 
         return contentLength;
       } catch (NumberFormatException e) {
-        throw new BatchDeserializerException("Invalid header", e, MessageKeys.INVALID_HEADER,
+        throw new BatchDeserializerException("Invalid content length", e, MessageKeys.INVALID_CONTENT_LENGTH,
             Integer.toString(contentLengthField.getLineNumber()));
       }
     }

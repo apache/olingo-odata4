@@ -21,18 +21,14 @@ package org.apache.olingo.server.api.debug;
 import org.apache.olingo.server.api.ODataResponse;
 
 /**
- * This class supports applications in creating debug responses.
+ * Support for applications creating debug responses.
  */
 public interface DebugResponseHelper {
 
   /**
    * Creates a debug response based on the given parameters. Will never throw an exception.
-   * @param request
-   * @param applicationResponse
-   * @param exception
-   * @param serverEnvironmentVaribles
-   * @param runtimeInformation
-   * @return the debug response or the raw application response in case an exception occurred.
+   * @param debugInfo debug information
+   * @return the debug response or the raw application response in case an exception occurred
    */
   ODataResponse createDebugResponse(DebugInformation debugInfo);
 }

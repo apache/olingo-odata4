@@ -19,11 +19,9 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
@@ -102,11 +100,7 @@ public class ODataResponse {
    * @return the header value(s) or null if not found
    */
   public List<String> getHeaders(final String name) {
-    HttpHeader h = headers.getHeader(name);
-    if(h == null) {
-      return null;
-    }
-    return new ArrayList<String>(h.getValues());
+    return headers.getHeader(name);
   }
 
   /**
@@ -118,7 +112,7 @@ public class ODataResponse {
    */
   public String getHeader(final String name) {
     final List<String> values = getHeaders(name);
-    return values == null ? null : values.get(0);
+    return values == null || values.isEmpty() ? null : values.get(0);
   }
 
 

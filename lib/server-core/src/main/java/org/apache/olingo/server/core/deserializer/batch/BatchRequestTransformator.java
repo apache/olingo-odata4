@@ -84,14 +84,14 @@ public class BatchRequestTransformator {
   }
 
   private HeaderField getContentId(final BatchQueryOperation queryOperation) throws BatchDeserializerException {
-    final HeaderField contentTypeHeader = queryOperation.getHeaders().getHeaderField(HttpHeader.CONTENT_ID);
+    final HeaderField contentIdHeader = queryOperation.getHeaders().getHeaderField(HttpHeader.CONTENT_ID);
 
-    if (contentTypeHeader != null) {
-      if (contentTypeHeader.getValues().size() == 1) {
-        return contentTypeHeader;
+    if (contentIdHeader != null) {
+      if (contentIdHeader.getValues().size() == 1) {
+        return contentIdHeader;
       } else {
-        throw new BatchDeserializerException("Invalid header", MessageKeys.INVALID_HEADER,
-            Integer.toString(contentTypeHeader.getLineNumber()));
+        throw new BatchDeserializerException("Invalid Content-ID header", MessageKeys.INVALID_CONTENT_ID,
+            Integer.toString(contentIdHeader.getLineNumber()));
       }
     }
 

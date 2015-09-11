@@ -22,26 +22,49 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 
 public class BatchDeserializerException extends DeserializerException {
   public static enum MessageKeys implements MessageKey {
+    /** parameter: line */
     INVALID_BOUNDARY,
+    /** parameter: line */
     INVALID_CHANGESET_METHOD,
+    /** parameter: line */
     INVALID_CONTENT,
+    /** parameter: line */
     INVALID_CONTENT_LENGTH,
+    /** parameter: line */
     INVALID_CONTENT_TRANSFER_ENCODING,
+    /** parameter: line */
     INVALID_CONTENT_TYPE,
-    INVALID_HEADER,
+    /** parameters: line, expected content type, actual content type */
+    UNEXPECTED_CONTENT_TYPE,
+    /** parameter: line */
+    INVALID_CONTENT_ID,
+    /** parameter: line */
     INVALID_HTTP_VERSION,
+    /** parameter: line */
     INVALID_METHOD,
+    /** parameter: line */
     INVALID_QUERY_OPERATION_METHOD,
+    /** parameter: line */
     INVALID_STATUS_LINE,
+    /** parameter: line */
     INVALID_URI,
+    /** parameter: line */
     MISSING_BLANK_LINE,
+    /** parameter: line */
     MISSING_BOUNDARY_DELIMITER,
+    /** parameter: line */
     MISSING_CLOSE_DELIMITER,
+    /** parameter: line */
     MISSING_CONTENT_ID,
+    /** parameter: line */
     MISSING_CONTENT_TRANSFER_ENCODING,
+    /** parameter: line */
     MISSING_CONTENT_TYPE,
+    /** parameter: line */
     MISSING_MANDATORY_HEADER,
+    /** parameter: line */
     FORBIDDEN_HEADER,
+    /** parameter: line */
     INVALID_BASE_URI;
 
     @Override

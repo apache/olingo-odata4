@@ -22,132 +22,111 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.http.HttpHeader;
-
 /**
- * HttpHeader container
+ * HttpHeader container.
  */
 public class HttpHeaders {
-  private final Map<String, HttpHeader> headers = new LinkedHashMap<String, HttpHeader>();
+  private final Map<String, List<String>> headers = new LinkedHashMap<String, List<String>>();
 
   /**
-   * Add a header with given name and value.
-   * If header with name already exists the value is added to this header.
-   *
+   * Adds a header with given name and value.
+   * If a header with that name already exists the value is added to this header.
    * @param name name of header
    * @param value value for header
    * @return this container (fluent interface)
    */
-  public HttpHeaders addHeader(String name, String value) {
-    HttpHeader eh = grantHeader(name);
-    eh.addValue(value);
+  public HttpHeaders addHeader(final String name, final String value) {
+    final String canonicalName = getCanonicalName(name);
+    List<String> header = headers.get(canonicalName);
+    if (header == null) {
+      header = new ArrayList<String>();
+    }
+    header.add(value);
+    headers.put(canonicalName, header);
     return this;
   }
 
   /**
-   * Add a header with given name and values.
-   * If header with name already exists the values are added to this header.
-   *
+   * Adds a header with the given name and values.
+   * If a header with that name already exists the values are added to this header.
    * @param name name of header
    * @param values values for header
    * @return this container (fluent interface)
    */
-  public HttpHeaders addHeader(String name, Collection<String> values) {
-    HttpHeader eh = grantHeader(name);
-    eh.addValues(values);
+  public HttpHeaders addHeader(final String name, final List<String> values) {
+    final String canonicalName = getCanonicalName(name);
+    List<String> header = headers.get(canonicalName);
+    if (header == null) {
+      header = new ArrayList<String>();
+    }
+    header.addAll(values);
+    headers.put(canonicalName, header);
     return this;
   }
 
   /**
    * Set a header with given name and value.
-   * If header with name already exists the old header is replaced with the new one.
-   *
+   * If a header with that name already exists the old header is replaced with the new one.
    * @param name name of header
    * @param value value for header
    * @return this container (fluent interface)
    */
-  public HttpHeaders setHeader(String name, String value) {
+  public HttpHeaders setHeader(final String name, final String value) {
     removeHeader(name);
-
-    HttpHeader eh = grantHeader(name);
-    eh.addValue(value);
+    addHeader(name, value);
     return this;
   }
 
   /**
-   * Get header for given name.
-   *
+   * Gets header values for the given name.
    * @param name name of header requested
-   * @return corresponding header
+   * @return corresponding header values or null if no values have been found
    */
-  public HttpHeader getHeader(String name) {
-    return headers.get(HttpHeader.createCanonicalName(name));
+  public List<String> getHeader(final String name) {
+    final List<String> values = headers.get(getCanonicalName(name));
+    return values == null || values.isEmpty() ? null : Collections.unmodifiableList(values);
   }
 
   /**
-   * Remove header for given name.
-   *
+   * Removes header of the given name.
    * @param name name of header to be removed
-   * @return header which was removed or null if no header was known for this name
+   * @return removed header values or null if no header was known for this name
    */
-  public HttpHeader removeHeader(String name) {
-    return headers.remove(HttpHeader.createCanonicalName(name));
+  public List<String> removeHeader(final String name) {
+    return headers.remove(getCanonicalName(name));
   }
 
-
   /**
-   * Get all headers.
-   *
-   * @return all headers
-   */
-  public Collection<HttpHeader> getHeaders() {
-    return Collections.unmodifiableCollection(headers.values());
-  }
-
-
-  /**
-   * Get all headers with the according values.
-   *
-   * @return an unmodifiable Map of header names/values
+   * Gets all headers with the according values.
+   * @return an unmodifiable Map of header names/values or an empty collection if no headers have been set
    */
   public Map<String, List<String>> getHeaderToValues() {
-    Map<String, List<String>> result = new HashMap<String, List<String>>();
-    Collection<HttpHeader> allHeaders = headers.values();
-    for (HttpHeader header : allHeaders) {
-      result.put(header.getName(), header.getValues());
-    }
-    return Collections.unmodifiableMap(result);
+    return headers.isEmpty() ? Collections.<String, List<String>> emptyMap() : Collections.unmodifiableMap(headers);
   }
 
   /**
-   * Get all header names.
-   *
-   * @return all header names
+   * Gets all header names.
+   * @return all header names or an empty collection if no headers have been set
    */
   public Collection<String> getHeaderNames() {
-    Collection<String> headerNames = new ArrayList<String>();
-    for (HttpHeader header : headers.values()) {
-      headerNames.add(header.getName());
-    }
-    return headerNames;
+    return headers.isEmpty() ? Collections.<String> emptySet() : Collections.unmodifiableSet(headers.keySet());
   }
 
   /**
-   * Get or create a header for given name.
-   *
-   * @return new or known header
+   * The canonical form of a header name is the already-used form regarding case,
+   * enabling applications to have pretty-looking headers instead of getting them
+   * converted to all lowercase.
+   * @param name HTTP header name
    */
-  private HttpHeader grantHeader(String name) {
-    String key = HttpHeader.createCanonicalName(name);
-    HttpHeader eh = headers.get(key);
-    if(eh == null) {
-      eh = new HttpHeader(name);
-      headers.put(key, eh);
+  private String getCanonicalName(final String name) {
+    for (final String headerName : headers.keySet()) {
+      if (headerName.equalsIgnoreCase(name)) {
+        return headerName;
+      }
     }
-    return eh;
+    return name;
   }
 }

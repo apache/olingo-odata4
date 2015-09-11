@@ -34,7 +34,7 @@ public class AsyncResponseSerializerTest {
   private static final String CRLF = "\r\n";
 
   @Test
-  public void testSimpleResponse() throws Exception {
+  public void simpleResponse() throws Exception {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
@@ -45,14 +45,14 @@ public class AsyncResponseSerializerTest {
     AsyncResponseSerializer serializer = new AsyncResponseSerializer();
     InputStream in = serializer.serialize(response);
     String result = IOUtils.toString(in);
-    assertEquals("HTTP/1.1 200 OK" + CRLF +
-        "Content-Length: 200" + CRLF +
-        "Content-Type: application/json" + CRLF + CRLF +
-        "Walter Winter" + CRLF, result);
+    assertEquals("HTTP/1.1 200 OK" + CRLF
+        + "Content-Type: application/json" + CRLF
+        + "Content-Length: 200" + CRLF + CRLF
+        + "Walter Winter" + CRLF, result);
   }
 
   @Test
-  public void testBiggerResponse() throws Exception {
+  public void biggerResponse() throws Exception {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_JSON.toContentTypeString());
@@ -64,10 +64,10 @@ public class AsyncResponseSerializerTest {
     AsyncResponseSerializer serializer = new AsyncResponseSerializer();
     InputStream in = serializer.serialize(response);
     String result = IOUtils.toString(in);
-    assertEquals("HTTP/1.1 202 Accepted" + CRLF +
-        "Content-Length: 0" + CRLF +
-        "Content-Type: application/json" + CRLF + CRLF +
-        testData, result);
+    assertEquals("HTTP/1.1 202 Accepted" + CRLF
+        + "Content-Type: application/json" + CRLF
+        + "Content-Length: 0" + CRLF + CRLF
+        + testData, result);
   }
 
   private String testData(int amount) {

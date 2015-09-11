@@ -21,7 +21,7 @@ package org.apache.olingo.server.api.serializer;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 
-/** Options for the OData serializer. */
+/** Options to pass as additional information to the reference-collection serializer. */
 public final class ReferenceCollectionSerializerOptions {
   private ContextURL contextURL;
   private CountOption count;

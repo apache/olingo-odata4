@@ -30,10 +30,10 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 public interface ODataDeserializer {
 
   /**
-   * Deserializes an entity stream into an {@link org.apache.olingo.commons.api.data.Entity} object.
-   * Validates: property types, no double properties, correct json types
-   * Returns a deserialized {@link org.apache.olingo.commons.api.data.Entity} object and an 
-   * {@link org.apache.olingo.server.api.uri.queryoption.ExpandOption} object
+   * Deserializes an entity stream into an {@link org.apache.olingo.commons.api.data.Entity Entity} object.
+   * Validates: property types, no double properties, correct json types.
+   * Returns a deserialized {@link org.apache.olingo.commons.api.data.Entity Entity} object and an 
+   * {@link org.apache.olingo.server.api.uri.queryoption.ExpandOption ExpandOption} object.
    * @param stream
    * @param edmEntityType
    * @return {@link DeserializerResult#getEntity()} and {@link DeserializerResult#getExpandTree()}
@@ -42,7 +42,8 @@ public interface ODataDeserializer {
   DeserializerResult entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
   /**
-   * Deserializes an entity collection stream into an {@link org.apache.olingo.commons.api.data.EntityCollection} object
+   * Deserializes an entity collection stream into an
+   * {@link org.apache.olingo.commons.api.data.EntityCollection EntityCollection} object.
    * @param stream
    * @param edmEntityType
    * @return {@link DeserializerResult#getEntityCollection()}
@@ -51,7 +52,7 @@ public interface ODataDeserializer {
   DeserializerResult entityCollection(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
   /**
-   * Deserializes an action-parameters stream into an {@link org.apache.olingo.commons.api.data.Entity} object.
+   * Deserializes an action-parameters stream into a map of key/value pairs.
    * Validates: parameter types, no double parameters, correct json types.
    * @param stream
    * @param edmAction
@@ -61,7 +62,7 @@ public interface ODataDeserializer {
   DeserializerResult actionParameters(InputStream stream, EdmAction edmAction) throws DeserializerException;
 
   /**
-   * Deserializes the Property or collections of properties (primitive & complex)
+   * Deserializes the Property or collections of properties (primitive & complex).
    * @param stream
    * @param edmProperty
    * @return {@link DeserializerResult#getProperty()}
@@ -70,7 +71,7 @@ public interface ODataDeserializer {
   DeserializerResult property(InputStream stream, EdmProperty edmProperty) throws DeserializerException;
 
   /**
-   * Read entity references from the provided document
+   * Reads entity references from the provided document.
    * @param stream
    * @param keys
    * @return {@link DeserializerResult#getEntityReferences()}

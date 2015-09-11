@@ -393,7 +393,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testMimeHeaderContentType() throws Exception {
+  public void mimeHeaderContentType() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: text/plain" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
@@ -403,7 +403,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE);
   }
 
   @Test
@@ -536,7 +536,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNestedChangeset() throws Exception {
+  public void nestedChangeset() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -559,7 +559,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE);
   }
 
   @Test
@@ -801,7 +801,7 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNonNumericContentLength() throws Exception {
+  public void nonNumericContentLength() throws Exception {
     final String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -819,7 +819,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--batch_8194-cf13-1f56--";
 
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HEADER);
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_LENGTH);
   }
 
   @Test
