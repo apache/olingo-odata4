@@ -25,10 +25,9 @@ import static org.junit.Assert.assertNull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.apache.olingo.client.core.serialization.AtomDeserializer;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.junit.Test;
 
 public class AtomDeserializerTest {

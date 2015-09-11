@@ -51,7 +51,7 @@ public class MetadataResponse extends ServiceResponse {
   public void writeMetadata()throws ODataLibraryException {
     assert (!isClosed());
     this.response.setContent(this.serializer.metadataDocument(this.metadata).getContent());
-    writeOK(this.responseContentType.toContentTypeString());
+    writeOK(responseContentType);
     close();
   }
 

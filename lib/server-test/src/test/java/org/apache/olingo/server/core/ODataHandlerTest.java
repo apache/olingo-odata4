@@ -33,13 +33,12 @@ import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -143,7 +142,7 @@ public class ODataHandlerTest {
   public void metadataDefault() throws Exception {
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", null);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals(HttpContentType.APPLICATION_XML, response.getHeader(HttpHeader.CONTENT_TYPE));
+    assertEquals(ContentType.APPLICATION_XML.toContentTypeString(), response.getHeader(HttpHeader.CONTENT_TYPE));
 
     assertNotNull(response.getContent());
     assertThat(IOUtils.toString(response.getContent()),

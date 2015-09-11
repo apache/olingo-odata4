@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
@@ -32,14 +33,14 @@ import org.apache.olingo.client.core.data.JSONServiceDocumentDeserializer;
 import org.apache.olingo.client.core.data.XMLServiceDocumentDeserializer;
 import org.apache.olingo.client.core.edm.ClientCsdlXMLMetadata;
 import org.apache.olingo.client.core.edm.xml.ClientCsdlEdmx;
-import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
+
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import com.fasterxml.jackson.core.JsonParser;

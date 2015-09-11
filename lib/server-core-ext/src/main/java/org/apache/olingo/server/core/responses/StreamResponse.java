@@ -36,13 +36,13 @@ public class StreamResponse extends ServiceResponse {
 
   public void writeStreamResponse(InputStream streamContent, ContentType contentType) {
     this.response.setContent(streamContent);
-    writeOK(contentType.toContentTypeString());
+    writeOK(contentType);
     close();
   }
 
   public void writeBinaryResponse(byte[] streamContent, ContentType contentType) {
     this.response.setContent(new ByteArrayInputStream(streamContent));
-    writeOK(contentType.toContentTypeString());
+    writeOK(contentType);
     close();
   }
 

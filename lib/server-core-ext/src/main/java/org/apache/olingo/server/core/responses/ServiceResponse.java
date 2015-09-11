@@ -22,6 +22,7 @@ package org.apache.olingo.server.core.responses;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -90,9 +91,9 @@ public abstract class ServiceResponse {
     }
   }
 
-  public void writeOK(String contentType) {
+  public void writeOK(ContentType contentType) {
     this.response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-    this.response.setHeader(HttpHeader.CONTENT_TYPE, contentType);
+    this.response.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
   }
 
   public void writeHeader(String key, String value) {

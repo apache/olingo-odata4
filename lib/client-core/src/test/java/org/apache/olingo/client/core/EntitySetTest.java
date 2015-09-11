@@ -27,12 +27,12 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {

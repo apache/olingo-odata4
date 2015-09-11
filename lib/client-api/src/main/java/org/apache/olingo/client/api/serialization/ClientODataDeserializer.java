@@ -20,10 +20,10 @@ package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
 
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.data.ResWrap;
 
 public interface ClientODataDeserializer extends ODataDeserializer {
 

@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.ex.ODataException;
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -53,8 +53,8 @@ import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.core.ODataHandler;
-import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
+import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -619,7 +619,7 @@ public class MockedBatchHandlerTest {
           odata.createFixedFormatSerializer().batchResponse(responseParts, responeBoundary);
 
       response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=" + responeBoundary);
+      response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responeBoundary);
       response.setContent(responseStream);
     }
 

@@ -33,15 +33,15 @@ import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.streamed.ODataStreamUpdateRequest;
-import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequestImpl;
-import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
-import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
-import org.apache.olingo.client.core.uri.URIUtils;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientSingleton;
+import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityCreateRequestImpl;
+import org.apache.olingo.client.core.communication.request.streamed.ODataMediaEntityUpdateRequestImpl;
+import org.apache.olingo.client.core.communication.request.streamed.ODataStreamUpdateRequestImpl;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 public class CUDRequestFactoryImpl implements CUDRequestFactory {

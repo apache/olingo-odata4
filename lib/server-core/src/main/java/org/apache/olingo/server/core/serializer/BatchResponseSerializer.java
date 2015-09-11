@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
@@ -104,8 +104,8 @@ public class BatchResponseSerializer {
   }
 
   private void appendChangeSetHeader(final BodyBuilder builder, final String changeSetBoundary) {
-    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary="
-            + changeSetBoundary, builder);
+    appendHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED
+        + "; boundary=" + changeSetBoundary, builder);
   }
 
   private void appendHeader(final String name, final String value, final BodyBuilder builder) {
@@ -149,7 +149,7 @@ public class BatchResponseSerializer {
 
   private void appendBodyPartHeader(final ODataResponse response, final BodyBuilder builder,
       final boolean isChangeSet) throws BatchSerializerException {
-    appendHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_HTTP, builder);
+    appendHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_HTTP.toContentTypeString(), builder);
     appendHeader(BatchParserCommon.CONTENT_TRANSFER_ENCODING, BatchParserCommon.BINARY_ENCODING, builder);
 
     if (isChangeSet) {

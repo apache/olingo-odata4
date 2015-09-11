@@ -22,14 +22,27 @@ public class ODataException extends Exception {
 
   private static final long serialVersionUID = 3057981437954048107L;
 
+  /**
+   * Creates exception with <code>message</code>.
+   * @param msg message text for exception
+   */
   public ODataException(final String msg) {
     super(msg);
   }
 
+  /**
+   * Creates exception with <code>message</code> and <code>cause</code> of exception.
+   * @param msg   message text for exception
+   * @param cause cause of exception
+   */
   public ODataException(final String msg, final Throwable cause) {
     super(msg, cause);
   }
 
+  /**
+   * Creates exception with <code>cause</code> of exception.
+   * @param cause cause of exception
+   */
   public ODataException(final Throwable cause) {
     super(cause);
   }

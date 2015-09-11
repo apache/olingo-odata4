@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.api.http.HttpHeaders;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**

@@ -89,7 +89,7 @@ public class EntityResponse extends ServiceResponse {
 
     // write the entity to response
     this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options).getContent());
-    writeOK(this.responseContentType.toContentTypeString());
+    writeOK(responseContentType);
     close();
   }
 

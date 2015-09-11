@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
@@ -34,15 +34,16 @@ public class HeaderTest {
   @Test
   public void test() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
 
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeader(HttpHeader.CONTENT_TYPE));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(), header.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(1, header.getHeaders(HttpHeader.CONTENT_TYPE).size());
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
   }
 
   @Test
-  public void testNotAvailable() {
+  public void notAvailable() {
     Header header = new Header(1);
 
     assertNull(header.getHeader(HttpHeader.CONTENT_TYPE));
@@ -50,28 +51,29 @@ public class HeaderTest {
   }
 
   @Test
-  public void testCaseInsensitive() {
+  public void caseInsensitive() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
 
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeader("cOnTenT-TyPE"));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(), header.getHeader("cOnTenT-TyPE"));
     assertEquals(1, header.getHeaders("cOnTenT-TyPE").size());
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeaders("cOnTenT-TyPE").get(0));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(), header.getHeaders("cOnTenT-TyPE").get(0));
   }
 
   @Test
-  public void testDuplicatedAdd() {
+  public void duplicatedAdd() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 2);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 2);
 
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeader(HttpHeader.CONTENT_TYPE));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(), header.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(1, header.getHeaders(HttpHeader.CONTENT_TYPE).size());
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
   }
 
   @Test
-  public void testFieldName() {
+  public void fieldName() {
     Header header = new Header(0);
     header.addHeader("MyFieldNamE", "myValue", 1);
 
@@ -84,9 +86,9 @@ public class HeaderTest {
   }
 
   @Test
-  public void testDeepCopy() {
+  public void deepCopy() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=123", 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=123", 1);
 
     Header copy = header.clone();
     assertEquals(header.getHeaders(HttpHeader.CONTENT_TYPE), copy.getHeaders(HttpHeader.CONTENT_TYPE));
@@ -98,23 +100,26 @@ public class HeaderTest {
   }
 
   @Test
-  public void testDuplicatedAddList() {
+  public void duplicatedAddList() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { HttpContentType.MULTIPART_MIXED,
-        HttpContentType.APPLICATION_ATOM_SVC }), 2);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] {
+        ContentType.MULTIPART_MIXED.toContentTypeString(),
+        ContentType.APPLICATION_ATOM_SVC.toContentTypeString() }), 2);
 
-    assertEquals(HttpContentType.MULTIPART_MIXED + ", " + HttpContentType.APPLICATION_ATOM_SVC, header
+    assertEquals(ContentType.MULTIPART_MIXED + ", " + ContentType.APPLICATION_ATOM_SVC, header
         .getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(2, header.getHeaders(HttpHeader.CONTENT_TYPE).size());
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
-    assertEquals(HttpContentType.APPLICATION_ATOM_SVC, header.getHeaders(HttpHeader.CONTENT_TYPE).get(1));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
+    assertEquals(ContentType.APPLICATION_ATOM_SVC.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(1));
   }
 
   @Test
-  public void testRemove() {
+  public void remove() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
     header.removeHeader(HttpHeader.CONTENT_TYPE);
 
     assertNull(header.getHeader(HttpHeader.CONTENT_TYPE));
@@ -122,25 +127,28 @@ public class HeaderTest {
   }
 
   @Test
-  public void testMultipleValues() {
+  public void multipleValues() {
     Header header = new Header(1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED, 1);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_ATOM_SVC, 2);
-    header.addHeader(HttpHeader.CONTENT_TYPE, HttpContentType.APPLICATION_ATOM_XML, 3);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED.toContentTypeString(), 1);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_ATOM_SVC.toContentTypeString(), 2);
+    header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.APPLICATION_ATOM_XML.toContentTypeString(), 3);
 
     final String fullHeaderString =
-        HttpContentType.MULTIPART_MIXED + ", " + HttpContentType.APPLICATION_ATOM_SVC + ", "
-            + HttpContentType.APPLICATION_ATOM_XML;
+        ContentType.MULTIPART_MIXED + ", " + ContentType.APPLICATION_ATOM_SVC + ", "
+            + ContentType.APPLICATION_ATOM_XML;
 
     assertEquals(fullHeaderString, header.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(3, header.getHeaders(HttpHeader.CONTENT_TYPE).size());
-    assertEquals(HttpContentType.MULTIPART_MIXED, header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
-    assertEquals(HttpContentType.APPLICATION_ATOM_SVC, header.getHeaders(HttpHeader.CONTENT_TYPE).get(1));
-    assertEquals(HttpContentType.APPLICATION_ATOM_XML, header.getHeaders(HttpHeader.CONTENT_TYPE).get(2));
+    assertEquals(ContentType.MULTIPART_MIXED.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(0));
+    assertEquals(ContentType.APPLICATION_ATOM_SVC.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(1));
+    assertEquals(ContentType.APPLICATION_ATOM_XML.toContentTypeString(),
+        header.getHeaders(HttpHeader.CONTENT_TYPE).get(2));
   }
 
   @Test
-  public void testSplitValues() {
+  public void splitValues() {
     final String values = "abc, def,123,77,   99, ysd";
     List<String> splittedValues = Header.splitValuesByComma(values);
 

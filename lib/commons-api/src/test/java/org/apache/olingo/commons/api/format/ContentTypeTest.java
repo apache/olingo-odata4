@@ -29,7 +29,7 @@ import org.junit.Test;
 public class ContentTypeTest {
 
   @Test
-  public void testCreate() {
+  public void create() {
     assertEquals("a/b", ContentType.create("a/b").toContentTypeString());
     assertEquals(ContentType.create("a/b;c=d;x=y"), ContentType.create("a/b;x=y;c=d"));
     assertEquals(ContentType.create("a/b;c=d;x=y"), ContentType.create("a/b; x=y; c=d"));
@@ -37,47 +37,47 @@ public class ContentTypeTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail1() {
+  public void createFail1() {
     ContentType.create("a");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail2() {
+  public void createFail2() {
     ContentType.create(" a / b ");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail3() {
+  public void createFail3() {
     ContentType.create("a/b;");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail4() {
+  public void createFail4() {
     ContentType.create("a/b;parameter");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail5() {
+  public void createFail5() {
     ContentType.create("a/b;parameter=");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail6() {
+  public void createFail6() {
     ContentType.create("a/b;=value");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail7() {
+  public void createFail7() {
     ContentType.create("a/b;the name=value");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testCreateFail8() {
+  public void createFail8() {
     ContentType.create("a/b;name= value");
   }
 
   @Test
-  public void testCreateWithParameter() {
+  public void createWithParameter() {
     assertEquals(ContentType.create("a/b;c=d"), ContentType.create(ContentType.create("a/b"), "c", "d"));
     assertEquals(ContentType.create("a/b;e=f;c=d"), ContentType.create(
         ContentType.create(ContentType.create("a/b"), "c", "d"), "e", "f"));
@@ -86,7 +86,7 @@ public class ContentTypeTest {
   }
 
   @Test
-  public void testCreateAndModify() {
+  public void createAndModify() {
     ContentType ct1 = ContentType.create("a/b");
     assertEquals(ContentType.create("a/b;c=d"), ContentType.create(ct1, "c", "d"));
 
@@ -98,7 +98,7 @@ public class ContentTypeTest {
   }
 
   @Test
-  public void testParse() {
+  public void parse() {
     assertNull(ContentType.parse("a"));
     assertNull(ContentType.parse("a/b;c"));
     assertNull(ContentType.parse("a/b;c="));
@@ -106,12 +106,12 @@ public class ContentTypeTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testWildcardFail() {
+  public void wildcardFail() {
     ContentType.create("*/*");
   }
 
   @Test
-  public void testCharsetUtf8() {
+  public void charsetUtf8() {
     ContentType ct1 = ContentType.create("a/b;charset=utf8");
     ContentType ct2 = ContentType.create("a/b;charset=utf-8");
 
@@ -122,5 +122,12 @@ public class ContentTypeTest {
     assertEquals("utf-8", ct2.getParameters().get("charset"));
 
     assertTrue(ct1.isCompatible(ct2));
+  }
+
+  @Test
+  public void toContentTypeString() {
+    assertEquals("application/json;a=b;c=d",
+        ContentType.create(ContentType.create(ContentType.APPLICATION_JSON, "a", "b"), "c", "d")
+            .toContentTypeString());
   }
 }

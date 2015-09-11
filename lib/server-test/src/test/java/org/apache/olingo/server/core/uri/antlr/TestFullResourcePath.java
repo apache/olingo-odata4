@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
@@ -2614,9 +2614,9 @@ public class TestFullResourcePath {
     testUri.run("ESKeyNav(1)", "$format=Test_all_valid_signsSpecified_for_format_signs%26-._~$@%27/Aa123%26-._~$@%27")
     .isKind(UriInfoKind.resource).goPath()
     .isFormatText("Test_all_valid_signsSpecified_for_format_signs&-._~$@'/Aa123&-._~$@'");
-    testUri.run("ESKeyNav(1)", "$format=" + HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8)
+    testUri.run("ESKeyNav(1)", "$format=" + ContentType.APPLICATION_ATOM_XML_ENTRY_UTF8)
     .isKind(UriInfoKind.resource).goPath()
-    .isFormatText(HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+    .isFormatText(ContentType.APPLICATION_ATOM_XML_ENTRY_UTF8.toContentTypeString());
     testUri.runEx("ESKeyNav(1)", "$format=noSlash")
     .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT);
     testUri.runEx("ESKeyNav(1)", "$format=slashAtEnd/")

@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.serialization;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,11 +36,10 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.serialization.ODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ex.ODataError;
-import org.apache.olingo.commons.api.data.PropertyType;
 import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -54,13 +52,14 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.data.PropertyType;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
@@ -367,11 +366,7 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
       final XMLEvent event = reader.nextEvent();
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        try {
-          object.setCommonProperty(key, event.asCharacters().getData());
-        } catch (ParseException e) {
-          throw new XMLStreamException("While parsing Atom entry or feed common elements", e);
-        }
+        object.setCommonProperty(key, event.asCharacters().getData());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {

@@ -34,7 +34,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -216,7 +215,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
                   value.getBytes(Charset.forName("UTF-8")));
           response.setContent(serializerContent);
           response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-          response.setHeader(HttpHeader.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
+          response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
         }
       }
     }

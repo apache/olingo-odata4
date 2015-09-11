@@ -113,7 +113,7 @@ public class PropertyResponse extends ServiceResponse {
       this.response.setContent(this.serializer.complex(this.metadata, type, property,
           this.complexOptions).getContent());
     }
-    writeOK(this.responseContentType.toContentTypeString());
+    writeOK(responseContentType);
     close();
   }
 
@@ -126,7 +126,7 @@ public class PropertyResponse extends ServiceResponse {
       this.response.setContent(
           this.serializer.primitive(metadata, type, property, this.primitiveOptions).getContent());
     }
-    writeOK(this.responseContentType.toContentTypeString());
+    writeOK(responseContentType);
     close();
   }
 

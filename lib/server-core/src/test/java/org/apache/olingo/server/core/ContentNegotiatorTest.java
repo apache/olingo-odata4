@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -45,13 +44,13 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_MIN_UTF8 = "application/json;charset=UTF-8;odata.metadata=minimal";
   static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
   static final private String ACCEPT_CASE_NONE = "application/json;odata.metadata=none";
-  static final private String ACCEPT_CASE_MIN_UTF8_IEEE754
-  = "application/json;charset=UTF-8;odata.metadata=minimal;IEEE754Compatible=true";
-  static final private String ACCEPT_CASE_MIN_IEEE754 
-  = "application/json;odata.metadata=minimal;IEEE754Compatible=true";
+  static final private String ACCEPT_CASE_MIN_UTF8_IEEE754 =
+      "application/json;charset=UTF-8;odata.metadata=minimal;IEEE754Compatible=true";
+  static final private String ACCEPT_CASE_MIN_IEEE754 =
+      "application/json;odata.metadata=minimal;IEEE754Compatible=true";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
-  static final private String ACCEPT_CASE_XML = HttpContentType.APPLICATION_XML;
-  static final private String ACCEPT_CASE_WILDCARD1 = HttpContentType.WILDCARD;
+  static final private String ACCEPT_CASE_XML = ContentType.APPLICATION_XML.toContentTypeString();
+  static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
   
   //@formatter:off (Eclipse formatter)

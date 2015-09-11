@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.serialization;
 
 import java.io.Writer;
 
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.client.api.data.ResWrap;
 
 /**
  * Interface for serialization.

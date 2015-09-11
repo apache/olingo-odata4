@@ -58,17 +58,21 @@ public final class ContentType {
   public static final String VALUE_ODATA_METADATA_FULL = "full";
 
   public static final ContentType APPLICATION_JSON = new ContentType(APPLICATION, "json", null);
-  public static final ContentType JSON = ContentType.create(ContentType.APPLICATION_JSON,
+  public static final ContentType JSON = create(ContentType.APPLICATION_JSON,
       PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_MINIMAL);
-  public static final ContentType JSON_NO_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+  public static final ContentType JSON_NO_METADATA = create(ContentType.APPLICATION_JSON,
       PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_NONE);
-  public static final ContentType JSON_FULL_METADATA = ContentType.create(ContentType.APPLICATION_JSON,
+  public static final ContentType JSON_FULL_METADATA = create(ContentType.APPLICATION_JSON,
       PARAMETER_ODATA_METADATA, VALUE_ODATA_METADATA_FULL);
 
   public static final ContentType APPLICATION_XML = new ContentType(APPLICATION, "xml", null);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType(APPLICATION, "atom+xml", null);
   public static final ContentType APPLICATION_ATOM_XML_ENTRY = create(APPLICATION_ATOM_XML, "type", "entry");
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY_UTF8 = create(APPLICATION_ATOM_XML_ENTRY,
+      PARAMETER_CHARSET, "utf-8");
   public static final ContentType APPLICATION_ATOM_XML_FEED = create(APPLICATION_ATOM_XML, "type", "feed");
+  public static final ContentType APPLICATION_ATOM_XML_FEED_UTF8 = create(APPLICATION_ATOM_XML_FEED,
+      PARAMETER_CHARSET, "utf-8");
   public static final ContentType APPLICATION_ATOM_SVC = new ContentType(APPLICATION, "atomsvc+xml", null);
 
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType(APPLICATION, "octet-stream", null);

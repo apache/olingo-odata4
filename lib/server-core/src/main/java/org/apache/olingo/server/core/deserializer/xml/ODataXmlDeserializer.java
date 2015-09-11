@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.deserializer.xml;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -290,11 +289,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        try {
-          object.setCommonProperty(key, event.asCharacters().getData());
-        } catch (ParseException e) {
-          throw new XMLStreamException("While parsing Atom entry or feed common elements", e);
-        }
+        object.setCommonProperty(key, event.asCharacters().getData());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {

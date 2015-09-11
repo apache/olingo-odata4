@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {

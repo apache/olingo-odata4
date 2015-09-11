@@ -20,11 +20,11 @@ package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
 
-import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.commons.api.ex.ODataError;
 
 /**
  * Interface for de-serialization.

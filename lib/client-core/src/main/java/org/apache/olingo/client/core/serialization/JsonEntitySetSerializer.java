@@ -21,11 +21,11 @@ package org.apache.olingo.client.core.serialization;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
 

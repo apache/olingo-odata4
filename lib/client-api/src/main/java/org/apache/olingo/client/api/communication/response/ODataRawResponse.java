@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
-import org.apache.olingo.commons.api.data.ResWrap;
+import org.apache.olingo.client.api.data.ResWrap;
 
 /**
  * This interface represents a generic OData response.

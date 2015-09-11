@@ -23,13 +23,13 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.DeltaLink;
-import org.apache.olingo.commons.api.data.ResWrap;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

@@ -25,11 +25,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.ResWrap;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.format.ContentType;
 
 /**
  * This class implements an OData retrieve query request returning a single entity.

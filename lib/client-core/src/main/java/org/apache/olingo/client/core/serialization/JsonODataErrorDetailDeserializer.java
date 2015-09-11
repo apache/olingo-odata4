@@ -21,9 +21,9 @@ package org.apache.olingo.client.core.serialization;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
-import org.apache.olingo.commons.api.data.ResWrap;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;

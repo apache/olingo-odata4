@@ -24,10 +24,10 @@ import java.util.Map;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
@@ -91,7 +91,7 @@ public class PrimitiveValueResponse extends ServiceResponse {
           (EdmPrimitiveType) this.returnType.getType(), value, options));
     }
 
-    writeOK(HttpContentType.TEXT_PLAIN);
+    writeOK(ContentType.TEXT_PLAIN);
   }
   
   public void writeEdmBinary(byte[] value) throws SerializerException {
@@ -100,7 +100,7 @@ public class PrimitiveValueResponse extends ServiceResponse {
       return;
     }
     this.response.setContent(new ByteArrayInputStream(value));
-    writeOK(HttpContentType.APPLICATION_OCTET_STREAM);
+    writeOK(ContentType.APPLICATION_OCTET_STREAM);
   }  
 
   public boolean isReturnCollection() {

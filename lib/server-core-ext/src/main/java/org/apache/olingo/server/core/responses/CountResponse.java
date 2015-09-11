@@ -20,10 +20,10 @@ package org.apache.olingo.server.core.responses;
 
 import java.util.Map;
 
-import org.apache.olingo.commons.api.http.HttpContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -48,7 +48,7 @@ public class CountResponse extends ServiceResponse {
     assert (!isClosed());
 
     this.response.setContent(this.serializer.count(count));
-    writeOK(HttpContentType.TEXT_PLAIN);
+    writeOK(ContentType.TEXT_PLAIN);
     close();
   }
 

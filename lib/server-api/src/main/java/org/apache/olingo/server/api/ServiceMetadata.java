@@ -30,24 +30,25 @@ import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
  */
 public interface ServiceMetadata {
   /**
-   *
+   * Gets the entity data model.
    * @return entity data model of this service
    */
   Edm getEdm();
 
   /**
-   *
+   * Get the data-service version.
    * @return data service version of this service
    */
   ODataServiceVersion getDataServiceVersion();
 
   /**
-   *
+   * Gets the list of references defined for this service.
    * @return list of defined emdx references of this service
    */
   List<EdmxReference> getReferences();
 
   /**
+   * Gets the helper for ETag support of the metadata document (may be NULL).
    * @return metadata ETag support
    */
   ServiceMetadataETagSupport getServiceMetadataETagSupport();

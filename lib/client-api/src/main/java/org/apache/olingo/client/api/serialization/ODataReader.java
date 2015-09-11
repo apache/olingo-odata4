@@ -21,14 +21,14 @@ package org.apache.olingo.client.api.serialization;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.commons.api.ex.ODataError;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 
 

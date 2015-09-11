@@ -29,6 +29,7 @@ import java.util.Iterator;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -38,9 +39,7 @@ import org.apache.olingo.client.api.domain.ClientLinkType;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
-import org.apache.olingo.client.core.EdmEnabledODataClientImpl;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.ResWrap;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
