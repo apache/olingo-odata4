@@ -31,7 +31,6 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
@@ -145,8 +144,7 @@ public class DemoEntityProcessor implements EntityProcessor {
     ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).suffix(Suffix.ENTITY).build();
     EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
 
-    ODataFormat oDataFormat = ODataFormat.fromContentType(responseFormat);
-    ODataSerializer serializer = this.odata.createSerializer(oDataFormat);
+    ODataSerializer serializer = this.odata.createSerializer(responseFormat);
     SerializerResult serializerResult = serializer.entity(this.srvMetadata,
         responseEdmEntityType, responseEntity, opts);
 

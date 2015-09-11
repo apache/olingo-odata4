@@ -125,14 +125,14 @@ public class Util {
    * The "Target" attribute specifies the target EntitySet
    * Therefore we need the startEntitySet "Categories" in order to retrieve the target EntitySet "Products"
    */
-  public static EdmEntitySet getNavigationTargetEntitySet(EdmEntitySet startEntitySet,
+  public static EdmEntitySet getNavigationTargetEntitySet(EdmEntitySet startEdmEntitySet,
       EdmNavigationProperty edmNavigationProperty)
       throws ODataApplicationException {
 
     EdmEntitySet navigationTargetEntitySet = null;
 
     String navPropName = edmNavigationProperty.getName();
-    EdmBindingTarget edmBindingTarget = startEntitySet.getRelatedBindingTarget(navPropName);
+    EdmBindingTarget edmBindingTarget = startEdmEntitySet.getRelatedBindingTarget(navPropName);
     if (edmBindingTarget == null) {
       throw new ODataApplicationException("Not supported.",
               HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);

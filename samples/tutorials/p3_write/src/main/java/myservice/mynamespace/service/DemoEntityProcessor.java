@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.format.ODataFormat;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -87,8 +86,7 @@ public class DemoEntityProcessor implements EntityProcessor {
 	 	// expand and select currently not supported
 		EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextUrl).build();
 
-		ODataFormat oDataFormat = ODataFormat.fromContentType(responseFormat);		
-		ODataSerializer serializer = this.odata.createSerializer(oDataFormat);
+		ODataSerializer serializer = this.odata.createSerializer(responseFormat);
 		SerializerResult result = serializer.entity(serviceMetadata, entityType, entity, options);
 		
 		//4. configure the response object
@@ -120,8 +118,7 @@ public class DemoEntityProcessor implements EntityProcessor {
 		// 2. create the data in backend 
 		// 2.1. retrieve the payload from the POST request for the entity to create and deserialize it
 		InputStream requestInputStream = request.getBody();
-		ODataFormat requestODataFormat = ODataFormat.fromContentType(requestFormat);
-		ODataDeserializer deserializer = this.odata.createDeserializer(requestODataFormat);
+		ODataDeserializer deserializer = this.odata.createDeserializer(requestFormat);
 		DeserializerResult result = deserializer.entity(requestInputStream, edmEntityType);
 		Entity requestEntity = result.getEntity();
 		// 2.2 do the creation in backend, which returns the newly created entity
@@ -131,8 +128,7 @@ public class DemoEntityProcessor implements EntityProcessor {
 		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build(); 
 		EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextUrl).build(); // expand and select currently not supported 
 		
-		ODataFormat oDataFormat = ODataFormat.fromContentType(responseFormat);		
-		ODataSerializer serializer = this.odata.createSerializer(oDataFormat);
+		ODataSerializer serializer = this.odata.createSerializer(responseFormat);
 		SerializerResult serializedResponse = serializer.entity(serviceMetadata, edmEntityType, createdEntity, options);
 		
 		//4. configure the response object
@@ -156,8 +152,7 @@ public class DemoEntityProcessor implements EntityProcessor {
 		// 2. update the data in backend
 		// 2.1. retrieve the payload from the PUT request for the entity to be updated 
 		InputStream requestInputStream = request.getBody();
-		ODataFormat requestODataFormat = ODataFormat.fromContentType(requestFormat);
-		ODataDeserializer deserializer = this.odata.createDeserializer(requestODataFormat);
+		ODataDeserializer deserializer = this.odata.createDeserializer(requestFormat);
 		DeserializerResult result = deserializer.entity(requestInputStream, edmEntityType);
 		Entity requestEntity = result.getEntity();
 		// 2.2 do the modification in backend
