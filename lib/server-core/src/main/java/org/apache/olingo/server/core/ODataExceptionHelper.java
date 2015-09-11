@@ -90,7 +90,8 @@ public class ODataExceptionHelper {
       serverError.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
     } else if (ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.INVALID_HTTP_METHOD.equals(e.getMessageKey())
-        || ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD.equals(e.getMessageKey())) {
+        || ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     } else if (ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode());

@@ -35,6 +35,8 @@ public class ODataHandlerException extends ODataLibraryException {
     PROCESSOR_NOT_IMPLEMENTED,
     /** no parameter */
     FUNCTIONALITY_NOT_IMPLEMENTED,
+    /** no parameter */
+    MISSING_CONTENT_TYPE,
     /** parameter: content type */
     UNSUPPORTED_CONTENT_TYPE,
     /** parameter: version */

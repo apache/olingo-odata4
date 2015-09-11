@@ -688,6 +688,15 @@ public class ODataHandlerTest {
   }
 
   @Test
+  public void noRequestContentType() throws Exception {
+    EntityProcessor processor = mock(EntityProcessor.class);
+    final ODataResponse response = dispatch(HttpMethod.POST, "ESAllPrim", null,
+        HttpHeader.CONTENT_TYPE, null, processor);
+    verifyZeroInteractions(processor);
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
+  }
+
+  @Test
   public void unsupportedRequestContentType() throws Exception {
     EntityProcessor processor = mock(EntityProcessor.class);
     ErrorProcessor errorProcessor = mock(ErrorProcessor.class);

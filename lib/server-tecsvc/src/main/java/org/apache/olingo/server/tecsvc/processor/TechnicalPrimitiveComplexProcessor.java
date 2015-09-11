@@ -287,7 +287,6 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
     Property property = getPropertyData(entity, path);
 
-    checkRequestFormat(requestFormat);
     if (representationType == RepresentationType.VALUE) {
       final FixedFormatDeserializer deserializer = odata.createFixedFormatDeserializer();
       final Object value = edmProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?

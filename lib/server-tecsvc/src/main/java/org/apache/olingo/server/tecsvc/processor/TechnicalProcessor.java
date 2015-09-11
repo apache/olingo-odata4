@@ -73,7 +73,7 @@ public abstract class TechnicalProcessor implements Processor {
     EdmEntitySet entitySet = null;
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
 
-    // First must be entity set or function import.
+    // First must be an entity, an entity collection, a function import, or an action import.
     blockTypeFilters(resourcePaths.get(0));
     if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
       entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();

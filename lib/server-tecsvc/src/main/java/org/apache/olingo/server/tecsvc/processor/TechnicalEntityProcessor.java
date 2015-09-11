@@ -146,7 +146,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
     checkRequestFormat(requestFormat);
 
-    //
     if (odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).hasRespondAsync()) {
       TechnicalAsyncService asyncService = TechnicalAsyncService.getInstance();
       TechnicalEntityProcessor processor = new TechnicalEntityProcessor(dataProvider, serviceMetadata);
@@ -154,12 +153,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       AsyncProcessor<EntityProcessor> asyncProcessor = asyncService.register(processor, EntityProcessor.class);
       asyncProcessor.prepareFor().createEntity(request, response, uriInfo, requestFormat, responseFormat);
       String location = asyncProcessor.processAsync();
-      //
       TechnicalAsyncService.acceptedResponse(response, location);
-      //
       return;
     }
-    //
 
     final UriResourceEntitySet resourceEntitySet = (UriResourceEntitySet) uriInfo.getUriResourceParts().get(0);
     final EdmEntitySet edmEntitySet = resourceEntitySet.getEntitySet();
@@ -227,7 +223,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     odata.createETagHelper().checkChangePreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
-    checkRequestFormat(requestFormat);
     final ODataDeserializer deserializer = odata.createDeserializer(requestFormat);
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
 
@@ -592,8 +587,6 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   private ContextURL getContextUrl(String rawODataPath, final EdmEntitySet entitySet, final EdmEntityType entityType,
       final boolean isSingleEntity, final ExpandOption expand, final SelectOption select)
       throws ODataLibraryException {
-    //
-    //
     Builder builder = ContextURL.with().oDataPath(rawODataPath);
     builder = entitySet == null ?
         isSingleEntity ? builder.type(entityType) : builder.asCollection().type(entityType) :
