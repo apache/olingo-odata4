@@ -17,12 +17,10 @@
  * under the License.
  */
 /**
- * Olingo URI
+ * Olingo Server API - Batch
  * <p>
- * The URI package is used to condense all information about the OData path used to query the data.
- * <br> In order to support filter and orderby statements the
- * {@link org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor} has to be implemented by an
- * application. 
+ * The batch package is used to condense common parts about the OData batch processing.
+ *
  */
-package org.apache.olingo.server.api.uri;
+package org.apache.olingo.server.api.batch;
 

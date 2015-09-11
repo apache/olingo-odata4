@@ -58,9 +58,9 @@ public enum MethodKind {
 
   /**
    * Constructor for enumeration value
-   * @param Syntax used in the URI
+   * @param syntax used in the URI
    */
-  private MethodKind(final String syntax) {
+  MethodKind(final String syntax) {
     this.syntax = syntax;
   }
 

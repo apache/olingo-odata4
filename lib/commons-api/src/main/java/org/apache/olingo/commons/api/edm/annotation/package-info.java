@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,12 +17,8 @@
  * under the License.
  */
 /**
- * Olingo URI
- * <p>
- * The URI package is used to condense all information about the OData path used to query the data.
- * <br> In order to support filter and orderby statements the
- * {@link org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor} has to be implemented by an
- * application. 
+ * Contains representations for all annotation related
+ * EDM objects created during the URI parsing
  */
-package org.apache.olingo.server.api.uri;
+package org.apache.olingo.commons.api.edm.annotation;
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- ******************************************************************************/
+ */
 package org.apache.olingo.server.api.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
@@ -30,6 +30,5 @@ public interface AliasQueryOption extends QueryOption {
   /**
    * @return Value of the alias
    */
-  public Expression getValue();
-
+  Expression getValue();
 }

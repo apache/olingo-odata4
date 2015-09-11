@@ -17,12 +17,10 @@
  * under the License.
  */
 /**
- * Olingo URI
+ * Olingo Server API - Deserializer - Batch
  * <p>
- * The URI package is used to condense all information about the OData path used to query the data.
- * <br> In order to support filter and orderby statements the
- * {@link org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor} has to be implemented by an
- * application. 
+ * The deserializer.batch package is used to condense all about the Olingo batch deserialization.
+ *
  */
-package org.apache.olingo.server.api.uri;
+package org.apache.olingo.server.api.deserializer.batch;
 
