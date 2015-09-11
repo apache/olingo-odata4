@@ -261,14 +261,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       case PRIMITIVE:
       case DEFINITION:
       case ENUM:
+      case COMPLEX:
         Parameter parameter = createParameter(node.get(paramName), paramName, edmParameter);
         parameters.put(paramName, parameter);
         node.remove(paramName);
         break;
-      case COMPLEX:
       case ENTITY:
-        throw new DeserializerException("Entity and complex parameters currently not Implemented",
-            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+        throw new DeserializerException("Entity parameters are not allowed",
+            DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE);
       default:
         throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
             + " for action parameter: " + paramName, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE,

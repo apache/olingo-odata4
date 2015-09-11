@@ -20,15 +20,20 @@
 package org.apache.olingo.server.core.requests;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.core.ContentNegotiatorException;
@@ -137,5 +142,11 @@ public class ActionRequest extends OperationRequest {
   
   public InputStream getPayload() {
     return getODataRequest().getBody();
+  }
+  
+  public List<Parameter> getParameters() throws DeserializerException {
+    ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
+    return new ArrayList<Parameter>(deserializer.actionParameters(getPayload(), getAction()).getActionParameters()
+        .values());
   }
 }
