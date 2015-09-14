@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.serializer.xml;
+package org.apache.olingo.server.core.deserializer.xml;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
