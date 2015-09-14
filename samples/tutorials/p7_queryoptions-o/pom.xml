@@ -35,7 +35,7 @@
 
 	<properties>
 		<javax.version>2.5</javax.version>
-		<odata.version>4.0.0-RC01</odata.version>
+		<odata.version>4.0.0-RC02</odata.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 
