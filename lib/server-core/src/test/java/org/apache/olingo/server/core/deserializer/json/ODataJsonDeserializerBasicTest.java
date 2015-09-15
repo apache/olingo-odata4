@@ -174,9 +174,13 @@ public class ODataJsonDeserializerBasicTest {
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
-    final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
+    deserializer.entityReferences(stream).getEntityReferences();
+  }
 
-    assertEquals(0, entityReferences.size());
+  @Test(expected = DeserializerException.class)
+  public void referencesNoContent() throws Exception {
+    OData.newInstance().createDeserializer(ContentType.JSON).entityReferences(
+        new ByteArrayInputStream(new byte[] {}));
   }
 
   @Test(expected = DeserializerException.class)

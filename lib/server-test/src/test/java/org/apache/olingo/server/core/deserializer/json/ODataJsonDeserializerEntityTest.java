@@ -687,6 +687,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   // ---------------------------------- Negative Tests -----------------------------------------------------------
 
   @Test(expected = DeserializerException.class)
+  public void emptyInput() throws Exception {
+    OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entity(
+        new ByteArrayInputStream(new byte[] {}),
+        edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+  }
+
+  @Test(expected = DeserializerException.class)
   public void etAllPrimWithInvalidNullValue() throws Exception {
     String entityString =
         "{\"PropertyInt16\":null," +

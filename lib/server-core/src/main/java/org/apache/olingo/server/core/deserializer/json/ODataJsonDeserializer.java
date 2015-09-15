@@ -74,7 +74,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private static final String AN_IO_EXCEPTION_OCCURRED_MSG = "An IOException occurred";
   private static final String DUPLICATE_JSON_PROPERTY_DETECTED_MSG = "Duplicate json property detected";
-  private static final String AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG = "An JsonParseException occurred";
+  private static final String AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG = "A JsonParseException occurred";
   private static final String ODATA_ANNOTATION_MARKER = "@";
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
   private static final EdmPrimitiveType EDM_INT64 = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
@@ -204,28 +204,25 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       throws DeserializerException {
     try {
       ObjectNode tree = parseJsonTree(stream);
-      if (tree != null) {
-        Map<String, Parameter> parameters = consumeParameters(edmAction, tree);
+      Map<String, Parameter> parameters = consumeParameters(edmAction, tree);
 
-        final List<String> toRemove = new ArrayList<String>();
-        Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
-        while (fieldsIterator.hasNext()) {
-          Map.Entry<String, JsonNode> field = fieldsIterator.next();
+      final List<String> toRemove = new ArrayList<String>();
+      Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
+      while (fieldsIterator.hasNext()) {
+        Map.Entry<String, JsonNode> field = fieldsIterator.next();
 
-          if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
-            // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
-            toRemove.add(field.getKey());
-          } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
-            throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
-                DeserializerException.MessageKeys.NOT_IMPLEMENTED);
-          }
+        if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
+          // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
+          toRemove.add(field.getKey());
+        } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
+          throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
+              DeserializerException.MessageKeys.NOT_IMPLEMENTED);
         }
-        // remove here to avoid iterator issues.
-        tree.remove(toRemove);
-        assertJsonNodeIsEmpty(tree);
-        return DeserializerResultImpl.with().actionParameters(parameters).build();
       }
-      return DeserializerResultImpl.with().build();
+      // remove here to avoid iterator issues.
+      tree.remove(toRemove);
+      assertJsonNodeIsEmpty(tree);
+      return DeserializerResultImpl.with().actionParameters(parameters).build();
 
     } catch (final JsonParseException e) {
       throw new DeserializerException(AN_JSON_PARSE_EXCEPTION_OCCURRED_MSG, e,
@@ -239,11 +236,16 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private ObjectNode parseJsonTree(final InputStream stream) throws IOException {
+  private ObjectNode parseJsonTree(final InputStream stream) throws IOException, DeserializerException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
     JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-    return parser.getCodec().readTree(parser);
+    final ObjectNode tree = parser.getCodec().readTree(parser);
+    if (tree == null) {
+      throw new DeserializerException("Invalid JSON syntax.",
+          DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    }
+    return tree;
   }
 
   private Map<String, Parameter> consumeParameters(final EdmAction edmAction, final ObjectNode node)
@@ -845,10 +847,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   public DeserializerResult property(final InputStream stream, final EdmProperty edmProperty)
       throws DeserializerException {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
-      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-      final ObjectNode tree = parser.getCodec().readTree(parser);
+      final ObjectNode tree = parseJsonTree(stream);
 
       final Property property;
       JsonNode jsonNode = tree.get(Constants.VALUE);
@@ -882,11 +881,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   public DeserializerResult entityReferences(final InputStream stream) throws DeserializerException {
     try {
       ArrayList<URI> parsedValues = new ArrayList<URI>();
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
-      JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-      final ObjectNode tree = parser.getCodec().readTree(parser);
-      final String key = "@odata.id";
+      final ObjectNode tree = parseJsonTree(stream);
+      final String key = Constants.JSON_ID;
       JsonNode jsonNode = tree.get(Constants.VALUE);
       if (jsonNode != null) {
         if (jsonNode.isArray()) {

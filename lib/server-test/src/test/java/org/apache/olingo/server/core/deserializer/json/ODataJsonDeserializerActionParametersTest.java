@@ -32,18 +32,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
-import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.core.edm.EdmActionImpl;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
-import org.apache.olingo.commons.core.edm.EdmEntityTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -233,7 +230,12 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertNotNull(parameter);
     assertEquals(null, parameter.getValue());
   }
-  
+
+  @Test(expected = DeserializerException.class)
+  public void noContent() throws Exception {
+    deserialize("", "BAETAllPrimRT", "ETAllPrim");
+  }
+
   @Test(expected = DeserializerException.class)
   public void bindingParameter() throws Exception {
     deserialize("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim");

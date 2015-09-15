@@ -222,6 +222,13 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
   }
 
   @Test(expected = DeserializerException.class)
+  public void emptyInput() throws Exception {
+    OData.newInstance().createDeserializer(CONTENT_TYPE_JSON).entityCollection(
+        new ByteArrayInputStream(new byte[] {}),
+        edm.getEntityType(new FullQualifiedName("Namespace1_Alias", "ETAllPrim")));
+  }
+
+  @Test(expected = DeserializerException.class)
   public void unknownContentInCollection() throws Exception {
     String entityCollectionString = "{\"value\" : [],"
         + "\"unknown\":null"

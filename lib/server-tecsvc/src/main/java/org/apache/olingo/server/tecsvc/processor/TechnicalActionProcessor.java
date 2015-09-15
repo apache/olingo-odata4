@@ -18,12 +18,16 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -38,7 +42,7 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.deserializer.DeserializerResult;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
 import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.processor.ActionComplexCollectionProcessor;
@@ -78,12 +82,9 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
-
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
     EntityCollection collection =
-        dataProvider.processActionEntityCollection(action.getName(), deserializerResult.getActionParameters());
+        dataProvider.processActionEntityCollection(action.getName(), parameters);
 
     // Collections must never be null.
     // Not nullable return types must not contain a null value.
@@ -123,11 +124,9 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
 
-    final DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
     final EntityActionResult entityResult =
-        dataProvider.processActionEntity(action.getName(), deserializerResult.getActionParameters());
+        dataProvider.processActionEntity(action.getName(), parameters);
     if (entityResult == null || entityResult.getEntity() == null) {
       if (action.getReturnType().isNullable()) {
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -178,11 +177,9 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
     Property property =
-        dataProvider.processActionPrimitiveCollection(action.getName(), deserializerResult.getActionParameters());
+        dataProvider.processActionPrimitiveCollection(action.getName(), parameters);
 
     if (property == null || property.isNull()) {
       // Collection Propertys must never be null
@@ -220,10 +217,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
-    Property property = dataProvider.processActionPrimitive(action.getName(), deserializerResult.getActionParameters());
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
+    Property property = dataProvider.processActionPrimitive(action.getName(), parameters);
     EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
     if (property == null || property.isNull()) {
       if (action.getReturnType().isNullable()) {
@@ -260,11 +255,9 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
     Property property =
-        dataProvider.processActionComplexCollection(action.getName(), deserializerResult.getActionParameters());
+        dataProvider.processActionComplexCollection(action.getName(), parameters);
 
     if (property == null || property.isNull()) {
       // Collection Propertys must never be null
@@ -301,10 +294,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     blockBoundActions(uriInfo);
     final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
         .getAction();
-    DeserializerResult deserializerResult =
-        odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
-
-    Property property = dataProvider.processActionComplex(action.getName(), deserializerResult.getActionParameters());
+    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
+    Property property = dataProvider.processActionComplex(action.getName(), parameters);
     EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
     if (property == null || property.isNull()) {
       if (action.getReturnType().isNullable()) {
@@ -340,11 +331,17 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final UriResourceAction resource =
         ((UriResourceAction) uriInfo.getUriResourceParts().get(uriInfo.getUriResourceParts().size() - 1));
     final EdmAction action = resource.getAction();
+    readParameters(action, request.getBody(), requestFormat);
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+
+  private Map<String, Parameter> readParameters(final EdmAction action, final InputStream body, final ContentType requestFormat)
+      throws ODataApplicationException, DeserializerException {
     if (action.getParameterNames().size() - (action.isBound() ? 1 : 0) > 0) {
       checkRequestFormat(requestFormat);
-      odata.createDeserializer(requestFormat).actionParameters(request.getBody(), action);
+      return odata.createDeserializer(requestFormat).actionParameters(body, action).getActionParameters();
     }
-    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    return Collections.<String, Parameter> emptyMap();
   }
 
   private ContextURL getContextUrl(final EdmEntitySet entitySet, final EdmEntityType entityType,

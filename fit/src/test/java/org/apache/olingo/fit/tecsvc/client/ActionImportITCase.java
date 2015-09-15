@@ -69,9 +69,12 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
   }
 
   @Test
-  public void primitiveActionInvalidParameters() throws Exception {
+  public void primitiveCollectionActionInvalidParameters() throws Exception {
     try {
-      callAction("AIRTString", ClientProperty.class, buildParameterInt16(42), false);
+      callAction("AIRTCollStringTwoParam", ClientProperty.class,
+          Collections.singletonMap("ParameterInt16",
+              (ClientValue) getFactory().newPrimitiveValueBuilder().buildString("42")),
+          false);
       fail("Expected an ODataClientErrorException");
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
