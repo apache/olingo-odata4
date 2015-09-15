@@ -1014,6 +1014,25 @@ public class TestFullResourcePath {
   }
 
   @Test
+  public void runResourcePathWithApostrophe() {
+    // TODO Currently "'" is not allowed in OData identifiers, but the specification allows this character (Unicode Cf)
+    testUri.runEx("ESAllPrim'").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESAllPrim'InvalidStuff").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESAllPrim", "$filter=PropertyInt16' eq 0")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq' 0")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq 0'")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq 'dsd''")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+  
+  @Test
   public void runEsNameCast() throws Exception {
     testUri.run("ESTwoPrim/olingo.odata.test1.ETBase")
     .isKind(UriInfoKind.resource).goPath()
@@ -5351,7 +5370,7 @@ public class TestFullResourcePath {
         + "(PropertyInt=1,PropertyString='2')")
         .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
   }
-
+  
   @Test
   public void startElementsInsteadOfNavigationProperties() {
     testUri.runEx("ESAllPrim(0)/ESAllPrim(0)/ESAllPrim(0)").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);

@@ -25,7 +25,7 @@ lexer grammar UriLexer;
 //;==============================================================================
 QM              : '?'                 ->        pushMode(MODE_QUERY);               //first query parameter
 AMP             : '&'                 ->        pushMode(MODE_QUERY);               //more query parameters
-STRING          : '\''                -> more,  pushMode(MODE_STRING);              //reads up to next single '
+STRING          : '\''                -> more,  pushMode(MODE_STRING) ;              //reads up to next single '
 QUOTATION_MARK  : '\u0022'            -> more,  pushMode(MODE_JSON_STRING);         //reads up to next unescaped "
 SEARCH_INLINE   : '$search'           ->        pushMode(MODE_SYSTEM_QUERY_SEARCH); //
 FRAGMENT        : '#'                 ->        pushMode(MODE_FRAGMENT);            //
@@ -311,7 +311,7 @@ mode MODE_FRAGMENT;
 // character.
 //;==============================================================================
 
-REST_F          : ~('\r'|'\n')* -> type(REST),  popMode;
+REST_F          	: ~('\r'|'\n')* -> type(REST),  popMode;
 
 //;==============================================================================
 mode MODE_SYSTEM_QUERY_REST;
@@ -319,33 +319,35 @@ mode MODE_SYSTEM_QUERY_REST;
 // character.
 //;==============================================================================
 
-AMP_sqr       : '&'     -> type(AMP),       popMode;
-FRAGMENT_sqr  : '#'     -> type(FRAGMENT),  popMode;
+AMP_sqr       			: '&'     -> type(AMP),       popMode;
+FRAGMENT_sqr  			: '#'     -> type(FRAGMENT),  popMode;
 
-EQ_sqr        : '='     -> type(EQ);
-REST          : ~[&#=] ~[&#]*;
+EQ_sqr        		 	: '='     -> type(EQ);
+REST          		 	: ~[&#=] ~[&#]*;
+ERROR_CHARACTER_sqmr 	: .;
 
 //;==============================================================================
 mode MODE_SYSTEM_QUERY_SEARCH;
 //;==============================================================================
 
-NOT_sqc             : 'NOT'   -> type(NOT);
-AND_sqc             : 'AND'   -> type(AND);
-OR_sqc              : 'OR'    -> type(OR);
-EQ_sqc              : '='     -> type(EQ);
+NOT_sqc             	: 'NOT'   -> type(NOT);
+AND_sqc             	: 'AND'   -> type(AND);
+OR_sqc              	: 'OR'    -> type(OR);
+EQ_sqc              	: '='     -> type(EQ);
 
-fragment WS_sqc     : ( ' ' | '\u0009');
-WSP_sqc             : WS_sqc+ -> type(WSP);
+fragment WS_sqc     	: ( ' ' | '\u0009');
+WSP_sqc             	: WS_sqc+ -> type(WSP);
 
-QUOTATION_MARK_sqc  : '\u0022';
+QUOTATION_MARK_sqc  	: '\u0022';
 
-SEARCHWORD          : ('a'..'z'|'A'..'Z')+;
-SEARCHPHRASE        : QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc;
+SEARCHWORD          	: ('a'..'z'|'A'..'Z')+;
+SEARCHPHRASE        	: QUOTATION_MARK_sqc ~["]* QUOTATION_MARK_sqc;
 
 // Follow Set
-CLOSE_qs            : ')' -> popMode, type(CLOSE);   
-SEMI_qs             : ';' -> popMode, type(SEMI);   
-AMP_qs              : '&' -> popMode, type(AMP);
+CLOSE_qs            	: ')' -> popMode, type(CLOSE);   
+SEMI_qs             	: ';' -> popMode, type(SEMI);   
+AMP_qs              	: '&' -> popMode, type(AMP);
+ERROR_CHARACTER_sqms	: .;
 
 //;==============================================================================
 mode MODE_STRING;
@@ -353,7 +355,8 @@ mode MODE_STRING;
 // Any "'" characters inside a string are expressed as double "''".
 //;==============================================================================
 
-STRING_s            : ('\'\'' | ~[\u0027] )* '\'' -> type(STRING), popMode;
+STRING_s            	: ('\'\'' | ~[\u0027] )* '\'' -> type(STRING), popMode;
+ERROR_CHARACTER_sm		: EOF | .;
 
 //;==============================================================================
 mode MODE_JSON_STRING;
@@ -361,7 +364,8 @@ mode MODE_JSON_STRING;
 // Any """ characters inside a string are escaped with "\".
 //;==============================================================================
 
-STRING_IN_JSON      : ('\\"' | ~[\u0022] )* '"' -> popMode;
+STRING_IN_JSON      	: ('\\"' | ~[\u0022] )* '"' -> popMode;
+ERROR_CHARACTER_jsm		: EOF | .;
 
 //;==============================================================================
 mode MODE_ODATA_GEO;
@@ -412,3 +416,5 @@ POLYGON             : P_ O_ L_ Y_ G_ O_ N_ ;
 SRID                : S_ R_ I_ D_;
 
 SQUOTE              : '\''  -> popMode;
+
+ERROR_CHARACTER_g	: .;
