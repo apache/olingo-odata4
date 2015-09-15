@@ -335,8 +335,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
-  private Map<String, Parameter> readParameters(final EdmAction action, final InputStream body, final ContentType requestFormat)
-      throws ODataApplicationException, DeserializerException {
+  private Map<String, Parameter> readParameters(final EdmAction action, final InputStream body, 
+      final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
     if (action.getParameterNames().size() - (action.isBound() ? 1 : 0) > 0) {
       checkRequestFormat(requestFormat);
       return odata.createDeserializer(requestFormat).actionParameters(body, action).getActionParameters();
