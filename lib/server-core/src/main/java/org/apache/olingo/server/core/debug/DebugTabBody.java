@@ -18,11 +18,17 @@
  */
 package org.apache.olingo.server.core.debug;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataResponse;
 
@@ -33,9 +39,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class DebugTabBody implements DebugTab {
 
-  private static enum ResponseContent {
+  private enum ResponseContent {
     JSON, XML, TEXT, IMAGE
-  };
+  }
 
   private final ODataResponse response;
   private final ResponseContent responseContent;
@@ -82,13 +88,13 @@ public class DebugTabBody implements DebugTab {
       String contentString;
       switch (responseContent) {
       case IMAGE:
-        contentString = Base64.encodeBase64String(IOUtils.toString(response.getContent()).getBytes("UTF-8"));
+        contentString = Base64.encodeBase64String(streamToBytes(response.getContent()));
         break;
       case JSON:
       case XML:
       case TEXT:
       default:
-        contentString = IOUtils.toString(response.getContent(), "UTF-8");
+        contentString = new String(streamToBytes(response.getContent()), "UTF-8");
         break;
       }
       return contentString;
@@ -125,5 +131,25 @@ public class DebugTabBody implements DebugTab {
       writer.append("\n</pre>\n");
       break;
     }
+  }
+
+  private byte[] streamToBytes(InputStream input) {
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    if (input != null) {
+      try {
+        ByteBuffer inBuffer = ByteBuffer.allocate(8192);
+        ReadableByteChannel ic = Channels.newChannel(input);
+        WritableByteChannel oc = Channels.newChannel(buffer);
+        while (ic.read(inBuffer) > 0) {
+          inBuffer.flip();
+          oc.write(inBuffer);
+          inBuffer.rewind();
+        }
+        return buffer.toByteArray();
+      } catch (IOException e) {
+        throw new ODataRuntimeException("Error on reading request content");
+      }
+    }
+    return null;
   }
 }
