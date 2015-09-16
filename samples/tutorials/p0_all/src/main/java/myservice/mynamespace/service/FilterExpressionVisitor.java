@@ -46,7 +46,6 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     this.currentEntity = currentEntity;
 	}
 
-  @Override
   public Object visitMember(UriInfoResource member) throws ExpressionVisitException, ODataApplicationException {
     // To keeps things simple, this tutorial allows only primitive properties.
     // We have faith that the java type of Edm.Int32 is Integer
@@ -73,7 +72,6 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     }
   }
   
-  @Override
   public Object visitLiteral(Literal literal) throws ExpressionVisitException, ODataApplicationException {
     // To keep this tutorial simple, our filter expression visitor supports only Edm.Int32 and Edm.String
     // In real world scenarios it can be difficult to guess the type of an literal.
@@ -100,8 +98,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     }
   }
   
-  @Override
-  public Object visitUnaryOperator(UnaryOperatorKind operator, Object operand) 
+  public Object visitUnaryOperator(UnaryOperatorKind operator, Object operand)
       throws ExpressionVisitException, ODataApplicationException {
     // OData allows two different unary operators. We have to take care, that the type of the operand fits to
     // operand
@@ -119,8 +116,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
         HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
   }
 
-	@Override
-	public Object visitBinaryOperator(BinaryOperatorKind operator, Object left, Object right) 
+	public Object visitBinaryOperator(BinaryOperatorKind operator, Object left, Object right)
 	    throws ExpressionVisitException, ODataApplicationException {
 		
 	  // Binary Operators are split up in three different kinds. Up to the kind of the operator it can be applied 
@@ -181,11 +177,11 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
       // Luckily all used types String, Boolean and also Integer support the interface Comparable
       int result;
       if(left instanceof Integer) {
-        result = ((Comparable<Integer>) (Integer)left).compareTo((Integer) right);
+        result = ((Integer) left).compareTo((Integer) right);
       } else if(left instanceof String) {
-        result = ((Comparable<String>) (String)left).compareTo((String) right);
+        result = ((String) left).compareTo((String) right);
       } else if(left instanceof Boolean) {
-        result = ((Comparable<Boolean>) (Boolean)left).compareTo((Boolean) right);
+        result = ((Boolean) left).compareTo((Boolean) right);
       } else {
         throw new ODataApplicationException("Class " + left.getClass().getCanonicalName() + " not expected", 
             HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ENGLISH);
@@ -207,7 +203,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
       }
       
     } else {
-      throw new ODataApplicationException("Comparision needs two equal types", 
+      throw new ODataApplicationException("Comparison needs two equal types",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
     }
   }
@@ -239,8 +235,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 	  }
   }
 
-  @Override
-	public Object visitMethodCall(MethodKind methodCall, List<Object> parameters) 
+	public Object visitMethodCall(MethodKind methodCall, List<Object> parameters)
 	    throws ExpressionVisitException, ODataApplicationException {
     
     // To keep this tutorial small and simple, we implement only one method call
@@ -248,7 +243,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
       // "Contains" gets two parameters, both have to be of type String
       // e.g. /Products?$filter=contains(Description, '1024 MB')
       // 
-      // First the method visistMember is called, which returns the current String value of the property.
+      // First the method visitMember is called, which returns the current String value of the property.
       // After that the method visitLiteral is called with the string literal '1024 MB',
       // which returns a String
       //
@@ -259,7 +254,7 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
         
         return valueParam1.contains(valueParam2);
       } else {
-        throw new ODataApplicationException("Contains needs two parametes of type Edm.String", 
+        throw new ODataApplicationException("Contains needs two parameters of type Edm.String",
             HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
       }
     } else {
@@ -268,34 +263,29 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
     }
 	}
 
-	@Override
 	public Object visitTypeLiteral(EdmType type) throws ExpressionVisitException, ODataApplicationException {
 	  throw new ODataApplicationException("Type literals are not implemented", 
         HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
 	}
-	
-	 @Override
-	  public Object visitAlias(String aliasName) throws ExpressionVisitException, ODataApplicationException {
+
+  public Object visitAlias(String aliasName) throws ExpressionVisitException, ODataApplicationException {
 	   throw new ODataApplicationException("Aliases are not implemented", 
          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
 	 }
 	 
-	  @Override
-	  public Object visitEnum(EdmEnumType type, List<String> enumValues) 
+	  public Object visitEnum(EdmEnumType type, List<String> enumValues)
 	      throws ExpressionVisitException, ODataApplicationException {
 	    throw new ODataApplicationException("Enums are not implemented", 
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
 	  }
 
-	  @Override
-	  public Object visitLambdaExpression(String lambdaFunction, String lambdaVariable, Expression expression) 
+	  public Object visitLambdaExpression(String lambdaFunction, String lambdaVariable, Expression expression)
 	      throws ExpressionVisitException, ODataApplicationException {
 	    throw new ODataApplicationException("Lamdba expressions are not implemented", 
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
 	  }
 
-	  @Override
-	  public Object visitLambdaReference(String variableName) 
+	  public Object visitLambdaReference(String variableName)
 	      throws ExpressionVisitException, ODataApplicationException {
 	    throw new ODataApplicationException("Lamdba references are not implemented", 
 	        HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
