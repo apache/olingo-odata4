@@ -37,12 +37,12 @@ public final class ContentNegotiator {
   private static final String XML = "xml";
 
   private static final List<ContentType> DEFAULT_SUPPORTED_CONTENT_TYPES =
-          Collections.unmodifiableList(Arrays.asList(
-                  ContentType.JSON,
-                  ContentType.JSON_NO_METADATA,
-                  ContentType.APPLICATION_JSON,
-                  ContentType.APPLICATION_ATOM_XML,
-                  ContentType.APPLICATION_XML));
+      Collections.unmodifiableList(Arrays.asList(
+          ContentType.JSON,
+          ContentType.JSON_NO_METADATA,
+          ContentType.APPLICATION_JSON,
+          ContentType.APPLICATION_ATOM_XML,
+          ContentType.APPLICATION_XML));
 
   private ContentNegotiator() {}
 
@@ -102,17 +102,15 @@ public final class ContentNegotiator {
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
       }
     } else if (acceptHeaderValue != null) {
-      final List<AcceptType> acceptedContentTypes = AcceptType.create(acceptHeaderValue);
       try {
-        result = getAcceptedType(acceptedContentTypes, supportedContentTypes);
+        result = getAcceptedType(AcceptType.create(acceptHeaderValue), supportedContentTypes);
       } catch (final IllegalArgumentException e) {
-        throw new ContentNegotiatorException("charset in accept header not supported: " + acceptHeaderValue, e,
-            ContentNegotiatorException.MessageKeys.WRONG_CHARSET_IN_HEADER, HttpHeader.ACCEPT, acceptHeaderValue);
+        result = null;
       }
       if (result == null) {
         throw new ContentNegotiatorException(
-            "unsupported accept content type: " + acceptedContentTypes + " != " + supportedContentTypes,
-            ContentNegotiatorException.MessageKeys.UNSUPPORTED_CONTENT_TYPES, acceptedContentTypes.toString());
+            "Unsupported or illegal Accept header value: " + acceptHeaderValue + " != " + supportedContentTypes,
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_TYPES, acceptHeaderValue);
       }
     } else {
       final ContentType requestedContentType = getDefaultSupportedContentTypes(representationType).get(0);
@@ -127,7 +125,7 @@ public final class ContentNegotiator {
     return result;
   }
 
-  private static ContentType mapContentType(String formatString) {
+  private static ContentType mapContentType(final String formatString) {
     return JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
     XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
     ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;

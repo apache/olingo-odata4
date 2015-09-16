@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ import org.junit.Test;
 public class AcceptTypeTest {
 
   @Test
-  public void testWildcard() {
+  public void wildcard() {
     List<AcceptType> atl = AcceptType.create("*/*");
 
     assertEquals(1, atl.size());
@@ -42,7 +43,7 @@ public class AcceptTypeTest {
   }
 
   @Test
-  public void testWildcardSubtype() {
+  public void wildcardSubtype() {
     List<AcceptType> atl = AcceptType.create("a/*");
 
     assertEquals(1, atl.size());
@@ -53,7 +54,7 @@ public class AcceptTypeTest {
   }
 
   @Test
-  public void testSingleAcceptType() {
+  public void singleAcceptType() {
     assertTrue(AcceptType.create("a/a").get(0).matches(ContentType.create("a/a")));
     assertTrue(AcceptType.create("a/a;q=0.2").get(0).matches(ContentType.create("a/a")));
     assertFalse(AcceptType.create("a/a;x=y;q=0.2").get(0).matches(ContentType.create("a/a")));
@@ -64,7 +65,7 @@ public class AcceptTypeTest {
   }
 
   @Test
-  public void testAcceptTypes() {
+  public void acceptTypes() {
     List<AcceptType> atl;
 
     atl = AcceptType.create("b/b,*/*,a/a,c/*");
@@ -101,53 +102,73 @@ public class AcceptTypeTest {
   }
 
   @Test
-  public void testWithQParameter() {
-    List<AcceptType> atl = AcceptType.create("application/json;q=0.2");
+  public void withQParameter() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/json;q=0.2");
 
-    assertEquals(1, atl.size());
-    assertEquals("application", atl.get(0).getType());
-    assertEquals("json", atl.get(0).getSubtype());
-    assertEquals("0.2", atl.get(0).getParameters().get("q"));
-    assertEquals("application/json;q=0.2", atl.get(0).toString());
+    assertEquals(1, acceptTypes.size());
+    final AcceptType acceptType = acceptTypes.get(0);
+    assertEquals("application", acceptType.getType());
+    assertEquals("json", acceptType.getSubtype());
+    assertEquals("0.2", acceptType.getParameters().get(TypeUtil.PARAMETER_Q));
+    assertEquals("0.2", acceptType.getParameter(TypeUtil.PARAMETER_Q));
+    assertEquals(Float.valueOf(0.2F), acceptType.getQuality());
+    assertEquals("application/json;q=0.2", acceptType.toString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
+  public void formatErrors() {
+    expectCreateError("/");
+    expectCreateError("//");
+    expectCreateError("///");
+    expectCreateError("a/b/c");
+    expectCreateError("a//b");
+  }
+
+  @Test
   public void abbreviationsNotAllowed() {
-    AcceptType.create("application");
+    expectCreateError("application");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testWrongQParameter() {
-    AcceptType.create(" a/a;q=z ");
+  @Test
+  public void wildcardError() {
+    expectCreateError("*/json");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void incompleteParameter() {
-    AcceptType.create("a/b;parameter");
+  @Test
+  public void wrongQParameter() {
+    expectCreateError(" a/a;q=z ");
+    expectCreateError("a/a;q=42");
+    expectCreateError("a/a;q=0.0001");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void missingParameterValue() {
-    AcceptType.create("a/b;parameter=");
+  @Test
+  public void parameterErrors() {
+    expectCreateError("a/b;parameter");
+    expectCreateError("a/b;parameter=");
+    expectCreateError("a/b;name= value");
+    expectCreateError("a/b;=value");
+    expectCreateError("a/b;the name=value");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void parameterValueStartingWithWhitespace() {
-    AcceptType.create("a/b;name= value");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void missingParameterName() {
-    AcceptType.create("a/b;=value");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void parameterNameWithWhitespace() {
-    AcceptType.create("a/b;the name=value");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void trailingSemicolon() {
-    AcceptType.create("a/b;");
+    expectCreateError("a/b;");
+  }
+
+  @Test
+  public void fromContentType() {
+    final List<AcceptType> acceptType = AcceptType.fromContentType(ContentType.APPLICATION_JSON);
+    assertNotNull(acceptType);
+    assertEquals(1, acceptType.size());
+    assertEquals(ContentType.APPLICATION_JSON.toContentTypeString(), acceptType.get(0).toString());
+  }
+
+  private void expectCreateError(final String value) {
+    try {
+      AcceptType.create(value);
+      fail("Expected exception not thrown.");
+    } catch (final IllegalArgumentException e) {
+      assertNotNull(e);
+    }
   }
 }

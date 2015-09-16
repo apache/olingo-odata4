@@ -297,13 +297,8 @@ public class ODataDispatcher {
           .deleteReference(request, response, uriInfo);
 
     } else {
-      throw new ODataHandlerException(getMethodNotAllowedStringMessage(httpMethod),
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, httpMethod.toString());
+      throwMethodNotAllowed(httpMethod);
     }
-  }
-
-  private String getMethodNotAllowedStringMessage(final HttpMethod httpMethod) {
-    return "HTTP method " + httpMethod + " is not allowed.";
   }
 
   private void handleValueDispatching(final ODataRequest request, final ODataResponse response,
@@ -337,8 +332,7 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveValueProcessor.class)
             .deletePrimitiveValue(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+        throwMethodNotAllowed(method);
       }
     } else {
       if (method == HttpMethod.GET) {
@@ -358,8 +352,7 @@ public class ODataDispatcher {
         handler.selectProcessor(MediaEntityProcessor.class)
             .deleteMediaEntity(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+        throwMethodNotAllowed(method);
       }
     }
   }
@@ -402,8 +395,7 @@ public class ODataDispatcher {
             .deleteComplex(request, response, uriInfo);
       }
     } else {
-      throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+      throwMethodNotAllowed(method);
     }
   }
 
@@ -445,8 +437,7 @@ public class ODataDispatcher {
             .deletePrimitive(request, response, uriInfo);
       }
     } else {
-      throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+      throwMethodNotAllowed(method);
     }
   }
 
@@ -493,8 +484,7 @@ public class ODataDispatcher {
               .createEntity(request, response, uriInfo, requestFormat, responseFormat);
         }
       } else {
-        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+        throwMethodNotAllowed(method);
       }
     } else {
       if (method == HttpMethod.GET) {
@@ -515,8 +505,7 @@ public class ODataDispatcher {
         handler.selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
             .deleteEntity(request, response, uriInfo);
       } else {
-        throw new ODataHandlerException(getMethodNotAllowedStringMessage(method),
-            ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, method.toString());
+        throwMethodNotAllowed(method);
       }
     }
   }
@@ -537,9 +526,13 @@ public class ODataDispatcher {
   private void checkMethod(final HttpMethod requestMethod, final HttpMethod allowedMethod)
       throws ODataHandlerException {
     if (requestMethod != allowedMethod) {
-      throw new ODataHandlerException(getMethodNotAllowedStringMessage(requestMethod),
-          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, requestMethod.toString());
+      throwMethodNotAllowed(requestMethod);
     }
+  }
+
+  private void throwMethodNotAllowed(final HttpMethod httpMethod) throws ODataHandlerException {
+    throw new ODataHandlerException("HTTP method " + httpMethod + " is not allowed.",
+        ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, httpMethod.toString());
   }
 
   private ContentType getSupportedContentType(final String contentTypeHeader,
@@ -551,7 +544,13 @@ public class ODataDispatcher {
       }
       return null;
     }
-    final ContentType contentType = ContentType.parse(contentTypeHeader);
+    ContentType contentType;
+    try {
+      contentType = ContentType.create(contentTypeHeader);
+    } catch (final IllegalArgumentException e) {
+      throw new ODataHandlerException("Illegal content type.", e,
+          ODataHandlerException.MessageKeys.INVALID_CONTENT_TYPE, contentTypeHeader);
+    }
     ContentNegotiator.checkSupport(contentType, handler.getCustomContentTypeSupport(), representationType);
     return contentType;
   }

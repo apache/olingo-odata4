@@ -21,8 +21,10 @@ package org.apache.olingo.commons.api.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -36,44 +38,25 @@ public class ContentTypeTest {
     assertEquals(ContentType.create("A/B"), ContentType.create("a/b"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail1() {
-    ContentType.create("a");
-  }
+  @Test
+  public void createFail() {
+    createWrong("a");
+    createWrong(" a / b ");
+    createWrong("a/b;");
+    createWrong("a/b;parameter");
+    createWrong("a/b;parameter=");
+    createWrong("a/b;=value");
+    createWrong("a/b;the name=value");
+    createWrong("a/b;name= value");
 
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail2() {
-    ContentType.create(" a / b ");
-  }
+    createWrong("*/*");
+    createWrong("*");
+    createWrong("a//b");
+    createWrong("///");
+    createWrong("a/*");
+    createWrong("*/b");
 
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail3() {
-    ContentType.create("a/b;");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail4() {
-    ContentType.create("a/b;parameter");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail5() {
-    ContentType.create("a/b;parameter=");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail6() {
-    ContentType.create("a/b;=value");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail7() {
-    ContentType.create("a/b;the name=value");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void createFail8() {
-    ContentType.create("a/b;name= value");
+    createWrong(null);
   }
 
   @Test
@@ -99,15 +82,12 @@ public class ContentTypeTest {
 
   @Test
   public void parse() {
+    assertEquals(ContentType.APPLICATION_OCTET_STREAM, ContentType.parse("application/octet-stream"));
+
     assertNull(ContentType.parse("a"));
     assertNull(ContentType.parse("a/b;c"));
     assertNull(ContentType.parse("a/b;c="));
     assertNull(ContentType.parse("a/b;c= "));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void wildcardFail() {
-    ContentType.create("*/*");
   }
 
   @Test
@@ -118,8 +98,9 @@ public class ContentTypeTest {
     assertNotEquals(ct1, ct2);
     assertEquals(ct1.getType(), ct2.getType());
     assertEquals(ct1.getSubtype(), ct2.getSubtype());
-    assertEquals("utf8", ct1.getParameters().get("charset"));
-    assertEquals("utf-8", ct2.getParameters().get("charset"));
+    assertEquals("utf8", ct1.getParameters().get(ContentType.PARAMETER_CHARSET));
+    assertEquals("utf-8", ct2.getParameters().get(ContentType.PARAMETER_CHARSET));
+    assertEquals("utf-8", ct2.getParameter(ContentType.PARAMETER_CHARSET));
 
     assertTrue(ct1.isCompatible(ct2));
   }
@@ -129,5 +110,14 @@ public class ContentTypeTest {
     assertEquals("application/json;a=b;c=d",
         ContentType.create(ContentType.create(ContentType.APPLICATION_JSON, "a", "b"), "c", "d")
             .toContentTypeString());
+  }
+
+  private void createWrong(final String value) {
+    try {
+      ContentType.create(value);
+      fail("Expected exception not thrown.");
+    } catch (final IllegalArgumentException e) {
+      assertNotNull(e);
+    }
   }
 }
