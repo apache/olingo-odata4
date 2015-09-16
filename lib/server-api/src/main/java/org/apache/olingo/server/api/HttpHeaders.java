@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * HttpHeader container.
+ * HttpHeader container for internal use in this package.
+ * @see ODataRequest
+ * @see ODataResponse
  */
-public class HttpHeaders {
+final class HttpHeaders {
   private final Map<String, List<String>> headers = new LinkedHashMap<String, List<String>>();
 
   /**

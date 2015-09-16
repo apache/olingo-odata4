@@ -24,7 +24,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Helper class which is only used within this package (<code>AcceptType</code> and <code>ContentType</code> handling).
+ * Helper class which is only used within this package.
+ * @see AcceptType
+ * @see ContentType
  */
 final class TypeUtil {
 
@@ -102,13 +104,15 @@ final class TypeUtil {
   }
 
   /**
-   * Validate that parameter name and parameter value are valid .
-   *
-   * @param parameterName must be <code>not null</code>, <code>not empty</code> and <code>contains no whitespace
-   *                      characters</code>
-   * @param parameterValue must be <code>not null</code>, <code>not empty</code> and <code>not start with a whitespace
-   *                      character</code>
-   * @throws IllegalArgumentException if one of the above requirements are not met
+   * Validates that parameter name and parameter value are valid:
+   * <ul>
+   * <li>not <code>null</code></li>
+   * <li>not empty</li>
+   * <li>does not contain whitespace characters (name), or does not start with whitespace (value), respectively</li>
+   * </ul>
+   * @param parameterName  name
+   * @param parameterValue value
+   * @throws IllegalArgumentException if one of the above requirements is not met
    */
   static void validateParameterNameAndValue(final String parameterName, final String parameterValue)
       throws IllegalArgumentException {

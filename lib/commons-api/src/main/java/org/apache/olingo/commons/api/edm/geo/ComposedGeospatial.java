@@ -43,9 +43,6 @@ public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatia
     }
   }
 
-  /**
-   * {@inheritDoc }
-   */
   @Override
   public Iterator<T> iterator() {
     return this.geospatials.iterator();

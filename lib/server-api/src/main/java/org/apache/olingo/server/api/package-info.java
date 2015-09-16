@@ -18,20 +18,17 @@
  */
 /**
  * Olingo Server API
- * <p>
- * OData Library is a protocol implementation of the OData V4.0 standard. For details of this standard
- * see <a href="http://odata.org">odata.org</a>.
- * <p>
- * This API is intended to help implement an OData service. An OData service consists of a metadata provider
- * implementation and an OData processor implementation.
- * <p>
- * An OData service can be exposed by a web application using the standard java servlet API. See the Olingo tutorials
- * section on how to implement a V4 service for further information:
- * <a href="http://olingo.apache.org/doc/odata4/index.html">http://olingo.apache.org/doc/odata4/index.html
- * <p>
- * The main entry point is the org.apache.olingo.server.api.OData class. Use the newInstance() method to create a new
- * object and start providing your service from there.
- * 
+ * <p>The OData Library is a protocol implementation of the OData V4.0 standard.
+ * For details of this standard see <a href="http://odata.org">odata.org</a>.</p>
+ * <p>This API is intended to help implementing an OData service.
+ * An OData service consists of a metadata provider implementation and an
+ * OData processor implementation.</p>
+ * <p>An OData service can be exposed by a web application using the standard java servlet API.
+ * For further information, see the <a href="http://olingo.apache.org/doc/odata4/">Olingo
+ * tutorials</a> on how to implement an OData service.</p>
+ * <p>The main entry point is the org.apache.olingo.server.api.OData class.
+ * Use the newInstance() method to create a new object and
+ * start providing your service from there.</p>
  */
 package org.apache.olingo.server.api;
 
