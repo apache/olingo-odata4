@@ -133,17 +133,20 @@ public class DemoEntityProcessor implements EntityProcessor {
 				Link link = new Link();
 				link.setTitle(navPropName);
 				link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+				link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
 
 				if(edmNavigationProperty.isCollection()){ // in case of Categories(1)/$expand=Products
 					// fetch the data for the $expand (to-many navigation) from backend
 					// here we get the data for the expand
 					EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
 					link.setInlineEntitySet(expandEntityCollection);
+					link.setHref(expandEntityCollection.getId().toASCIIString());
 				} else {  // in case of Products(1)?$expand=Category
 					// fetch the data for the $expand (to-one navigation) from backend
 					// here we get the data for the expand
 					Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
 					link.setInlineEntity(expandEntity);
+					link.setHref(expandEntity.getId().toASCIIString());
 				}
 
 				// set the link - containing the expanded data - to the current entity

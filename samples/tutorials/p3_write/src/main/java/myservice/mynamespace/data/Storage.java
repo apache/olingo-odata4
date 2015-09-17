@@ -27,11 +27,14 @@ import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriParameter;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -235,29 +238,39 @@ public class Storage {
     return false;
   }
 
-  private void initSampleData() {
+  private void initSampleData(){
 
     // add some sample product entities
-    productList.add(new Entity()
+    final Entity e1 = new Entity()
         .addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 1))
         .addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Notebook Basic 15"))
-        .addProperty(
-            new Property(null, "Description", ValueType.PRIMITIVE,
-                "Notebook Basic, 1.7GHz - 15 XGA - 1024MB DDR2 SDRAM - 40GB")));
+        .addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
+            "Notebook Basic, 1.7GHz - 15 XGA - 1024MB DDR2 SDRAM - 40GB"));
+    e1.setId(createId("Products", 1));
+    productList.add(e1);
 
-    productList.add(new Entity()
+    final Entity e2 = new Entity()
         .addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 2))
         .addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "1UMTS PDA"))
-        .addProperty(
-            new Property(null, "Description", ValueType.PRIMITIVE,
-                "Ultrafast 3G UMTS/HSDPA Pocket PC, supports GSM network")));
+        .addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
+            "Ultrafast 3G UMTS/HSDPA Pocket PC, supports GSM network"));
+    e2.setId(createId("Products", 1));
+    productList.add(e2);
 
-    productList.add(new Entity()
+    final Entity e3 = new Entity()
         .addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 3))
         .addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Ergo Screen"))
-        .addProperty(
-            new Property(null, "Description", ValueType.PRIMITIVE,
-                "19 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960")));
+        .addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
+            "19 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"));
+    e3.setId(createId("Products", 1));
+    productList.add(e3);
+  }
 
+  private URI createId(String entitySetName, Object id) {
+    try {
+      return new URI(entitySetName + "(" + String.valueOf(id) + ")");
+    } catch (URISyntaxException e) {
+      throw new ODataRuntimeException("Unable to create id for entity: " + entitySetName, e);
+    }
   }
 }

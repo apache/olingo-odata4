@@ -122,9 +122,12 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
 		EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 		ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
 
-		EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with().contextURL(contextUrl).build();
-		SerializerResult serializerResult = serializer.entityCollection(serviceMetadata, edmEntityType, 
-		                                                                entityCollection, opts);
+		final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
+		EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
+				.contextURL(contextUrl).setId(id).build();
+		SerializerResult serializerResult = serializer.entityCollection(serviceMetadata, edmEntityType, entityCollection,
+				opts);
+
 		InputStream serializedContent = serializerResult.getContent();
 
 		// 5th: configure the response object: set the body, headers and status code

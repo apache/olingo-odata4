@@ -133,8 +133,9 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
     ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
 
+    final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
     EntityCollectionSerializerOptions opts =
-        EntityCollectionSerializerOptions.with().contextURL(contextUrl).count(countOption).build();
+        EntityCollectionSerializerOptions.with().contextURL(contextUrl).setId(id).count(countOption).build();
     SerializerResult serializerResult =
         serializer.entityCollection(serviceMetadata, edmEntityType, returnEntityCollection, opts);
     InputStream serializedContent = serializerResult.getContent();
