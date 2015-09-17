@@ -55,7 +55,7 @@ public class ODataRequest {
   }
 
   /**
-   * <p>Set a header to the response.</p>
+   * <p>Sets a header in the request.</p>
    * <p>The header name will be handled as case-insensitive key.</p>
    * <p>If a header already exists then the header will be replaced by this new value.</p>
    * @param name case-insensitive header name

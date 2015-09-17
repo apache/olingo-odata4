@@ -29,13 +29,9 @@ public class DeletedEntity {
    * Reason of the removal from the list
    */
   public enum Reason {
-    /**
-     * The entity was deleted
-     */
+    /** The entity was deleted. */
     deleted,
-    /**
-     * The data of the entity as changed and not any longer part of the response
-     */
+    /** The data of the entity has changed and is not any longer part of the response. */
     changed
   }
 

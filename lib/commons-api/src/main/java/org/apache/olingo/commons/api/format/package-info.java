@@ -17,7 +17,9 @@
  * under the License.
  */
 /**
- * Contains all the format related objects (also related to http headers <coder>Prefer</coder>, <code>Accepted</code>
- * and <code>Content-Type</code>) which are used for handling of an OData responses and OData requests.
+ * Contains all the format-related objects used for the handling of
+ * OData responses and OData requests.
+ * They are related to the HTTP headers <code>Prefer</code>, <code>Accept</code>,
+ * and <code>Content-Type</code>.
  */
 package org.apache.olingo.commons.api.format;

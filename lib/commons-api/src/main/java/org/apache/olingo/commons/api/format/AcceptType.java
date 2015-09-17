@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Internally used {@link AcceptType} for OData library.
@@ -44,6 +45,8 @@ import java.util.Map;
  * Once created an {@link AcceptType} is <b>IMMUTABLE</b>.
  */
 public final class AcceptType {
+
+  private static final Pattern Q_PATTERN = Pattern.compile("\\A(?:0(?:\\.\\d{0,3})?)|(?:1(?:\\.0{0,3})?)\\Z");
 
   private final String type;
   private final String subtype;
@@ -77,12 +80,10 @@ public final class AcceptType {
     final String q = parameters.get(TypeUtil.PARAMETER_Q);
     if (q == null) {
       quality = 1F;
-    } else {
-      try {
+    } else if (Q_PATTERN.matcher(q).matches()) {
         quality = Float.valueOf(q);
-      } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("Illegal quality parameter.", e);
-      }
+    } else {
+      throw new IllegalArgumentException("Illegal quality parameter '" + q + "'.");
     }
   }
 

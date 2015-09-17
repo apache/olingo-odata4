@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.data;
 import java.net.URI;
 
 /**
- * Data representation for a operation.
+ * Data representation for an operation.
  */
 public class Operation {
 

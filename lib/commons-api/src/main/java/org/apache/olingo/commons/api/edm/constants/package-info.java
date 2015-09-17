@@ -17,8 +17,7 @@
  * under the License.
  */
 /**
- * Contains representations for all constants related
- * EDM objects created during the URI parsing
+ * Contains representations for constants related to EDM objects.
  */
 package org.apache.olingo.commons.api.edm.constants;
 

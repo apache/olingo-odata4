@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Contains all OData errors and exceptions related classes.
+ * Contains all OData errors and exception-related classes.
  */
 package org.apache.olingo.commons.api.ex;

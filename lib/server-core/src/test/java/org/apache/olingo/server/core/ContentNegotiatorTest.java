@@ -40,19 +40,18 @@ import org.junit.Test;
 
 public class ContentNegotiatorTest {
 
-  static final private String ACCEPT_CASE_MIN = "application/json;odata.metadata=minimal";
+  static final private String ACCEPT_CASE_MIN = ContentType.JSON.toContentTypeString();
   static final private String ACCEPT_CASE_MIN_UTF8 = "application/json;charset=UTF-8;odata.metadata=minimal";
-  static final private String ACCEPT_CASE_FULL = "application/json;odata.metadata=full";
-  static final private String ACCEPT_CASE_NONE = "application/json;odata.metadata=none";
+  static final private String ACCEPT_CASE_FULL = ContentType.JSON_FULL_METADATA.toContentTypeString();
+  static final private String ACCEPT_CASE_NONE = ContentType.JSON_NO_METADATA.toContentTypeString();
   static final private String ACCEPT_CASE_MIN_UTF8_IEEE754 =
       "application/json;charset=UTF-8;odata.metadata=minimal;IEEE754Compatible=true";
-  static final private String ACCEPT_CASE_MIN_IEEE754 =
-      "application/json;odata.metadata=minimal;IEEE754Compatible=true";
+  static final private String ACCEPT_CASE_MIN_IEEE754 = ACCEPT_CASE_MIN + ";IEEE754Compatible=true";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = ContentType.APPLICATION_XML.toContentTypeString();
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
-  
+
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
 
@@ -101,6 +100,7 @@ public class ContentNegotiatorTest {
       { null,                   "a/a;x=y",        null,                  "a/a;v=w"        },
       { null,                   null,             "a/a;x=y",             "a/a;v=w"        },
       { null,                   null,             ACCEPT_CASE_FULL,      null             }, // not yet supported
+      { null,                   null,             "*",                   null             },
       { null,                   "a/b;charset=ISO-8859-1", null,          "a/b"            },
       { null,                   null,             "a/b;charset=ISO-8859-1", "a/b"         },
       { null,                   null,             null,                  "text/plain"     }
@@ -153,8 +153,7 @@ public class ContentNegotiatorTest {
 
   @Test
   public void checkSupport() throws Exception {
-    ContentNegotiator.checkSupport(ContentType.JSON, null,
-        RepresentationType.ENTITY);
+    ContentNegotiator.checkSupport(ContentType.JSON, null, RepresentationType.ENTITY);
     ContentNegotiator.checkSupport(ContentType.TEXT_PLAIN, null, RepresentationType.VALUE);
     try {
       ContentNegotiator.checkSupport(ContentType.APPLICATION_SVG_XML, null, RepresentationType.ENTITY);

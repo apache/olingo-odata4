@@ -39,6 +39,8 @@ public class ODataHandlerException extends ODataLibraryException {
     MISSING_CONTENT_TYPE,
     /** parameter: content type */
     UNSUPPORTED_CONTENT_TYPE,
+    /** parameter: content type */
+    INVALID_CONTENT_TYPE,
     /** parameter: version */
     ODATA_VERSION_NOT_SUPPORTED;
 

@@ -24,10 +24,8 @@ public class ContentNegotiatorException extends ODataLibraryException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {
-    /** parameters: HTTP header name, HTTP header value */
-    WRONG_CHARSET_IN_HEADER,
     /** parameter: list of content-type ranges */
-    UNSUPPORTED_CONTENT_TYPES,
+    UNSUPPORTED_ACCEPT_TYPES,
     /** parameter: content type */
     UNSUPPORTED_CONTENT_TYPE,
     /** no parameter */

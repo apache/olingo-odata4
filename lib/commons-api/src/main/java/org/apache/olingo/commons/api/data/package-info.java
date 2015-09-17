@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Contains all the data objects of an OData responses and OData requests
+ * Contains all the data objects of OData responses and OData requests
  */
 package org.apache.olingo.commons.api.data;
