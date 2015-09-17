@@ -280,12 +280,12 @@ public class Storage {
 
     Property idProperty = entity.getProperty("ID");
     if (idProperty != null) {
-      idProperty.setValue(ValueType.PRIMITIVE, new Integer(newId));
+      idProperty.setValue(ValueType.PRIMITIVE, Integer.valueOf(newId));
     } else {
       // as of OData v4 spec, the key property can be omitted from the POST request body
       entity.getProperties().add(new Property(null, "ID", ValueType.PRIMITIVE, newId));
     }
-
+    entity.setId(createId(entity, "ID"));
     this.productList.add(entity);
 
     return entity;

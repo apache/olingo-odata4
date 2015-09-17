@@ -124,7 +124,7 @@ public class Storage {
 				.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "1UMTS PDA"))
 				.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
 						"Ultrafast 3G UMTS/HSDPA Pocket PC, supports GSM network"));
-		e2.setId(createId("Products", 1));
+		e2.setId(createId("Products", 2));
 		productList.add(e2);
 
 		final Entity e3 = new Entity()
@@ -132,7 +132,7 @@ public class Storage {
 				.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Ergo Screen"))
 				.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
 						"19 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"));
-		e3.setId(createId("Products", 1));
+		e3.setId(createId("Products", 3));
 		productList.add(e3);
 	}
 

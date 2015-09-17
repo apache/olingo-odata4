@@ -151,12 +151,12 @@ public class Storage {
 
     Property idProperty = entity.getProperty("ID");
     if (idProperty != null) {
-      idProperty.setValue(ValueType.PRIMITIVE, new Integer(newId));
+      idProperty.setValue(ValueType.PRIMITIVE, Integer.valueOf(newId));
     } else {
       // as of OData v4 spec, the key property can be omitted from the POST request body
       entity.getProperties().add(new Property(null, "ID", ValueType.PRIMITIVE, newId));
     }
-
+    entity.setId(createId("Products", newId));
     this.productList.add(entity);
 
     return entity;
@@ -254,7 +254,7 @@ public class Storage {
         .addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "1UMTS PDA"))
         .addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
             "Ultrafast 3G UMTS/HSDPA Pocket PC, supports GSM network"));
-    e2.setId(createId("Products", 1));
+    e2.setId(createId("Products", 2));
     productList.add(e2);
 
     final Entity e3 = new Entity()
@@ -262,7 +262,7 @@ public class Storage {
         .addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Ergo Screen"))
         .addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
             "19 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"));
-    e3.setId(createId("Products", 1));
+    e3.setId(createId("Products", 3));
     productList.add(e3);
   }
 
