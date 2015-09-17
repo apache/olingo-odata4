@@ -23,10 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
@@ -40,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
@@ -82,6 +86,7 @@ import org.apache.olingo.server.core.responses.StreamResponse;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 
 public class DataRequest extends ServiceRequest {
+  public static final int DEFAULT_BUFFER_SIZE = 8192;
   protected UriResourceEntitySet uriResourceEntitySet;
   private boolean countRequest;
   private UriResourceProperty uriResourceProperty;
@@ -623,7 +628,7 @@ public class DataRequest extends ServiceRequest {
         Property property = new Property(
             edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
             edmProperty.getName());
-        property.setValue(ValueType.PRIMITIVE, getRawValueFromClient(edmProperty));
+        property.setValue(ValueType.PRIMITIVE, getRawValueFromClient());
         handler.updateProperty(DataRequest.this, property, false,
             getETag(), propertyResponse);
       }
@@ -701,25 +706,26 @@ public class DataRequest extends ServiceRequest {
     return deserializer.property(getODataRequest().getBody(), edmProperty).getProperty();
   }
   
-  private Object getRawValueFromClient(
-      EdmProperty edmProperty) throws DeserializerException {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-    byte[] buffer = new byte[1024];
-    int read = 0;
-    do {
+  private Object getRawValueFromClient() throws DeserializerException {
+    InputStream input = getODataRequest().getBody();
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    if (input != null) {
       try {
-        read = IOUtils.read(getODataRequest().getBody(), buffer, 0, 1024);
-        bos.write(buffer, 0, read);
-        if (read < 1024) {
-          break;
+        ByteBuffer inBuffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
+        ReadableByteChannel ic = Channels.newChannel(input);
+        WritableByteChannel oc = Channels.newChannel(buffer);
+        while (ic.read(inBuffer) > 0) {
+          inBuffer.flip();
+          oc.write(inBuffer);
+          inBuffer.rewind();
         }
+        return buffer.toByteArray();
       } catch (IOException e) {
-        throw new DeserializerException("Error reading raw value",
-            SerializerException.MessageKeys.IO_EXCEPTION);
+        throw new ODataRuntimeException("Error on reading content");
       }
-    } while (true);
-    return bos.toByteArray(); 
-  }  
+    }
+    return null;
+  }
 
   static ContextURL.Builder buildEntitySetContextURL(UriHelper helper,
       EdmBindingTarget edmEntitySet, List<UriParameter> keyPredicates, UriInfo uriInfo,
