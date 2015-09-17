@@ -134,7 +134,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).build();
     final String id = request.getRawBaseUri() + "/" + responseEdmEntitySet.getName();
     EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
-        .contextURL(contextUrl).setId(id).build();
+        .contextURL(contextUrl).id(id).build();
     EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
 
     ODataSerializer serializer = odata.createSerializer(responseFormat);

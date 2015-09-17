@@ -171,7 +171,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         .contextURL(contextUrl)
         .select(selectOption)
         .expand(expandOption)
-        .setId(id)
+        .id(id)
         .build();
 
     ODataSerializer serializer = odata.createSerializer(responseFormat);

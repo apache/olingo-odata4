@@ -138,7 +138,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
                                                                               .count(uriInfo.getCountOption())
                                                                               .select(selectOption)
                                                                               .expand(uriInfo.getExpandOption())
-                                                                              .setId(id)
+                                                                              .id(id)
                                                                               .build();
 
     // and serialize the content: transform from the EntitySet object to InputStream
