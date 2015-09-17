@@ -30,7 +30,7 @@ public class EntityCollectionSerializerOptions {
   private CountOption count;
   private ExpandOption expand;
   private SelectOption select;
-  private boolean onlyReferences;
+  private boolean writeOnlyReferences;
   private String id;
 
   /** Gets the {@link ContextURL}. */
@@ -54,8 +54,8 @@ public class EntityCollectionSerializerOptions {
   }
 
   /** only writes the references of the entities */
-  public boolean onlyReferences() {
-    return onlyReferences;
+  public boolean getWriteOnlyReferences() {
+    return writeOnlyReferences;
   }
   
   /** Gets the id of the entity collection */
@@ -102,13 +102,13 @@ public class EntityCollectionSerializerOptions {
     }
 
     /** Sets to serialize only references */
-    public Builder setWriteOnlyReferences(final boolean ref) {
-      options.onlyReferences = ref;
+    public Builder writeOnlyReferences(final boolean ref) {
+      options.writeOnlyReferences = ref;
       return this;
     }
     
     /** Sets id of the collection */
-    public Builder setId(final String id) {
+    public Builder id(final String id) {
       options.id = id;
       return this;
     }

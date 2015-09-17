@@ -270,7 +270,7 @@ public class ODataXmlSerializerTest {
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().serviceRoot(new URI("http://host:port"))
                 .entitySet(edmEntitySet).build())
-            .setId("http://host/svc/ESCompAllPrim")
+            .id("http://host/svc/ESCompAllPrim")
             .count(countOption)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
@@ -635,7 +635,7 @@ public class ODataXmlSerializerTest {
         edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
-            .setId("http://host/svc/ESMedia")
+            .id("http://host/svc/ESMedia")
             .build()).getContent();
     final String resultString = IOUtils.toString(content);
 
@@ -732,7 +732,7 @@ public class ODataXmlSerializerTest {
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().serviceRoot(URI.create("http://host/svc"))
                 .entitySet(edmEntitySet).build())
-            .setId("http://host/svc/ESAllNullable")
+            .id("http://host/svc/ESAllNullable")
             .build()).getContent();
     final String resultString = IOUtils.toString(content);
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
@@ -928,7 +928,7 @@ public class ODataXmlSerializerTest {
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
-                .setId("http://host/svc/ESCompComp")
+                .id("http://host/svc/ESCompComp")
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
@@ -1002,7 +1002,7 @@ public class ODataXmlSerializerTest {
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
-                .setId("http://host/svc/ESCompComp")
+                .id("http://host/svc/ESCompComp")
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(inputStream);

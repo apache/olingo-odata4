@@ -536,7 +536,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
                 getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
             .count(countOption)
             .expand(expand).select(select)
-            .setId(id)
+            .id(id)
             .build());
   }
 

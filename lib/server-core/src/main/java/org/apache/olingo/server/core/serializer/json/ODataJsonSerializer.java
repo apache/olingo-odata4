@@ -157,7 +157,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         writeEntitySet(metadata, entityType, entitySet, null, null, false, json);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.onlyReferences(), json);
+            options.getExpand(), options.getSelect(), options.getWriteOnlyReferences(), json);
       }
       writeNextLink(entitySet, json);
 
@@ -186,7 +186,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
           options == null ? null : options.getSelect(),
-          options == null ? false : options.onlyReferences(),
+          options == null ? false : options.getWriteOnlyReferences(),
           json);
 
       json.close();

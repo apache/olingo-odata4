@@ -27,7 +27,7 @@ public class EntitySerializerOptions {
   private ContextURL contextURL;
   private ExpandOption expand;
   private SelectOption select;
-  private boolean onlyReferences;
+  private boolean writeOnlyReferences;
   
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -45,8 +45,8 @@ public class EntitySerializerOptions {
   }
 
   /** only writes the references of the entities */
-  public boolean onlyReferences() {
-    return onlyReferences;
+  public boolean getWriteOnlyReferences() {
+    return writeOnlyReferences;
   }
 
   private EntitySerializerOptions() {}
@@ -84,8 +84,8 @@ public class EntitySerializerOptions {
     }
 
     /** Sets to serialize only references */
-    public Builder setWriteOnlyReferences(final boolean ref) {
-      options.onlyReferences = ref;
+    public Builder writeOnlyReferences(final boolean ref) {
+      options.writeOnlyReferences = ref;
       return this;
     }
     

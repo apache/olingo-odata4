@@ -213,7 +213,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final EntityCollectionSerializerOptions options) throws SerializerException {
 
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-    if (options != null && options.onlyReferences()) {
+    if (options != null && options.getWriteOnlyReferences()) {
       ReferenceCollectionSerializerOptions rso = ReferenceCollectionSerializerOptions.with()
           .contextURL(contextURL).build();
       return entityReferenceCollection(entitySet, rso);
@@ -282,7 +282,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Entity entity, final EntitySerializerOptions options) throws SerializerException {
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
 
-    if (options != null && options.onlyReferences()) {
+    if (options != null && options.getWriteOnlyReferences()) {
       return entityReference(entity,
           ReferenceSerializerOptions.with().contextURL(contextURL).build());
     }

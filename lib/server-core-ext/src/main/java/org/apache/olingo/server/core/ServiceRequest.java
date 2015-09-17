@@ -147,13 +147,13 @@ public abstract class ServiceRequest {
       return (T) EntitySerializerOptions.with()
           .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .expand(uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
-          .setWriteOnlyReferences(references).build();
+          .writeOnlyReferences(references).build();
     } else if (serilizerOptions.isAssignableFrom(EntityCollectionSerializerOptions.class)) {
       return (T) EntityCollectionSerializerOptions.with()
           .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
-          .select(uriInfo.getSelectOption()).setWriteOnlyReferences(references)
-          .setId(getODataRequest().getRawBaseUri()+getODataRequest().getRawODataPath()).build();
+          .select(uriInfo.getSelectOption()).writeOnlyReferences(references)
+          .id(getODataRequest().getRawBaseUri() + getODataRequest().getRawODataPath()).build();
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {
       return (T) ComplexSerializerOptions.with().contextURL(contextUrl)
           .expand(this.uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption()).build();
