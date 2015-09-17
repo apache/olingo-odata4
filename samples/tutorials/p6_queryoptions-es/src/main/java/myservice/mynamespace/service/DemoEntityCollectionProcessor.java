@@ -138,16 +138,19 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
           Link link = new Link();
           link.setTitle(navPropName);
           link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+          link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
 
           if (edmNavigationProperty.isCollection()) { // in case of Categories/$expand=Products
             // fetch the data for the $expand (to-many navigation) from backend
             EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
             link.setInlineEntitySet(expandEntityCollection);
+            link.setHref(expandEntityCollection.getId().toASCIIString());
           } else { // in case of Products?$expand=Category
             // fetch the data for the $expand (to-one navigation) from backend
             // here we get the data for the expand
             Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
             link.setInlineEntity(expandEntity);
+            link.setHref(expandEntity.getId().toASCIIString());
           }
 
           // set the link - containing the expanded data - to the current entity
@@ -163,10 +166,12 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).selectList(selectList).build();
 
     // adding the selectOption to the serializerOpts will actually tell the lib to do the job
+    final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
     EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
         .contextURL(contextUrl)
         .select(selectOption)
         .expand(expandOption)
+        .setId(id)
         .build();
 
     ODataSerializer serializer = odata.createSerializer(responseFormat);

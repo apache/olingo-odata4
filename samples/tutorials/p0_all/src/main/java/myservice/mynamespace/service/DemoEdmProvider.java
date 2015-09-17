@@ -54,6 +54,8 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   // Entity Set Names
   public static final String ES_PRODUCTS_NAME = "Products";
   public static final String ES_CATEGORIES_NAME = "Categories";
+  public static final String NAV_TO_CATEGORY = "Category";
+  public static final String NAV_TO_PRODUCTS = "Products";
 
   @Override
   public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) {
@@ -75,7 +77,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       propertyRef.setName("ID");
 
       // navigation property: many-to-one, null not allowed (product must have a category)
-      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Category")
+      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName(NAV_TO_CATEGORY)
           .setType(ET_CATEGORY_FQN).setNullable(false).setPartner("Products");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);
@@ -99,7 +101,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       propertyRef.setName("ID");
 
       // navigation property: one-to-many
-      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName("Products")
+      CsdlNavigationProperty navProp = new CsdlNavigationProperty().setName(NAV_TO_PRODUCTS)
           .setType(ET_PRODUCT_FQN).setCollection(true).setPartner("Category");
       List<CsdlNavigationProperty> navPropList = new ArrayList<CsdlNavigationProperty>();
       navPropList.add(navProp);

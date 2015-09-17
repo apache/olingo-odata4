@@ -115,8 +115,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     modifiedEntityList = applyTopQueryOption(modifiedEntityList, uriInfo.getTopOption());
     // 3.6.) Server driven paging (not part of this tutorial)
     // 3.7.) $expand
-    modifiedEntityList = applyExpandQueryOption(modifiedEntityCollection, modifiedEntityList, edmEntitySet, 
-                                                uriInfo.getExpandOption());
+    modifiedEntityList = applyExpandQueryOption(modifiedEntityList, edmEntitySet, uriInfo.getExpandOption());
     // 3.8.) $select
     SelectOption selectOption = uriInfo.getSelectOption();
     
@@ -133,13 +132,15 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).selectList(selectList).build();
 
     // adding the selectOption to the serializerOpts will actually tell the lib to do the job
+    final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
     EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
                                                                               .contextURL(contextUrl)
                                                                               .count(uriInfo.getCountOption())
                                                                               .select(selectOption)
                                                                               .expand(uriInfo.getExpandOption())
+                                                                              .setId(id)
                                                                               .build();
-		
+
     // and serialize the content: transform from the EntitySet object to InputStream
     SerializerResult serializerResult = serializer.entityCollection(serviceMetadata, edmEntityType,
                                                                     modifiedEntityCollection, opts);
@@ -151,7 +152,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
-  private List<Entity> applyExpandQueryOption(EntityCollection entityCollection, List<Entity> modifiedEntityList, 
+  private List<Entity> applyExpandQueryOption(List<Entity> modifiedEntityList,
       EdmEntitySet edmEntitySet, ExpandOption expandOption) {
 
     // in our example: http://localhost:8080/DemoService/DemoService.svc/Categories/$expand=Products
@@ -193,16 +194,19 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
           Link link = new Link();
           link.setTitle(navPropName);
           link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+          link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
 
           if (edmNavigationProperty.isCollection()) { // in case of Categories/$expand=Products
             // fetch the data for the $expand (to-many navigation) from backend
             EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
             link.setInlineEntitySet(expandEntityCollection);
+            link.setHref(expandEntityCollection.getId().toASCIIString());
           } else { // in case of Products?$expand=Category
             // fetch the data for the $expand (to-one navigation) from backend
             // here we get the data for the expand
             Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
             link.setInlineEntity(expandEntity);
+            link.setHref(expandEntity.getId().toASCIIString());
           }
 
           // set the link - containing the expanded data - to the current entity

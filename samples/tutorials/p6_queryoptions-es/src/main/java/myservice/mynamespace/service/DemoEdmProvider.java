@@ -54,6 +54,8 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   // Entity Set Names
   public static final String ES_PRODUCTS_NAME = "Products";
   public static final String ES_CATEGORIES_NAME = "Categories";
+  public static final String NAV_TO_CATEGORY = "Category";
+  public static final String NAV_TO_PRODUCTS = "Products";
 
   @Override
   public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) {

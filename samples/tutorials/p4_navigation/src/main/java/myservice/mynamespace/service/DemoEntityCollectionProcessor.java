@@ -132,7 +132,9 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
 
     // 3rd: create and configure a serializer
     ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).build();
-    EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with().contextURL(contextUrl).build();
+    final String id = request.getRawBaseUri() + "/" + responseEdmEntitySet.getName();
+    EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
+        .contextURL(contextUrl).setId(id).build();
     EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
 
     ODataSerializer serializer = odata.createSerializer(responseFormat);
