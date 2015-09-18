@@ -105,8 +105,10 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
     // Now the content is serialized using the serializer.
     final ExpandOption expand = uriInfo.getExpandOption();
     final SelectOption select = uriInfo.getSelectOption();
+    final String id = request.getRawBaseUri() + "/" + edmEntitySet.getName();
     InputStream serializedContent = serializer.entityCollection(edm, edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
+            .id(id)
             .contextURL(isODataMetadataNone(requestedContentType) ? null :
                 getContextUrl(edmEntitySet, false, expand, select, null))
             .count(uriInfo.getCountOption())
