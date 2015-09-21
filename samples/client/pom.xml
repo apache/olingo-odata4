@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-samples</artifactId>
-    <version>4.0.0-RC03</version>
+    <version>4.0.0</version>
     <relativePath>..</relativePath>
   </parent>
 
