@@ -86,7 +86,7 @@ To install the required bundles, you can simply install the Karaf olingo-server 
 The following commands will install the olingo-server feature.
 
 ```
-feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.0.0/xml/features
+feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
 feature:install olingo-server
 ```
 
@@ -95,16 +95,16 @@ feature:install olingo-server
 To install this sample bundle, run the karaf console command.
 
 ```
-bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.0.0
+bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.1.0-SNAPSHOT
 ```
 
 Shown below is the output from running the above Karaf console commands.
 
 ```
-karaf@root()> feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.0.0/xml/features
-Adding feature url mvn:org.apache.olingo/odata-karaf-features/4.0.0/xml/features
+karaf@root()> feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
+Adding feature url mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
 karaf@root()> feature:install olingo-server
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.0.0
+karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.1.0-SNAPSHOT
 Bundle ID: 109
 ```
 
@@ -123,16 +123,16 @@ START LEVEL 100 , List Threshold: 50
 102 | Active |  50 | 2.4.2          | Jackson-core            
 103 | Active |  50 | 2.4.2          | Jackson-annotations     
 104 | Active |  50 | 2.4.2          | jackson-databind        
-105 | Active |  50 | 4.0.0.RC01 | odata-commons-api       
-106 | Active |  50 | 4.0.0.RC01 | odata-commons-core      
-107 | Active |  50 | 4.0.0.RC01 | odata-server-api        
-108 | Active |  50 | 4.0.0.RC01 | odata-server-core       
-109 | Active |  80 | 4.0.0.RC01 | odata-server-osgi-sample
+105 | Active |  50 | 4.0.0          | odata-commons-api       
+106 | Active |  50 | 4.0.0          | odata-commons-core      
+107 | Active |  50 | 4.0.0          | odata-server-api        
+108 | Active |  50 | 4.0.0          | odata-server-core       
+109 | Active |  80 | 4.0.0          | odata-server-osgi-sample
 karaf@root()> web:list
 ID  | State       | Web-State   | Level | Web-ContextPath | Name                                     
 -----------------------------------------------------------------------------------------------------
-109 | Active      | Deployed    | 80    | /olingo-cars    | odata-server-osgi-sample (4.0.0.RC01)
-karaf@root()> 
+109 | Active      | Deployed    | 80    | /olingo-cars    | odata-server-osgi-sample (4.0.0)
+karaf@root()>
 ```
 
 #### Test this sample

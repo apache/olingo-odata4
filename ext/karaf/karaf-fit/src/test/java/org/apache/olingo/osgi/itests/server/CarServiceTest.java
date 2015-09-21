@@ -50,18 +50,18 @@ public class CarServiceTest extends OlingoOSGiTestSupport {
     public void testServiceStarted() throws Exception {
         // check if the bundle is started
         assertBundleStarted("org.apache.olingo.odata-server-osgi-sample");
-        
+
         // use the jdk http client to verify the server side
         verifyContent(getContent(SERVICE_URL));
-        
+
         verifyContent(getContent(SERVICE_URL + "$metadata"));
-        
+
         verifyContent(getContent(SERVICE_URL + "Cars"));
-        
+
         verifyContent(getContent(SERVICE_URL + "Cars(1)"));
-        
+
         verifyContent(getContent(SERVICE_URL + "Cars(1)/Price"));
-    }    
+    }
 
     private static void verifyContent(String content) {
         // this is currently a simple test to check if there is no error
@@ -88,7 +88,7 @@ public class CarServiceTest extends OlingoOSGiTestSupport {
                 in.close();
             }
         }
-        
+
     }
 
     @Configuration
@@ -96,7 +96,7 @@ public class CarServiceTest extends OlingoOSGiTestSupport {
         return new Option[] {
             olingoBaseConfig(),
             features(olingoUrl, "olingo-server", "olingo-client"),
-            mavenBundle("org.apache.olingo", "odata-server-osgi-sample", "4.0.0"),
+            mavenBundle("org.apache.olingo", "odata-server-osgi-sample", "4.1.0-SNAPSHOT"),
             logLevel(LogLevel.INFO)
         };
     }
