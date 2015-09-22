@@ -36,6 +36,7 @@
   <modules>
     <module>server</module>
     <module>client</module>
+	<module>osgi/server</module>
   </modules>
 
   <build>
