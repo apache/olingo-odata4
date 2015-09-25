@@ -41,6 +41,7 @@
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -68,6 +69,13 @@
       <artifactId>geronimo-atinject_1.0_spec</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- to force the olingo sample to be available before testing -->
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>odata-server-osgi-sample</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
