@@ -46,7 +46,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 
-public class EdmSchemaImpl implements EdmSchema {
+public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
 
   private final CsdlSchema schema;
   private final EdmProviderImpl edm;
@@ -66,6 +66,7 @@ public class EdmSchemaImpl implements EdmSchema {
   private EdmEntityContainer entityContainer;
 
   public EdmSchemaImpl(final EdmProviderImpl edm, final CsdlEdmProvider provider, final CsdlSchema schema) {
+    super(edm, schema);
     this.edm = edm;
     this.provider = provider;
     this.schema = schema;
@@ -263,15 +264,15 @@ public class EdmSchemaImpl implements EdmSchema {
         schema.getAnnotationGroups();
     if (providerAnnotations != null) {
       for (CsdlAnnotations annotationGroup : providerAnnotations) {
-        FullQualifiedName annotationsGroupName;
+        FullQualifiedName targetName;
         if (annotationGroup.getTarget().contains(".")) {
-          annotationsGroupName = new FullQualifiedName(annotationGroup.getTarget());
+          targetName = new FullQualifiedName(annotationGroup.getTarget());
         } else {
-          annotationsGroupName = new FullQualifiedName(namespace, annotationGroup.getTarget());
+          targetName = new FullQualifiedName(namespace, annotationGroup.getTarget());
         }
         EdmAnnotationsImpl annotationsImpl = new EdmAnnotationsImpl(edm, this, annotationGroup);
         annotationGroups.add(annotationsImpl);
-        edm.cacheAnnotationGroup(annotationsGroupName, annotationsImpl);
+        edm.cacheAnnotationGroup(targetName, annotationsImpl);
       }
     }
     return annotationGroups;
@@ -288,17 +289,5 @@ public class EdmSchemaImpl implements EdmSchema {
       }
     }
     return annotations;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    EdmAnnotation result = null;
-    for (EdmAnnotation annotation : getAnnotations()) {
-      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        result = annotation;
-      }
-    }
-
-    return result;
   }
 }

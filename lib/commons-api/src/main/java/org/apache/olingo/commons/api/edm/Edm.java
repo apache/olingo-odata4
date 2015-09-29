@@ -161,7 +161,8 @@ public interface Edm {
    * Get {@link EdmAnnotations} by target.
    *
    * @param targetName <tt>edm:Annotations</tt> target
+   * @param qualifier for the target. Can be <code>NULL</code>
    * @return {@link EdmAnnotations}
    */
-  EdmAnnotations getAnnotationGroup(FullQualifiedName targetName);
+  EdmAnnotations getAnnotationGroup(FullQualifiedName targetName, String qualifier);
 }

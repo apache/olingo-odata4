@@ -45,7 +45,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 
 public abstract class AbstractEdmDynamicAnnotationExpression
-extends AbstractEdmAnnotationEspression implements EdmDynamicAnnotationExpression {
+extends AbstractEdmAnnotationExpression implements EdmDynamicAnnotationExpression {
 
   @Override
   public boolean isNot() {

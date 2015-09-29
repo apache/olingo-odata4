@@ -76,8 +76,8 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, EdmTerm> terms =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmTerm>());
 
-  private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
-      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmAnnotations>());
+  private final Map<TargetQualifierMapKey, EdmAnnotations> annotationGroups =
+      Collections.synchronizedMap(new HashMap<TargetQualifierMapKey, EdmAnnotations>());
 
   private Map<String, String> aliasToNamespaceInfo = Collections.synchronizedMap(new HashMap<String, String>());
   private boolean aliasToNamespaceInfoCreated = false;
@@ -296,12 +296,14 @@ public abstract class AbstractEdm implements Edm {
   }
 
   @Override
-  public EdmAnnotations getAnnotationGroup(final FullQualifiedName targetName) {
-    EdmAnnotations _annotations = annotationGroups.get(targetName);
+  public EdmAnnotations getAnnotationGroup(final FullQualifiedName targetName, String qualifier) {
+    final FullQualifiedName fqn = resolvePossibleAlias(targetName);
+    TargetQualifierMapKey key = new TargetQualifierMapKey(fqn, qualifier);
+    EdmAnnotations _annotations = annotationGroups.get(key);
     if (_annotations == null) {
       _annotations = createAnnotationGroup(targetName);
       if (_annotations != null) {
-        annotationGroups.put(targetName, _annotations);
+        annotationGroups.put(key, _annotations);
       }
     }
     return _annotations;
@@ -411,8 +413,9 @@ public abstract class AbstractEdm implements Edm {
 
   protected abstract EdmAnnotations createAnnotationGroup(FullQualifiedName targetName);
 
-  public void cacheAnnotationGroup(final FullQualifiedName annotationsGroupName,
+  public void cacheAnnotationGroup(final FullQualifiedName targetName,
       final EdmAnnotations annotationsGroup) {
-    annotationGroups.put(annotationsGroupName, annotationsGroup);
+    TargetQualifierMapKey key = new TargetQualifierMapKey(targetName, annotationsGroup.getQualifier());
+    annotationGroups.put(key, annotationsGroup);
   }
 }

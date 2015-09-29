@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,14 +41,17 @@ public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
   }
 
   @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
+  public EdmAnnotation getAnnotation(final EdmTerm term, String qualifier) {
     EdmAnnotation result = null;
     for (EdmAnnotation annotation : getAnnotations()) {
       if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        result = annotation;
+        if (qualifier == annotation.getQualifier()
+            || (qualifier != null && qualifier.equals(annotation.getQualifier()))) {
+          result = annotation;
+          break;
+        }
       }
     }
-
     return result;
   }
 

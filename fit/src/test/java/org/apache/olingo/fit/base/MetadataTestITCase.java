@@ -106,7 +106,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertEquals(descriptionTerm.getFullQualifiedName(),
         edm.getTerm(new FullQualifiedName("Org.OData.Core.V1.Description")).getFullQualifiedName());
 
-    final EdmAnnotation description = core.getAnnotation(descriptionTerm);
+    final EdmAnnotation description = core.getAnnotation(descriptionTerm, null);
     assertNotNull(description);
     // assertEquals("Core terms needed to write vocabularies",
     // description.getExpression().asConstant().getValue().asPrimitive().getName());
@@ -119,7 +119,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertTrue(isLanguageDependent.getAppliesTo().contains(EdmTerm.class));
     assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core.Tag")), isLanguageDependent.getType());
     assertEquals(EdmBoolean.getInstance(), ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
-    assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm));
+    assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm, null));
 
     final EdmTerm permissions = edm.getTerm(new FullQualifiedName("Core.Permissions"));
     assertNotNull(permissions);
@@ -133,7 +133,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertNotNull(scale);
 
     final EdmAnnotation requiresTypeInScale =
-        scale.getAnnotation(edm.getTerm(new FullQualifiedName("Core.RequiresType")));
+        scale.getAnnotation(edm.getTerm(new FullQualifiedName("Core.RequiresType")), null);
     assertNotNull(requiresTypeInScale);
     assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValueAsString());
 

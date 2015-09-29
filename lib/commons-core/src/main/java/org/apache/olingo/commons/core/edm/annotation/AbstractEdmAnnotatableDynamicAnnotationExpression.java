@@ -30,15 +30,19 @@ extends AbstractEdmDynamicAnnotationExpression implements EdmAnnotatable {
 
   private final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
 
+  //TODO: Can we derive this method from AbstractEdmAnnotatable?
   @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
+  public EdmAnnotation getAnnotation(final EdmTerm term, String qualifier) {
     EdmAnnotation result = null;
     for (EdmAnnotation annotation : getAnnotations()) {
       if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        result = annotation;
+        if (qualifier == annotation.getQualifier()
+            || (qualifier != null && qualifier.equals(annotation.getQualifier()))) {
+          result = annotation;
+          break;
+        }
       }
     }
-
     return result;
   }
 

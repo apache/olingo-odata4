@@ -27,9 +27,10 @@ public interface EdmAnnotatable {
 
   /**
    * @param term term for annotation
+   * @param qualifier for the term. Can be <code>NULL</code>
    * @return annotation according to term
    */
-  EdmAnnotation getAnnotation(EdmTerm term);
+  EdmAnnotation getAnnotation(EdmTerm term, String qualifier);
 
   /**
    * Get list of all annotations.

@@ -22,7 +22,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 
-public abstract class AbstractEdmAnnotationEspression implements EdmAnnotationExpression {
+public abstract class AbstractEdmAnnotationExpression implements EdmAnnotationExpression {
 
   @Override
   public boolean isConstant() {

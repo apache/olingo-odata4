@@ -20,10 +20,19 @@ package org.apache.olingo.commons.api.edm;
 
 import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 
+/**
+ * This class models an OData Annotation which can be applied to a target. 
+ */
 public interface EdmAnnotation extends EdmAnnotatable {
 
+  /**
+   * @return the term of this annotation
+   */
   EdmTerm getTerm();
 
+  /**
+   * @return the qualifier for this annotation. Might be <code>NULL</code>
+   */
   String getQualifier();
 
   EdmAnnotationExpression getExpression();
