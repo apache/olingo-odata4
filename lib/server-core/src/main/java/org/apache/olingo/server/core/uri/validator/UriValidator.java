@@ -527,16 +527,20 @@ public class UriValidator {
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       final boolean isEntitySet = pathSegment.getKind() == UriResourceKind.entitySet;
-      if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty) {
+      final boolean isEntityColFunction = isEntityColFunction(pathSegment);
+      
+      if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty || isEntityColFunction) {
         final List<UriParameter> keyPredicates = isEntitySet ?
             ((UriResourceEntitySet) pathSegment).getKeyPredicates() :
-            ((UriResourceNavigation) pathSegment).getKeyPredicates();
-
+              isEntityColFunction ? ((UriResourceFunction) pathSegment).getKeyPredicates()
+              : ((UriResourceNavigation) pathSegment).getKeyPredicates();
+            
         if (keyPredicates != null) {
 
           final EdmEntityType entityType = isEntitySet ?
               ((UriResourceEntitySet) pathSegment).getEntityType() :
-              (EdmEntityType) ((UriResourceNavigation) pathSegment).getType();
+              isEntityColFunction ? (EdmEntityType) ((UriResourceFunction) pathSegment).getType() 
+              : (EdmEntityType) ((UriResourceNavigation) pathSegment).getType();
           final List<String> keyPredicateNames = entityType.getKeyPredicateNames();
           Map<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
           for (EdmKeyPropertyRef key : entityType.getKeyPropertyRefs()) {
@@ -590,6 +594,17 @@ public class UriValidator {
     }
   }
 
+  private boolean isEntityColFunction(final UriResource pathSegment) {
+    if(pathSegment.getKind() == UriResourceKind.function) {
+      final UriResourceFunction resourceFunction = (UriResourceFunction) pathSegment;
+      final EdmReturnType returnType = resourceFunction.getFunction().getReturnType();
+      
+      return returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY;
+    } else {
+      return false;
+    }
+  }
+  
   private void validatePropertyOperations(final UriInfo uriInfo, final HttpMethod method)
       throws UriValidationException {
     final List<UriResource> parts = uriInfo.getUriResourceParts();

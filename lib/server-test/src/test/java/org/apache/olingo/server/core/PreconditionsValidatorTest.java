@@ -96,7 +96,7 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void navigationOnFunction() throws Exception {
-    assertTrue(mustValidate("FICRTESTwoKeyNav()(PropertyInt16=1,PropertyString='1')/NavPropertySINav", "SINav"));
+    assertTrue(mustValidate("FICRTESTwoKeyNav()/NavPropertySINav", "SINav"));
   }
 
   @Test

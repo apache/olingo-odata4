@@ -1033,6 +1033,118 @@ public class TestFullResourcePath {
   }
   
   @Test
+  public void runFunctionsWithKeyPredicates() throws Exception {
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+      .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+      .isParameter(0, "ParameterString", "'1'")
+      .isParameter(1, "ParameterInt16", "1");
+    
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt16=0)")
+     .isKind(UriInfoKind.resource)
+     .goPath().first()
+     .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+     .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+     .isParameter(0, "ParameterString", "'1'")
+     .isParameter(1, "ParameterInt16", "1")
+     .isKeyPredicate(0, "PropertyInt16", "0");
+    
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)(0)")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+      .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+      .isParameter(0, "ParameterString", "'1'")
+      .isParameter(1, "ParameterInt16", "1")
+      .isKeyPredicate(0, "PropertyInt16", "0");
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt16 eq 0)")
+      .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
+    
+    // PropertyInt32 does not exist
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt32=0)")
+      .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterString='1',ParameterInt16=1)" 
+        + "(PropertyInt16=0,PropertyInt16=1)")
+    .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+  
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterString='1',ParameterInt16=1)")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollCTTwoPrimTwoParam")
+      .isFunction("UFCRTCollCTTwoPrimTwoParam")
+      .isParameter(0, "ParameterString", "'1'")
+      .isParameter(1, "ParameterInt16", "1");
+    
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt16=1)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterString='1',ParameterInt16=1)(1)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt32=1)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterString='1',ParameterInt16=1)(PropertyInt32=1,PropertyInt16=2)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    
+    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollESTwoKeyNavParam")
+      .isFunction("UFCRTCollETTwoKeyNavParam")
+      .isParameter(0, "ParameterInt16", "1");
+    
+    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyString='1')")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollESTwoKeyNavParam")
+      .isFunction("UFCRTCollETTwoKeyNavParam")
+      .isParameter(0, "ParameterInt16", "1")
+      .isKeyPredicate(0, "PropertyInt16", "1")
+      .isKeyPredicate(1,"PropertyString", "'1'");
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16 eq 1)")
+      .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1)")
+      .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyInt32=1,PropertyString='1')")
+      .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)()")
+      .isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,PropertyInt32=1)")
+      .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=1,Unkown=1)")
+    .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    
+    testUri.run("FICRTCollString()")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollString")
+      .isFunction("UFCRTCollString");
+    
+    testUri.run("FICRTString()")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTString")
+      .isFunction("UFCRTString");
+    
+    testUri.runEx("FICRTCollString()(0)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTString()(0)")
+      .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  }
+  
+  @Test
   public void runEsNameCast() throws Exception {
     testUri.run("ESTwoPrim/olingo.odata.test1.ETBase")
     .isKind(UriInfoKind.resource).goPath()
@@ -1759,14 +1871,12 @@ public class TestFullResourcePath {
     .isFunctionImport("FICRTETKeyNav")
     .isFunction("UFCRTETKeyNav")
     .isType(EntityTypeProvider.nameETKeyNav);
-
-    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')")
+    
+    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)")
     .isKind(UriInfoKind.resource).goPath()
     .first()
     .isFunctionImport("FICRTETTwoKeyNavParam")
-    .isParameter(0, "ParameterInt16", "1")
-    .isKeyPredicate(0, "PropertyInt16", "2")
-    .isKeyPredicate(1, "PropertyString", "'3'");
+    .isParameter(0, "ParameterInt16", "1");
 
     testUri.run("FICRTESMedia(ParameterInt16=1)/$value")
     .isKind(UriInfoKind.resource).goPath()
@@ -1799,16 +1909,13 @@ public class TestFullResourcePath {
     .isParameter(0, "ParameterInt16", "1")
     .isType(EntityTypeProvider.nameETTwoKeyNav)
     .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
-
-    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)(PropertyInt16=2,PropertyString='3')"
-            + "/olingo.odata.test1.ETBaseTwoKeyNav")
+    
+    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isFunctionImport("FICRTETTwoKeyNavParam")
         .isFunction("UFCRTETTwoKeyNavParam")
         .isParameter(0, "ParameterInt16", "1")
-        .isKeyPredicate(0, "PropertyInt16", "2")
-        .isKeyPredicate(1, "PropertyString", "'3'")
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
