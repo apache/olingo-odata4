@@ -425,10 +425,5 @@ public class EdmImplCachingTest {
     protected EdmAnnotations createAnnotationGroup(final FullQualifiedName target) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
   }
 }

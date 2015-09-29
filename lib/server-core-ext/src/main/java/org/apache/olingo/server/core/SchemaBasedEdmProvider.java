@@ -22,12 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
@@ -42,6 +40,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   private final List<CsdlSchema> edmSchemas = new ArrayList<CsdlSchema>();
@@ -305,11 +304,6 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
-    return null;
-  }
-
-  @Override
-  public CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException {
     return null;
   }
 }

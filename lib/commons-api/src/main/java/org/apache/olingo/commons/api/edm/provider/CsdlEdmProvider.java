@@ -179,13 +179,4 @@ public interface CsdlEdmProvider {
    * @throws ODataException the o data exception
    */
   CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException;
-
-  /**
-   * Gets annotatable.
-   *
-   * @param annotatedName full qualified name of annotatable
-   * @return Annotatable element by target name
-   * @throws ODataException the o data exception
-   */
-  CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException;
 }

@@ -112,9 +112,4 @@ public abstract class CsdlAbstractEdmProvider implements CsdlEdmProvider {
   public CsdlAnnotations getAnnotationsGroup(final FullQualifiedName targetName) throws ODataException {
     return null;
   }
-
-  @Override
-  public CsdlAnnotatable getAnnotatable(final FullQualifiedName annotatedName) throws ODataException {
-    return null;
-  }
 }

@@ -164,21 +164,4 @@ public interface Edm {
    * @return {@link EdmAnnotations}
    */
   EdmAnnotations getAnnotationGroup(FullQualifiedName targetName);
-
-  /**
-   * Get all {@link EdmAnnotation} by element FQN.
-   *
-   * @param annotatableName must not be null
-   * @return {@link EdmAnnotation}
-   */
-  List<EdmAnnotation> getAnnotations(FullQualifiedName annotatableName);
-
-  /**
-   * Get {@link EdmAnnotation} by element FQN and term.
-   *
-   * @param annotatableName must not be null
-   * @param term <tt>edm:Annotation</tt> term
-   * @return {@link EdmAnnotation}
-   */
-  EdmAnnotation getAnnotation(FullQualifiedName annotatableName, EdmTerm term);
 }

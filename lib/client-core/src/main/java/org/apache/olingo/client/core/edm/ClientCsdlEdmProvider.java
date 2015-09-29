@@ -22,13 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -42,6 +40,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
 
@@ -197,15 +196,6 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
     CsdlSchema schema = xmlSchemas.get(targetName.getNamespace());
     if (schema != null) {
       return schema.getAnnotationGroup(targetName.getName());
-    }
-    return null;
-  }
-
-  @Override
-  public CsdlAnnotatable getAnnotatable(FullQualifiedName annotatedName) throws ODataException {
-    final CsdlSchema schema = xmlSchemas.get(annotatedName.getNamespace());
-    if (schema != null) {
-      return schema.getAnnotatables().get(annotatedName.getName());
     }
     return null;
   }

@@ -19,9 +19,7 @@
 package org.apache.olingo.commons.api.edm.provider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The type Csdl schema.
@@ -53,8 +51,6 @@ public class CsdlSchema extends CsdlAbstractEdmItem implements CsdlAnnotatable {
   private final List<CsdlAnnotations> annotationGroups = new ArrayList<CsdlAnnotations>();
 
   private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
-
-  private Map<String, CsdlAnnotatable> annotatables;
 
   /**
    * Gets namespace.
@@ -368,62 +364,5 @@ public class CsdlSchema extends CsdlAbstractEdmItem implements CsdlAnnotatable {
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
-  }
-
-  /**
-   * Gets annotatables.
-   *
-   * @return the annotatables
-   */
-  public Map<String, CsdlAnnotatable> getAnnotatables() {
-    if (annotatables == null) {
-      annotatables = new HashMap<String, CsdlAnnotatable>();
-      for (CsdlAnnotations annotationGroup : getAnnotationGroups()) {
-        annotatables.put(null, annotationGroup);
-      }
-      for (CsdlAnnotation annotation : getAnnotations()) {
-        annotatables.put(annotation.getTerm(), annotation);
-      }
-      for (CsdlAction action : getActions()) {
-        annotatables.put(action.getName(), action);
-      }
-      for (CsdlComplexType complexType : getComplexTypes()) {
-        annotatables.put(complexType.getName(), complexType);
-      }
-      for (CsdlEntityType entityType : getEntityTypes()) {
-        annotatables.put(entityType.getName(), entityType);
-      }
-      for (CsdlEnumType enumType : getEnumTypes()) {
-        annotatables.put(enumType.getName(), enumType);
-      }
-      for (CsdlFunction function : getFunctions()) {
-        annotatables.put(function.getName(), function);
-      }
-      for (CsdlTerm term : getTerms()) {
-        annotatables.put(term.getName(), term);
-      }
-      for (CsdlTypeDefinition typedef : getTypeDefinitions()) {
-        annotatables.put(typedef.getName(), typedef);
-      }
-      if (entityContainer != null) {
-        annotatables.put(entityContainer.getName(), entityContainer);
-        for (CsdlAnnotation annotation : entityContainer.getAnnotations()) {
-          annotatables.put(annotation.getTerm(), annotation);
-        }
-        for (CsdlActionImport actionImport : entityContainer.getActionImports()) {
-          annotatables.put(actionImport.getName(), actionImport);
-        }
-        for (CsdlFunctionImport functionImport : entityContainer.getFunctionImports()) {
-          annotatables.put(functionImport.getName(), functionImport);
-        }
-        for (CsdlEntitySet entitySet : entityContainer.getEntitySets()) {
-          annotatables.put(entitySet.getName(), entitySet);
-        }
-        for (CsdlSingleton singleton : entityContainer.getSingletons()) {
-          annotatables.put(singleton.getName(), singleton);
-        }
-      }
-    }
-    return annotatables;
   }
 }

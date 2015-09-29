@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -79,9 +78,6 @@ public abstract class AbstractEdm implements Edm {
 
   private final Map<FullQualifiedName, EdmAnnotations> annotationGroups =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmAnnotations>());
-
-  private final Map<FullQualifiedName, List<EdmAnnotation>> annotations =
-      Collections.synchronizedMap(new HashMap<FullQualifiedName, List<EdmAnnotation>>());
 
   private Map<String, String> aliasToNamespaceInfo = Collections.synchronizedMap(new HashMap<String, String>());
   private boolean aliasToNamespaceInfoCreated = false;
@@ -311,33 +307,6 @@ public abstract class AbstractEdm implements Edm {
     return _annotations;
   }
 
-  @Override
-  public List<EdmAnnotation> getAnnotations(final FullQualifiedName annotatableName) {
-    final FullQualifiedName fqn = resolvePossibleAlias(annotatableName);
-    List<EdmAnnotation> _annotations = annotations.get(fqn);
-    if (_annotations == null) {
-      _annotations = createAnnotations(fqn);
-      if (_annotations != null) {
-        annotations.put(fqn, _annotations);
-      }
-    }
-    return _annotations;
-  }
-
-  @Override
-  public EdmAnnotation getAnnotation(final FullQualifiedName annotatableName, final EdmTerm term) {
-    final List<EdmAnnotation> _annotations = getAnnotations(annotatableName);
-    EdmAnnotation result = null;
-    if (_annotations != null) {
-      for (EdmAnnotation annotation : _annotations) {
-        if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-          result = annotation;
-        }
-      }
-    }
-    return result;
-  }
-
   private FullQualifiedName resolvePossibleAlias(final FullQualifiedName namespaceOrAliasFQN) {
     if (!aliasToNamespaceInfoCreated) {
       aliasToNamespaceInfo = createAliasToNamespaceInfo();
@@ -446,10 +415,4 @@ public abstract class AbstractEdm implements Edm {
       final EdmAnnotations annotationsGroup) {
     annotationGroups.put(annotationsGroupName, annotationsGroup);
   }
-
-  protected abstract List<EdmAnnotation> createAnnotations(FullQualifiedName annotatedName);
-
-  // public void cacheAnnotation(FullQualifiedName annotationsGroupName, EdmAnnotations annotationsGroup) {
-  // annotationGroups.put(annotationsGroupName, annotationsGroup);
-  // }
 }

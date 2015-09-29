@@ -358,23 +358,4 @@ public class EdmProviderImpl extends AbstractEdm {
       throw new EdmException(e);
     }
   }
-
-  @Override
-  protected List<EdmAnnotation> createAnnotations(final FullQualifiedName annotatedName) {
-    try {
-      CsdlAnnotatable providerAnnotatable = provider.getAnnotatable(annotatedName);
-      if (providerAnnotatable != null && providerAnnotatable.getAnnotations() != null) {
-        List<EdmAnnotation> result = new ArrayList<EdmAnnotation>();
-        for (CsdlAnnotation annotation : providerAnnotatable.getAnnotations()) {
-          // Load Term
-          getTerm(new FullQualifiedName(annotation.getTerm()));
-          result.add(new EdmAnnotationImpl(this, annotation));
-        }
-        return result;
-      }
-      return null;
-    } catch (ODataException e) {
-      throw new EdmException(e);
-    }
-  }
 }

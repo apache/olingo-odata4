@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -132,8 +132,8 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmTerm scale = edm.getTerm(new FullQualifiedName("UoM.Scale"));
     assertNotNull(scale);
 
-    final EdmAnnotation requiresTypeInScale = edm.getAnnotation(
-        scale.getFullQualifiedName(), edm.getTerm(new FullQualifiedName("Core.RequiresType")));
+    final EdmAnnotation requiresTypeInScale =
+        scale.getAnnotation(edm.getTerm(new FullQualifiedName("Core.RequiresType")));
     assertNotNull(requiresTypeInScale);
     assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValueAsString());
 
