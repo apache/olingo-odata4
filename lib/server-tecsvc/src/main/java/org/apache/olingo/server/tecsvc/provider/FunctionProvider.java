@@ -574,7 +574,7 @@ public class FunctionProvider {
               .setParameters(Arrays.asList(
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
                       .setCollection(true).setNullable(false)))
-              .setComposable(true)
+              .setComposable(false)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true)
                       .setNullable(false))

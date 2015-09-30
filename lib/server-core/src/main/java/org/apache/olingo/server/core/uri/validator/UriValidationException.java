@@ -52,7 +52,9 @@ public class UriValidationException extends ODataLibraryException {
     /** parameter: unallowed kind before $value */
     UNALLOWED_KIND_BEFORE_VALUE,
     /** parameter: unallowed kind before $count */
-    UNALLOWED_KIND_BEFORE_COUNT;
+    UNALLOWED_KIND_BEFORE_COUNT, 
+    /** parameter: unallowed resource path */
+    UNALLOWED_RESOURCE_PATH;
 
     @Override
     public String getKey() {

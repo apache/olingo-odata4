@@ -1145,6 +1145,72 @@ public class TestFullResourcePath {
   }
   
   @Test
+  public void runNonComposableFunctions() throws Exception {
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+      .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+      .isParameter(0, "ParameterInt16", "1")
+      .isParameter(1, "ParameterString", "'1'");
+    
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+      .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+      .isParameter(0, "ParameterInt16", "1")
+      .isParameter(1, "ParameterString", "'1'");
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)/PropertyInt16")
+      .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1")
+      .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$top=1")
+    .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", 
+        "$filter=PropertyInt16 eq 1")
+    .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1")
+    .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$count=true")
+    .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skiptoken=5")
+    .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    
+    // $search is currently not implemented. Please change this exception if the implementation is done.
+    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$search=test")
+      .isExSemantic(MessageKeys.NOT_IMPLEMENTED);
+    
+    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isEntitySet("ESBaseTwoKeyNav")
+      .at(1)
+      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
+    
+    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
+        + "(PropertyInt16=1,PropertyString='1')")
+      .isKind(UriInfoKind.resource)
+      .goPath().first()
+      .isEntitySet("ESBaseTwoKeyNav")
+      .at(1)
+      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey")
+      .isKeyPredicate(0, "PropertyInt16", "1")
+      .isKeyPredicate(1, "PropertyString", "'1'");
+    
+    testUri.runEx("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
+          + "(PropertyInt16=1,PropertyString='1')/NavPropertyETBaseTwoKeyNavOne")
+      .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
+  }
+  
+  @Test
   public void runEsNameCast() throws Exception {
     testUri.run("ESTwoPrim/olingo.odata.test1.ETBase")
     .isKind(UriInfoKind.resource).goPath()
