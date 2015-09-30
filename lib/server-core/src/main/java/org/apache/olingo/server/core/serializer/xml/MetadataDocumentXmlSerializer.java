@@ -26,8 +26,11 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -50,6 +53,8 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -102,6 +107,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_ALIAS = "Alias";
   private static final String XML_NAMESPACE = "Namespace";
   private static final String XML_TYPE_DEFINITION = "TypeDefinition";
+  private static final String XML_ANNOTATION = "Annotation";
   private static final String REFERENCE = "Reference";
   private static final String INCLUDE = "Include";
   private static final String INCLUDE_ANNOTATIONS = "IncludeAnnotations";
@@ -120,6 +126,8 @@ public class MetadataDocumentXmlSerializer {
   private static final String NS_EDM = "http://docs.oasis-open.org/odata/ns/edm";
   private static final String XML_ENTITY_SET_PATH = "EntitySetPath";
   private static final String XML_CONTAINS_TARGET = "ContainsTarget";
+  private static final String XML_TERM_ATT = "Term";
+  private static final String XML_QUALIFIER_ATT = "Qualifier";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
@@ -324,6 +332,7 @@ public class MetadataDocumentXmlSerializer {
       }
 
       appendNavigationPropertyBindings(writer, entitySet);
+      appendAnnotations(writer, entitySet);
       writer.writeEndElement();
     }
   }
@@ -482,9 +491,36 @@ public class MetadataDocumentXmlSerializer {
 
       appendNavigationProperties(writer, entityType);
 
+      appendAnnotations(writer, entityType);
+
       writer.writeEndElement();
     }
   }
+
+  private void appendAnnotations(XMLStreamWriter writer, EdmAnnotatable annotatable) throws XMLStreamException {
+    List<EdmAnnotation> annotations = annotatable.getAnnotations();
+    for (EdmAnnotation annotation : annotations) {
+      writer.writeStartElement(XML_ANNOTATION);
+      String term = getAliasedFullQualifiedName(annotation.getTerm().getFullQualifiedName(), false);
+      writer.writeAttribute(XML_TERM_ATT, term);
+      String qualifier = annotation.getQualifier();
+      if(qualifier != null) {
+        writer.writeAttribute(XML_QUALIFIER_ATT, qualifier);
+      }
+      EdmAnnotationExpression expression = annotation.getExpression();
+      if(expression != null) {
+        if(expression.isConstant()) {
+          EdmConstantAnnotationExpression constExpression = expression.asConstant();
+          Valuable value = constExpression.getValue();
+          writer.writeAttribute(value.getType(), constExpression.getValueAsString());
+        } else {
+          // TODO: mibo_150930: Handle dynamic expressions
+        }
+      }
+      writer.writeEndElement();
+    }
+  }
+
 
   private void appendNavigationProperties(final XMLStreamWriter writer, final EdmStructuredType type)
       throws XMLStreamException {
@@ -616,6 +652,10 @@ public class MetadataDocumentXmlSerializer {
 
   private String getAliasedFullQualifiedName(final EdmType type, final boolean isCollection) {
     FullQualifiedName fqn = type.getFullQualifiedName();
+    return getAliasedFullQualifiedName(fqn, isCollection);
+  }
+
+  private String getAliasedFullQualifiedName(final FullQualifiedName fqn, final boolean isCollection) {
     final String name;
     if (namespaceToAlias.get(fqn.getNamespace()) != null) {
       name = namespaceToAlias.get(fqn.getNamespace()) + "." + fqn.getName();
@@ -640,6 +680,7 @@ public class MetadataDocumentXmlSerializer {
         writer.writeStartElement(PREFIX_EDMX, INCLUDE, NS_EDMX);
         writer.writeAttribute(XML_NAMESPACE, include.getNamespace());
         if (include.getAlias() != null) {
+          namespaceToAlias.put(include.getNamespace(), include.getAlias());
           // Reference Aliases are ignored for now since they are not V2 compatible
           writer.writeAttribute(XML_ALIAS, include.getAlias());
         }

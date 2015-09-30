@@ -50,8 +50,9 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
    * Sets the annotated expression
    * @param annotationExpression annotated expression
    */
-  public void setExpression(final AnnotationExpression annotationExpression) {
+  public CsdlAnnotation setExpression(final AnnotationExpression annotationExpression) {
     this.annotationExpression = annotationExpression;
+    return this;
   }
 
   /**

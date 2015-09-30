@@ -46,6 +46,13 @@ public class CsdlEntitySet extends CsdlBindingTarget {
   }
 
   @Override
+  public CsdlEntitySet setAnnotations(final List<CsdlAnnotation> annotations) {
+    super.setAnnotations(annotations);
+    return this;
+  }
+
+
+  @Override
   public CsdlEntitySet setType(final String type) {
     this.type = new FullQualifiedName(type);
     return this;

@@ -100,8 +100,7 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
         final Object valueOfString = type.valueOfString(constExprConstruct.getValue(),
             null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
             type.getDefaultType());
-        value = new Property(kind.getFullQualifiedName().getFullQualifiedNameAsString(),
-            null, ValueType.PRIMITIVE, valueOfString);
+        value = new Property(kind.getFullQualifiedName().getName(), null, ValueType.PRIMITIVE, valueOfString);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }

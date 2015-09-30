@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +44,7 @@ import org.apache.olingo.commons.api.ex.ODataException;
 public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
   public static final String nameSpace = "olingo.odata.test1";
+  public static final String CORE_VOCABULARY_NAMESPACE = "Org.OData.Core.V1";
 
   private final SchemaProvider schemaProvider;
   private final EntityTypeProvider entityTypeProvider;
@@ -52,6 +54,7 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
   private final ActionProvider actionProvider;
   private final FunctionProvider functionProvider;
   private final TypeDefinitionProvider typeDefinitionProvider;
+  private final TermProvider termProvider;
 
   public EdmTechProvider() {
     containerProvider = new ContainerProvider(this);
@@ -62,12 +65,14 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
     functionProvider = new FunctionProvider();
     typeDefinitionProvider = new TypeDefinitionProvider();
     schemaProvider = new SchemaProvider(this);
+    termProvider = new TermProvider();
   }
 
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-    return Collections.singletonList(
-        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace));
+    return Arrays.asList(
+        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace),
+        new CsdlAliasInfo().setAlias("Core").setNamespace(CORE_VOCABULARY_NAMESPACE));
   }
 
   @Override
@@ -102,7 +107,7 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException {
-    return null;
+    return termProvider.getTerm(termName);
   }
 
   @Override

@@ -130,4 +130,8 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
     return annotations;
   }
 
+  public CsdlBindingTarget setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations.addAll(annotations);
+    return this;
+  }
 }

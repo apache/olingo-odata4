@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.olingo.commons.api.edm.provider.annotation.AbstractCsdlAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
 import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
@@ -50,7 +51,7 @@ import java.io.IOException;
 
 @JsonDeserialize(using = AbstractClientCsdlDynamicAnnotationExpression.DynamicAnnotationExpressionDeserializer.class)
 abstract class AbstractClientCsdlDynamicAnnotationExpression
-        extends AbstractClientCsdlAnnotationExpression implements DynamicAnnotationExpression {
+        extends AbstractCsdlAnnotationExpression implements DynamicAnnotationExpression {
 
   private static final long serialVersionUID = 1093411847477874348L;
 
@@ -257,8 +258,8 @@ abstract class AbstractClientCsdlDynamicAnnotationExpression
       }
     }
 
-    private AbstractClientCsdlAnnotationExpression parseConstOrEnumExpression(final JsonParser jp) throws IOException {
-      AbstractClientCsdlAnnotationExpression result;
+    private AbstractCsdlAnnotationExpression parseConstOrEnumExpression(final JsonParser jp) throws IOException {
+      AbstractCsdlAnnotationExpression result;
       if (isAnnotationConstExprConstruct(jp)) {
         result = parseAnnotationConstExprConstruct(jp);
       } else {

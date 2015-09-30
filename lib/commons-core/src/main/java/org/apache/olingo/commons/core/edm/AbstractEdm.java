@@ -301,7 +301,7 @@ public abstract class AbstractEdm implements Edm {
     TargetQualifierMapKey key = new TargetQualifierMapKey(fqn, qualifier);
     EdmAnnotations _annotations = annotationGroups.get(key);
     if (_annotations == null) {
-      _annotations = createAnnotationGroup(targetName);
+      _annotations = createAnnotationGroup(fqn);
       if (_annotations != null) {
         annotationGroups.put(key, _annotations);
       }

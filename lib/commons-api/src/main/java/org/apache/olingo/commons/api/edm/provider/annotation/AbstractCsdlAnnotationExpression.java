@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml;
+package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.annotation.AnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.DynamicAnnotationExpression;
 
-abstract class AbstractClientCsdlAnnotationExpression extends CsdlAbstractEdmItem implements AnnotationExpression {
+public abstract class AbstractCsdlAnnotationExpression extends CsdlAbstractEdmItem implements AnnotationExpression {
 
   private static final long serialVersionUID = -4238652997159205377L;
 

@@ -16,12 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml;
+package org.apache.olingo.commons.api.edm.provider.annotation;
 
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantAnnotationExpression;
-
-class ClientCsdlConstantAnnotationExpression
-        extends CsdlConstantAnnotationExpression {
+public class CsdlConstantAnnotationExpression
+        extends AbstractCsdlAnnotationExpression implements ConstantAnnotationExpression {
 
   private static final long serialVersionUID = 5618680702707972904L;
+
+  private Type type;
+
+  private String value;
+
+  public CsdlConstantAnnotationExpression() {
+  }
+
+  public CsdlConstantAnnotationExpression(Type type, String value) {
+    this.type = type;
+    this.value = value;
+  }
+
+  @Override
+  public Type getType() {
+    return type;
+  }
+
+  @Override
+  public void setType(final Type type) {
+    this.type = type;
+  }
+
+  @Override
+  public String getValue() {
+    return value;
+  }
+
+  @Override
+  public void setValue(final String value) {
+    this.value = value;
+  }
+
 }

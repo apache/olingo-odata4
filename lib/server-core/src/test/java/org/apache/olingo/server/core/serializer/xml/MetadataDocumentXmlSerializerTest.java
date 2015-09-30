@@ -113,6 +113,28 @@ public class MetadataDocumentXmlSerializerTest {
         IOUtils.toString(metadata));
   }
 
+
+  /** Writes simplest (empty) Schema. */
+  @Test
+  public void writeMetadataWithSimpleSchema() throws Exception {
+    EdmSchema schema = mock(EdmSchema.class);
+    when(schema.getNamespace()).thenReturn("MyNamespace");
+    Edm edm = mock(Edm.class);
+    when(edm.getSchemas()).thenReturn(Arrays.asList(schema));
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    when(serviceMetadata.getEdm()).thenReturn(edm);
+
+    InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
+    assertNotNull(metadata);
+    assertEquals("<?xml version='1.0' encoding='UTF-8'?>" +
+            "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
+            "<edmx:DataServices>" +
+            "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>" +
+            "</edmx:DataServices>" +
+            "</edmx:Edmx>",
+        IOUtils.toString(metadata));
+  }
+
   @Test
   public void writeEdmxWithLocalTestEdm() throws Exception {
     List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();

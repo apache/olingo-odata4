@@ -173,7 +173,7 @@ public class MetadataTest extends AbstractTest {
     final EdmAnnotation annotation = annotationGroup.getAnnotations().get(0);
     assertNotNull(annotation);
     assertTrue(annotation.getExpression().isConstant());
-    assertEquals("Edm.String", annotation.getExpression().asConstant().getValue().getType());
+    assertEquals("String", annotation.getExpression().asConstant().getValue().getType());
 
     assertEquals(10, schema.getAnnotationGroups().get(3).getAnnotations().size());
   }
@@ -331,10 +331,10 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(group);
 
     final EdmAnnotation time1 = group.getAnnotations().get(0);
-    assertEquals("Edm.TimeOfDay", time1.getExpression().asConstant().getValue().getType());
+    assertEquals("TimeOfDay", time1.getExpression().asConstant().getValue().getType());
 
     final EdmAnnotation time2 = group.getAnnotations().get(1);
-    assertEquals("Edm.TimeOfDay", time2.getExpression().asConstant().getValue().getType());
+    assertEquals("TimeOfDay", time2.getExpression().asConstant().getValue().getType());
   }
 
   /**
