@@ -61,6 +61,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.SingletonPrimitiveType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
@@ -69,11 +70,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
 
   private static final XMLInputFactory FACTORY = new InputFactoryImpl();
   private static final String ATOM = "a";
-  private static final String NS_ATOM = "http://www.w3.org/2005/Atom";  
-  private static final QName REF_ELEMENT = new QName("http://docs.oasis-open.org/odata/ns/metadata", "ref");
-  private static final QName PARAMETERS_ELEMENT = 
-      new QName("http://docs.oasis-open.org/odata/ns/metadata", "parameters");
-  private static final QName ID_ATTR = new QName(NS_ATOM, ATOM);
+  private static final QName REF_ELEMENT = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
+  private static final QName PARAMETERS_ELEMENT = new QName(Constants.NS_METADATA, "parameters");
+  private static final QName ID_ATTR = new QName(Constants.NS_ATOM, ATOM);
 
   private final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
   private final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
@@ -83,16 +82,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
   private final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG); 
   private final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
-  
-//  private void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
-//    writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
-//    writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
-//    writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
-//    writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);
-//    writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
-//    writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
-//  }
-  
+
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     return FACTORY.createXMLEventReader(input);
   }
@@ -715,12 +705,12 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   public DeserializerResult actionParameters(InputStream stream, EdmAction edmAction) 
       throws DeserializerException {
     Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
-    if(edmAction.getParameterNames() == null || edmAction.getParameterNames().isEmpty()
-        || (edmAction.isBound() && edmAction.getParameterNames().size() == 1)) {
+    if (edmAction.getParameterNames() == null || edmAction.getParameterNames().isEmpty()
+        || edmAction.isBound() && edmAction.getParameterNames().size() == 1) {
       return DeserializerResultImpl.with().actionParameters(parameters)
           .build();
     }
-        
+
     try {             
       final XMLEventReader reader = getReader(stream);
       while (reader.hasNext()) {
@@ -729,14 +719,26 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           consumeParameters(edmAction, reader, event.asStartElement(), parameters);
         }        
       }
-      // NULL fill for missing parameters
-      Parameter nullParameter = new Parameter();
-      nullParameter.setValue(ValueType.PRIMITIVE, null);
-      for (String param:edmAction.getParameterNames()) {
-        if (parameters.get(param) == null) {
-          parameters.put(param, nullParameter);
+      // EDM checks.
+      for (final String param : edmAction.getParameterNames()) {
+        Parameter parameter = parameters.get(param);
+        if (parameter == null) {
+          final EdmParameter edmParameter = edmAction.getParameter(param);
+          if (!edmParameter.isNullable()) {
+            throw new DeserializerException("Non-nullable parameter not present or null: " + param,
+                MessageKeys.INVALID_NULL_PARAMETER, param);
+          }
+          if (edmParameter.isCollection()) {
+            throw new DeserializerException("Collection must not be null for parameter: " + param,
+                MessageKeys.INVALID_NULL_PARAMETER, param);
+          }
+          // NULL fill for missing parameters.
+          parameter = new Parameter();
+          parameter.setName(param);
+          parameter.setValue(ValueType.PRIMITIVE, null);
+          parameters.put(param, parameter);
         }
-      }      
+      }
       return DeserializerResultImpl.with().actionParameters(parameters)
           .build();
     } catch (XMLStreamException e) {

@@ -112,18 +112,15 @@ public class ODataImpl extends OData {
 
   @Override
   public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
-    ODataDeserializer deserializer;
-
     if (contentType.isCompatible(ContentType.JSON)) {
-      deserializer = new ODataJsonDeserializer(contentType);
+      return new ODataJsonDeserializer(contentType);
     } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
         || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
-      deserializer = new ODataXmlDeserializer();      
+      return new ODataXmlDeserializer();
     } else {
       throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
           DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     }
-    return deserializer;
   }
 
   @Override

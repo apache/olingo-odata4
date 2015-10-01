@@ -19,10 +19,11 @@
 package org.apache.olingo.server.core.deserializer.xml;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
@@ -40,39 +41,22 @@ import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmGuid;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSingle;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
-import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.apache.olingo.server.core.deserializer.xml.ODataXmlDeserializer;
-import org.apache.olingo.server.tecsvc.MetadataETagSupport;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class ODataXmlDeserializerTest {
-  
-  private static final ServiceMetadata metadata = new ServiceMetadataImpl(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("WmetadataETag"));
-  private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
-  private final ODataDeserializer serializer = new ODataXmlDeserializer();
-  
+public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
+
+  private static final EdmEntityContainer entityContainer = edm.getEntityContainer();
+  private final ODataDeserializer deserializer = new ODataXmlDeserializer();
+
   @BeforeClass
   public static void setup() {
     XMLUnit.setIgnoreComments(true);
@@ -81,64 +65,24 @@ public class ODataXmlDeserializerTest {
     XMLUnit.setNormalizeWhitespace(true);
     XMLUnit.setCompareUnmatched(false);
   }
-  
-  protected Object edmInt16(String value) throws EdmPrimitiveTypeException {
-    return EdmInt16.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmInt16.getInstance().getDefaultType()); 
-  }
-  protected Object edmInt32(String value) throws EdmPrimitiveTypeException {
-    return EdmInt32.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmInt32.getInstance().getDefaultType()); 
-  }
-  protected Object edmInt64(String value) throws EdmPrimitiveTypeException {
-    return EdmInt64.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmInt64.getInstance().getDefaultType()); 
-  }
-  protected Object edmSingle(String value) throws EdmPrimitiveTypeException {
-    return EdmSingle.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmSingle.getInstance().getDefaultType()); 
-  }
-  protected Object edmDouble(String value) throws EdmPrimitiveTypeException {
-    return EdmDouble.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmDouble.getInstance().getDefaultType()); 
-  }
-  protected Object edmSByte(String value) throws EdmPrimitiveTypeException {
-    return EdmSByte.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmSByte.getInstance().getDefaultType()); 
-  }
-  protected Object edmByte(String value) throws EdmPrimitiveTypeException {
-    return EdmByte.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmByte.getInstance().getDefaultType()); 
-  }  
-  protected Object edmDecimal(String value) throws EdmPrimitiveTypeException {
-    return EdmDecimal.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmDecimal.getInstance().getDefaultType()); 
-  }
-  protected Object edmBinary(String value) throws EdmPrimitiveTypeException {
-    return EdmBinary.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmBinary.getInstance().getDefaultType()); 
+
+  protected byte[] edmBinary(String value) throws EdmPrimitiveTypeException {
+    return EdmBinary.getInstance().valueOfString(value, true, null, null, null, true,
+        byte[].class);
   }
   protected Object edmDate(String value) throws EdmPrimitiveTypeException {
-    return EdmDate.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmDate.getInstance().getDefaultType()); 
+    return EdmDate.getInstance().valueOfString(value, true, null, null, null, true,
+        EdmDate.getInstance().getDefaultType());
   }
   protected Object edmDateTimeOffset(String value) throws EdmPrimitiveTypeException {
-    return EdmDateTimeOffset.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmDateTimeOffset.getInstance().getDefaultType()); 
-  }  
-  protected Object edmDuration(String value) throws EdmPrimitiveTypeException {
-    return EdmDuration.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmDuration.getInstance().getDefaultType()); 
-  }   
-  protected Object edmGUID(String value) throws EdmPrimitiveTypeException {
-    return EdmGuid.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmGuid.getInstance().getDefaultType()); 
+    return EdmDateTimeOffset.getInstance().valueOfString(value, true, null, null, null, true, 
+        EdmDateTimeOffset.getInstance().getDefaultType());
   }  
   protected Object edmTimeOfDay(String value) throws EdmPrimitiveTypeException {
-    return EdmTimeOfDay.getInstance().valueOfString(value, true, 10, 10, 10, true, 
-        EdmTimeOfDay.getInstance().getDefaultType()); 
+    return EdmTimeOfDay.getInstance().valueOfString(value, true, null, null, null, true, 
+        EdmTimeOfDay.getInstance().getDefaultType());
   }
-  
+
   @Test
   public void entitySimple() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -179,32 +123,31 @@ public class ODataXmlDeserializerTest {
         "  </atom:content>\n" + 
         "</atom:entry>\n"; 
     
-    Entity result = serializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
     Assert.assertEquals(16, result.getProperties().size());
     Assert.assertEquals(2, result.getNavigationBindings().size());
     
-    Assert.assertEquals(edmInt16("32767"), result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
     Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
-    Assert.assertEquals(edmByte("255"), result.getProperty("PropertyByte").asPrimitive());
-    Assert.assertEquals(edmSByte("127"), result.getProperty("PropertySByte").asPrimitive());
-    Assert.assertEquals(edmInt32("2147483647"), result.getProperty("PropertyInt32").asPrimitive());
-    Assert.assertEquals(edmInt64("9223372036854775807"), result.getProperty("PropertyInt64").asPrimitive());
-    Assert.assertEquals(edmSingle("1.79E20"), result.getProperty("PropertySingle").asPrimitive());
-    Assert.assertEquals(edmDouble("-1.79E19"), result.getProperty("PropertyDouble").asPrimitive());
-    Assert.assertEquals(edmDecimal("34"), result.getProperty("PropertyDecimal").asPrimitive());
-//    Assert.assertEquals(edmBinary("ASNFZ4mrze8="), result.getProperty("PropertyBinary").asPrimitive());
+    Assert.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
+    Assert.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
+    Assert.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
+    Assert.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
+    Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
+    Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
+    Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
+    Assert.assertArrayEquals(edmBinary("ASNFZ4mrze8="), (byte[]) result.getProperty("PropertyBinary").asPrimitive());
     Assert.assertEquals(edmDate("2012-12-03"), result.getProperty("PropertyDate").asPrimitive());
     Assert.assertEquals(edmDateTimeOffset("2012-12-03T07:16:23Z"), result.getProperty("PropertyDateTimeOffset")
         .asPrimitive());
-    Assert.assertEquals(edmDuration("PT6S"), result.getProperty("PropertyDuration")
-        .asPrimitive());
-    Assert.assertEquals(edmGUID("01234567-89ab-cdef-0123-456789abcdef"), result.getProperty("PropertyGuid")
-        .asPrimitive());
+    Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
+    Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
+        result.getProperty("PropertyGuid").asPrimitive());
     Assert.assertEquals(edmTimeOfDay("03:26:05"), result.getProperty("PropertyTimeOfDay").asPrimitive());
   }
-  
+
   @Test
   public void entitySimpleWithTypes() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -247,32 +190,31 @@ public class ODataXmlDeserializerTest {
         "  </atom:content>\n" + 
         "</atom:entry>\n"; 
     
-    Entity result = serializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
     Assert.assertEquals(16, result.getProperties().size());
     Assert.assertEquals(2, result.getNavigationBindings().size());
     
-    Assert.assertEquals(edmInt16("32767"), result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
     Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
-    Assert.assertEquals(edmByte("255"), result.getProperty("PropertyByte").asPrimitive());
-    Assert.assertEquals(edmSByte("127"), result.getProperty("PropertySByte").asPrimitive());
-    Assert.assertEquals(edmInt32("2147483647"), result.getProperty("PropertyInt32").asPrimitive());
-    Assert.assertEquals(edmInt64("9223372036854775807"), result.getProperty("PropertyInt64").asPrimitive());
-    Assert.assertEquals(edmSingle("1.79E20"), result.getProperty("PropertySingle").asPrimitive());
-    Assert.assertEquals(edmDouble("-1.79E19"), result.getProperty("PropertyDouble").asPrimitive());
-    Assert.assertEquals(edmDecimal("34"), result.getProperty("PropertyDecimal").asPrimitive());
-//    Assert.assertEquals(edmBinary("ASNFZ4mrze8="), result.getProperty("PropertyBinary").asPrimitive());
+    Assert.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
+    Assert.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
+    Assert.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
+    Assert.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
+    Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
+    Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
+    Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
+    Assert.assertArrayEquals(edmBinary("ASNFZ4mrze8="), (byte[]) result.getProperty("PropertyBinary").asPrimitive());
     Assert.assertEquals(edmDate("2012-12-03"), result.getProperty("PropertyDate").asPrimitive());
     Assert.assertEquals(edmDateTimeOffset("2012-12-03T07:16:23Z"), result.getProperty("PropertyDateTimeOffset")
         .asPrimitive());
-    Assert.assertEquals(edmDuration("PT6S"), result.getProperty("PropertyDuration")
-        .asPrimitive());
-    Assert.assertEquals(edmGUID("01234567-89ab-cdef-0123-456789abcdef"), result.getProperty("PropertyGuid")
-        .asPrimitive());
+    Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
+    Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
+        result.getProperty("PropertyGuid").asPrimitive());
     Assert.assertEquals(edmTimeOfDay("03:26:05"), result.getProperty("PropertyTimeOfDay").asPrimitive());
   }  
-  
+
   @Test
   public void entityCompAllPrim() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompAllPrim");
@@ -309,7 +251,7 @@ public class ODataXmlDeserializerTest {
           + "</atom:content>"
         + "</atom:entry>";
     
-    Entity result = serializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
     Assert.assertEquals("olingo.odata.test1.ETCompAllPrim",result.getType());
@@ -317,8 +259,8 @@ public class ODataXmlDeserializerTest {
     Assert.assertEquals(2, result.getProperties().size());
     Assert.assertEquals(0, result.getNavigationLinks().size());
 
-    Assert.assertEquals(edmInt16("32767"), result.getProperty("PropertyInt16").asPrimitive());
-    
+    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+
     Assert.assertNotNull(result.getProperty("PropertyComp"));
     Property comp = result.getProperty("PropertyComp");
     Assert.assertEquals("olingo.odata.test1.CTAllPrim", comp.getType());
@@ -326,14 +268,14 @@ public class ODataXmlDeserializerTest {
     
     Assert.assertEquals(16, cv.getValue().size());
     
-    Assert.assertEquals(edmInt16("32767"), getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 32767, getCVProperty(cv, "PropertyInt16").asPrimitive());
     Assert.assertEquals("First Resource - first", getCVProperty(cv, "PropertyString").asPrimitive());
-    Assert.assertEquals(edmByte("255"), getCVProperty(cv, "PropertyByte").asPrimitive());
-    Assert.assertEquals(edmSByte("127"), getCVProperty(cv, "PropertySByte").asPrimitive());
-    Assert.assertEquals(edmInt32("2147483647"), getCVProperty(cv, "PropertyInt32").asPrimitive());
-    Assert.assertEquals(edmInt64("9223372036854775807"), getCVProperty(cv, "PropertyInt64").asPrimitive());
+    Assert.assertEquals((short) 255, getCVProperty(cv, "PropertyByte").asPrimitive());
+    Assert.assertEquals((byte) 127, getCVProperty(cv, "PropertySByte").asPrimitive());
+    Assert.assertEquals(2147483647, getCVProperty(cv, "PropertyInt32").asPrimitive());
+    Assert.assertEquals(9223372036854775807L, getCVProperty(cv, "PropertyInt64").asPrimitive());
   }  
-  
+
   private Property getCVProperty(ComplexValue cv, String name) {
     for (Property p:cv.getValue()) {
       if (p.getName().equals(name)) {
@@ -343,7 +285,6 @@ public class ODataXmlDeserializerTest {
     return null;
   }
   
-  @SuppressWarnings("unchecked")
   @Test
   public void entityMixPrimCollComp() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
@@ -384,7 +325,7 @@ public class ODataXmlDeserializerTest {
         "  </atom:content>\n" + 
         "</atom:entry>\n"; 
 
-    Entity result = serializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
     Assert.assertEquals(4, result.getProperties().size());
@@ -398,22 +339,22 @@ public class ODataXmlDeserializerTest {
     ComplexValue cv = (ComplexValue)comp.getValue();
     
     Assert.assertEquals(2, cv.getValue().size());
-    Assert.assertEquals(edmInt16("111"), getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
     Assert.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
     
     comp = result.getProperty("CollPropertyComp");
     Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
+    @SuppressWarnings("unchecked")
     List<ComplexValue> properties = (List<ComplexValue>)comp.getValue();
     
     Assert.assertEquals(3, properties.size());
     
-    Assert.assertEquals(edmInt16("123"), getCVProperty(properties.get(0), "PropertyInt16")
-        .asPrimitive());
-    Assert.assertEquals("TEST 1", getCVProperty(properties.get(0), "PropertyString")
-        .asPrimitive());
+    Assert.assertEquals((short) 123,
+        getCVProperty(properties.get(0), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 1",
+        getCVProperty(properties.get(0), "PropertyString").asPrimitive());
 
-    Assert.assertEquals(edmInt16("789"), getCVProperty(properties.get(2), "PropertyInt16")
-        .asPrimitive());
+    Assert.assertEquals((short) 789, getCVProperty(properties.get(2), "PropertyInt16").asPrimitive());
     Assert.assertEquals("TEST 3", getCVProperty(properties.get(2), "PropertyString")
         .asPrimitive());    
   }
@@ -461,13 +402,13 @@ public class ODataXmlDeserializerTest {
         "</atom:entry>\n" + 
         "";
     
-    Entity result = serializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
     Assert.assertEquals(2, result.getProperties().size());
     Assert.assertEquals(1, result.getNavigationLinks().size());
     
-    Assert.assertEquals(edmInt16("32767"), result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
     Assert.assertEquals("Test String4", result.getProperty("PropertyString").asPrimitive());    
     
     Assert.assertEquals(1, result.getNavigationLinks().size());
@@ -491,8 +432,8 @@ public class ODataXmlDeserializerTest {
         + "<metadata:value xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"
         + "234</metadata:value>";
 
-    Property result = serializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();    
-    Assert.assertEquals(edmInt16("234"), result.getValue()); 
+    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
+    Assert.assertEquals((short) 234, result.getValue()); 
   }
 
   @Test
@@ -503,7 +444,7 @@ public class ODataXmlDeserializerTest {
         + "<metadata:value xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "metadata:null=\"true\"/>";
 
-    Property result = serializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();    
+    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
     Assert.assertNull(result.getValue());    
   }
   
@@ -517,7 +458,7 @@ public class ODataXmlDeserializerTest {
         + "<metadata:element>Employee2@company.example</metadata:element>"
         + "<metadata:element>Employee3@company.example</metadata:element>"
         + "</metadata:value>";
-    Property result = serializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();    
+    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
     Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
         "Employee3@company.example"), result.getValue());
     
@@ -557,7 +498,7 @@ public class ODataXmlDeserializerTest {
         "  <data:PostalCode>12209</data:PostalCode>\n" + 
         "</data:ShipTo>";
     
-    Property result = serializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();    
+    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
 
     Assert.assertEquals("ShipTo", result.getName());
     Assert.assertTrue(result.getValue() instanceof ComplexValue);
@@ -588,15 +529,15 @@ public class ODataXmlDeserializerTest {
         "    <data:PropertyString>TEST 3</data:PropertyString>\n" + 
         "  </metadata:element>\n" + 
         "</metadata:value>";
-    Property result = serializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();    
+    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
 
     List<ComplexValue> complex = (List<ComplexValue>)result.getValue();
     
     Assert.assertEquals(3, complex.size());
     Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", result.getType());
-    Assert.assertEquals(edmInt16("123"), getCVProperty(complex.get(0), "PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 123, getCVProperty(complex.get(0), "PropertyInt16").asPrimitive());
     Assert.assertEquals("TEST 1", getCVProperty(complex.get(0), "PropertyString").asPrimitive());
-    Assert.assertEquals(edmInt16("789"), getCVProperty(complex.get(2), "PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 789, getCVProperty(complex.get(2), "PropertyInt16").asPrimitive());
     Assert.assertEquals("TEST 3", getCVProperty(complex.get(2), "PropertyString").asPrimitive());
   }
   
@@ -607,7 +548,7 @@ public class ODataXmlDeserializerTest {
         "              xmlns=\"http://www.w3.org/2005/Atom\" "+
         "              id=\"http://host/service/Orders(10643)\" />";
     
-    List<URI> result = serializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
+    List<URI> result = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();    
     Assert.assertEquals(1, result.size());
     Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
@@ -622,7 +563,7 @@ public class ODataXmlDeserializerTest {
         "  <metadata:ref id=\"http://host/service/Orders(10759)\" />\n" + 
         "</feed>";
     
-    List<URI> result = serializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
+    List<URI> result = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();    
     Assert.assertEquals(2, result.size());
     Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());

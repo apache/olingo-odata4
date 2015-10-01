@@ -16,25 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.deserializer.json;
+package org.apache.olingo.server.core.deserializer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class AbstractODataDeserializerTest {
-  protected static final ContentType CONTENT_TYPE_JSON = ContentType.JSON;
-  protected static final ContentType CONTENT_TYPE_JSON_IEEE754Compatible = 
-      ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true");
-  
-  protected static final Edm edm = OData.newInstance().createServiceMetadata(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
+
+  protected static final String NAMESPACE = "Namespace1_Alias";
+  protected static final Edm edm = OData.newInstance()
+      .createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
+      .getEdm();
 
   protected InputStream getFileAsStream(final String filename) throws IOException {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);

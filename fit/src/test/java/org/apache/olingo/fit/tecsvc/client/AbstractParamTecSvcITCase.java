@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,5 +49,18 @@ public abstract class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
   @Override
   protected ContentType getContentType() {
     return contentType;
+  }
+
+  protected void assertContentType(final String content) {
+    assertThat(content, startsWith(contentType.toContentTypeString()));
+  }
+
+  protected boolean isJson() {
+    return ContentType.JSON.isCompatible(contentType);
+  }
+
+  protected void assertShortOrInt(final int value, final Object n) {
+    assertTrue(n instanceof Number);
+    assertEquals(value, ((Number) n).intValue());
   }
 }

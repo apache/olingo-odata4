@@ -31,7 +31,7 @@ public interface EdmNavigationProperty extends EdmElement, EdmAnnotationsTarget,
   EdmEntityType getType();
 
   /**
-   * @return true if nullable or null if not specified
+   * @return true if nullable or not specified
    */
   boolean isNullable();
 

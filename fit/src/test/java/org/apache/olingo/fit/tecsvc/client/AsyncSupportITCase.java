@@ -48,13 +48,12 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Test;
 
-public final class AsyncSupportITCase extends AbstractTecSvcITCase {
+public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_ALL_PRIM = "ESAllPrim";
   private static final String NAV_PROPERTY_ET_TWO_PRIM_ONE = "NavPropertyETTwoPrimOne";
@@ -70,7 +69,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
 
     final ODataRetrieveResponse<ClientEntity> response = client.getRetrieveRequestFactory()
         .getEntityRequest(uri).execute();
-    assertEquals(32767, response.getBody().getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, response.getBody().getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // first async request
@@ -98,9 +97,8 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
     assertNotNull(first.getODataResponse());
     ODataResponse firstResponse = first.getODataResponse();
     assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
-    ResWrap<Entity> entity = client.getDeserializer(ContentType.APPLICATION_JSON)
-        .toEntity(firstResponse.getRawResponse());
-    assertEquals(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
+    ResWrap<Entity> entity = client.getDeserializer(getContentType()).toEntity(firstResponse.getRawResponse());
+    assertShortOrInt(32767, entity.getPayload().getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", entity.getPayload().getProperty("PropertyString").asPrimitive());
   }
 
@@ -144,12 +142,12 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), firstResponse.getStatusCode());
     assertEquals(2, firstResponse.getHeaderNames().size());
     assertEquals("4.0", firstResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
-    ResWrap<EntityCollection> firWrap = client.getDeserializer(ContentType.APPLICATION_JSON)
+    ResWrap<EntityCollection> firWrap = client.getDeserializer(getContentType())
         .toEntitySet(firstResponse.getRawResponse());
     EntityCollection firstResponseEntitySet = firWrap.getPayload();
     assertEquals(3, firstResponseEntitySet.getEntities().size());
     Entity firstResponseEntity = firstResponseEntitySet.getEntities().get(0);
-    assertEquals(32767, firstResponseEntity.getProperty("PropertyInt16").asPrimitive());
+    assertShortOrInt(32767, firstResponseEntity.getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", firstResponseEntity.getProperty("PropertyString").asPrimitive());
   }
 
@@ -190,7 +188,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
     assertNotNull(createdEntity);
     final ClientProperty property1 = createdEntity.getProperty("PropertyInt64");
     assertNotNull(property1);
-    assertEquals(42, property1.getPrimitiveValue().toValue());
+    assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
     assertNull(property2.getPrimitiveValue());
@@ -220,7 +218,7 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
     assertEquals("4.0", firstResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
 
     final ClientEntity entity = firstResponse.getBody();
-    assertEquals(32767, entity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+    assertShortOrInt(32767, entity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("First Resource - positive values",
         entity.getProperty("PropertyString").getPrimitiveValue().toValue());
   }
@@ -266,11 +264,11 @@ public final class AsyncSupportITCase extends AbstractTecSvcITCase {
     return client.getRetrieveRequestFactory().getEntityRequest(uri);
   }
 
-  private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, Object value) {
+  private void checkEntityAvailableWith(ClientEntitySet entitySet, String property, int value) {
     for (ClientEntity entity : entitySet.getEntities()) {
-      ClientProperty ep = entity.getProperty("PropertyInt16");
+      ClientProperty ep = entity.getProperty(property);
       if (ep != null) {
-        assertEquals(value, ep.getPrimitiveValue().toValue());
+        assertShortOrInt(value, ep.getPrimitiveValue().toValue());
         return;
       }
     }

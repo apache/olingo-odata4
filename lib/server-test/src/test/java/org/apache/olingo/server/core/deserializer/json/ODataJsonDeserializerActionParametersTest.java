@@ -19,184 +19,190 @@
 package org.apache.olingo.server.core.deserializer.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.edm.EdmParameter;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlAction;
-import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
-import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
-import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
-import org.apache.olingo.commons.core.edm.EdmActionImpl;
-import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
+import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class ODataJsonDeserializerActionParametersTest extends AbstractODataDeserializerTest {
 
   @Test
   public void empty() throws Exception {
-    final String input = "{}";
-    final Map<String, Parameter> parameters = deserialize(input, "UART");
+    final Map<String, Parameter> parameters = deserialize("{}", "UART", null);
     assertNotNull(parameters);
     assertTrue(parameters.isEmpty());
   }
 
   @Test
   public void primitive() throws Exception {
-    final String input = "{\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
-    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam");
+    final Map<String, Parameter> parameters = deserialize(
+        "{\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}",
+        "UARTTwoParam", null);
     assertNotNull(parameters);
     assertEquals(2, parameters.size());
     Parameter parameter = parameters.get("ParameterInt16");
     assertNotNull(parameter);
+    assertTrue(parameter.isPrimitive());
+    assertFalse(parameter.isCollection());
     assertEquals((short) 42, parameter.getValue());
     parameter = parameters.get("ParameterDuration");
     assertNotNull(parameter);
     assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
-  
+
+  @Test
+  public void primitiveCollection() throws Exception {
+    EdmParameter parameter = mock(EdmParameter.class);
+    when(parameter.getType()).thenReturn(
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration));
+    when(parameter.isCollection()).thenReturn(true);
+    EdmAction action = mock(EdmAction.class);
+    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
+    when(action.getParameter("Parameter")).thenReturn(parameter);
+
+    final String input = "{\"Parameter\": [ \"PT0S\", \"PT42S\", \"PT1H2M3S\" ]}";
+    final Map<String, Parameter> parameters = deserialize(input, action);
+
+    assertNotNull(parameters);
+    assertEquals(1, parameters.size());
+    Parameter parameterData = parameters.get("Parameter");
+    assertNotNull(parameterData);
+    assertTrue(parameterData.isPrimitive());
+    assertTrue(parameterData.isCollection());
+    assertEquals(BigDecimal.ZERO, parameterData.asCollection().get(0));
+    assertEquals(BigDecimal.valueOf(42), parameterData.asCollection().get(1));
+    assertEquals(BigDecimal.valueOf(3723), parameterData.asCollection().get(2));
+  }
+
   @Test
   public void complex() throws Exception {
-    EdmProviderImpl provider = mock(EdmProviderImpl.class);
-    CsdlComplexType address = new CsdlComplexType();
-    address.setProperties(Arrays.asList(createProperty("Street", "Edm.String"), 
-        createProperty("Zip", "Edm.Int32")));
-    address.setName("Address");
-    EdmComplexTypeImpl edmAddress = new EdmComplexTypeImpl(provider, 
-        new FullQualifiedName("namespace.Address"), address);    
-    Mockito.stub(provider.getComplexType(Mockito.any(FullQualifiedName.class))).toReturn(edmAddress);
-    
-    List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
-    parameters.add(createParam("param1", "Edm.Int16"));
-    parameters.add(createParam("param2", "namespace.Address"));
-    parameters.add(createParam("param3", "Edm.Int32").setCollection(true));
-    parameters.add(createParam("param4", "Edm.String").setNullable(true));
-    
-    FullQualifiedName actionName = new FullQualifiedName("namespace", "action");
-    CsdlAction csdlAction = new CsdlAction().setName("action1").setParameters(parameters);
-    EdmAction action = new EdmActionImpl(provider, actionName, csdlAction);
-    
-    final String input = "{\n" + 
-        "  \"param1\": 42,\n" + 
-        "  \"param2\": {\n" + 
-        "    \"Street\": \"One Microsoft Way\",\n" + 
-        "    \"Zip\": 98052\n" + 
-        "  },\n" + 
-        "  \"param3\": [ 1, 42, 99 ],\n" + 
-        "  \"param4\": null\n" + 
-        "}";
-    final Map<String, Parameter> response = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()), action).getActionParameters();
-    
-    assertNotNull(response);
-    assertEquals(4, response.size());
-    Parameter parameter = response.get("param1");
-    assertNotNull(response);
-    assertEquals((short) 42, parameter.getValue());
-    parameter = response.get("param2");
-    assertNotNull(parameter);
-    ComplexValue addressValue = (ComplexValue)parameter.getValue();
-    assertEquals("Street", addressValue.getValue().get(0).getName());
-    assertEquals("One Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals("Zip", addressValue.getValue().get(1).getName());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
-    
-    parameter = response.get("param3");
-    assertNotNull(parameter);
-    assertEquals(Arrays.asList(1, 42, 99), parameter.getValue());
-    
-    parameter = response.get("param4");
-    assertNull(parameter.getValue());
+    EdmParameter parameter = mock(EdmParameter.class);
+    when(parameter.getType()).thenReturn(edm.getComplexType(new FullQualifiedName(NAMESPACE, "CTTwoPrim")));
+    EdmAction action = mock(EdmAction.class);
+    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
+    when(action.getParameter("Parameter")).thenReturn(parameter);
+
+    final String input = "{\"Parameter\": { \"PropertyString\": \"Yes\", \"PropertyInt16\": 42 }}";
+    final Map<String, Parameter> parameters = deserialize(input, action);
+
+    assertNotNull(parameters);
+    assertEquals(1, parameters.size());
+    final Parameter parameterData = parameters.get("Parameter");
+    assertNotNull(parameterData);
+    assertTrue(parameterData.isComplex());
+    assertFalse(parameterData.isCollection());
+    final List<Property> complexValues = parameterData.asComplex().getValue();
+    assertEquals((short) 42, complexValues.get(0).getValue());
+    assertEquals("Yes", complexValues.get(1).getValue());
   }
-  
+
   @Test
   public void complexCollection() throws Exception {
-    EdmProviderImpl provider = mock(EdmProviderImpl.class);
-    CsdlComplexType address = new CsdlComplexType();
-    address.setProperties(Arrays.asList(createProperty("Street", "Edm.String"), 
-        createProperty("Zip", "Edm.Int32")));
-    address.setName("Address");
-    EdmComplexTypeImpl edmAddress = new EdmComplexTypeImpl(provider, 
-        new FullQualifiedName("namespace.Address"), address);    
-    Mockito.stub(provider.getComplexType(Mockito.any(FullQualifiedName.class))).toReturn(edmAddress);
-    
-    List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
-    parameters.add(createParam("param1", "Edm.Int16"));
-    parameters.add(createParam("param2", "namespace.Address").setCollection(true));
-    parameters.add(createParam("param3", "Edm.Int32").setCollection(true));
-    parameters.add(createParam("param4", "Edm.String").setNullable(true));
-    
-    FullQualifiedName actionName = new FullQualifiedName("namespace", "action");
-    CsdlAction csdlAction = new CsdlAction().setName("action1").setParameters(parameters);
-    EdmAction action = new EdmActionImpl(provider, actionName, csdlAction);
-    
-    final String input = "{\n" + 
-        "  \"param1\": 42,\n" + 
-        "  \"param2\": [{\n" + 
-        "    \"Street\": \"One Microsoft Way\",\n" + 
-        "    \"Zip\": 98052\n" + 
-        "  },\n" +
-        "  {\n" + 
-        "    \"Street\": \"Two Microsoft Way\",\n" + 
-        "    \"Zip\": 98052\n" + 
-        "  }],\n" +         
-        "  \"param3\": [ 1, 42, 99 ],\n" + 
-        "  \"param4\": null\n" + 
-        "}";
-    final Map<String, Parameter> response = OData.newInstance().createDeserializer(CONTENT_TYPE_JSON)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()), action).getActionParameters();
-    
-    assertNotNull(response);
-    assertEquals(4, response.size());
-    Parameter parameter = response.get("param1");
-    assertNotNull(response);
-    assertEquals((short) 42, parameter.getValue());
-    parameter = response.get("param2");
-    assertNotNull(parameter);
-    ComplexValue addressValue = (ComplexValue)((List<?>)parameter.getValue()).get(0);
-    assertEquals("One Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
+    EdmParameter parameter = mock(EdmParameter.class);
+    when(parameter.getType()).thenReturn(edm.getComplexType(new FullQualifiedName(NAMESPACE, "CTTwoPrim")));
+    when(parameter.isCollection()).thenReturn(true);
+    EdmAction action = mock(EdmAction.class);
+    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
+    when(action.getParameter("Parameter")).thenReturn(parameter);
 
-    addressValue = (ComplexValue)((List<?>)parameter.getValue()).get(1);
-    assertEquals("Two Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
-    
-    parameter = response.get("param3");
-    assertNotNull(parameter);
-    assertEquals(Arrays.asList(1, 42, 99), parameter.getValue());
-    
-    parameter = response.get("param4");
-    assertNull(parameter.getValue());
-  }  
+    final String input = "{\"Parameter\": [\n"
+        + "  { \"PropertyInt16\": 9999, \"PropertyString\": \"One\" },\n"
+        + "  { \"PropertyInt16\": -123, \"PropertyString\": \"Two\" }]}";
+    final Map<String, Parameter> parameters = deserialize(input, action);
 
-  private CsdlParameter createParam(String name, String type) {
-    return new CsdlParameter().setName(name).setType(new FullQualifiedName(type));
-  }  
+    assertNotNull(parameters);
+    assertEquals(1, parameters.size());
+    Parameter parameterData = parameters.get("Parameter");
+    assertNotNull(parameterData);
+    assertTrue(parameterData.isComplex());
+    assertTrue(parameterData.isCollection());
+    ComplexValue complexValue = (ComplexValue) parameterData.asCollection().get(0);
+    assertEquals((short) 9999, complexValue.getValue().get(0).getValue());
+    assertEquals("One", complexValue.getValue().get(1).getValue());
 
-  private CsdlProperty createProperty(String name, String type) {
-    return new CsdlProperty().setName(name).setType(type);
+    complexValue = (ComplexValue) parameterData.asCollection().get(1);
+    assertEquals((short) -123, complexValue.getValue().get(0).getValue());
+    assertEquals("Two", complexValue.getValue().get(1).getValue());
   }
-  
+
+  @Test
+  public void entity() throws Exception {
+    EdmParameter parameter = mock(EdmParameter.class);
+    when(parameter.getType()).thenReturn(edm.getEntityType(new FullQualifiedName(NAMESPACE, "ETTwoPrim")));
+    EdmAction action = mock(EdmAction.class);
+    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
+    when(action.getParameter("Parameter")).thenReturn(parameter);
+
+    final String input = "{\"Parameter\": { \"PropertyInt16\": 42, \"PropertyString\": \"Yes\" }}";
+    final Map<String, Parameter> parameters = deserialize(input, action);
+
+    assertNotNull(parameters);
+    assertEquals(1, parameters.size());
+    final Parameter parameterData = parameters.get("Parameter");
+    assertNotNull(parameterData);
+    assertTrue(parameterData.isEntity());
+    assertFalse(parameterData.isCollection());
+    final List<Property> entityValues = parameterData.asEntity().getProperties();
+    assertEquals((short) 42, entityValues.get(0).getValue());
+    assertEquals("Yes", entityValues.get(1).getValue());
+  }
+
+  @Test
+  public void entityCollection() throws Exception {
+    EdmParameter parameter = mock(EdmParameter.class);
+    when(parameter.getType()).thenReturn(edm.getEntityType(new FullQualifiedName(NAMESPACE, "ETTwoPrim")));
+    when(parameter.isCollection()).thenReturn(true);
+    EdmAction action = mock(EdmAction.class);
+    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
+    when(action.getParameter("Parameter")).thenReturn(parameter);
+
+    final String input = "{\"Parameter\": [\n"
+        + "  { \"PropertyInt16\": 1234, \"PropertyString\": \"One\" },\n"
+        + "  { \"PropertyInt16\": -321, \"PropertyString\": \"Two\" }]}";
+    final Map<String, Parameter> parameters = deserialize(input, action);
+
+    assertNotNull(parameters);
+    assertEquals(1, parameters.size());
+    Parameter parameterData = parameters.get("Parameter");
+    assertNotNull(parameterData);
+    assertTrue(parameterData.isEntity());
+    assertTrue(parameterData.isCollection());
+    Entity entity = ((EntityCollection) parameterData.getValue()).getEntities().get(0);
+    assertEquals((short) 1234, entity.getProperties().get(0).getValue());
+    assertEquals("One", entity.getProperties().get(1).getValue());
+
+    entity = ((EntityCollection) parameterData.getValue()).getEntities().get(1);
+    assertEquals((short) -321, entity.getProperties().get(0).getValue());
+    assertEquals("Two", entity.getProperties().get(1).getValue());
+  }
+
   @Test
   public void boundEmpty() throws Exception {
-    final String input = "{}";
-    final Map<String, Parameter> parameters = deserialize(input, "BAETAllPrimRT", "ETAllPrim");
+    final Map<String, Parameter> parameters = deserialize("{}", "BAETAllPrimRT", "ETAllPrim");
     assertNotNull(parameters);
     assertTrue(parameters.isEmpty());
   }
@@ -206,7 +212,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     final String input =
         "{\"ParameterDuration@odata.type\":\"Edm.Duration\","
             + "\"ParameterDuration\":\"P42DT11H22M33S\",\"ParameterInt16\":42}";
-    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam");
+    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam", null);
     assertNotNull(parameters);
     assertEquals(2, parameters.size());
     Parameter parameter = parameters.get("ParameterInt16");
@@ -218,9 +224,9 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
   }
   
   @Test
-  public void testParameterWithNullLiteral() throws Exception {
-    final Map<String, Parameter> parameters = deserialize("{\"ParameterInt16\":1,\"ParameterDuration\":null}", 
-        "UARTCollStringTwoParam");
+  public void parameterWithNullLiteral() throws Exception {
+    final Map<String, Parameter> parameters = deserialize("{\"ParameterInt16\":1,\"ParameterDuration\":null}",
+        "UARTCollStringTwoParam", null);
     assertNotNull(parameters);
     assertEquals(2, parameters.size());
     Parameter parameter = parameters.get("ParameterInt16");
@@ -231,52 +237,60 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertEquals(null, parameter.getValue());
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void noContent() throws Exception {
-    deserialize("", "BAETAllPrimRT", "ETAllPrim");
+    expectException("", "UARTTwoParam", null, MessageKeys.JSON_SYNTAX_EXCEPTION);
+    expectException("", "BAETAllPrimRT", "ETAllPrim", MessageKeys.JSON_SYNTAX_EXCEPTION);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void bindingParameter() throws Exception {
-    deserialize("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim");
+    expectException("{\"ParameterETAllPrim\":{\"PropertyInt16\":42}}", "BAETAllPrimRT", "ETAllPrim",
+        MessageKeys.UNKNOWN_CONTENT);
   }
 
-  @Test(expected = DeserializerException.class)
-  public void wrongName() throws Exception {
-    deserialize("{\"ParameterWrong\":null}", "UARTParam");
-  }
-
-  @Test(expected = DeserializerException.class)
-  public void nullNotNullable() throws Exception {
-    deserialize("{\"ParameterInt16\":null}", "UARTCTTwoPrimParam");
-  }
-
-  @Test(expected = DeserializerException.class)
+  @Test
   public void missingParameter() throws Exception {
-    deserialize("{}", "UARTCTTwoPrimParam");
+    expectException("{\"ParameterWrong\":null}", "UARTParam", null, MessageKeys.UNKNOWN_CONTENT);
+    expectException("{}", "UARTCTTwoPrimParam", null, MessageKeys.INVALID_NULL_PARAMETER);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void parameterTwice() throws Exception {
-    deserialize("{\"ParameterInt16\":1,\"ParameterInt16\":2}", "UARTParam");
+    expectException("{\"ParameterInt16\":1,\"ParameterInt16\":2}", "UARTParam", null, MessageKeys.DUPLICATE_PROPERTY);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void wrongType() throws Exception {
-    deserialize("{\"ParameterInt16\":\"42\"}", "UARTParam");
-  }
-  
-  private Map<String, Parameter> deserialize(final String input, final String actionName) throws DeserializerException {
-    return OData.newInstance().createDeserializer(CONTENT_TYPE_JSON)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()),
-            edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName))).getActionParameters();
+    expectException("{\"ParameterInt16\":null}", "UARTCTTwoPrimParam", null, MessageKeys.INVALID_NULL_PARAMETER);
+    expectException("{\"ParameterInt16\":\"42\"}", "UARTParam", null, MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"ParameterInt16\":123456}", "UARTParam", null, MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"ParameterInt16\":[42]}", "UARTParam", null, MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
 
-  private Map<String, Parameter> deserialize(final String input, final String actionName, final String typeName)
+  private Map<String, Parameter> deserialize(final String input, final EdmAction action) throws DeserializerException {
+    return OData.newInstance().createDeserializer(ContentType.JSON)
+        .actionParameters(new ByteArrayInputStream(input.getBytes()), action)
+        .getActionParameters();
+  }
+
+  private Map<String, Parameter> deserialize(final String input, final String actionName, final String bindingTypeName)
       throws DeserializerException {
-    return OData.newInstance().createDeserializer(CONTENT_TYPE_JSON)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()),
-            edm.getBoundAction(new FullQualifiedName("Namespace1_Alias", actionName),
-                new FullQualifiedName("Namespace1_Alias", typeName), false)).getActionParameters();
+    return deserialize(input,
+        bindingTypeName == null ?
+            edm.getUnboundAction(new FullQualifiedName(NAMESPACE, actionName)) :
+            edm.getBoundAction(new FullQualifiedName(NAMESPACE, actionName),
+                new FullQualifiedName(NAMESPACE, bindingTypeName),
+                false));
+  }
+
+  private void expectException(final String input, final String actionName, final String bindingTypeName,
+      final DeserializerException.MessageKeys messageKey) {
+    try {
+      deserialize(input, actionName, bindingTypeName);
+      fail("Expected exception not thrown.");
+    } catch (final DeserializerException e) {
+      assertEquals(messageKey, e.getMessageKey());
+    }
   }
 }

@@ -72,16 +72,16 @@ import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 
 public class ODataXmlSerializer extends AbstractODataSerializer {
 
-  private static final String DATA = "d";
   private static final String CONTEXT = "context";
   /** The default character set is UTF-8. */
   public static final String DEFAULT_CHARSET = "UTF-8";
   private static final String ATOM = "a";
-  private static final String NS_ATOM = "http://www.w3.org/2005/Atom";
+  private static final String NS_ATOM = Constants.NS_ATOM;
   private static final String METADATA = "m";
-  private static final String NS_METADATA = "http://docs.oasis-open.org/odata/ns/metadata";
-  private static final String NS_DATA = "http://docs.oasis-open.org/odata/ns/data";
-  private static final String NS_SCHEMA = "http://docs.oasis-open.org/odata/ns/scheme";
+  private static final String NS_METADATA = Constants.NS_METADATA;
+  private static final String DATA = "d";
+  private static final String NS_DATA = Constants.NS_DATASERVICES;
+  private static final String NS_SCHEMA = Constants.NS_SCHEME;
 
   @Override
   public SerializerResult serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
@@ -235,7 +235,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
 
-      if (options != null) {
+      if (options != null && options.getId() != null) {
         writer.writeStartElement(ATOM, "id", NS_ATOM);
         writer.writeCharacters(options.getId());
         writer.writeEndElement();
@@ -364,16 +364,20 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeAttribute(METADATA, NS_METADATA, "etag", entity.getETag());
     }
 
-    writer.writeStartElement(NS_ATOM, "id");
-    writer.writeCharacters(entity.getId().toASCIIString());
-    writer.writeEndElement();
+    if (entity.getId() != null) {
+      writer.writeStartElement(NS_ATOM, "id");
+      writer.writeCharacters(entity.getId().toASCIIString());
+      writer.writeEndElement();
+    }
 
     writerAuthorInfo(entity.getTitle(), writer);
 
-    writer.writeStartElement(NS_ATOM, "link");
-    writer.writeAttribute("rel", "edit");
-    writer.writeAttribute("href", entity.getId().toASCIIString());
-    writer.writeEndElement();
+    if (entity.getId() != null) {
+      writer.writeStartElement(NS_ATOM, "link");
+      writer.writeAttribute("rel", "edit");
+      writer.writeAttribute("href", entity.getId().toASCIIString());
+      writer.writeEndElement();
+    }
 
     if (entityType.hasStream()) {
       writer.writeStartElement(NS_ATOM, "content");
@@ -551,12 +555,14 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     Link link = linked.getNavigationLink(navigationPropertyName);
     if (link == null) {
       link = new Link();
-      link.setRel("http://docs.oasis-open.org/odata/ns/related/" + navigationPropertyName);
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
       link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
       EntityCollection target = new EntityCollection();
       link.setInlineEntitySet(target);
-      link.setHref(linked.getId().toASCIIString() + "/" + navigationPropertyName);
+      if (linked.getId() != null) {
+        link.setHref(linked.getId().toASCIIString() + "/" + navigationPropertyName);
+      }
     }
     return link;
   }
@@ -575,7 +581,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     if (link.getTitle() != null) {
       writer.writeAttribute("title", link.getTitle());
     }
-    writer.writeAttribute("href", link.getHref());
+    if (link.getHref() != null) {
+      writer.writeAttribute("href", link.getHref());
+    }
     if (close) {
       writer.writeEndElement();
     }
@@ -606,11 +614,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       SerializerException {
     writer.writeStartElement(DATA, edmProperty.getName(), NS_DATA);
     if (property == null || property.isNull()) {
-      if (edmProperty.isNullable() == Boolean.FALSE) {
+      if (edmProperty.isNullable()) {
+        writer.writeAttribute(METADATA, NS_METADATA, "null", "true");
+      } else {
         throw new SerializerException("Non-nullable property not present!",
             SerializerException.MessageKeys.MISSING_PROPERTY, edmProperty.getName());
-      } else {
-        writer.writeAttribute(METADATA, NS_METADATA, "null", "true");
       }
     } else {
       writePropertyValue(metadata, edmProperty, property, selectedPaths, writer);

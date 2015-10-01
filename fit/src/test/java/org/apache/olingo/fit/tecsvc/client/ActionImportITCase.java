@@ -21,6 +21,7 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -42,13 +43,12 @@ import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class ActionImportITCase extends AbstractTecSvcITCase {
+public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void noReturnTypeAction() throws Exception {
@@ -293,6 +293,8 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
       final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
+    assumeTrue("The client would send wrongly formatted parameters in XML.",
+        parameters == null || parameters.isEmpty() || isJson());  // TODO: XML case
     final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
     ODataInvokeRequest<T> request = getClient().getInvokeRequestFactory()
         .getActionInvokeRequest(actionURI, resultRef, parameters);
@@ -308,10 +310,5 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
       assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     }
     return response;
-  }
-
-  @Override
-  protected ContentType getContentType() {
-    return ContentType.APPLICATION_JSON;
   }
 }

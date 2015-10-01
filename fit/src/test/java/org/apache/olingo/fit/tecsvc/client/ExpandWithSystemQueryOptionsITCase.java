@@ -216,7 +216,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Test
   @Ignore("Server do not support navigation property count annotations")
   public void count() {
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.SELECT, "PropertyInt16");
     options.put(QueryOption.COUNT, true);
@@ -254,7 +254,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Test
   public void singleEntityWithExpand() {
     /* A single entity request will be dispatched to a different processor method than entity set request */
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.FILTER, "PropertyInt16 lt 2");
     Map<String, Object> keys = new HashMap<String, Object>();
@@ -295,7 +295,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     // Entity with Key (PropertyInt16=1, PropertyString='2') holds references to (PropertyInt16=1, PropertyString='1')
     // Define filters to select explicit the entities at any level => Circle
 
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
@@ -370,7 +370,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void systemQueryOptionOnThirdLevel() {
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
@@ -443,7 +443,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void expandWithSearchQuery() {
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
     expandOptions.put(QueryOption.SEARCH, "abc");
     expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
@@ -463,7 +463,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
  
   @Test
   public void expandWithLevels() {
-    final ODataClient client = getClient(SERVICE_URI);
+    final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
     expandOptions.put(QueryOption.LEVELS, 2);
 

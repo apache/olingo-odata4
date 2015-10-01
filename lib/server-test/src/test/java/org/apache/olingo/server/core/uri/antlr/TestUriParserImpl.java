@@ -18,12 +18,11 @@
  */
 package org.apache.olingo.server.core.uri.antlr;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
@@ -326,7 +325,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet() throws UnsupportedEncodingException {
+  public void entitySet() throws Exception {
 
     // plain entity set
     testRes.run("ESAllPrim")
@@ -351,7 +350,7 @@ public class TestUriParserImpl {
     .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // with all keys
-    testRes.run("ESAllKey(" + encode(allKeys) + ")")
+    testRes.run("ESAllKey(" + Encoder.encode(allKeys) + ")")
     .isEntitySet("ESAllKey")
     .isKeyPredicate(0, "PropertyString", "'ABC'")
     .isKeyPredicate(1, "PropertyInt16", "1")
@@ -1164,9 +1163,5 @@ public class TestUriParserImpl {
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESMixPrimCollComp", "$select=/PropertyInt16")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-  }
-
-  public static String encode(final String decoded) throws UnsupportedEncodingException {
-    return URLEncoder.encode(decoded, "UTF-8");
   }
 }

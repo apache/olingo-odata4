@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -61,22 +56,7 @@ public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
     }
   }
 
-  protected void assertShortOrInt(final int value, final Object n) {
-    assertTrue(n instanceof Number);
-    assertEquals(value, ((Number) n).intValue());
-  }
-
-  protected void assertContentType(final String content) {
-    assertThat(content, containsString(getContentType().toContentTypeString()));
-  }
-
-  protected ContentType getContentType() {
-    return ContentType.APPLICATION_JSON;
-  }
-
-  protected boolean isJson() {
-    return ContentType.JSON.isCompatible(getContentType());
-  }
+  protected abstract ContentType getContentType();
 
   @Override
   protected ODataClient getClient() {
@@ -85,12 +65,8 @@ public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
     return odata;
   }
 
-  protected EdmEnabledODataClient getClient(final String serviceRoot) {
-    return ODataClientFactory.getEdmEnabledClient(serviceRoot, getContentType());
-  }
-
   protected EdmEnabledODataClient getEdmEnabledClient() {
-    return getClient(SERVICE_URI);
+    return ODataClientFactory.getEdmEnabledClient(SERVICE_URI, getContentType());
   }
 
   protected ClientObjectFactory getFactory() {
