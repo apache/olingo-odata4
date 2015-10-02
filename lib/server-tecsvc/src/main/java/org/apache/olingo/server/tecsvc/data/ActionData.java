@@ -52,6 +52,21 @@ public class ActionData {
       throws DataProviderException {
     if ("UARTString".equals(name)) {
       return DataCreator.createPrimitive(null, "UARTString string value");
+    } else if ("UARTByteNineParam".equals(name)) {
+      short count = 0;  // counts non-empty parameters
+      for (final String parameterName : parameters.keySet()) {
+        final Parameter parameter = parameters.get(parameterName);
+        if (!(parameter.isNull()
+            || !parameter.isCollection()
+                && (parameter.isComplex() && parameter.asComplex().getValue().isEmpty()
+                    || parameter.isEntity() && ((Entity) parameter.getValue()).getProperties().isEmpty())
+            || parameter.isCollection()
+                && (parameter.isEntity() && ((EntityCollection) parameter.getValue()).getEntities().isEmpty()
+                    || parameter.asCollection().isEmpty()))) {
+          count++;
+        }
+      }
+      return DataCreator.createPrimitive(null, count);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }

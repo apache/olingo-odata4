@@ -286,6 +286,32 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
     assertEquals("UARTCollStringTwoParam duration value: null", iter.next().asPrimitive().toValue());
   }
 
+  @Test
+  public void allParameterKinds() {
+    Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    parameters.put("ParameterEnum", getFactory().newEnumValue(null, "String3"));
+    parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("ParameterComp", getFactory().newComplexValue(null)
+        .add(getFactory().newPrimitiveProperty("PropertyInt16",
+            getFactory().newPrimitiveValueBuilder().buildInt16((short) 3))));
+    parameters.put("ParameterETTwoPrim", getFactory().newComplexValue(null));
+    parameters.put("CollParameterByte", getFactory().newCollectionValue(null)
+        .add(getFactory().newPrimitiveValueBuilder().buildInt16((short) 10)));
+    parameters.put("CollParameterEnum", getFactory().newCollectionValue(null)
+        .add(getFactory().newEnumValue(null, "String1")));
+    parameters.put("CollParameterDef", getFactory().newCollectionValue(null)
+        .add(getFactory().newPrimitiveValueBuilder().setValue("CollDefString").build()));
+    parameters.put("CollParameterComp", getFactory().newCollectionValue(null)
+        .add(getFactory().newComplexValue(null)
+            .add(getFactory().newPrimitiveProperty("PropertyString",
+                getFactory().newPrimitiveValueBuilder().setValue("CollCompString").build()))));
+    parameters.put("CollParameterETTwoPrim", getFactory().newCollectionValue(null));
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTByteNineParam", ClientProperty.class, parameters, false);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(6, response.getBody().getPrimitiveValue().toValue());
+  }
+
   private Map<String, ClientValue> buildParameterInt16(final int value) {
     return Collections.singletonMap("ParameterInt16",
         (ClientValue) getFactory().newPrimitiveValueBuilder().buildInt16((short) value));

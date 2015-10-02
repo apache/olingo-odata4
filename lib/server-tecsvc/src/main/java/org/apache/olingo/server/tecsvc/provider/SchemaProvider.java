@@ -130,6 +130,7 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameUART));
     actions.addAll(prov.getActions(ActionProvider.nameUARTParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTTwoParam));
+    actions.addAll(prov.getActions(ActionProvider.nameUARTByteNineParam));
 
     // Functions
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();

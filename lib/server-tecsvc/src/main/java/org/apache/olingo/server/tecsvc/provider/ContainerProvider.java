@@ -46,6 +46,7 @@ public class ContainerProvider {
   public static final String AIRT = "AIRT";
   public static final String AIRT_PARAM = "AIRTParam";
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
+  public static final String AIRT_BYTE_NINE_PARAM = "AIRTByteNineParam";
 
   CsdlEntityContainerInfo entityContainerInfoTest1 =
       new CsdlEntityContainerInfo().setContainerName(nameContainer);
@@ -123,6 +124,7 @@ public class ContainerProvider {
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_PARAM));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_TWO_PARAM));
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_BYTE_NINE_PARAM));
 
     // FunctionImports
     List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
@@ -500,6 +502,11 @@ public class ContainerProvider {
         return new CsdlActionImport()
             .setName(AIRT_TWO_PARAM)
             .setAction(ActionProvider.nameUARTTwoParam);
+
+      } else if (name.equals(AIRT_BYTE_NINE_PARAM)) {
+        return new CsdlActionImport()
+            .setName(AIRT_BYTE_NINE_PARAM)
+            .setAction(ActionProvider.nameUARTByteNineParam);
       }
     }
 

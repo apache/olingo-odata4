@@ -54,6 +54,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.AbstractGeospatialType;
@@ -103,14 +105,15 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           throw new DeserializerException("geo types support not implemented",
               DeserializerException.MessageKeys.NOT_IMPLEMENTED);
         }
+        final EdmPrimitiveType primitiveType = (EdmPrimitiveType) type;
         final String stringValue = event.asCharacters().getData();
-        value = ((EdmPrimitiveType)type).valueOfString(stringValue, 
+        value = primitiveType.valueOfString(stringValue, 
             isNullable, 
             maxLength, 
             precision, 
             scale, 
             isUnicode, 
-            ((EdmPrimitiveType)type).getDefaultType());
+            primitiveType.getDefaultType());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -152,13 +155,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {        
-        if (edmType instanceof SingletonPrimitiveType) {
+        if (edmType instanceof SingletonPrimitiveType
+            || edmType.getKind() == EdmTypeKind.ENUM
+            || edmType.getKind() == EdmTypeKind.DEFINITION) {
           values.add(primitive(reader, event.asStartElement(), type, isNullable, 
               maxLength, precision, scale, isUnicode));          
         } else if (edmType instanceof EdmComplexType) {
           values.add(complex(reader, event.asStartElement(), (EdmComplexType) edmType));                    
-        } else if (edmType instanceof EdmEnumType) {
-          values.add(readEnum(reader, event.asStartElement()));          
         }
         // do not add null or empty values
       }
@@ -168,21 +171,6 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       }
     }
     valuable.setValue(getValueType(edmType, true), values);
-  }
-
-  private Object readEnum(XMLEventReader reader, StartElement start) throws XMLStreamException {
-    boolean foundEndProperty = false;
-    Object value = null;
-    while (reader.hasNext() && !foundEndProperty) {
-      final XMLEvent event = reader.nextEvent();
-      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        value = event.asCharacters().getData();
-      }
-      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
-        foundEndProperty = true;
-      }
-    }
-    return value;
   }
 
   private Property property(final XMLEventReader reader, final StartElement start, final EdmType edmType,
@@ -212,11 +200,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       return isCollection? ValueType.COLLECTION_COMPLEX:ValueType.COMPLEX;
     } else if (edmType instanceof EdmEnumType) {
       return isCollection?ValueType.COLLECTION_ENUM:ValueType.ENUM;
+    } else if (edmType instanceof EdmTypeDefinition) {
+      return isCollection?ValueType.COLLECTION_PRIMITIVE:ValueType.PRIMITIVE;
     } else {
       return ValueType.PRIMITIVE;
     }
   }
-  
+
   private void valuable(final Valuable valuable, final XMLEventReader reader, final StartElement start,
       final EdmType edmType, final boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final boolean isUnicode, final boolean isCollection) throws XMLStreamException,
@@ -236,22 +226,19 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       return;
     }
 
+    final String typeName = edmType.getFullQualifiedName().getFullQualifiedNameAsString();
+    valuable.setType(isCollection ? ("Collection(" + typeName + ")") : typeName);
     if (isCollection) {
       collection(valuable, reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode);
-      valuable.setType("Collection("+edmType.getFullQualifiedName().getFullQualifiedNameAsString()+")");
-    } else if (edmType instanceof SingletonPrimitiveType) {
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
-      valuable.setValue(ValueType.PRIMITIVE, 
+    } else if (edmType instanceof SingletonPrimitiveType
+        || edmType.getKind() == EdmTypeKind.ENUM
+        || edmType.getKind() == EdmTypeKind.DEFINITION) {
+      valuable.setValue(getValueType(edmType, false),
           primitive(reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode));          
     } else if (edmType instanceof EdmComplexType) {
       valuable.setValue(ValueType.COMPLEX, complex(reader, start, (EdmComplexType) edmType));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
-    } else if (edmType instanceof EdmEnumType) {
-      valuable.setValue(ValueType.ENUM, readEnum(reader, start));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     } else if (edmType instanceof EdmEntityType) {
-      valuable.setValue(ValueType.ENTITY, entity(reader, start, (EdmEntityType)edmType));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
+      valuable.setValue(ValueType.ENTITY, entity(reader, start, (EdmEntityType) edmType));
     }
     // do not add null or empty values    
   }
@@ -791,12 +778,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Parameter createParameter(XMLEventReader reader, StartElement start, String paramName, 
       EdmParameter edmParameter) throws DeserializerException, EdmPrimitiveTypeException, XMLStreamException {
     
+    Parameter parameter = new Parameter();
+    parameter.setName(paramName);
     switch (edmParameter.getType().getKind()) {
     case PRIMITIVE:
     case ENUM:
+    case DEFINITION:
     case COMPLEX:
-      Parameter parameter = new Parameter();
-      parameter.setName(paramName);
       Property property = property(reader, start, 
         edmParameter.getType(),
         edmParameter.isNullable(), 
@@ -806,14 +794,21 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         true,
         edmParameter.isCollection());
       parameter.setValue(property.getValueType(), property.getValue());
-      return parameter;
+      break;
     case ENTITY:
-      throw new DeserializerException("Entity parameters are not allowed",
-          DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE);
+      if (edmParameter.isCollection()) {
+        final EntityCollection entityCollection = entitySet(reader, start, (EdmEntityType) edmParameter.getType());
+        parameter.setValue(ValueType.COLLECTION_ENTITY, entityCollection);
+      } else {
+        final Entity entity = entity(reader, start, (EdmEntityType) edmParameter.getType());
+        parameter.setValue(ValueType.ENTITY, entity);
+      }
+      break;
     default:
       throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
           + " for action parameter: " + paramName, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE,
           paramName);
     }
+    return parameter;
   }
 }

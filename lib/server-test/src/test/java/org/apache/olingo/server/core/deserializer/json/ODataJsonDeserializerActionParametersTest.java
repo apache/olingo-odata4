@@ -23,12 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +34,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmAction;
-import org.apache.olingo.commons.api.edm.EdmParameter;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -76,126 +70,99 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
 
   @Test
   public void primitiveCollection() throws Exception {
-    EdmParameter parameter = mock(EdmParameter.class);
-    when(parameter.getType()).thenReturn(
-        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration));
-    when(parameter.isCollection()).thenReturn(true);
-    EdmAction action = mock(EdmAction.class);
-    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
-    when(action.getParameter("Parameter")).thenReturn(parameter);
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterByte", "[1,42]");
+    assertTrue(parameter.isPrimitive());
+    assertTrue(parameter.isCollection());
+    assertEquals((short) 1, parameter.asCollection().get(0));
+    assertEquals((short) 42, parameter.asCollection().get(1));
+  }
 
-    final String input = "{\"Parameter\": [ \"PT0S\", \"PT42S\", \"PT1H2M3S\" ]}";
-    final Map<String, Parameter> parameters = deserialize(input, action);
+  @Test
+  public void enumeration() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterEnum", "\"String3,String1\"");
+    assertTrue(parameter.isEnum());
+    assertFalse(parameter.isCollection());
+    assertEquals((short) 5, parameter.getValue());
+  }
 
-    assertNotNull(parameters);
-    assertEquals(1, parameters.size());
-    Parameter parameterData = parameters.get("Parameter");
-    assertNotNull(parameterData);
-    assertTrue(parameterData.isPrimitive());
-    assertTrue(parameterData.isCollection());
-    assertEquals(BigDecimal.ZERO, parameterData.asCollection().get(0));
-    assertEquals(BigDecimal.valueOf(42), parameterData.asCollection().get(1));
-    assertEquals(BigDecimal.valueOf(3723), parameterData.asCollection().get(2));
+  @Test
+  public void enumCollection() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterEnum",
+        "[ \"String1,String2\", \"String3,String3,String3\" ]");
+    assertTrue(parameter.isEnum());
+    assertTrue(parameter.isCollection());
+    assertEquals((short) 3, parameter.asCollection().get(0));
+    assertEquals((short) 4, parameter.asCollection().get(1));
+  }
+
+  @Test
+  public void typeDefinition() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterDef", "\"Test String\"");
+    assertTrue(parameter.isPrimitive());
+    assertFalse(parameter.isCollection());
+    assertEquals("Test String", parameter.getValue());
+  }
+
+  @Test
+  public void typeDefinitionCollection() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterDef",
+        "[ \"Test String\", \"Another String\" ]");
+    assertTrue(parameter.isPrimitive());
+    assertTrue(parameter.isCollection());
+    assertEquals("Test String", parameter.asCollection().get(0));
+    assertEquals("Another String", parameter.asCollection().get(1));
   }
 
   @Test
   public void complex() throws Exception {
-    EdmParameter parameter = mock(EdmParameter.class);
-    when(parameter.getType()).thenReturn(edm.getComplexType(new FullQualifiedName(NAMESPACE, "CTTwoPrim")));
-    EdmAction action = mock(EdmAction.class);
-    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
-    when(action.getParameter("Parameter")).thenReturn(parameter);
-
-    final String input = "{\"Parameter\": { \"PropertyString\": \"Yes\", \"PropertyInt16\": 42 }}";
-    final Map<String, Parameter> parameters = deserialize(input, action);
-
-    assertNotNull(parameters);
-    assertEquals(1, parameters.size());
-    final Parameter parameterData = parameters.get("Parameter");
-    assertNotNull(parameterData);
-    assertTrue(parameterData.isComplex());
-    assertFalse(parameterData.isCollection());
-    final List<Property> complexValues = parameterData.asComplex().getValue();
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterComp",
+        "{ \"PropertyString\": \"Yes\", \"PropertyInt16\": 42 }");
+    assertTrue(parameter.isComplex());
+    assertFalse(parameter.isCollection());
+    final List<Property> complexValues = parameter.asComplex().getValue();
     assertEquals((short) 42, complexValues.get(0).getValue());
     assertEquals("Yes", complexValues.get(1).getValue());
   }
 
   @Test
   public void complexCollection() throws Exception {
-    EdmParameter parameter = mock(EdmParameter.class);
-    when(parameter.getType()).thenReturn(edm.getComplexType(new FullQualifiedName(NAMESPACE, "CTTwoPrim")));
-    when(parameter.isCollection()).thenReturn(true);
-    EdmAction action = mock(EdmAction.class);
-    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
-    when(action.getParameter("Parameter")).thenReturn(parameter);
-
-    final String input = "{\"Parameter\": [\n"
-        + "  { \"PropertyInt16\": 9999, \"PropertyString\": \"One\" },\n"
-        + "  { \"PropertyInt16\": -123, \"PropertyString\": \"Two\" }]}";
-    final Map<String, Parameter> parameters = deserialize(input, action);
-
-    assertNotNull(parameters);
-    assertEquals(1, parameters.size());
-    Parameter parameterData = parameters.get("Parameter");
-    assertNotNull(parameterData);
-    assertTrue(parameterData.isComplex());
-    assertTrue(parameterData.isCollection());
-    ComplexValue complexValue = (ComplexValue) parameterData.asCollection().get(0);
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterComp",
+        "[ { \"PropertyInt16\": 9999, \"PropertyString\": \"One\" },"
+        + "  { \"PropertyInt16\": -123, \"PropertyString\": \"Two\" }]");
+    assertTrue(parameter.isComplex());
+    assertTrue(parameter.isCollection());
+    ComplexValue complexValue = (ComplexValue) parameter.asCollection().get(0);
     assertEquals((short) 9999, complexValue.getValue().get(0).getValue());
     assertEquals("One", complexValue.getValue().get(1).getValue());
 
-    complexValue = (ComplexValue) parameterData.asCollection().get(1);
+    complexValue = (ComplexValue) parameter.asCollection().get(1);
     assertEquals((short) -123, complexValue.getValue().get(0).getValue());
     assertEquals("Two", complexValue.getValue().get(1).getValue());
   }
 
   @Test
   public void entity() throws Exception {
-    EdmParameter parameter = mock(EdmParameter.class);
-    when(parameter.getType()).thenReturn(edm.getEntityType(new FullQualifiedName(NAMESPACE, "ETTwoPrim")));
-    EdmAction action = mock(EdmAction.class);
-    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
-    when(action.getParameter("Parameter")).thenReturn(parameter);
-
-    final String input = "{\"Parameter\": { \"PropertyInt16\": 42, \"PropertyString\": \"Yes\" }}";
-    final Map<String, Parameter> parameters = deserialize(input, action);
-
-    assertNotNull(parameters);
-    assertEquals(1, parameters.size());
-    final Parameter parameterData = parameters.get("Parameter");
-    assertNotNull(parameterData);
-    assertTrue(parameterData.isEntity());
-    assertFalse(parameterData.isCollection());
-    final List<Property> entityValues = parameterData.asEntity().getProperties();
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterETTwoPrim",
+        "{ \"PropertyInt16\": 42, \"PropertyString\": \"Yes\" }");
+    assertTrue(parameter.isEntity());
+    assertFalse(parameter.isCollection());
+    final List<Property> entityValues = parameter.asEntity().getProperties();
     assertEquals((short) 42, entityValues.get(0).getValue());
     assertEquals("Yes", entityValues.get(1).getValue());
   }
 
   @Test
   public void entityCollection() throws Exception {
-    EdmParameter parameter = mock(EdmParameter.class);
-    when(parameter.getType()).thenReturn(edm.getEntityType(new FullQualifiedName(NAMESPACE, "ETTwoPrim")));
-    when(parameter.isCollection()).thenReturn(true);
-    EdmAction action = mock(EdmAction.class);
-    when(action.getParameterNames()).thenReturn(Collections.singletonList("Parameter"));
-    when(action.getParameter("Parameter")).thenReturn(parameter);
-
-    final String input = "{\"Parameter\": [\n"
-        + "  { \"PropertyInt16\": 1234, \"PropertyString\": \"One\" },\n"
-        + "  { \"PropertyInt16\": -321, \"PropertyString\": \"Two\" }]}";
-    final Map<String, Parameter> parameters = deserialize(input, action);
-
-    assertNotNull(parameters);
-    assertEquals(1, parameters.size());
-    Parameter parameterData = parameters.get("Parameter");
-    assertNotNull(parameterData);
-    assertTrue(parameterData.isEntity());
-    assertTrue(parameterData.isCollection());
-    Entity entity = ((EntityCollection) parameterData.getValue()).getEntities().get(0);
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterETTwoPrim",
+        "[ { \"PropertyInt16\": 1234, \"PropertyString\": \"One\" },"
+        + "  { \"PropertyInt16\": -321, \"PropertyString\": \"Two\" }]");
+    assertTrue(parameter.isEntity());
+    assertTrue(parameter.isCollection());
+    Entity entity = ((EntityCollection) parameter.getValue()).getEntities().get(0);
     assertEquals((short) 1234, entity.getProperties().get(0).getValue());
     assertEquals("One", entity.getProperties().get(1).getValue());
 
-    entity = ((EntityCollection) parameterData.getValue()).getEntities().get(1);
+    entity = ((EntityCollection) parameter.getValue()).getEntities().get(1);
     assertEquals((short) -321, entity.getProperties().get(0).getValue());
     assertEquals("Two", entity.getProperties().get(1).getValue());
   }
@@ -222,7 +189,7 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     assertNotNull(parameter);
     assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
-  
+
   @Test
   public void parameterWithNullLiteral() throws Exception {
     final Map<String, Parameter> parameters = deserialize("{\"ParameterInt16\":1,\"ParameterDuration\":null}",
@@ -268,20 +235,33 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     expectException("{\"ParameterInt16\":[42]}", "UARTParam", null, MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
 
-  private Map<String, Parameter> deserialize(final String input, final EdmAction action) throws DeserializerException {
-    return OData.newInstance().createDeserializer(ContentType.JSON)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()), action)
-        .getActionParameters();
+  private Parameter deserializeUARTByteNineParam(final String parameterName, final String parameterJsonValue)
+      throws DeserializerException {
+    final Map<String, Parameter> parameters = deserialize(
+        "{" + (parameterName.equals("CollParameterByte") ? "" : "\"CollParameterByte\":[],")
+            + (parameterName.equals("CollParameterEnum") ? "" : "\"CollParameterEnum\":[],")
+            + (parameterName.equals("CollParameterDef") ? "" : "\"CollParameterDef\":[],")
+            + (parameterName.equals("CollParameterComp") ? "" : "\"CollParameterComp\":[],")
+            + (parameterName.equals("CollParameterETTwoPrim") ? "" : "\"CollParameterETTwoPrim\":[],")
+            + "\"" + parameterName + "\":" + parameterJsonValue + "}",
+        "UARTByteNineParam", null);
+    assertNotNull(parameters);
+    assertEquals(9, parameters.size());
+    Parameter parameter = parameters.get(parameterName);
+    assertNotNull(parameter);
+    return parameter;
   }
 
   private Map<String, Parameter> deserialize(final String input, final String actionName, final String bindingTypeName)
       throws DeserializerException {
-    return deserialize(input,
-        bindingTypeName == null ?
-            edm.getUnboundAction(new FullQualifiedName(NAMESPACE, actionName)) :
-            edm.getBoundAction(new FullQualifiedName(NAMESPACE, actionName),
-                new FullQualifiedName(NAMESPACE, bindingTypeName),
-                false));
+    return OData.newInstance().createDeserializer(ContentType.JSON)
+        .actionParameters(new ByteArrayInputStream(input.getBytes()),
+            bindingTypeName == null ?
+                edm.getUnboundAction(new FullQualifiedName(NAMESPACE, actionName)) :
+                edm.getBoundAction(new FullQualifiedName(NAMESPACE, actionName),
+                    new FullQualifiedName(NAMESPACE, bindingTypeName),
+                    false))
+        .getActionParameters();
   }
 
   private void expectException(final String input, final String actionName, final String bindingTypeName,
