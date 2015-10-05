@@ -19,58 +19,50 @@
 package org.apache.olingo.server.core.deserializer.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Parameter;
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAction;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlAction;
-import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
-import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
-import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.edm.EdmActionImpl;
-import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
-import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
+import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-public class ODataXMLDeserializerActionParametersTest {
+public class ODataXMLDeserializerActionParametersTest extends AbstractODataDeserializerTest {
+
+  private static final String PREAMBLE = "<?xml version='1.0' encoding='UTF-8'?>"
+      + "<metadata:parameters xmlns:data=\"" + Constants.NS_DATASERVICES + "\""
+      + " xmlns:metadata=\"" + Constants.NS_METADATA + "\">";
+  private static final String POSTAMBLE = "</metadata:parameters>";
 
   @Test
   public void empty() throws Exception {
-    final String input = "";
-    final Map<String, Parameter> parameters = deserialize(input, "UART");
+    final Map<String, Parameter> parameters = deserialize(PREAMBLE + POSTAMBLE, "UART", null);
     assertNotNull(parameters);
     assertTrue(parameters.isEmpty());
   }
 
   @Test
   public void primitive() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterInt16>42</ParameterInt16>"
-        +"<ParameterDuration>P42DT11H22M33S</ParameterDuration>"
-        +"</metadata:parameters>";
-    
-    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam");
+    final String input = PREAMBLE
+        + "<data:ParameterDuration>P42DT11H22M33S</data:ParameterDuration>"
+        + "<data:ParameterInt16>42</data:ParameterInt16>"
+        + POSTAMBLE;
+
+    final Map<String, Parameter> parameters = deserialize(input, "UARTTwoParam", null);
     assertNotNull(parameters);
     assertEquals(2, parameters.size());
     Parameter parameter = parameters.get("ParameterInt16");
@@ -80,158 +72,106 @@ public class ODataXMLDeserializerActionParametersTest {
     assertNotNull(parameter);
     assertEquals(BigDecimal.valueOf(3669753), parameter.getValue());
   }
-  
+
+  @Test
+  public void primitiveCollection() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterByte",
+        "<metadata:element>0</metadata:element>"
+        + "<metadata:element>42</metadata:element>"
+        + "<metadata:element>255</metadata:element>");
+    assertNotNull(parameter);
+    assertTrue(parameter.isPrimitive());
+    assertTrue(parameter.isCollection());
+    assertEquals((short) 0, parameter.asCollection().get(0));
+    assertEquals((short) 42, parameter.asCollection().get(1));
+    assertEquals((short) 255, parameter.asCollection().get(2));
+  }
+
+  @Test
+  public void enumeration() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterEnum", "String3,String1");
+    assertTrue(parameter.isEnum());
+    assertFalse(parameter.isCollection());
+    assertEquals((short) 5, parameter.getValue());
+  }
+
+  @Test
+  public void enumCollection() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterEnum",
+        "<metadata:element>String1,String2</metadata:element>"
+        + "<metadata:element>String3,String3,String3</metadata:element>");
+    assertTrue(parameter.isEnum());
+    assertTrue(parameter.isCollection());
+    assertEquals((short) 3, parameter.asCollection().get(0));
+    assertEquals((short) 4, parameter.asCollection().get(1));
+  }
+
+  @Test
+  public void typeDefinition() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterDef", "Test String");
+    assertTrue(parameter.isPrimitive());
+    assertFalse(parameter.isCollection());
+    assertEquals("Test String", parameter.getValue());
+  }
+
+  @Test
+  public void typeDefinitionCollection() throws Exception {
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterDef",
+        "<metadata:element>Test String</metadata:element>"
+        + "<metadata:element>Another String</metadata:element>");
+    assertTrue(parameter.isPrimitive());
+    assertTrue(parameter.isCollection());
+    assertEquals("Test String", parameter.asCollection().get(0));
+    assertEquals("Another String", parameter.asCollection().get(1));
+  }
+
   @Test
   public void complex() throws Exception {
-    EdmProviderImpl provider = mock(EdmProviderImpl.class);
-    CsdlComplexType address = new CsdlComplexType();
-    address.setProperties(Arrays.asList(createProperty("Street", "Edm.String"), 
-        createProperty("Zip", "Edm.Int32")));
-    address.setName("Address");
-    EdmComplexTypeImpl edmAddress = new EdmComplexTypeImpl(provider, 
-        new FullQualifiedName("namespace.Address"), address);    
-    Mockito.stub(provider.getComplexType(Mockito.any(FullQualifiedName.class))).toReturn(edmAddress);
-    
-    List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
-    parameters.add(createParam("param1", "Edm.Int16"));
-    parameters.add(createParam("param2", "namespace.Address"));
-    parameters.add(createParam("param3", "Edm.Int32").setCollection(true));
-    parameters.add(createParam("param4", "Edm.String").setNullable(true));
-    
-    FullQualifiedName actionName = new FullQualifiedName("namespace", "action");
-    CsdlAction csdlAction = new CsdlAction().setName("action1").setParameters(parameters);
-    EdmAction action = new EdmActionImpl(provider, actionName, csdlAction);
-    
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>" + 
-        "<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">\n" + 
-        "  <param1>42</param1>\n" + 
-        "  <param2 metadata:type=\"#namespace.Address\">\n" + 
-        "    <Street>One Microsoft Way</Street>\n" + 
-        "    <Zip>98052</Zip>\n" + 
-        "  </param2>\n" + 
-        "  <param3>\n" + 
-        "    <element>1</element>\n" + 
-        "    <element>42</element>\n" + 
-        "    <element>99</element>\n" + 
-        "  </param3>\n" + 
-        "  <param4 metadata:null=\"true\"/>\n" + 
-        "</metadata:parameters>";
-    final Map<String, Parameter> response = OData.newInstance().createDeserializer(ContentType.APPLICATION_XML)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()), action).getActionParameters();
-    
-    assertNotNull(response);
-    assertEquals(4, response.size());
-    Parameter parameter = response.get("param1");
-    assertNotNull(response);
-    assertEquals((short) 42, parameter.getValue());
-    parameter = response.get("param2");
+    final Parameter parameter = deserializeUARTByteNineParam("ParameterComp",
+        "<data:PropertyInt16>42</data:PropertyInt16>    <data:PropertyString>Yes</data:PropertyString>");
     assertNotNull(parameter);
-    ComplexValue addressValue = (ComplexValue)parameter.getValue();
-    assertEquals("Street", addressValue.getValue().get(0).getName());
-    assertEquals("One Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals("Zip", addressValue.getValue().get(1).getName());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
-    
-    parameter = response.get("param3");
-    assertNotNull(parameter);
-    assertEquals(Arrays.asList(1, 42, 99), parameter.getValue());
-    
-    parameter = response.get("param4");
-    assertNull(parameter.getValue());
+    assertTrue(parameter.isComplex());
+    assertFalse(parameter.isCollection());
+    final List<Property> complexValues = parameter.asComplex().getValue();
+    assertEquals((short) 42, complexValues.get(0).getValue());
+    assertEquals("Yes", complexValues.get(1).getValue());
   }
-  
+
   @Test
   public void complexCollection() throws Exception {
-    EdmProviderImpl provider = mock(EdmProviderImpl.class);
-    CsdlComplexType address = new CsdlComplexType();
-    address.setProperties(Arrays.asList(createProperty("Street", "Edm.String"), 
-        createProperty("Zip", "Edm.Int32")));
-    address.setName("Address");
-    EdmComplexTypeImpl edmAddress = new EdmComplexTypeImpl(provider, 
-        new FullQualifiedName("namespace.Address"), address);    
-    Mockito.stub(provider.getComplexType(Mockito.any(FullQualifiedName.class))).toReturn(edmAddress);
-    
-    List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
-    parameters.add(createParam("param1", "Edm.Int16"));
-    parameters.add(createParam("param2", "namespace.Address").setCollection(true));
-    parameters.add(createParam("param3", "Edm.Int32").setCollection(true));
-    parameters.add(createParam("param4", "Edm.String").setNullable(true));
-    
-    FullQualifiedName actionName = new FullQualifiedName("namespace", "action");
-    CsdlAction csdlAction = new CsdlAction().setName("action1").setParameters(parameters);
-    EdmAction action = new EdmActionImpl(provider, actionName, csdlAction);
-    
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>" + 
-        "<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">\n" + 
-        "  <param1>42</param1>\n" + 
-        "  <param2 metadata:type=\"#namespace.Address\">\n" +
-        "    <element>" +
-        "    <Street>One Microsoft Way</Street>\n" + 
-        "    <Zip>98052</Zip>\n" +
-        "    </element>" +
-        "    <element>" +
-        "    <Street>Two Microsoft Way</Street>\n" + 
-        "    <Zip>98052</Zip>\n" +
-        "    </element>" +        
-        "  </param2>\n" + 
-        "  <param3>\n" + 
-        "    <element>1</element>\n" + 
-        "    <element>42</element>\n" + 
-        "    <element>99</element>\n" + 
-        "  </param3>\n" + 
-        "  <param4 metadata:null=\"true\"/>\n" + 
-        "</metadata:parameters>";
-    final Map<String, Parameter> response = OData.newInstance().createDeserializer(ContentType.APPLICATION_XML)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()), action).getActionParameters();
-    
-    assertNotNull(response);
-    assertEquals(4, response.size());
-    Parameter parameter = response.get("param1");
-    assertNotNull(response);
-    assertEquals((short) 42, parameter.getValue());
-    parameter = response.get("param2");
-    assertNotNull(parameter);
-    ComplexValue addressValue = (ComplexValue)((List<?>)parameter.getValue()).get(0);
-    assertEquals("One Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
+    final Parameter parameter = deserializeUARTByteNineParam("CollParameterComp",
+        "<metadata:element>"
+        + "<data:PropertyInt16>9999</data:PropertyInt16><data:PropertyString>One</data:PropertyString>"
+        + "</metadata:element>"
+        + "<metadata:element>"
+        + "<data:PropertyInt16>-123</data:PropertyInt16><data:PropertyString>Two</data:PropertyString>"
+        + "</metadata:element>");
+    assertTrue(parameter.isComplex());
+    assertTrue(parameter.isCollection());
+    ComplexValue complexValue = (ComplexValue) parameter.asCollection().get(0);
+    assertEquals((short) 9999, complexValue.getValue().get(0).getValue());
+    assertEquals("One", complexValue.getValue().get(1).getValue());
 
-    addressValue = (ComplexValue)((List<?>)parameter.getValue()).get(1);
-    assertEquals("Two Microsoft Way", addressValue.getValue().get(0).getValue());
-    assertEquals(98052, addressValue.getValue().get(1).getValue());
-    
-    parameter = response.get("param3");
-    assertNotNull(parameter);
-    assertEquals(Arrays.asList(1, 42, 99), parameter.getValue());
-    
-    parameter = response.get("param4");
-    assertNull(parameter.getValue());
-  } 
-
-  private CsdlParameter createParam(String name, String type) {
-    return new CsdlParameter().setName(name).setType(new FullQualifiedName(type));
-  }  
-
-  private CsdlProperty createProperty(String name, String type) {
-    return new CsdlProperty().setName(name).setType(type);
+    complexValue = (ComplexValue) parameter.asCollection().get(1);
+    assertEquals((short) -123, complexValue.getValue().get(0).getValue());
+    assertEquals("Two", complexValue.getValue().get(1).getValue());
   }
-  
+
   @Test
   public void boundEmpty() throws Exception {
-    final String input = "";
-    final Map<String, Parameter> parameters = deserialize(input, "BAETAllPrimRT", "ETAllPrim");
+    final Map<String, Parameter> parameters = deserialize(PREAMBLE + POSTAMBLE,
+        "BAETAllPrimRT", "ETAllPrim");
     assertNotNull(parameters);
     assertTrue(parameters.isEmpty());
   }
 
   @Test
-  public void testParameterWithNullLiteral() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterInt16>1</ParameterInt16>"
-        +"</metadata:parameters>";
-    
-    final Map<String, Parameter> parameters = deserialize(input, 
-        "UARTCollStringTwoParam");
+  public void parameterWithNullLiteral() throws Exception {
+    final String input = PREAMBLE
+        + "<data:ParameterInt16>1</data:ParameterInt16>"
+        + "<data:ParameterDuration metadata:null=\"true\" />"
+        + POSTAMBLE;
+    final Map<String, Parameter> parameters = deserialize(input, "UARTCollStringTwoParam", null);
     assertNotNull(parameters);
     assertEquals(2, parameters.size());
     Parameter parameter = parameters.get("ParameterInt16");
@@ -241,63 +181,76 @@ public class ODataXMLDeserializerActionParametersTest {
     assertNotNull(parameter);
     assertEquals(null, parameter.getValue());
   }
-  
+
   @Test
   public void bindingParameter() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterETAllPrim>1</ParameterETAllPrim>"
-        +"</metadata:parameters>";    
+    final String input = PREAMBLE + "<data:ParameterETAllPrim>1</data:ParameterETAllPrim>" + POSTAMBLE;
     deserialize(input, "BAETAllPrimRT", "ETAllPrim");
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void wrongName() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterWrong>1</ParameterWrong>"
-        +"</metadata:parameters>";      
-    deserialize(input, "UARTParam");
+    expectException(PREAMBLE + "<data:ParameterWrong>1</data:ParameterWrong>" + POSTAMBLE,
+        "UARTParam", null, MessageKeys.UNKNOWN_CONTENT);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void nullNotNullable() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterInt16>null</ParameterInt16>"
-        +"</metadata:parameters>";     
-    deserialize(input, "UARTCTTwoPrimParam");
+    expectException(PREAMBLE + "<data:ParameterInt16>null</data:ParameterInt16>" + POSTAMBLE,
+        "UARTCTTwoPrimParam", null, MessageKeys.INVALID_VALUE_FOR_PROPERTY);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void missingParameter() throws Exception {
-    deserialize("", "UARTCTTwoPrimParam");
+    expectException(PREAMBLE + POSTAMBLE, "UARTCTTwoPrimParam", null, MessageKeys.INVALID_NULL_PARAMETER);
   }
 
-  @Test(expected = DeserializerException.class)
+  @Test
   public void parameterTwice() throws Exception {
-    final String input = "<?xml version='1.0' encoding='UTF-8'?>"
-        +"<metadata:parameters xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\">"        
-        +"<ParameterInt16>1</ParameterInt16>"
-        +"<ParameterInt16>2</ParameterInt16>"
-        +"</metadata:parameters>";      
-    deserialize(input, "UARTParam");
-  }
-  
-  protected static final Edm edm = OData.newInstance().createServiceMetadata(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
-  
-  private Map<String, Parameter> deserialize(final String input, final String actionName) throws DeserializerException {
-    return OData.newInstance().createDeserializer(ContentType.APPLICATION_XML)
-        .actionParameters(new ByteArrayInputStream(input.getBytes()),
-            edm.getUnboundAction(new FullQualifiedName("Namespace1_Alias", actionName))).getActionParameters();
+    expectException(PREAMBLE
+        + "<data:ParameterInt16>1</data:ParameterInt16>"
+        + "<data:ParameterInt16>2</data:ParameterInt16>"
+        + POSTAMBLE,
+        "UARTParam", null, MessageKeys.DUPLICATE_PROPERTY);
   }
 
-  private Map<String, Parameter> deserialize(final String input, final String actionName, final String typeName)
+  private Parameter deserializeUARTByteNineParam(final String parameterName, final String parameterXmlValue)
+      throws DeserializerException {
+    final Map<String, Parameter> parameters = deserialize(
+        PREAMBLE + (parameterName.equals("CollParameterByte") ? "" : "<data:CollParameterByte />")
+            + (parameterName.equals("CollParameterEnum") ? "" : "<data:CollParameterEnum />")
+            + (parameterName.equals("CollParameterDef") ? "" : "<data:CollParameterDef />")
+            + (parameterName.equals("CollParameterComp") ? "" : "<data:CollParameterComp />")
+            + (parameterName.equals("CollParameterETTwoPrim") ? "" : "<data:CollParameterETTwoPrim />")
+            + "<data:" + parameterName + ">" + parameterXmlValue + "</data:" + parameterName + ">"
+            + POSTAMBLE,
+        "UARTByteNineParam", null);
+    assertNotNull(parameters);
+    assertEquals(9, parameters.size());
+    Parameter parameter = parameters.get(parameterName);
+    assertNotNull(parameter);
+    return parameter;
+  }
+
+  private Map<String, Parameter> deserialize(final String input, final String actionName, final String bindingTypeName)
       throws DeserializerException {
     return OData.newInstance().createDeserializer(ContentType.APPLICATION_XML)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
-            edm.getBoundAction(new FullQualifiedName("Namespace1_Alias", actionName),
-                new FullQualifiedName("Namespace1_Alias", typeName), false)).getActionParameters();
+            bindingTypeName == null ?
+                edm.getUnboundAction(new FullQualifiedName(NAMESPACE, actionName)) :
+                edm.getBoundAction(new FullQualifiedName(NAMESPACE, actionName),
+                    new FullQualifiedName(NAMESPACE, bindingTypeName),
+                    false))
+        .getActionParameters();
+  }
+
+  private void expectException(final String input, final String actionName, final String bindingTypeName,
+      final DeserializerException.MessageKeys messageKey) {
+    try {
+      deserialize(input, actionName, bindingTypeName);
+      fail("Expected exception not thrown.");
+    } catch (final DeserializerException e) {
+      assertEquals(messageKey, e.getMessageKey());
+    }
   }
 }

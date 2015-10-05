@@ -222,7 +222,14 @@ public class UriValidator {
 
   private RowIndexForUriType rowIndexForResourceKind(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
-
+    
+    final int nonComposableFunctionIndex = getIndexOfLastNonComposableFunction(uriInfo);
+    if(nonComposableFunctionIndex != -1 && (uriInfo.getUriResourceParts().size() - 1) > nonComposableFunctionIndex) {
+      throw new UriValidationException("Non composable functions followed by further resource parts are not allowed", 
+          UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH, 
+          uriInfo.getUriResourceParts().get(nonComposableFunctionIndex + 1).getSegmentValue());
+    }
+    
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
@@ -241,7 +248,11 @@ public class UriValidator {
       idx = rowIndexForEntitySet(lastPathSegment);
       break;
     case function:
-      idx = rowIndexForFunction(lastPathSegment);
+      if(nonComposableFunctionIndex == -1) {
+        idx = rowIndexForFunction(lastPathSegment);
+      } else {
+        idx = RowIndexForUriType.none;
+      }
       break;
     case primitiveProperty:
       idx = rowIndexForPrimitiveProperty(lastPathSegment);
@@ -264,6 +275,21 @@ public class UriValidator {
     }
 
     return idx;
+  }
+
+  private int getIndexOfLastNonComposableFunction(final UriInfo uriInfo) {
+    for(int i = 0; i < uriInfo.getUriResourceParts().size(); i++) {
+      final UriResource resourcePath = uriInfo.getUriResourceParts().get(i);
+      
+      if(resourcePath instanceof UriResourceFunction) {
+        final UriResourceFunction resourceFuntion = (UriResourceFunction) resourcePath;
+        if(!resourceFuntion.getFunction().isComposable()) {
+          return i;
+        }
+      }
+    }
+    
+    return -1;
   }
 
   private RowIndexForUriType rowIndexForValue(final UriInfo uriInfo) throws UriValidationException {
@@ -327,6 +353,12 @@ public class UriValidator {
     RowIndexForUriType idx;
     UriResourceFunction urf = (UriResourceFunction) lastPathSegment;
     EdmReturnType rt = urf.getFunction().getReturnType();
+
+    if(!urf.getFunction().isComposable()) {
+      return RowIndexForUriType.none;
+    }
+    
+    
     switch (rt.getType().getKind()) {
     case ENTITY:
       idx = rt.isCollection() && urf.getKeyPredicates().isEmpty() ?
@@ -527,16 +559,20 @@ public class UriValidator {
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       final boolean isEntitySet = pathSegment.getKind() == UriResourceKind.entitySet;
-      if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty) {
+      final boolean isEntityColFunction = isEntityColFunction(pathSegment);
+      
+      if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty || isEntityColFunction) {
         final List<UriParameter> keyPredicates = isEntitySet ?
             ((UriResourceEntitySet) pathSegment).getKeyPredicates() :
-            ((UriResourceNavigation) pathSegment).getKeyPredicates();
-
+              isEntityColFunction ? ((UriResourceFunction) pathSegment).getKeyPredicates()
+              : ((UriResourceNavigation) pathSegment).getKeyPredicates();
+            
         if (keyPredicates != null) {
 
           final EdmEntityType entityType = isEntitySet ?
               ((UriResourceEntitySet) pathSegment).getEntityType() :
-              (EdmEntityType) ((UriResourceNavigation) pathSegment).getType();
+              isEntityColFunction ? (EdmEntityType) ((UriResourceFunction) pathSegment).getType() 
+              : (EdmEntityType) ((UriResourceNavigation) pathSegment).getType();
           final List<String> keyPredicateNames = entityType.getKeyPredicateNames();
           Map<String, EdmKeyPropertyRef> edmKeys = new HashMap<String, EdmKeyPropertyRef>();
           for (EdmKeyPropertyRef key : entityType.getKeyPropertyRefs()) {
@@ -590,6 +626,17 @@ public class UriValidator {
     }
   }
 
+  private boolean isEntityColFunction(final UriResource pathSegment) {
+    if(pathSegment.getKind() == UriResourceKind.function) {
+      final UriResourceFunction resourceFunction = (UriResourceFunction) pathSegment;
+      final EdmReturnType returnType = resourceFunction.getFunction().getReturnType();
+      
+      return returnType.isCollection() && returnType.getType().getKind() == EdmTypeKind.ENTITY;
+    } else {
+      return false;
+    }
+  }
+  
   private void validatePropertyOperations(final UriInfo uriInfo, final HttpMethod method)
       throws UriValidationException {
     final List<UriResource> parts = uriInfo.getUriResourceParts();

@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 public interface EdmReturnType extends EdmTyped {
 
   /**
-   * @return true if nullable or null if not specified
+   * @return true if nullable or not specified
    */
   boolean isNullable();
 

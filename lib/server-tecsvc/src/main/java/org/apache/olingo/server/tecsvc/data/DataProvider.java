@@ -77,9 +77,12 @@ public class DataProvider {
   }
 
   public EntityCollection readAll(final EdmEntitySet edmEntitySet) throws DataProviderException {
-    final EntityCollection entityCollection = data.get(edmEntitySet.getName());
-
-    return (entityCollection == null) ? createEntityCollection(edmEntitySet) : entityCollection;
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    if (entityCollection == null) {
+      entityCollection = new EntityCollection();
+      data.put(edmEntitySet.getName(), entityCollection);
+    }
+    return entityCollection;
   }
 
   public Entity read(final EdmEntitySet edmEntitySet, final List<UriParameter> keys) throws DataProviderException {
@@ -146,7 +149,7 @@ public class DataProvider {
     final EdmEntityType edmEntityType = edmEntitySet.getEntityType();
     EntityCollection entitySet = readAll(edmEntitySet);
     final List<Entity> entities = entitySet.getEntities();
-    final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntitySet.getEntityType());
+    final Map<String, Object> newKey = findFreeComposedKey(entities, edmEntityType);
     Entity newEntity = new Entity();
     newEntity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
     for (final String keyName : edmEntityType.getKeyPredicateNames()) {
@@ -162,14 +165,6 @@ public class DataProvider {
     entities.add(newEntity);
 
     return newEntity;
-  }
-  
-  private EntityCollection createEntityCollection(final EdmEntitySet edmEntitySet) {
-    if(data.get(edmEntitySet.getName()) == null ) {
-      data.put(edmEntitySet.getName(), new EntityCollection());
-    }
-    
-    return data.get(edmEntitySet.getName());
   }
 
   private Map<String, Object> findFreeComposedKey(final List<Entity> entities, final EdmEntityType entityType)
@@ -545,12 +540,12 @@ public class DataProvider {
 
   public EntityActionResult processActionEntity(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
-    return ActionData.entityAction(name, actionParameters, data);
+    return ActionData.entityAction(name, actionParameters, data, odata, edm);
   }
 
   public EntityCollection processActionEntityCollection(final String name,
       final Map<String, Parameter> actionParameters) throws DataProviderException {
-    return ActionData.entityCollectionAction(name, actionParameters);
+    return ActionData.entityCollectionAction(name, actionParameters, odata, edm);
   }
   
   public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId, 

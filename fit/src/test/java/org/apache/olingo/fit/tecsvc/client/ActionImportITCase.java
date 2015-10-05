@@ -21,6 +21,7 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -42,13 +43,12 @@ import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
-public class ActionImportITCase extends AbstractTecSvcITCase {
+public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void noReturnTypeAction() throws Exception {
@@ -286,6 +286,32 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
     assertEquals("UARTCollStringTwoParam duration value: null", iter.next().asPrimitive().toValue());
   }
 
+  @Test
+  public void allParameterKinds() {
+    Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    parameters.put("ParameterEnum", getFactory().newEnumValue(null, "String3"));
+    parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("ParameterComp", getFactory().newComplexValue(null)
+        .add(getFactory().newPrimitiveProperty("PropertyInt16",
+            getFactory().newPrimitiveValueBuilder().buildInt16((short) 3))));
+    parameters.put("ParameterETTwoPrim", getFactory().newComplexValue(null));
+    parameters.put("CollParameterByte", getFactory().newCollectionValue(null)
+        .add(getFactory().newPrimitiveValueBuilder().buildInt16((short) 10)));
+    parameters.put("CollParameterEnum", getFactory().newCollectionValue(null)
+        .add(getFactory().newEnumValue(null, "String1")));
+    parameters.put("CollParameterDef", getFactory().newCollectionValue(null)
+        .add(getFactory().newPrimitiveValueBuilder().setValue("CollDefString").build()));
+    parameters.put("CollParameterComp", getFactory().newCollectionValue(null)
+        .add(getFactory().newComplexValue(null)
+            .add(getFactory().newPrimitiveProperty("PropertyString",
+                getFactory().newPrimitiveValueBuilder().setValue("CollCompString").build()))));
+    parameters.put("CollParameterETTwoPrim", getFactory().newCollectionValue(null));
+    final ODataInvokeResponse<ClientProperty> response =
+        callAction("AIRTByteNineParam", ClientProperty.class, parameters, false);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals(6, response.getBody().getPrimitiveValue().toValue());
+  }
+
   private Map<String, ClientValue> buildParameterInt16(final int value) {
     return Collections.singletonMap("ParameterInt16",
         (ClientValue) getFactory().newPrimitiveValueBuilder().buildInt16((short) value));
@@ -293,6 +319,8 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
       final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
+    assumeTrue("The client would send wrongly formatted parameters in XML.",
+        parameters == null || parameters.isEmpty() || isJson());  // TODO: XML case
     final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
     ODataInvokeRequest<T> request = getClient().getInvokeRequestFactory()
         .getActionInvokeRequest(actionURI, resultRef, parameters);
@@ -308,10 +336,5 @@ public class ActionImportITCase extends AbstractTecSvcITCase {
       assertEquals("return=minimal", response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
     }
     return response;
-  }
-
-  @Override
-  protected ContentType getContentType() {
-    return ContentType.APPLICATION_JSON;
   }
 }

@@ -506,8 +506,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         expand);
     expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
     final CountOption countOption = uriInfo.getCountOption();
+    
+    String id;
+    if(edmEntitySet == null) {
+      // Used for functions, function imports etc.
+      id = request.getRawODataPath();
+    } else {
+      id = request.getRawBaseUri() + edmEntitySet.getName();
+    }
 
-    final String id = request.getRawBaseUri() + edmEntitySet.getName();
     // Serialize
     final SerializerResult serializerResult = (isReference) ?
         serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :

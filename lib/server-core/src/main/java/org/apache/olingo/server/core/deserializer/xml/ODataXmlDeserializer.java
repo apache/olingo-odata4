@@ -54,6 +54,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.AbstractGeospatialType;
@@ -61,6 +63,7 @@ import org.apache.olingo.commons.core.edm.primitivetype.SingletonPrimitiveType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
@@ -69,11 +72,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
 
   private static final XMLInputFactory FACTORY = new InputFactoryImpl();
   private static final String ATOM = "a";
-  private static final String NS_ATOM = "http://www.w3.org/2005/Atom";  
-  private static final QName REF_ELEMENT = new QName("http://docs.oasis-open.org/odata/ns/metadata", "ref");
-  private static final QName PARAMETERS_ELEMENT = 
-      new QName("http://docs.oasis-open.org/odata/ns/metadata", "parameters");
-  private static final QName ID_ATTR = new QName(NS_ATOM, ATOM);
+  private static final QName REF_ELEMENT = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
+  private static final QName PARAMETERS_ELEMENT = new QName(Constants.NS_METADATA, "parameters");
+  private static final QName ID_ATTR = new QName(Constants.NS_ATOM, ATOM);
 
   private final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
   private final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
@@ -83,16 +84,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
   private final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG); 
   private final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
-  
-//  private void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
-//    writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
-//    writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
-//    writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
-//    writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);
-//    writer.writeNamespace(Constants.PREFIX_GML, Constants.NS_GML);
-//    writer.writeNamespace(Constants.PREFIX_GEORSS, Constants.NS_GEORSS);
-//  }
-  
+
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     return FACTORY.createXMLEventReader(input);
   }
@@ -113,14 +105,15 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           throw new DeserializerException("geo types support not implemented",
               DeserializerException.MessageKeys.NOT_IMPLEMENTED);
         }
+        final EdmPrimitiveType primitiveType = (EdmPrimitiveType) type;
         final String stringValue = event.asCharacters().getData();
-        value = ((EdmPrimitiveType)type).valueOfString(stringValue, 
+        value = primitiveType.valueOfString(stringValue, 
             isNullable, 
             maxLength, 
             precision, 
             scale, 
             isUnicode, 
-            ((EdmPrimitiveType)type).getDefaultType());
+            primitiveType.getDefaultType());
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
@@ -162,13 +155,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {        
-        if (edmType instanceof SingletonPrimitiveType) {
+        if (edmType instanceof SingletonPrimitiveType
+            || edmType.getKind() == EdmTypeKind.ENUM
+            || edmType.getKind() == EdmTypeKind.DEFINITION) {
           values.add(primitive(reader, event.asStartElement(), type, isNullable, 
               maxLength, precision, scale, isUnicode));          
         } else if (edmType instanceof EdmComplexType) {
           values.add(complex(reader, event.asStartElement(), (EdmComplexType) edmType));                    
-        } else if (edmType instanceof EdmEnumType) {
-          values.add(readEnum(reader, event.asStartElement()));          
         }
         // do not add null or empty values
       }
@@ -178,21 +171,6 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       }
     }
     valuable.setValue(getValueType(edmType, true), values);
-  }
-
-  private Object readEnum(XMLEventReader reader, StartElement start) throws XMLStreamException {
-    boolean foundEndProperty = false;
-    Object value = null;
-    while (reader.hasNext() && !foundEndProperty) {
-      final XMLEvent event = reader.nextEvent();
-      if (event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-        value = event.asCharacters().getData();
-      }
-      if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
-        foundEndProperty = true;
-      }
-    }
-    return value;
   }
 
   private Property property(final XMLEventReader reader, final StartElement start, final EdmType edmType,
@@ -222,11 +200,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       return isCollection? ValueType.COLLECTION_COMPLEX:ValueType.COMPLEX;
     } else if (edmType instanceof EdmEnumType) {
       return isCollection?ValueType.COLLECTION_ENUM:ValueType.ENUM;
+    } else if (edmType instanceof EdmTypeDefinition) {
+      return isCollection?ValueType.COLLECTION_PRIMITIVE:ValueType.PRIMITIVE;
     } else {
       return ValueType.PRIMITIVE;
     }
   }
-  
+
   private void valuable(final Valuable valuable, final XMLEventReader reader, final StartElement start,
       final EdmType edmType, final boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final boolean isUnicode, final boolean isCollection) throws XMLStreamException,
@@ -246,22 +226,19 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       return;
     }
 
+    final String typeName = edmType.getFullQualifiedName().getFullQualifiedNameAsString();
+    valuable.setType(isCollection ? ("Collection(" + typeName + ")") : typeName);
     if (isCollection) {
       collection(valuable, reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode);
-      valuable.setType("Collection("+edmType.getFullQualifiedName().getFullQualifiedNameAsString()+")");
-    } else if (edmType instanceof SingletonPrimitiveType) {
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
-      valuable.setValue(ValueType.PRIMITIVE, 
+    } else if (edmType instanceof SingletonPrimitiveType
+        || edmType.getKind() == EdmTypeKind.ENUM
+        || edmType.getKind() == EdmTypeKind.DEFINITION) {
+      valuable.setValue(getValueType(edmType, false),
           primitive(reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode));          
     } else if (edmType instanceof EdmComplexType) {
       valuable.setValue(ValueType.COMPLEX, complex(reader, start, (EdmComplexType) edmType));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
-    } else if (edmType instanceof EdmEnumType) {
-      valuable.setValue(ValueType.ENUM, readEnum(reader, start));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     } else if (edmType instanceof EdmEntityType) {
-      valuable.setValue(ValueType.ENTITY, entity(reader, start, (EdmEntityType)edmType));
-      valuable.setType(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
+      valuable.setValue(ValueType.ENTITY, entity(reader, start, (EdmEntityType) edmType));
     }
     // do not add null or empty values    
   }
@@ -715,12 +692,12 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   public DeserializerResult actionParameters(InputStream stream, EdmAction edmAction) 
       throws DeserializerException {
     Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
-    if(edmAction.getParameterNames() == null || edmAction.getParameterNames().isEmpty()
-        || (edmAction.isBound() && edmAction.getParameterNames().size() == 1)) {
+    if (edmAction.getParameterNames() == null || edmAction.getParameterNames().isEmpty()
+        || edmAction.isBound() && edmAction.getParameterNames().size() == 1) {
       return DeserializerResultImpl.with().actionParameters(parameters)
           .build();
     }
-        
+
     try {             
       final XMLEventReader reader = getReader(stream);
       while (reader.hasNext()) {
@@ -729,14 +706,26 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           consumeParameters(edmAction, reader, event.asStartElement(), parameters);
         }        
       }
-      // NULL fill for missing parameters
-      Parameter nullParameter = new Parameter();
-      nullParameter.setValue(ValueType.PRIMITIVE, null);
-      for (String param:edmAction.getParameterNames()) {
-        if (parameters.get(param) == null) {
-          parameters.put(param, nullParameter);
+      // EDM checks.
+      for (final String param : edmAction.getParameterNames()) {
+        Parameter parameter = parameters.get(param);
+        if (parameter == null) {
+          final EdmParameter edmParameter = edmAction.getParameter(param);
+          if (!edmParameter.isNullable()) {
+            throw new DeserializerException("Non-nullable parameter not present or null: " + param,
+                MessageKeys.INVALID_NULL_PARAMETER, param);
+          }
+          if (edmParameter.isCollection()) {
+            throw new DeserializerException("Collection must not be null for parameter: " + param,
+                MessageKeys.INVALID_NULL_PARAMETER, param);
+          }
+          // NULL fill for missing parameters.
+          parameter = new Parameter();
+          parameter.setName(param);
+          parameter.setValue(ValueType.PRIMITIVE, null);
+          parameters.put(param, parameter);
         }
-      }      
+      }
       return DeserializerResultImpl.with().actionParameters(parameters)
           .build();
     } catch (XMLStreamException e) {
@@ -789,12 +778,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Parameter createParameter(XMLEventReader reader, StartElement start, String paramName, 
       EdmParameter edmParameter) throws DeserializerException, EdmPrimitiveTypeException, XMLStreamException {
     
+    Parameter parameter = new Parameter();
+    parameter.setName(paramName);
     switch (edmParameter.getType().getKind()) {
     case PRIMITIVE:
     case ENUM:
+    case DEFINITION:
     case COMPLEX:
-      Parameter parameter = new Parameter();
-      parameter.setName(paramName);
       Property property = property(reader, start, 
         edmParameter.getType(),
         edmParameter.isNullable(), 
@@ -804,14 +794,21 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         true,
         edmParameter.isCollection());
       parameter.setValue(property.getValueType(), property.getValue());
-      return parameter;
+      break;
     case ENTITY:
-      throw new DeserializerException("Entity parameters are not allowed",
-          DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE);
+      if (edmParameter.isCollection()) {
+        final EntityCollection entityCollection = entitySet(reader, start, (EdmEntityType) edmParameter.getType());
+        parameter.setValue(ValueType.COLLECTION_ENTITY, entityCollection);
+      } else {
+        final Entity entity = entity(reader, start, (EdmEntityType) edmParameter.getType());
+        parameter.setValue(ValueType.ENTITY, entity);
+      }
+      break;
     default:
       throw new DeserializerException("Invalid type kind " + edmParameter.getType().getKind().toString()
           + " for action parameter: " + paramName, DeserializerException.MessageKeys.INVALID_ACTION_PARAMETER_TYPE,
           paramName);
     }
+    return parameter;
   }
 }

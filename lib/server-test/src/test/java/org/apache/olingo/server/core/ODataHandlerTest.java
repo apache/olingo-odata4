@@ -318,17 +318,16 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
     verify(primitiveProcessor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-
+    
+    // FINRTInt16 is not composable so /$value is not allowed
     final String valueUri = "FINRTInt16()/$value";
     final PrimitiveValueProcessor primitiveValueProcessor = mock(PrimitiveValueProcessor.class);
-    dispatch(HttpMethod.GET, valueUri, primitiveValueProcessor);
-    verify(primitiveValueProcessor).readPrimitiveValue(
-        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-    dispatchMethodNotAllowed(HttpMethod.POST, valueUri, primitiveValueProcessor);
-    dispatchMethodNotAllowed(HttpMethod.PATCH, valueUri, primitiveValueProcessor);
-    dispatchMethodNotAllowed(HttpMethod.PUT, valueUri, primitiveValueProcessor);
-    dispatchMethodNotAllowed(HttpMethod.DELETE, valueUri, primitiveValueProcessor);
-
+    dispatchMethodWithError(HttpMethod.GET, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    dispatchMethodWithError(HttpMethod.POST, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    dispatchMethodWithError(HttpMethod.PATCH, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    dispatchMethodWithError(HttpMethod.PUT, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    dispatchMethodWithError(HttpMethod.DELETE, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    
     final String primitiveCollectionUri = "FICRTCollString()";
     PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.GET, primitiveCollectionUri, primitiveCollectionProcessor);
@@ -757,6 +756,13 @@ public class ODataHandlerTest {
   private void dispatchMethodNotAllowed(final HttpMethod method, final String path, final Processor processor) {
     final ODataResponse response = dispatch(method, path, processor);
     assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
+    assertNotNull(response.getContent());
+  }
+  
+  private void dispatchMethodWithError(final HttpMethod method, final String path, final Processor processor, 
+      final HttpStatusCode statusCode) {
+    final ODataResponse response = dispatch(method, path, processor);
+    assertEquals(statusCode.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getContent());
   }
 }

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.data;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,11 +32,13 @@ import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 public class ActionData {
@@ -49,6 +52,21 @@ public class ActionData {
       throws DataProviderException {
     if ("UARTString".equals(name)) {
       return DataCreator.createPrimitive(null, "UARTString string value");
+    } else if ("UARTByteNineParam".equals(name)) {
+      short count = 0;  // counts non-empty parameters
+      for (final String parameterName : parameters.keySet()) {
+        final Parameter parameter = parameters.get(parameterName);
+        if (!(parameter.isNull()
+            || !parameter.isCollection()
+                && (parameter.isComplex() && parameter.asComplex().getValue().isEmpty()
+                    || parameter.isEntity() && ((Entity) parameter.getValue()).getProperties().isEmpty())
+            || parameter.isCollection()
+                && (parameter.isEntity() && ((EntityCollection) parameter.getValue()).getEntities().isEmpty()
+                    || parameter.asCollection().isEmpty()))) {
+          count++;
+        }
+      }
+      return DataCreator.createPrimitive(null, count);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
@@ -101,57 +119,45 @@ public class ActionData {
       throws DataProviderException {
     if ("UARTCTTwoPrimParam".equals(name)) {
       Parameter paramInt16 = parameters.get("ParameterInt16");
-      final Short number = paramInt16 == null ? (short) 32767 : (Short) paramInt16.asPrimitive();
-      return createCTTwoPrimComplexProperty(number, "UARTCTTwoPrimParam string value");
+      final Short number = paramInt16 == null || paramInt16.isNull() ?
+          (short) 32767 :
+          (Short) paramInt16.asPrimitive();
+      return createCTTwoPrimComplexProperty(name, number, "UARTCTTwoPrimParam string value");
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  private static Property createCTTwoPrimComplexProperty(final Short number, final String text) {
-    ComplexValue compValue = new ComplexValue();
-    Property propInt = new Property();
-    propInt.setName("PropertyInt16");
-    propInt.setValue(ValueType.PRIMITIVE, number);
-    compValue.getValue().add(propInt);
-    Property propString = new Property();
-    propString.setName("PropertyString");
-    propString.setValue(ValueType.PRIMITIVE, text);
-    compValue.getValue().add(propString);
-
-    Property complexProp = new Property();
-    complexProp.setValue(ValueType.COMPLEX, compValue);
-    return complexProp;
+  private static Property createCTTwoPrimComplexProperty(final String name, final Short number, final String text) {
+    return DataCreator.createComplex(name,
+        DataCreator.createPrimitive("PropertyInt16", number),
+        DataCreator.createPrimitive("PropertyString", text));
   }
 
   protected static Property complexCollectionAction(final String name, final Map<String, Parameter> parameters)
       throws DataProviderException {
     if ("UARTCollCTTwoPrimParam".equals(name)) {
       List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
-      complexCollection.add(createCTTwoPrimComplexProperty((short) 16, "Test123").asComplex());
-      complexCollection.add(createCTTwoPrimComplexProperty((short) 17, "Test456").asComplex());
-      complexCollection.add(createCTTwoPrimComplexProperty((short) 18, "Test678").asComplex());
-
-      Parameter paramInt16 = parameters.get("ParameterInt16");
-      if (paramInt16 != null) {
-        Short number = (Short) paramInt16.asPrimitive();
-        if (number < 0) {
-          complexCollection.clear();
-        } else if (number >= 0 && number < complexCollection.size()) {
-          complexCollection = complexCollection.subList(0, number);
-        }
-        Property complexCollProperty = new Property();
-        complexCollProperty.setValue(ValueType.COLLECTION_COMPLEX, complexCollection);
-        return complexCollProperty;
+      final Parameter paramInt16 = parameters.get("ParameterInt16");
+      final Short number = paramInt16 == null || paramInt16.isNull() ? 0 : (Short) paramInt16.asPrimitive();
+      if (number >= 1) {
+        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 16, "Test123").asComplex());
       }
+      if (number >= 2) {
+        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 17, "Test456").asComplex());
+      }
+      if (number >= 3) {
+        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 18, "Test678").asComplex());
+      }
+      return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
   protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters,
-      final Map<String, EntityCollection> data) throws DataProviderException {
+      final Map<String, EntityCollection> data, final OData oData, final Edm edm) throws DataProviderException {
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
       Parameter parameter = parameters.get("ParameterInt16");
-      final Short number = parameter == null ? 0 : (Short) parameter.asPrimitive();
+      final Short number = parameter == null || parameter.isNull() ? 0 : (Short) parameter.asPrimitive();
 
       EntityCollection entityCollection = data.get("ESTwoKeyTwoPrim");
       for (Entity entity : entityCollection.getEntities()) {
@@ -180,7 +186,8 @@ public class ActionData {
             }
           }
         } while (!freeKey);
-        return new EntityActionResult().setEntity(createAllPrimEntity(key, "UARTETAllPrimParam string value", date))
+        return new EntityActionResult().setEntity(
+            createAllPrimEntity(key, "UARTETAllPrimParam string value", date, oData, edm))
             .setCreated(true);
       } else {
         return new EntityActionResult().setEntity(entityCollection.getEntities().get(0));
@@ -189,8 +196,9 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.");
   }
 
-  private static Entity createAllPrimEntity(final Short key, final String val, final Calendar date) {
-    return new Entity().addProperty(DataCreator.createPrimitive("PropertyInt16", key))
+  private static Entity createAllPrimEntity(final Short key, final String val, final Calendar date,
+      final OData oData, final Edm edm) throws DataProviderException {
+    Entity entity = new Entity().addProperty(DataCreator.createPrimitive("PropertyInt16", key))
         .addProperty(DataCreator.createPrimitive("PropertyString", val))
         .addProperty(DataCreator.createPrimitive("PropertyBoolean", false))
         .addProperty(DataCreator.createPrimitive("PropertyByte", null))
@@ -206,28 +214,31 @@ public class ActionData {
         .addProperty(DataCreator.createPrimitive("PropertyDuration", null))
         .addProperty(DataCreator.createPrimitive("PropertyGuid", null))
         .addProperty(DataCreator.createPrimitive("PropertyTimeOfDay", null));
+    setEntityId(entity, "ESAllPrim", oData, edm);
+    return entity;
   }
 
-  protected static EntityCollection entityCollectionAction(final String name, final Map<String, Parameter> parameters)
-      throws DataProviderException {
+  protected static EntityCollection entityCollectionAction(final String name, final Map<String, Parameter> parameters,
+      final OData oData, final Edm edm) throws DataProviderException {
     if ("UARTCollETKeyNavParam".equals(name)) {
-      Parameter paramInt16 = parameters.get("ParameterInt16");
-      final Short number = paramInt16 == null ? 0 : (Short) paramInt16.asPrimitive();
       EntityCollection collection = new EntityCollection();
+      Parameter paramInt16 = parameters.get("ParameterInt16");
+      final Short number = paramInt16 == null || paramInt16.isNull() ? 0 : (Short) paramInt16.asPrimitive();
       if (number > 0) {
         for (short i = 1; i <= number; i++) {
-          collection.getEntities().add(createETKeyNavEntity(i));
+          collection.getEntities().add(createETKeyNavEntity(i, oData, edm));
         }
       }
       return collection;
     } else if ("UARTCollETAllPrimParam".equals(name)) {
-      Parameter paramTimeOfDay = parameters.get("ParameterTimeOfDay");
       EntityCollection collection = new EntityCollection();
-      if (paramTimeOfDay != null) {
+      Parameter paramTimeOfDay = parameters.get("ParameterTimeOfDay");
+      if (paramTimeOfDay != null && !paramTimeOfDay.isNull()) {
         Calendar timeOfDay = (Calendar) paramTimeOfDay.asPrimitive();
         int count = timeOfDay.get(Calendar.HOUR_OF_DAY);
         for (short i = 1; i <= count; i++) {
-          collection.getEntities().add(createAllPrimEntity(i, "UARTCollETAllPrimParam int16 value: " + i, null));
+          collection.getEntities().add(
+              createAllPrimEntity(i, "UARTCollETAllPrimParam int16 value: " + i, null, oData, edm));
         }
       }
       return collection;
@@ -236,8 +247,9 @@ public class ActionData {
   }
 
   @SuppressWarnings("unchecked")
-  private static Entity createETKeyNavEntity(final Short number) {
-    return new Entity()
+  private static Entity createETKeyNavEntity(final Short number, final OData oData, final Edm edm)
+      throws DataProviderException {
+    Entity entity = new Entity()
         .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
         .addProperty(DataCreator.createPrimitive("PropertyString", "UARTCollETKeyNavParam int16 value: " + number))
         .addProperty(DataCreator.createComplex("PropertyCompNav", 
@@ -253,6 +265,18 @@ public class ActionData {
             DataCreator.createPrimitive("PropertyString", ""),
             DataCreator.createComplex("PropertyCompNav", 
                 DataCreator.createPrimitive("PropertyInt16", (short) 0))));
+    setEntityId(entity, "ESKeyNav", oData, edm);
+    return entity;
+  }
+
+  private static void setEntityId(Entity entity, final String entitySetName, final OData oData, final Edm edm)
+      throws DataProviderException {
+    try {
+      entity.setId(URI.create(oData.createUriHelper().buildCanonicalURL(
+          edm.getEntityContainer().getEntitySet(entitySetName), entity)));
+    } catch (final SerializerException e) {
+      throw new DataProviderException("Unable to set entity ID!", e);
+    }
   }
 
   protected static Property createKeyNavAllPrimComplexValue(final String name) {

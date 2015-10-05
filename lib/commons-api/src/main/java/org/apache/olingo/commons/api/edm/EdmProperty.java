@@ -42,7 +42,7 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarg
   boolean isPrimitive();
 
   /**
-   * @return true if nullable or null if not specified
+   * @return true if nullable or not specified
    */
   boolean isNullable();
 
@@ -67,7 +67,7 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarg
   SRID getSrid();
 
   /**
-   * @return true if unicode or null if not specified
+   * @return true if unicode or not specified
    */
   boolean isUnicode();
 
