@@ -108,7 +108,7 @@ public class Storage {
     resetDataSet(Integer.MAX_VALUE);
   }
   
-  public void resetDataSet(final Integer amount) {
+  public void resetDataSet(final int amount) {
     // Replace the old lists with empty ones
     productList = new ArrayList<Entity>();
     categoryList = new ArrayList<Entity>();
