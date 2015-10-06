@@ -662,9 +662,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       // do a check for bound functions (which requires a parameter list)
       if (ctx.vlNVO.size() == 0) {
-        throw wrap(new UriParserSemanticException("Expected function parameters for '" + fullBindingTypeName.toString()
-            + "'",
-            UriParserSemanticException.MessageKeys.FUNCTION_PARAMETERS_EXPECTED, fullBindingTypeName.toString()));
+        throw wrap(new UriParserSemanticException("Unknown type for type cast " + fullFilterName.toString() 
+        + " not found", UriParserSemanticException.MessageKeys.UNKNOWN_TYPE , fullFilterName.toString()));
       }
 
       context.contextReadingFunctionParameters = true;

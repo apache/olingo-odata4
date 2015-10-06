@@ -48,6 +48,8 @@ public class UriParserSemanticException extends UriParserException {
     FUNCTION_PARAMETERS_EXPECTED,
     /** parameter: resource part */
     UNKNOWN_PART,
+    /** parameter: type */
+    UNKNOWN_TYPE,
     /** parameter: expression */
     ONLY_FOR_TYPED_PARTS,
     /** parameter: entity type name */

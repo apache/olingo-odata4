@@ -5442,7 +5442,7 @@ public class TestFullResourcePath {
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_PARAMETERS_EXPECTED);
+    .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_TYPE);
 
     // $ref
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$ref")
@@ -5563,7 +5563,13 @@ public class TestFullResourcePath {
     testUri.runEx("AIRTESAllPrimParam/FICRTString()").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("AIRTESAllPrimParam/AIRTString").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
   }
-
+  
+  @Test
+  public void invalidTypeCast() {
+    testUri.runEx("ESAllPrim/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
+    testUri.runEx("ESAllPrim(0)/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
+  }
+  
   @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
     testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
