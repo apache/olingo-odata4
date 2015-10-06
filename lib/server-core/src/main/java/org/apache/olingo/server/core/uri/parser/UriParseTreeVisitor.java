@@ -331,6 +331,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmEntitySet != null
           && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
               || parts.get(0) instanceof UriResourceRoot)) {
+        ensureNamespaceIsNull(ctx.vNS);
         context.contextUriInfo.addResourcePart(
             new UriResourceEntitySetImpl().setEntitSet(edmEntitySet));
         return null;
@@ -341,6 +342,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmSingleton != null
           && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
               || parts.get(0) instanceof UriResourceRoot)) {
+        ensureNamespaceIsNull(ctx.vNS);
         context.contextUriInfo.addResourcePart(
             new UriResourceSingletonImpl().setSingleton(edmSingleton));
         return null;
@@ -351,6 +353,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       if (edmActionImport != null
           && (parts.isEmpty() || !(parts.get(0) instanceof UriResourcePartTyped)
               || parts.get(0) instanceof UriResourceRoot)) {
+        ensureNamespaceIsNull(ctx.vNS);
         context.contextUriInfo.addResourcePart(
             new UriResourceActionImpl().setActionImport(edmActionImport));
         return null;
@@ -396,7 +399,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
               + "' with parameters [" + tmp.toString() + "] not found",
               UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, edmFunctionImport.getName(), tmp.toString()));
         }
-
+        
+        ensureNamespaceIsNull(ctx.vNS);
         uriResource.setFunction(edmFunctionImport.getUnboundFunction(names));
         context.contextUriInfo.addResourcePart(uriResource);
         return null;
@@ -706,6 +710,19 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       throw wrap(new UriParserSemanticException("Unknown resource path segment:" + fullFilterName.toString(),
           UriParserSemanticException.MessageKeys.UNKNOWN_PART, fullFilterName.toString()));
+    }
+  }
+  
+  /**
+   * Ensures that the namespace of the first resource parts is null
+   * @param vNS namespace or null
+   */
+  private void ensureNamespaceIsNull(final NamespaceContext vNS) {
+    if(vNS != null && context.contextUriInfo.getLastResourcePart() == null) {
+      // First resource part and namespace is not null!
+      throw wrap(new UriParserSemanticException("Namespace is not allowed for EntitySets, Singeltons, " 
+          + " Action Imports and Function Imports. Found " + vNS.getText(), 
+            UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT, vNS.getText()));
     }
   }
 

@@ -5571,6 +5571,15 @@ public class TestFullResourcePath {
   }
   
   @Test
+  public void testFirstResourcePathWithNamespace() {
+    testUri.runEx("olingo.odata.test1.ESAllPrim").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.ESAllPrim(0)").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.FINRTInt16()").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.AIRTString").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.SINav").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+  }
+  
+  @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
     testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
         .goPath()
