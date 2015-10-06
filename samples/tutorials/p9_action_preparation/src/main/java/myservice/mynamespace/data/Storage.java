@@ -36,9 +36,7 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.uri.UriParameter;
-import org.apache.olingo.server.api.uri.UriResourceFunction;
 
 import myservice.mynamespace.service.DemoEdmProvider;
 import myservice.mynamespace.util.Util;
@@ -58,74 +56,6 @@ public class Storage {
   }
 
   /* PUBLIC FACADE */
-  
-  
-  public Entity readFunctionImportEntity(final UriResourceFunction uriResourceFunction, 
-      final ServiceMetadata serviceMetadata) throws ODataApplicationException {
-    
-    final EntityCollection entityCollection = readFunctionImportCollection(uriResourceFunction, serviceMetadata);
-    final EdmEntityType edmEntityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
-    
-    return Util.findEntity(edmEntityType, entityCollection, uriResourceFunction.getKeyPredicates());
-  }
-  
-  public EntityCollection readFunctionImportCollection(final UriResourceFunction uriResourceFunction, 
-      final ServiceMetadata serviceMetadata) throws ODataApplicationException {
-    
-    if(DemoEdmProvider.FUNCTION_COUNT_CATEGORIES.equals(uriResourceFunction.getFunctionImport().getName())) {
-      // Get the parameter of the function
-      final UriParameter parameterAmount = uriResourceFunction.getParameters().get(0);
-      // Try to convert the parameter to an Integer.
-      // We have to take care, that the type of parameter fits to its EDM declaration
-      int amount;
-      try {
-        amount = Integer.parseInt(parameterAmount.getText());
-      } catch(NumberFormatException e) {
-        throw new ODataApplicationException("Type of parameter Amount must be Edm.Int32", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
-      }
-      
-      final EdmEntityType productEntityType = serviceMetadata.getEdm().getEntityType(DemoEdmProvider.ET_PRODUCT_FQN);
-      final List<Entity> resultEntityList = new ArrayList<Entity>();
-      
-      // Loop over all categories and check how many products are linked
-      for(final Entity category : categoryList) {
-        final EntityCollection products = getRelatedEntityCollection(category, productEntityType);
-        if(products.getEntities().size() == amount) {
-          resultEntityList.add(category);
-        }
-      }
-      
-      final EntityCollection resultCollection = new EntityCollection();
-      resultCollection.getEntities().addAll(resultEntityList);
-      return resultCollection;
-    } else {
-      throw new ODataApplicationException("Function not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), 
-          Locale.ROOT);
-    }
-  }
-  
-  public void resetDataSet() {
-    resetDataSet(Integer.MAX_VALUE);
-  }
-  
-  public void resetDataSet(final int amount) {
-    // Replace the old lists with empty ones
-    productList = new ArrayList<Entity>();
-    categoryList = new ArrayList<Entity>();
-    
-    // Create new sample data
-    initProductSampleData();
-    initCategorySampleData();
-    
-    // Truncate the lists
-    if(amount < productList.size()) {
-      productList = productList.subList(0, amount);
-      // Products 0, 1 are linked to category 0
-      // Products 2, 3 are linked to category 1
-      // Products 4, 5 are linked to category 2
-      categoryList = categoryList.subList(0, (amount / 2) + 1);
-    }
-  }
   
   public EntityCollection readEntitySetData(EdmEntitySet edmEntitySet) throws ODataApplicationException {
 
