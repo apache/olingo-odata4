@@ -294,12 +294,12 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtCprop() throws Exception {
-    testUri.run("ESAllPrim/olingo.odata.test1.BFCESAllPrimRTCTAllPrim()")
+    testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
     .isKind(UriInfoKind.resource).goPath()
     .first()
     .isEntitySet("ESAllPrim")
     .n()
-    .isFunction("BFCESAllPrimRTCTAllPrim")
+    .isFunction("BFNESAllPrimRTCTAllPrim")
     .isType(ComplexTypeProvider.nameCTAllPrim);
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/olingo.odata.test1.CTBase")
@@ -1188,25 +1188,15 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$search=test")
       .isExSemantic(MessageKeys.NOT_IMPLEMENTED);
     
-    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()")
+    testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
       .isKind(UriInfoKind.resource)
       .goPath().first()
-      .isEntitySet("ESBaseTwoKeyNav")
+      .isEntitySet("ESAllPrim")
       .at(1)
-      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
+      .isFunction("BFNESAllPrimRTCTAllPrim");
     
-    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
-        + "(PropertyInt16=1,PropertyString='1')")
-      .isKind(UriInfoKind.resource)
-      .goPath().first()
-      .isEntitySet("ESBaseTwoKeyNav")
-      .at(1)
-      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey")
-      .isKeyPredicate(0, "PropertyInt16", "1")
-      .isKeyPredicate(1, "PropertyString", "'1'");
-    
-    testUri.runEx("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
-          + "(PropertyInt16=1,PropertyString='1')/NavPropertyETBaseTwoKeyNavOne")
+    testUri.runEx("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()" 
+          + "/PropertyString")
       .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
   }
   

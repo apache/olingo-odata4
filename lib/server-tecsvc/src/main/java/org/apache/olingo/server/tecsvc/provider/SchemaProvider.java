@@ -163,7 +163,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETBaseTwoKeyNavRTETTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESBaseTwoKeyNavRTESBaseTwoKey));
-    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESAllPrimRTCTAllPrim));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFNESAllPrimRTCTAllPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCollCTTwoPrim));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTString));
