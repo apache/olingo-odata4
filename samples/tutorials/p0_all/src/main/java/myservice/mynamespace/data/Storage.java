@@ -20,9 +20,11 @@ package myservice.mynamespace.data;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import myservice.mynamespace.service.DemoEdmProvider;
 import myservice.mynamespace.util.Util;
@@ -36,6 +38,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -45,18 +48,24 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 
 public class Storage {
 
+  /** Special property to store the media content **/
+  private static final String MEDIA_PROPERTY_NAME = "$value";
+  
   // represent our database
   private List<Entity> productList;
   private List<Entity> categoryList;
-
+  private List<Entity> advertisments;
+  
   public Storage() {
 
     productList = new ArrayList<Entity>();
     categoryList = new ArrayList<Entity>();
-
+    advertisments = new ArrayList<Entity>();
+    
     // creating some sample data
     initProductSampleData();
     initCategorySampleData();
+    initAdvertismentSampleData();
   }
 
   /* PUBLIC FACADE */
@@ -135,6 +144,8 @@ public class Storage {
       return getEntityCollection(productList);
     } else if (edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       return getEntityCollection(categoryList);
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_ADVERTISMENTS_NAME)) {
+      return getEntityCollection(advertisments);
     }
 
     return null;
@@ -145,10 +156,12 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       return getEntity(edmEntityType, keyParams, productList);
-    } else if (edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if (edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       return getEntity(edmEntityType, keyParams, categoryList);
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_ADVERTISMENTS_NAME)) {
+      return getEntity(edmEntityType, keyParams, advertisments);
     }
 
     return null;
@@ -210,9 +223,9 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       return createEntity(edmEntityType, entityToCreate, productList);
-    } else if (edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if (edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       return createEntity(edmEntityType, entityToCreate, categoryList);
     }
 
@@ -226,11 +239,13 @@ public class Storage {
       HttpMethod httpMethod) throws ODataApplicationException {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
-
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       updateEntity(edmEntityType, keyParams, updateEntity, httpMethod, productList);
-    } else if (edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if (edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       updateEntity(edmEntityType, keyParams, updateEntity, httpMethod, categoryList);
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_ADVERTISMENTS_NAME)) {
+      updateEntity(edmEntityType, keyParams, updateEntity, httpMethod, advertisments);
     }
   }
 
@@ -239,13 +254,44 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       deleteEntity(edmEntityType, keyParams, productList);
-    } else if (edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if (edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       deleteEntity(edmEntityType, keyParams, categoryList);
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_ADVERTISMENTS_NAME)) {
+      deleteEntity(edmEntityType, keyParams, advertisments);
     }
   }
-
+  
+  public byte[] readMedia(final Entity entity) {
+    return (byte[]) entity.getProperty(MEDIA_PROPERTY_NAME).asPrimitive();
+  }
+  
+  public void updateMedia(final Entity entity, final String mediaContentType, final byte[] data) {
+    entity.getProperties().remove(entity.getProperty(MEDIA_PROPERTY_NAME));
+    entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, data));
+    entity.setMediaContentType(mediaContentType);
+  }
+  
+  public Entity createMediaEntity(final EdmEntityType edmEntityType, final String mediaContentType, 
+      final byte[] data) {
+    Entity entity = null;
+    
+    if(edmEntityType.getName().equals(DemoEdmProvider.ET_ADVERTISMENT_NAME)) {
+      entity = new Entity();
+      entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE, UUID.randomUUID()));
+      entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, null));
+      entity.addProperty(new Property(null, "AirDate", ValueType.PRIMITIVE, null));
+      
+      entity.setMediaContentType(mediaContentType);
+      entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, data));
+      
+      advertisments.add(entity);
+    }
+    
+    return entity;
+  }
+  
   /* INTERNAL */
 
   private Entity createEntity(EdmEntityType edmEntityType, Entity entity, List<Entity> entityList) {
@@ -352,7 +398,8 @@ public class Storage {
     
     Entity entity = getEntity(edmEntityType, keyParams, entityList);
     if (entity == null) {
-      throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ENGLISH);
+      throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(), 
+          Locale.ENGLISH);
     }
 
     entityList.remove(entity);
@@ -451,7 +498,28 @@ public class Storage {
     entity.setId(createId(entity, "ID"));
     categoryList.add(entity);
   }
-
+  
+private void initAdvertismentSampleData() {
+    
+    Entity entity = new Entity();
+    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 
+        UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")));
+    entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Old School Lemonade Store, Retro Style"));
+    entity.addProperty(new Property(null, "AirDate", ValueType.PRIMITIVE, Timestamp.valueOf("2012-11-07 00:00:00")));
+    entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, "Super content".getBytes()));
+    entity.setMediaContentType(ContentType.parse("text/plain").toContentTypeString());
+    advertisments.add(entity);
+    
+    entity = new Entity();
+    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 
+        UUID.fromString("db2d2186-1c29-4d1e-88ef-a127f521b9c67")));
+    entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Early morning start, need coffee"));
+    entity.addProperty(new Property(null, "AirDate", ValueType.PRIMITIVE, Timestamp.valueOf("2000-02-29 00:00:00")));
+    entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, "Super content2".getBytes()));
+    entity.setMediaContentType(ContentType.parse("text/plain").toContentTypeString());
+    advertisments.add(entity);
+  }
+  
   private URI createId(Entity entity, String idPropertyName) {
     return createId(entity, idPropertyName, null);
   }

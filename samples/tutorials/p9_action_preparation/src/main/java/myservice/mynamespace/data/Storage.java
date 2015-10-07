@@ -73,9 +73,9 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       return getEntity(edmEntityType, keyParams, productList);
-    } else if(edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       return getEntity(edmEntityType, keyParams, categoryList);
     }
 
@@ -86,9 +86,9 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       return createEntity(edmEntityType, entityToCreate, productList);
-    } else if(edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       return createEntity(edmEntityType, entityToCreate, categoryList);
     }
 
@@ -103,9 +103,9 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       updateEntity(edmEntityType, keyParams, updateEntity, httpMethod, productList);
-    } else if(edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       updateEntity(edmEntityType, keyParams, updateEntity, httpMethod, categoryList);
     }
   }
@@ -115,9 +115,9 @@ public class Storage {
 
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    if (edmEntityType.getName().equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+    if (edmEntitySet.getName().equals(DemoEdmProvider.ES_PRODUCTS_NAME)) {
       deleteEntity(edmEntityType, keyParams, productList);
-    } else if(edmEntityType.getName().equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+    } else if(edmEntitySet.getName().equals(DemoEdmProvider.ES_CATEGORIES_NAME)) {
       deleteEntity(edmEntityType, keyParams, categoryList);
     }
   }

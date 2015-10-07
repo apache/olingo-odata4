@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -46,6 +47,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -63,7 +65,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import myservice.mynamespace.data.Storage;
 import myservice.mynamespace.util.Util;
 
-public class DemoEntityProcessor implements EntityProcessor {
+public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcessor {
 
   private OData odata;
   private ServiceMetadata serviceMetadata;
@@ -374,5 +376,88 @@ public class DemoEntityProcessor implements EntityProcessor {
 
     // 3. configure the response object
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+
+  @Override
+  public void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException {
+    
+    final UriResource firstResoucePart = uriInfo.getUriResourceParts().get(0);
+    if(firstResoucePart instanceof UriResourceEntitySet) {
+      final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+      final UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) firstResoucePart;
+      
+      final Entity entity = storage.readEntityData(edmEntitySet, uriResourceEntitySet.getKeyPredicates());
+      if(entity == null) {
+        throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(), 
+            Locale.ENGLISH);
+      }
+
+      final byte[] mediaContent = storage.readMedia(entity);
+      final InputStream responseContent = odata.createFixedFormatSerializer().binary(mediaContent);
+      
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setContent(responseContent);
+      response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
+    } else {
+      throw new ODataApplicationException("Not implemented", HttpStatusCode.BAD_REQUEST.getStatusCode(), 
+          Locale.ENGLISH);
+    }
+  }
+
+  @Override
+  public void createMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException {
+    
+    final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+    final byte[] mediaContent = odata.createFixedFormatDeserializer().binary(request.getBody());
+    
+    final Entity entity = storage.createMediaEntity(edmEntitySet.getEntityType(), 
+                                                    requestFormat.toContentTypeString(), 
+                                                    mediaContent);
+    
+    final ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build();
+    final EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
+    final SerializerResult serializerResult = odata.createSerializer(responseFormat).entity(serviceMetadata,
+        edmEntitySet.getEntityType(), entity, opts);
+    
+    final String location = request.getRawBaseUri() + '/'
+        + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity);
+    response.setContent(serializerResult.getContent());
+    response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
+    response.setHeader(HttpHeader.LOCATION, location);
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+
+  @Override
+  public void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException {
+    
+    final UriResource firstResoucePart = uriInfo.getUriResourceParts().get(0);
+    if (firstResoucePart instanceof UriResourceEntitySet) {
+      final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+      final UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) firstResoucePart;
+
+      final Entity entity = storage.readEntityData(edmEntitySet, uriResourceEntitySet.getKeyPredicates());
+      if (entity == null) {
+        throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(),
+            Locale.ENGLISH);
+      }
+      
+      final byte[] mediaContent = odata.createFixedFormatDeserializer().binary(request.getBody());
+      storage.updateMedia(entity, requestFormat.toContentTypeString(), mediaContent);
+      
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    } else {
+      throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), 
+          Locale.ENGLISH);
+    }
+  }    
+
+  @Override
+  public void deleteMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    
+    deleteEntity(request, response, uriInfo);
   }
 }
