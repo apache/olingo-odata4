@@ -192,10 +192,10 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
   }
 
   @Override
-  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
+  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
     CsdlSchema schema = xmlSchemas.get(targetName.getNamespace());
     if (schema != null) {
-      return schema.getAnnotationGroup(targetName.getName());
+      return schema.getAnnotationGroup(targetName.getName(), qualifier);
     }
     return null;
   }

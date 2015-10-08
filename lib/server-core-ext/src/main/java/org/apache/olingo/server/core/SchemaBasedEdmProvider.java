@@ -303,7 +303,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   }
 
   @Override
-  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName) throws ODataException {
+  public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
     return null;
   }
 }

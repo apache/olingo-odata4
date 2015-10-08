@@ -20,9 +20,6 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 
 import java.io.Serializable;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
-
 /**
  * Super type of all annotation expressions
  * A expression is either constant or dynamic
@@ -36,7 +33,7 @@ public interface AnnotationExpression extends Serializable {
   boolean isConstant();
 
   /**
-   * Casts the expression to {@link EdmConstantAnnotationExpression}
+   * Casts the expression to {@link org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression}
    * @return Constant Expression
    */
   ConstantAnnotationExpression asConstant();
@@ -48,7 +45,7 @@ public interface AnnotationExpression extends Serializable {
   boolean isDynamic();
 
   /**
-   * Cast the expression to {@link EdmDynamicAnnotationExpression}
+   * Cast the expression to {@link org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression}
    * @return Dynamic Expression
    */
   DynamicAnnotationExpression asDynamic();

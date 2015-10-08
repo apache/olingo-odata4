@@ -144,7 +144,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(metadata);
 
     assertFalse(metadata.getSchema(0).getAnnotationGroups().isEmpty());
-    final CsdlAnnotations annots = metadata.getSchema(0).getAnnotationGroup("ODataDemo.DemoService/Suppliers");
+    final CsdlAnnotations annots = metadata.getSchema(0).getAnnotationGroup("ODataDemo.DemoService/Suppliers", null);
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
     assertEquals(ConstantAnnotationExpression.Type.String,
@@ -285,7 +285,7 @@ public class MetadataTest extends AbstractTest {
     assertNotNull(metadata);
 
     // Check displayName
-    final CsdlAnnotation displayName = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Supplier").
+    final CsdlAnnotation displayName = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Supplier", null).
         getAnnotation("Vocabulary1.DisplayName");
     assertNotNull(displayName);
     assertTrue(displayName.getExpression().isDynamic());
@@ -307,7 +307,7 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Address/CountryName", thirdArg.getValue());
 
     // Check Tags
-    final CsdlAnnotation tags = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Product").
+    final CsdlAnnotation tags = metadata.getSchema(0).getAnnotationGroup("ODataDemo.Product", null).
         getAnnotation("Vocabulary1.Tags");
     assertNotNull(tags);
     assertTrue(tags.getExpression().isDynamic());

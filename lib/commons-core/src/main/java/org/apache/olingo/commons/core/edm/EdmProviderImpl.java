@@ -342,12 +342,11 @@ public class EdmProviderImpl extends AbstractEdm {
   }
 
   @Override
-  protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
+  protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName, String qualifier) {
     try {
-      EdmSchema schema = getSchema(targetName.getNamespace());
-      CsdlAnnotations providerGroup = provider.getAnnotationsGroup(targetName);
+      CsdlAnnotations providerGroup = provider.getAnnotationsGroup(targetName, qualifier);
       if (providerGroup != null) {
-        return new EdmAnnotationsImpl(this, schema, providerGroup);
+        return new EdmAnnotationsImpl(this, providerGroup);
       }
       return null;
     } catch (ODataException e) {

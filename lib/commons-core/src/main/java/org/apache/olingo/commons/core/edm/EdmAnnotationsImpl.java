@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmAnnotationsTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -39,14 +38,12 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 public class EdmAnnotationsImpl implements EdmAnnotations {
 
   private final Edm edm;
-  private final EdmSchema schema;
   private final CsdlAnnotations annotationGroup;
   private EdmAnnotationsTarget target;
   private List<EdmAnnotation> annotations;
 
-  public EdmAnnotationsImpl(final Edm edm, final EdmSchema schema, final CsdlAnnotations annotationGroup) {
+  public EdmAnnotationsImpl(final Edm edm, final CsdlAnnotations annotationGroup) {
     this.edm = edm;
-    this.schema = schema;
     this.annotationGroup = annotationGroup;
   }
 
@@ -80,7 +77,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
       final FullQualifiedName base = new FullQualifiedName(splitted[0]);
       final String path = splitted.length > 1 ? splitted[1] : null;
 
-      final EdmEntityContainer baseEntityContainer = schema.getEntityContainer();
+      final EdmEntityContainer baseEntityContainer = edm.getEntityContainer();
 
       EdmAnnotationsTarget localTarget = baseEntityContainer == null ? null
           : baseEntityContainer.getActionImport(path);

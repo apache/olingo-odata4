@@ -270,7 +270,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
         } else {
           targetName = new FullQualifiedName(namespace, annotationGroup.getTarget());
         }
-        EdmAnnotationsImpl annotationsImpl = new EdmAnnotationsImpl(edm, this, annotationGroup);
+        EdmAnnotationsImpl annotationsImpl = new EdmAnnotationsImpl(edm, annotationGroup);
         annotationGroups.add(annotationsImpl);
         edm.cacheAnnotationGroup(targetName, annotationsImpl);
       }

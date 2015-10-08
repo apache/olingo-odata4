@@ -285,7 +285,7 @@ public class EdmImplCallCreateTest {
     }
 
     @Override
-    protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName) {
+    protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName, String qualifier) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
   }
