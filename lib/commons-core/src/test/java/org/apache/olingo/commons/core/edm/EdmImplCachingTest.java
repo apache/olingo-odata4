@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -247,6 +247,40 @@ public class EdmImplCachingTest {
     assertNotSame(function, function2);
   }
 
+  @Test
+  public void cacheTerm() {
+    EdmTerm term1 = edm.getTerm(NAME1);
+    assertNotNull(term1);
+
+    EdmTerm cachedTerm = edm.getTerm(NAME1);
+    assertNotNull(cachedTerm);
+
+    assertEquals(term1, cachedTerm);
+    assertTrue(term1 == cachedTerm);
+
+    EdmTerm term2 = edm.getTerm(NAME2);
+    assertNotNull(term2);
+
+    assertNotSame(term1, term2);
+  }
+
+  @Test
+  public void cacheAnnotationsGroup() {
+    EdmAnnotations annotationGroup1 = edm.getAnnotationGroup(NAME1, null);
+    assertNotNull(annotationGroup1);
+
+    EdmAnnotations cachedAnnotationGroup = edm.getAnnotationGroup(NAME1, null);
+    assertNotNull(cachedAnnotationGroup);
+
+    assertEquals(annotationGroup1, cachedAnnotationGroup);
+    assertTrue(annotationGroup1 == cachedAnnotationGroup);
+    
+    EdmAnnotations annotationGroup2 = edm.getAnnotationGroup(NAME1, "");
+    assertNotNull(annotationGroup2);
+    
+    assertNotSame(annotationGroup1, annotationGroup2);
+  }
+
   @Before
   public void setup() {
     edm = new LocalEdm();
@@ -417,12 +451,26 @@ public class EdmImplCachingTest {
 
     @Override
     protected EdmTerm createTerm(final FullQualifiedName termName) {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if(NAME1.equals(termName) || NAME2.equals(termName)){
+        EdmTerm term = mock(EdmTerm.class);
+        when(term.getFullQualifiedName()).thenReturn(termName);
+        return term;
+      }
+      return null;
     }
 
     @Override
     protected EdmAnnotations createAnnotationGroup(final FullQualifiedName target, String qualifier) {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if(NAME1.equals(target) && qualifier == null){
+        EdmAnnotations annotationGroup = mock(EdmAnnotations.class);
+        when(annotationGroup.getQualifier()).thenReturn(null);
+        return annotationGroup;
+      }else if(NAME1.equals(target) && "".equals(qualifier)){
+        EdmAnnotations annotationGroup = mock(EdmAnnotations.class);
+        when(annotationGroup.getQualifier()).thenReturn("");
+        return annotationGroup;
+      }
+      return null;
     }
   }
 }

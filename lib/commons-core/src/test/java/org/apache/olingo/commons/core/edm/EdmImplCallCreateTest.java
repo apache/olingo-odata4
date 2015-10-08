@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -149,6 +149,26 @@ public class EdmImplCallCreateTest {
     assertNull(edm.getUnboundFunction(WRONG_FQN, null));
   }
 
+  @Test
+  public void callCreateTerm() {
+    EdmTerm term = edm.getTerm(FQN);
+    assertNotNull(term);
+
+    assertEquals(FQN, term.getFullQualifiedName());
+
+    assertNull(edm.getTerm(WRONG_FQN));
+  }
+
+  @Test
+  public void callCreateAnnotationGroup() {
+    EdmAnnotations annotationGroup = edm.getAnnotationGroup(FQN, null);
+    assertNotNull(annotationGroup);
+
+    assertEquals(null, annotationGroup.getQualifier());
+
+    assertNull(edm.getAnnotationGroup(WRONG_FQN, null));
+  }
+
   @Before
   public void setup() {
     edm = new LocalEdm();
@@ -281,12 +301,22 @@ public class EdmImplCallCreateTest {
 
     @Override
     protected EdmTerm createTerm(final FullQualifiedName termName) {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (FQN.equals(termName)) {
+        EdmTerm term = mock(EdmTerm.class);
+        when(term.getFullQualifiedName()).thenReturn(FQN);
+        return term;
+      }
+      return null;
     }
 
     @Override
     protected EdmAnnotations createAnnotationGroup(final FullQualifiedName targetName, String qualifier) {
-      throw new UnsupportedOperationException("Not supported yet.");
+      if (FQN.equals(targetName) && qualifier == null) {
+        EdmAnnotations annotationGroup = mock(EdmAnnotations.class);
+        when(annotationGroup.getQualifier()).thenReturn(qualifier);
+        return annotationGroup;
+      }
+      return null;
     }
   }
 }
