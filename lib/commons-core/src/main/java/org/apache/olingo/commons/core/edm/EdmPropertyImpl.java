@@ -24,21 +24,18 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 
 public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, EdmElement {
 
-  private final FullQualifiedName structuredTypeName;
   private final CsdlProperty property;
   private final EdmTypeInfo typeInfo;
   private EdmType propertyType;
 
-  public EdmPropertyImpl(final Edm edm, final FullQualifiedName structuredTypeName, final CsdlProperty property) {
+  public EdmPropertyImpl(final Edm edm, final CsdlProperty property) {
     super(edm, property.getName(), property);
 
-    this.structuredTypeName = structuredTypeName;
     this.property = property;
     typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
   }
@@ -108,16 +105,6 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.Property;
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return structuredTypeName;
   }
 
   @Override

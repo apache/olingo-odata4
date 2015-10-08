@@ -21,7 +21,6 @@ package org.apache.olingo.commons.core.edm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmTerm;
@@ -38,7 +37,7 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   private final EdmTypeInfo typeInfo;
   private EdmType termType;
   private EdmTerm baseTerm;
-  private List<Class<?>> appliesTo;
+  private List<String> appliesTo;
 
   public EdmTermImpl(final Edm edm, final String namespace, final CsdlTerm term) {
     super(edm, term.getName(), term);
@@ -82,24 +81,16 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   }
 
   @Override
-  public List<Class<?>> getAppliesTo() {
+  public List<String> getAppliesTo() {
     if (appliesTo == null) {
-      final List<Class<?>> appliesToLocal = new ArrayList<Class<?>>();
-      for (String element : term.getAppliesTo()) {
-        try {
-          appliesToLocal.add(ClassUtils.getClass(EdmTerm.class.getPackage().getName() + ".Edm" + element));
-        } catch (ClassNotFoundException e) {
-          throw new EdmException("Could not load Edm class for {} " + element, e);
-        }
-      }
-
-      appliesTo = appliesToLocal;
+      appliesTo = new ArrayList<String>();
+      appliesTo.addAll(term.getAppliesTo());
     }
     return appliesTo;
   }
 
   @Override
-  public Boolean isNullable() {
+  public boolean isNullable() {
     return term.isNullable();
   }
 
@@ -131,15 +122,5 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.Term;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return getFullQualifiedName();
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return null;
   }
 }

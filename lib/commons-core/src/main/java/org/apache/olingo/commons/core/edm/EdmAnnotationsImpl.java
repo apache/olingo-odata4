@@ -145,4 +145,9 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
     return annotations;
   }
 
+  @Override
+  public String getTargetPath() {
+    return annotationGroup.getTarget();
+  }
+
 }

@@ -20,33 +20,20 @@ package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmMember;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
 
 public class EdmMemberImpl extends AbstractEdmNamed implements EdmMember {
 
-  private final FullQualifiedName enumFQN;
   private final CsdlEnumMember member;
 
-  public EdmMemberImpl(final Edm edm, final FullQualifiedName enumFQN, final CsdlEnumMember member) {
+  public EdmMemberImpl(final Edm edm, final CsdlEnumMember member) {
     super(edm, member.getName(), member);
-    this.enumFQN = enumFQN;
     this.member = member;
   }
 
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.Member;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return enumFQN;
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
   }
 
   @Override

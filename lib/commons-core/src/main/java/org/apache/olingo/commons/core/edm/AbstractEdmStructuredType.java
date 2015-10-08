@@ -145,22 +145,12 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
     return true;
   }
 
-  @Override
-  public String getAnnotationsTargetPath() {
-    return null;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return getFullQualifiedName();
-  }
-
   public Map<String, EdmProperty> getProperties() {
     if (properties == null) {
       final Map<String, EdmProperty> localPorperties = new LinkedHashMap<String, EdmProperty>();
       final List<CsdlProperty> structureTypeProperties = providerStructuredType.getProperties();
       for (CsdlProperty property : structureTypeProperties) {
-        localPorperties.put(property.getName(), new EdmPropertyImpl(edm, typeName, property));
+        localPorperties.put(property.getName(), new EdmPropertyImpl(edm, property));
       }
       properties = Collections.unmodifiableMap(localPorperties);
     }
@@ -177,7 +167,7 @@ public abstract class AbstractEdmStructuredType extends EdmTypeImpl implements E
       if (structuredTypeNavigationProperties != null) {
         for (CsdlNavigationProperty navigationProperty : structuredTypeNavigationProperties) {
           localNavigationProperties.put(navigationProperty.getName(),
-              new EdmNavigationPropertyImpl(edm, typeName, navigationProperty));
+              new EdmNavigationPropertyImpl(edm, navigationProperty));
         }
       }
 

@@ -54,17 +54,6 @@ public interface EdmAnnotationsTarget {
   }
 
   /**
-   * @return {@link FullQualifiedName} of this target, or of the parent element if applicable
-   *
-   */
-  FullQualifiedName getAnnotationsTargetFQN();
-
-  /**
-   * @return name of child element, not null if not needed
-   */
-  String getAnnotationsTargetPath();
-
-  /**
    * @return {@link TargetType} of this target
    */
   TargetType getAnnotationsTargetType();

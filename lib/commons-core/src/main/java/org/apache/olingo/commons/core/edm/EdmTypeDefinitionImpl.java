@@ -149,14 +149,4 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
   public TargetType getAnnotationsTargetType() {
     return TargetType.TypeDefinition;
   }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return getFullQualifiedName();
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
-  }
 }

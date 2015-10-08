@@ -57,7 +57,7 @@ public class EdmNavigationPropertyImplTest {
     CsdlNavigationProperty propertyProvider = new CsdlNavigationProperty();
     propertyProvider.setType(entityTypeName);
     propertyProvider.setNullable(false);
-    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, entityTypeName, propertyProvider);
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     assertFalse(property.isCollection());
     assertFalse(property.isNullable());
     EdmType type = property.getType();
@@ -87,7 +87,7 @@ public class EdmNavigationPropertyImplTest {
     referentialConstraints.add(new CsdlReferentialConstraint().setProperty("property").setReferencedProperty(
         "referencedProperty"));
     propertyProvider.setReferentialConstraints(referentialConstraints);
-    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, entityTypeName, propertyProvider);
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     assertEquals("property", property.getReferencingPropertyName("referencedProperty"));
     assertNull(property.getReferencingPropertyName("wrong"));
   }
@@ -108,7 +108,7 @@ public class EdmNavigationPropertyImplTest {
     propertyProvider.setType(entityTypeName);
     propertyProvider.setNullable(false);
     propertyProvider.setPartner("partnerName");
-    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, entityTypeName, propertyProvider);
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     EdmNavigationProperty partner = property.getPartner();
     assertNotNull(partner);
 
@@ -132,7 +132,7 @@ public class EdmNavigationPropertyImplTest {
     propertyProvider.setType(entityTypeName);
     propertyProvider.setNullable(false);
     propertyProvider.setPartner("wrong");
-    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, entityTypeName, propertyProvider);
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     property.getPartner();
   }
 
@@ -140,7 +140,7 @@ public class EdmNavigationPropertyImplTest {
   public void navigationPropertyWithNonExistentType() throws Exception {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     CsdlNavigationProperty propertyProvider = new CsdlNavigationProperty();
-    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, null, propertyProvider);
+    EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     property.getType();
   }
 }

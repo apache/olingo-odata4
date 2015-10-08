@@ -38,8 +38,6 @@ public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnno
 
   private List<String> appliesTo = new ArrayList<String>();
 
-  private boolean isCollection;
-
   // Facets
   private String defaultValue;
 
@@ -128,26 +126,6 @@ public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnno
    */
   public CsdlTerm setAppliesTo(final List<String> appliesTo) {
     this.appliesTo = appliesTo;
-    return this;
-  }
-
-  /**
-   * Is collection.
-   *
-   * @return the boolean
-   */
-  public boolean isCollection() {
-    return isCollection;
-  }
-
-  /**
-   * Sets collection.
-   *
-   * @param isCollection the is collection
-   * @return the collection
-   */
-  public CsdlTerm setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
     return this;
   }
 

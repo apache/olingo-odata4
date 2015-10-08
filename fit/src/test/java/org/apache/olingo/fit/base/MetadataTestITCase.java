@@ -115,8 +115,8 @@ public class MetadataTestITCase extends AbstractTestITCase {
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
-    assertTrue(isLanguageDependent.getAppliesTo().contains(EdmProperty.class));
-    assertTrue(isLanguageDependent.getAppliesTo().contains(EdmTerm.class));
+    assertTrue(isLanguageDependent.getAppliesTo().contains("Property"));
+    assertTrue(isLanguageDependent.getAppliesTo().contains("Term"));
     assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core.Tag")), isLanguageDependent.getType());
     assertEquals(EdmBoolean.getInstance(), ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
     assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm, null));

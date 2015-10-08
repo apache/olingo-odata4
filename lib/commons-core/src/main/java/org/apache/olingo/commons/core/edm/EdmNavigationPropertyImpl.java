@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,16 +35,13 @@ import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmElement, EdmNavigationProperty {
 
-  private final FullQualifiedName structuredTypeName;
   private final CsdlNavigationProperty navigationProperty;
   private List<EdmReferentialConstraint> referentialConstraints;
   private EdmEntityType typeImpl;
   private EdmNavigationProperty partnerNavigationProperty;
 
-  public EdmNavigationPropertyImpl(
-      final Edm edm, final FullQualifiedName structuredTypeName, final CsdlNavigationProperty navigationProperty) {
+  public EdmNavigationPropertyImpl(final Edm edm, final CsdlNavigationProperty navigationProperty) {
     super(edm, navigationProperty.getName(), navigationProperty);
-    this.structuredTypeName = structuredTypeName;
     this.navigationProperty = navigationProperty;
   }
 
@@ -128,15 +125,5 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.NavigationProperty;
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return structuredTypeName;
   }
 }

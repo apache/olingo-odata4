@@ -32,6 +32,9 @@ public interface EdmTerm extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable 
    */
   EdmType getType();
 
+  /**
+   * @return the fully qualified name of this term
+   */
   FullQualifiedName getFullQualifiedName();
 
   /**
@@ -46,12 +49,12 @@ public interface EdmTerm extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable 
    * @return list of CSDL element that this term can be applied to; if no value is supplied, the term is not restricted
    * in its application.
    */
-  List<Class<?>> getAppliesTo();
+  List<String> getAppliesTo();
 
   /**
-   * @return true if nullable or null if not specified
+   * @return true if nullable
    */
-  Boolean isNullable();
+  boolean isNullable();
 
   /**
    * @return the maximum length as an Integer or null if not specified

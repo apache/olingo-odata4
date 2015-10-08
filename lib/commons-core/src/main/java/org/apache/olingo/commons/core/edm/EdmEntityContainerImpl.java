@@ -311,16 +311,6 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   }
 
   @Override
-  public String getAnnotationsTargetPath() {
-    return null;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return getFullQualifiedName();
-  }
-
-  @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EntityContainer;
   }

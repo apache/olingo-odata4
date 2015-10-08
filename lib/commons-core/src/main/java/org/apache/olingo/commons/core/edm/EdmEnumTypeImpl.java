@@ -103,7 +103,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     final List<String> memberNamesLocal = new ArrayList<String>();
     if (enumType.getMembers() != null) {
       for (final CsdlEnumMember member : enumType.getMembers()) {
-        membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, getFullQualifiedName(), member));
+        membersMapLocal.put(member.getName(), new EdmMemberImpl(edm, member));
         memberNamesLocal.add(member.getName());
       }
 
@@ -254,16 +254,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   @Override
   public TargetType getAnnotationsTargetType() {
     return TargetType.EnumType;
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return null;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return getFullQualifiedName();
   }
   
   @Override

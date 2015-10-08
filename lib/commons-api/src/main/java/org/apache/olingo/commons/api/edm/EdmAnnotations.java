@@ -34,8 +34,22 @@ public interface EdmAnnotations {
    * @return a string allowing annotation authors a means of conditionally applying an annotation
    */
   String getQualifier();
+  
+  /**
+   * Will return the full path to the target 
+   * e.g. MySchema.MyEntityContainer/MyEntitySet/MySchema.MyEntityType/MyProperty
+   * @return the path to the target
+   */
+  String getTargetPath();
 
+  /**
+   * @param term
+   * @return the annotation for the given term or null if not present
+   */
   EdmAnnotation getAnnotation(EdmTerm term);
 
+  /**
+   * @return a list of all annotations
+   */
   List<EdmAnnotation> getAnnotations();
 }

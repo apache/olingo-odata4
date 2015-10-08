@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlBindingTarget;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 
@@ -76,16 +75,6 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
           + getName());
     }
     return entityType;
-  }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return container.getFullQualifiedName();
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
   }
 
   @Override

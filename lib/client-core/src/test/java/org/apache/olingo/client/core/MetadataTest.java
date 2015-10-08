@@ -167,8 +167,7 @@ public class MetadataTest extends AbstractTest {
     final EdmAnnotationsTarget annotationsTarget = annotationGroup.getTarget();
     assertNotNull(annotationsTarget);
     assertTrue(EdmAnnotationsTarget.TargetType.Property == annotationsTarget.getAnnotationsTargetType());
-    assertEquals(new FullQualifiedName("ODataDemo.Product"), annotationsTarget.getAnnotationsTargetFQN());
-    assertEquals("Name", annotationsTarget.getAnnotationsTargetPath());
+    assertEquals("ODataDemo.Product/Name", annotationGroup.getTargetPath());
 
     final EdmAnnotation annotation = annotationGroup.getAnnotations().get(0);
     assertNotNull(annotation);

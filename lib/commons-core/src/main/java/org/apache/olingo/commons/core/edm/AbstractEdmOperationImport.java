@@ -67,14 +67,4 @@ public abstract class AbstractEdmOperationImport extends AbstractEdmNamed implem
   public EdmEntityContainer getEntityContainer() {
     return container;
   }
-
-  @Override
-  public FullQualifiedName getAnnotationsTargetFQN() {
-    return container.getFullQualifiedName();
-  }
-
-  @Override
-  public String getAnnotationsTargetPath() {
-    return getName();
-  }
 }

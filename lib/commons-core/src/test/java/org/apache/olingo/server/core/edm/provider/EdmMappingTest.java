@@ -27,7 +27,6 @@ import java.util.Date;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
@@ -40,7 +39,7 @@ public class EdmMappingTest {
   @Test
   public void initialMappingMustBeNull() {
     CsdlProperty property = new CsdlProperty().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
-    EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
+    EdmProperty edmProperty = new EdmPropertyImpl(null, property);
 
     assertNull(edmProperty.getMapping());
 
@@ -56,7 +55,7 @@ public class EdmMappingTest {
     CsdlProperty property = new CsdlProperty()
         .setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName())
         .setMapping(mapping);
-    EdmProperty edmProperty = new EdmPropertyImpl(null, new FullQualifiedName("namespace.name"), property);
+    EdmProperty edmProperty = new EdmPropertyImpl(null, property);
 
     assertNotNull(edmProperty.getMapping());
     assertEquals(Date.class, edmProperty.getMapping().getMappedJavaClass());

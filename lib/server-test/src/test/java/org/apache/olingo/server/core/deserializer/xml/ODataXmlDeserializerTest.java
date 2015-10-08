@@ -487,7 +487,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     CsdlProperty prop = new CsdlProperty();
     prop.setName("ShipTo");
     prop.setType(new FullQualifiedName("Model.Address"));
-    EdmPropertyImpl edmProperty = new EdmPropertyImpl(edm, null, prop);
+    EdmPropertyImpl edmProperty = new EdmPropertyImpl(edm, prop);
 
     String payload = "<data:ShipTo xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\" " +
         " xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +

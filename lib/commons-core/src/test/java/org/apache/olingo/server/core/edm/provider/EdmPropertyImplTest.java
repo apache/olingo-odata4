@@ -49,7 +49,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));
     CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(EdmPrimitiveTypeKind.Binary.getFullQualifiedName());
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     assertTrue(property.isPrimitive());
     final EdmType type = property.getType();
     assertEquals(EdmTypeKind.PRIMITIVE, type.getKind());
@@ -66,7 +66,7 @@ public class EdmPropertyImplTest {
     when(provider.getComplexType(complexTypeName)).thenReturn(complexTypeProvider);
     CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(complexTypeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, complexTypeName, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     assertFalse(property.isCollection());
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
@@ -84,7 +84,7 @@ public class EdmPropertyImplTest {
     when(provider.getEnumType(enumTypeName)).thenReturn(enumTypeProvider);
     CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(enumTypeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     assertFalse(property.isCollection());
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
@@ -103,7 +103,7 @@ public class EdmPropertyImplTest {
     when(provider.getTypeDefinition(typeName)).thenReturn(typeProvider);
     CsdlProperty propertyProvider = new CsdlProperty();
     propertyProvider.setType(typeName);
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     assertFalse(property.isPrimitive());
     final EdmType type = property.getType();
     assertEquals(EdmTypeKind.DEFINITION, type.getKind());
@@ -117,7 +117,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final CsdlProperty propertyProvider = new CsdlProperty()
         .setType(new FullQualifiedName("ns", "wrong"));
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     property.getType();
     fail();
   }
@@ -128,7 +128,7 @@ public class EdmPropertyImplTest {
     EdmProviderImpl edm = new EdmProviderImpl(provider);
     final CsdlProperty propertyProvider = new CsdlProperty()
         .setType(new FullQualifiedName(EdmPrimitiveType.EDM_NAMESPACE, "type"));
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     property.getType();
     fail();
   }
@@ -144,7 +144,7 @@ public class EdmPropertyImplTest {
     propertyProvider.setUnicode(true);
     propertyProvider.setNullable(false);
     propertyProvider.setDefaultValue("x");
-    final EdmProperty property = new EdmPropertyImpl(edm, null, propertyProvider);
+    final EdmProperty property = new EdmPropertyImpl(edm, propertyProvider);
     assertTrue(property.isPrimitive());
     assertNull(property.getMapping());
     assertNull(property.getMimeType());
