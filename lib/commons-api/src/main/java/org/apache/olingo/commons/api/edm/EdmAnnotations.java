@@ -18,12 +18,11 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-import java.util.List;
 
 /**
  * This is used to apply a group of annotations to a single model element.
  */
-public interface EdmAnnotations {
+public interface EdmAnnotations extends EdmAnnotatable{
 
   /**
    * @return a model element in the entity model to which this annotations is targeted
@@ -41,15 +40,4 @@ public interface EdmAnnotations {
    * @return the path to the target
    */
   String getTargetPath();
-
-  /**
-   * @param term
-   * @return the annotation for the given term or null if not present
-   */
-  EdmAnnotation getAnnotation(EdmTerm term);
-
-  /**
-   * @return a list of all annotations
-   */
-  List<EdmAnnotation> getAnnotations();
 }

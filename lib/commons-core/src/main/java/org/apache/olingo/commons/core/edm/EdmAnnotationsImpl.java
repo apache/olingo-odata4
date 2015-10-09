@@ -18,31 +18,24 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmAnnotationsTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 
-public class EdmAnnotationsImpl implements EdmAnnotations {
+public class EdmAnnotationsImpl extends AbstractEdmAnnotatable implements EdmAnnotations {
 
   private final Edm edm;
   private final CsdlAnnotations annotationGroup;
   private EdmAnnotationsTarget target;
-  private List<EdmAnnotation> annotations;
 
   public EdmAnnotationsImpl(final Edm edm, final CsdlAnnotations annotationGroup) {
+    super(edm, annotationGroup);
     this.edm = edm;
     this.annotationGroup = annotationGroup;
   }
@@ -122,32 +115,7 @@ public class EdmAnnotationsImpl implements EdmAnnotations {
   }
 
   @Override
-  public EdmAnnotation getAnnotation(final EdmTerm term) {
-    EdmAnnotation result = null;
-    for (EdmAnnotation annotation : getAnnotations()) {
-      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        result = annotation;
-      }
-    }
-    return result;
-  }
-
-  @Override
-  public List<EdmAnnotation> getAnnotations() {
-    if (annotations == null) {
-      List<EdmAnnotation> annotationsLocal = new ArrayList<EdmAnnotation>();
-      for (CsdlAnnotation annotation : annotationGroup.getAnnotations()) {
-        annotationsLocal.add(new EdmAnnotationImpl(edm, annotation));
-      }
-
-      annotations = Collections.unmodifiableList(annotationsLocal);
-    }
-    return annotations;
-  }
-
-  @Override
   public String getTargetPath() {
     return annotationGroup.getTarget();
   }
-
 }
