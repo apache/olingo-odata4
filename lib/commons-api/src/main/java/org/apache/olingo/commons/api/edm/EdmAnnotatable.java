@@ -26,7 +26,7 @@ import java.util.List;
 public interface EdmAnnotatable {
 
   /**
-   * @param term term for annotation
+   * @param term term used for the annotation. MUST NOT be null.
    * @param qualifier for the term. Can be <code>NULL</code>
    * @return annotation according to term
    */

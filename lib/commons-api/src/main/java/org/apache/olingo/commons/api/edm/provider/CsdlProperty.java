@@ -300,6 +300,16 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   }
 
   /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlProperty setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }
+  
+  /**
    * Sets srid.
    *
    * @param srid the srid

@@ -34,7 +34,7 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
 
   private String qualifier;
 
-  private List<CsdlAnnotation> annotation = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   private AnnotationExpression annotationExpression;
 
@@ -93,16 +93,16 @@ public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatab
 
   /**
    * Sets a list of annotations
-   * @param annotation list of annotations
+   * @param annotations list of annotations
    * @return this instance
    */
-  public CsdlAnnotation setAnnotations(final List<CsdlAnnotation> annotation) {
-    this.annotation = annotation;
+  public CsdlAnnotation setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
     return this;
   }
 
   @Override
   public List<CsdlAnnotation> getAnnotations() {
-    return annotation;
+    return annotations;
   }
 }

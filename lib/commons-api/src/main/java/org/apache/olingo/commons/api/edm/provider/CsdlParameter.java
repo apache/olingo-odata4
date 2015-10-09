@@ -50,7 +50,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
 
   private SRID srid;
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
   public String getName() {
@@ -231,6 +231,16 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
+  }
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlParameter setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
   }
 
   /**

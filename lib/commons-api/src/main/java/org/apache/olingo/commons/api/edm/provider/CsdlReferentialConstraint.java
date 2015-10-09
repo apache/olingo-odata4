@@ -32,7 +32,7 @@ public class CsdlReferentialConstraint extends CsdlAbstractEdmItem implements Cs
 
   private String referencedProperty;
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   /**
    * Gets property.
@@ -77,5 +77,15 @@ public class CsdlReferentialConstraint extends CsdlAbstractEdmItem implements Cs
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
+  }
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlReferentialConstraint setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
   }
 }

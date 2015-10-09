@@ -39,7 +39,7 @@ public abstract class CsdlOperationImport extends CsdlAbstractEdmItem implements
   /**
    * The Annotations.
    */
-  protected final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  protected List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
   public String getName() {
@@ -80,5 +80,15 @@ public abstract class CsdlOperationImport extends CsdlAbstractEdmItem implements
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
+  }
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlOperationImport setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
   }
 }

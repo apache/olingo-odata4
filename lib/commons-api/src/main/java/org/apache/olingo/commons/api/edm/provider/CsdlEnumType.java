@@ -38,7 +38,7 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
 
   private List<CsdlEnumMember> members = new ArrayList<CsdlEnumMember>();
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
   public String getName() {
@@ -169,5 +169,15 @@ public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
+  }
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlEnumType setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
   }
 }

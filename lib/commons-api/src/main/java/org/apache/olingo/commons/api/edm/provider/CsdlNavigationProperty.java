@@ -233,4 +233,14 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlNavigationProperty setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }
 }

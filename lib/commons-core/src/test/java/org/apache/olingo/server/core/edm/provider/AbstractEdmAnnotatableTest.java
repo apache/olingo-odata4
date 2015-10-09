@@ -36,7 +36,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
 import org.apache.olingo.commons.core.edm.AbstractEdmAnnotatable;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AbstractEdmAnnotatableTest {
@@ -68,7 +67,6 @@ public class AbstractEdmAnnotatableTest {
     assertNull(anno.getAnnotation(null, "qualifier"));
   }
 
-  @Ignore
   @Test
   public void singleAnnotation() {
     CsdlEntityContainer annotatable = new CsdlEntityContainer();
@@ -84,8 +82,6 @@ public class AbstractEdmAnnotatableTest {
 
     assertNotNull(anno.getAnnotation(term, null));
     assertNull(anno.getAnnotation(term, "qualifier"));
-    assertNull(anno.getAnnotation(null, null));
-    assertNull(anno.getAnnotation(null, "qualifier"));
   }
   
   private class EdmAnnotatableTester extends AbstractEdmAnnotatable {

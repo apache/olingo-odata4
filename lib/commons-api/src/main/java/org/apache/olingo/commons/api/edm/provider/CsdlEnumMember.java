@@ -32,7 +32,7 @@ public class CsdlEnumMember extends CsdlAbstractEdmItem implements CsdlNamed, Cs
 
   private String value;
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
   public String getName() {
@@ -74,5 +74,14 @@ public class CsdlEnumMember extends CsdlAbstractEdmItem implements CsdlNamed, Cs
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
-
+  
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlEnumMember setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }
 }

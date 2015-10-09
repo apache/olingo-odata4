@@ -53,4 +53,10 @@ public class CsdlSingleton extends CsdlBindingTarget {
     this.navigationPropertyBindings = navigationPropertyBindings;
     return this;
   }
+  
+  @Override
+  public CsdlSingleton setAnnotations(final List<CsdlAnnotation> annotations) {
+    super.setAnnotations(annotations);
+    return this;
+  }
 }

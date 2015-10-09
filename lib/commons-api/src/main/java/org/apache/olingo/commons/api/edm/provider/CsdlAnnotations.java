@@ -28,7 +28,7 @@ public class CsdlAnnotations extends CsdlAbstractEdmItem implements CsdlAnnotata
 
   private static final long serialVersionUID = 8283036066408166150L;
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   private String target;
 
@@ -79,6 +79,16 @@ public class CsdlAnnotations extends CsdlAbstractEdmItem implements CsdlAnnotata
     return annotations;
   }
 
+  /**
+   * Sets a list of annotations
+   * @param annotations list of annotations
+   * @return this instance
+   */
+  public CsdlAnnotations setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }
+  
   /**
    * Gets annotation.
    *
