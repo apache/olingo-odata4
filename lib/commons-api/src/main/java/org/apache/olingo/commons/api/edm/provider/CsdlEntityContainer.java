@@ -42,7 +42,7 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
 
   private List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
 
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   // Annotations
   @Override
@@ -236,6 +236,11 @@ public class CsdlEntityContainer extends CsdlAbstractEdmItem implements CsdlName
   @Override
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
+  }
+  
+  public CsdlEntityContainer setAnnotations(List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
   }
 
 }
