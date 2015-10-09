@@ -72,9 +72,8 @@ public enum QueryOption {
    */
   SKIP,
   /**
-   * This query option applies only to the OData 2.0 protocol to the AtomPub protocol. The value of a $skiptoken query
-   * option is an opaque token which identifies an index into the collection of entities identified by the URI
-   * containing the $skiptoken parameter.
+   * The value of a $skiptoken query option is an opaque token which identifies an index into the collection
+   * of entities identified by the URI containing the $skiptoken parameter.
    */
   SKIPTOKEN,
   /**
@@ -82,13 +81,6 @@ public enum QueryOption {
    * section of the URI.
    */
   FILTER,
-  /**
-   * For a value of "allpages", this option indicates that the response to the request MUST include the count of the
-   * number of entities in the EntitySet, identified by the resource path section of the URI after all $filter system
-   * query options have been applied. For a value of "none", this option indicates that the response to the request MUST
-   * NOT include the count value.
-   */
-  INLINECOUNT,
   /**
    * Search expressions are used within the $search system query option to request entities matching the specified
    * expression.

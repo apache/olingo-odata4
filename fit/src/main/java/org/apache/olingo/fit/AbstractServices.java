@@ -936,7 +936,7 @@ public abstract class AbstractServices {
       @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
       @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+      @QueryParam("$count") @DefaultValue(StringUtils.EMPTY) final String count,
       @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
       @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
       @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken,
@@ -1038,7 +1038,7 @@ public abstract class AbstractServices {
    * @param accept Accept header.
    * @param name entity set or function name.
    * @param format format query option.
-   * @param count inlinecount query option.
+   * @param count count query option.
    * @param filter filter query option.
    * @param orderby orderby query option.
    * @param skiptoken skiptoken query option.
@@ -1053,7 +1053,7 @@ public abstract class AbstractServices {
       @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
       @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+      @QueryParam("$count") @DefaultValue(StringUtils.EMPTY) final String count,
       @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
       @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,
       @QueryParam("$skiptoken") @DefaultValue(StringUtils.EMPTY) final String skiptoken) {

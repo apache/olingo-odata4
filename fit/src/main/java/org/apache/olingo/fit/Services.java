@@ -383,7 +383,7 @@ public class Services extends AbstractServices {
       @QueryParam("$top") @DefaultValue(StringUtils.EMPTY) final String top,
       @QueryParam("$skip") @DefaultValue(StringUtils.EMPTY) final String skip,
       @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      @QueryParam("$inlinecount") @DefaultValue(StringUtils.EMPTY) final String count,
+      @QueryParam("$count") @DefaultValue(StringUtils.EMPTY) final String count,
       @QueryParam("$filter") @DefaultValue(StringUtils.EMPTY) final String filter,
       @QueryParam("$search") @DefaultValue(StringUtils.EMPTY) final String search,
       @QueryParam("$orderby") @DefaultValue(StringUtils.EMPTY) final String orderby,

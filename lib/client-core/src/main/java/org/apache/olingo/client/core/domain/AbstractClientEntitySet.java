@@ -33,7 +33,7 @@ public abstract class AbstractClientEntitySet extends AbstractClientPayload impl
   /**
    * Number of ODataEntities contained in this entity set.
    * <br/>
-   * If <tt>$inlinecount</tt> was requested, this value comes from there.
+   * If <tt>$count</tt> was requested, this value comes from there.
    */
   private Integer count;
 
