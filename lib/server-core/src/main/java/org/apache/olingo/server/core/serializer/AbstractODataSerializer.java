@@ -25,7 +25,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
 public abstract class AbstractODataSerializer implements ODataSerializer {
-  
+
   protected static final String IO_EXCEPTION_TEXT = "An I/O exception occurred.";
 
   protected void closeCircleStreamBufferOutput(OutputStream outputStream, SerializerException cachedException)
@@ -37,11 +37,10 @@ public abstract class AbstractODataSerializer implements ODataSerializer {
         if (cachedException != null) {
           throw cachedException;
         } else {
-          throw new SerializerException("An I/O exception occurred.", e,
+          throw new SerializerException(IO_EXCEPTION_TEXT, e,
               SerializerException.MessageKeys.IO_EXCEPTION);
         }
       }
     }
   }
- 
 }

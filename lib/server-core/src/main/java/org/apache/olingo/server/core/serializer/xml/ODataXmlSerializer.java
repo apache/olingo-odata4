@@ -31,7 +31,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
@@ -49,13 +48,14 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
@@ -72,16 +72,14 @@ import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 
 public class ODataXmlSerializer extends AbstractODataSerializer {
 
-  private static final String CONTEXT = "context";
   /** The default character set is UTF-8. */
-  public static final String DEFAULT_CHARSET = "UTF-8";
+  public static final String DEFAULT_CHARSET = Constants.UTF8;
   private static final String ATOM = "a";
   private static final String NS_ATOM = Constants.NS_ATOM;
-  private static final String METADATA = "m";
+  private static final String METADATA = Constants.PREFIX_METADATA;
   private static final String NS_METADATA = Constants.NS_METADATA;
-  private static final String DATA = "d";
+  private static final String DATA = Constants.PREFIX_DATASERVICES;
   private static final String NS_DATA = Constants.NS_DATASERVICES;
-  private static final String NS_SCHEMA = Constants.NS_SCHEME;
 
   @Override
   public SerializerResult serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
@@ -155,13 +153,13 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
 
       writer.writeStartElement("error");
       writer.writeDefaultNamespace(NS_METADATA);
       writeErrorDetails(String.valueOf(error.getStatusCode()), error.getMessage(), error.getTarget(), writer);
       if (error.getDetails() != null && !error.getDetails().isEmpty()) {
-        writer.writeStartElement("details");
+        writer.writeStartElement(Constants.ERROR_DETAILS);
         for (ODataErrorDetail inner : error.getDetails()) {
           writeErrorDetails(inner.getCode(), inner.getMessage(), inner.getTarget(), writer);
         }
@@ -191,17 +189,17 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   private void writeErrorDetails(String code, String message, String target, XMLStreamWriter writer)
       throws XMLStreamException {
     if (code != null) {
-      writer.writeStartElement("code");
-      writer.writeCharacters(String.valueOf(code));
+      writer.writeStartElement(Constants.ERROR_CODE);
+      writer.writeCharacters(code);
       writer.writeEndElement();
     }
 
-    writer.writeStartElement("message");
+    writer.writeStartElement(Constants.ERROR_MESSAGE);
     writer.writeCharacters(message);
     writer.writeEndElement();
 
     if (target != null) {
-      writer.writeStartElement("target");
+      writer.writeStartElement(Constants.ERROR_TARGET);
       writer.writeCharacters(target);
       writer.writeEndElement();
     }
@@ -225,18 +223,18 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
-      writer.writeStartElement(ATOM, "feed", NS_ATOM);
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
       writer.writeNamespace(ATOM, NS_ATOM);
       writer.writeNamespace(METADATA, NS_METADATA);
       writer.writeNamespace(DATA, NS_DATA);
 
-      writer.writeAttribute(METADATA, NS_METADATA, "context",
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
 
       if (options != null && options.getId() != null) {
-        writer.writeStartElement(ATOM, "id", NS_ATOM);
+        writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ID, NS_ATOM);
         writer.writeCharacters(options.getId());
         writer.writeEndElement();
       }
@@ -293,7 +291,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
           options == null ? null : options.getSelect(), writer, true);
@@ -329,7 +327,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     if (metadata != null
         && metadata.getServiceMetadataETagSupport() != null
         && metadata.getServiceMetadataETagSupport().getMetadataETag() != null) {
-      writer.writeAttribute(METADATA, NS_METADATA, "metadata-etag",
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_METADATAETAG,
           metadata.getServiceMetadataETagSupport().getMetadataETag());
     }
   }
@@ -347,25 +345,24 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final SelectOption select, final XMLStreamWriter writer, final boolean top)
           throws XMLStreamException, SerializerException {
 
-    writer.writeStartElement(ATOM, "entry", NS_ATOM);
+    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
     if (top) {
       writer.writeNamespace(ATOM, NS_ATOM);
       writer.writeNamespace(METADATA, NS_METADATA);
       writer.writeNamespace(DATA, NS_DATA);
 
       if (contextURL != null) { // top-level entity
-        writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
             ContextURLBuilder.create(contextURL).toASCIIString());
         writeMetadataETag(metadata, writer);
-
       }
     }
     if (entity.getETag() != null) {
-      writer.writeAttribute(METADATA, NS_METADATA, "etag", entity.getETag());
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_ETAG, entity.getETag());
     }
 
     if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, "id");
+      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_ID);
       writer.writeCharacters(entity.getId().toASCIIString());
       writer.writeEndElement();
     }
@@ -373,24 +370,21 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     writerAuthorInfo(entity.getTitle(), writer);
 
     if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, "link");
-      writer.writeAttribute("rel", "edit");
-      writer.writeAttribute("href", entity.getId().toASCIIString());
+      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_LINK);
+      writer.writeAttribute(Constants.ATTR_REL, Constants.EDIT_LINK_REL);
+      writer.writeAttribute(Constants.ATTR_HREF, entity.getId().toASCIIString());
       writer.writeEndElement();
     }
 
     if (entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, "content");
-      writer.writeAttribute("type", entity.getMediaContentType());
+      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+      writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
       if (entity.getMediaContentSource() != null) {
-        writer.writeAttribute("src", entity.getMediaContentSource().toString());
+        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toString());
       } else {
         String id = entity.getId().toASCIIString();
-        if (id.endsWith("/")) {
-          writer.writeAttribute("src", id + "$value");
-        } else {
-          writer.writeAttribute("src", id + "/$value");
-        }
+        writer.writeAttribute(Constants.ATOM_ATTR_SRC,
+            id + (id.endsWith("/") ? "" : "/") + "$value");
       }
       writer.writeEndElement();
     }
@@ -403,18 +397,19 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
     writeNavigationProperties(metadata, resolvedType, entity, expand, writer);
 
-    writer.writeStartElement(ATOM, "category", NS_ATOM);
-    writer.writeAttribute("scheme", NS_SCHEMA);
-    writer.writeAttribute("term", "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
+    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
+    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
+    writer.writeAttribute(Constants.ATOM_ATTR_TERM,
+        "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
     writer.writeEndElement();
 
     // In the case media, content is sibiling
     if (!entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, "content");
-      writer.writeAttribute("type", "application/xml");
+      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+      writer.writeAttribute(Constants.ATTR_TYPE, "application/xml");
     }
 
-    writer.writeStartElement(METADATA, "properties", NS_METADATA);
+    writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
     writeProperties(metadata, resolvedType, entity.getProperties(), select, writer);
     writer.writeEndElement(); // properties
 
@@ -425,15 +420,15 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   private void writerAuthorInfo(final String title, final XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeStartElement(NS_ATOM, "title");
+    writer.writeStartElement(NS_ATOM, Constants.ATTR_TITLE);
     if (title != null) {
       writer.writeCharacters(title);
     }
     writer.writeEndElement();
-    writer.writeStartElement(NS_ATOM, "summary");
+    writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_SUMMARY);
     writer.writeEndElement();
 
-    writer.writeStartElement(NS_ATOM, "updated");
+    writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_UPDATED);
     writer.writeCharacters(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         .format(new Date(System.currentTimeMillis())));
     writer.writeEndElement();
@@ -528,7 +523,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           }
           if (navigationLink != null) {
             writeLink(writer, navigationLink, false);
-            writer.writeStartElement(METADATA, "inline", NS_METADATA);
+            writer.writeStartElement(METADATA, Constants.ATOM_ELEM_INLINE, NS_METADATA);
             writeExpandedNavigationProperty(metadata, property, navigationLink,
                 innerOptions == null ? null : innerOptions.getExpandOption(),
                 innerOptions == null ? null : innerOptions.getSelectOption(),
@@ -573,16 +568,16 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   private void writeLink(final XMLStreamWriter writer, final Link link, final boolean close)
       throws XMLStreamException {
-    writer.writeStartElement(ATOM, "link", NS_ATOM);
-    writer.writeAttribute("rel", link.getRel());
+    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_LINK, NS_ATOM);
+    writer.writeAttribute(Constants.ATTR_REL, link.getRel());
     if (link.getType() != null) {
-      writer.writeAttribute("type", link.getType());
+      writer.writeAttribute(Constants.ATTR_TYPE, link.getType());
     }
     if (link.getTitle() != null) {
-      writer.writeAttribute("title", link.getTitle());
+      writer.writeAttribute(Constants.ATTR_TITLE, link.getTitle());
     }
     if (link.getHref() != null) {
-      writer.writeAttribute("href", link.getHref());
+      writer.writeAttribute(Constants.ATTR_HREF, link.getHref());
     }
     if (close) {
       writer.writeEndElement();
@@ -595,7 +590,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
       if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
-        writer.writeStartElement(ATOM, "feed", NS_ATOM);
+        writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
             innerSelect, writer);
         writer.writeEndElement();
@@ -615,7 +610,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     writer.writeStartElement(DATA, edmProperty.getName(), NS_DATA);
     if (property == null || property.isNull()) {
       if (edmProperty.isNullable()) {
-        writer.writeAttribute(METADATA, NS_METADATA, "null", "true");
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
       } else {
         throw new SerializerException("Non-nullable property not present!",
             SerializerException.MessageKeys.MISSING_PROPERTY, edmProperty.getName());
@@ -648,9 +643,14 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final Set<List<String>> selectedPaths,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     try {
-      if (edmProperty.isPrimitive()) {
+      if (edmProperty.isPrimitive()
+          || edmProperty.getType().getKind() == EdmTypeKind.ENUM
+          || edmProperty.getType().getKind() == EdmTypeKind.DEFINITION) {
         if (edmProperty.isCollection()) {
-          writer.writeAttribute(METADATA, NS_METADATA, "type", "#Collection(" + edmProperty.getType().getName() + ")");
+          writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+              edmProperty.isPrimitive() ?
+                  "#Collection(" + edmProperty.getType().getName() + ")" :
+                  collectionType(edmProperty.getType()));
           writePrimitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
@@ -661,19 +661,16 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
               writer);
         }
-      } else if (edmProperty.isCollection()) {
-        writer.writeAttribute(METADATA, NS_METADATA, "type", collectionType(edmProperty.getType()));
-        writeComplexCollection(metadata, (EdmComplexType) edmProperty.getType(), property, selectedPaths, writer);
       } else if (property.isComplex()) {
-        writer.writeAttribute(METADATA, NS_METADATA, "type",
-            "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), property.getType()));
-        writeComplexValue(metadata, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
-            selectedPaths, writer);
-      } else if (property.isEnum()) {
-        writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
-            edmProperty.isNullable(), edmProperty.getMaxLength(),
-            edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
-            writer);
+        if (edmProperty.isCollection()) {
+          writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, collectionType(edmProperty.getType()));
+          writeComplexCollection(metadata, (EdmComplexType) edmProperty.getType(), property, selectedPaths, writer);
+        } else {
+          writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+              "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), property.getType()));
+          writeComplexValue(metadata, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
+              selectedPaths, writer);
+        }
       } else {
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());
@@ -690,7 +687,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Boolean isUnicode,
       final XMLStreamWriter writer) throws XMLStreamException, EdmPrimitiveTypeException, SerializerException {
     for (Object value : property.asCollection()) {
-      writer.writeStartElement(METADATA, "element", NS_METADATA);
+      writer.writeStartElement(METADATA, Constants.ELEM_ELEMENT, NS_METADATA);
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
       case COLLECTION_ENUM:
@@ -711,9 +708,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Property property, final Set<List<String>> selectedPaths, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
     for (Object value : property.asCollection()) {
-      writer.writeStartElement(METADATA, "element", NS_METADATA);
+      writer.writeStartElement(METADATA, Constants.ELEM_ELEMENT, NS_METADATA);
       if (derivedComplexType(type, property.getType()) != null) {
-        writer.writeAttribute(METADATA, NS_METADATA, "type", property.getType());
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, property.getType());
       }
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
@@ -733,7 +730,10 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       throws EdmPrimitiveTypeException, XMLStreamException, SerializerException {
     if (property.isPrimitive()) {
       if (!(type instanceof EdmString)) {
-        writer.writeAttribute(METADATA, NS_METADATA, "type", type.getName());
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+            type.getKind() == EdmTypeKind.DEFINITION ?
+                "#" + type.getFullQualifiedName().getFullQualifiedNameAsString() :
+                type.getName());
       }
       writePrimitiveValue(type, property.asPrimitive(),
           isNullable, maxLength, precision, scale, isUnicode, writer);
@@ -741,7 +741,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       throw new SerializerException("Property type not yet supported!",
           SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
     } else if (property.isEnum()) {
-      writer.writeAttribute(METADATA, NS_METADATA, "type", "#" + type.getName());
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+          "#" + type.getFullQualifiedName().getFullQualifiedNameAsString());
       writePrimitiveValue(type, property.asEnum(),
           isNullable, maxLength, precision, scale, isUnicode, writer);
     } else {
@@ -757,7 +758,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     final String value = type.valueToString(primitiveValue,
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
-      writer.writeAttribute(DATA, NS_DATA, "null", "true");
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
     } else {
       writer.writeCharacters(value);
     }
@@ -797,16 +798,16 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
-      writer.writeStartElement(METADATA, "value", NS_METADATA);
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
+      writer.writeStartElement(METADATA, Constants.VALUE, NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
       if (contextURL != null) {
-        writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
             ContextURLBuilder.create(contextURL).toASCIIString());
       }
       writeMetadataETag(metadata, writer);
       if (property.isNull()) {
-        writer.writeAttribute(METADATA, NS_METADATA, "null", "true");
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
       } else {
         writePrimitive(type, property,
             options == null ? null : options.isNullable(),
@@ -853,17 +854,17 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
-      writer.writeStartElement(METADATA, "value", NS_METADATA);
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
+      writer.writeStartElement(METADATA, Constants.VALUE, NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
       writer.writeNamespace(DATA, NS_DATA);
-      writer.writeAttribute(METADATA, NS_METADATA, "type", "#"
-          + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
-      writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+          "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
       if (property.isNull()) {
-        writer.writeAttribute(METADATA, NS_METADATA, "null", "true");
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
       } else {
         final List<Property> values = property.asComplex().getValue();
         writeProperties(metadata, resolvedType, values, options == null ? null : options.getSelect(), writer);
@@ -899,15 +900,15 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
-      writer.writeStartElement(METADATA, "value", NS_METADATA);
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
+      writer.writeStartElement(METADATA, Constants.VALUE, NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
       if (contextURL != null) {
-        writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
             ContextURLBuilder.create(contextURL).toASCIIString());
       }
       writeMetadataETag(metadata, writer);
-      writer.writeAttribute(METADATA, NS_METADATA, "type", "#Collection(" + type.getName() + ")");
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, "#Collection(" + type.getName() + ")");
       writePrimitiveCollection(type, property,
           options == null ? null : options.isNullable(),
           options == null ? null : options.getMaxLength(),
@@ -952,11 +953,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
 
-      writer.writeStartElement(METADATA, "value", NS_METADATA);
+      writer.writeStartElement(METADATA, Constants.VALUE, NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
       writer.writeNamespace(DATA, NS_DATA);
-      writer.writeAttribute(METADATA, NS_METADATA, "type", collectionType(type));
-      writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, collectionType(type));
+      writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
       writeComplexCollection(metadata, type, property, null, writer);
@@ -993,7 +994,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writeReference(entity, options == null ? null : options.getContextURL(), writer, true);
       writer.writeEndDocument();
       writer.flush();
@@ -1020,11 +1021,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     if (top) {
       writer.writeNamespace(METADATA, NS_METADATA);
       if (contextURL != null) { // top-level entity
-        writer.writeAttribute(METADATA, NS_METADATA, CONTEXT,
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
             ContextURLBuilder.create(contextURL).toASCIIString());
       }
     }
-    writer.writeAttribute("id", entity.getId().toASCIIString());
+    writer.writeAttribute(Constants.ATOM_ATTR_ID, entity.getId().toASCIIString());
     writer.writeEndElement();
   }
 
@@ -1043,13 +1044,13 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-      writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
-      writer.writeStartElement(ATOM, "feed", NS_ATOM);
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
       writer.writeNamespace(ATOM, NS_ATOM);
       writer.writeNamespace(METADATA, NS_METADATA);
       if (options != null && options.getContextURL() != null) { // top-level entity
-        writer.writeAttribute(METADATA, NS_METADATA, CONTEXT, ContextURLBuilder.create(options.getContextURL())
-            .toASCIIString());
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
+            ContextURLBuilder.create(options.getContextURL()).toASCIIString());
       }
       if (options != null && options.getCount() != null && options.getCount().getValue()
           && entitySet.getCount() != null) {
@@ -1083,16 +1084,16 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   private void writeCount(final EntityCollection entitySet, XMLStreamWriter writer)
       throws XMLStreamException {
-    writer.writeStartElement(METADATA, "count", NS_METADATA);
+    writer.writeStartElement(METADATA, Constants.ATOM_ELEM_COUNT, NS_METADATA);
     writer.writeCharacters(String.valueOf(entitySet.getCount()));
     writer.writeEndElement();
   }
 
   private void writeNextLink(final EntityCollection entitySet, XMLStreamWriter writer)
       throws XMLStreamException {
-    writer.writeStartElement(ATOM, "link", NS_ATOM);
-    writer.writeAttribute("rel", "next");
-    writer.writeAttribute("href", entitySet.getNext().toASCIIString());
+    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_LINK, NS_ATOM);
+    writer.writeAttribute(Constants.ATTR_REL, Constants.NEXT_LINK_REL);
+    writer.writeAttribute(Constants.ATTR_HREF, entitySet.getNext().toASCIIString());
     writer.writeEndElement();
   }
 }

@@ -28,8 +28,10 @@ import java.util.Collections;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
@@ -81,11 +83,11 @@ import org.xml.sax.SAXException;
 
 public class ODataXmlSerializerTest {
   private static final ServiceMetadata metadata = new ServiceMetadataImpl(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("WmetadataETag"));
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("metadataETag"));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
   private static final DifferenceListener DIFFERENCE_LISTENER = new CustomDifferenceListener();
   private static final int MAX_ALLOWED_UPDATED_DIFFERENCE = 2000;
-  private static final String UPDATED_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+  private static final SimpleDateFormat UPDATED_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
   private final DataProvider data = new DataProvider(OData.newInstance(), metadata.getEdm());
   private final ODataSerializer serializer = new ODataXmlSerializer();
@@ -115,12 +117,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"$metadata#ESAllPrim/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -182,12 +183,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
         "m:context=\"$metadata#ESAllPrim/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -279,7 +279,7 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"http://host:port$metadata#ESCompAllPrim\" "
-        + "m:metadata-etag=\"WmetadataETag\">"
+        + "m:metadata-etag=\"metadataETag\">"
         + "<a:id>http://host/svc/ESCompAllPrim</a:id>"
         + "<m:count>4</m:count>"
         + "<a:link rel=\"next\" href=\"/next\"/>"
@@ -304,12 +304,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"http://host/service/$metadata#ESCollAllPrim/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESCollAllPrim(1)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -421,12 +420,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"$metadata#ESCompAllPrim/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\" m:etag=\"W/&quot;32767&quot;\">\n" +
+        "  m:metadata-etag=\"metadataETag\" m:etag=\"W/&quot;32767&quot;\">\n" +
         "  <a:id>ESCompAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -476,12 +474,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
         "  m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -537,12 +534,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"$metadata#ESMixPrimCollComp/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESMixPrimCollComp(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -559,6 +555,90 @@ public class ODataXmlSerializerTest {
         "  </a:content>\n" +
         "</a:entry>";
     checkXMLEqual(expectedResult, resultString);
+  }
+
+  @Test
+  public void enumAndTypeDefinition() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
+    Entity entity = new Entity();
+    entity.addProperty(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, 1));
+    entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
+    entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM,
+        Arrays.asList(2, 4, 6)));
+    entity.addProperty(new Property(null, "PropertyDefString", ValueType.PRIMITIVE, "Test"));
+    entity.addProperty(new Property(null, "CollPropertyDefString", ValueType.COLLECTION_PRIMITIVE,
+        Arrays.asList("Test1", "Test2")));
+    ComplexValue complexValue = new ComplexValue();
+    complexValue.getValue().add(entity.getProperty("PropertyEnumString"));
+    complexValue.getValue().add(entity.getProperty("CollPropertyEnumString"));
+    complexValue.getValue().add(entity.getProperty("PropertyDefString"));
+    complexValue.getValue().add(entity.getProperty("CollPropertyDefString"));
+    entity.addProperty(new Property(null, "PropertyCompMixedEnumDef", ValueType.COMPLEX, complexValue));
+    entity.addProperty(new Property(null, "CollPropertyCompMixedEnumDef", ValueType.COLLECTION_COMPLEX,
+        Collections.singletonList(complexValue)));
+    final long currentTimeMillis = System.currentTimeMillis();
+    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent());
+    checkXMLEqual(resultString,
+        "<?xml version='1.0' encoding='UTF-8'?>\n"
+        + "<a:entry xmlns:a=\"" + Constants.NS_ATOM + "\""
+        + "  xmlns:m=\"" + Constants.NS_METADATA + "\" xmlns:d=\"" + Constants.NS_DATASERVICES + "\""
+        + " m:context=\"$metadata#ESMixEnumDefCollComp/$entity\" m:metadata-etag=\"metadataETag\">\n"
+        + "  <a:title /> <a:summary />\n"
+        + "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>\n"
+        + "  <a:author> <a:name /> </a:author>\n"
+        + "  <a:category scheme=\"" + Constants.NS_SCHEME + "\"\n"
+        + "    term=\"#olingo.odata.test1.ETMixEnumDefCollComp\" />\n"
+        + "  <a:content type=\"application/xml\">\n"
+        + "    <m:properties>\n"
+        + "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n"
+        + "      <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "      <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "        <m:element>String2</m:element>\n"
+        + "        <m:element>String3</m:element>\n"
+        + "        <m:element>String2,String3</m:element>\n"
+        + "      </d:CollPropertyEnumString>\n"
+        + "      <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "      <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "        <m:element>Test1</m:element>\n"
+        + "        <m:element>Test2</m:element>\n"
+        + "      </d:CollPropertyDefString>\n"
+        + "      <d:PropertyCompMixedEnumDef m:type=\"#olingo.odata.test1.CTMixEnumDef\">\n"
+        + "        <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "        <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "          <m:element>String2</m:element>\n"
+        + "          <m:element>String3</m:element>\n"
+        + "          <m:element>String2,String3</m:element>\n"
+        + "        </d:CollPropertyEnumString>\n"
+        + "        <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "        <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "          <m:element>Test1</m:element>\n"
+        + "          <m:element>Test2</m:element>\n"
+        + "        </d:CollPropertyDefString>\n"
+        + "      </d:PropertyCompMixedEnumDef>\n"
+        + "      <d:CollPropertyCompMixedEnumDef m:type=\"#Collection(olingo.odata.test1.CTMixEnumDef)\">\n"
+        + "        <m:element>\n"
+        + "          <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "          <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "            <m:element>String2</m:element>\n"
+        + "            <m:element>String3</m:element>\n"
+        + "            <m:element>String2,String3</m:element>\n"
+        + "          </d:CollPropertyEnumString>\n"
+        + "          <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "          <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "            <m:element>Test1</m:element>\n"
+        + "            <m:element>Test2</m:element>\n"
+        + "          </d:CollPropertyDefString>\n"
+        + "        </m:element>\n"
+        + "      </d:CollPropertyCompMixedEnumDef>\n"
+        + "    </m:properties>\n"
+        + "  </a:content>\n"
+        + "</a:entry>");
   }
 
   @Test
@@ -605,12 +685,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
         "  m:context=\"$metadata#ESMedia/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESMedia(1)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -643,14 +722,13 @@ public class ODataXmlSerializerTest {
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESMedia\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>http://host/svc/ESMedia</a:id>\n" +
         "  <a:entry>\n" +
         "    <a:id>ESMedia(1)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -667,8 +745,7 @@ public class ODataXmlSerializerTest {
         "    <a:id>ESMedia(2)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -685,8 +762,7 @@ public class ODataXmlSerializerTest {
         "    <a:id>ESMedia(3)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -703,8 +779,7 @@ public class ODataXmlSerializerTest {
         "    <a:id>ESMedia(4)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -740,14 +815,13 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"http://host/svc$metadata#ESAllNullable\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>http://host/svc/ESAllNullable</a:id>\n" +
         "  <a:entry>\n" +
         "    <a:id>ESAllNullable(1)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -775,82 +849,82 @@ public class ODataXmlSerializerTest {
         "        <d:PropertyTimeOfDay m:null=\"true\" />\n" +
         "        <d:CollPropertyString m:type=\"#Collection(String)\">\n" +
         "          <m:element>spiderman@comic.com</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>spidergirl@comic.com</m:element>\n" +
         "        </d:CollPropertyString>\n" +
         "        <d:CollPropertyBoolean m:type=\"#Collection(Boolean)\">\n" +
         "          <m:element>true</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>false</m:element>\n" +
         "        </d:CollPropertyBoolean>\n" +
         "        <d:CollPropertyByte m:type=\"#Collection(Byte)\">\n" +
         "          <m:element>50</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>249</m:element>\n" +
         "        </d:CollPropertyByte>\n" +
         "        <d:CollPropertySByte m:type=\"#Collection(SByte)\">\n" +
         "          <m:element>-120</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>126</m:element>\n" +
         "        </d:CollPropertySByte>\n" +
         "        <d:CollPropertyInt16 m:type=\"#Collection(Int16)\">\n" +
         "          <m:element>1000</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>30112</m:element>\n" +
         "        </d:CollPropertyInt16>\n" +
         "        <d:CollPropertyInt32 m:type=\"#Collection(Int32)\">\n" +
         "          <m:element>23232323</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>10000001</m:element>\n" +
         "        </d:CollPropertyInt32>\n" +
         "        <d:CollPropertyInt64 m:type=\"#Collection(Int64)\">\n" +
         "          <m:element>929292929292</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>444444444444</m:element>\n" +
         "        </d:CollPropertyInt64>\n" +
         "        <d:CollPropertySingle m:type=\"#Collection(Single)\">\n" +
         "          <m:element>1790.0</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>3210.0</m:element>\n" +
         "        </d:CollPropertySingle>\n" +
         "        <d:CollPropertyDouble m:type=\"#Collection(Double)\">\n" +
         "          <m:element>-17900.0</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>3210.0</m:element>\n" +
         "        </d:CollPropertyDouble>\n" +
         "        <d:CollPropertyDecimal m:type=\"#Collection(Decimal)\">\n" +
         "          <m:element>12</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>1234</m:element>\n" +
         "        </d:CollPropertyDecimal>\n" +
         "        <d:CollPropertyBinary m:type=\"#Collection(Binary)\">\n" +
         "          <m:element>q83v</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>VGeJ</m:element>\n" +
         "        </d:CollPropertyBinary>\n" +
         "        <d:CollPropertyDate m:type=\"#Collection(Date)\">\n" +
         "          <m:element>1958-12-03</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>2013-06-25</m:element>\n" +
         "        </d:CollPropertyDate>\n" +
         "        <d:CollPropertyDateTimeOffset m:type=\"#Collection(DateTimeOffset)\">\n" +
         "          <m:element>2015-08-12T03:08:34Z</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>1948-02-17T09:09:09Z</m:element>\n" +
         "        </d:CollPropertyDateTimeOffset>\n" +
         "        <d:CollPropertyDuration m:type=\"#Collection(Duration)\">\n" +
         "          <m:element>PT13S</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>PT1H0S</m:element>\n" +
         "        </d:CollPropertyDuration>\n" +
         "        <d:CollPropertyGuid m:type=\"#Collection(Guid)\">\n" +
         "          <m:element>ffffff67-89ab-cdef-0123-456789aaaaaa</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>cccccc67-89ab-cdef-0123-456789cccccc</m:element>\n" +
         "        </d:CollPropertyGuid>\n" +
         "        <d:CollPropertyTimeOfDay m:type=\"#Collection(TimeOfDay)\">\n" +
         "          <m:element>04:14:13</m:element>\n" +
-        "          <m:element d:null=\"true\" />\n" +
+        "          <m:element m:null=\"true\" />\n" +
         "          <m:element>00:37:13</m:element>\n" +
         "        </d:CollPropertyTimeOfDay>\n" +
         "      </m:properties>\n" +
@@ -884,12 +958,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
         "  m:context=\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -937,14 +1010,13 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
         "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
         "  <a:entry>\n" +
         "    <a:id>ESCompComp(1)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -965,8 +1037,7 @@ public class ODataXmlSerializerTest {
         "    <a:id>ESCompComp(2)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "<a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -1011,14 +1082,13 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
         "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp)\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
         "  <a:entry>\n" +
         "    <a:id>ESCompComp(1)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -1040,8 +1110,7 @@ public class ODataXmlSerializerTest {
         "    <a:id>ESCompComp(2)</a:id>\n" +
         "    <a:title />\n" +
         "    <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "    <a:author>\n" +
         "      <a:name />\n" +
         "    </a:author>\n" +
@@ -1080,12 +1149,11 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESTwoPrim/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -1099,8 +1167,7 @@ public class ODataXmlSerializerTest {
         "        <a:id>ESAllPrim(32767)</a:id>\n" +
         "        <a:title />\n" +
         "        <a:summary />\n" +
-        "    <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "        <a:author>\n" +
         "          <a:name />\n" +
         "        </a:author>\n" +
@@ -1191,12 +1258,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
         "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -1210,8 +1276,7 @@ public class ODataXmlSerializerTest {
         "        <a:id>ESAllPrim(32767)</a:id>\n" +
         "        <a:title />\n" +
         "        <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "        <a:author>\n" +
         "          <a:name />\n" +
         "        </a:author>\n" +
@@ -1278,12 +1343,11 @@ public class ODataXmlSerializerTest {
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"$metadata#ESAllPrim(PropertySByte)/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -1297,8 +1361,8 @@ public class ODataXmlSerializerTest {
         "        <a:id>ESTwoPrim(32767)</a:id>\n" +
         "        <a:title />\n" +
         "        <a:summary />\n" +
-        "        <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "        <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "        <a:author>\n" +
         "          <a:name />\n" +
         "        </a:author>\n" +
@@ -1332,8 +1396,8 @@ public class ODataXmlSerializerTest {
         "          <a:id>ESTwoPrim(-365)</a:id>\n" +
         "          <a:title />\n" +
         "          <a:summary />\n" +
-        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "          <a:author>\n" +
         "            <a:name />\n" +
         "          </a:author>\n" +
@@ -1396,12 +1460,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:context=\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(-32768)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -1462,12 +1525,11 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
         "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(-365)</a:id>\n" +
         "  <a:title />\n" +
         "  <a:summary />\n" +
-        "  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
         "  <a:author>\n" +
         "    <a:name />\n" +
         "  </a:author>\n" +
@@ -1486,8 +1548,8 @@ public class ODataXmlSerializerTest {
         "          <a:id>ESAllPrim(-32768)</a:id>\n" +
         "          <a:title />\n" +
         "          <a:summary />\n" +
-        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "          <a:author>\n" +
         "            <a:name />\n" +
         "          </a:author>\n" +
@@ -1518,8 +1580,8 @@ public class ODataXmlSerializerTest {
         "          <a:id>ESAllPrim(0)</a:id>\n" +
         "          <a:title />\n" +
         "          <a:summary />\n" +
-        "          <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "          <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "          <a:author>\n" +
         "            <a:name />\n" +
         "          </a:author>\n" +
@@ -1540,9 +1602,8 @@ public class ODataXmlSerializerTest {
         "                  <a:id>ESTwoPrim(32766)</a:id>\n" +
         "                  <a:title />\n" +
         "                  <a:summary />\n" +
-        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
-
+        "                  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "                  <a:author>\n" +
         "                    <a:name />\n" +
         "                  </a:author>\n" +
@@ -1568,8 +1629,8 @@ public class ODataXmlSerializerTest {
         "                  <a:id>ESTwoPrim(-32766)</a:id>\n" +
         "                  <a:title />\n" +
         "                  <a:summary />\n" +
-        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "                  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "                  <a:author>\n" +
         "                    <a:name />\n" +
         "                  </a:author>\n" +
@@ -1595,8 +1656,8 @@ public class ODataXmlSerializerTest {
         "                  <a:id>ESTwoPrim(32767)</a:id>\n" +
         "                  <a:title />\n" +
         "                  <a:summary />\n" +
-        "                  <a:updated>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            .format(new Date(currentTimeMillis)) + "</a:updated>" +
+        "                  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
         "                  <a:author>\n" +
         "                    <a:name />\n" +
         "                  </a:author>\n" +
@@ -1660,7 +1721,7 @@ public class ODataXmlSerializerTest {
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"$metadata#ESAllPrim(32767)/PropertyString\" "
-        + "m:metadata-etag=\"WmetadataETag\">"
+        + "m:metadata-etag=\"metadataETag\">"
         + "First Resource - positive values</m:value>";
     Assert.assertEquals(expected, resultString);
   }
@@ -1680,7 +1741,7 @@ public class ODataXmlSerializerTest {
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"$metadata#ESAllPrim(4242)/PropertyString\" "
-        + "m:metadata-etag=\"WmetadataETag\" "
+        + "m:metadata-etag=\"metadataETag\" "
         + "m:null=\"true\"/>";
     Assert.assertEquals(expected, response);
   }
@@ -1701,7 +1762,7 @@ public class ODataXmlSerializerTest {
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"$metadata#ESCollAllPrim(1)/CollPropertyString\" "
-        + "m:metadata-etag=\"WmetadataETag\"  m:type=\"#Collection(String)\">"
+        + "m:metadata-etag=\"metadataETag\"  m:type=\"#Collection(String)\">"
         + "<m:element>Employee1@company.example</m:element>"
         + "<m:element>Employee2@company.example</m:element>"
         + "<m:element>Employee3@company.example</m:element>"
@@ -1727,7 +1788,7 @@ public class ODataXmlSerializerTest {
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:type=\"#olingo.odata.test1.CTTwoPrim\" "
         + "m:context=\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\" "
-        + "m:metadata-etag=\"WmetadataETag\">"
+        + "m:metadata-etag=\"metadataETag\">"
         + "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>"
         + "<d:PropertyString>TEST A</d:PropertyString>"
         + "</m:value>";
@@ -1751,7 +1812,7 @@ public class ODataXmlSerializerTest {
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
         "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
-        "  m:metadata-etag=\"WmetadataETag\">\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
         "  <m:element>\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 1</d:PropertyString>\n" +
@@ -1838,31 +1899,28 @@ public class ODataXmlSerializerTest {
   
   private static class CustomDifferenceListener implements DifferenceListener {
 
-
     @Override
     public int differenceFound(Difference difference) {
       final String xpath = "/updated[1]/text()[1]";
       if(difference.getControlNodeDetail().getXpathLocation().endsWith(xpath)) {
         String controlValue = difference.getControlNodeDetail().getValue();
         String testValue = difference.getTestNodeDetail().getValue();
-        // allow a difference from two seconds
-        SimpleDateFormat sdf = new SimpleDateFormat(UPDATED_FORMAT);
+        // Allow a difference of up to 2 seconds.
         try {
-          long controlTime = sdf.parse(controlValue).getTime();
-          long testTime = sdf.parse(testValue).getTime();
+          long controlTime = UPDATED_FORMAT.parse(controlValue).getTime();
+          long testTime = UPDATED_FORMAT.parse(testValue).getTime();
           long diff = controlTime - testTime;
-          if(diff < 0) {
+          if (diff < 0) {
             diff = diff * -1;
           }
-          if(diff <= MAX_ALLOWED_UPDATED_DIFFERENCE) {
-            // allow a difference from 2 seconds
+          if (diff <= MAX_ALLOWED_UPDATED_DIFFERENCE) {
             return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
           }
         } catch (ParseException e) {
           throw new RuntimeException("Parse exception for updated value (see difference '" + difference + "').");
         }
       }
-      //Yes it is a difference so throw an exception
+      // Yes it is a difference so throw an exception.
       return DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
     }
 

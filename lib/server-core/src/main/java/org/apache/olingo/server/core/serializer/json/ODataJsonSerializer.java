@@ -42,7 +42,9 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
@@ -399,25 +401,25 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   private void writePropertyValue(final EdmProperty edmProperty,
       final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json)
       throws IOException, SerializerException {
+    final EdmType type = edmProperty.getType();
     try {
-      if (edmProperty.isPrimitive()) {
+      if (edmProperty.isPrimitive()
+          || type.getKind() == EdmTypeKind.ENUM || type.getKind() == EdmTypeKind.DEFINITION) {
         if (edmProperty.isCollection()) {
-          writePrimitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
+          writePrimitiveCollection((EdmPrimitiveType) type, property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), json);
         } else {
-          writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
+          writePrimitive((EdmPrimitiveType) type, property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), json);
         }
-      } else if (edmProperty.isCollection()) {
-        writeComplexCollection((EdmComplexType) edmProperty.getType(), property, selectedPaths, json);
       } else if (property.isComplex()) {
-        writeComplexValue((EdmComplexType) edmProperty.getType(), property.asComplex().getValue(), selectedPaths, json);
-      } else if (property.isEnum()) {
-        writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
-            edmProperty.isNullable(), edmProperty.getMaxLength(),
-            edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), json);
+        if (edmProperty.isCollection()) {
+          writeComplexCollection((EdmComplexType) type, property, selectedPaths, json);
+        } else {
+          writeComplexValue((EdmComplexType) type, property.asComplex().getValue(), selectedPaths, json);
+        }
       } else {
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, edmProperty.getName());
@@ -437,6 +439,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
+      case COLLECTION_ENUM:
         try {
           writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, json);
         } catch (EdmPrimitiveTypeException e) {
@@ -448,9 +451,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       case COLLECTION_GEOSPATIAL:
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
-      case COLLECTION_ENUM:
-        json.writeString(value.toString());
-        break;
       default:
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());

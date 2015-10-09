@@ -1138,7 +1138,11 @@ public class DataCreator {
   }
 
   protected static Property createPrimitiveCollection(final String name, final Object... values) {
-    return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(values));
+    List<Object> propertyValues = new ArrayList<Object>();
+    for (final Object value : values) {
+      propertyValues.add(value);
+    }
+    return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, propertyValues);
   }
 
   protected static Property createComplex(final String name, final Property... properties) {

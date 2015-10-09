@@ -466,6 +466,10 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Property complexProperty = entity.getProperty("PropertyCompMixedEnumDef");
     List<Property> value = complexProperty.asComplex().getValue();
     assertEquals((short) 2, value.get(0).getValue());
+
+    defProperty = ((ComplexValue) entity.getProperty("CollPropertyCompMixedEnumDef").asCollection().get(1))
+        .getValue().get(2);
+    assertEquals("string", defProperty.getValue());
     stream.close();
   }
 

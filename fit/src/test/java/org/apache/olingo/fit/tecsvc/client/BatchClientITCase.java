@@ -59,10 +59,9 @@ import org.junit.Test;
 
 public class BatchClientITCase extends AbstractParamTecSvcITCase {
 
-  private static final String SERVICE_NAMESPACE = "olingo.odata.test1";
   private static final String ES_NOT_AVAILABLE_NAME = "ESNotAvailable";
-  private static final FullQualifiedName ES_NOT_AVAILABLE = new FullQualifiedName(SERVICE_NAMESPACE,
-      ES_NOT_AVAILABLE_NAME);
+  private static final FullQualifiedName ES_NOT_AVAILABLE =
+      new FullQualifiedName(SERVICE_NAMESPACE, ES_NOT_AVAILABLE_NAME);
   private static final String PROPERTY_STRING = "PropertyString";
 
   @Before

@@ -71,19 +71,16 @@ import com.fasterxml.aalto.stax.InputFactoryImpl;
 public class ODataXmlDeserializer implements ODataDeserializer {
 
   private static final XMLInputFactory FACTORY = new InputFactoryImpl();
-  private static final String ATOM = "a";
-  private static final QName REF_ELEMENT = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
-  private static final QName PARAMETERS_ELEMENT = new QName(Constants.NS_METADATA, "parameters");
-  private static final QName ID_ATTR = new QName(Constants.NS_ATOM, ATOM);
 
-  private final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
-  private final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
-  private final QName contextQName = new QName(Constants.NS_METADATA, Constants.CONTEXT);
-  private final QName nullQName = new QName(Constants.NS_METADATA, Constants.ATTR_NULL);
-  private final QName inlineQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_INLINE);
-  private final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
-  private final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG); 
-  private final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
+  private static final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
+  private static final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
+  private static final QName contextQName = new QName(Constants.NS_METADATA, Constants.CONTEXT);
+  private static final QName nullQName = new QName(Constants.NS_METADATA, Constants.ATTR_NULL);
+  private static final QName inlineQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_INLINE);
+  private static final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
+  private static final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG);
+  private static final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
+  private static final QName parametersQName = new QName(Constants.NS_METADATA, "parameters");
 
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     return FACTORY.createXMLEventReader(input);
@@ -330,7 +327,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
               link.setInlineEntitySet(entitySet(reader, inline, navigationProperty.getType()));
             }
           }
-        } else if (REF_ELEMENT.equals(event.asStartElement().getName())) {
+        } else if (entryRefQName.equals(event.asStartElement().getName())) {
           if (navigationProperty.isCollection()) {
             throw new DeserializerException("Binding annotation: " + link.getTitle() + 
                 " must be collection of entity refercences",
@@ -362,7 +359,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     while (reader.hasNext() && !foundEndElement) {
       final XMLEvent event = reader.nextEvent();
       
-      if (event.isStartElement() && REF_ELEMENT.equals(event.asStartElement().getName())) {
+      if (event.isStartElement() && entryRefQName.equals(event.asStartElement().getName())) {
           references.add(entityRef(reader, event.asStartElement()));
       }
       
@@ -671,11 +668,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         final XMLEvent event = reader.nextEvent();
         if (event.isStartElement()) {
           StartElement start = event.asStartElement();
-          if (REF_ELEMENT.equals(start.getName())) {
-            Attribute context = start.getAttributeByName(ID_ATTR);
-            if (context == null) {
-              context = start.getAttributeByName(new QName("id"));
-            }
+          if (entryRefQName.equals(start.getName())) {
+            Attribute context = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
             URI uri = URI.create(context.getValue());
             references.add(uri);
           }
@@ -683,8 +677,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       }
       return DeserializerResultImpl.with().entityReferences(references).build();
     } catch (XMLStreamException e) {
-      throw new DeserializerException("An IOException occurred", e,
-          DeserializerException.MessageKeys.IO_EXCEPTION);
+      throw new DeserializerException(e.getMessage(), e, DeserializerException.MessageKeys.IO_EXCEPTION);
     }
   }
 
@@ -702,7 +695,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEventReader reader = getReader(stream);
       while (reader.hasNext()) {
         final XMLEvent event = reader.nextEvent();
-        if (event.isStartElement() && PARAMETERS_ELEMENT.equals(event.asStartElement().getName())) {
+        if (event.isStartElement() && parametersQName.equals(event.asStartElement().getName())) {
           consumeParameters(edmAction, reader, event.asStartElement(), parameters);
         }        
       }
@@ -765,7 +758,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           }
         }
         if (!found) {
-          throw new DeserializerException("failed to read "+event.asStartElement().getName().getLocalPart(), 
+          throw new DeserializerException("failed to read " + event.asStartElement().getName().getLocalPart(),
               DeserializerException.MessageKeys.UNKNOWN_CONTENT);          
         }
       }      

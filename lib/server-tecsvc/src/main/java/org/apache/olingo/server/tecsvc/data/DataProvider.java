@@ -48,6 +48,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -235,9 +236,10 @@ public class DataProvider {
 
   private Property createProperty(final EdmProperty edmProperty, final String propertyName)
       throws DataProviderException {
+    final EdmType type = edmProperty.getType();
     Property newProperty;
-
-    if (edmProperty.isPrimitive()) {
+    if (edmProperty.isPrimitive()
+        || type.getKind() == EdmTypeKind.ENUM || type.getKind() == EdmTypeKind.DEFINITION) {
       newProperty = edmProperty.isCollection() ?
           DataCreator.createPrimitiveCollection(propertyName) :
           DataCreator.createPrimitive(propertyName, null);
@@ -248,10 +250,9 @@ public class DataProvider {
         newProperty = newProperty2;
       } else {
         newProperty = DataCreator.createComplex(propertyName);
-        createProperties((EdmComplexType) edmProperty.getType(), newProperty.asComplex().getValue());
+        createProperties((EdmComplexType) type, newProperty.asComplex().getValue());
       }
     }
-
     return newProperty;
   }
 
@@ -414,39 +415,35 @@ public class DataProvider {
   @SuppressWarnings("unchecked")
   public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
-    if (edmProperty.isPrimitive()) {
-      if (newProperty != null || !patch) {
-        final Object value = newProperty == null ? null : newProperty.getValue();
-        updatePropertyValue(property, value);
-      }
-    } else if (edmProperty.isCollection()) {
+    final EdmType type = edmProperty.getType();
+    if (edmProperty.isCollection()) {
       // Updating collection properties means replacing all entries with the given ones.
       property.asCollection().clear();
 
       if (newProperty != null) {
-        if (edmProperty.getType().getKind() == EdmTypeKind.COMPLEX) {
-          // Complex type
-          final List<ComplexValue> complexValues = (List<ComplexValue>) newProperty.asCollection();
-
-          // Create each complex value
-          for (final ComplexValue complexValue : complexValues) {
+        if (type.getKind() == EdmTypeKind.COMPLEX) {
+          // Create each complex value.
+          for (final ComplexValue complexValue : (List<ComplexValue>) newProperty.asCollection()) {
             ((List<ComplexValue>) property.asCollection()).add(createComplexValue(edmProperty, complexValue, patch));
           }
         } else {
           // Primitive type
-          final List<Object> values = (List<Object>) newProperty.asCollection();
-          ((List<Object>) property.asCollection()).addAll(values);
+          ((List<Object>) property.asCollection()).addAll(newProperty.asCollection());
         }
       }
-    } else {
-      final EdmComplexType type = (EdmComplexType) edmProperty.getType();
-      for (final String propertyName : type.getPropertyNames()) {
+    } else if (type.getKind() == EdmTypeKind.COMPLEX) {
+      for (final String propertyName : ((EdmComplexType) type).getPropertyNames()) {
         final List<Property> newProperties = newProperty == null || newProperty.asComplex() == null ? null :
             newProperty.asComplex().getValue();
-        updateProperty(type.getStructuralProperty(propertyName),
+        updateProperty(((EdmComplexType) type).getStructuralProperty(propertyName),
             findProperty(propertyName, property.asComplex().getValue()),
             newProperties == null ? null : findProperty(propertyName, newProperties),
             patch);
+      }
+    } else {
+      if (newProperty != null || !patch) {
+        final Object value = newProperty == null ? null : newProperty.getValue();
+        updatePropertyValue(property, value);
       }
     }
   }

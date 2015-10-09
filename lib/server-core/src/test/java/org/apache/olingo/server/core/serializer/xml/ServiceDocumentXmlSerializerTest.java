@@ -23,7 +23,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
@@ -43,7 +42,6 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class ServiceDocumentXmlSerializerTest {
   private static ODataSerializer serializer;
@@ -52,16 +50,16 @@ public class ServiceDocumentXmlSerializerTest {
   public static void init() throws SerializerException {
     serializer = OData.newInstance().createSerializer(ContentType.APPLICATION_ATOM_XML);
   }
-  
+
   @Test
   public void writeServiceWithEmptyMockedEdm() throws Exception {
     final Edm edm = mock(Edm.class);
     EdmEntityContainer container = mock(EdmEntityContainer.class);
-    Mockito.stub(container.getFullQualifiedName()).toReturn(new FullQualifiedName("service.test"));
-    when(container.getEntitySets()).thenReturn(new ArrayList<EdmEntitySet>());
-    when(container.getFunctionImports()).thenReturn(new ArrayList<EdmFunctionImport>());
-    when(container.getSingletons()).thenReturn(new ArrayList<EdmSingleton>());
-    when(edm.getEntityContainer(null)).thenReturn(container);
+    when(container.getFullQualifiedName()).thenReturn(new FullQualifiedName("service", "test"));
+    when(container.getEntitySets()).thenReturn(Collections.<EdmEntitySet> emptyList());
+    when(container.getFunctionImports()).thenReturn(Collections.<EdmFunctionImport> emptyList());
+    when(container.getSingletons()).thenReturn(Collections.<EdmSingleton> emptyList());
+    when(edm.getEntityContainer()).thenReturn(container);
     ServiceMetadata metadata = mock(ServiceMetadata.class);
     when(metadata.getEdm()).thenReturn(edm);
 

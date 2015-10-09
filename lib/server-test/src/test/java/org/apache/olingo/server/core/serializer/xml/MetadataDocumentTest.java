@@ -23,8 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -44,7 +43,10 @@ public class MetadataDocumentTest {
   public void writeMetadataWithTechnicalScenario() throws Exception {
     final OData odata = OData.newInstance();
     final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
-        new EdmTechProvider(), getEdmxReferences());
+        new EdmTechProvider(),
+        Collections.singletonList(
+            new EdmxReference(URI.create(CORE_VOCABULARY))
+                .addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"))));
 
     final String metadata = IOUtils.toString(
         odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());
@@ -138,23 +140,8 @@ public class MetadataDocumentTest {
 
     // TypeDefCheck
     assertThat(metadata,
-        containsString("<Property Name=\"PropertyDefString\" Type=\"Namespace1_Alias.TDString\" MaxLength=\"15\"/>"));
-    assertThat(metadata, containsString("<Property Name=\"CollPropertyDefString\" " +
-        "Type=\"Collection(Namespace1_Alias.TDString)\" MaxLength=\"15\"/>"));
-  }
-
-  /**
-   * <code>
-   * <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
-   * <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
-   * </edmx:Reference>
-   * </code>
-   *
-   * @return default emdx reference
-   */
-  private List<EdmxReference> getEdmxReferences() {
-    EdmxReference reference = new EdmxReference(URI.create(CORE_VOCABULARY));
-    reference.addInclude(new EdmxReferenceInclude("Org.OData.Core.V1", "Core"));
-    return Arrays.asList(reference);
+        containsString("<Property Name=\"PropertyDefString\" Type=\"Namespace1_Alias.TDString\"/>"));
+    assertThat(metadata,
+        containsString("<Property Name=\"CollPropertyDefString\" Type=\"Collection(Namespace1_Alias.TDString)\"/>"));
   }
 }

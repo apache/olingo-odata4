@@ -28,10 +28,10 @@ public class TypeDefinitionProvider {
 
   public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) {
     if (nameTDString.equals(typeDefinitionName)) {
-      return new CsdlTypeDefinition().setName(nameTDString.getName()).setUnderlyingType(
-          EdmPrimitiveTypeKind.String.getFullQualifiedName()).setMaxLength(15);
+      return new CsdlTypeDefinition().setName(nameTDString.getName())
+          .setUnderlyingType(EdmPrimitiveTypeKind.String.getFullQualifiedName())
+          .setMaxLength(15);
     }
     return null;
   }
-
 }
