@@ -66,11 +66,9 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
-
 public class ODataXmlDeserializer implements ODataDeserializer {
 
-  private static final XMLInputFactory FACTORY = new InputFactoryImpl();
+  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
 
   private static final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
   private static final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
