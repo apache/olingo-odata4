@@ -27,10 +27,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -43,10 +43,10 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -60,6 +60,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +69,8 @@ public class EdmSchemaImplTest {
 
   private EdmSchema schema;
   private Edm edm;
+  public static final String NAMESPACE = "org.namespace";
+  public static final String ALIAS = "alias";
 
   @Before
   public void before() {
@@ -108,7 +111,8 @@ public class EdmSchemaImplTest {
     assertEquals(2, typeDefinitions.size());
 
     for (EdmTypeDefinition def : typeDefinitions) {
-      assertTrue(def == edm.getTypeDefinition(new FullQualifiedName("org.namespace", def.getName())));
+      assertTrue(def == edm.getTypeDefinition(new FullQualifiedName(NAMESPACE, def.getName())));
+      assertTrue(def == edm.getTypeDefinition(new FullQualifiedName(ALIAS, def.getName())));
     }
   }
 
@@ -119,7 +123,8 @@ public class EdmSchemaImplTest {
     assertEquals(2, enumTypes.size());
 
     for (EdmEnumType enumType : enumTypes) {
-      assertTrue(enumType == edm.getEnumType(new FullQualifiedName("org.namespace", enumType.getName())));
+      assertTrue(enumType == edm.getEnumType(new FullQualifiedName(NAMESPACE, enumType.getName())));
+      assertTrue(enumType == edm.getEnumType(new FullQualifiedName(ALIAS, enumType.getName())));
     }
   }
 
@@ -130,7 +135,8 @@ public class EdmSchemaImplTest {
     assertEquals(2, entityTypes.size());
 
     for (EdmEntityType entityType : entityTypes) {
-      assertTrue(entityType == edm.getEntityType(new FullQualifiedName("org.namespace", entityType.getName())));
+      assertTrue(entityType == edm.getEntityType(new FullQualifiedName(NAMESPACE, entityType.getName())));
+      assertTrue(entityType == edm.getEntityType(new FullQualifiedName(ALIAS, entityType.getName())));
     }
   }
 
@@ -141,7 +147,8 @@ public class EdmSchemaImplTest {
     assertEquals(2, complexTypes.size());
 
     for (EdmComplexType complexType : complexTypes) {
-      assertTrue(complexType == edm.getComplexType(new FullQualifiedName("org.namespace", complexType.getName())));
+      assertTrue(complexType == edm.getComplexType(new FullQualifiedName(NAMESPACE, complexType.getName())));
+      assertTrue(complexType == edm.getComplexType(new FullQualifiedName(ALIAS, complexType.getName())));
     }
   }
 
@@ -152,7 +159,8 @@ public class EdmSchemaImplTest {
     assertEquals(2, actions.size());
 
     for (EdmAction action : actions) {
-      assertTrue(action == edm.getUnboundAction(new FullQualifiedName("org.namespace", action.getName())));
+      assertTrue(action == edm.getUnboundAction(new FullQualifiedName(NAMESPACE, action.getName())));
+      assertTrue(action == edm.getUnboundAction(new FullQualifiedName(ALIAS, action.getName())));
     }
   }
 
@@ -163,11 +171,29 @@ public class EdmSchemaImplTest {
     assertEquals(2, functions.size());
 
     for (EdmFunction function : functions) {
-      FullQualifiedName functionName = new FullQualifiedName("org.namespace", function.getName());
+      FullQualifiedName functionName = new FullQualifiedName(NAMESPACE, function.getName());
+      assertTrue(function == edm.getUnboundFunction(functionName, null));
+      
+      functionName = new FullQualifiedName(ALIAS, function.getName());
       assertTrue(function == edm.getUnboundFunction(functionName, null));
     }
   }
 
+  @Test
+  public void getAnnotationGroups() {
+    List<EdmAnnotations> annotationGroups = schema.getAnnotationGroups();
+    assertNotNull(annotationGroups);
+    assertEquals(2, annotationGroups.size());
+
+    for (EdmAnnotations annotationGroup : annotationGroups) {
+      FullQualifiedName targetName = new FullQualifiedName(annotationGroup.getTargetPath());
+      assertTrue(annotationGroup == edm.getAnnotationGroup(targetName, null));
+      targetName = new FullQualifiedName(annotationGroup.getTargetPath().replace(NAMESPACE, ALIAS));
+      assertTrue(annotationGroup == edm.getAnnotationGroup(targetName, null));
+    }
+  }
+
+  
   @Test
   public void getContainer() {
     EdmEntityContainer container = schema.getEntityContainer();
@@ -205,10 +231,7 @@ public class EdmSchemaImplTest {
     assertTrue(container == edm.getEntityContainer(null));
   }
 
-  private class LocalProvider extends CsdlAbstractEdmProvider {
-
-    private static final String ALIAS = "alias";
-    private static final String NAMESPACE = "org.namespace";
+  private class LocalProvider implements CsdlEdmProvider {
 
     @Override
     public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
@@ -350,6 +373,17 @@ public class EdmSchemaImplTest {
       functions.add(new CsdlFunction().setName("function1"));
       functions.add(new CsdlFunction().setName("function2"));
       providerSchema.setFunctions(functions);
+      
+      List<CsdlAnnotations> annotationGroups = new ArrayList<CsdlAnnotations>();
+      annotationGroups.add(new CsdlAnnotations().setTarget(NAMESPACE + ".entityType1"));
+      annotationGroups.add(new CsdlAnnotations().setTarget(NAMESPACE + ".entityType2"));
+      providerSchema.setAnnotationsGroup(annotationGroups);
+      
+      List<CsdlTerm> terms = new ArrayList<CsdlTerm>();
+      terms.add(new CsdlTerm().setName("term1").setType("Edm.String"));
+      terms.add(new CsdlTerm().setName("term2").setType("Edm.String"));
+      providerSchema.setTerms(terms);
+      
       ArrayList<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
       schemas.add(providerSchema);
       return schemas;
@@ -357,6 +391,11 @@ public class EdmSchemaImplTest {
 
     @Override
     public CsdlEntityContainer getEntityContainer() throws ODataException {
+      throw new RuntimeException("Provider must not be called in the schema case");
+    }
+
+    @Override
+    public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
       throw new RuntimeException("Provider must not be called in the schema case");
     }
   }

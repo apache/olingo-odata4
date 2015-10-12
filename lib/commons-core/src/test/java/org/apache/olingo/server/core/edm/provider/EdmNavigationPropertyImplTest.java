@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -66,6 +67,7 @@ public class EdmNavigationPropertyImplTest {
     assertEquals("entity", type.getName());
     assertNull(property.getReferencingPropertyName("referencedPropertyName"));
     assertNull(property.getPartner());
+    assertFalse(property.containsTarget());
 
     // Test caching
     EdmType cachedType = property.getType();
@@ -83,13 +85,22 @@ public class EdmNavigationPropertyImplTest {
     CsdlNavigationProperty propertyProvider = new CsdlNavigationProperty();
     propertyProvider.setType(entityTypeName);
     propertyProvider.setNullable(false);
+    propertyProvider.setContainsTarget(true);
     List<CsdlReferentialConstraint> referentialConstraints = new ArrayList<CsdlReferentialConstraint>();
     referentialConstraints.add(new CsdlReferentialConstraint().setProperty("property").setReferencedProperty(
         "referencedProperty"));
     propertyProvider.setReferentialConstraints(referentialConstraints);
+  
     EdmNavigationProperty property = new EdmNavigationPropertyImpl(edm, propertyProvider);
     assertEquals("property", property.getReferencingPropertyName("referencedProperty"));
     assertNull(property.getReferencingPropertyName("wrong"));
+    assertTrue(property.containsTarget());
+    
+    assertNotNull(property.getReferentialConstraints());
+    List<EdmReferentialConstraint> edmReferentialConstraints = property.getReferentialConstraints();
+    assertEquals(1, edmReferentialConstraints.size());
+    assertTrue(edmReferentialConstraints == property.getReferentialConstraints());
+    
   }
 
   @Test

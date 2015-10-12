@@ -154,5 +154,6 @@ public class EdmPropertyImplTest {
     assertTrue(property.isUnicode());
     assertFalse(property.isNullable());
     assertEquals("x", property.getDefaultValue());
+    assertNull(property.getSrid());
   }
 }

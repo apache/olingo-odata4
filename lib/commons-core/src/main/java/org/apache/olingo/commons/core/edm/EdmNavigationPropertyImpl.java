@@ -116,8 +116,8 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
         }
       }
 
-      referentialConstraints = referentialConstraintsLocal;
+      referentialConstraints = Collections.unmodifiableList(referentialConstraintsLocal);
     }
-    return Collections.unmodifiableList(referentialConstraints);
+    return referentialConstraints;
   }
 }

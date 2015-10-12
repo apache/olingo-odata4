@@ -379,6 +379,11 @@ public class EdmEntityTypeImplTest {
   }
 
   @Test
+  public void openTypeDefaultIsFalse() {
+    assertFalse(baseType.isOpenType());
+  }
+
+  @Test
   public void abstractTypeWithAbstractBaseTypeDoesNotNeedKey() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);

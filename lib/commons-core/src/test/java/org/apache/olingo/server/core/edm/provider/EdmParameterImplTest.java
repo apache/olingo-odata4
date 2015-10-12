@@ -120,6 +120,7 @@ public class EdmParameterImplTest {
     assertEquals(Integer.valueOf(12), parameter.getScale());
     assertEquals(Integer.valueOf(128), parameter.getMaxLength());
     assertFalse(parameter.isNullable());
+    assertNull(parameter.getSrid());
   }
 
   @Test(expected = EdmException.class)

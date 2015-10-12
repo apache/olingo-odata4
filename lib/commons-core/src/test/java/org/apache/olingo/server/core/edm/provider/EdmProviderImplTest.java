@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotations;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -40,6 +41,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
@@ -81,6 +83,10 @@ public class EdmProviderImplTest {
     aliasInfos.add(new CsdlAliasInfo().setAlias("alias").setNamespace("namespace"));
     when(provider.getAliasInfos()).thenReturn(aliasInfos);
 
+    CsdlAnnotations annotationsGroup = new CsdlAnnotations();
+    annotationsGroup.setTarget("FQN.FQN");
+    when(provider.getAnnotationsGroup(FQN, null)).thenReturn(annotationsGroup);
+
     edm = new EdmProviderImpl(provider);
   }
 
@@ -112,6 +118,7 @@ public class EdmProviderImplTest {
     when(localProvider.getComplexType(fqn)).thenThrow(new ODataException("msg"));
     when(localProvider.getActions(fqn)).thenThrow(new ODataException("msg"));
     when(localProvider.getFunctions(fqn)).thenThrow(new ODataException("msg"));
+    when(localProvider.getAnnotationsGroup(fqn, null)).thenThrow(new ODataException("msg"));
 
     Edm localEdm = new EdmProviderImpl(localProvider);
 
@@ -124,23 +131,34 @@ public class EdmProviderImplTest {
     // seperate because of signature
     try {
       localEdm.getUnboundAction(fqn);
+      fail("Expeced an EdmException");
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
 
     try {
       localEdm.getUnboundFunction(fqn, null);
+      fail("Expeced an EdmException");
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
     try {
       localEdm.getBoundAction(fqn, fqn, true);
+      fail("Expeced an EdmException");
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
 
     try {
       localEdm.getBoundFunction(fqn, fqn, true, null);
+      fail("Expeced an EdmException");
+    } catch (EdmException e) {
+      assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
+    }
+
+    try {
+      localEdm.getAnnotationGroup(fqn, null);
+      fail("Expeced an EdmException");
     } catch (EdmException e) {
       assertEquals("org.apache.olingo.commons.api.ex.ODataException: msg", e.getMessage());
     }
@@ -221,5 +239,13 @@ public class EdmProviderImplTest {
     assertEquals(FQN.getName(), complexType.getName());
 
     assertNull(edm.getComplexType(WRONG_FQN));
+  }
+
+  @Test
+  public void getAnnotations() {
+    EdmAnnotations annotationGroup = edm.getAnnotationGroup(FQN, null);
+    assertNotNull(annotationGroup);
+
+    assertNull(edm.getAnnotationGroup(WRONG_FQN, null));
   }
 }

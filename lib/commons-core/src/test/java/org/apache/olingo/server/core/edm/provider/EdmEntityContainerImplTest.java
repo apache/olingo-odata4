@@ -135,38 +135,25 @@ public class EdmEntityContainerImplTest {
     CsdlEntityContainerInfo entityContainerInfo =
         new CsdlEntityContainerInfo().setContainerName(containerName);
     EdmEntityContainer container = new EdmEntityContainerImpl(edm, provider, entityContainerInfo);
-    boolean thrown = false;
     try {
       container.getEntitySet(null);
-    } catch (EdmException e) {
-      thrown = true;
-    }
-    if (!thrown) {
       fail("Expected EdmException not thrown");
+    } catch (EdmException e) {
     }
     try {
       container.getSingleton(null);
-    } catch (EdmException e) {
-      thrown = true;
-    }
-    if (!thrown) {
       fail("Expected EdmException not thrown");
+    } catch (EdmException e) {
     }
     try {
       container.getActionImport(null);
-    } catch (EdmException e) {
-      thrown = true;
-    }
-    if (!thrown) {
       fail("Expected EdmException not thrown");
+    } catch (EdmException e) {
     }
     try {
       container.getFunctionImport(null);
-    } catch (EdmException e) {
-      thrown = true;
-    }
-    if (!thrown) {
       fail("Expected EdmException not thrown");
+    } catch (EdmException e) {
     }
   }
 
@@ -174,6 +161,7 @@ public class EdmEntityContainerImplTest {
   public void simpleContainerGetter() {
     assertEquals("name", container.getName());
     assertEquals("space", container.getNamespace());
+    assertEquals(new FullQualifiedName("space.name"), container.getFullQualifiedName());
   }
 
   @Test

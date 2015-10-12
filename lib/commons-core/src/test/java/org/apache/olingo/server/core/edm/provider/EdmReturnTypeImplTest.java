@@ -55,6 +55,7 @@ public class EdmReturnTypeImplTest {
     assertNull(typeImpl.getPrecision());
     assertNull(typeImpl.getMaxLength());
     assertNull(typeImpl.getScale());
+    assertNull(typeImpl.getSrid());
   }
 
   @Test
@@ -64,8 +65,10 @@ public class EdmReturnTypeImplTest {
 
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
 
-    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeImpl.getType());
+    EdmType cachedType = typeImpl.getType();
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), cachedType);
     assertTrue(typeImpl.isCollection());
+    assertTrue(cachedType == typeImpl.getType());
   }
 
   @Test(expected = EdmException.class)

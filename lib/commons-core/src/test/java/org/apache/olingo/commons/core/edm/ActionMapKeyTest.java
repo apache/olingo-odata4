@@ -29,7 +29,6 @@ import org.junit.Test;
 public class ActionMapKeyTest {
 
   private final FullQualifiedName fqn = new FullQualifiedName("namespace", "name");
-
   private final FullQualifiedName fqnType = new FullQualifiedName("namespace2", "name2");
 
   @Test
@@ -53,6 +52,23 @@ public class ActionMapKeyTest {
     }
     fail("EdmException expected for parameters: " + fqn + " " + typeName + " " + collection);
   }
+  
+  @Test
+  public void testNotEquals() {
+    ActionMapKey key;
+    ActionMapKey someKey;
+
+    key = new ActionMapKey(fqn, fqnType, false);
+    someKey = new ActionMapKey(fqnType, fqnType, false);
+    assertNotSame(key, someKey);
+    
+    key = new ActionMapKey(fqn, fqnType, false);
+    someKey = new ActionMapKey(fqnType, fqnType, true);
+    assertNotSame(key, someKey);
+    
+    key = new ActionMapKey(fqn, fqnType, false);
+    assertNotSame(key, null);
+  }
 
   @Test
   public void testEqualsMethod() {
@@ -60,6 +76,8 @@ public class ActionMapKeyTest {
     ActionMapKey someKey;
 
     key = new ActionMapKey(fqn, fqnType, false);
+    assertEquals(key, key);
+    
     someKey = new ActionMapKey(fqn, fqnType, false);
     assertEquals(key, someKey);
 

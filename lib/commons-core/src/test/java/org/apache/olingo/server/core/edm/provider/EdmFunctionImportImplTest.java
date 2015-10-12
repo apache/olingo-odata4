@@ -20,12 +20,15 @@ package org.apache.olingo.server.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -75,14 +78,21 @@ public class EdmFunctionImportImplTest {
     final EdmFunctionImport functionImport = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
     assertEquals("functionImport", functionImport.getName());
+    assertEquals(new FullQualifiedName("ns", functionImportName), functionImport.getFullQualifiedName());
+    assertTrue(functionImport.isIncludeInServiceDocument());
     final EdmFunction function = functionImport.getUnboundFunction(Collections.<String> emptyList());
     assertEquals(functionName.getNamespace(), function.getNamespace());
     assertEquals(functionName.getName(), function.getName());
+    assertEquals(functionName, function.getFullQualifiedName());
     assertFalse(function.isBound());
     assertFalse(function.isComposable());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean),
         function.getReturnType().getType());
     assertEquals(entityContainer, functionImport.getEntityContainer());
     assertNull(functionImport.getReturnedEntitySet());
+    
+    List<EdmFunction> functions = functionImport.getUnboundFunctions();
+    assertNotNull(functions);
+    assertEquals(1, functions.size());
   }
 }

@@ -192,9 +192,10 @@ public abstract class AbstractEdm implements Edm {
 
   @Override
   public EdmAction getUnboundAction(final FullQualifiedName actionName) {
-    EdmAction action = unboundActions.get(actionName);
+    final FullQualifiedName fqn = resolvePossibleAlias(actionName);
+    EdmAction action = unboundActions.get(fqn);
     if (action == null) {
-      action = createUnboundAction(resolvePossibleAlias(actionName));
+      action = createUnboundAction(fqn);
       if (action != null) {
         unboundActions.put(actionName, action);
       }

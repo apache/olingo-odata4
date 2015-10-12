@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.edm.provider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.EdmException;
@@ -46,6 +47,7 @@ public class EdmTypeDefinitionImplTest {
 
     assertEquals("name", typeDefImpl.getName());
     assertEquals("namespace", typeDefImpl.getNamespace());
+    assertEquals(new FullQualifiedName("namespace.name"), typeDefImpl.getFullQualifiedName());
     assertEquals(String.class, typeDefImpl.getDefaultType());
     assertEquals(EdmTypeKind.DEFINITION, typeDefImpl.getKind());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String), typeDefImpl.getUnderlyingType());
@@ -63,15 +65,34 @@ public class EdmTypeDefinitionImplTest {
     assertNull(typeDefImpl.getPrecision());
     assertNull(typeDefImpl.getScale());
     assertTrue(typeDefImpl.isUnicode());
+    assertNull(typeDefImpl.getSrid());
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void invalidTypeResultsInEdmException() throws Exception {
     FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
     CsdlTypeDefinition providerTypeDef =
         new CsdlTypeDefinition().setName("typeDef").setUnderlyingType(new FullQualifiedName("wrong", "wrong"));
     EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
-    def.getUnderlyingType();
+    try {
+      def.getUnderlyingType();
+      fail("Expected an EdmException");
+    } catch (EdmException e) {
+      assertEquals("Invalid underlying type: wrong.wrong", e.getMessage());
+    }
+  }
+
+  @Test
+  public void nullTypeResultsInEdmException() throws Exception {
+    FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
+    CsdlTypeDefinition providerTypeDef = new CsdlTypeDefinition().setName("typeDef");
+    EdmTypeDefinitionImpl def = new EdmTypeDefinitionImpl(mock(EdmProviderImpl.class), typeDefName, providerTypeDef);
+    try {
+      def.getUnderlyingType();
+      fail("Expected an EdmException");
+    } catch (EdmException e) {
+      assertEquals("Underlying Type for type definition: namespace.name must not be null.", e.getMessage());
+    }
   }
 
 }

@@ -19,7 +19,10 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
@@ -63,7 +67,6 @@ public class EdmEntitySetImplTest {
     final CsdlEntitySet entitySetProvider = new CsdlEntitySet()
         .setName(entitySetName)
         .setType(typeName)
-        .setIncludeInServiceDocument(true)
         .setNavigationPropertyBindings(Arrays.asList(
             new CsdlNavigationPropertyBinding().setPath("path")
                 .setTarget(containerName.getFullQualifiedNameAsString() + "/" + entitySetName)));
@@ -79,5 +82,35 @@ public class EdmEntitySetImplTest {
     assertNull(entitySet.getRelatedBindingTarget(null));
     final EdmBindingTarget target = entitySet.getRelatedBindingTarget("path");
     assertEquals(entitySetName, target.getName());
+    assertTrue(entitySet.isIncludeInServiceDocument());
+  }
+
+  @Test
+  public void entitySetIncludeInServiceDocumentFalseAndInvalidType() throws Exception {
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
+
+    final FullQualifiedName containerName = new FullQualifiedName("ns", "container");
+    final CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(containerName);
+    when(provider.getEntityContainerInfo(containerName)).thenReturn(containerInfo);
+    final EdmEntityContainer entityContainer = new EdmEntityContainerImpl(edm, provider, containerInfo);
+
+    final String entitySetName = "entitySet";
+    final CsdlEntitySet entitySetProvider = new CsdlEntitySet()
+        .setName(entitySetName)
+        .setType("invalid.invalid")
+        .setIncludeInServiceDocument(false);
+    when(provider.getEntitySet(containerName, entitySetName)).thenReturn(entitySetProvider);
+
+    final EdmEntitySet entitySet = new EdmEntitySetImpl(edm, entityContainer, entitySetProvider);
+    assertFalse(entitySet.isIncludeInServiceDocument());
+
+    try {
+      entitySet.getEntityType();
+      fail("Expected an EdmException");
+    } catch (EdmException e) {
+      assertEquals("Can´t find entity type: invalid.invalid for entity set or singleton: " + entitySetName, e
+          .getMessage());
+    }
   }
 }

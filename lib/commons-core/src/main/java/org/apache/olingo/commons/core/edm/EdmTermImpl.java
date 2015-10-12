@@ -65,7 +65,9 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
                   ? typeInfo.getEnumType()
                   : typeInfo.isComplexType()
                       ? typeInfo.getComplexType()
-                      : null;
+                      : typeInfo.isEntityType()
+                          ? typeInfo.getEntityType()
+                          : null;
       if (termType == null) {
         throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
       }
