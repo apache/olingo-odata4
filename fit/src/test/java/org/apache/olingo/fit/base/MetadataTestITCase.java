@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
 import org.junit.Test;
@@ -115,8 +116,8 @@ public class MetadataTestITCase extends AbstractTestITCase {
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
-    assertTrue(isLanguageDependent.getAppliesTo().contains("Property"));
-    assertTrue(isLanguageDependent.getAppliesTo().contains("Term"));
+    assertTrue(isLanguageDependent.getAppliesTo().contains(TargetType.Property));
+    assertTrue(isLanguageDependent.getAppliesTo().contains(TargetType.Term));
     assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core.Tag")), isLanguageDependent.getType());
     assertEquals(EdmBoolean.getInstance(), ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
     assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm, null));

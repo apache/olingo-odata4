@@ -103,11 +103,6 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
   }
 
   @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.Property;
-  }
-
-  @Override
   public boolean isPrimitive() {
     return typeInfo.isPrimitiveType();
   }

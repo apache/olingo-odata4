@@ -38,9 +38,4 @@ public class EdmActionImportImpl extends AbstractEdmOperationImport implements E
   public EdmAction getUnboundAction() {
     return edm.getUnboundAction(actionImport.getActionFQN());
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.ActionImport;
-  }
 }

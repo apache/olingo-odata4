@@ -138,9 +138,4 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
   public boolean hasStream() {
     return hasStream;
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.EntityType;
-  }
 }

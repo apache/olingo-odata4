@@ -26,7 +26,7 @@ import java.util.List;
  * <br/>
  * EdmEntityContainer hold the information of EntitySets, Singletons, ActionImports and FunctionImports contained
  */
-public interface EdmEntityContainer extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
 
   /**
    * @return namespace of this entity container

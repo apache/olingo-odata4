@@ -250,11 +250,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   public boolean isFlags() {
     return enumType.isFlags();
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.EnumType;
-  }
   
   @Override
   public int hashCode() {

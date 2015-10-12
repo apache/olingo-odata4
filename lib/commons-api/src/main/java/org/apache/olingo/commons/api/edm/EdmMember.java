@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.edm;
 /**
  * An {@link EdmEnumType} member element.
  */
-public interface EdmMember extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmMember extends EdmNamed, EdmAnnotatable {
 
   /**
    * @return value of this member as string

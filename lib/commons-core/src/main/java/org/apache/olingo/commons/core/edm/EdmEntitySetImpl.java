@@ -36,9 +36,4 @@ public class EdmEntitySetImpl extends AbstractEdmBindingTarget implements EdmEnt
   public boolean isIncludeInServiceDocument() {
     return entitySet.isIncludeInServiceDocument();
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.EntitySet;
-  }
 }

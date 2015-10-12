@@ -25,7 +25,7 @@ import java.util.List;
  *
  * Complex types and entity types are described in the Conceptual Schema Definition of the OData protocol.
  */
-public interface EdmStructuredType extends EdmType, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmStructuredType extends EdmType, EdmAnnotatable {
 
   /**
    * Get property by name

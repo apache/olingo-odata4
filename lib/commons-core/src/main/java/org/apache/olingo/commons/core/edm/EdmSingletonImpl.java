@@ -28,9 +28,4 @@ public class EdmSingletonImpl extends AbstractEdmBindingTarget implements EdmSin
   public EdmSingletonImpl(final Edm edm, final EdmEntityContainer container, final CsdlSingleton singleton) {
     super(edm, container, singleton);
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.Singleton;
-  }
 }

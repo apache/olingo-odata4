@@ -25,7 +25,7 @@ import java.util.List;
  * <br/>
  * EdmNavigationProperty allows navigation from one entity type to another via a relationship.
  */
-public interface EdmNavigationProperty extends EdmElement, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmNavigationProperty extends EdmElement, EdmAnnotatable {
 
   @Override
   EdmEntityType getType();

@@ -32,11 +32,6 @@ public class EdmMemberImpl extends AbstractEdmNamed implements EdmMember {
   }
 
   @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.Member;
-  }
-
-  @Override
   public String getValue() {
     return member.getValue();
   }

@@ -29,10 +29,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.EdmAnnotationsTarget.TargetType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
@@ -93,8 +93,6 @@ public class EdmTermImplTest {
     EdmPrimitiveType type = (EdmPrimitiveType) initialTerm.getType();
     assertEquals(type.getName(), "String");
     
-    assertEquals(TargetType.Term, initialTerm.getAnnotationsTargetType());
-    
     //initial facets
     assertTrue(initialTerm.isNullable());
     assertNull(initialTerm.getDefaultValue());
@@ -114,12 +112,10 @@ public class EdmTermImplTest {
     assertFalse(derivedTerm.getAnnotations().isEmpty());
     assertEquals(1, derivedTerm.getAnnotations().size());
     assertFalse(derivedTerm.getAppliesTo().isEmpty());
-    assertEquals("Property", derivedTerm.getAppliesTo().get(0));
+    assertEquals(TargetType.Property, derivedTerm.getAppliesTo().get(0));
 
     EdmPrimitiveType type = (EdmPrimitiveType) derivedTerm.getType();
     assertEquals(type.getName(), "String");
-    
-    assertEquals(TargetType.Term, derivedTerm.getAnnotationsTargetType());
     
     //set facets
     assertFalse(derivedTerm.isNullable());

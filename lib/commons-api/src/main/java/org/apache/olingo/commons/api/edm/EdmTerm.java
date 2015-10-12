@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
 /**
  * An {@link EdmTerm} defines a term in a vocabulary.
  */
-public interface EdmTerm extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmTerm extends EdmNamed, EdmAnnotatable {
 
   /**
    * @return type of value returned by the expression contained in an annotation using this term
@@ -49,7 +49,7 @@ public interface EdmTerm extends EdmNamed, EdmAnnotationsTarget, EdmAnnotatable 
    * @return list of CSDL element that this term can be applied to; if no value is supplied, the term is not restricted
    * in its application.
    */
-  List<String> getAppliesTo();
+  List<TargetType> getAppliesTo();
 
   /**
    * @return true if nullable

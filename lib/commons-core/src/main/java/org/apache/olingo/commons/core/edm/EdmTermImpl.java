@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -26,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
@@ -37,7 +39,7 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   private final EdmTypeInfo typeInfo;
   private EdmType termType;
   private EdmTerm baseTerm;
-  private List<String> appliesTo;
+  private List<TargetType> appliesTo;
 
   public EdmTermImpl(final Edm edm, final String namespace, final CsdlTerm term) {
     super(edm, term.getName(), term);
@@ -59,14 +61,14 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
           ? EdmPrimitiveTypeFactory.getInstance(typeInfo.getPrimitiveTypeKind())
           : typeInfo.isTypeDefinition()
               ? typeInfo.getTypeDefinition()
-                  : typeInfo.isEnumType()
+              : typeInfo.isEnumType()
                   ? typeInfo.getEnumType()
                   : typeInfo.isComplexType()
                       ? typeInfo.getComplexType()
                       : null;
-                      if (termType == null) {
-                        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
-                      }
+      if (termType == null) {
+        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+      }
     }
 
     return termType;
@@ -81,10 +83,17 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   }
 
   @Override
-  public List<String> getAppliesTo() {
+  public List<TargetType> getAppliesTo() {
     if (appliesTo == null) {
-      appliesTo = new ArrayList<String>();
-      appliesTo.addAll(term.getAppliesTo());
+      ArrayList<TargetType> localAppliesTo = new ArrayList<TargetType>();
+      for (String apply : term.getAppliesTo()) {
+        try {
+          localAppliesTo.add(TargetType.valueOf(apply));
+        } catch (IllegalArgumentException e) {
+          throw new EdmException("Invalid AppliesTo value: " + apply, e);
+        }
+      }
+      appliesTo = Collections.unmodifiableList(localAppliesTo);
     }
     return appliesTo;
   }
@@ -117,10 +126,5 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   @Override
   public String getDefaultValue() {
     return term.getDefaultValue();
-  }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.Term;
   }
 }

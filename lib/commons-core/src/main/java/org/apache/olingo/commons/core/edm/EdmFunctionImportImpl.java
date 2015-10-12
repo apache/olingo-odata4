@@ -56,9 +56,4 @@ public class EdmFunctionImportImpl extends AbstractEdmOperationImport implements
   public boolean isIncludeInServiceDocument() {
     return functionImport.isIncludeInServiceDocument();
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.FunctionImport;
-  }
 }

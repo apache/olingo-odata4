@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  * <br/>
  * EdmProperty defines a simple type or a complex type.
  */
-public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotatable {
 
   /**
    * Gets the related MIME type for the property.

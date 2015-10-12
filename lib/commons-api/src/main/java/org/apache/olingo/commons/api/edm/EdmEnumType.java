@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * An EdmEnumType represents a set of related values.
  */
-public interface EdmEnumType extends EdmPrimitiveType, EdmAnnotationsTarget {
+public interface EdmEnumType extends EdmPrimitiveType {
 
   /**
    * Get member according to given name

@@ -25,11 +25,6 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmAnnotations extends EdmAnnotatable{
 
   /**
-   * @return a model element in the entity model to which this annotations is targeted
-   */
-  EdmAnnotationsTarget getTarget();
-
-  /**
    * @return a string allowing annotation authors a means of conditionally applying an annotation
    */
   String getQualifier();

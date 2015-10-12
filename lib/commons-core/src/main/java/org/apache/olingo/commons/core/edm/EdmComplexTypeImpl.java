@@ -57,9 +57,4 @@ public class EdmComplexTypeImpl extends AbstractEdmStructuredType implements Edm
       baseType = buildBaseType(baseTypeName);
     }
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.ComplexType;
-  }
 }

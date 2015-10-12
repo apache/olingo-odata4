@@ -309,9 +309,4 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
       }
     }
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.EntityContainer;
-  }
 }

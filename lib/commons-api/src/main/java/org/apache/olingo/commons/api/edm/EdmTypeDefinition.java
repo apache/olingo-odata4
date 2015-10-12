@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  * <br/>
  * For more information on primitive types refer to {@link EdmPrimitiveType}.
  */
-public interface EdmTypeDefinition extends EdmPrimitiveType, EdmAnnotationsTarget, EdmAnnotatable {
+public interface EdmTypeDefinition extends EdmPrimitiveType, EdmAnnotatable {
 
   /**
    * @return {@link EdmPrimitiveType} this type definition is based upon

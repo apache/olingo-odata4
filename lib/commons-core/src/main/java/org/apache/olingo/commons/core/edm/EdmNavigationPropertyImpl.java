@@ -120,9 +120,4 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmEl
     }
     return Collections.unmodifiableList(referentialConstraints);
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.NavigationProperty;
-  }
 }

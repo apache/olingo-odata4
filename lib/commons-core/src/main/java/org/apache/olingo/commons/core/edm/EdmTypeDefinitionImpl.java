@@ -144,9 +144,4 @@ public class EdmTypeDefinitionImpl extends AbstractEdmNamed implements EdmTypeDe
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
     return getUnderlyingType().fromUriLiteral(literal);
   }
-
-  @Override
-  public TargetType getAnnotationsTargetType() {
-    return TargetType.TypeDefinition;
-  }
 }
