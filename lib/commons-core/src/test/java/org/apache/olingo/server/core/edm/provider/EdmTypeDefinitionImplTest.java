@@ -19,12 +19,14 @@
 package org.apache.olingo.server.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -33,10 +35,66 @@ import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmTypeDefinitionImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
+import org.apache.olingo.commons.core.edm.primitivetype.PrimitiveTypeBaseTest;
 import org.junit.Test;
 
-public class EdmTypeDefinitionImplTest {
+public class EdmTypeDefinitionImplTest extends PrimitiveTypeBaseTest {
 
+  private final EdmPrimitiveType instance = new EdmTypeDefinitionImpl(null,
+      new FullQualifiedName("namespace", "def"),
+      new CsdlTypeDefinition().setName("def")
+          .setUnderlyingType(EdmString.getInstance().getFullQualifiedName())
+          .setMaxLength(5)
+          .setUnicode(false));
+
+  @Test
+  public void defaultType() throws Exception {
+    assertEquals(String.class, instance.getDefaultType());
+  }
+
+  @Test
+  public void compatibility() {
+    assertTrue(instance.isCompatible(instance));
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+      if (kind != EdmPrimitiveTypeKind.String) {
+        assertFalse(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(kind)));
+      }
+    }
+  }
+
+  @Test
+  public void toUriLiteral() throws Exception {
+    assertEquals("'Value'", instance.toUriLiteral("Value"));
+  }
+
+  @Test
+  public void fromUriLiteral() throws Exception {
+    assertEquals("Value", instance.fromUriLiteral("'Value'"));
+  }
+
+  @Test
+  public void valueToString() throws Exception {
+    assertEquals("text", instance.valueToString("text", null, null, null, null, null));
+
+    expectFacetsErrorInValueToString(instance, "longtext", null, null, null, null, null);
+    expectFacetsErrorInValueToString(instance, "text", null, 3, null, null, null);
+    expectFacetsErrorInValueToString(instance, "schräg", null, null, null, null, null);
+    expectFacetsErrorInValueToString(instance, "schräg", null, null, null, null, false);
+  }
+
+  @Test
+  public void valueOfString() throws Exception {
+    assertEquals("text", instance.valueOfString("text", null, null, null, null, null, String.class));
+
+    expectFacetsErrorInValueOfString(instance, "longtext", null, null, null, null, null);
+    expectFacetsErrorInValueOfString(instance, "text", null, 3, null, null, null);
+    expectFacetsErrorInValueOfString(instance, "schräg", null, null, null, null, null);
+    expectFacetsErrorInValueOfString(instance, "schräg", null, null, null, null, false);
+
+    expectTypeErrorInValueOfString(instance, "text");
+  }
+  
   @Test
   public void typeDefOnStringNoFacets() throws Exception {
     final FullQualifiedName typeDefName = new FullQualifiedName("namespace", "name");
