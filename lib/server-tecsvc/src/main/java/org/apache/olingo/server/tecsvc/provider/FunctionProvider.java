@@ -50,8 +50,8 @@ public class FunctionProvider {
   public static final FullQualifiedName nameBFCCTPrimCompRTETTwoKeyNavParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCTPrimCompRTETTwoKeyNavParam");
 
-  public static final FullQualifiedName nameBFCESAllPrimRTCTAllPrim =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESAllPrimRTCTAllPrim");
+  public static final FullQualifiedName nameBFNESAllPrimRTCTAllPrim =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFNESAllPrimRTCTAllPrim");
 
   public static final FullQualifiedName nameBFCESBaseTwoKeyNavRTESBaseTwoKey =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESBaseTwoKeyNavRTESBaseTwoKey");
@@ -574,22 +574,22 @@ public class FunctionProvider {
               .setParameters(Arrays.asList(
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETBaseTwoKeyNav)
                       .setCollection(true).setNullable(false)))
-              .setComposable(false)
+              .setComposable(true)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true)
                       .setNullable(false))
           );
 
-    } else if (functionName.equals(nameBFCESAllPrimRTCTAllPrim)) {
+    } else if (functionName.equals(nameBFNESAllPrimRTCTAllPrim)) {
       return Arrays.asList(
           new CsdlFunction()
-              .setName("BFCESAllPrimRTCTAllPrim")
+              .setName("BFNESAllPrimRTCTAllPrim")
               .setBound(true)
               .setParameters(
                   Arrays.asList(
                       new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETAllPrim)
                           .setCollection(true).setNullable(false)))
-              .setComposable(true)
+              .setComposable(false)
               .setReturnType(
                   new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))
           );

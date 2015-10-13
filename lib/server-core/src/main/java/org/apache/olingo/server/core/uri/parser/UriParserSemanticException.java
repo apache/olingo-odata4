@@ -48,6 +48,8 @@ public class UriParserSemanticException extends UriParserException {
     FUNCTION_PARAMETERS_EXPECTED,
     /** parameter: resource part */
     UNKNOWN_PART,
+    /** parameter: type */
+    UNKNOWN_TYPE,
     /** parameter: expression */
     ONLY_FOR_TYPED_PARTS,
     /** parameter: entity type name */
@@ -75,8 +77,10 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: resource_name */
     RESOURCE_NOT_FOUND,
     /** parameter: not implemented part */
-    NOT_IMPLEMENTED;
-
+    NOT_IMPLEMENTED,
+    /** parameter: namespace **/
+    NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT;
+    
     @Override
     public String getKey() {
       return name();

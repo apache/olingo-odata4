@@ -30,20 +30,29 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
 public class ServiceDocumentTest {
 
+  private static final String serviceRoot = "http://localhost:8080/odata.svc";
   private static final ServiceMetadata metadata = OData.newInstance().createServiceMetadata(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList(),
+      new ServiceMetadataETagSupport() {
+        @Override
+        public String getServiceDocumentETag() {
+          return "W/\"serviceDocumentETag\"";
+        }
+        @Override
+        public String getMetadataETag() {
+          return "W/\"metadataETag\"";
+        }
+      });
 
   @Test
   public void writeServiceDocumentJson() throws Exception {
-    final String serviceRoot = "http://localhost:8080/odata.svc";
-
     OData server = OData.newInstance();
     assertNotNull(server);
 
@@ -54,7 +63,8 @@ public class ServiceDocumentTest {
     assertNotNull(result);
     final String jsonString = IOUtils.toString(result);
 
-    assertTrue(jsonString.contains(metadata.getServiceMetadataETagSupport().getMetadataETag().replace("\"", "\\\"")));
+    assertTrue(jsonString.contains(
+        metadata.getServiceMetadataETagSupport().getMetadataETag().replace("\"", "\\\"")));
 
     assertTrue(jsonString.contains("ESAllPrim"));
     assertTrue(jsonString.contains("ESCollAllPrim"));
@@ -75,7 +85,6 @@ public class ServiceDocumentTest {
 
   @Test
   public void serviceDocumentNoMetadata() throws Exception {
-    final String serviceRoot = "http://localhost:8080/odata.svc";
     final String result = IOUtils.toString(
         OData.newInstance().createSerializer(ContentType.JSON_NO_METADATA)
             .serviceDocument(metadata, serviceRoot).getContent());

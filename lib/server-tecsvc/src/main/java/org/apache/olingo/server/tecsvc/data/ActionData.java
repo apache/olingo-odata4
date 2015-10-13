@@ -54,8 +54,7 @@ public class ActionData {
       return DataCreator.createPrimitive(null, "UARTString string value");
     } else if ("UARTByteNineParam".equals(name)) {
       short count = 0;  // counts non-empty parameters
-      for (final String parameterName : parameters.keySet()) {
-        final Parameter parameter = parameters.get(parameterName);
+      for (final Parameter parameter : parameters.values()) {
         if (!(parameter.isNull()
             || !parameter.isCollection()
                 && (parameter.isComplex() && parameter.asComplex().getValue().isEmpty()
@@ -81,10 +80,9 @@ public class ActionData {
           String param16String = valueAsString(paramInt16, EdmPrimitiveTypeKind.Int16, oData);
           String paramDurationString = valueAsString(paramDuration, EdmPrimitiveTypeKind.Duration, oData);
 
-          return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(new String[] {
-              name + " int16 value: " + param16String,
-              name + " duration value: " + paramDurationString
-          }));
+          return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(
+                  name + " int16 value: " + param16String,
+                  name + " duration value: " + paramDurationString));
         } catch(EdmPrimitiveTypeException e) {
           throw new DataProviderException("EdmPrimitiveTypeException", e);
         }

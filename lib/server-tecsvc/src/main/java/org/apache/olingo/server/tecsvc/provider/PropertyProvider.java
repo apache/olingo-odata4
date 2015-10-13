@@ -777,12 +777,10 @@ public class PropertyProvider {
   // TypeDefinition Properties ---------------------------------------------------------------------------------------
   public static final CsdlProperty propertyTypeDefinition_TDString = new CsdlProperty()
       .setName("PropertyDefString")
-      .setType(TypeDefinitionProvider.nameTDString)
-      .setMaxLength(15);
+      .setType(TypeDefinitionProvider.nameTDString);
 
   public static final CsdlProperty collPropertyTypeDefinition_TDString = new CsdlProperty()
       .setName("CollPropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)
-      .setMaxLength(15)
       .setCollection(true);
 }

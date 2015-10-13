@@ -21,7 +21,6 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.IOException;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
@@ -73,48 +72,42 @@ public class ServiceDocumentJsonSerializer {
 
     gen.writeArrayFieldStart(Constants.VALUE);
 
-    final Edm edm = metadata.getEdm();
-    writeEntitySets(gen, edm);
-    writeFunctionImports(gen, edm);
-    writeSingletons(gen, edm);
+    final EdmEntityContainer container = metadata.getEdm().getEntityContainer();
+    writeEntitySets(gen, container);
+    writeFunctionImports(gen, container);
+    writeSingletons(gen, container);
   }
 
-  private void writeEntitySets(final JsonGenerator gen, final Edm edm) throws IOException {
-    EdmEntityContainer container = edm.getEntityContainer(null);
-
+  private void writeEntitySets(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
       if (edmEntitySet.isIncludeInServiceDocument()) {
-        gen.writeStartObject();
-        gen.writeObjectField(Constants.JSON_NAME, edmEntitySet.getName());
-        gen.writeObjectField(Constants.JSON_URL, edmEntitySet.getName());
-        gen.writeEndObject();
+        writeElement(gen, null, edmEntitySet.getName(), edmEntitySet.getName());
       }
     }
   }
 
-  private void writeFunctionImports(final JsonGenerator gen, final Edm edm) throws IOException {
-    EdmEntityContainer container = edm.getEntityContainer(null);
-
+  private void writeFunctionImports(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {
       if (edmFunctionImport.isIncludeInServiceDocument()) {
-        gen.writeStartObject();
-        gen.writeObjectField(Constants.JSON_NAME, edmFunctionImport.getName());
-        gen.writeObjectField(Constants.JSON_URL, edmFunctionImport.getName());
-        gen.writeObjectField(KIND, FUNCTION_IMPORT);
-        gen.writeEndObject();
+        writeElement(gen, FUNCTION_IMPORT, edmFunctionImport.getName(), edmFunctionImport.getName());
       }
     }
   }
 
-  private void writeSingletons(final JsonGenerator gen, final Edm edm) throws IOException {
-    EdmEntityContainer container = edm.getEntityContainer(null);
-
+  private void writeSingletons(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmSingleton edmSingleton : container.getSingletons()) {
-      gen.writeStartObject();
-      gen.writeObjectField(Constants.JSON_NAME, edmSingleton.getName());
-      gen.writeObjectField(Constants.JSON_URL, edmSingleton.getName());
-      gen.writeObjectField(KIND, SINGLETON);
-      gen.writeEndObject();
+      writeElement(gen, SINGLETON, edmSingleton.getName(), edmSingleton.getName());
     }
+  }
+
+  private void writeElement(JsonGenerator gen, final String kind, final String reference, final String title)
+      throws IOException {
+    gen.writeStartObject();
+    gen.writeObjectField(Constants.JSON_NAME, title);
+    gen.writeObjectField(Constants.JSON_URL, reference);
+    if (kind != null) {
+      gen.writeObjectField(KIND, kind);
+    }
+    gen.writeEndObject();
   }
 }

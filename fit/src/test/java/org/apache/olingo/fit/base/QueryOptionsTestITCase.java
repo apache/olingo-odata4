@@ -185,7 +185,7 @@ public class QueryOptionsTestITCase extends AbstractTestITCase {
   }
 
   /**
-   * Test <tt>$inlinecount</tt>.
+   * Test <tt>$count</tt>.
    */
   @Test
   public void count() {

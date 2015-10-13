@@ -25,21 +25,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
-import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
-import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
-import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
@@ -50,7 +44,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
@@ -264,7 +257,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertNotNull(result.getProperty("PropertyComp"));
     Property comp = result.getProperty("PropertyComp");
     Assert.assertEquals("olingo.odata.test1.CTAllPrim", comp.getType());
-    ComplexValue cv = (ComplexValue)comp.getValue();
+    ComplexValue cv = comp.asComplex();
     
     Assert.assertEquals(16, cv.getValue().size());
     
@@ -277,14 +270,14 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
   }  
 
   private Property getCVProperty(ComplexValue cv, String name) {
-    for (Property p:cv.getValue()) {
+    for (Property p : cv.getValue()) {
       if (p.getName().equals(name)) {
         return p;
       }
     }
     return null;
   }
-  
+
   @Test
   public void entityMixPrimCollComp() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
@@ -336,7 +329,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
     Property comp = result.getProperty("PropertyComp");
     Assert.assertEquals("olingo.odata.test1.CTTwoPrim", comp.getType());
-    ComplexValue cv = (ComplexValue)comp.getValue();
+    ComplexValue cv = comp.asComplex();
     
     Assert.assertEquals(2, cv.getValue().size());
     Assert.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
@@ -344,21 +337,85 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     
     comp = result.getProperty("CollPropertyComp");
     Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
-    @SuppressWarnings("unchecked")
-    List<ComplexValue> properties = (List<ComplexValue>)comp.getValue();
-    
+
+    List<?> properties = comp.asCollection();
     Assert.assertEquals(3, properties.size());
     
-    Assert.assertEquals((short) 123,
-        getCVProperty(properties.get(0), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 1",
-        getCVProperty(properties.get(0), "PropertyString").asPrimitive());
+    Assert.assertEquals((short) 123, getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 1", getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
 
-    Assert.assertEquals((short) 789, getCVProperty(properties.get(2), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 3", getCVProperty(properties.get(2), "PropertyString")
-        .asPrimitive());    
+    Assert.assertEquals((short) 789, getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
   }
-  
+
+  @Test
+  public void entityMixEnumDefCollComp() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
+    final String payload = "<?xml version='1.0' encoding='UTF-8'?>\n"
+        + "<a:entry xmlns:a=\"" + Constants.NS_ATOM + "\""
+        + "  xmlns:m=\"" + Constants.NS_METADATA + "\" xmlns:d=\"" + Constants.NS_DATASERVICES + "\">\n"
+        + "  <a:content type=\"application/xml\">\n"
+        + "    <m:properties>\n"
+        + "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n"
+        + "      <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "      <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "        <m:element>String2</m:element>\n"
+        + "        <m:element>String3</m:element>\n"
+        + "        <m:element>String2,String3</m:element>\n"
+        + "      </d:CollPropertyEnumString>\n"
+        + "      <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "      <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "        <m:element>Test1</m:element>\n"
+        + "        <m:element>Test2</m:element>\n"
+        + "      </d:CollPropertyDefString>\n"
+        + "      <d:PropertyCompMixedEnumDef m:type=\"#olingo.odata.test1.CTMixEnumDef\">\n"
+        + "        <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "        <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "          <m:element>String2</m:element>\n"
+        + "          <m:element>String3</m:element>\n"
+        + "          <m:element>String2,String3</m:element>\n"
+        + "        </d:CollPropertyEnumString>\n"
+        + "        <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "        <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "          <m:element>Test1</m:element>\n"
+        + "          <m:element>Test2</m:element>\n"
+        + "        </d:CollPropertyDefString>\n"
+        + "      </d:PropertyCompMixedEnumDef>\n"
+        + "      <d:CollPropertyCompMixedEnumDef m:type=\"#Collection(olingo.odata.test1.CTMixEnumDef)\">\n"
+        + "        <m:element>\n"
+        + "          <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
+        + "</d:PropertyEnumString>\n"
+        + "          <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
+        + "            <m:element>String2</m:element>\n"
+        + "            <m:element>String3</m:element>\n"
+        + "            <m:element>String2,String3</m:element>\n"
+        + "          </d:CollPropertyEnumString>\n"
+        + "          <d:PropertyDefString m:type=\"#olingo.odata.test1.TDString\">Test</d:PropertyDefString>\n"
+        + "          <d:CollPropertyDefString m:type=\"#Collection(olingo.odata.test1.TDString)\">\n"
+        + "            <m:element>Test1</m:element>\n"
+        + "            <m:element>Test2</m:element>\n"
+        + "          </d:CollPropertyDefString>\n"
+        + "        </m:element>\n"
+        + "      </d:CollPropertyCompMixedEnumDef>\n"
+        + "    </m:properties>\n"
+        + "  </a:content>\n"
+        + "</a:entry>";
+    final Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertEquals(7, result.getProperties().size());
+    
+    Assert.assertEquals((short) 1, result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertEquals((short) 6, result.getProperty("PropertyEnumString").asEnum());
+    Assert.assertEquals(3, result.getProperty("CollPropertyEnumString").asCollection().size());
+    Assert.assertEquals("Test", result.getProperty("PropertyDefString").asPrimitive());
+    Assert.assertEquals(2, result.getProperty("CollPropertyDefString").asCollection().size());
+    Assert.assertEquals(4, result.getProperty("PropertyCompMixedEnumDef").asComplex().getValue().size());
+    Assert.assertEquals(1, result.getProperty("CollPropertyCompMixedEnumDef").asCollection().size());
+  }
+
   @Test
   public void entityWithNavigation() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
@@ -461,54 +518,30 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
     Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
         "Employee3@company.example"), result.getValue());
-    
   }
-  
+
   @Test
   public void complexProperty() throws Exception {
-    Edm edm = Mockito.mock(Edm.class);
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyComp");
+    final String payload = "<data:PropertyComp xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + " xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n"
+        + " metadata:type=\"#olingo.odata.test1.CTTwoPrim\">\n"
+        + "  <data:PropertyInt16>123</data:PropertyInt16>\n" 
+        + "  <data:PropertyString metadata:null=\"true\"/>\n"
+        + "</data:PropertyComp>";
 
-    CsdlProperty street = new CsdlProperty().setName("Street")
-        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
-    CsdlProperty city = new CsdlProperty().setName("City")
-        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
-    CsdlProperty region = new CsdlProperty().setName("Region")
-        .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
-    CsdlProperty postalcode = new CsdlProperty().setName("PostalCode")
-        .setType(EdmPrimitiveTypeKind.Int64.getFullQualifiedName());
-    
-    CsdlComplexType ct = new CsdlComplexType()
-        .setName("Model.Address")
-        .setProperties(Arrays.asList(street, city, region, postalcode));
-    EdmComplexTypeImpl complexType = new EdmComplexTypeImpl(edm, new FullQualifiedName("Model.Address"), ct);
-    
-    Mockito.stub(edm.getComplexType(new FullQualifiedName("Model.Address"))).toReturn(complexType);
-    
-    CsdlProperty prop = new CsdlProperty();
-    prop.setName("ShipTo");
-    prop.setType(new FullQualifiedName("Model.Address"));
-    EdmPropertyImpl edmProperty = new EdmPropertyImpl(edm, prop);
+    final Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty)
+        .getProperty();
 
-    String payload = "<data:ShipTo xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\" " +
-        " xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        " metadata:type=\"#Model.Address\">\n" + 
-        "  <data:Street>Obere Str. 57</data:Street>\n" + 
-        "  <data:City>Berlin</data:City>\n" + 
-        "  <data:Region metadata:null=\"true\"/>\n" + 
-        "  <data:PostalCode>12209</data:PostalCode>\n" + 
-        "</data:ShipTo>";
-    
-    Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
-
-    Assert.assertEquals("ShipTo", result.getName());
-    Assert.assertTrue(result.getValue() instanceof ComplexValue);
-    ComplexValue cv = (ComplexValue)result.getValue();
-    Assert.assertEquals("Model.Address", result.getType());
-    Assert.assertEquals("Berlin", getCVProperty(cv, "City").asPrimitive());
-    Assert.assertEquals("Obere Str. 57", getCVProperty(cv, "Street").asPrimitive());    
+    Assert.assertEquals("PropertyComp", result.getName());
+    Assert.assertTrue(result.isComplex());
+    final ComplexValue cv = result.asComplex();
+    Assert.assertEquals("olingo.odata.test1.CTTwoPrim", result.getType());
+    Assert.assertEquals((short) 123, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assert.assertTrue(getCVProperty(cv, "PropertyString").isNull());    
   }
-  
-  @SuppressWarnings("unchecked")
+
   @Test
   public void complexCollectionProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
@@ -531,16 +564,20 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         "</metadata:value>";
     Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
 
-    List<ComplexValue> complex = (List<ComplexValue>)result.getValue();
-    
-    Assert.assertEquals(3, complex.size());
+    List<?> complexCollection = result.asCollection();
+
+    Assert.assertEquals(3, complexCollection.size());
     Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", result.getType());
-    Assert.assertEquals((short) 123, getCVProperty(complex.get(0), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 1", getCVProperty(complex.get(0), "PropertyString").asPrimitive());
-    Assert.assertEquals((short) 789, getCVProperty(complex.get(2), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 3", getCVProperty(complex.get(2), "PropertyString").asPrimitive());
+    Assert.assertEquals((short) 123,
+        getCVProperty((ComplexValue) complexCollection.get(0), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 1",
+        getCVProperty((ComplexValue) complexCollection.get(0), "PropertyString").asPrimitive());
+    Assert.assertEquals((short) 789,
+        getCVProperty((ComplexValue) complexCollection.get(2), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 3",
+        getCVProperty((ComplexValue) complexCollection.get(2), "PropertyString").asPrimitive());
   }
-  
+
   @Test
   public void entityReference() throws Exception {
     String payload = "<metadata:ref xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
@@ -553,7 +590,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals(1, result.size());
     Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
   }
-  
+
   @Test
   public void entityReferences() throws Exception {
     String payload = "<feed xmlns=\"http://www.w3.org/2005/Atom\"\n" + 
@@ -562,7 +599,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         "  <metadata:ref id=\"http://host/service/Orders(10643)\" />\n" + 
         "  <metadata:ref id=\"http://host/service/Orders(10759)\" />\n" + 
         "</feed>";
-    
+
     List<URI> result = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();    
     Assert.assertEquals(2, result.size());

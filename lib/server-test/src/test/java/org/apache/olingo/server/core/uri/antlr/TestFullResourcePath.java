@@ -294,12 +294,12 @@ public class TestFullResourcePath {
 
   @Test
   public void runBfuncBnEsRtCprop() throws Exception {
-    testUri.run("ESAllPrim/olingo.odata.test1.BFCESAllPrimRTCTAllPrim()")
+    testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
     .isKind(UriInfoKind.resource).goPath()
     .first()
     .isEntitySet("ESAllPrim")
     .n()
-    .isFunction("BFCESAllPrimRTCTAllPrim")
+    .isFunction("BFNESAllPrimRTCTAllPrim")
     .isType(ComplexTypeProvider.nameCTAllPrim);
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/olingo.odata.test1.CTBase")
@@ -1188,25 +1188,15 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$search=test")
       .isExSemantic(MessageKeys.NOT_IMPLEMENTED);
     
-    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()")
+    testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
       .isKind(UriInfoKind.resource)
       .goPath().first()
-      .isEntitySet("ESBaseTwoKeyNav")
+      .isEntitySet("ESAllPrim")
       .at(1)
-      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey");
+      .isFunction("BFNESAllPrimRTCTAllPrim");
     
-    testUri.run("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
-        + "(PropertyInt16=1,PropertyString='1')")
-      .isKind(UriInfoKind.resource)
-      .goPath().first()
-      .isEntitySet("ESBaseTwoKeyNav")
-      .at(1)
-      .isFunction("BFCESBaseTwoKeyNavRTESBaseTwoKey")
-      .isKeyPredicate(0, "PropertyInt16", "1")
-      .isKeyPredicate(1, "PropertyString", "'1'");
-    
-    testUri.runEx("ESBaseTwoKeyNav/olingo.odata.test1.BFCESBaseTwoKeyNavRTESBaseTwoKey()" 
-          + "(PropertyInt16=1,PropertyString='1')/NavPropertyETBaseTwoKeyNavOne")
+    testUri.runEx("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()" 
+          + "/PropertyString")
       .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
   }
   
@@ -5442,7 +5432,7 @@ public class TestFullResourcePath {
         .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_PARAMETERS_EXPECTED);
+    .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_TYPE);
 
     // $ref
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$ref")
@@ -5563,7 +5553,22 @@ public class TestFullResourcePath {
     testUri.runEx("AIRTESAllPrimParam/FICRTString()").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("AIRTESAllPrimParam/AIRTString").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
   }
-
+  
+  @Test
+  public void invalidTypeCast() {
+    testUri.runEx("ESAllPrim/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
+    testUri.runEx("ESAllPrim(0)/namespace.Invalid").isExSemantic(MessageKeys.UNKNOWN_TYPE);
+  }
+  
+  @Test
+  public void testFirstResourcePathWithNamespace() {
+    testUri.runEx("olingo.odata.test1.ESAllPrim").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.ESAllPrim(0)").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.FINRTInt16()").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.AIRTString").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+    testUri.runEx("olingo.odata.test1.SINav").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+  }
+  
   @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
     testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")

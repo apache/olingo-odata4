@@ -21,10 +21,9 @@ package org.apache.olingo.commons.core.edm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -42,21 +41,12 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
-  private static final Set<EdmPrimitiveTypeKind> VALID_UNDERLYING_TYPES = new HashSet<EdmPrimitiveTypeKind>();
-  static {
-    VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Byte);
-    VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.SByte);
-    VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int16);
-    VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int32);
-    VALID_UNDERLYING_TYPES.add(EdmPrimitiveTypeKind.Int64);
-  }
-
   private final EdmPrimitiveType underlyingType;
   private final CsdlEnumType enumType;
   private final String uriPrefix;
   private final String uriSuffix;
   private List<String> memberNames;
-  private LinkedHashMap<String, EdmMember> membersMap;
+  private Map<String, EdmMember> membersMap;
 
   public EdmEnumTypeImpl(final Edm edm, final FullQualifiedName enumName, final CsdlEnumType enumType) {
     super(edm, enumName, EdmTypeKind.ENUM, enumType);
@@ -64,12 +54,16 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     if (enumType.getUnderlyingType() == null) {
       underlyingType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
     } else {
-      EdmPrimitiveTypeKind underlyingTypeKind = EdmPrimitiveTypeKind.valueOfFQN(enumType.getUnderlyingType());
-
-      if (!VALID_UNDERLYING_TYPES.contains(underlyingTypeKind)) {
+      final EdmPrimitiveTypeKind underlyingTypeKind = EdmPrimitiveTypeKind.valueOfFQN(enumType.getUnderlyingType());
+      if (underlyingTypeKind == EdmPrimitiveTypeKind.Byte
+          || underlyingTypeKind == EdmPrimitiveTypeKind.SByte
+          || underlyingTypeKind == EdmPrimitiveTypeKind.Int16
+          || underlyingTypeKind == EdmPrimitiveTypeKind.Int32
+          || underlyingTypeKind == EdmPrimitiveTypeKind.Int64) {
+        underlyingType = EdmPrimitiveTypeFactory.getInstance(underlyingTypeKind);
+      } else {
         throw new EdmException("Not allowed as underlying type: " + underlyingTypeKind);
       }
-      underlyingType = EdmPrimitiveTypeFactory.getInstance(underlyingTypeKind);
     }
 
     this.enumType = enumType;
@@ -99,7 +93,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   }
 
   private void createEdmMembers() {
-    final LinkedHashMap<String, EdmMember> membersMapLocal = new LinkedHashMap<String, EdmMember>();
+    final Map<String, EdmMember> membersMapLocal = new LinkedHashMap<String, EdmMember>();
     final List<String> memberNamesLocal = new ArrayList<String>();
     if (enumType.getMembers() != null) {
       for (final CsdlEnumMember member : enumType.getMembers()) {
@@ -154,7 +148,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   @Override
   public <T> T valueOfString(final String value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-          throws EdmPrimitiveTypeException {
+      throws EdmPrimitiveTypeException {
 
     if (value == null) {
       if (isNullable != null && !isNullable) {
@@ -173,10 +167,9 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
   }
 
-  private String constructEnumValue(final long value)
-      throws EdmPrimitiveTypeException {
+  private String constructEnumValue(final long value) throws EdmPrimitiveTypeException {
     long remaining = value;
-    final StringBuilder result = new StringBuilder();
+    StringBuilder result = new StringBuilder();
 
     final boolean flags = isFlags();
     for (final EdmMember member : getMembers()) {
@@ -228,16 +221,13 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null ? null
-        : uriPrefix.isEmpty() && uriSuffix.isEmpty() ? literal : uriPrefix + literal + uriSuffix;
+    return literal == null ? null : uriPrefix + literal + uriSuffix;
   }
 
   @Override
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
     if (literal == null) {
       return null;
-    } else if (uriPrefix.isEmpty() && uriSuffix.isEmpty()) {
-      return literal;
     } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
         && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
       return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
@@ -250,29 +240,17 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   public boolean isFlags() {
     return enumType.isFlags();
   }
-  
+
   @Override
   public int hashCode() {
-    return this.getFullQualifiedName().getFullQualifiedNameAsString().hashCode();
+    return getFullQualifiedName().getFullQualifiedNameAsString().hashCode();
   }
-  
+
   @Override
-  public boolean equals(Object obj){
-    if(obj == null){
-      return false;
-    }
-    
-    if(obj == this){
-      return true;
-    }
-    
-    if(obj instanceof EdmEnumType){
-      EdmEnumType other = (EdmEnumType) obj;
-      if(this.getFullQualifiedName().equals(other.getFullQualifiedName())){
-        return true;
-      }
-    }
-    
-    return false;
+  public boolean equals(final Object obj) {
+    return obj != null
+        && (obj == this
+        || obj instanceof EdmEnumType
+            && getFullQualifiedName().equals(((EdmEnumType) obj).getFullQualifiedName()));
   }
 }
