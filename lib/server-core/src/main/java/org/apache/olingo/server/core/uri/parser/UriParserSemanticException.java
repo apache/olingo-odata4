@@ -79,7 +79,11 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: not implemented part */
     NOT_IMPLEMENTED,
     /** parameter: namespace **/
-    NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT;
+    NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT, 
+    /** parameter: complex parameter value */
+    COMPLEX_PARAMETER_IN_RESOURCE_PATH, 
+    /** parameter: function import name */
+    FUNCTION_IMPORT_NOT_ALLOWED;
     
     @Override
     public String getKey() {

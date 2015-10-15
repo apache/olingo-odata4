@@ -31,12 +31,14 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
+import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
@@ -403,15 +405,25 @@ public class FilterValidator implements TestValidator {
   public FilterValidator isParameterText(final int parameterIndex, final String parameterText)
       throws ExpressionVisitException, ODataApplicationException {
 
-    if (!(curExpression instanceof MethodImpl)) {
-      fail("Current expression is not a method");
+    if (curExpression instanceof MethodImpl) {
+      MethodImpl methodCall = (MethodImpl) curExpression;
+
+      Expression parameter = methodCall.getParameters().get(parameterIndex);
+      String actualParameterText = FilterTreeToText.Serialize(parameter);
+      assertEquals(parameterText, actualParameterText);
+    } else if (curExpression instanceof MemberImpl) {
+      final MemberImpl member = (MemberImpl) curExpression;
+      final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
+
+      if (!uriResourceParts.isEmpty() && uriResourceParts.get(0) instanceof UriResourceFunctionImpl) {
+        assertEquals(parameterText, ((UriResourceFunctionImpl) uriResourceParts.get(0)).getParameters()
+            .get(parameterIndex).getText());
+      } else {
+        fail("Current expression is not a method or function");
+      }
+    } else {
+      fail("Current expression is not a method or function");
     }
-
-    MethodImpl methodCall = (MethodImpl) curExpression;
-
-    Expression parameter = methodCall.getParameters().get(parameterIndex);
-    String actualParameterText = FilterTreeToText.Serialize(parameter);
-    assertEquals(parameterText, actualParameterText);
 
     return this;
   }

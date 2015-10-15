@@ -30,8 +30,8 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -42,6 +42,7 @@ import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
@@ -65,11 +66,14 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class Parser {
   private static final String ATOM = "atom";
   private static final String JSON = "json";
   private static final String XML = "xml";
+  private static final String AT = "@";
+  private static final String NULL = "null";
   int logLevel = 0;
 
   private enum ParserEntryRules {
@@ -271,7 +275,26 @@ public class Parser {
                 UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, option.name);
           }
         } else {
-          CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
+          if (option.name.startsWith(AT)) {
+            final FilterExpressionEOFContext filterExpCtx =
+                (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
+            final ExpressionImpl expression = ((FilterOptionImpl) uriParseTreeVisitor
+                .visitFilterExpressionEOF(filterExpCtx)).getExpression();
+
+            final UriParameterImpl parameter = new UriParameterImpl();
+            parameter.setAlias(option.name);
+            parameter.setExpression(expression);
+            parameter.setText(NULL.equals(option.value) ? null : option.value);
+            
+            if(context.contextUriInfo.getAlias(option.name) == null) {
+              context.contextUriInfo.addAlias(option.name, parameter);
+            } else {
+              throw new UriParserSyntaxException("Alias already specified! Name: " + option.name, 
+                  UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
+            }
+          }
+          
+          final CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
           customOption.setName(option.name);
           customOption.setText(option.value);
           context.contextUriInfo.addCustomQueryOption(customOption);

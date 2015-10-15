@@ -35,7 +35,9 @@ public class UriParserSyntaxException extends UriParserException {
     /** parameter: $format option value */
     WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT,
     SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE,
-    SYNTAX;
+    SYNTAX, 
+    /** parameter: alias name */
+    DUPLICATED_ALIAS;
 
     @Override
     public String getKey() {

@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoAll;
 import org.apache.olingo.server.api.uri.UriInfoBatch;
@@ -36,6 +36,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoMetadata;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriInfoService;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
@@ -63,8 +64,8 @@ public class UriInfoImpl implements UriInfo {
   private EdmEntityType entityTypeCast; // for $entity
 
   private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
-  private Map<String, String> aliasToValue = new HashMap<String, String>();
-
+  private Map<String, UriParameter> aliasValues = new HashMap<String, UriParameter>();
+  
   private Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
       new HashMap<SystemQueryOptionKind, SystemQueryOption>();
 
@@ -138,9 +139,18 @@ public class UriInfoImpl implements UriInfo {
 
   @Override
   public String getValueForAlias(final String alias) {
-    return aliasToValue.get(alias);
+    final UriParameter parameter = aliasValues.get(alias);
+    return parameter == null ? null : parameter.getText();
   }
 
+  public UriParameter getAlias(final String key) {
+    return aliasValues.get(key);
+  }
+  
+  public void addAlias(final String key, UriParameter parameter) {
+    aliasValues.put(key, parameter);
+  }
+  
   @Override
   public EdmEntityType getEntityTypeCast() {
     return entityTypeCast;
@@ -235,9 +245,6 @@ public class UriInfoImpl implements UriInfo {
 
   public void addCustomQueryOption(final CustomQueryOptionImpl item) {
     customQueryOptions.add(item);
-    if (item.getName().startsWith("@")) {
-      aliasToValue.put(item.getName(), item.getText());
-    }
   }
 
   /**
@@ -297,5 +304,4 @@ public class UriInfoImpl implements UriInfo {
   public Collection<SystemQueryOption> getSystemQueryOptions() {
     return Collections.unmodifiableCollection(systemQueryOptions.values());
   }
-
 }

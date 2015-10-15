@@ -37,6 +37,8 @@ public class UriValidationException extends ODataLibraryException {
     UNSUPPORTED_ACTION_RETURN_TYPE,
     /** parameter: unsupported http method */
     UNSUPPORTED_HTTP_METHOD,
+    /** parameter: unsupported parameter name */
+    UNSUPPORTED_PARAMETER,
     /** parameter: system query option */
     SYSTEM_QUERY_OPTION_NOT_ALLOWED,
     /** parameters: system query option, http method */
@@ -54,8 +56,11 @@ public class UriValidationException extends ODataLibraryException {
     /** parameter: unallowed kind before $count */
     UNALLOWED_KIND_BEFORE_COUNT, 
     /** parameter: unallowed resource path */
-    UNALLOWED_RESOURCE_PATH;
+    UNALLOWED_RESOURCE_PATH,
+    /** parameter: missing parameter name */
+    MISSING_PARAMETER;
 
+    
     @Override
     public String getKey() {
       return name();

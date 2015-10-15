@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
@@ -68,7 +69,7 @@ public class EdmTechTestProvider extends EdmTechProvider {
           ));
 
     }
-
+    
     return super.getComplexType(complexTypeName);
   }
 
@@ -115,5 +116,13 @@ public class EdmTechTestProvider extends EdmTechProvider {
 
     return super.getEntityType(entityTypeName);
   }
-
+  
+  @Override
+  public CsdlFunctionImport getFunctionImport(FullQualifiedName entityContainer, String functionImportName)
+      throws ODataException {
+    
+    
+    return super.getFunctionImport(entityContainer, functionImportName);
+  }
+  
 }
