@@ -223,7 +223,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final Property property = entity == null ?
         getPropertyData(
             dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0)).getFunction(),
-            ((UriResourceFunction) resourceParts.get(0)).getParameters()), path) :
+            ((UriResourceFunction) resourceParts.get(0)).getParameters(), resource), path) :
         getPropertyData(entity, path);
 
     if (property == null && representationType != RepresentationType.COUNT) {

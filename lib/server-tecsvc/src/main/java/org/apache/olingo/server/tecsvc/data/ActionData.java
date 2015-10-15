@@ -67,7 +67,8 @@ public class ActionData {
       }
       return DataCreator.createPrimitive(null, count);
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   protected static Property primitiveCollectionAction(final String name, final Map<String, Parameter> parameters,
@@ -83,7 +84,7 @@ public class ActionData {
           return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, Arrays.asList(
                   name + " int16 value: " + param16String,
                   name + " duration value: " + paramDurationString));
-        } catch(EdmPrimitiveTypeException e) {
+        } catch (EdmPrimitiveTypeException e) {
           throw new DataProviderException("EdmPrimitiveTypeException", e);
         }
       }
@@ -103,7 +104,8 @@ public class ActionData {
       }
       return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, collectionValues);
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   private static String valueAsString(final Parameter parameter, final EdmPrimitiveTypeKind kind, final OData oData)
@@ -122,7 +124,8 @@ public class ActionData {
           (Short) paramInt16.asPrimitive();
       return createCTTwoPrimComplexProperty(name, number, "UARTCTTwoPrimParam string value");
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   private static Property createCTTwoPrimComplexProperty(final String name, final Short number, final String text) {
@@ -148,7 +151,8 @@ public class ActionData {
       }
       return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters,
@@ -191,7 +195,8 @@ public class ActionData {
         return new EntityActionResult().setEntity(entityCollection.getEntities().get(0));
       }
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   private static Entity createAllPrimEntity(final Short key, final String val, final Calendar date,
@@ -241,7 +246,8 @@ public class ActionData {
       }
       return collection;
     }
-    throw new DataProviderException("Action " + name + " is not yet implemented.");
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
   }
 
   @SuppressWarnings("unchecked")

@@ -498,17 +498,18 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final SelectOption select = uriInfo.getSelectOption();
 
     // Transform the entity graph to a tree. The construction is controlled by the expand tree.
-    // Apply all expand system query options to the tree.So the expanded navigation properties can be modified
-    // for serialization,without affecting the data stored in the database.
+    // Apply all expand system query options to the tree.
+    // So the expanded navigation properties can be modified for serialization,
+    // without affecting the data stored in the database.
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
     final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet,
         edmEntitySet,
         expand);
     expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
     final CountOption countOption = uriInfo.getCountOption();
-    
+
     String id;
-    if(edmEntitySet == null) {
+    if (edmEntitySet == null) {
       // Used for functions, function imports etc.
       id = request.getRawODataPath();
     } else {

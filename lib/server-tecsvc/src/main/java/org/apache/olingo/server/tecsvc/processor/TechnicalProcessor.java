@@ -139,11 +139,11 @@ public abstract class TechnicalProcessor implements Processor {
           if (uriResource.isCollection()) { // handled in readEntityCollection()
             return null;
           } else {
-            entity = dataProvider.readFunctionEntity(function, uriResource.getParameters());
+            entity = dataProvider.readFunctionEntity(function, uriResource.getParameters(), uriInfo);
           }
         } else {
           entity = dataProvider.read((EdmEntityType) function.getReturnType().getType(),
-              dataProvider.readFunctionEntitySet(function, uriResource.getParameters()),
+              dataProvider.readFunctionEntityCollection(function, uriResource.getParameters(), uriInfo),
               key);
         }
       } else {
@@ -197,7 +197,8 @@ public abstract class TechnicalProcessor implements Processor {
     } else {
       if (resourcePaths.get(0) instanceof UriResourceFunction) {
         final UriResourceFunction uriResource = (UriResourceFunction) resourcePaths.get(0);
-        return dataProvider.readFunctionEntitySet(uriResource.getFunction(), uriResource.getParameters());
+        return dataProvider.readFunctionEntityCollection(uriResource.getFunction(), uriResource.getParameters(),
+            uriInfo);
       } else {
         return dataProvider.readAll(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
       }

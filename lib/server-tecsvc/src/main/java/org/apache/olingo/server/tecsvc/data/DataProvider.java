@@ -43,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -56,6 +57,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 
@@ -500,19 +502,55 @@ public class DataProvider {
     entity.setMediaETag("W/\"" + UUID.randomUUID() + "\"");
   }
 
-  public EntityCollection readFunctionEntitySet(final EdmFunction function, final List<UriParameter> parameters)
-      throws DataProviderException {
-    return FunctionData.entityCollectionFunction(function.getName(), parameters, data);
+  public EntityCollection readFunctionEntityCollection(final EdmFunction function, final List<UriParameter> parameters,
+      final UriInfoResource uriInfo) throws DataProviderException {
+    return FunctionData.entityCollectionFunction(function.getName(),
+        getFunctionParameterValues(function, parameters, uriInfo),
+        data);
   }
 
-  public Entity readFunctionEntity(final EdmFunction function, final List<UriParameter> parameters)
-      throws DataProviderException {
-    return FunctionData.entityFunction(function.getName(), parameters, data);
+  public Entity readFunctionEntity(final EdmFunction function, final List<UriParameter> parameters,
+      final UriInfoResource uriInfo) throws DataProviderException {
+    return FunctionData.entityFunction(function.getName(),
+        getFunctionParameterValues(function, parameters, uriInfo),
+        data);
   }
 
-  public Property readFunctionPrimitiveComplex(final EdmFunction function, final List<UriParameter> parameters)
-      throws DataProviderException {
-    return FunctionData.primitiveComplexFunction(function.getName(), parameters, data, odata);
+  public Property readFunctionPrimitiveComplex(final EdmFunction function, final List<UriParameter> parameters,
+      final UriInfoResource uriInfo) throws DataProviderException {
+    return FunctionData.primitiveComplexFunction(function.getName(),
+        getFunctionParameterValues(function, parameters, uriInfo),
+        data);
+  }
+
+  private Map<String, Object> getFunctionParameterValues(final EdmFunction function,
+      final List<UriParameter> parameters, final UriInfoResource uriInfo) throws DataProviderException {
+    Map<String, Object> values = new HashMap<String, Object>();
+    for (final UriParameter parameter : parameters) {
+      final EdmParameter edmParameter = function.getParameter(parameter.getName());
+      final String text = parameter.getAlias() == null ?
+          parameter.getText() :
+          uriInfo.getValueForAlias(parameter.getAlias());
+      if (text != null) {
+        if (edmParameter.getType().getKind() == EdmTypeKind.PRIMITIVE
+            && !edmParameter.isCollection()) {
+          final EdmPrimitiveType primitiveType = (EdmPrimitiveType) edmParameter.getType();
+          try {
+            values.put(parameter.getName(),
+                primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
+                    edmParameter.isNullable(), edmParameter.getMaxLength(),
+                    edmParameter.getPrecision(), edmParameter.getScale(), null,
+                    primitiveType.getDefaultType()));
+          } catch (final EdmPrimitiveTypeException e) {
+            throw new DataProviderException("Invalid function parameter.", e);
+          }
+        } else {
+          throw new DataProviderException("Non-primitive and collection functionn parameters are not yet supported.",
+              HttpStatusCode.NOT_IMPLEMENTED);
+        }
+      }
+    }
+    return values;
   }
 
   public Property processActionPrimitive(final String name, final Map<String, Parameter> actionParameters)
@@ -544,33 +582,34 @@ public class DataProvider {
       final Map<String, Parameter> actionParameters) throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters, odata, edm);
   }
-  
+
   public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId, 
       final String rawServiceRoot) throws DataProviderException {
         setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));
   }
-  
+
   public void deleteReference(final Entity entity, final EdmNavigationProperty navigationProperty, 
       final String entityId, final String rawServiceRoot) throws DataProviderException {
 
-    if(navigationProperty.isCollection()) {
+    if (navigationProperty.isCollection()) {
       final Entity targetEntity = getEntityByReference(entityId, rawServiceRoot);
       final Link navigationLink = entity.getNavigationLink(navigationProperty.getName());
       
-      if(navigationLink != null && navigationLink.getInlineEntitySet() != null 
+      if (navigationLink != null && navigationLink.getInlineEntitySet() != null 
           && navigationLink.getInlineEntitySet().getEntities().contains(targetEntity)) {
         
         // Remove partner single-valued navigation property
-        if(navigationProperty.getPartner() != null) {
+        if (navigationProperty.getPartner() != null) {
           final EdmNavigationProperty edmPartnerNavigationProperty = navigationProperty.getPartner();
-          if(!edmPartnerNavigationProperty.isCollection() && !edmPartnerNavigationProperty.isNullable()) {
+          if (!edmPartnerNavigationProperty.isCollection() && !edmPartnerNavigationProperty.isNullable()) {
             throw new DataProviderException("Navigation property must not be null", HttpStatusCode.BAD_REQUEST);
-          } else if(!edmPartnerNavigationProperty.isCollection()) {
+          } else if (!edmPartnerNavigationProperty.isCollection()) {
             removeLink(edmPartnerNavigationProperty, targetEntity);
-          } else if(edmPartnerNavigationProperty.isCollection() && edmPartnerNavigationProperty.getPartner() != null) {
+          } else if (edmPartnerNavigationProperty.isCollection()
+              && edmPartnerNavigationProperty.getPartner() != null) {
             // Bidirectional referential constraint
             final Link partnerNavigationLink = targetEntity.getNavigationLink(edmPartnerNavigationProperty.getName());
-            if(partnerNavigationLink != null && partnerNavigationLink.getInlineEntitySet() != null) {
+            if (partnerNavigationLink != null && partnerNavigationLink.getInlineEntitySet() != null) {
               partnerNavigationLink.getInlineEntitySet().getEntities().remove(entity);
             }
           }
@@ -582,7 +621,7 @@ public class DataProvider {
         throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);
       }
     } else {
-      if(navigationProperty.isNullable()) {
+      if (navigationProperty.isNullable()) {
         removeLink(navigationProperty, entity);
       } else {
         throw new DataProviderException("Navigation property must not be null", HttpStatusCode.BAD_REQUEST);
