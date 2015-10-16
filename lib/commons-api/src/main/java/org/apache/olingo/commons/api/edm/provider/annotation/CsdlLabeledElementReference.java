@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,16 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm.annotation;
+package org.apache.olingo.commons.api.edm.provider.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnd;
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+/**
+ * The edm:LabeledElementReference expression returns the value of an
+ * edm:LabeledElement (see {@link LabeledElement}) expression.
+ */
+public class CsdlLabeledElementReference extends CsdlDynamicExpression {
+  private static final long serialVersionUID = -4793707024628773226L;
 
-public class EdmAndImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmAnd {
+  private String value;
 
-  public EdmAndImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
-    super(left, right);
+  /**
+   * Returns the value of the edm:LabeledElement expression
+   * @return value of the edm:LabeledElement expression
+   */
+  public String getValue() {
+    return value;
   }
 
+  public CsdlLabeledElementReference setValue(final String value) {
+    this.value = value;
+    return this;
+  }
 }

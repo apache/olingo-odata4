@@ -24,8 +24,8 @@ package org.apache.olingo.commons.api.edm.annotation;
 public interface EdmNot extends EdmDynamicAnnotationExpression {
   
   /**
-   * Returns a boolean value
-   * @return either true or false
+   * Returns an expression which should be inverted
+   * @return the expression which must be inverted
    */
-  EdmDynamicAnnotationExpression getExpression();
+  EdmAnnotationExpression getExpression();
 }

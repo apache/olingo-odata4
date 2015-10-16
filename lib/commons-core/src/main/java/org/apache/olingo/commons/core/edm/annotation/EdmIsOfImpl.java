@@ -23,20 +23,20 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmIsOf;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.annotation.IsOf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmIsOf {
 
   private final Edm edm;
 
-  private final IsOf isOf;
+  private final CsdlIsOf isOf;
 
   private final EdmDynamicAnnotationExpression value;
 
   private EdmType type;
 
-  public EdmIsOfImpl(final Edm edm, final IsOf isOf, final EdmDynamicAnnotationExpression value) {
+  public EdmIsOfImpl(final Edm edm, final CsdlIsOf isOf, final EdmDynamicAnnotationExpression value) {
     this.edm = edm;
     this.isOf = isOf;
     this.value = value;

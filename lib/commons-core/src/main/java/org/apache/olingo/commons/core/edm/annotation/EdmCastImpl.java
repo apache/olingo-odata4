@@ -23,20 +23,20 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.annotation.EdmCast;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.geo.SRID;
-import org.apache.olingo.commons.api.edm.provider.annotation.Cast;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 public class EdmCastImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmCast {
 
   private final Edm edm;
 
-  private final Cast cast;
+  private final CsdlCast cast;
 
   private final EdmDynamicAnnotationExpression value;
 
   private EdmType type;
 
-  public EdmCastImpl(final Edm edm, final Cast cast, final EdmDynamicAnnotationExpression value) {
+  public EdmCastImpl(final Edm edm, final CsdlCast cast, final EdmDynamicAnnotationExpression value) {
     this.edm = edm;
     this.cast = cast;
     this.value = value;

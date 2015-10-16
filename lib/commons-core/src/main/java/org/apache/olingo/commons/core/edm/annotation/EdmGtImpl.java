@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmGt;
 
 public class EdmGtImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmGt {
 
-  public EdmGtImpl(final EdmDynamicAnnotationExpression left, final EdmDynamicAnnotationExpression right) {
+  public EdmGtImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
     super(left, right);
   }
 

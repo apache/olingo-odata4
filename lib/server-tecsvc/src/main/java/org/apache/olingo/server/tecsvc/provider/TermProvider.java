@@ -18,13 +18,12 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantAnnotationExpression;
-
-import java.util.Arrays;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 
 /**
  */
@@ -48,13 +47,13 @@ public class TermProvider {
     if(TERM_DESCRIPTION.equals(termName)) {
       return new CsdlTerm().setName("Description").setType("Edm.String")
           .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                  new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                       "A brief description of a model element")),
               new CsdlAnnotation().setTerm("Core.IsLanguageDependent")));
     } else if(TERM_LONG_DESCRIPTION.equals(termName)) {
       return new CsdlTerm().setName("LongDescription").setType("Edm.String")
           .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                  new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                       "A lengthy description of a model element")),
               new CsdlAnnotation().setTerm("Core.IsLanguageDependent")));
     }

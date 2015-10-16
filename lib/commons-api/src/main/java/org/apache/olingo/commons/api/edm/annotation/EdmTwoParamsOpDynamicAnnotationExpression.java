@@ -27,11 +27,11 @@ public interface EdmTwoParamsOpDynamicAnnotationExpression extends EdmDynamicAnn
    * Returns the first expression (left child)
    * @return Child expression
    */
-  EdmDynamicAnnotationExpression getLeftExpression();
+  EdmAnnotationExpression getLeftExpression();
   
   /**
    * Returns the second expression (right child)
    * @return Child expression
    */
-  EdmDynamicAnnotationExpression getRightExpression();
+  EdmAnnotationExpression getRightExpression();
 }

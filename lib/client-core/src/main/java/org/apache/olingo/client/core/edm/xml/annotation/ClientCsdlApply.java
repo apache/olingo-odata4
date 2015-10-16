@@ -16,52 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.client.core.edm.xml;
+package org.apache.olingo.client.core.edm.xml.annotation;
 
 import java.io.IOException;
 
-import org.apache.olingo.client.core.edm.xml.annotation.ClientCsdlDynamicExpression;
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.client.core.edm.xml.AbstractClientCsdlEdmDeserializer;
+import org.apache.olingo.client.core.edm.xml.ClientCsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize(using = ClientCsdlAnnotation.AnnotationDeserializer.class)
-public class ClientCsdlAnnotation extends CsdlAnnotation {
+@JsonDeserialize(using = ClientCsdlApply.ApplyDeserializer.class)
+class ClientCsdlApply extends CsdlApply {
 
-  private static final long serialVersionUID = 5464714417411058033L;
+  private static final long serialVersionUID = 4358398303405059879L;
 
-  static class AnnotationDeserializer extends AbstractClientCsdlEdmDeserializer<CsdlAnnotation> {
+  static class ApplyDeserializer extends AbstractClientCsdlEdmDeserializer<ClientCsdlApply> {
 
     @Override
-    protected CsdlAnnotation doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
+    protected ClientCsdlApply doDeserialize(final JsonParser jp, final DeserializationContext ctxt)
             throws IOException {
-
-      final ClientCsdlAnnotation annotation = new ClientCsdlAnnotation();
-
-      for (; jp.getCurrentToken() != null && jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+      final ClientCsdlApply apply = new ClientCsdlApply();
+      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();
         if (token == JsonToken.FIELD_NAME) {
-          if ("Term".equals(jp.getCurrentName())) {
-            annotation.setTerm(jp.nextTextValue());
-          } else if ("Qualifier".equals(jp.getCurrentName())) {
-            annotation.setQualifier(jp.nextTextValue());
+          if ("Function".equals(jp.getCurrentName())) {
+            apply.setFunction(jp.nextTextValue());
           } else if ("Annotation".equals(jp.getCurrentName())) {
-            jp.nextToken();
-            annotation.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
+            apply.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
           } else if (isAnnotationConstExprConstruct(jp)) {
-            // Constant Expressions
-            annotation.setExpression(parseAnnotationConstExprConstruct(jp));
+            apply.getParameters().add(parseAnnotationConstExprConstruct(jp));
           } else {
-            // Dynamic Expressions
-            annotation.setExpression(jp.readValueAs(ClientCsdlDynamicExpression.class));
+            apply.getParameters().add(jp.readValueAs(ClientCsdlDynamicExpression.class));
           }
         }
       }
 
-      return annotation;
+      return apply;
     }
   }
 }

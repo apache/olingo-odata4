@@ -56,12 +56,14 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
-import org.apache.olingo.commons.api.edm.provider.annotation.Apply;
-import org.apache.olingo.commons.api.edm.provider.annotation.Collection;
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.Path;
-import org.apache.olingo.commons.api.edm.provider.annotation.TwoParamsOpDynamicAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.UrlRef;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+//CHECKSTYLE:OFF
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
+//CHECKSTYLE:ON
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
@@ -146,7 +148,7 @@ public class MetadataTest extends AbstractTest {
     final CsdlAnnotations annots = metadata.getSchema(0).getAnnotationGroup("ODataDemo.DemoService/Suppliers", null);
     assertNotNull(annots);
     assertFalse(annots.getAnnotations().isEmpty());
-    assertEquals(ConstantAnnotationExpression.Type.String,
+    assertEquals(CsdlConstantExpression.ConstantExpressionType.String,
         annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getType());
     assertEquals("http://www.odata.org/",
         annots.getAnnotation("Org.OData.Publication.V1.PrivacyPolicyUrl").getExpression().asConstant().getValue());
@@ -290,19 +292,19 @@ public class MetadataTest extends AbstractTest {
     assertTrue(displayName.getExpression().isDynamic());
 
     assertTrue(displayName.getExpression().asDynamic().isApply());
-    final Apply apply = displayName.getExpression().asDynamic().asApply();
+    final CsdlApply apply = displayName.getExpression().asDynamic().asApply();
     assertEquals(Constants.CANONICAL_FUNCTION_CONCAT, apply.getFunction());
     assertEquals(3, apply.getParameters().size());
 
-    Path path = (Path) apply.getParameters().get(0);
+    CsdlPath path = (CsdlPath) apply.getParameters().get(0);
     assertEquals("Name", path.getValue());
 
-    ConstantAnnotationExpression expression =
-        (ConstantAnnotationExpression) apply.getParameters().get(1);
+    CsdlConstantExpression expression =
+        (CsdlConstantExpression) apply.getParameters().get(1);
     assertEquals(" in ", expression.getValue());
-    assertEquals(ConstantAnnotationExpression.Type.String, expression.getType());
+    assertEquals(CsdlConstantExpression.ConstantExpressionType.String, expression.getType());
 
-    Path thirdArg = (Path) apply.getParameters().get(2);
+    CsdlPath thirdArg = (CsdlPath) apply.getParameters().get(2);
     assertEquals("Address/CountryName", thirdArg.getValue());
 
     // Check Tags
@@ -312,9 +314,10 @@ public class MetadataTest extends AbstractTest {
     assertTrue(tags.getExpression().isDynamic());
 
     assertTrue(tags.getExpression().asDynamic().isCollection());
-    final Collection collection = tags.getExpression().asDynamic().asCollection();
+    final CsdlCollection collection = tags.getExpression().asDynamic().asCollection();
     assertEquals(1, collection.getItems().size());
-    assertEquals(ConstantAnnotationExpression.Type.String, collection.getItems().get(0).asConstant().getType());
+    assertEquals(CsdlConstantExpression.ConstantExpressionType.String, collection.getItems().get(0).asConstant()
+        .getType());
     assertEquals("MasterData", collection.getItems().get(0).asConstant().getValue());
   }
 
@@ -355,16 +358,16 @@ public class MetadataTest extends AbstractTest {
 
     annotation = group.getAnnotation("And");
     assertTrue(annotation.getExpression().isDynamic());
-    assertTrue(annotation.getExpression().asDynamic().isTwoParamsOp());
-    assertEquals(TwoParamsOpDynamicAnnotationExpression.Type.And,
-        annotation.getExpression().asDynamic().asTwoParamsOp().getType());
-    assertTrue(annotation.getExpression().asDynamic().asTwoParamsOp().getLeftExpression().isPath());
+    assertTrue(annotation.getExpression().asDynamic().isLogicalOrComparison());
+    assertEquals(LogicalOrComparisonExpressionType.And,
+        annotation.getExpression().asDynamic().asLogicalOrComparison().getType());
+    assertTrue(annotation.getExpression().asDynamic().asLogicalOrComparison().getLeft().asDynamic().isPath());
 
     annotation = group.getAnnotation("Vocab.Supplier");
     assertNotNull(annotation);
     assertTrue(annotation.getExpression().isDynamic());
     assertTrue(annotation.getExpression().asDynamic().isUrlRef());
-    final UrlRef urlRef = annotation.getExpression().asDynamic().asUrlRef();
+    final CsdlUrlRef urlRef = annotation.getExpression().asDynamic().asUrlRef();
     assertTrue(urlRef.getValue().isDynamic());
     assertTrue(urlRef.getValue().asDynamic().isApply());
 
@@ -383,7 +386,7 @@ public class MetadataTest extends AbstractTest {
     edmAnnotation = edmGroup.getAnnotations().get(1);
     assertTrue(edmAnnotation.getExpression().isDynamic());
     assertTrue(edmAnnotation.getExpression().asDynamic().isAnd());
-    assertTrue(edmAnnotation.getExpression().asDynamic().asAnd().getLeftExpression().isPath());
+    assertTrue(edmAnnotation.getExpression().asDynamic().asAnd().getLeftExpression().asDynamic().isPath());
 
     edmAnnotation = edmGroup.getAnnotations().get(edmGroup.getAnnotations().size() - 2);
     assertNotNull(edmAnnotation);
@@ -398,7 +401,7 @@ public class MetadataTest extends AbstractTest {
   public void metadataWithCapabilities() throws Exception {
     InputStream input = getClass().getResourceAsStream("Metadata-With-Capabilities.xml");
     final XMLMetadata metadata = getClient().getDeserializer(ContentType.APPLICATION_XML).
-            toMetadata(input);
+        toMetadata(input);
 
     CsdlSchema schema = metadata.getSchema("Capabilities");
     assertNotNull(schema);

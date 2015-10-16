@@ -22,18 +22,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantAnnotationExpression;
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class ContainerProvider {
 
@@ -169,18 +168,18 @@ public class ContainerProvider {
                 .asList(new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrim"),
                     new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrim")))
             .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                    new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                         "Contains entities with all primitive types")),
                 new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledForEntitySet").setExpression(
-                    new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                         "System Query Options: $filter, $count, $orderby, $skip, $top, $expand, $select, $format; "
                             + "Operations: Create, Create with Deep Insert, Create with Bind Operation, Read")),
                 new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledForEntity").setExpression(
-                    new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                         "System Query Options: $expand, $select, $format; Operations: "
                             + "Read, Update, Update with Bind Operation, Delete")),
                 new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledNavigationProperties")
-                    .setExpression(new CsdlConstantAnnotationExpression(ConstantAnnotationExpression.Type.String,
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                         "NavPropertyETTwoPrimOne, NavPropertyETTwoPrimMany"))));
 
       } else if (name.equals("ESCollAllPrim")) {

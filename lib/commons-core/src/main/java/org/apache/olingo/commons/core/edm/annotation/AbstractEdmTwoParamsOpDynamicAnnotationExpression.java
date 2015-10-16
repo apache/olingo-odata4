@@ -18,30 +18,31 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmTwoParamsOpDynamicAnnotationExpression;
 
 public abstract class AbstractEdmTwoParamsOpDynamicAnnotationExpression
 extends AbstractEdmDynamicAnnotationExpression implements EdmTwoParamsOpDynamicAnnotationExpression {
 
-  private final EdmDynamicAnnotationExpression left;
+  private final EdmAnnotationExpression left;
 
-  private final EdmDynamicAnnotationExpression right;
+  private final EdmAnnotationExpression right;
 
   public AbstractEdmTwoParamsOpDynamicAnnotationExpression(
-      final EdmDynamicAnnotationExpression left, final EdmDynamicAnnotationExpression right) {
+      final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
 
     this.left = left;
     this.right = right;
   }
 
   @Override
-  public EdmDynamicAnnotationExpression getLeftExpression() {
+  public EdmAnnotationExpression getLeftExpression() {
     return left;
   }
 
   @Override
-  public EdmDynamicAnnotationExpression getRightExpression() {
+  public EdmAnnotationExpression getRightExpression() {
     return right;
   }
 }

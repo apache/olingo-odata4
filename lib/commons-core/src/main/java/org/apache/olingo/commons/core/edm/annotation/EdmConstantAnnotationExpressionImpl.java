@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,7 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.ConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
@@ -39,8 +39,8 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
   private final Valuable value;
   private final EdmPrimitiveType type;
 
-  public EdmConstantAnnotationExpressionImpl(final ConstantAnnotationExpression constExprConstruct) {
-    if (constExprConstruct.getType() == ConstantAnnotationExpression.Type.EnumMember) {
+  public EdmConstantAnnotationExpressionImpl(final CsdlConstantExpression constExprConstruct) {
+    if (constExprConstruct.getType() == CsdlConstantExpression.ConstantExpressionType.EnumMember) {
       final List<Property> enumValues = new ArrayList<Property>();
       String enumTypeName = null;
       for (String split : StringUtils.split(constExprConstruct.getValue(), ' ')) {

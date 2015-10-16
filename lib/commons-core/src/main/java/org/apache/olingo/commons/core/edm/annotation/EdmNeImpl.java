@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmNe;
 
 public class EdmNeImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmNe {
 
-  public EdmNeImpl(final EdmDynamicAnnotationExpression left, final EdmDynamicAnnotationExpression right) {
+  public EdmNeImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
     super(left, right);
   }
 

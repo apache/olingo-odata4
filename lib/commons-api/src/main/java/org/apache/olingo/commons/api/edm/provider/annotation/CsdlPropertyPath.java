@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,16 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.commons.core.edm.annotation;
+package org.apache.olingo.commons.api.edm.provider.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnd;
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+/**
+ * The edm:PropertyPath expression provides a value for terms or term properties that specify the built-in
+ * abstract type Edm.PropertyPath.
+ */
+public class CsdlPropertyPath extends CsdlDynamicExpression {
+  private static final long serialVersionUID = -8182384289259575448L;
 
-public class EdmAndImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmAnd {
+  private String value;
 
-  public EdmAndImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
-    super(left, right);
+  /**
+   * Returns the property path itself.
+   * @return the property path itself
+   */
+  public String getValue() {
+    return value;
   }
 
+  public CsdlPropertyPath setValue(final String value) {
+    this.value = value;
+    return this;
+  }
 }

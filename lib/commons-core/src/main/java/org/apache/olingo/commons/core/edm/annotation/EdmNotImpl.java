@@ -18,19 +18,20 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmNot;
 
 public class EdmNotImpl extends AbstractEdmDynamicAnnotationExpression implements EdmNot {
 
-  private final EdmDynamicAnnotationExpression expression;
+  private final EdmAnnotationExpression expression;
 
-  public EdmNotImpl(final EdmDynamicAnnotationExpression expression) {
+  public EdmNotImpl(final EdmAnnotationExpression expression) {
     this.expression = expression;
   }
 
   @Override
-  public EdmDynamicAnnotationExpression getExpression() {
+  public EdmAnnotationExpression getExpression() {
     return expression;
   }
 

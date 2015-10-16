@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmLe;
 
 public class EdmLeImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmLe {
 
-  public EdmLeImpl(final EdmDynamicAnnotationExpression left, final EdmDynamicAnnotationExpression right) {
+  public EdmLeImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
     super(left, right);
   }
 
