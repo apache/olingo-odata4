@@ -20,7 +20,6 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.math.BigInteger;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
@@ -32,12 +31,6 @@ public final class EdmSByte extends SingletonPrimitiveType {
 
   public static EdmSByte getInstance() {
     return INSTANCE;
-  }
-
-  @Override
-  public boolean isCompatible(final EdmPrimitiveType primitiveType) {
-    return primitiveType instanceof Uint7
-        || primitiveType instanceof EdmSByte;
   }
 
   @Override

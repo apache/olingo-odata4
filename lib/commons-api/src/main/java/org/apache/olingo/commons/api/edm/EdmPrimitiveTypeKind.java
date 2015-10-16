@@ -76,21 +76,22 @@ public enum EdmPrimitiveTypeKind {
   }
 
   /**
-   * Gets <tt>EdmPrimitiveTypeKind</tt> from a full-qualified type name, for the given OData protocol version.
-   *
-   * @param fqn full-qualified type name.
-   * @return <tt>EdmPrimitiveTypeKind</tt> object.
+   * Gets the {@link EdmPrimitiveTypeKind} from a full-qualified type name.
+   * @param fqn full-qualified type name
+   * @return {@link EdmPrimitiveTypeKind} object
    */
   public static EdmPrimitiveTypeKind valueOfFQN(final FullQualifiedName fqn) {
-    return valueOfFQN(fqn.toString());
+    if (EdmPrimitiveType.EDM_NAMESPACE.equals(fqn.getNamespace())) {
+      return valueOf(fqn.getName());
+    } else {
+      throw new IllegalArgumentException(fqn + " does not look like an EDM primitive type.");
+    }
   }
 
   /**
-   * Gets <tt>EdmPrimitiveTypeKind</tt> from a full type expression (as <tt>Edm.Int32</tt>), for the given OData
-   * protocol version.
-   *
-   * @param fqn string value type.
-   * @return <tt>EdmPrimitiveTypeKind</tt> object.
+   * Gets the {@link EdmPrimitiveTypeKind} from a full type expression (like <code>Edm.Int32</code>).
+   * @param fqn String containing a full-qualified type name
+   * @return {@link EdmPrimitiveTypeKind} object
    */
   public static EdmPrimitiveTypeKind valueOfFQN(final String fqn) {
     if (!fqn.startsWith(EdmPrimitiveType.EDM_NAMESPACE + ".")) {

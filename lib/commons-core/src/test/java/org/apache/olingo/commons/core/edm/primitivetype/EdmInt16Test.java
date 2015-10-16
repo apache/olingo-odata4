@@ -33,7 +33,6 @@ public class EdmInt16Test extends PrimitiveTypeBaseTest {
 
   @Test
   public void testInt16Compatibility() {
-    assertTrue(instance.isCompatible(Uint7.getInstance()));
     assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)));
     assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)));
   }
