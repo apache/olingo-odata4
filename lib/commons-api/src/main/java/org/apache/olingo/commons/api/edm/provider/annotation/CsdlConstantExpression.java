@@ -23,7 +23,7 @@ public class CsdlConstantExpression extends CsdlExpression {
 
   private static final long serialVersionUID = 5618680702707972904L;
 
-  private ConstantExpressionType type;
+  private final ConstantExpressionType type;
   private String value;
 
   /**
@@ -96,7 +96,9 @@ public class CsdlConstantExpression extends CsdlExpression {
     }
   }
 
-  public CsdlConstantExpression() {}
+  public CsdlConstantExpression(ConstantExpressionType type) {
+    this.type = type;
+  }
 
   public CsdlConstantExpression(ConstantExpressionType type, String value) {
     this.type = type;
@@ -109,16 +111,6 @@ public class CsdlConstantExpression extends CsdlExpression {
    */
   public ConstantExpressionType getType() {
     return type;
-  }
-
-  /**
-   * Sets the type of the constant expression
-   * @param type type of the constant expression
-   * @return this for method chaining
-   */
-  public CsdlConstantExpression setType(final ConstantExpressionType type) {
-    this.type = type;
-    return this;
   }
 
   /**

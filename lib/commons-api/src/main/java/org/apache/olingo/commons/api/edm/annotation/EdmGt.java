@@ -21,6 +21,6 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a edm:Gt expression
  */
-public interface EdmGt extends EdmTwoParamsOpDynamicAnnotationExpression {
+public interface EdmGt extends EdmLogicalOrComparisonExpression {
   // No additional methods needed for now.
 }

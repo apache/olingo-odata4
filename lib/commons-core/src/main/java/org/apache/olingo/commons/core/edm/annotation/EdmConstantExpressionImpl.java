@@ -26,27 +26,66 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotationExpression {
+public class EdmConstantExpressionImpl extends AbstractEdmExpression implements EdmConstantExpression {
 
-  private final Valuable value;
-  private final EdmPrimitiveType type;
+  private Valuable value;
+  private EdmPrimitiveType type;
+  private final CsdlConstantExpression constExprConstruct;
 
-  public EdmConstantAnnotationExpressionImpl(final CsdlConstantExpression constExprConstruct) {
+  public EdmConstantExpressionImpl(Edm edm, final CsdlConstantExpression constExprConstruct) {
+    super(edm, constExprConstruct.getType().toString());
+    this.constExprConstruct = constExprConstruct;
+  }
+
+  @Override
+  public Valuable getValue() {
+    if(value == null){
+      build();
+    }
+    return value;
+  }
+
+  @Override
+  public String getValueAsString() {
+    return constExprConstruct.getValue();
+    
+//    if (value == null) {
+//      build();
+//    }
+//    if (value == null) {
+//      return "";
+//    } else if (value.isEnum()) {
+//      return value.getValue().toString();
+//    } else if (value.isGeospatial()) {
+//      return value.toString();
+//    } else {
+//      // TODO: check after copied from ClientPrimitiveValueImpl
+//      try {
+//        return type.valueToString(value.getValue(), null, null,
+//            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+//      } catch (EdmPrimitiveTypeException e) {
+//        throw new IllegalArgumentException(e);
+//      }
+//    }
+  }
+
+  private void build() {
     if (constExprConstruct.getType() == CsdlConstantExpression.ConstantExpressionType.EnumMember) {
+      // TODO: Delete ProeprtyValue here
       final List<Property> enumValues = new ArrayList<Property>();
       String enumTypeName = null;
       for (String split : StringUtils.split(constExprConstruct.getValue(), ' ')) {
         final String[] enumSplit = StringUtils.split(split, '/');
         enumTypeName = enumSplit[0];
-        enumValues.add(new Property(enumSplit[0], enumSplit[1]));
+        enumValues.add(new Property(enumSplit[0], null, ValueType.ENUM, enumSplit[1]));
       }
       if (enumValues.size() == 1) {
         value = enumValues.get(0);
@@ -101,50 +140,6 @@ public class EdmConstantAnnotationExpressionImpl implements EdmConstantAnnotatio
             null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
             type.getDefaultType());
         value = new Property(kind.getFullQualifiedName().getName(), null, ValueType.PRIMITIVE, valueOfString);
-      } catch (EdmPrimitiveTypeException e) {
-        throw new IllegalArgumentException(e);
-      }
-    }
-  }
-
-  @Override
-  public boolean isConstant() {
-    return true;
-  }
-
-  @Override
-  public EdmConstantAnnotationExpression asConstant() {
-    return this;
-  }
-
-  @Override
-  public boolean isDynamic() {
-    return false;
-  }
-
-  @Override
-  public EdmDynamicAnnotationExpression asDynamic() {
-    return null;
-  }
-
-  @Override
-  public Valuable getValue() {
-    return value;
-  }
-
-  @Override
-  public String getValueAsString() {
-    if (value == null) {
-      return "";
-    } else if (value.isEnum()) {
-      return value.toString();
-    } else if (value.isGeospatial()) {
-      return value.toString();
-    } else {
-      // TODO: check after copied from ClientPrimitiveValueImpl
-      try {
-        return type.valueToString(value.getValue(), null, null,
-            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }

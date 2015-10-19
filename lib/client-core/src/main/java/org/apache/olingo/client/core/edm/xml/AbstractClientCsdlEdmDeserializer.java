@@ -35,8 +35,8 @@ public abstract class AbstractClientCsdlEdmDeserializer<T> extends JsonDeseriali
 
   protected CsdlConstantExpression parseAnnotationConstExprConstruct(final JsonParser jp)
       throws IOException {
-    final CsdlConstantExpression constExpr = new CsdlConstantExpression();
-    constExpr.setType(CsdlConstantExpression.ConstantExpressionType.fromString(jp.getCurrentName()));
+    final CsdlConstantExpression constExpr =
+        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.fromString(jp.getCurrentName()));
     constExpr.setValue(jp.nextTextValue());
     return constExpr;
   }

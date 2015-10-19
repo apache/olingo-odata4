@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,36 +18,39 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.core.edm.AbstractEdmAnnotatable;
 
-public abstract class AbstractEdmAnnotatableDynamicAnnotationExpression
-extends AbstractEdmDynamicAnnotationExpression implements EdmAnnotatable {
+public abstract class AbstractEdmAnnotatableDynamicExpression extends AbstractEdmDynamicExpression implements
+    EdmAnnotatable {
 
-  private final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
+  private final AnnotationHelper helper;
 
-  //TODO: Can we derive this method from AbstractEdmAnnotatable?
+  public AbstractEdmAnnotatableDynamicExpression(Edm edm, String name, CsdlAnnotatable annotatable) {
+    super(edm, name);
+    helper = new AnnotationHelper(edm, annotatable);
+  }
+
   @Override
   public EdmAnnotation getAnnotation(final EdmTerm term, String qualifier) {
-    EdmAnnotation result = null;
-    for (EdmAnnotation annotation : getAnnotations()) {
-      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        if (qualifier == annotation.getQualifier()
-            || (qualifier != null && qualifier.equals(annotation.getQualifier()))) {
-          result = annotation;
-          break;
-        }
-      }
-    }
-    return result;
+    return helper.getAnnotation(term, qualifier);
   }
 
   @Override
   public List<EdmAnnotation> getAnnotations() {
-    return annotations;
+    return helper.getAnnotations();
+  }
+
+  private class AnnotationHelper extends AbstractEdmAnnotatable {
+
+    public AnnotationHelper(Edm edm, CsdlAnnotatable annotatable) {
+      super(edm, annotatable);
+    }
   }
 }

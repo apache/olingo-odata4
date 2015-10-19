@@ -19,27 +19,23 @@
 package org.apache.olingo.commons.core.edm.annotation;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.annotation.EdmCast;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-public class EdmCastImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmCast {
-
-  private final Edm edm;
+public class EdmCastImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmCast {
 
   private final CsdlCast cast;
-
-  private final EdmDynamicAnnotationExpression value;
-
+  private EdmExpression value;
   private EdmType type;
 
-  public EdmCastImpl(final Edm edm, final CsdlCast cast, final EdmDynamicAnnotationExpression value) {
-    this.edm = edm;
-    this.cast = cast;
-    this.value = value;
+  public EdmCastImpl(final Edm edm, final CsdlCast csdlExp) {
+    super(edm, "Cast", csdlExp);
+    this.cast = csdlExp;
   }
 
   @Override
@@ -65,6 +61,9 @@ public class EdmCastImpl extends AbstractEdmAnnotatableDynamicAnnotationExpressi
   @Override
   public EdmType getType() {
     if (type == null) {
+      if (cast.getType() == null) {
+        throw new EdmException("Must specify a type for a Cast expression.");
+      }
       final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(cast.getType()).build();
       type = typeInfo.getType();
     }
@@ -72,7 +71,13 @@ public class EdmCastImpl extends AbstractEdmAnnotatableDynamicAnnotationExpressi
   }
 
   @Override
-  public EdmDynamicAnnotationExpression getValue() {
+  public EdmExpression getValue() {
+    if (value == null) {
+      if (cast.getValue() == null) {
+        throw new EdmException("Cast expressions require an expression value.");
+      }
+      value = getExpression(edm, cast.getValue());
+    }
     return value;
   }
 

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.api.edm;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 
 /**
  * This class models an OData Annotation which can be applied to a target. 
@@ -35,5 +35,5 @@ public interface EdmAnnotation extends EdmAnnotatable {
    */
   String getQualifier();
 
-  EdmAnnotationExpression getExpression();
+  EdmExpression getExpression();
 }

@@ -21,6 +21,6 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a edm:Ge expression
  */
-public interface EdmGe extends EdmTwoParamsOpDynamicAnnotationExpression {
+public interface EdmGe extends EdmLogicalOrComparisonExpression {
   // No additional methods needed for now.
 }

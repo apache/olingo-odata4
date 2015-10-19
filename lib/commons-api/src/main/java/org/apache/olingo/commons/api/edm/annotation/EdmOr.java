@@ -21,6 +21,6 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a logical edm:And expression
  */
-public interface EdmOr extends EdmTwoParamsOpDynamicAnnotationExpression {
+public interface EdmOr extends EdmLogicalOrComparisonExpression {
   // No additional methods needed for now.
 }

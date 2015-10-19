@@ -18,33 +18,23 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+import org.apache.olingo.commons.api.data.Valuable;
+
 /**
- * Super type of all annotation expressions
- * A expression is either constant or dynamic
+ * Represents a constant expression
  */
-public interface EdmAnnotationExpression {
+public interface EdmConstantExpression extends EdmExpression {
+  
+  /**
+   * Value of the constant expression
+   * @return value of the constant expression
+   */
+  //TODO: Delete data package dependency
+  Valuable getValue();
 
   /**
-   * Return true if the expression is constant
-   * @return true if the expression is constant
+   * Returns the value of the expression as String
+   * @return String representation of the expression
    */
-  boolean isConstant();
-  
-  /**
-   * Casts the expression to {@link EdmConstantAnnotationExpression}
-   * @return Constant Expression
-   */
-  EdmConstantAnnotationExpression asConstant();
-  
-  /**
-   * Return true if the expression is dynamic
-   * @return true if the expression is dynamic
-   */
-  boolean isDynamic();
-  
-  /**
-   * Cast the expression to {@link EdmDynamicAnnotationExpression}
-   * @return Dynamic Expression
-   */
-  EdmDynamicAnnotationExpression asDynamic();
+  String getValueAsString();
 }

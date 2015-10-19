@@ -21,6 +21,6 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a edm:Ne expression
  */
-public interface EdmNe extends EdmTwoParamsOpDynamicAnnotationExpression {
+public interface EdmNe extends EdmLogicalOrComparisonExpression {
   // No additional methods needed for now.
 }

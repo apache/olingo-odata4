@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
  * The edm:Record expression enables a new entity type or complex type instance to be constructed.
  * A record expression contains zero or more edm:PropertyValue (See {@link EdmPropertyValue} )elements.
  */
-public interface EdmRecord extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmRecord extends EdmDynamicExpression, EdmAnnotatable {
   
   /**
    * List of edm:PropertyValues (See {@link EdmPropertyValue}

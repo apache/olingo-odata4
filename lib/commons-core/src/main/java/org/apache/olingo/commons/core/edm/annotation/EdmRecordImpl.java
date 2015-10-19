@@ -18,36 +18,57 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmRecord {
+public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmRecord {
 
-  private final List<EdmPropertyValue> propertyValues;
-
+  private List<EdmPropertyValue> propertyValues;
   private EdmStructuredType type;
+  private CsdlRecord record;
 
-  public EdmRecordImpl(final Edm edm, final String type, final List<EdmPropertyValue> propertyValues) {
-    this.propertyValues = propertyValues;
-
-    if (type != null) {
-      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(type).build();
-      this.type = typeInfo.getEntityType() == null ? typeInfo.getComplexType() : typeInfo.getEntityType();
-    }
+  public EdmRecordImpl(final Edm edm, CsdlRecord csdlExp) {
+    super(edm, "Record", csdlExp);
+    this.record = csdlExp;
   }
 
   @Override
   public List<EdmPropertyValue> getPropertyValues() {
+    if (propertyValues == null) {
+      List<EdmPropertyValue> localValues = new ArrayList<EdmPropertyValue>();
+      if (record.getPropertyValues() != null) {
+        for (CsdlPropertyValue value : record.getPropertyValues()) {
+          localValues.add(new EdmPropertyValueImpl(edm, value));
+        }
+      }
+      propertyValues = Collections.unmodifiableList(localValues);
+    }
     return propertyValues;
   }
 
   @Override
   public EdmStructuredType getType() {
+    if (type == null) {
+      if (record.getType() == null) {
+        throw new EdmException("Must specify a type for a Record expression.");
+      }
+      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(record.getType()).build();
+      if (typeInfo.isEntityType() || typeInfo.isComplexType()) {
+        type = typeInfo.isEntityType() ? typeInfo.getEntityType() : typeInfo.getComplexType();
+      } else {
+        throw new EdmException("Record expressions must specify a complex or entity type.");
+      }
+    }
     return type;
   }
 

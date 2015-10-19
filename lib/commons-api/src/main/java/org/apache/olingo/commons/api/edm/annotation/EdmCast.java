@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  * Represents an edm:Cast expression.
  * Casts the value obtained from its single child expression to the specified type
  */
-public interface EdmCast extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmCast extends EdmDynamicExpression, EdmAnnotatable {
   /**
    * Returns the facet attribute MaxLength
    * @return Returns the facet attribute MaxLength
@@ -61,5 +61,5 @@ public interface EdmCast extends EdmDynamicAnnotationExpression, EdmAnnotatable 
    * Cast value of the expression
    * @return Cast value
    */
-  EdmDynamicAnnotationExpression getValue();
+  EdmExpression getValue();
 }

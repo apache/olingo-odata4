@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmLt;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression;
 
-public class EdmLtImpl extends AbstractEdmTwoParamsOpDynamicAnnotationExpression implements EdmLt {
+public class EdmLtImpl extends AbstractEdmLogicalOrComparisonExpression implements EdmLt {
 
-  public EdmLtImpl(final EdmAnnotationExpression left, final EdmAnnotationExpression right) {
-    super(left, right);
+  public EdmLtImpl(Edm edm, CsdlLogicalOrComparisonExpression csdlExp) {
+    super(edm, csdlExp);
   }
-
 }

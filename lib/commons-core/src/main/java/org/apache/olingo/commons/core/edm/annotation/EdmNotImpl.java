@@ -18,21 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmNot;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression;
 
-public class EdmNotImpl extends AbstractEdmDynamicAnnotationExpression implements EdmNot {
+public class EdmNotImpl extends AbstractEdmLogicalOrComparisonExpression implements EdmNot {
 
-  private final EdmAnnotationExpression expression;
-
-  public EdmNotImpl(final EdmAnnotationExpression expression) {
-    this.expression = expression;
+    public EdmNotImpl(Edm edm, CsdlLogicalOrComparisonExpression csdlExp) {
+    super(edm, csdlExp);
   }
-
-  @Override
-  public EdmAnnotationExpression getExpression() {
-    return expression;
-  }
-
 }

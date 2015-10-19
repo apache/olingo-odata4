@@ -25,11 +25,11 @@ import java.util.List;
  * The value calculated by the collection expression is the collection of the values calculated 
  * by each of the child expressions.
  */
-public interface EdmCollection extends EdmDynamicAnnotationExpression {
+public interface EdmCollection extends EdmDynamicExpression {
 
   /**
    * Returns a list of child expression
    * @return List of child expression
    */
-  List<EdmAnnotationExpression> getItems();
+  List<EdmExpression> getItems();
 }

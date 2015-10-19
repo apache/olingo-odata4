@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,30 +18,51 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmApply;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
 
-public class EdmApplyImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmApply {
+public class EdmApplyImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmApply {
 
-  private final String function;
+  private CsdlApply csdlExp;
 
-  private final List<EdmAnnotationExpression> parameters;
+  private String function;
+  private List<EdmExpression> parameters;
 
-  public EdmApplyImpl(final String function, final List<EdmAnnotationExpression> parameters) {
-    this.function = function;
-    this.parameters = parameters;
+  public EdmApplyImpl(Edm edm, CsdlApply csdlExp) {
+    super(edm, "Apply", csdlExp);
+    this.csdlExp = csdlExp;
   }
 
   @Override
   public String getFunction() {
+    if (function == null) {
+      if (csdlExp.getFunction() == null) {
+        throw new EdmException("An Apply expression must specify a function.");
+      }
+      function = csdlExp.getFunction();
+    }
     return function;
   }
 
   @Override
-  public List<EdmAnnotationExpression> getParameters() {
+  public List<EdmExpression> getParameters() {
+    if (parameters == null) {
+      List<EdmExpression> localParameters = new ArrayList<EdmExpression>();
+      if (csdlExp.getParameters() != null) {
+        for (CsdlExpression param : csdlExp.getParameters()) {
+          localParameters.add(getExpression(edm, param));
+        }
+      }
+      parameters = Collections.unmodifiableList(localParameters);
+    }
     return parameters;
   }
-
 }

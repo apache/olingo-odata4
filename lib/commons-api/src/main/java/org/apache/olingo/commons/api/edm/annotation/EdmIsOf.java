@@ -26,7 +26,7 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  *  The edm:IsOf expression evaluates a child expression and returns a Boolean value indicating whether 
  *  the child expression returns the specified type
  */
-public interface EdmIsOf extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmIsOf extends EdmDynamicExpression, EdmAnnotatable {
  
   /**
    * Facet MaxLength
@@ -62,5 +62,5 @@ public interface EdmIsOf extends EdmDynamicAnnotationExpression, EdmAnnotatable 
    * Returns true if the child expression returns the specified typed 
    * @return Returns true if the child expression returns the specified typed 
    */
-  EdmDynamicAnnotationExpression getValue();
+  EdmExpression getValue();
 }

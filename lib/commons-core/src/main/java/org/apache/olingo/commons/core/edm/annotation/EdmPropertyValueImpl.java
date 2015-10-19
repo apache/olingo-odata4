@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,28 +18,39 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 
 public class EdmPropertyValueImpl
-extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmPropertyValue {
+    extends AbstractEdmAnnotatableDynamicExpression implements EdmPropertyValue {
 
-  private final String property;
+  private EdmExpression value;
+  private CsdlPropertyValue csdlExp;
 
-  private final EdmAnnotationExpression value;
-
-  public EdmPropertyValueImpl(final String property, final EdmAnnotationExpression value) {
-    this.property = property;
-    this.value = value;
+  public EdmPropertyValueImpl(Edm edm, CsdlPropertyValue csdlExp) {
+    super(edm, "PropertyValue", csdlExp);
+    this.csdlExp = csdlExp;
   }
 
   @Override
   public String getProperty() {
-    return property;
+    if (csdlExp.getProperty() == null) {
+      throw new EdmException("PropertyValue expressions require a referenced property value.");
+    }
+    return csdlExp.getProperty();
   }
 
   @Override
-  public EdmAnnotationExpression getValue() {
+  public EdmExpression getValue() {
+    if (value == null) {
+      if (csdlExp.getValue() == null) {
+        throw new EdmException("PropertyValue expressions require an expression value.");
+      }
+      value = getExpression(edm, csdlExp.getValue());
+    }
     return value;
   }
 

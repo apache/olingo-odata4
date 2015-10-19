@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a dynamic expression
  */
-public interface EdmDynamicAnnotationExpression extends EdmAnnotationExpression {
+public interface EdmDynamicExpression extends EdmExpression {
   
   /**
    * Returns true if the expression is a logical edm:Not expression

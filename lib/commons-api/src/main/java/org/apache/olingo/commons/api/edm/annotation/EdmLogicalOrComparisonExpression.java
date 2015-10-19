@@ -18,22 +18,20 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
-import org.apache.olingo.commons.api.data.Valuable;
-
 /**
- * Represents a constant expression
+ * Represents a generic expression with two child exprssions
  */
-public interface EdmConstantAnnotationExpression extends EdmAnnotationExpression {
+public interface EdmLogicalOrComparisonExpression extends EdmDynamicExpression {
+
+  /**
+   * Returns the first expression (left child)
+   * @return Child expression
+   */
+  EdmExpression getLeftExpression();
   
   /**
-   * Value of the constant expression
-   * @return value of the constant expression
+   * Returns the second expression (right child)
+   * @return Child expression
    */
-  Valuable getValue();
-
-  /**
-   * Returns the value of the expression as String
-   * @return String representation of the expression
-   */
-  String getValueAsString();
+  EdmExpression getRightExpression();
 }

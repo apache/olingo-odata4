@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,13 +18,21 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmNavigationPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNavigationPropertyPath;
 
-public class EdmNavigationPropertyPathImpl
-extends AbstractEdmElementOrAttributeNotation implements EdmNavigationPropertyPath {
+public class EdmNavigationPropertyPathImpl extends AbstractEdmDynamicExpression implements EdmNavigationPropertyPath {
 
-  public EdmNavigationPropertyPathImpl(final String value) {
-    super(value);
+  private final CsdlNavigationPropertyPath csdlExp;
+
+  public EdmNavigationPropertyPathImpl(Edm edm, CsdlNavigationPropertyPath csdlExp) {
+    super(edm, "NavigationPropertyPath");
+    this.csdlExp = csdlExp;
   }
 
+  @Override
+  public String getValue() {
+    return csdlExp.getValue();
+  }
 }

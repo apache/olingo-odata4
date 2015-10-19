@@ -19,19 +19,38 @@
 package org.apache.olingo.commons.api.edm.annotation;
 
 /**
- * Represents a generic expression with two child exprssions
+ * Super type of all annotation expressions
+ * A expression is either constant or dynamic
  */
-public interface EdmTwoParamsOpDynamicAnnotationExpression extends EdmDynamicAnnotationExpression {
+public interface EdmExpression {
 
   /**
-   * Returns the first expression (left child)
-   * @return Child expression
+   * Will return the name of the expression e.g. Apply or Cast.
+   * @return the name of the expression
    */
-  EdmAnnotationExpression getLeftExpression();
+  String getExpressionName();
+
+  /**
+   * Return true if the expression is constant
+   * @return true if the expression is constant
+   */
+  boolean isConstant();
   
   /**
-   * Returns the second expression (right child)
-   * @return Child expression
+   * Casts the expression to {@link EdmConstantExpression}
+   * @return Constant Expression
    */
-  EdmAnnotationExpression getRightExpression();
+  EdmConstantExpression asConstant();
+  
+  /**
+   * Return true if the expression is dynamic
+   * @return true if the expression is dynamic
+   */
+  boolean isDynamic();
+  
+  /**
+   * Cast the expression to {@link EdmDynamicExpression}
+   * @return Dynamic Expression
+   */
+  EdmDynamicExpression asDynamic();
 }

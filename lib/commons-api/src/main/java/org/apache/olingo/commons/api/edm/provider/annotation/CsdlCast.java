@@ -37,7 +37,7 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
   private Integer precision;
   private Integer scale;
   private SRID srid;
-  private CsdlDynamicExpression value;
+  private CsdlExpression value;
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override
@@ -114,11 +114,11 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
    * Cast value of the expression
    * @return Cast value
    */
-  public CsdlDynamicExpression getValue() {
+  public CsdlExpression getValue() {
     return value;
   }
 
-  public void setValue(final CsdlDynamicExpression value) {
+  public void setValue(final CsdlExpression value) {
     this.value = value;
   }
 }

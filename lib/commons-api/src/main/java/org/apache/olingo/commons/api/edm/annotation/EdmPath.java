@@ -23,7 +23,7 @@ package org.apache.olingo.commons.api.edm.annotation;
  *  It can be used in annotations that target entity containers, entity sets, entity types, complex types, 
  *  navigation properties of structured types, and properties of structured types.
  */
-public interface EdmPath extends EdmDynamicAnnotationExpression {
+public interface EdmPath extends EdmDynamicExpression {
   
   /**
    * Returns the target value of the expression

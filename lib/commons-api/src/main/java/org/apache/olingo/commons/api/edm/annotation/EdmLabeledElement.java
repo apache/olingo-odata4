@@ -24,7 +24,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
  * The edm:LabeledElement expression assigns a name to a child expression. The value of the child expression can 
  * then be reused elsewhere with an edm:LabeledElementReference (See {@link EdmLabeledElementReference}) expression.
  */
-public interface EdmLabeledElement extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmLabeledElement extends EdmDynamicExpression, EdmAnnotatable {
   
   /**
    * Returns the assigned name
@@ -37,5 +37,5 @@ public interface EdmLabeledElement extends EdmDynamicAnnotationExpression, EdmAn
    * 
    * @return child expression
    */
-  EdmDynamicAnnotationExpression getValue();
+  EdmExpression getValue();
 }

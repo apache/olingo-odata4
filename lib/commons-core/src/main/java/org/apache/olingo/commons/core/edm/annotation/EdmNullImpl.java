@@ -18,8 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmNull;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNull;
 
-public class EdmNullImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmNull {
-  // No additional methods needed for now.
+public class EdmNullImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmNull {
+
+  public EdmNullImpl(Edm edm, CsdlNull csdlExp) {
+    super(edm, "Null", csdlExp);
+  }
 }

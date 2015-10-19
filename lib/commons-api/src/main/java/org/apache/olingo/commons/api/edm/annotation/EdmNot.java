@@ -21,11 +21,6 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents a logical edm:Le expression
  */
-public interface EdmNot extends EdmDynamicAnnotationExpression {
-  
-  /**
-   * Returns an expression which should be inverted
-   * @return the expression which must be inverted
-   */
-  EdmAnnotationExpression getExpression();
+public interface EdmNot extends EdmLogicalOrComparisonExpression {
+//No additional methods needed.
 }

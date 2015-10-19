@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,12 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmAnd;
 import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationPath;
 import org.apache.olingo.commons.api.edm.annotation.EdmApply;
 import org.apache.olingo.commons.api.edm.annotation.EdmCast;
 import org.apache.olingo.commons.api.edm.annotation.EdmCollection;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmEq;
 import org.apache.olingo.commons.api.edm.annotation.EdmGe;
 import org.apache.olingo.commons.api.edm.annotation.EdmGt;
@@ -44,8 +45,11 @@ import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 
-public abstract class AbstractEdmDynamicAnnotationExpression
-extends AbstractEdmAnnotationExpression implements EdmDynamicAnnotationExpression {
+public abstract class AbstractEdmDynamicExpression extends AbstractEdmExpression implements EdmDynamicExpression {
+
+  public AbstractEdmDynamicExpression(Edm edm, String name) {
+    super(edm, name);
+  }
 
   @Override
   public boolean isNot() {

@@ -53,8 +53,8 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.annotation.EdmAnnotationExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmConstantAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
@@ -504,13 +504,13 @@ public class MetadataDocumentXmlSerializer {
       String term = getAliasedFullQualifiedName(annotation.getTerm().getFullQualifiedName(), false);
       writer.writeAttribute(XML_TERM_ATT, term);
       String qualifier = annotation.getQualifier();
-      if(qualifier != null) {
+      if (qualifier != null) {
         writer.writeAttribute(XML_QUALIFIER_ATT, qualifier);
       }
-      EdmAnnotationExpression expression = annotation.getExpression();
-      if(expression != null) {
-        if(expression.isConstant()) {
-          EdmConstantAnnotationExpression constExpression = expression.asConstant();
+      EdmExpression expression = annotation.getExpression();
+      if (expression != null) {
+        if (expression.isConstant()) {
+          EdmConstantExpression constExpression = expression.asConstant();
           Valuable value = constExpression.getValue();
           writer.writeAttribute(value.getType(), constExpression.getValueAsString());
         } else {
@@ -520,7 +520,6 @@ public class MetadataDocumentXmlSerializer {
       writer.writeEndElement();
     }
   }
-
 
   private void appendNavigationProperties(final XMLStreamWriter writer, final EdmStructuredType type)
       throws XMLStreamException {

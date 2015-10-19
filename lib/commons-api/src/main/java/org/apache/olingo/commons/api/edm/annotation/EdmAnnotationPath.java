@@ -21,7 +21,7 @@ package org.apache.olingo.commons.api.edm.annotation;
 /**
  * Represents an annotation path
  */
-public interface EdmAnnotationPath extends EdmDynamicAnnotationExpression {
+public interface EdmAnnotationPath extends EdmDynamicExpression {
   
   /**
    * Value of the path

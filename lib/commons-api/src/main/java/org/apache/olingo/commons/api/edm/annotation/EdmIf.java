@@ -23,7 +23,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 /**
  * Represents a edm:If expression
  */
-public interface EdmIf extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmIf extends EdmDynamicExpression, EdmAnnotatable {
   
   /**
    * Returns the first expression of the edm:If expression.
@@ -31,7 +31,7 @@ public interface EdmIf extends EdmDynamicAnnotationExpression, EdmAnnotatable {
    * 
    * @return First expression of the if expression
    */
-  EdmAnnotationExpression getGuard();
+  EdmExpression getGuard();
   
   /**
    * Return the second expression of the edm:If expression.
@@ -40,7 +40,7 @@ public interface EdmIf extends EdmDynamicAnnotationExpression, EdmAnnotatable {
    * 
    * @return Second Expression of the edm:If expression
    */
-  EdmAnnotationExpression getThen();
+  EdmExpression getThen();
 
   /**
    * Return the third expression of the edm:If expression.
@@ -49,5 +49,5 @@ public interface EdmIf extends EdmDynamicAnnotationExpression, EdmAnnotatable {
    * 
    * @return Third Expression of the edm:If expression
    */
-  EdmAnnotationExpression getElse();
+  EdmExpression getElse();
 }

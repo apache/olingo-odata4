@@ -25,7 +25,7 @@ import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 /**
  * Represents an Edm:Apply expression
  */
-public interface EdmApply extends EdmDynamicAnnotationExpression, EdmAnnotatable {
+public interface EdmApply extends EdmDynamicExpression, EdmAnnotatable {
 
   /**
    * A QualifiedName specifying the name of the client-side function to apply.
@@ -45,5 +45,5 @@ public interface EdmApply extends EdmDynamicAnnotationExpression, EdmAnnotatable
    * Returns the expressions applied to the parameters of the function
    * @return List of expression
    */
-  List<EdmAnnotationExpression> getParameters();
+  List<EdmExpression> getParameters();
 }

@@ -19,27 +19,25 @@
 package org.apache.olingo.commons.core.edm.annotation;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicAnnotationExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmIsOf;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
-public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicAnnotationExpression implements EdmIsOf {
+public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmIsOf {
 
   private final Edm edm;
-
   private final CsdlIsOf isOf;
-
-  private final EdmDynamicAnnotationExpression value;
-
+  private EdmExpression value;
   private EdmType type;
 
-  public EdmIsOfImpl(final Edm edm, final CsdlIsOf isOf, final EdmDynamicAnnotationExpression value) {
+  public EdmIsOfImpl(final Edm edm, final CsdlIsOf isOf) {
+    super(edm, "IsOf", isOf);
     this.edm = edm;
     this.isOf = isOf;
-    this.value = value;
   }
 
   @Override
@@ -65,6 +63,9 @@ public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicAnnotationExpressi
   @Override
   public EdmType getType() {
     if (type == null) {
+      if(isOf.getType() == null){
+        throw new EdmException("Must specify a type for an IsOf expression.");
+      }
       final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(isOf.getType()).build();
       type = typeInfo.getType();
     }
@@ -72,7 +73,13 @@ public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicAnnotationExpressi
   }
 
   @Override
-  public EdmDynamicAnnotationExpression getValue() {
+  public EdmExpression getValue() {
+    if(value == null){
+      if(isOf.getValue() == null){
+        throw new EdmException("IsOf expressions require an expression value.");
+      }
+      value = getExpression(edm, isOf.getValue());
+    }
     return value;
   }
 
