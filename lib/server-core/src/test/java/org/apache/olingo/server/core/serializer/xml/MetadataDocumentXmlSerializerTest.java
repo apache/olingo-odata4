@@ -333,7 +333,7 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<Path>PathValue</Path>"));
     assertTrue(metadata.contains("<PropertyPath>PropertyPathValue</PropertyPath>"));
     assertTrue(metadata
-        .contains("<Record Type=\"namespace.ETAbstract\"><PropertyValue Property=\"PropName\"><String>value</String>"
+        .contains("<Record Type=\"Alias.ETAbstract\"><PropertyValue Property=\"PropName\"><String>value</String>"
             + "<Annotation Term=\"ns.term\"/></PropertyValue><Annotation Term=\"ns.term\"/></Record>"));
     assertTrue(metadata.contains("<UrlRef><String>URLRefValue</String><Annotation Term=\"ns.term\"/></UrlRef>"));
 

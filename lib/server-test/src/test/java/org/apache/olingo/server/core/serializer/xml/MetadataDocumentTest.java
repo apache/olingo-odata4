@@ -50,6 +50,7 @@ public class MetadataDocumentTest {
 
     final String metadata = IOUtils.toString(
         odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());
+    System.out.println(metadata);
     assertNotNull(metadata);
     assertThat(metadata, containsString("<edmx:Reference Uri=\"" + CORE_VOCABULARY + "\">"
             + "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" + "</edmx:Reference>"));
@@ -76,23 +77,10 @@ public class MetadataDocumentTest {
             + "<Property Name=\"AdditionalPropertyString_5\" Type=\"Edm.String\"/>"
             + "</EntityType>"));
 
-//    assertThat(metadata, containsString("<EntitySet Name=\"ESAllPrim\" EntityType=\"Namespace1_Alias.ETAllPrim\">"
-//        + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimOne\" Target=\"ESTwoPrim\"/>"
-//        + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimMany\" Target=\"ESTwoPrim\"/>"
-//        + "</EntitySet>"));
-
       assertThat(metadata, containsString("<EntitySet Name=\"ESAllPrim\" EntityType=\"Namespace1_Alias.ETAllPrim\">"
         + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimOne\" Target=\"ESTwoPrim\"/>"
         + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimMany\" Target=\"ESTwoPrim\"/>"
-        + "<Annotation Term=\"Core.Description\" String=\"Contains entities with all primitive types\"/>"
-        + "<Annotation Term=\"Core.LongDescription\" Qualifier=\"EnabledForEntitySet\" String=\"System Query Options:"
-        + " $filter, $count, $orderby, $skip, $top, $expand, $select, $format; Operations: Create, Create with Deep "
-        + "Insert, Create with Bind Operation, Read\"/>"
-        + "<Annotation Term=\"Core.LongDescription\" Qualifier=\"EnabledForEntity\" String=\"System Query Options: "
-        + "$expand, $select, $format; Operations: Read, Update, Update with Bind Operation, Delete\"/>"
-        + "<Annotation Term=\"Core.LongDescription\" Qualifier=\"EnabledNavigationProperties\" "
-        + "String=\"NavPropertyETTwoPrimOne, NavPropertyETTwoPrimMany\"/>"
-        + "</EntitySet>"));
+        + "<Annotation Term=\"Core.Description\""));
 
     assertThat(metadata,
         containsString("<ComplexType Name=\"CTPrim\">"

@@ -244,8 +244,8 @@ public class MetadataDocumentXmlSerializer {
       for (EdmAnnotation annotation : annotations) {
         writer.writeStartElement(XML_ANNOTATION);
         if (annotation.getTerm() != null) {
-          writer.writeAttribute(XML_TERM_ATT, annotation.getTerm().getFullQualifiedName()
-              .getFullQualifiedNameAsString());
+          writer.writeAttribute(XML_TERM_ATT, getAliasedFullQualifiedName(annotation.getTerm().getFullQualifiedName(),
+              false));
         }
         if (annotation.getQualifier() != null) {
           writer.writeAttribute(XML_QUALIFIER_ATT, annotation.getQualifier());
@@ -315,7 +315,7 @@ public class MetadataDocumentXmlSerializer {
       break;
     case Cast:
       EdmCast asCast = dynExp.asCast();
-      writer.writeAttribute(XML_TYPE, asCast.getType().getFullQualifiedName().getFullQualifiedNameAsString());
+      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(asCast.getType(), false));
 
       if (asCast.getMaxLength() != null) {
         writer.writeAttribute(XML_MAX_LENGTH, "" + asCast.getMaxLength());
@@ -345,7 +345,7 @@ public class MetadataDocumentXmlSerializer {
       break;
     case IsOf:
       EdmIsOf asIsOf = dynExp.asIsOf();
-      writer.writeAttribute(XML_TYPE, asIsOf.getType().getFullQualifiedName().getFullQualifiedNameAsString());
+      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(asIsOf.getType(), false));
 
       if (asIsOf.getMaxLength() != null) {
         writer.writeAttribute(XML_MAX_LENGTH, "" + asIsOf.getMaxLength());
@@ -388,7 +388,7 @@ public class MetadataDocumentXmlSerializer {
       break;
     case Record:
       EdmRecord asRecord = dynExp.asRecord();
-      writer.writeAttribute(XML_TYPE, asRecord.getType().getFullQualifiedName().getFullQualifiedNameAsString());
+      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(asRecord.getType(), false));
       for (EdmPropertyValue propValue : asRecord.getPropertyValues()) {
         writer.writeStartElement(XML_PROPERTY_Value);
         writer.writeAttribute(XML_PROPERTY, propValue.getProperty());
