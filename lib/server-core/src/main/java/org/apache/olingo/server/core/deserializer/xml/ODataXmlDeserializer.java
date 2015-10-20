@@ -67,7 +67,7 @@ import com.fasterxml.aalto.stax.InputFactoryImpl;
 
 public class ODataXmlDeserializer implements ODataDeserializer {
 
-  private static final XMLInputFactory FACTORY = new InputFactoryImpl();
+  private static final XMLInputFactory FACTORY = XMLInputFactory.newInstance();
   private static final String ATOM = "a";
   private static final String NS_ATOM = "http://www.w3.org/2005/Atom";  
   private static final QName REF_ELEMENT = new QName("http://docs.oasis-open.org/odata/ns/metadata", "ref");
