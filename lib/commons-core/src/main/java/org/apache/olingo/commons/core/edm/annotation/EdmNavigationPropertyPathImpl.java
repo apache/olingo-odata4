@@ -35,4 +35,9 @@ public class EdmNavigationPropertyPathImpl extends AbstractEdmDynamicExpression 
   public String getValue() {
     return csdlExp.getValue();
   }
+  
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.NavigationPropertyPath;
+  }
 }

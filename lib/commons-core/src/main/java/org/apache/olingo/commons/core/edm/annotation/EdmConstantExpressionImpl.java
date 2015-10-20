@@ -19,87 +19,58 @@
 package org.apache.olingo.commons.core.edm.annotation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.Valuable;
-import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmConstantExpressionImpl extends AbstractEdmExpression implements EdmConstantExpression {
 
-  private Valuable value;
   private EdmPrimitiveType type;
-  private final CsdlConstantExpression constExprConstruct;
+  private final CsdlConstantExpression csdlExp;
+
+  private boolean built = false;
+  private Object primitive;
+  private String enumTypeName;
+  private List<String> enumMembers;
+  private Geospatial geospatial;
 
   public EdmConstantExpressionImpl(Edm edm, final CsdlConstantExpression constExprConstruct) {
     super(edm, constExprConstruct.getType().toString());
-    this.constExprConstruct = constExprConstruct;
-  }
-
-  @Override
-  public Valuable getValue() {
-    if(value == null){
-      build();
-    }
-    return value;
+    this.csdlExp = constExprConstruct;
   }
 
   @Override
   public String getValueAsString() {
-    return constExprConstruct.getValue();
-    
-//    if (value == null) {
-//      build();
-//    }
-//    if (value == null) {
-//      return "";
-//    } else if (value.isEnum()) {
-//      return value.getValue().toString();
-//    } else if (value.isGeospatial()) {
-//      return value.toString();
-//    } else {
-//      // TODO: check after copied from ClientPrimitiveValueImpl
-//      try {
-//        return type.valueToString(value.getValue(), null, null,
-//            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
-//      } catch (EdmPrimitiveTypeException e) {
-//        throw new IllegalArgumentException(e);
-//      }
-//    }
+    return csdlExp.getValue();
   }
 
   private void build() {
-    if (constExprConstruct.getType() == CsdlConstantExpression.ConstantExpressionType.EnumMember) {
-      // TODO: Delete ProeprtyValue here
-      final List<Property> enumValues = new ArrayList<Property>();
-      String enumTypeName = null;
-      for (String split : StringUtils.split(constExprConstruct.getValue(), ' ')) {
-        final String[] enumSplit = StringUtils.split(split, '/');
-        enumTypeName = enumSplit[0];
-        enumValues.add(new Property(enumSplit[0], null, ValueType.ENUM, enumSplit[1]));
+    if (csdlExp.getType() == CsdlConstantExpression.ConstantExpressionType.EnumMember) {
+      if (csdlExp.getValue() == null) {
+        throw new EdmException("Expression value must not be null");
       }
-      if (enumValues.size() == 1) {
-        value = enumValues.get(0);
-      } else {
-        final List<Property> collValue = new ArrayList<Property>();
-        for (Property enumValue : enumValues) {
-          collValue.add(enumValue);
+      final List<String> localEnumValues = new ArrayList<String>();
+      for (String split : csdlExp.getValue().split(" ")) {
+        final String[] enumSplit = split.split("/");
+        if (enumSplit.length != 2) {
+          throw new EdmException("Enum expression value must consist of enumTypeName/EnumMember.");
         }
-        value = new Property(enumTypeName, null, ValueType.COLLECTION_ENUM, collValue);
+        enumTypeName = enumSplit[0];
+        localEnumValues.add(enumSplit[1]);
       }
-      type = null;
+      enumMembers = Collections.unmodifiableList(localEnumValues);
     } else {
       EdmPrimitiveTypeKind kind;
-      switch (constExprConstruct.getType()) {
+      switch (csdlExp.getType()) {
       case Binary:
         kind = EdmPrimitiveTypeKind.Binary;
         break;
@@ -136,13 +107,75 @@ public class EdmConstantExpressionImpl extends AbstractEdmExpression implements 
       }
       type = EdmPrimitiveTypeFactory.getInstance(kind);
       try {
-        final Object valueOfString = type.valueOfString(constExprConstruct.getValue(),
-            null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-            type.getDefaultType());
-        value = new Property(kind.getFullQualifiedName().getName(), null, ValueType.PRIMITIVE, valueOfString);
+        primitive = type.valueOfString(csdlExp.getValue(), null, null, null, null, null, type.getDefaultType());
       } catch (EdmPrimitiveTypeException e) {
         throw new IllegalArgumentException(e);
       }
     }
+    built = true;
+  }
+
+  @Override
+  public EdmExpressionType getExpressionType() {
+    switch (csdlExp.getType()) {
+    case Binary:
+      return EdmExpressionType.Binary;
+    case Bool:
+      return EdmExpressionType.Bool;
+    case Date:
+      return EdmExpressionType.Date;
+    case DateTimeOffset:
+      return EdmExpressionType.DateTimeOffset;
+    case Decimal:
+      return EdmExpressionType.Decimal;
+    case Duration:
+      return EdmExpressionType.Duration;
+    case EnumMember:
+      return EdmExpressionType.EnumMember;
+    case Float:
+      return EdmExpressionType.Float;
+    case Guid:
+      return EdmExpressionType.Guid;
+    case Int:
+      return EdmExpressionType.Int;
+    case String:
+      return EdmExpressionType.String;
+    case TimeOfDay:
+      return EdmExpressionType.TimeOfDay;
+    default:
+      throw new EdmException("Invalid Expressiontype for constant expression: " + csdlExp.getType());
+    }
+  }
+
+  @Override
+  public Object asPrimitive() {
+    if (!built) {
+      build();
+    }
+    return primitive;
+  }
+
+  @Override
+  public List<String> asEnumMembers() {
+    if (!built) {
+      build();
+    }
+    return enumMembers;
+  }
+
+  @Override
+  public String getEnumTypeName() {
+    if (!built) {
+      build();
+    }
+    return enumTypeName;
+  }
+
+  @Override
+  public Geospatial asGeospatial() {
+    if (!built) {
+      build();
+    }
+    return geospatial;
   }
 }

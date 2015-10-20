@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
+
 /**
  * The edm:UrlRef expression enables a value to be obtained by sending a GET request to the value of 
  * the UrlRef expression. 
  */
-public interface EdmUrlRef extends EdmDynamicExpression {
+public interface EdmUrlRef extends EdmDynamicExpression, EdmAnnotatable {
   
   /**
    * Returns a expression of type Edm.String

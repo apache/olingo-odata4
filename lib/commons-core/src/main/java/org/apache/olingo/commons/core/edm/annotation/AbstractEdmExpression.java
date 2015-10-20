@@ -141,8 +141,6 @@ public abstract class AbstractEdmExpression implements EdmExpression {
       _expression = new EdmPathImpl(edm, exp.asPath());
     } else if (exp.isPropertyPath()) {
       _expression = new EdmPropertyPathImpl(edm, exp.asPropertyPath());
-    } else if (exp.isPropertyValue()) {
-      _expression = new EdmPropertyValueImpl(edm, exp.asPropertyValue());
     } else if (exp.isRecord()) {
       _expression = new EdmRecordImpl(edm, exp.asRecord());
     } else if (exp.isUrlRef()) {

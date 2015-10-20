@@ -24,13 +24,13 @@ import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
 
-public class EdmUrlRefImpl extends AbstractEdmDynamicExpression implements EdmUrlRef {
+public class EdmUrlRefImpl extends AbstractEdmAnnotatableDynamicExpression implements EdmUrlRef {
 
   private final CsdlUrlRef csdlExp;
   private EdmExpression value;
 
   public EdmUrlRefImpl(Edm edm, CsdlUrlRef csdlExp) {
-    super(edm, "UrlRef");
+    super(edm, "UrlRef", csdlExp);
     this.csdlExp = csdlExp;
   }
 
@@ -43,5 +43,10 @@ public class EdmUrlRefImpl extends AbstractEdmDynamicExpression implements EdmUr
       value = getExpression(edm, csdlExp.getValue());
     }
     return value;
+  }
+  
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.UrlRef;
   }
 }

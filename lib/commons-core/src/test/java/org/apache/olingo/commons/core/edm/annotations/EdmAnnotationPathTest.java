@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlAnnotationPath;
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class EdmAnnotationPathTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asAnnotationPath());
 
     assertEquals("AnnotationPath", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.AnnotationPath, dynExp.getExpressionType());
     assertNull(dynExp.asAnnotationPath().getValue());
 
     assertSingleKindDynamicExpression(dynExp);

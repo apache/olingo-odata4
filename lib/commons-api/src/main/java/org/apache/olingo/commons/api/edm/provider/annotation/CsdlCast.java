@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  * Represents an edm:Cast expression.
  * Casts the value obtained from its single child expression to the specified type
  */
-public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
+public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable {
   private static final long serialVersionUID = 7664148202663405946L;
 
   private String type;
@@ -44,12 +44,12 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
-  
+
   public CsdlCast setAnnotations(List<CsdlAnnotation> annotations) {
     this.annotations = annotations;
     return this;
   }
-  
+
   /**
    * Value cast to
    * @return value cast to
@@ -58,8 +58,9 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return type;
   }
 
-  public void setType(final String type) {
+  public CsdlCast setType(final String type) {
     this.type = type;
+    return this;
   }
 
   /**
@@ -70,8 +71,9 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return maxLength;
   }
 
-  public void setMaxLength(final Integer maxLength) {
+  public CsdlCast setMaxLength(final Integer maxLength) {
     this.maxLength = maxLength;
+    return this;
   }
 
   /**
@@ -82,8 +84,9 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return precision;
   }
 
-  public void setPrecision(final Integer precision) {
+  public CsdlCast setPrecision(final Integer precision) {
     this.precision = precision;
+    return this;
   }
 
   /**
@@ -94,8 +97,9 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return scale;
   }
 
-  public void setScale(final Integer scale) {
+  public CsdlCast setScale(final Integer scale) {
     this.scale = scale;
+    return this;
   }
 
   /**
@@ -106,8 +110,9 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return srid;
   }
 
-  public void setSrid(final SRID srid) {
+  public CsdlCast setSrid(final SRID srid) {
     this.srid = srid;
+    return this;
   }
 
   /**
@@ -118,7 +123,8 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable{
     return value;
   }
 
-  public void setValue(final CsdlExpression value) {
+  public CsdlCast setValue(final CsdlExpression value) {
     this.value = value;
+    return this;
   }
 }

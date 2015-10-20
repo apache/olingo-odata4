@@ -29,29 +29,18 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
-import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
-import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
-import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
+import org.apache.olingo.commons.core.edm.annotation.EdmPropertyValueImpl;
 import org.junit.Test;
 
 public class EdmPropertyValueImplTest extends AbstractAnnotationTest {
   @Test
   public void initialPropertyValue() {
-    EdmExpression exp = AbstractEdmExpression.getExpression(mock(Edm.class), new CsdlPropertyValue());
-
-    EdmDynamicExpression dynExp = assertDynamic(exp);
-    assertTrue(dynExp.isPropertyValue());
-    assertNotNull(dynExp.asPropertyValue());
-
-    assertEquals("PropertyValue", dynExp.getExpressionName());
-    assertSingleKindDynamicExpression(dynExp);
-
-    EdmPropertyValue asPropValue = dynExp.asPropertyValue();
+    EdmPropertyValue asPropValue = new EdmPropertyValueImpl(mock(Edm.class), new CsdlPropertyValue());
     try {
       asPropValue.getProperty();
       fail("EdmException expected");
@@ -78,14 +67,13 @@ public class EdmPropertyValueImplTest extends AbstractAnnotationTest {
     List<CsdlAnnotation> csdlAnnotations = new ArrayList<CsdlAnnotation>();
     csdlAnnotations.add(new CsdlAnnotation().setTerm("ns.term"));
     csdlPropertyValue.setAnnotations(csdlAnnotations);
-    EdmExpression exp = AbstractEdmExpression.getExpression(mock(Edm.class), csdlPropertyValue);
-    EdmPropertyValue asPropValue = exp.asDynamic().asPropertyValue();
+    EdmPropertyValue asPropValue = new EdmPropertyValueImpl(mock(Edm.class), csdlPropertyValue);
 
     assertNotNull(asPropValue.getProperty());
     assertEquals("property", asPropValue.getProperty());
     assertNotNull(asPropValue.getValue());
     assertTrue(asPropValue.getValue().isConstant());
-    
+
     assertNotNull(asPropValue.getAnnotations());
     assertEquals(1, asPropValue.getAnnotations().size());
   }

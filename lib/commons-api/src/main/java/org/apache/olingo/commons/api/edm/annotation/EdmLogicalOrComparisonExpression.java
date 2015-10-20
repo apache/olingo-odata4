@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
+import org.apache.olingo.commons.api.edm.EdmAnnotatable;
+
 /**
  * Represents a generic expression with two child exprssions
  */
-public interface EdmLogicalOrComparisonExpression extends EdmDynamicExpression {
+public interface EdmLogicalOrComparisonExpression extends EdmDynamicExpression, EdmAnnotatable {
 
   /**
    * Returns the first expression (left child)

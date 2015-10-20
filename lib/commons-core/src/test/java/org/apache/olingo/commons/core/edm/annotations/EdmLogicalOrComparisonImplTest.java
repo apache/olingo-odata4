@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.annotation.EdmLogicalOrComparisonExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
@@ -50,6 +51,7 @@ public class EdmLogicalOrComparisonImplTest extends AbstractAnnotationTest {
 
       EdmDynamicExpression dynExp = assertDynamic(path);
       assertEquals(type.toString(), dynExp.getExpressionName());
+      assertEquals(EdmExpressionType.valueOf(type.toString()), dynExp.getExpressionType());
       assertSingleKindDynamicExpression(dynExp);
 
       EdmLogicalOrComparisonExpression logicOrComparisonExp = (EdmLogicalOrComparisonExpression) dynExp;

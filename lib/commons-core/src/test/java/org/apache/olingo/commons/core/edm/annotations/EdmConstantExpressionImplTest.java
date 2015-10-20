@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
@@ -37,6 +38,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Binary, exp.getExpressionType());
     assertEquals("Binary", exp.asConstant().getExpressionName());
     assertEquals("qrvM3e7_", exp.asConstant().getValueAsString());
   }
@@ -48,6 +50,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Bool, exp.getExpressionType());
     assertEquals("Bool", exp.asConstant().getExpressionName());
     assertEquals("true", exp.asConstant().getValueAsString());
   }
@@ -59,6 +62,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Date, exp.getExpressionType());
     assertEquals("Date", exp.asConstant().getExpressionName());
     assertEquals("2012-02-29", exp.asConstant().getValueAsString());
   }
@@ -71,6 +75,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.DateTimeOffset, exp.getExpressionType());
     assertEquals("DateTimeOffset", exp.asConstant().getExpressionName());
     assertEquals("2012-02-29T01:02:03Z", exp.asConstant().getValueAsString());
   }
@@ -83,6 +88,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Decimal, exp.getExpressionType());
     assertEquals("Decimal", exp.asConstant().getExpressionName());
     assertEquals("-123456789012345678901234567890", exp.asConstant().getValueAsString());
   }
@@ -94,6 +100,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Duration, exp.getExpressionType());
     assertEquals("Duration", exp.asConstant().getExpressionName());
     assertEquals("PT10S", exp.asConstant().getValueAsString());
   }
@@ -105,6 +112,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.EnumMember, exp.getExpressionType());
     assertEquals("EnumMember", exp.asConstant().getExpressionName());
     assertEquals("Enum/enumMember", exp.asConstant().getValueAsString());
   }
@@ -116,6 +124,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Float, exp.getExpressionType());
     assertEquals("Float", exp.asConstant().getExpressionName());
     assertEquals("1.42", exp.asConstant().getValueAsString());
   }
@@ -128,6 +137,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Guid, exp.getExpressionType());
     assertEquals("Guid", exp.asConstant().getExpressionName());
     assertEquals("aabbccdd-aabb-ccdd-eeff-aabbccddeeff", exp.asConstant().getValueAsString());
   }
@@ -139,6 +149,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.Int, exp.getExpressionType());
     assertEquals("Int", exp.asConstant().getExpressionName());
     assertEquals("42", exp.asConstant().getValueAsString());
   }
@@ -150,6 +161,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.String, exp.getExpressionType());
     assertEquals("String", exp.asConstant().getExpressionName());
     assertEquals("ABCD", exp.asConstant().getValueAsString());
   }
@@ -161,6 +173,7 @@ public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 
     assertConstant(exp);
 
+    assertEquals(EdmExpressionType.TimeOfDay, exp.getExpressionType());
     assertEquals("TimeOfDay", exp.asConstant().getExpressionName());
     assertEquals("00:00:00.999", exp.asConstant().getValueAsString());
   }

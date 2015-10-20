@@ -24,11 +24,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNull;
@@ -47,6 +52,7 @@ public class EdmUrlRefImplTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asUrlRef());
 
     assertEquals("UrlRef", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.UrlRef, dynExp.getExpressionType());
     assertSingleKindDynamicExpression(dynExp);
 
     EdmUrlRef asUrlRef = dynExp.asUrlRef();
@@ -56,16 +62,25 @@ public class EdmUrlRefImplTest extends AbstractAnnotationTest {
     } catch (EdmException e) {
       assertEquals("URLRef expressions require an expression value.", e.getMessage());
     }
+
+    assertNotNull(asUrlRef.getAnnotations());
+    assertTrue(asUrlRef.getAnnotations().isEmpty());
   }
 
   @Test
   public void urlRefWithValue() {
     CsdlUrlRef csdlUrlRef = new CsdlUrlRef();
     csdlUrlRef.setValue(new CsdlConstantExpression(ConstantExpressionType.String));
+    List<CsdlAnnotation> csdlAnnotations = new ArrayList<CsdlAnnotation>();
+    csdlAnnotations.add(new CsdlAnnotation().setTerm("ns.term"));
+    csdlUrlRef.setAnnotations(csdlAnnotations);
     EdmExpression exp = AbstractEdmExpression.getExpression(mock(Edm.class), csdlUrlRef);
     EdmUrlRef asUrlRef = exp.asDynamic().asUrlRef();
     assertNotNull(asUrlRef.getValue());
     assertTrue(asUrlRef.getValue().isConstant());
+
+    assertNotNull(asUrlRef.getAnnotations());
+    assertEquals(1, asUrlRef.getAnnotations().size());
   }
 
   @Test

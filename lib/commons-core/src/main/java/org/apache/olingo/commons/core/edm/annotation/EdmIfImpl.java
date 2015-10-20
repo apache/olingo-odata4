@@ -67,4 +67,8 @@ public class EdmIfImpl extends AbstractEdmAnnotatableDynamicExpression implement
     return _else;
   }
 
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.If;
+  }
 }

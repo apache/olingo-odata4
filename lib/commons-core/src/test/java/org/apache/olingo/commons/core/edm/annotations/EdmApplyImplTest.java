@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmApply;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
@@ -55,6 +56,7 @@ public class EdmApplyImplTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asApply());
 
     assertEquals("Apply", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.Apply, dynExp.getExpressionType());
     assertSingleKindDynamicExpression(dynExp);
 
     EdmApply asApply = dynExp.asApply();

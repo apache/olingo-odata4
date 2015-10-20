@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,19 +18,40 @@
  */
 package org.apache.olingo.commons.api.edm.annotation;
 
-import org.apache.olingo.commons.api.data.Valuable;
+import java.util.List;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 /**
  * Represents a constant expression
  */
 public interface EdmConstantExpression extends EdmExpression {
-  
+
+  // TODO: Is methods
+
   /**
-   * Value of the constant expression
-   * @return value of the constant expression
+   * The value object of this expression or null if it is of type enum or geospatial.
+   * @return a value object or null
    */
-  //TODO: Delete data package dependency
-  Valuable getValue();
+  Object asPrimitive();
+
+  /**
+   * A list of enum members or empty list if this expression is of type primitve or geospatial.
+   * @return a list of all enum members or empty list
+   */
+  List<String> asEnumMembers();
+
+  /**
+   * Return the Enum type name or null if this expression is of type primitve or geospatial.
+   * @return enum type name or null
+   */
+  String getEnumTypeName();
+
+  /**
+   * Return the geospatial object or null if this expression is of type primitve or enum.
+   * @return geospatial object or null
+   */
+  Geospatial asGeospatial();
 
   /**
    * Returns the value of the expression as String

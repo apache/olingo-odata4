@@ -27,4 +27,9 @@ public class EdmNullImpl extends AbstractEdmAnnotatableDynamicExpression impleme
   public EdmNullImpl(Edm edm, CsdlNull csdlExp) {
     super(edm, "Null", csdlExp);
   }
+  
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Null;
+  }
 }

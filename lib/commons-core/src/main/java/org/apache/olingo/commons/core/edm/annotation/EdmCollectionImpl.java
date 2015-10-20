@@ -51,4 +51,9 @@ public class EdmCollectionImpl extends AbstractEdmDynamicExpression implements E
     }
     return items;
   }
+
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Collection;
+  }
 }

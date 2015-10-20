@@ -41,6 +41,32 @@ public abstract class AbstractEdmLogicalOrComparisonExpression
   }
 
   @Override
+  public EdmExpressionType getExpressionType() {
+    switch (csdlExp.getType()) {
+    case And:
+      return EdmExpressionType.And;
+    case Or:
+      return EdmExpressionType.Or;
+    case Not:
+      return EdmExpressionType.Not;
+    case Eq:
+      return EdmExpressionType.Eq;
+    case Ne:
+      return EdmExpressionType.Ne;
+    case Gt:
+      return EdmExpressionType.Gt;
+    case Ge:
+      return EdmExpressionType.Ge;
+    case Lt:
+      return EdmExpressionType.Lt;
+    case Le:
+      return EdmExpressionType.Le;
+    default:
+      throw new EdmException("Invalid Expressiontype for logical or comparison expression: " + csdlExp.getType());
+    }
+  }
+
+  @Override
   public EdmExpression getLeftExpression() {
     if (left == null) {
       if (csdlExp.getLeft() == null) {

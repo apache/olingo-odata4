@@ -54,4 +54,8 @@ public class EdmLabeledElementImpl
     return value;
   }
 
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.LabeledElement;
+  }
 }

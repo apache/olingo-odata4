@@ -35,4 +35,9 @@ public class EdmAnnotationPathImpl extends AbstractEdmDynamicExpression implemen
   public String getValue() {
     return csdlExp.getValue();
   }
+
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.AnnotationPath;
+  }
 }

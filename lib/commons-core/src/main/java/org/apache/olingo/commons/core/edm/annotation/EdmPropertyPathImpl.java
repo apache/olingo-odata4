@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,7 +26,7 @@ public class EdmPropertyPathImpl extends AbstractEdmDynamicExpression implements
 
   private final CsdlPropertyPath csdlExp;
 
-  public EdmPropertyPathImpl(Edm edm, CsdlPropertyPath  csdlExp) {
+  public EdmPropertyPathImpl(Edm edm, CsdlPropertyPath csdlExp) {
     super(edm, "PropertyPath");
     this.csdlExp = csdlExp;
   }
@@ -34,5 +34,10 @@ public class EdmPropertyPathImpl extends AbstractEdmDynamicExpression implements
   @Override
   public String getValue() {
     return csdlExp.getValue();
+  }
+
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.PropertyPath;
   }
 }

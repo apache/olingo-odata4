@@ -23,15 +23,15 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
+import org.apache.olingo.commons.core.edm.AbstractEdmAnnotatable;
 
-public class EdmPropertyValueImpl
-    extends AbstractEdmAnnotatableDynamicExpression implements EdmPropertyValue {
+public class EdmPropertyValueImpl extends AbstractEdmAnnotatable implements EdmPropertyValue {
 
   private EdmExpression value;
   private CsdlPropertyValue csdlExp;
 
   public EdmPropertyValueImpl(Edm edm, CsdlPropertyValue csdlExp) {
-    super(edm, "PropertyValue", csdlExp);
+    super(edm, csdlExp);
     this.csdlExp = csdlExp;
   }
 
@@ -49,9 +49,8 @@ public class EdmPropertyValueImpl
       if (csdlExp.getValue() == null) {
         throw new EdmException("PropertyValue expressions require an expression value.");
       }
-      value = getExpression(edm, csdlExp.getValue());
+      value = AbstractEdmExpression.getExpression(edm, csdlExp.getValue());
     }
     return value;
   }
-
 }

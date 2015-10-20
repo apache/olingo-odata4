@@ -24,6 +24,55 @@ package org.apache.olingo.commons.api.edm.annotation;
  */
 public interface EdmExpression {
 
+  enum EdmExpressionType {
+    //Constant
+    Binary,
+    Bool,
+    Date,
+    DateTimeOffset,
+    Decimal,
+    Duration,
+    EnumMember,
+    Float,
+    Guid,
+    Int,
+    String,
+    TimeOfDay,
+    //Dynamic
+    //Logical
+    And,
+    Or,
+    Not,
+    //Comparison
+    Eq,
+    Ne,
+    Gt,
+    Ge,
+    Lt,
+    Le,
+    //Other
+    AnnotationPath,
+    Apply,
+    Cast,
+    Collection,
+    If,
+    IsOf,
+    LabeledElement,
+    LabeledElementReference,
+    Null,
+    NavigationPropertyPath,
+    Path,
+    PropertyPath,
+    Record,
+    UrlRef;
+  }
+  
+  /**
+   * See {@link EdmExpressionType} for details.
+   * @return the type of this expression
+   */
+  EdmExpressionType getExpressionType();
+  
   /**
    * Will return the name of the expression e.g. Apply or Cast.
    * @return the name of the expression

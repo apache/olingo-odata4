@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,16 +33,16 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -58,6 +59,31 @@ import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
+import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlAnnotationPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElement;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElementReference;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression;
+//CHECKSTYLE:OFF
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNavigationPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNull;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
+//CHECKSTYLE:ON
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmComplexTypeImpl;
 import org.apache.olingo.server.api.OData;
@@ -74,7 +100,7 @@ import org.junit.Test;
 public class MetadataDocumentXmlSerializerTest {
 
   private static ODataSerializer serializer;
-  
+
   @BeforeClass
   public static void init() throws SerializerException {
     serializer = OData.newInstance().createSerializer(ContentType.APPLICATION_XML);
@@ -113,7 +139,6 @@ public class MetadataDocumentXmlSerializerTest {
         IOUtils.toString(metadata));
   }
 
-
   /** Writes simplest (empty) Schema. */
   @Test
   public void writeMetadataWithSimpleSchema() throws Exception {
@@ -127,11 +152,11 @@ public class MetadataDocumentXmlSerializerTest {
     InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>" +
-            "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
-            "<edmx:DataServices>" +
-            "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>" +
-            "</edmx:DataServices>" +
-            "</edmx:Edmx>",
+        "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">" +
+        "<edmx:DataServices>" +
+        "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>" +
+        "</edmx:DataServices>" +
+        "</edmx:Edmx>",
         IOUtils.toString(metadata));
   }
 
@@ -235,11 +260,7 @@ public class MetadataDocumentXmlSerializerTest {
 
   @Test
   public void aliasTest() throws Exception {
-    CsdlEdmProvider provider = new LocalProvider();
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList(), null);
-    InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
-    String metadata = IOUtils.toString(metadataStream);
-    assertNotNull(metadata);
+    String metadata = localMetadata();
 
     assertTrue(metadata.contains("<EnumType Name=\"ENString\" IsFlags=\"true\" UnderlyingType=\"Edm.Int16\">"));
     assertTrue(metadata.contains("<EntityType Name=\"ETAbstractBase\" BaseType=\"Alias.ETAbstract\">"));
@@ -250,6 +271,81 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"/>"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
+  }
+
+  @Test
+  public void annotationsTest() throws Exception {
+    String metadata = localMetadata();
+    // All constant expressions
+    assertTrue(metadata.contains("<Annotations Target=\"Alias.ETAbstract\" Qualifier=\"Tablett\">"));
+    assertTrue(metadata.contains("</Annotations>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Binary>qrvM3e7_</Binary></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Bool>true</Bool></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Date>2012-02-29</Date></Annotation>"));
+    assertTrue(metadata
+        .contains("<Annotation Term=\"ns.term\"><DateTimeOffset>2012-02-29T01:02:03Z</DateTimeOffset></Annotation>"));
+    assertTrue(metadata
+        .contains("<Annotation Term=\"ns.term\"><Decimal>-12345678901234567234567890</Decimal></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Duration>PT10S</Duration></Annotation>"));
+    assertTrue(metadata
+        .contains("<Annotation Term=\"ns.term\"><EnumMember>Enum/enumMember</EnumMember></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Float>1.42</Float></Annotation>"));
+    assertTrue(metadata
+        .contains("<Annotation Term=\"ns.term\"><Guid>aabbccdd-aabb-ccdd-eeff-aabbccddeeff</Guid></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><Int>42</Int></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><String>ABCD</String></Annotation>"));
+    assertTrue(metadata.contains("<Annotation Term=\"ns.term\"><TimeOfDay>00:00:00.999</TimeOfDay></Annotation>"));
+
+    // All dynamic expressions
+    // Logical expressions
+    assertTrue(metadata.contains("<And><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></And>"));
+    assertTrue(metadata.contains("<Or><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Or>"));
+    assertTrue(metadata.contains("<Not><Bool>true</Bool><Annotation Term=\"ns.term\"/></Not>"));
+
+    // Comparison expressions
+    assertTrue(metadata.contains("<Eq><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Eq>"));
+    assertTrue(metadata.contains("<Ne><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Ne>"));
+    assertTrue(metadata.contains("<Gt><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Gt>"));
+    assertTrue(metadata.contains("<Ge><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Ge>"));
+    assertTrue(metadata.contains("<Lt><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Lt>"));
+    assertTrue(metadata.contains("<Le><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Le>"));
+
+    // Other
+    assertTrue(metadata.contains("<AnnotationPath>AnnoPathValue</AnnotationPath>"));
+    assertTrue(metadata
+        .contains("<Apply Function=\"odata.concat\"><Bool>true</Bool><Annotation Term=\"ns.term\"/></Apply>"));
+    assertTrue(metadata
+        .contains("<Cast Type=\"Edm.String\" MaxLength=\"1\" Precision=\"2\" Scale=\"3\">"
+            + "<String>value</String><Annotation Term=\"ns.term\"/></Cast>"));
+    assertTrue(metadata.contains("<Collection><Bool>true</Bool>"
+        + "<Bool>false</Bool><String>String</String></Collection>"));
+    assertTrue(metadata
+        .contains("<If><Bool>true</Bool><String>Then</String>"
+            + "<String>Else</String><Annotation Term=\"ns.term\"/></If>"));
+    assertTrue(metadata
+        .contains("<IsOf Type=\"Edm.String\" MaxLength=\"1\" Precision=\"2\" Scale=\"3\">"
+            + "<String>value</String><Annotation Term=\"ns.term\"/></IsOf>"));
+    assertTrue(metadata
+        .contains("<LabeledElement Name=\"NameAtt\">"
+            + "<String>value</String><Annotation Term=\"ns.term\"/></LabeledElement>"));
+    assertTrue(metadata.contains("<LabeledElementReference>LabeledElementReferenceValue</LabeledElementReference>"));
+    assertTrue(metadata.contains("<NavigationPropertyPath>NavigationPropertyPathValue</NavigationPropertyPath>"));
+    assertTrue(metadata.contains("<Path>PathValue</Path>"));
+    assertTrue(metadata.contains("<PropertyPath>PropertyPathValue</PropertyPath>"));
+    assertTrue(metadata
+        .contains("<Record Type=\"namespace.ETAbstract\"><PropertyValue Property=\"PropName\"><String>value</String>"
+            + "<Annotation Term=\"ns.term\"/></PropertyValue><Annotation Term=\"ns.term\"/></Record>"));
+    assertTrue(metadata.contains("<UrlRef><String>URLRefValue</String><Annotation Term=\"ns.term\"/></UrlRef>"));
+
+  }
+
+  private String localMetadata() throws SerializerException, IOException {
+    CsdlEdmProvider provider = new LocalProvider();
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList(), null);
+    InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
+    String metadata = IOUtils.toString(metadataStream);
+    assertNotNull(metadata);
+    return metadata;
   }
 
   @Test
@@ -286,7 +382,7 @@ public class MetadataDocumentXmlSerializerTest {
         + "</ComplexType>"));
   }
 
-  static class LocalProvider extends CsdlAbstractEdmProvider {
+  static class LocalProvider implements CsdlEdmProvider {
     private final static String nameSpace = "namespace";
 
     private final FullQualifiedName nameETAbstract = new FullQualifiedName(nameSpace, "ETAbstract");
@@ -318,12 +414,15 @@ public class MetadataDocumentXmlSerializerTest {
 
     @Override
     public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
-      return new CsdlEnumType()
-          .setName("ENString")
-          .setFlags(true)
-          .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
-          .setMembers(Arrays.asList(
-              new CsdlEnumMember().setName("String1").setValue("1")));
+      if ("ENString".equals(enumTypeName.getName())) {
+        return new CsdlEnumType()
+            .setName("ENString")
+            .setFlags(true)
+            .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
+            .setMembers(Arrays.asList(
+                new CsdlEnumMember().setName("String1").setValue("1")));
+      }
+      return null;
     }
 
     @Override
@@ -488,6 +587,11 @@ public class MetadataDocumentXmlSerializerTest {
       // EntityContainer
       schema.setEntityContainer(getEntityContainer());
 
+      // Annotationgroups
+      List<CsdlAnnotations> annotationGroups = new ArrayList<CsdlAnnotations>();
+      annotationGroups.add(getAnnotationsGroup(new FullQualifiedName("Alias.ETAbstract"), "Tablett"));
+      schema.setAnnotationsGroup(annotationGroups);
+
       return schemas;
     }
 
@@ -499,7 +603,7 @@ public class MetadataDocumentXmlSerializerTest {
       }
       return null;
     }
-    
+
     @Override
     public CsdlEntityContainer getEntityContainer() throws ODataException {
       CsdlEntityContainer container = new CsdlEntityContainer();
@@ -526,6 +630,189 @@ public class MetadataDocumentXmlSerializerTest {
       functionImports.add(getFunctionImport(nameContainer, "FINRTInt16"));
 
       return container;
+    }
+
+    @Override
+    public CsdlTypeDefinition getTypeDefinition(FullQualifiedName typeDefinitionName) throws ODataException {
+      return null;
+    }
+
+    @Override
+    public CsdlTerm getTerm(FullQualifiedName termName) throws ODataException {
+      if (new FullQualifiedName("ns.term").equals(termName)) {
+        return new CsdlTerm().setType("Edm.String").setName("term");
+      }
+      return null;
+    }
+
+    @Override
+    public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
+      if (new FullQualifiedName("Alias.ETAbstract").equals(targetName) && "Tablett".equals(qualifier)) {
+        CsdlAnnotations annoGroup = new CsdlAnnotations();
+        annoGroup.setTarget("Alias.ETAbstract");
+        annoGroup.setQualifier("Tablett");
+
+        List<CsdlAnnotation> innerAnnotations = new ArrayList<CsdlAnnotation>();
+        innerAnnotations.add(new CsdlAnnotation().setTerm("ns.term"));
+
+        List<CsdlAnnotation> annotationsList = new ArrayList<CsdlAnnotation>();
+        annoGroup.setAnnotations(annotationsList);
+        // Constant Annotations
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Binary).setValue("qrvM3e7_")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Bool, "true")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Date, "2012-02-29")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.DateTimeOffset, "2012-02-29T01:02:03Z")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Decimal, "-12345678901234567234567890")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Duration, "PT10S")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.EnumMember, "Enum/enumMember")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Float, "1.42")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(
+                new CsdlConstantExpression(ConstantExpressionType.Guid, "aabbccdd-aabb-ccdd-eeff-aabbccddeeff")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.Int, "42")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.String, "ABCD")));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlConstantExpression(ConstantExpressionType.TimeOfDay, "00:00:00.999")));
+
+        // logical expressions
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.And)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Or)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Not)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setAnnotations(innerAnnotations)));
+
+        // comparison
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Eq)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Ne)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Gt)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Ge)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Lt)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Le)
+                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+                .setAnnotations(innerAnnotations)));
+
+        // Other
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlAnnotationPath().setValue("AnnoPathValue")));
+
+        List<CsdlExpression> parameters = new ArrayList<CsdlExpression>();
+        parameters.add(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlApply().setFunction("odata.concat")
+                .setParameters(parameters)
+                .setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlCast()
+                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+                .setMaxLength(1)
+                .setPrecision(2)
+                .setScale(3)
+                .setType("Edm.String")
+                .setAnnotations(innerAnnotations)));
+
+        List<CsdlExpression> items = new ArrayList<CsdlExpression>();
+        items.add(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"));
+        items.add(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"));
+        items.add(new CsdlConstantExpression(ConstantExpressionType.String, "String"));
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlCollection().setItems(items)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlIf()
+                .setGuard(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+                .setThen(new CsdlConstantExpression(ConstantExpressionType.String, "Then"))
+                .setElse(new CsdlConstantExpression(ConstantExpressionType.String, "Else"))
+                .setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlIsOf()
+                .setMaxLength(1)
+                .setPrecision(2)
+                .setScale(3)
+                .setType("Edm.String")
+                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+                .setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLabeledElement()
+                .setName("NameAtt")
+                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+                .setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlLabeledElementReference().setValue("LabeledElementReferenceValue")));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlNull().setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlNavigationPropertyPath().setValue("NavigationPropertyPathValue")));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlPath().setValue("PathValue")));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlPropertyPath().setValue("PropertyPathValue")));
+
+        CsdlPropertyValue prop = new CsdlPropertyValue()
+            .setProperty("PropName")
+            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+            .setAnnotations(innerAnnotations);
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlRecord().setType("Alias.ETAbstract")
+                .setPropertyValues(Arrays.asList(prop))
+                .setAnnotations(innerAnnotations)));
+
+        annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
+            .setExpression(new CsdlUrlRef()
+                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "URLRefValue"))
+                .setAnnotations(innerAnnotations)));
+
+        return annoGroup;
+      }
+      return null;
     }
   }
 }

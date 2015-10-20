@@ -35,4 +35,9 @@ public class EdmPathImpl extends AbstractEdmDynamicExpression implements EdmPath
   public String getValue() {
     return csdlExp.getValue();
   }
+  
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Path;
+  }
 }

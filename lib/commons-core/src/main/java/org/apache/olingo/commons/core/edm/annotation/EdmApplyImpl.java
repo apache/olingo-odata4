@@ -65,4 +65,9 @@ public class EdmApplyImpl extends AbstractEdmAnnotatableDynamicExpression implem
     }
     return parameters;
   }
+
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Apply;
+  }
 }

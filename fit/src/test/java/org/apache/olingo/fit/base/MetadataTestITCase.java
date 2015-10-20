@@ -68,7 +68,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertNotNull(record);
     assertEquals(3, record.getPropertyValues().size());
     assertTrue(record.getPropertyValues().get(0).getValue().isConstant());
-    assertTrue((Boolean) record.getPropertyValues().get(0).getValue().asConstant().getValue().asPrimitive());
+    assertTrue((Boolean) record.getPropertyValues().get(0).getValue().asConstant().asPrimitive());
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().isCollection());
     assertEquals(1, record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().size());
     assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().get(0).isDynamic());

@@ -83,4 +83,8 @@ public class EdmIsOfImpl extends AbstractEdmAnnotatableDynamicExpression impleme
     return value;
   }
 
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.IsOf;
+  }
 }

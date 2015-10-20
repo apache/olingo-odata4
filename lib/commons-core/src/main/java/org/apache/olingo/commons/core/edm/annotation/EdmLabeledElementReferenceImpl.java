@@ -35,4 +35,9 @@ public class EdmLabeledElementReferenceImpl extends AbstractEdmDynamicExpression
   public String getValue() {
     return csdlExp.getValue();
   }
+  
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.LabeledElementReference;
+  }
 }

@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElementReference;
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
 import org.junit.Test;
@@ -41,6 +42,7 @@ public class EdmLabledElementReferenceImplTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asLabeledElementReference());
 
     assertEquals("LabeledElementReference", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.LabeledElementReference, dynExp.getExpressionType());
     assertNull(dynExp.asLabeledElementReference().getValue());
     assertSingleKindDynamicExpression(dynExp);
   }

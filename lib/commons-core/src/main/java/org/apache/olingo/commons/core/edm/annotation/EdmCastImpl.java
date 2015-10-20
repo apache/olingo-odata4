@@ -81,4 +81,8 @@ public class EdmCastImpl extends AbstractEdmAnnotatableDynamicExpression impleme
     return value;
   }
 
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Cast;
+  }
 }

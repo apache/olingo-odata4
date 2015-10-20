@@ -34,6 +34,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.annotation.EdmCast;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
@@ -52,6 +53,7 @@ public class EdmCastImplTest extends AbstractAnnotationTest{
     assertNotNull(dynExp.asCast());
 
     assertEquals("Cast", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.Cast, dynExp.getExpressionType());
     assertSingleKindDynamicExpression(dynExp);
     try {
       dynExp.asCast().getValue();

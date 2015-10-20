@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
@@ -55,6 +56,7 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asRecord());
 
     assertEquals("Record", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.Record, dynExp.getExpressionType());
     assertNotNull(dynExp.asRecord().getPropertyValues());
     assertTrue(dynExp.asRecord().getPropertyValues().isEmpty());
 

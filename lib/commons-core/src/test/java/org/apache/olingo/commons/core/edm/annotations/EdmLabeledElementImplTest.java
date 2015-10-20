@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmLabeledElement;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElement;
@@ -50,6 +51,7 @@ public class EdmLabeledElementImplTest extends AbstractAnnotationTest {
     assertNotNull(dynExp.asLabeledElement());
 
     assertEquals("LabeledElement", dynExp.getExpressionName());
+    assertEquals(EdmExpressionType.LabeledElement, dynExp.getExpressionType());
     assertSingleKindDynamicExpression(dynExp);
 
     EdmLabeledElement asLabeled = dynExp.asLabeledElement();

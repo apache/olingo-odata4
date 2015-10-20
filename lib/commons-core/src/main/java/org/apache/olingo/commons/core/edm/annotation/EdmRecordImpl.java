@@ -72,4 +72,8 @@ public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicExpression imple
     return type;
   }
 
+  @Override
+  public EdmExpressionType getExpressionType() {
+    return EdmExpressionType.Record;
+  }
 }

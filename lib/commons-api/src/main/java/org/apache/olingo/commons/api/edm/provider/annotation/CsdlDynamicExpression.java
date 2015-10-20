@@ -233,22 +233,6 @@ public abstract class CsdlDynamicExpression extends CsdlExpression {
   }
 
   /**
-   * Returns true if the expression is a edm:PropertyValue expression
-   * @return true if the expression is a edm:PropertyValue expression
-   */
-  public boolean isPropertyValue() {
-    return this instanceof CsdlPropertyValue;
-  }
-
-  /**
-   * Casts the expression to a {@link CsdlPropertyValue} expression
-   * @return PropertyValue expression
-   */
-  public CsdlPropertyValue asPropertyValue() {
-    return isPropertyValue() ? (CsdlPropertyValue) this : null;
-  }
-
-  /**
    * Returns true if the expression is a edm:Record expression
    * @return true if the expression is a edm:Record expression
    */
