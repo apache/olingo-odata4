@@ -51,9 +51,11 @@ import org.apache.olingo.commons.api.edm.EdmReturnType;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.annotation.EdmApply;
 import org.apache.olingo.commons.api.edm.annotation.EdmCast;
 import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
@@ -147,6 +149,8 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_TERM_ATT = "Term";
   private static final String XML_QUALIFIER_ATT = "Qualifier";
   private static final String XML_PROPERTY_Value = "PropertyValue";
+  private static final String XML_BASE_TERM = "BaseTerm";
+  private static final String XML_APPLIES_TO = "AppliesTo";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
@@ -209,6 +213,8 @@ public class MetadataDocumentXmlSerializer {
     // Functions
     appendFunctions(writer, schema.getFunctions());
 
+    appendTerms(writer, schema.getTerms());
+
     // EntityContainer
     appendEntityContainer(writer, schema.getEntityContainer());
 
@@ -218,6 +224,59 @@ public class MetadataDocumentXmlSerializer {
     appendAnnotations(writer, schema);
 
     writer.writeEndElement();
+  }
+
+  private void appendTerms(XMLStreamWriter writer, List<EdmTerm> terms) throws XMLStreamException {
+    for (EdmTerm term : terms) {
+      writer.writeStartElement(XML_TERM_ATT);
+
+      writer.writeAttribute(XML_NAME, term.getName());
+
+      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(term.getType(), false));
+
+      if (term.getBaseTerm() != null) {
+        writer.writeAttribute(XML_BASE_TERM, getAliasedFullQualifiedName(term.getBaseTerm().getFullQualifiedName(),
+            false));
+      }
+      
+      if(term.getAppliesTo() != null && !term.getAppliesTo().isEmpty()){
+        String appliesToString = "";
+        boolean first = true;
+        for(TargetType target : term.getAppliesTo()){
+          if(first){
+            first = false;
+            appliesToString = target.toString();
+          }else{
+            appliesToString = appliesToString + " " + target.toString();
+          }
+        }
+        writer.writeAttribute(XML_APPLIES_TO, appliesToString);
+      }
+
+      // Facets
+      if (!term.isNullable()) {
+        writer.writeAttribute(XML_NULLABLE, "" + term.isNullable());
+      }
+
+      if (term.getDefaultValue() != null) {
+        writer.writeAttribute(XML_DEFAULT_VALUE, term.getDefaultValue());
+      }
+
+      if (term.getMaxLength() != null) {
+        writer.writeAttribute(XML_MAX_LENGTH, "" + term.getMaxLength());
+      }
+
+      if (term.getPrecision() != null) {
+        writer.writeAttribute(XML_PRECISION, "" + term.getPrecision());
+      }
+
+      if (term.getScale() != null) {
+        writer.writeAttribute(XML_SCALE, "" + term.getScale());
+      }
+      
+      appendAnnotations(writer, term);
+      writer.writeEndElement();
+    }
   }
 
   private void appendAnnotationGroups(XMLStreamWriter writer, List<EdmAnnotations> annotationGroups)

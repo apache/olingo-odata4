@@ -66,12 +66,10 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIf;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElement;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElementReference;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression;
@@ -79,7 +77,9 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrCompar
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNavigationPropertyPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNull;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
 //CHECKSTYLE:ON
@@ -271,6 +271,17 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"/>"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
+  }
+
+  @Test
+  public void terms() throws Exception {
+    String metadata = localMetadata();
+    assertTrue(metadata.contains("<Term Name=\"Term1\" Type=\"Edm.String\"/>"));
+    assertTrue(metadata
+        .contains("<Term Name=\"Term2\" Type=\"Edm.String\" Nullable=\"false\" DefaultValue=\"default\" "
+            + "MaxLength=\"1\" Precision=\"2\" Scale=\"3\"/>"));
+    assertTrue(metadata.contains("<Term Name=\"Term3\" Type=\"Edm.String\" AppliesTo=\"Property EntitySet Schema\"/>"));
+    assertTrue(metadata.contains("<Term Name=\"Term4\" Type=\"Edm.String\" BaseTerm=\"Alias.Term1\"/>"));
   }
 
   @Test
@@ -587,6 +598,15 @@ public class MetadataDocumentXmlSerializerTest {
       // EntityContainer
       schema.setEntityContainer(getEntityContainer());
 
+      //Terms
+      List<CsdlTerm> terms = new ArrayList<CsdlTerm>();
+      terms.add(getTerm(new FullQualifiedName("ns.term")));
+      terms.add(getTerm(new FullQualifiedName("namespace.Term1")));
+      terms.add(getTerm(new FullQualifiedName("ns.Term2")));
+      terms.add(getTerm(new FullQualifiedName("ns.Term3")));
+      terms.add(getTerm(new FullQualifiedName("ns.Term4")));
+      schema.setTerms(terms);
+      
       // Annotationgroups
       List<CsdlAnnotations> annotationGroups = new ArrayList<CsdlAnnotations>();
       annotationGroups.add(getAnnotationsGroup(new FullQualifiedName("Alias.ETAbstract"), "Tablett"));
@@ -641,6 +661,21 @@ public class MetadataDocumentXmlSerializerTest {
     public CsdlTerm getTerm(FullQualifiedName termName) throws ODataException {
       if (new FullQualifiedName("ns.term").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("term");
+        
+      } else if(new FullQualifiedName("namespace.Term1").equals(termName)){
+        return new CsdlTerm().setType("Edm.String").setName("Term1");
+        
+      } else if(new FullQualifiedName("ns.Term2").equals(termName)){
+        return new CsdlTerm().setType("Edm.String").setName("Term2")
+            .setNullable(false).setDefaultValue("default").setMaxLength(1).setPrecision(2).setScale(3);
+        
+      } else if(new FullQualifiedName("ns.Term3").equals(termName)){
+        return new CsdlTerm().setType("Edm.String").setName("Term3")
+            .setAppliesTo(Arrays.asList("Property", "EntitySet", "Schema"));
+        
+      } else if(new FullQualifiedName("ns.Term4").equals(termName)){
+        return new CsdlTerm().setType("Edm.String").setName("Term4").setBaseTerm("namespace.Term1");
+        
       }
       return null;
     }
