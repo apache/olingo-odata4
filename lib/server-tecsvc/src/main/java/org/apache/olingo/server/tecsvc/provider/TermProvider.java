@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -44,17 +44,17 @@ public class TermProvider {
       new FullQualifiedName("Org.OData.Core.V1", "LongDescription");
 
   public CsdlTerm getTerm(FullQualifiedName termName) {
-    if(TERM_DESCRIPTION.equals(termName)) {
+    if (TERM_DESCRIPTION.equals(termName)) {
       return new CsdlTerm().setName("Description").setType("Edm.String")
           .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                      "A brief description of a model element")),
+              new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                  "A brief description of a model element")),
               new CsdlAnnotation().setTerm("Core.IsLanguageDependent")));
-    } else if(TERM_LONG_DESCRIPTION.equals(termName)) {
+    } else if (TERM_LONG_DESCRIPTION.equals(termName)) {
       return new CsdlTerm().setName("LongDescription").setType("Edm.String")
           .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                      "A lengthy description of a model element")),
+              new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                  "A lengthy description of a model element")),
               new CsdlAnnotation().setTerm("Core.IsLanguageDependent")));
     }
 

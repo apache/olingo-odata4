@@ -168,8 +168,8 @@ public class ContainerProvider {
                 .asList(new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrim"),
                     new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrim")))
             .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                        "Contains entities with all primitive types")),
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                    "Contains entities with all primitive types")),
                 new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledForEntitySet").setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                         "System Query Options: $filter, $count, $orderby, $skip, $top, $expand, $select, $format; "
@@ -185,8 +185,29 @@ public class ContainerProvider {
       } else if (name.equals("ESCollAllPrim")) {
         return new CsdlEntitySet()
             .setName("ESCollAllPrim")
-            .setType(EntityTypeProvider.nameETCollAllPrim);
-
+            .setType(EntityTypeProvider.nameETCollAllPrim)
+            .setAnnotations(
+                Arrays
+                    .asList(
+                        new CsdlAnnotation()
+                            .setTerm("Core.Description")
+                            .setExpression(
+                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                                    .setValue("Contains entities with collection of each primitive type")),
+                        new CsdlAnnotation()
+                            .setTerm("Core.LongDescription")
+                            .setQualifier("EnabledForEntitySet")
+                            .setExpression(
+                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                                    .setValue("System Query Options: $filter, $count, $orderby, "
+                                        + "$skip, $top, $expand, $select, $format; Operations: Create, Read")),
+                        new CsdlAnnotation()
+                            .setTerm("Core.LongDescription")
+                            .setQualifier("EnabledForEntity")
+                            .setExpression(
+                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                                    .setValue("System Query Options: $expand, $select, "
+                                        + "$format; Operations: Read, Update, Delete"))));
       } else if (name.equals("ESTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESTwoPrim")
@@ -197,28 +218,134 @@ public class ContainerProvider {
                     .setTarget("ESAllPrim"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETAllPrimMany")
-                    .setTarget("ESAllPrim")
-                ));
-
+                    .setTarget("ESAllPrim")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation()
+                    .setTerm("Core.Description")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with two primitve types")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntitySet")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
+                                + "$select, $format; Operations: Create, Create with Deep Insert, "
+                                + "Create with Bind Operation, Read")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntity")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, Update, "
+                                + "Update with Bind Operation, Delete")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledNavigationProperties")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("NavPropertyETAllPrimOne, NavPropertyETAllPrimMany"))));
       } else if (name.equals("ESMixPrimCollComp")) {
         return new CsdlEntitySet()
             .setName("ESMixPrimCollComp")
-            .setType(EntityTypeProvider.nameETMixPrimCollComp);
+            .setType(EntityTypeProvider.nameETMixPrimCollComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation()
+                    .setTerm("Core.Description")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with various properties of type primitive, collection "
+                                + "of primitve, complex and collection of complex")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntitySet")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
+                                + "$select, $format; Operations: Create, Read")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntity")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
+                                + "Update, Delete"))));
 
       } else if (name.equals("ESBase")) {
         return new CsdlEntitySet()
             .setName("ESBase")
-            .setType(EntityTypeProvider.nameETBase);
+            .setType(EntityTypeProvider.nameETBase)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation()
+                    .setTerm("Core.Description")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with single inheritance")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntitySet")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
+                                + "$select, $format; Operations: Create, Read")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntity")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
+                                + "Update, Delete"))));
 
       } else if (name.equals("ESTwoBase")) {
         return new CsdlEntitySet()
             .setName("ESTwoBase")
-            .setType(EntityTypeProvider.nameETTwoBase);
+            .setType(EntityTypeProvider.nameETTwoBase)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation()
+                    .setTerm("Core.Description")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with double inheritance")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntitySet")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
+                                + "$select, $format; Operations: Create, Read")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntity")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
+                                + "Update, Delete"))));
 
       } else if (name.equals("ESTwoKeyTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESTwoKeyTwoPrim")
-            .setType(EntityTypeProvider.nameETTwoKeyTwoPrim);
+            .setType(EntityTypeProvider.nameETTwoKeyTwoPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation()
+                    .setTerm("Core.Description")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with two primitive types with two keys")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntitySet")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, $select,"
+                                + " $format; Operations: Create, Read")),
+                new CsdlAnnotation()
+                    .setTerm("Core.LongDescription")
+                    .setQualifier("EnabledForEntity")
+                    .setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, Update, "
+                                + "Delete"))));
 
       } else if (name.equals("ESBaseTwoKeyTwoPrim")) {
         return new CsdlEntitySet()
