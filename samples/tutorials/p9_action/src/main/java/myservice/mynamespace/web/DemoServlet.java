@@ -46,7 +46,6 @@ public class DemoServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LoggerFactory.getLogger(DemoServlet.class);
 
-
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     try {
@@ -65,14 +64,12 @@ public class DemoServlet extends HttpServlet {
       handler.register(new DemoEntityProcessor(storage));
       handler.register(new DemoPrimitiveProcessor(storage));
       handler.register(new DemoActionProcessor(storage));
-
+      
       // let the handler do the work
       handler.process(req, resp);
     } catch (RuntimeException e) {
       LOG.error("Server Error occurred in ExampleServlet", e);
       throw new ServletException(e);
     }
-
   }
-
 }
