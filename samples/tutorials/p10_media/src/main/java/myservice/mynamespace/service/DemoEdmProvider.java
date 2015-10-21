@@ -57,13 +57,13 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   public static final String ET_CATEGORY_NAME = "Category";
   public static final FullQualifiedName ET_CATEGORY_FQN = new FullQualifiedName(NAMESPACE, ET_CATEGORY_NAME);
   
-  public static final String ET_ADVERTISMENT_NAME = "Advertisment";
-  public static final FullQualifiedName ET_ADVERTISMENT_FQN = new FullQualifiedName(NAMESPACE, ET_ADVERTISMENT_NAME);
+  public static final String ET_ADVERTISEMENT_NAME = "Advertisement";
+  public static final FullQualifiedName ET_ADVERTISEMENT_FQN = new FullQualifiedName(NAMESPACE, ET_ADVERTISEMENT_NAME);
   
   // Entity Set Names
   public static final String ES_PRODUCTS_NAME = "Products";
   public static final String ES_CATEGORIES_NAME = "Categories";
-  public static final String ES_ADVERTISMENTS_NAME = "Advertisments";
+  public static final String ES_ADVERTISEMENTS_NAME = "Advertisements";
   
   public CsdlEntityType getEntityType(FullQualifiedName entityTypeName) {
 
@@ -121,7 +121,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       entityType.setProperties(Arrays.asList(id, name));
       entityType.setKey(Arrays.asList(propertyRef));
       entityType.setNavigationProperties(navPropList);
-    } else if(entityTypeName.equals(ET_ADVERTISMENT_FQN)) {
+    } else if(entityTypeName.equals(ET_ADVERTISEMENT_FQN)) {
       CsdlProperty id = new CsdlProperty().setName("ID").setType(EdmPrimitiveTypeKind.Guid.getFullQualifiedName());
       CsdlProperty name = new CsdlProperty().setName("Name").setType(EdmPrimitiveTypeKind.String
           .getFullQualifiedName());
@@ -132,7 +132,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       propertyRef.setName("ID");
       
       entityType = new CsdlEntityType();
-      entityType.setName(ET_ADVERTISMENT_NAME);
+      entityType.setName(ET_ADVERTISEMENT_NAME);
       entityType.setProperties(Arrays.asList(id, name, airDate));
       entityType.setKey(Collections.singletonList(propertyRef));
       entityType.setHasStream(true);
@@ -175,10 +175,10 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
         List<CsdlNavigationPropertyBinding> navPropBindingList = new ArrayList<CsdlNavigationPropertyBinding>();
         navPropBindingList.add(navPropBinding);
         entitySet.setNavigationPropertyBindings(navPropBindingList);
-      } else if (entitySetName.equals(ES_ADVERTISMENTS_NAME)) {
+      } else if (entitySetName.equals(ES_ADVERTISEMENTS_NAME)) {
         entitySet = new CsdlEntitySet();
-        entitySet.setName(ES_ADVERTISMENTS_NAME);
-        entitySet.setType(ET_ADVERTISMENT_FQN);
+        entitySet.setName(ES_ADVERTISEMENTS_NAME);
+        entitySet.setType(ET_ADVERTISEMENT_FQN);
       }
     }
     
@@ -196,7 +196,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     entityTypes.add(getEntityType(ET_PRODUCT_FQN));
     entityTypes.add(getEntityType(ET_CATEGORY_FQN));
-    entityTypes.add(getEntityType(ET_ADVERTISMENT_FQN));
+    entityTypes.add(getEntityType(ET_ADVERTISEMENT_FQN));
     schema.setEntityTypes(entityTypes);
     
     // add EntityContainer
@@ -214,7 +214,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
     List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
     entitySets.add(getEntitySet(CONTAINER, ES_PRODUCTS_NAME));
     entitySets.add(getEntitySet(CONTAINER, ES_CATEGORIES_NAME));
-    entitySets.add(getEntitySet(CONTAINER, ES_ADVERTISMENTS_NAME));
+    entitySets.add(getEntitySet(CONTAINER, ES_ADVERTISEMENTS_NAME));
     
     // create EntityContainer
     CsdlEntityContainer entityContainer = new CsdlEntityContainer();

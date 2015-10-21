@@ -329,8 +329,8 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
      * A real service may store the content on the file system. So we have to take care to
      * delete external files too. 
      * 
-     * DELETE request to /Advertisments(ID) will be dispatched to the deleteEntity(...) method
-     * DELETE request to /Advertisments(ID)/$value will be dispatched to the deleteMediaEntity(...) method
+     * DELETE request to /Advertisements(ID) will be dispatched to the deleteEntity(...) method
+     * DELETE request to /Advertisements(ID)/$value will be dispatched to the deleteMediaEntity(...) method
      * 
      * So it is a good idea handle deletes in a central place.
      */
