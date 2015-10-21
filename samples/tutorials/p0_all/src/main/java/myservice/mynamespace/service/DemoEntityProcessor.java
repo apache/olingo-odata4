@@ -458,6 +458,19 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
   public void deleteMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
       throws ODataApplicationException, ODataLibraryException {
     
+    /*
+     * In this tutorial, the content of the media entity is stored in a special property.
+     * So no additional steps to delete the content of the media entity are necessary.
+     *  
+     * A real service may store the content on the file system. So we have to take care to
+     * delete external files too. 
+     * 
+     * DELETE request to /Advertisments(ID) will be dispatched to the deleteEntity(...) method
+     * DELETE request to /Advertisments(ID)/$value will be dispatched to the deleteMediaEntity(...) method
+     * 
+     * So it is a good idea handle deletes in a central place.
+     */
+    
     deleteEntity(request, response, uriInfo);
   }
 }
