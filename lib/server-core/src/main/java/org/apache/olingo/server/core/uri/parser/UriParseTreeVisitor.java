@@ -998,14 +998,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitBooleanNonCaseLiteral(final BooleanNonCaseLiteralContext ctx) {
-    String text = ctx.getText().toLowerCase();
-
-    if (text.equals("false")) {
-      return new LiteralImpl().setText("false").setType(
-          EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
-    }
-    return new LiteralImpl().setText("true").setType(
-        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
+    final String text = ctx.getText().toLowerCase();
+    return new LiteralImpl().setText(text.equals("false") ? "false" : "true")
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -1195,11 +1190,15 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     EnumerationImpl enum1 = new EnumerationImpl();
 
     // get type
-    String odi = ctx.vODI.getText();
+    final String odi = ctx.vODI.getText();
 
-    FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
-    EdmEnumType edmEnumType = edm.getEnumType(fullName);
-
+    final FullQualifiedName fullName = getFullNameFromContext(ctx.vNS, odi);
+    final EdmEnumType edmEnumType = edm.getEnumType(fullName);
+    if (edmEnumType == null) {
+      throw wrap(new UriParserSemanticException(
+          "Enum type '" + fullName.getFullQualifiedNameAsString() + "' not found!",
+          UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, fullName.getFullQualifiedNameAsString()));
+    }
     enum1.setType(edmEnumType);
 
     String valueString = ctx.vValues.getText();
@@ -1237,7 +1236,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         levels.setText(ctx.vM.getText());
         try {
           expandItem.setSystemQueryOption(levels);
-        } catch(ODataRuntimeException e) {
+        } catch (ODataRuntimeException e) {
           // Thrown if duplicated system query options are detected
           throw wrap(new UriParserSyntaxException("Double system query option!", e,
                 UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, e.getMessage()));
@@ -1968,7 +1967,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitStringLiteral(final StringLiteralContext ctx) {
     return new LiteralImpl().setText(ctx.getText())
-                            .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String));
+        .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String));
   }
   
   @Override
@@ -1982,27 +1981,25 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitIntLiteral(final IntLiteralContext ctx) {
+    EdmPrimitiveTypeKind typeKind = null;
     try {
       final long value = Long.parseLong(ctx.getText());
-      EdmType type = null;
-
       if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
-        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte);
+        typeKind = EdmPrimitiveTypeKind.SByte;
       } else if (value >= 0 && value <= 255) {
-        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte);
+        typeKind = EdmPrimitiveTypeKind.Byte;
       } else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
-        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16);
+        typeKind = EdmPrimitiveTypeKind.Int16;
       } else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
-        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
+        typeKind = EdmPrimitiveTypeKind.Int32;
       } else {
-        type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
+        typeKind = EdmPrimitiveTypeKind.Int64;
       }
-
-      return new LiteralImpl().setText(ctx.getText()).setType(type);
-    } catch( NumberFormatException e) {
-      return new LiteralImpl().setText(ctx.getText())
-          .setType(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal));
+    } catch (final NumberFormatException e) {
+      typeKind = EdmPrimitiveTypeKind.Decimal;
     }
+    return new LiteralImpl().setText(ctx.getText())
+        .setType(EdmPrimitiveTypeFactory.getInstance(typeKind));
   }
 
   @Override
