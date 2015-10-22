@@ -196,6 +196,16 @@ public class MetadataTest extends AbstractTest {
     assertEquals("NorthwindEntities", entityContainer.getName());
   }
 
+  @Test
+  public void getContainerWithoutCallingGetSchemas() {
+    final XMLMetadata metadata = getClient().getDeserializer(ContentType.APPLICATION_XML).
+        toMetadata(getClass().getResourceAsStream("fromdoc1-metadata.xml"));
+
+    Edm edm = getClient().getReader().readMetadata(metadata.getSchemaByNsOrAlias());
+
+    assertNotNull(edm.getEntityContainer());
+  }
+
   /**
    * Tests Example 85 from CSDL specification.
    */

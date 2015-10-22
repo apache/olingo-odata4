@@ -155,11 +155,18 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
-          throws ODataException {
+      throws ODataException {
     for (CsdlSchema schema : xmlSchemas.values()) {
-      if (schema.getEntityContainer() != null) {
-        return new CsdlEntityContainerInfo().setContainerName(entityContainerName).setExtendsContainer(
-            schema.getEntityContainer().getExtendsContainerFQN());
+      CsdlEntityContainer entityContainer = schema.getEntityContainer();
+      if (entityContainer != null) {
+        FullQualifiedName containerFQN;
+        if (entityContainerName == null) {
+          containerFQN = new FullQualifiedName(schema.getNamespace(), entityContainer.getName());
+        } else {
+          containerFQN = entityContainerName;
+        }
+        return new CsdlEntityContainerInfo().setContainerName(containerFQN).setExtendsContainer(
+            entityContainer.getExtendsContainerFQN());
       }
     }
     return null;
