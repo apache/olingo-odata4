@@ -30,23 +30,19 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
 public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
 
   private final CsdlTerm term;
   private final FullQualifiedName fqn;
-  private final EdmTypeInfo typeInfo;
   private EdmType termType;
   private EdmTerm baseTerm;
   private List<TargetType> appliesTo;
 
   public EdmTermImpl(final Edm edm, final String namespace, final CsdlTerm term) {
     super(edm, term.getName(), term);
-
     this.term = term;
     fqn = new FullQualifiedName(namespace, term.getName());
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(term.getType()).build();
   }
 
   @Override
@@ -57,22 +53,14 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   @Override
   public EdmType getType() {
     if (termType == null) {
-      termType = typeInfo.isPrimitiveType()
-          ? EdmPrimitiveTypeFactory.getInstance(typeInfo.getPrimitiveTypeKind())
-          : typeInfo.isTypeDefinition()
-              ? typeInfo.getTypeDefinition()
-              : typeInfo.isEnumType()
-                  ? typeInfo.getEnumType()
-                  : typeInfo.isComplexType()
-                      ? typeInfo.getComplexType()
-                      : typeInfo.isEntityType()
-                          ? typeInfo.getEntityType()
-                          : null;
+      if (term.getType() == null) {
+        throw new EdmException("Terms must hava a full qualified type.");
+      }
+      termType = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(term.getType()).build().getType();
       if (termType == null) {
-        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+        throw new EdmException("Cannot find type with name: " + term.getType());
       }
     }
-
     return termType;
   }
 

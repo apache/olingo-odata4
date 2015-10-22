@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,19 +30,22 @@ import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, EdmElement {
 
   private final CsdlProperty property;
-  private final EdmTypeInfo typeInfo;
+  private EdmTypeInfo typeInfo;
   private EdmType propertyType;
 
   public EdmPropertyImpl(final Edm edm, final CsdlProperty property) {
     super(edm, property.getName(), property);
 
     this.property = property;
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
+
   }
 
   @Override
   public EdmType getType() {
     if (propertyType == null) {
+      if (typeInfo == null) {
+        buildTypeInfo();
+      }
       propertyType = typeInfo.getType();
       if (propertyType == null) {
         throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
@@ -50,6 +53,13 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
     }
 
     return propertyType;
+  }
+
+  private void buildTypeInfo() {
+    if (property.getType() == null) {
+      throw new EdmException("Property " + property.getName() + " must hava a full qualified type.");
+    }
+    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
   }
 
   @Override
@@ -104,6 +114,9 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
 
   @Override
   public boolean isPrimitive() {
+    if (typeInfo == null) {
+      buildTypeInfo();
+    }
     return typeInfo.isPrimitiveType();
   }
 }

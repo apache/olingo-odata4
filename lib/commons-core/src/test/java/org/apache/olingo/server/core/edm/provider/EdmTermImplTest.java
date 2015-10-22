@@ -54,6 +54,28 @@ public class EdmTermImplTest {
   private EdmTerm initialTerm;
   private EdmTerm derivedTerm;
 
+  @Test
+  public void initialTerm() {
+    EdmTerm term = new EdmTermImpl(mock(Edm.class), "namespace", new CsdlTerm());
+
+    assertTrue(term.isNullable());
+    assertNull(term.getName());
+    assertNull(term.getMaxLength());
+    assertNull(term.getPrecision());
+    assertNull(term.getScale());
+    assertNull(term.getSrid());
+    assertNotNull(term.getAnnotations());
+    assertTrue(term.getAnnotations().isEmpty());
+
+    assertNotNull(term.getFullQualifiedName());
+    try {
+      term.getType();
+      fail("EdmException expected");
+    } catch (EdmException e) {
+      assertEquals("Terms must hava a full qualified type.", e.getMessage());
+    }
+  }
+
   @Before
   public void setupTypes() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);

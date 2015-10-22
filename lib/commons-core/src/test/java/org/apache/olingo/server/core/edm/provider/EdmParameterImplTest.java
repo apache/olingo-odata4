@@ -20,10 +20,14 @@ package org.apache.olingo.server.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -41,6 +45,29 @@ import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Test;
 
 public class EdmParameterImplTest {
+
+  @Test
+  public void initialParameter() {
+    EdmParameterImpl parameter = new EdmParameterImpl(mock(Edm.class), new CsdlParameter());
+
+    assertTrue(parameter.isNullable());
+    assertFalse(parameter.isCollection());
+    assertNull(parameter.getName());
+    assertNull(parameter.getMapping());
+    assertNull(parameter.getMaxLength());
+    assertNull(parameter.getPrecision());
+    assertNull(parameter.getScale());
+    assertNull(parameter.getSrid());
+    assertNotNull(parameter.getAnnotations());
+    assertTrue(parameter.getAnnotations().isEmpty());
+
+    try {
+      parameter.getType();
+      fail("EdmException expected");
+    } catch (EdmException e) {
+      assertEquals("Parameter null must hava a full qualified type.", e.getMessage());
+    }
+  }
 
   @Test
   public void getTypeReturnsPrimitiveType() {

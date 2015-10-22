@@ -40,7 +40,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 public abstract class AbstractEdm implements Edm {
 
   protected Map<String, EdmSchema> schemas;
-
   protected List<EdmSchema> schemaList;
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
@@ -79,8 +78,7 @@ public abstract class AbstractEdm implements Edm {
   private final Map<TargetQualifierMapKey, EdmAnnotations> annotationGroups =
       Collections.synchronizedMap(new HashMap<TargetQualifierMapKey, EdmAnnotations>());
 
-  private Map<String, String> aliasToNamespaceInfo = Collections.synchronizedMap(new HashMap<String, String>());
-  private boolean aliasToNamespaceInfoCreated = false;
+  private Map<String, String> aliasToNamespaceInfo = null;
 
   @Override
   public List<EdmSchema> getSchemas() {
@@ -98,23 +96,25 @@ public abstract class AbstractEdm implements Edm {
 
     EdmSchema schema = schemas.get(namespace);
     if (schema == null) {
-      if (!aliasToNamespaceInfoCreated) {
-        aliasToNamespaceInfo = createAliasToNamespaceInfo();
-      }
       schema = schemas.get(aliasToNamespaceInfo.get(namespace));
     }
-
     return schema;
   }
 
   private void initSchemas() {
-    schemas = createSchemas();
-    aliasToNamespaceInfoCreated = true;
+    loadAliasToNamespaceInfo();
+    Map<String, EdmSchema> localSchemas = createSchemas();
+    schemas = Collections.synchronizedMap(localSchemas);
 
     if (schemas == null) {
       schemas = Collections.emptyMap();
     }
     schemaList = Collections.unmodifiableList(new ArrayList<EdmSchema>(schemas.values()));
+  }
+
+  private void loadAliasToNamespaceInfo() {
+    Map<String, String> localAliasToNamespaceInfo = createAliasToNamespaceInfo();
+    aliasToNamespaceInfo = Collections.synchronizedMap(localAliasToNamespaceInfo);
   }
 
   @Override
@@ -311,8 +311,8 @@ public abstract class AbstractEdm implements Edm {
   }
 
   private FullQualifiedName resolvePossibleAlias(final FullQualifiedName namespaceOrAliasFQN) {
-    if (!aliasToNamespaceInfoCreated) {
-      aliasToNamespaceInfo = createAliasToNamespaceInfo();
+    if (aliasToNamespaceInfo == null) {
+      loadAliasToNamespaceInfo();
     }
     FullQualifiedName finalFQN = null;
     if (namespaceOrAliasFQN != null) {

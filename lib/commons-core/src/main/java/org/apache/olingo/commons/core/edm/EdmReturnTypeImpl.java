@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,12 +28,12 @@ import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 public class EdmReturnTypeImpl implements EdmReturnType {
 
   private final CsdlReturnType returnType;
-  private final EdmTypeInfo typeInfo;
+  private final Edm edm;
   private EdmType typeImpl;
 
   public EdmReturnTypeImpl(final Edm edm, final CsdlReturnType returnType) {
+    this.edm = edm;
     this.returnType = returnType;
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(returnType.getType()).build();
   }
 
   @Override
@@ -69,9 +69,12 @@ public class EdmReturnTypeImpl implements EdmReturnType {
   @Override
   public EdmType getType() {
     if (typeImpl == null) {
-      typeImpl = typeInfo.getType();
+      if (returnType.getType() == null) {
+        throw new EdmException("Return types must hava a full qualified type.");
+      }
+      typeImpl = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(returnType.getType()).build().getType();
       if (typeImpl == null) {
-        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+        throw new EdmException("Cannot find type with name: " + returnType.getType());
       }
     }
 

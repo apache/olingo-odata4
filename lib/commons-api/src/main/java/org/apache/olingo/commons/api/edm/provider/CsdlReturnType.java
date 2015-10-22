@@ -28,7 +28,7 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
 
   private static final long serialVersionUID = 4816954124986010965L;
 
-  private FullQualifiedName type;
+  private String type;
 
   private boolean isCollection;
 
@@ -49,7 +49,7 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
    * @return the type
    */
   public String getType() {
-    return type.getFullQualifiedNameAsString();
+    return type;
   }
 
   /**
@@ -58,7 +58,7 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
    * @return the type fQN
    */
   public FullQualifiedName getTypeFQN() {
-    return type;
+    return new FullQualifiedName(type);
   }
 
   /**
@@ -68,7 +68,7 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
    * @return the type
    */
   public CsdlReturnType setType(final String type) {
-    this.type = new FullQualifiedName(type);
+    this.type = type;
     return this;
   }
 
@@ -79,7 +79,7 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
    * @return the type
    */
   public CsdlReturnType setType(final FullQualifiedName type) {
-    this.type = type;
+    this.type = type.getFullQualifiedNameAsString();
     return this;
   }
 

@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -173,7 +174,7 @@ public class EdmSchemaImplTest {
     for (EdmFunction function : functions) {
       FullQualifiedName functionName = new FullQualifiedName(NAMESPACE, function.getName());
       assertTrue(function == edm.getUnboundFunction(functionName, null));
-      
+
       functionName = new FullQualifiedName(ALIAS, function.getName());
       assertTrue(function == edm.getUnboundFunction(functionName, null));
     }
@@ -193,7 +194,6 @@ public class EdmSchemaImplTest {
     }
   }
 
-  
   @Test
   public void getContainer() {
     EdmEntityContainer container = schema.getEntityContainer();
@@ -301,7 +301,7 @@ public class EdmSchemaImplTest {
 
     @Override
     public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-      throw new RuntimeException("Provider must not be called in the schema case");
+      return Collections.emptyList();
     }
 
     @Override
@@ -373,17 +373,17 @@ public class EdmSchemaImplTest {
       functions.add(new CsdlFunction().setName("function1"));
       functions.add(new CsdlFunction().setName("function2"));
       providerSchema.setFunctions(functions);
-      
+
       List<CsdlAnnotations> annotationGroups = new ArrayList<CsdlAnnotations>();
       annotationGroups.add(new CsdlAnnotations().setTarget(NAMESPACE + ".entityType1"));
       annotationGroups.add(new CsdlAnnotations().setTarget(NAMESPACE + ".entityType2"));
       providerSchema.setAnnotationsGroup(annotationGroups);
-      
+
       List<CsdlTerm> terms = new ArrayList<CsdlTerm>();
       terms.add(new CsdlTerm().setName("term1").setType("Edm.String"));
       terms.add(new CsdlTerm().setName("term2").setType("Edm.String"));
       providerSchema.setTerms(terms);
-      
+
       ArrayList<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
       schemas.add(providerSchema);
       return schemas;

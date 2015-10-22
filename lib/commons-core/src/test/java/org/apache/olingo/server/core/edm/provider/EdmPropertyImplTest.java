@@ -20,12 +20,14 @@ package org.apache.olingo.server.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -44,6 +46,36 @@ import org.junit.Test;
 
 public class EdmPropertyImplTest {
 
+  @Test
+  public void initialProperty() {
+    EdmProperty property = new EdmPropertyImpl(mock(Edm.class), new CsdlProperty());
+
+    assertTrue(property.isNullable());
+    assertFalse(property.isCollection());
+    assertNull(property.getName());
+    assertNull(property.getMapping());
+    assertNull(property.getMaxLength());
+    assertNull(property.getPrecision());
+    assertNull(property.getScale());
+    assertNull(property.getSrid());
+    assertNotNull(property.getAnnotations());
+    assertTrue(property.getAnnotations().isEmpty());
+
+    try {
+      property.getType();
+      fail("EdmException expected");
+    } catch (EdmException e) {
+      assertEquals("Property null must hava a full qualified type.", e.getMessage());
+    }
+   
+    try {
+      property.isPrimitive();
+      fail("EdmException expected");
+    } catch (EdmException e) {
+      assertEquals("Property null must hava a full qualified type.", e.getMessage());
+    }
+  }
+  
   @Test
   public void getTypeReturnsPrimitiveType() {
     EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));

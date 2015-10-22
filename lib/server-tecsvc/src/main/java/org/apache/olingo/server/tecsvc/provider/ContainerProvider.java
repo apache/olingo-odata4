@@ -190,19 +190,19 @@ public class ContainerProvider {
                 Arrays
                     .asList(
                         new CsdlAnnotation()
-                            .setTerm("Core.Description")
+                            .setTerm("Org.OData.Core.V1.Description")
                             .setExpression(
                                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                                     .setValue("Contains entities with collection of each primitive type")),
                         new CsdlAnnotation()
-                            .setTerm("Core.LongDescription")
+                            .setTerm("Org.OData.Core.V1.LongDescription")
                             .setQualifier("EnabledForEntitySet")
                             .setExpression(
                                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                                     .setValue("System Query Options: $filter, $count, $orderby, "
                                         + "$skip, $top, $expand, $select, $format; Operations: Create, Read")),
                         new CsdlAnnotation()
-                            .setTerm("Core.LongDescription")
+                            .setTerm("Org.OData.Core.V1.LongDescription")
                             .setQualifier("EnabledForEntity")
                             .setExpression(
                                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,13 +30,11 @@ import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter, EdmElement {
 
   private final CsdlParameter parameter;
-  private final EdmTypeInfo typeInfo;
   private EdmType typeImpl;
 
   public EdmParameterImpl(final Edm edm, final CsdlParameter parameter) {
     super(edm, parameter.getName(), parameter);
     this.parameter = parameter;
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build();
   }
 
   @Override
@@ -77,9 +75,12 @@ public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter, 
   @Override
   public EdmType getType() {
     if (typeImpl == null) {
-      typeImpl = typeInfo.getType();
+      if (parameter.getType() == null) {
+        throw new EdmException("Parameter " + parameter.getName() + " must hava a full qualified type.");
+      }
+      typeImpl = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(parameter.getType()).build().getType();
       if (typeImpl == null) {
-        throw new EdmException("Cannot find type with name: " + typeInfo.getFullQualifiedName());
+        throw new EdmException("Cannot find type with name: " + parameter.getTypeFQN());
       }
     }
 

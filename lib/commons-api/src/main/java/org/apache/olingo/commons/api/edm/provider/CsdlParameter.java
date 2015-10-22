@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,7 +33,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
 
   private String name;
 
-  private FullQualifiedName type;
+  private String type;
 
   private boolean isCollection;
 
@@ -74,7 +74,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
    * @return the type
    */
   public String getType() {
-    return type.getFullQualifiedNameAsString();
+    return type;
   }
 
   /**
@@ -83,7 +83,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
    * @return the type fQN
    */
   public FullQualifiedName getTypeFQN() {
-    return type;
+    return new FullQualifiedName(type);
   }
 
   /**
@@ -93,7 +93,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
    * @return the type
    */
   public CsdlParameter setType(final String type) {
-    this.type = new FullQualifiedName(type);
+    this.type = type;
     return this;
   }
 
@@ -104,7 +104,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
    * @return the type
    */
   public CsdlParameter setType(final FullQualifiedName type) {
-    this.type = type;
+    this.type = type.getFullQualifiedNameAsString();
     return this;
   }
 
@@ -232,7 +232,7 @@ public class CsdlParameter extends CsdlAbstractEdmItem implements CsdlNamed, Csd
   public List<CsdlAnnotation> getAnnotations() {
     return annotations;
   }
-  
+
   /**
    * Sets a list of annotations
    * @param annotations list of annotations

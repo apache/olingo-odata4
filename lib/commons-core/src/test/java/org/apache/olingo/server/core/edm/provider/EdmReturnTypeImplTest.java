@@ -22,9 +22,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -42,6 +44,24 @@ import org.junit.Test;
 
 public class EdmReturnTypeImplTest {
 
+  @Test
+  public void initialReturnType() {
+    EdmReturnType returnType = new EdmReturnTypeImpl(mock(Edm.class), new CsdlReturnType());
+
+    assertTrue(returnType.isNullable());
+    assertNull(returnType.getMaxLength());
+    assertNull(returnType.getPrecision());
+    assertNull(returnType.getScale());
+    assertNull(returnType.getSrid());
+
+    try {
+      returnType.getType();
+      fail("EdmException expected");
+    } catch (EdmException e) {
+      assertEquals("Return types must hava a full qualified type.", e.getMessage());
+    }
+  }
+  
   @Test
   public void primitiveReturnType() {
     CsdlReturnType providerType = new CsdlReturnType().setType(new FullQualifiedName("Edm", "String"));
