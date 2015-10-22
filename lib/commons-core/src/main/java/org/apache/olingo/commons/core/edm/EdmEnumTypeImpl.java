@@ -92,6 +92,10 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     return Collections.unmodifiableList(memberNames);
   }
 
+  /**
+   * Creates the map from member names to member objects,
+   * preserving the order for the case of implicit value assignments.
+   */
   private void createEdmMembers() {
     final Map<String, EdmMember> membersMapLocal = new LinkedHashMap<String, EdmMember>();
     final List<String> memberNamesLocal = new ArrayList<String>();
@@ -132,9 +136,11 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     Long result = null;
     for (final String memberValue : value.split(",", isFlags() ? -1 : 1)) {
       Long memberValueLong = null;
+      long count = 0;
       for (final EdmMember member : getMembers()) {
-        if (member.getName().equals(memberValue) || member.getValue().equals(memberValue)) {
-          memberValueLong = Long.decode(member.getValue());
+        count++;
+        if (memberValue.equals(member.getName()) || memberValue.equals(member.getValue())) {
+          memberValueLong = member.getValue() == null ? count - 1 : Long.decode(member.getValue());
         }
       }
       if (memberValueLong == null) {
@@ -172,8 +178,9 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     StringBuilder result = new StringBuilder();
 
     final boolean flags = isFlags();
+    long memberValue = -1;
     for (final EdmMember member : getMembers()) {
-      final long memberValue = Long.parseLong(member.getValue());
+      memberValue = member.getValue() == null ? memberValue + 1 : Long.parseLong(member.getValue());
       if (flags) {
         if ((memberValue & remaining) == memberValue) {
           if (result.length() > 0) {

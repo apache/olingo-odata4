@@ -21,22 +21,22 @@ package org.apache.olingo.server.api.uri;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 /**
- * Represents an function parameter or key predicate when used in the URI.
+ * Represents a function parameter or key predicate when used in the URI.
  */
 public interface UriParameter {
 
   /**
-   * @return Alias name if the parameters values is an alias, otherwise null
+   * @return Alias name if the parameter's value is an alias, otherwise null
    */
   String getAlias();
 
   /**
-   * @return Text of the parameters value
+   * @return Text of the parameter's value
    */
   String getText();
 
   /**
-   * @return If the parameters value is a expression and expression is returned, otherwise null
+   * @return Expression if the parameter's value is an expression, otherwise null
    */
   Expression getExpression();
 
@@ -46,7 +46,7 @@ public interface UriParameter {
   String getName();
 
   /**
-   * @return Name of the referenced property when referential constrains are used
+   * @return Name of the referenced property when referential constraints are used
    */
   String getReferencedProperty();
 }

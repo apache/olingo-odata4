@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -46,6 +47,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.processor.EntityProcessor;
+import org.apache.olingo.server.api.processor.MediaEntityProcessor;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -54,6 +56,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -62,7 +65,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import myservice.mynamespace.data.Storage;
 import myservice.mynamespace.util.Util;
 
-public class DemoEntityProcessor implements EntityProcessor {
+public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcessor {
 
   private OData odata;
   private ServiceMetadata serviceMetadata;
@@ -77,10 +80,61 @@ public class DemoEntityProcessor implements EntityProcessor {
     this.serviceMetadata = serviceMetadata;
   }
 
-	public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
-					throws ODataApplicationException, SerializerException {
+  public void readEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+      throws ODataApplicationException, SerializerException {
 
-	  EdmEntityType responseEdmEntityType = null; // we'll need this to build the ContextURL
+    // The sample service supports only functions imports and entity sets.
+    // We do not care about bound functions and composable functions.
+
+    UriResource uriResource = uriInfo.getUriResourceParts().get(0);
+
+    if (uriResource instanceof UriResourceEntitySet) {
+      readEntityInternal(request, response, uriInfo, responseFormat);
+    } else if (uriResource instanceof UriResourceFunction) {
+      readFunctionImportInternal(request, response, uriInfo, responseFormat);
+    } else {
+      throw new ODataApplicationException("Only EntitySet is supported",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ENGLISH);
+    }
+  }
+
+  private void readFunctionImportInternal(final ODataRequest request, final ODataResponse response,
+      final UriInfo uriInfo, final ContentType responseFormat) throws ODataApplicationException, SerializerException {
+
+    // 1st step: Analyze the URI and fetch the entity returned by the function import
+    // Function Imports are always the first segment of the resource path
+    final UriResource firstSegment = uriInfo.getUriResourceParts().get(0);
+
+    if (!(firstSegment instanceof UriResourceFunction)) {
+      throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),
+          Locale.ENGLISH);
+    }
+
+    final UriResourceFunction uriResourceFunction = (UriResourceFunction) firstSegment;
+    final Entity entity = storage.readFunctionImportEntity(uriResourceFunction, serviceMetadata);
+
+    if (entity == null) {
+      throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+    }
+
+    // 2nd step: Serialize the response entity
+    final EdmEntityType edmEntityType = (EdmEntityType) uriResourceFunction.getFunction().getReturnType().getType();
+    final ContextURL contextURL = ContextURL.with().type(edmEntityType).build();
+    final EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextURL).build();
+    final ODataSerializer serializer = odata.createSerializer(responseFormat);
+    final SerializerResult serializerResult = serializer.entity(serviceMetadata, edmEntityType, entity, opts);
+
+    // 3rd configure the response object
+    response.setContent(serializerResult.getContent());
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+
+  private void readEntityInternal(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType responseFormat)
+          throws ODataApplicationException, SerializerException {
+
+    EdmEntityType responseEdmEntityType = null; // we'll need this to build the ContextURL
     Entity responseEntity = null; // required for serialization of the response body
     EdmEntitySet responseEdmEntitySet = null; // we need this for building the contextUrl
 
@@ -141,123 +195,122 @@ public class DemoEntityProcessor implements EntityProcessor {
       throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
     }
 
-		// 3. apply system query options
+    // 3. apply system query options
 
-		// handle $select
-		SelectOption selectOption = uriInfo.getSelectOption();
-		// in our example, we don't have performance issues, so we can rely upon the handling in the Olingo lib
-		// nothing else to be done
+    // handle $select
+    SelectOption selectOption = uriInfo.getSelectOption();
+    // in our example, we don't have performance issues, so we can rely upon the handling in the Olingo lib
+    // nothing else to be done
 
-		// handle $expand
-		ExpandOption expandOption = uriInfo.getExpandOption();
-		// in our example: http://localhost:8080/DemoService/DemoService.svc/Categories(1)/$expand=Products
-		// or http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
-		if(expandOption != null) {
-			// retrieve the EdmNavigationProperty from the expand expression
-			// Note: in our example, we have only one NavigationProperty, so we can directly access it
-			EdmNavigationProperty edmNavigationProperty = null;
-			ExpandItem expandItem = expandOption.getExpandItems().get(0);
-			if(expandItem.isStar()) {
-				List<EdmNavigationPropertyBinding> bindings = responseEdmEntitySet.getNavigationPropertyBindings();
-				// we know that there are navigation bindings
-				// however normally in this case a check if navigation bindings exists is done
-				if(!bindings.isEmpty()) {
-					// can in our case only be 'Category' or 'Products', so we can take the first
-					EdmNavigationPropertyBinding binding = bindings.get(0);
-					EdmElement property = responseEdmEntitySet.getEntityType().getProperty(binding.getPath());
-					// we don't need to handle error cases, as it is done in the Olingo library
-					if(property instanceof EdmNavigationProperty) {
-						edmNavigationProperty = (EdmNavigationProperty) property;
-					}
-				}
-			} else {
-				// can be 'Category' or 'Products', no path supported
-				UriResource expandUriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
-				// we don't need to handle error cases, as it is done in the Olingo library
-				if(expandUriResource instanceof UriResourceNavigation) {
-					edmNavigationProperty = ((UriResourceNavigation) expandUriResource).getProperty();
-				}
-			}
+    // handle $expand
+    ExpandOption expandOption = uriInfo.getExpandOption();
+    // in our example: http://localhost:8080/DemoService/DemoService.svc/Categories(1)/$expand=Products
+    // or http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
+    if (expandOption != null) {
+      // retrieve the EdmNavigationProperty from the expand expression
+      // Note: in our example, we have only one NavigationProperty, so we can directly access it
+      EdmNavigationProperty edmNavigationProperty = null;
+      ExpandItem expandItem = expandOption.getExpandItems().get(0);
+      if (expandItem.isStar()) {
+        List<EdmNavigationPropertyBinding> bindings = responseEdmEntitySet.getNavigationPropertyBindings();
+        // we know that there are navigation bindings
+        // however normally in this case a check if navigation bindings exists is done
+        if (!bindings.isEmpty()) {
+          // can in our case only be 'Category' or 'Products', so we can take the first
+          EdmNavigationPropertyBinding binding = bindings.get(0);
+          EdmElement property = responseEdmEntitySet.getEntityType().getProperty(binding.getPath());
+          // we don't need to handle error cases, as it is done in the Olingo library
+          if (property instanceof EdmNavigationProperty) {
+            edmNavigationProperty = (EdmNavigationProperty) property;
+          }
+        }
+      } else {
+        // can be 'Category' or 'Products', no path supported
+        UriResource expandUriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
+        // we don't need to handle error cases, as it is done in the Olingo library
+        if (expandUriResource instanceof UriResourceNavigation) {
+          edmNavigationProperty = ((UriResourceNavigation) expandUriResource).getProperty();
+        }
+      }
 
-			// can be 'Category' or 'Products', no path supported
-			// we don't need to handle error cases, as it is done in the Olingo library
-			if(edmNavigationProperty != null) {
-				EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
-				String navPropName = edmNavigationProperty.getName();
+      // can be 'Category' or 'Products', no path supported
+      // we don't need to handle error cases, as it is done in the Olingo library
+      if (edmNavigationProperty != null) {
+        EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
+        String navPropName = edmNavigationProperty.getName();
 
-				// build the inline data
-				Link link = new Link();
-				link.setTitle(navPropName);
-				link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+        // build the inline data
+        Link link = new Link();
+        link.setTitle(navPropName);
+        link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
         link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
 
-				if(edmNavigationProperty.isCollection()) { // in case of Categories(1)/$expand=Products
-					// fetch the data for the $expand (to-many navigation) from backend
-					// here we get the data for the expand
-					EntityCollection expandEntityCollection =
+        if (edmNavigationProperty.isCollection()) { // in case of Categories(1)/$expand=Products
+          // fetch the data for the $expand (to-many navigation) from backend
+          // here we get the data for the expand
+          EntityCollection expandEntityCollection =
               storage.getRelatedEntityCollection(responseEntity, expandEdmEntityType);
-					link.setInlineEntitySet(expandEntityCollection);
+          link.setInlineEntitySet(expandEntityCollection);
           link.setHref(expandEntityCollection.getId().toASCIIString());
-				} else {  // in case of Products(1)?$expand=Category
-					// fetch the data for the $expand (to-one navigation) from backend
-					// here we get the data for the expand
-					Entity expandEntity = storage.getRelatedEntity(responseEntity, expandEdmEntityType);
-					link.setInlineEntity(expandEntity);
+        } else { // in case of Products(1)?$expand=Category
+          // fetch the data for the $expand (to-one navigation) from backend
+          // here we get the data for the expand
+          Entity expandEntity = storage.getRelatedEntity(responseEntity, expandEdmEntityType);
+          link.setInlineEntity(expandEntity);
           link.setHref(expandEntity.getId().toASCIIString());
-				}
+        }
 
-				// set the link - containing the expanded data - to the current entity
-				responseEntity.getNavigationLinks().add(link);
-			}
-		}
+        // set the link - containing the expanded data - to the current entity
+        responseEntity.getNavigationLinks().add(link);
+      }
+    }
 
+    // 4. serialize
+    EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
+    // we need the property names of the $select, in order to build the context URL
+    String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType, expandOption, selectOption);
+    ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet)
+        .selectList(selectList)
+        .suffix(Suffix.ENTITY).build();
 
-		// 4. serialize
-		EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
-		// we need the property names of the $select, in order to build the context URL
-		String selectList = odata.createUriHelper().buildContextURLSelectList(edmEntityType, expandOption, selectOption);
-		ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet)
-						.selectList(selectList)
-						.suffix(Suffix.ENTITY).build();
+    // make sure that $expand and $select are considered by the serializer
+    // adding the selectOption to the serializerOpts will actually tell the lib to do the job
+    EntitySerializerOptions opts = EntitySerializerOptions.with()
+        .contextURL(contextUrl)
+        .select(selectOption)
+        .expand(expandOption)
+        .build();
 
-		// make sure that $expand and $select are considered by the serializer
-		// adding the selectOption to the serializerOpts will actually tell the lib to do the job
-		EntitySerializerOptions opts = EntitySerializerOptions.with()
-						.contextURL(contextUrl)
-						.select(selectOption)
-						.expand(expandOption)
-						.build();
+    ODataSerializer serializer = this.odata.createSerializer(responseFormat);
+    SerializerResult serializerResult = serializer.entity(serviceMetadata, edmEntityType, responseEntity, opts);
 
-		ODataSerializer serializer = this.odata.createSerializer(responseFormat);
-		SerializerResult serializerResult = serializer.entity(serviceMetadata, edmEntityType, responseEntity, opts);
+    // 5. configure the response object
+    response.setContent(serializerResult.getContent());
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
 
-		// 5. configure the response object
-		response.setContent(serializerResult.getContent());
-		response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-		response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
-	}
-	
-	 /*
+  /*
    * Example request:
    * 
    * POST URL: http://localhost:8080/DemoService/DemoService.svc/Products
    * Header: Content-Type: application/json; odata.metadata=minimal
    * Request body:
-    {
-      "ID":3,
-      "Name":"Ergo Screen",
-      "Description":"17 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"
-    }
-   * */
+   * {
+   * "ID":3,
+   * "Name":"Ergo Screen",
+   * "Description":"17 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"
+   * }
+   */
   public void createEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                           ContentType requestFormat, ContentType responseFormat)
-        throws ODataApplicationException, DeserializerException, SerializerException {
-    
-    // 1. Retrieve the entity type from the URI 
+      ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+
+    // 1. Retrieve the entity type from the URI
     EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-    // 2. create the data in backend 
+    // 2. create the data in backend
     // 2.1. retrieve the payload from the POST request for the entity to create and deserialize it
     InputStream requestInputStream = request.getBody();
     ODataDeserializer deserializer = this.odata.createDeserializer(requestFormat);
@@ -265,34 +318,35 @@ public class DemoEntityProcessor implements EntityProcessor {
     Entity requestEntity = result.getEntity();
     // 2.2 do the creation in backend, which returns the newly created entity
     Entity createdEntity = storage.createEntityData(edmEntitySet, requestEntity);
-    
+
     // 3. serialize the response (we have to return the created entity)
-    ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build(); 
-    EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextUrl).build(); // expand and select currently not supported 
-    
+    ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
+    EntitySerializerOptions options = EntitySerializerOptions.with().contextURL(contextUrl).build(); // expand and
+                                                                                                     // select currently
+                                                                                                     // not supported
+
     ODataSerializer serializer = this.odata.createSerializer(responseFormat);
     SerializerResult serializedResponse = serializer.entity(serviceMetadata, edmEntityType, createdEntity, options);
-    
-    //4. configure the response object
+
+    // 4. configure the response object
     response.setContent(serializedResponse.getContent());
     response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
   }
 
-  
   public void updateEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
-                           ContentType requestFormat, ContentType responseFormat)
-              throws ODataApplicationException, DeserializerException, SerializerException {
-    
-    // 1. Retrieve the entity set which belongs to the requested entity 
+      ContentType requestFormat, ContentType responseFormat)
+          throws ODataApplicationException, DeserializerException, SerializerException {
+
+    // 1. Retrieve the entity set which belongs to the requested entity
     List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     // Note: only in our example we can assume that the first segment is the EntitySet
-    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0); 
+    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
     EdmEntitySet edmEntitySet = uriResourceEntitySet.getEntitySet();
     EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
     // 2. update the data in backend
-    // 2.1. retrieve the payload from the PUT request for the entity to be updated 
+    // 2.1. retrieve the payload from the PUT request for the entity to be updated
     InputStream requestInputStream = request.getBody();
     ODataDeserializer deserializer = this.odata.createDeserializer(requestFormat);
     DeserializerResult result = deserializer.entity(requestInputStream, edmEntityType);
@@ -302,26 +356,121 @@ public class DemoEntityProcessor implements EntityProcessor {
     // Note that this updateEntity()-method is invoked for both PUT or PATCH operations
     HttpMethod httpMethod = request.getMethod();
     storage.updateEntityData(edmEntitySet, keyPredicates, requestEntity, httpMethod);
-    
-    //3. configure the response object
+
+    // 3. configure the response object
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
   }
 
-  
   public void deleteEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
-          throws ODataApplicationException {
-    
-    // 1. Retrieve the entity set which belongs to the requested entity 
+      throws ODataApplicationException {
+
+    // 1. Retrieve the entity set which belongs to the requested entity
     List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     // Note: only in our example we can assume that the first segment is the EntitySet
-    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0); 
+    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
     EdmEntitySet edmEntitySet = uriResourceEntitySet.getEntitySet();
 
     // 2. delete the data in backend
     List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
     storage.deleteEntityData(edmEntitySet, keyPredicates);
-    
-    //3. configure the response object
+
+    // 3. configure the response object
     response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+  }
+
+  @Override
+  public void readMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo, ContentType responseFormat)
+      throws ODataApplicationException, ODataLibraryException {
+    
+    final UriResource firstResoucePart = uriInfo.getUriResourceParts().get(0);
+    if(firstResoucePart instanceof UriResourceEntitySet) {
+      final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+      final UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) firstResoucePart;
+      
+      final Entity entity = storage.readEntityData(edmEntitySet, uriResourceEntitySet.getKeyPredicates());
+      if(entity == null) {
+        throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(), 
+            Locale.ENGLISH);
+      }
+
+      final byte[] mediaContent = storage.readMedia(entity);
+      final InputStream responseContent = odata.createFixedFormatSerializer().binary(mediaContent);
+      
+      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      response.setContent(responseContent);
+      response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
+    } else {
+      throw new ODataApplicationException("Not implemented", HttpStatusCode.BAD_REQUEST.getStatusCode(), 
+          Locale.ENGLISH);
+    }
+  }
+
+  @Override
+  public void createMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException {
+    
+    final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+    final byte[] mediaContent = odata.createFixedFormatDeserializer().binary(request.getBody());
+    
+    final Entity entity = storage.createMediaEntity(edmEntitySet.getEntityType(), 
+                                                    requestFormat.toContentTypeString(), 
+                                                    mediaContent);
+    
+    final ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build();
+    final EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
+    final SerializerResult serializerResult = odata.createSerializer(responseFormat).entity(serviceMetadata,
+        edmEntitySet.getEntityType(), entity, opts);
+    
+    final String location = request.getRawBaseUri() + '/'
+        + odata.createUriHelper().buildCanonicalURL(edmEntitySet, entity);
+    response.setContent(serializerResult.getContent());
+    response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
+    response.setHeader(HttpHeader.LOCATION, location);
+    response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+
+  @Override
+  public void updateMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo,
+      ContentType requestFormat, ContentType responseFormat) throws ODataApplicationException, ODataLibraryException {
+    
+    final UriResource firstResoucePart = uriInfo.getUriResourceParts().get(0);
+    if (firstResoucePart instanceof UriResourceEntitySet) {
+      final EdmEntitySet edmEntitySet = Util.getEdmEntitySet(uriInfo);
+      final UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) firstResoucePart;
+
+      final Entity entity = storage.readEntityData(edmEntitySet, uriResourceEntitySet.getKeyPredicates());
+      if (entity == null) {
+        throw new ODataApplicationException("Entity not found", HttpStatusCode.NOT_FOUND.getStatusCode(),
+            Locale.ENGLISH);
+      }
+      
+      final byte[] mediaContent = odata.createFixedFormatDeserializer().binary(request.getBody());
+      storage.updateMedia(entity, requestFormat.toContentTypeString(), mediaContent);
+      
+      response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    } else {
+      throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), 
+          Locale.ENGLISH);
+    }
+  }    
+
+  @Override
+  public void deleteMediaEntity(ODataRequest request, ODataResponse response, UriInfo uriInfo)
+      throws ODataApplicationException, ODataLibraryException {
+    
+    /*
+     * In this tutorial, the content of the media entity is stored in a special property.
+     * So no additional steps to delete the content of the media entity are necessary.
+     *  
+     * A real service may store the content on the file system. So we have to take care to
+     * delete external files too. 
+     * 
+     * DELETE request to /Advertisments(ID) will be dispatched to the deleteEntity(...) method
+     * DELETE request to /Advertisments(ID)/$value will be dispatched to the deleteMediaEntity(...) method
+     * 
+     * So it is a good idea handle deletes in a central place.
+     */
+    
+    deleteEntity(request, response, uriInfo);
   }
 }

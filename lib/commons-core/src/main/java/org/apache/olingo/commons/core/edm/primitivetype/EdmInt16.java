@@ -36,8 +36,7 @@ public final class EdmInt16 extends SingletonPrimitiveType {
 
   @Override
   public boolean isCompatible(final EdmPrimitiveType primitiveType) {
-    return primitiveType instanceof Uint7
-        || primitiveType instanceof EdmByte
+    return primitiveType instanceof EdmByte
         || primitiveType instanceof EdmSByte
         || primitiveType instanceof EdmInt16;
   }

@@ -30,84 +30,50 @@ import java.util.UUID;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.junit.Test;
 
 public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void nameSpace() throws Exception {
-    assertEquals(EdmPrimitiveType.SYSTEM_NAMESPACE, Uint7.getInstance().getNamespace());
-
-    assertEquals(EdmPrimitiveType.EDM_NAMESPACE, EdmInt32.getInstance().getNamespace());
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-      final EdmType instance = EdmPrimitiveTypeFactory.getInstance(kind);
-      assertEquals(EdmPrimitiveType.EDM_NAMESPACE, instance.getNamespace());
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+      assertEquals(EdmPrimitiveType.EDM_NAMESPACE, EdmPrimitiveTypeFactory.getInstance(kind).getNamespace());
     }
   }
 
   @Test
   public void names() throws Exception {
-    assertEquals("Uint7", Uint7.getInstance().getName());
-
-    assertEquals("Binary", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).getName());
-    assertEquals("Boolean", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean).getName());
-    assertEquals("Byte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte).getName());
-    assertEquals("Date", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date).getName());
-    assertEquals("DateTimeOffset",
-        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).getName());
-    assertEquals("Decimal", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).getName());
-    assertEquals("Double", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double).getName());
-    assertEquals("Duration", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).getName());
-    assertEquals("Guid", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid).getName());
-    assertEquals("Int16", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).getName());
-    assertEquals("Int32", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32).getName());
-    assertEquals("Int64", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64).getName());
-    assertEquals("SByte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte).getName());
-    assertEquals("Single", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single).getName());
-    assertEquals("String", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).getName());
-    assertEquals("TimeOfDay", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay).getName());
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+      assertEquals(kind.name(), EdmPrimitiveTypeFactory.getInstance(kind).getName());
+    }
   }
 
   @Test
   public void kind() throws Exception {
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
       assertEquals(EdmTypeKind.PRIMITIVE, EdmPrimitiveTypeFactory.getInstance(kind).getKind());
     }
   }
 
   @Test
   public void toStringAll() throws Exception {
-    assertEquals("System.Uint7", Uint7.getInstance().toString());
-
-    assertEquals("Edm.Binary", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).toString());
-    assertEquals("Edm.Boolean", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean).toString());
-    assertEquals("Edm.Byte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte).toString());
-    assertEquals("Edm.Date", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date).toString());
-    assertEquals("Edm.DateTimeOffset",
-        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.DateTimeOffset).toString());
-    assertEquals("Edm.Decimal", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).toString());
-    assertEquals("Edm.Double", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double).toString());
-    assertEquals("Edm.Duration", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Duration).toString());
-    assertEquals("Edm.Guid", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Guid).toString());
-    assertEquals("Edm.Int16", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16).toString());
-    assertEquals("Edm.Int32", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32).toString());
-    assertEquals("Edm.Int64", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64).toString());
-    assertEquals("Edm.SByte", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte).toString());
-    assertEquals("Edm.Single", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single).toString());
-    assertEquals("Edm.String", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).toString());
-    assertEquals("Edm.TimeOfDay", EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay).toString());
-
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
-      final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
-      assertEquals(instance.toString(), kind.getFullQualifiedName().toString());
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+      assertEquals(kind.getFullQualifiedName().toString(), EdmPrimitiveTypeFactory.getInstance(kind).toString());
     }
   }
 
   @Test
   public void compatibility() {
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
       final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
       assertTrue(instance.isCompatible(instance));
       assertFalse(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(
@@ -117,8 +83,6 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void defaultType() throws Exception {
-    assertEquals(Byte.class, Uint7.getInstance().getDefaultType());
-
     assertEquals(byte[].class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary).getDefaultType());
     assertEquals(Boolean.class,
         EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean).getDefaultType());
@@ -140,11 +104,44 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
     assertEquals(String.class, EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String).getDefaultType());
     assertEquals(Calendar.class,
         EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.TimeOfDay).getDefaultType());
+
+    assertEquals(Geospatial.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Geography).getDefaultType());
+    assertEquals(Point.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyPoint).getDefaultType());
+    assertEquals(LineString.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyLineString).getDefaultType());
+    assertEquals(Polygon.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyPolygon).getDefaultType());
+    assertEquals(MultiPoint.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyMultiPoint).getDefaultType());
+    assertEquals(MultiLineString.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyMultiLineString).getDefaultType());
+    assertEquals(MultiPolygon.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyMultiPolygon).getDefaultType());
+    assertEquals(GeospatialCollection.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyCollection).getDefaultType());
+    assertEquals(Geospatial.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Geometry).getDefaultType());
+    assertEquals(Point.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryPoint).getDefaultType());
+    assertEquals(LineString.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryLineString).getDefaultType());
+    assertEquals(Polygon.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryPolygon).getDefaultType());
+    assertEquals(MultiPoint.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryMultiPoint).getDefaultType());
+    assertEquals(MultiLineString.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryMultiLineString).getDefaultType());
+    assertEquals(MultiPolygon.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryMultiPolygon).getDefaultType());
+    assertEquals(GeospatialCollection.class,
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryCollection).getDefaultType());
   }
 
   @Test
   public void validate() throws Exception {
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
       final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
       assertTrue(instance.validate(null, null, null, null, null, null));
       assertTrue(instance.validate(null, true, null, null, null, null));
@@ -175,7 +172,7 @@ public class CommonPrimitiveTypeTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void uriLiteral() throws Exception {
-    for (EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
+    for (final EdmPrimitiveTypeKind kind : EdmPrimitiveTypeKind.values()) {
       final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(kind);
       assertEquals("test", instance.fromUriLiteral(instance.toUriLiteral("test")));
       assertNull(instance.toUriLiteral(null));

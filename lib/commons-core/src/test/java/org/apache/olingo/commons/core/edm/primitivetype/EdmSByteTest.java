@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 
@@ -30,11 +29,6 @@ import org.junit.Test;
 public class EdmSByteTest extends PrimitiveTypeBaseTest {
 
   private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte);
-
-  @Test
-  public void compatibility() {
-    assertTrue(instance.isCompatible(Uint7.getInstance()));
-  }
 
   @Test
   public void toUriLiteral() throws Exception {

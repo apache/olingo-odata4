@@ -20,39 +20,24 @@ package org.apache.olingo.server.core.uri.antlr;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.Encoder;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDouble;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmGuid;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt16;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt32;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmInt64;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
-import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
@@ -64,15 +49,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestFullResourcePath {
-  Edm edm = null;
-  TestUriValidator testUri = null;
-  ResourceValidator testRes = null;
-  FilterValidator testFilter = null;
+
+  private static final OData oData = OData.newInstance();
+  private final TestUriValidator testUri;
+  private final FilterValidator testFilter;
 
   public TestFullResourcePath() {
-    edm = new EdmProviderImpl(new EdmTechTestProvider());
+    final Edm edm = oData.createServiceMetadata(new EdmTechTestProvider(), Collections.<EdmxReference> emptyList())
+        .getEdm();
     testUri = new TestUriValidator().setEdm(edm);
-    testRes = new ResourceValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
   }
 
@@ -437,9 +422,9 @@ public class TestFullResourcePath {
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.runEx("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(WrongParameter='1')")
-    .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_PART);
+    .isExSemantic(MessageKeys.UNKNOWN_PART);
     testUri.runEx("ESKeyNav/olingo.odata.test1.BFCESKeyNavRTETKeyNavParam(ParameterString=wrong)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
+    .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
   }
 
   @Test
@@ -960,57 +945,42 @@ public class TestFullResourcePath {
   @Test
   public void runEsNameError() {
 
-    testUri.runEx("ESAllPrim/$count/$ref")
-    .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PROPERTIES);
-    testUri.runEx("ESAllPrim/$ref/$count")
-    .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
-    testUri.runEx("ESAllPrim/$ref/invalid")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
-    testUri.runEx("ESAllPrim/$count/invalid")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
-    testUri.runEx("ESAllPrim/PropertyString")
-    .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
-    testUri.runEx("ESAllPrim(1)/whatever")
-    .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE);
-    testUri.runEx("ESAllPrim(PropertyInt16)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
-    testUri.runEx("ESAllPrim(PropertyInt16=)")
-    .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')")
-    .isExSemantic(UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+    testUri.runEx("ESAllPrim/$count/$ref").isExSemantic(MessageKeys.ONLY_FOR_TYPED_PROPERTIES);
+    testUri.runEx("ESAllPrim/$ref/$count").isExSemantic(MessageKeys.ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESAllPrim/$ref/invalid").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESAllPrim/$count/invalid").isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESAllPrim/PropertyString").isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
+    testUri.runEx("ESAllPrim(1)/whatever").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESAllPrim(PropertyInt16)").isExSemantic(MessageKeys.INVALID_KEY_VALUE);
+    testUri.runEx("ESAllPrim(PropertyInt16=)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESAllPrim(PropertyInt16=1,Invalid='1')").isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
 
     testUri.runEx("ESBase/olingo.odata.test1.ETBase/PropertyInt16")
-    .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
+        .isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        .isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETAllKey")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        .isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETBaseTwoKeyTwoPrim('1')/olingo.odata.test1.ETAllKey")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        .isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim(1)/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        .isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
 
     testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETBaseTwoKeyTwoPrim"
         + "/olingo.odata.test1.ETTwoBaseTwoKeyTwoPrim(1)")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+        .isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETAllKey")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+    testUri.runEx("ETBaseTwoKeyTwoPrim/olingo.odata.test1.ETAllKey").isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
+    testUri.runEx("ETBaseTwoKeyTwoPrim()").isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
+    testUri.runEx("ESAllNullable(1)/CollPropertyString/$value").isExSemantic(MessageKeys.ONLY_FOR_TYPED_PARTS);
 
-    testUri.runEx("ETBaseTwoKeyTwoPrim()")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
-
-    testUri.runEx("ESAllNullable(1)/CollPropertyString/$value")
-    .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
-
-    testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value")
-    .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND);
+    testUri.runEx("ETMixPrimCollComp(1)/ComplexProperty/$value").isExSemantic(MessageKeys.RESOURCE_NOT_FOUND);
   }
 
   @Test
@@ -1286,10 +1256,8 @@ public class TestFullResourcePath {
     .isKeyPredicate(2, "KeyAlias2", "'3'")
     .isKeyPredicate(3, "KeyAlias3", "'4'");
 
-    testUri.runEx("ESTwoPrim(wrong)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
-    testUri.runEx("ESTwoPrim(PropertyInt16=wrong)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
+    testUri.runEx("ESTwoPrim(wrong)").isExSemantic(MessageKeys.INVALID_KEY_VALUE);
+    testUri.runEx("ESTwoPrim(PropertyInt16=wrong)").isExSemantic(MessageKeys.INVALID_KEY_VALUE);
   }
 
   @Test
@@ -1322,13 +1290,12 @@ public class TestFullResourcePath {
   @Test
   public void runEsNameKeyCast() throws Exception {
     // testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
-    // .isExSemantic(UriParserSemanticException.MessageKeys.xxx);
+    // .isExSemantic(MessageKeys.xxx);
 
     // testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
-    // .isExSemantic(UriParserSemanticException.MessageKeys.xxx);
+    // .isExSemantic(MessageKeys.xxx);
 
-    testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+    testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)").isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     testUri.run("ESTwoPrim(1)/olingo.odata.test1.ETBase")
     .isKind(UriInfoKind.resource).goPath()
@@ -2025,10 +1992,8 @@ public class TestFullResourcePath {
   public void runFunctionImpError() {
     testUri.runEx("FICRTCollCTTwoPrimTwoParam")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    testUri.runEx("FICRTCollCTTwoPrimTwoParam()")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
-    testUri.runEx("FICRTCollCTTwoPrimTwoParam(invalidParam=2)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam()").isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(invalidParam=2)").isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
   }
 
   @Test
@@ -2715,9 +2680,9 @@ public class TestFullResourcePath {
     .isSelectText("PropertyCompNav/PropertyInt16");
 
     testUri.runEx("ESKeyNav", "$expand=undefined")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/undefined")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
@@ -2897,7 +2862,7 @@ public class TestFullResourcePath {
     .goPath().first()
     .isEntitySet("ESKeyNav")
     .isKeyPredicate(0, "PropertyInt16", "1");
-    testUri.runEx("ESKeyNav()").isExSemantic(UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
+    testUri.runEx("ESKeyNav()").isExSemantic(MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES);
 
     testUri.run("SINav")
     .isKind(UriInfoKind.resource)
@@ -3187,12 +3152,12 @@ public class TestFullResourcePath {
     .isLiteral("'SomeString'");
 
     testFilter.runOnETTwoKeyNavEx("invalid")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     // TODO: This should throw an exception because the top node of the filter tree must be boolean.
     // testFilter.runOnETTwoKeyNavEx("PropertyComp")
-    // .isExSemantic(UriParserSemanticException.MessageKeys.XYZ);
+    // .isExSemantic(MessageKeys.XYZ);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -3204,11 +3169,11 @@ public class TestFullResourcePath {
     // testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyString eq 1")
     // .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt64 eq 1")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/PropertyInt16 gt 42")
-    .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
+        .isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/NavPropertyETTwoKeyNavOne eq null")
-    .isExSemantic(UriParserSemanticException.MessageKeys.PROPERTY_AFTER_COLLECTION);
+        .isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
 
     testFilter.runOnETAllPrim("PropertySByte eq PropertySByte")
     .is("<<PropertySByte> eq <PropertySByte>>")
@@ -4405,7 +4370,7 @@ public class TestFullResourcePath {
     .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETKeyNav("any()")
     .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
   }
@@ -4995,8 +4960,14 @@ public class TestFullResourcePath {
             .first().isComplex("PropertyCompMixedEnumDef")
             .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator();
 
+    testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has ENString'String1'")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has wrongNamespace.ENString'String1'")
+        .isExSemantic(MessageKeys.UNKNOWN_TYPE);
+    testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has olingo.odata.test1.Wrong'String1'")
+        .isExSemantic(MessageKeys.UNKNOWN_TYPE);
   }
-  
+
   @Test
   public void filterOnCountAndRef() throws Exception {
     testUri.run("ESKeyNav/$count", "$filter=PropertyInt16 ge 0")
@@ -5347,9 +5318,9 @@ public class TestFullResourcePath {
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc desc")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOrderByOnETTwoKeyNavEx("undefined")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyComp/undefined")
-    .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
@@ -5392,62 +5363,62 @@ public class TestFullResourcePath {
   @Test
   public void testErrors() {
     testUri.runEx("FICRTString(wrong1='ABC')/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
+    .isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
     testUri.runEx("FICRTString(wrong1='ABC', wrong2=1)/olingo.odata.test1.BFCStringRTESTwoKeyNav()")
-    .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
+    .isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
 
     // type filter for entity incompatible
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBase")
-    .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+    .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     // type filter for entity double on entry
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')"
         + "/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
-        .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+        .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
     // type filter for entity double on collection
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
-    .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+    .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
     // type filter for entity double on non key pred
     testUri.runEx("SINav/olingo.odata.test1.ETBaseTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
-    .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+    .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex incompatible
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
         + "/olingo.odata.test1.CTCollAllPrim")
-        .isExSemantic(UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+        .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
 
     // type filter for complex double on entry
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')"
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
-        .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+        .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex double on collection
     testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')"
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
-        .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+        .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     // type filter for complex double on non key pred
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim"
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
-        .isExSemantic(UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+        .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
-    .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_TYPE);
+    .isExSemantic(MessageKeys.UNKNOWN_TYPE);
 
     // $ref
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$ref")
-    .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_ENTITY_TYPES);
+    .isExSemantic(MessageKeys.ONLY_FOR_ENTITY_TYPES);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyCompTwoPrim/$count")
-    .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_COLLECTIONS);
+    .isExSemantic(MessageKeys.ONLY_FOR_COLLECTIONS);
 
     // Actions must not be followed by anything.
     testUri.runEx(ContainerProvider.AIRT_STRING + "/$value")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE);
     testUri.runEx(ContainerProvider.AIRTCT_TWO_PRIM_PARAM + "/PropertyInt16")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/"
         + "olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav/olingo.odata.test1.ETTwoKeyNav")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExSemantic(MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav/$count")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_COUNT);
   }
@@ -5586,80 +5557,90 @@ public class TestFullResourcePath {
   public void filterLiteralTypes() throws Exception {
     testUri.run("ESAllPrim", "$filter='1' eq 42")
       .goFilter().isBinary(BinaryOperatorKind.EQ)
-        .left().isLiteral("'1'").isLiteralType(EdmString.getInstance())
+        .left().isLiteral("'1'").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String))
         .root()
-        .right().isLiteral("42").isLiteralType(EdmSByte.getInstance());
+        .right().isLiteral("42").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte));
 
     testUri.run("ESAllPrim", "$filter=127 eq 128")
       .goFilter().isBinary(BinaryOperatorKind.EQ)
-        .left().isLiteral("127").isLiteralType(EdmSByte.getInstance())
+        .left().isLiteral("127").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte))
         .root()
-        .right().isLiteral("128").isLiteralType(EdmByte.getInstance());
+        .right().isLiteral("128").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte));
     
     testUri.run("ESAllPrim", "$filter=null eq 42.1")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
       .left().isLiteral("null").isNullLiteralType()
       .root()
-      .right().isLiteral("42.1").isLiteralType(EdmDecimal.getInstance());
+      .right().isLiteral("42.1").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
     
     testUri.run("ESAllPrim", "$filter=15.6E300 eq 3.4E37")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
       .left().isLiteral("15.6E300")
-      .isLiteralType(EdmDouble.getInstance())
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double))
       .root()
-      .right().isLiteral("3.4E37").isLiteralType(EdmDouble.getInstance());
+      .right().isLiteral("3.4E37").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
     
     testUri.run("ESAllPrim", "$filter=15.55555555555555555555555555555555555555555555 eq 3.1")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
       .left().isLiteral("15.55555555555555555555555555555555555555555555")
-      .isLiteralType(EdmDecimal.getInstance())
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal))
       .root()
-      .right().isLiteral("3.1").isLiteralType(EdmDecimal.getInstance());
+      .right().isLiteral("3.1").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
     
     testUri.run("ESAllPrim", "$filter=duration'PT1H2S' eq 2012-12-03")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("duration'PT1H2S'").isLiteralType(EdmDuration.getInstance())
+      .left().isLiteral("duration'PT1H2S'")
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration))
       .root()
-      .right().isLiteral("2012-12-03").isLiteralType(EdmDate.getInstance());
+      .right().isLiteral("2012-12-03").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date));
     
     testUri.run("ESAllPrim", "$filter=true eq 2012-12-03T07:16:23Z")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("true").isLiteralType(EdmBoolean.getInstance())
+      .left().isLiteral("true").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean))
       .root()
-      .right().isLiteral("2012-12-03T07:16:23Z").isLiteralType(EdmDateTimeOffset.getInstance());
+      .right().isLiteral("2012-12-03T07:16:23Z")
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset));
     
     testUri.run("ESAllPrim", "$filter=07:59:59.999 eq 01234567-89ab-cdef-0123-456789abcdef")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("07:59:59.999").isLiteralType(EdmTimeOfDay.getInstance())
+      .left().isLiteral("07:59:59.999")
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay))
       .root()
-      .right().isLiteral("01234567-89ab-cdef-0123-456789abcdef").isLiteralType(EdmGuid.getInstance());
+      .right().isLiteral("01234567-89ab-cdef-0123-456789abcdef")
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Guid));
     
     testUri.run("ESAllPrim", "$filter=binary'0FAB7B' eq true")
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("binary'0FAB7B'").isLiteralType(EdmBinary.getInstance())
+      .left().isLiteral("binary'0FAB7B'").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary))
       .root()
-      .right().isLiteral("true").isLiteralType(EdmBoolean.getInstance());
+      .right().isLiteral("true").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
     
     testUri.run("ESAllPrim", "$filter=" + Short.MIN_VALUE + " eq " + Short.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Short.MIN_VALUE).isLiteralType(EdmInt16.getInstance())
+      .left().isLiteral("" + Short.MIN_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16))
       .root()
-      .right().isLiteral("" + Short.MAX_VALUE).isLiteralType(EdmInt16.getInstance());
-    
+      .right().isLiteral("" + Short.MAX_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16));
+
     testUri.run("ESAllPrim", "$filter=" + Integer.MIN_VALUE + " eq " + Integer.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Integer.MIN_VALUE).isLiteralType(EdmInt32.getInstance())
+      .left().isLiteral("" + Integer.MIN_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32))
       .root()
-      .right().isLiteral("" + Integer.MAX_VALUE).isLiteralType(EdmInt32.getInstance());
+      .right().isLiteral("" + Integer.MAX_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32));
     
     testUri.run("ESAllPrim", "$filter=" + Long.MIN_VALUE + " eq " + Long.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Long.MIN_VALUE).isLiteralType(EdmInt64.getInstance())
+      .left().isLiteral("" + Long.MIN_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64))
       .root()
-      .right().isLiteral("" + Long.MAX_VALUE).isLiteralType(EdmInt64.getInstance());
+      .right().isLiteral("" + Long.MAX_VALUE)
+      .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64));
   }
 
-  public static String encode(final String decoded) throws UnsupportedEncodingException {
-    return Encoder.encode(decoded);
+  public static String encode(final String decoded) {
+    return decoded.replaceAll(":", "%3A");
   }
 }

@@ -85,7 +85,7 @@ public abstract class VisitorOperand {
 
   public abstract TypedOperand asTypedOperand() throws ODataApplicationException;
 
-  public abstract TypedOperand asTypedOperand(EdmPrimitiveType... types) throws ODataApplicationException;
+  public abstract TypedOperand asTypedOperand(EdmPrimitiveType type) throws ODataApplicationException;
 
   public abstract EdmProperty getEdmProperty();
 

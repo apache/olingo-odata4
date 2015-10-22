@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -54,36 +55,42 @@ public class TypedOperand extends VisitorOperand {
   }
 
   @Override
-  public TypedOperand asTypedOperand(final EdmPrimitiveType... asTypes) throws ODataApplicationException {
+  public TypedOperand asTypedOperand(final EdmPrimitiveType asType) throws ODataApplicationException {
     if (is(primNull)) {
       return this;
     } else if (isNull()) {
-      return new TypedOperand(null, asTypes[0]);
+      return new TypedOperand(null, asType);
     }
 
     Object newValue = null;
-    for (EdmPrimitiveType asType : asTypes) {
-      // Use BigDecimal for unlimited precision
-      if (asType.equals(primDouble) || asType.equals(primSingle) || asType.equals(primDecimal)) {
-
-        try {
-          newValue = new BigDecimal(value.toString());
-        } catch (NumberFormatException e) {
-          // Nothing to do
-        }
-      } else {
-        // Use type conversion of EdmPrimitive types
-        try {
-          final String literal = getLiteral(value);
-          newValue = tryCast(literal, asType);
-        } catch (EdmPrimitiveTypeException e) {
-          // Nothing to do
-        }
+    // Use BigInteger for arbitrarily large whole numbers.
+    if (asType.equals(primSByte) || asType.equals(primByte)
+        || asType.equals(primInt16) || asType.equals(primInt32) || asType.equals(primInt64)) {
+      if (value instanceof BigInteger) {
+        newValue = value;
+      } else if (value instanceof Byte || value instanceof Short
+          || value instanceof Integer || value instanceof Long) {
+        newValue = BigInteger.valueOf(((Number) value).longValue());
       }
-
-      if (newValue != null) {
-        return new TypedOperand(newValue, asType);
+    // Use BigDecimal for unlimited precision.
+    } else if (asType.equals(primDouble) || asType.equals(primSingle) || asType.equals(primDecimal)) {
+      try {
+        newValue = new BigDecimal(value.toString());
+      } catch (NumberFormatException e) {
+        // Nothing to do
       }
+    } else {
+      // Use type conversion of EdmPrimitive types
+      try {
+        final String literal = getLiteral(value);
+        newValue = tryCast(literal, asType);
+      } catch (EdmPrimitiveTypeException e) {
+        // Nothing to do
+      }
+    }
+
+    if (newValue != null) {
+      return new TypedOperand(newValue, asType);
     }
 
     throw new ODataApplicationException("Cast failed", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
@@ -93,11 +100,9 @@ public class TypedOperand extends VisitorOperand {
     final TypedOperand other = otherOperand.asTypedOperand();
     final EdmType oType = other.getType();
     
-    // In case of numberic values make sure that the EDM type is equals, check also the java type.
-    // So it is possible, that there is an conversation even if the same
-    // EdmType is provided.
-    // For example consider an Edm16 (internal Integer) and Edm16(internal
-    // Short)
+    // In case of numberic values make sure that the EDM type is equal, check also the java type.
+    // It is possible that there is an conversion even if the same EdmType is provided.
+    // For example consider an Edm.Int32 (internal Integer) and an Edm.Int16 (internal Short) value:
     // shortInstance.equals(intInstance) will always be false!
     if (type == oType && value != null && other.getValue() != null
         && value.getClass() == other.getValue().getClass()) {

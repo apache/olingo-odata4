@@ -70,8 +70,6 @@ public interface EdmPrimitiveType extends EdmType {
 
   String EDM_NAMESPACE = "Edm";
 
-  String SYSTEM_NAMESPACE = "System";
-
   /**
    * Checks type compatibility.
    *

@@ -44,6 +44,9 @@
     <module>p6_queryoptions-es</module>
     <module>p7_queryoptions-o</module>
     <module>p8_queryoptions-f</module>
+	<module>p9_action</module>
+	<module>p9_action_preparation</module>
+	<module>p10_media</module>
   </modules>
 
   <build>

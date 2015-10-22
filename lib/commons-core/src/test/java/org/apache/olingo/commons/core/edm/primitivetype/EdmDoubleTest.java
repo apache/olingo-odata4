@@ -34,7 +34,6 @@ public class EdmDoubleTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void compatibility() {
-    assertTrue(instance.isCompatible(Uint7.getInstance()));
     assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)));
     assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)));
     assertTrue(instance.isCompatible(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)));

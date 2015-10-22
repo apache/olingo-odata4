@@ -23,8 +23,9 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -48,16 +49,19 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operati
 
 public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> {
 
-  final private Entity entity;
+  private final Entity entity;
+  private final UriInfoResource uriInfo;
+  private final Edm edm;
 
-  public ExpressionVisitorImpl(final Entity entity, final EdmBindingTarget bindingTarget) {
+  public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo, final Edm edm) {
     this.entity = entity;
+    this.uriInfo = uriInfo;
+    this.edm = edm;
   }
 
   @Override
   public VisitorOperand visitBinaryOperator(final BinaryOperatorKind operator, final VisitorOperand left,
-      final VisitorOperand right)
-      throws ExpressionVisitException, ODataApplicationException {
+      final VisitorOperand right) throws ExpressionVisitException, ODataApplicationException {
 
     final BinaryOperator binaryOperator = new BinaryOperator(left, right);
 
@@ -84,6 +88,9 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     case DIV:
     case MOD:
       return binaryOperator.arithmeticOperator(operator);
+    case HAS:
+      return binaryOperator.hasOperator();
+
     default:
       return throwNotImplemented();
     }
@@ -161,15 +168,13 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitLambdaExpression(final String lambdaFunction, final String lambdaVariable,
-      final Expression expression)
-      throws ExpressionVisitException, ODataApplicationException {
-
+      final Expression expression) throws ExpressionVisitException, ODataApplicationException {
     return throwNotImplemented();
   }
 
   @Override
   public VisitorOperand visitLiteral(final Literal literal) throws ExpressionVisitException, ODataApplicationException {
-    return new UntypedOperand(literal.getText());
+    return new UntypedOperand(literal.getText(), edm);
   }
 
   @Override
@@ -204,12 +209,12 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitAlias(final String aliasName) throws ExpressionVisitException, ODataApplicationException {
-    return throwNotImplemented();
+    return new UntypedOperand(uriInfo.getValueForAlias(aliasName), edm);
   }
 
   @Override
-  public VisitorOperand visitTypeLiteral(final EdmType type) throws ExpressionVisitException, 
-      ODataApplicationException {
+  public VisitorOperand visitTypeLiteral(final EdmType type)
+      throws ExpressionVisitException, ODataApplicationException {
     return throwNotImplemented();
   }
 
@@ -221,9 +226,18 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitEnum(final EdmEnumType type, final List<String> enumValues)
-      throws ExpressionVisitException,
-      ODataApplicationException {
-    return throwNotImplemented();
+      throws ExpressionVisitException, ODataApplicationException {
+    Long result = null;
+    try {
+      for (final String enumValue : enumValues) {
+        final Long value = type.valueOfString(enumValue, null, null, null, null, null, Long.class);
+        result = result == null ? value : result | value;
+      }
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new ODataApplicationException("Illegal enum value.",
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT, e);
+    }
+    return new TypedOperand(result, type);
   }
 
   private VisitorOperand throwNotImplemented() throws ODataApplicationException {

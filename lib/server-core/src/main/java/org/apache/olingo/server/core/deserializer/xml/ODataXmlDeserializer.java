@@ -54,16 +54,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.AbstractGeospatialType;
-import org.apache.olingo.commons.core.edm.primitivetype.SingletonPrimitiveType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
@@ -152,9 +149,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {        
-        if (edmType instanceof SingletonPrimitiveType
-            || edmType.getKind() == EdmTypeKind.ENUM
-            || edmType.getKind() == EdmTypeKind.DEFINITION) {
+        if (edmType instanceof EdmPrimitiveType) {
           values.add(primitive(reader, event.asStartElement(), type, isNullable, 
               maxLength, precision, scale, isUnicode));          
         } else if (edmType instanceof EdmComplexType) {
@@ -191,14 +186,14 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   private ValueType getValueType(EdmType edmType, boolean isCollection) {
-    if (edmType instanceof SingletonPrimitiveType) {
-      return isCollection? ValueType.COLLECTION_PRIMITIVE:ValueType.PRIMITIVE;
+    if (edmType instanceof EdmPrimitiveType) {
+      if (edmType instanceof EdmEnumType) {
+        return isCollection ? ValueType.COLLECTION_ENUM : ValueType.ENUM;
+      } else {
+        return isCollection ? ValueType.COLLECTION_PRIMITIVE : ValueType.PRIMITIVE;
+      }
     } else if (edmType instanceof EdmComplexType) {
-      return isCollection? ValueType.COLLECTION_COMPLEX:ValueType.COMPLEX;
-    } else if (edmType instanceof EdmEnumType) {
-      return isCollection?ValueType.COLLECTION_ENUM:ValueType.ENUM;
-    } else if (edmType instanceof EdmTypeDefinition) {
-      return isCollection?ValueType.COLLECTION_PRIMITIVE:ValueType.PRIMITIVE;
+      return isCollection ? ValueType.COLLECTION_COMPLEX : ValueType.COMPLEX;
     } else {
       return ValueType.PRIMITIVE;
     }
@@ -227,9 +222,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     valuable.setType(isCollection ? ("Collection(" + typeName + ")") : typeName);
     if (isCollection) {
       collection(valuable, reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode);
-    } else if (edmType instanceof SingletonPrimitiveType
-        || edmType.getKind() == EdmTypeKind.ENUM
-        || edmType.getKind() == EdmTypeKind.DEFINITION) {
+    } else if (edmType instanceof EdmPrimitiveType) {
       valuable.setValue(getValueType(edmType, false),
           primitive(reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode));          
     } else if (edmType instanceof EdmComplexType) {

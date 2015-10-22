@@ -922,14 +922,18 @@ public class MetadataDocumentXmlSerializer {
     for (EdmEnumType enumType : enumTypes) {
       writer.writeStartElement(XML_ENUM_TYPE);
       writer.writeAttribute(XML_NAME, enumType.getName());
-      writer.writeAttribute(XML_IS_FLAGS, "" + enumType.isFlags());
+      writer.writeAttribute(XML_IS_FLAGS, Boolean.toString(enumType.isFlags()));
       writer.writeAttribute(XML_UNDERLYING_TYPE, getFullQualifiedName(enumType.getUnderlyingType(), false));
 
       for (String memberName : enumType.getMemberNames()) {
         writer.writeEmptyElement(XML_MEMBER);
         writer.writeAttribute(XML_NAME, memberName);
+        
         EdmMember member = enumType.getMember(memberName);
-        writer.writeAttribute(XML_VALUE, member.getValue());
+        if (member.getValue() != null) {
+          writer.writeAttribute(XML_VALUE, member.getValue());
+        }
+        
         appendAnnotations(writer, member);
       }
 

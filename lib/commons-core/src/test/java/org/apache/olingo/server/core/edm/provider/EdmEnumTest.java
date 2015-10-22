@@ -71,31 +71,28 @@ public class EdmEnumTest {
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(false)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
 
-    int16EnumType = new EdmEnumTypeImpl(null,
-        new FullQualifiedName("testNamespace", "testName"),
-        new CsdlEnumType().setName("MyEnum")
-            .setFlags(false)
-            .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
-            .setMembers(Arrays.asList(
-                new CsdlEnumMember().setName("A").setValue("0"),
-                new CsdlEnumMember().setName("B").setValue("1"),
-                new CsdlEnumMember().setName("C").setValue("2"))));
+    final FullQualifiedName testName = new FullQualifiedName("testNamespace", "testName");
 
-    int32EnumType = new EdmEnumTypeImpl(null,
-        new FullQualifiedName("testNamespace", "testName"),
+    int16EnumType = new EdmEnumTypeImpl(null, testName,
+        new CsdlEnumType().setName("MyEnum")
+            .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
+            .setMembers(Arrays.asList(  // implicit values according to specification: 0, 1, 2
+                new CsdlEnumMember().setName("A"),
+                new CsdlEnumMember().setName("B"),
+                new CsdlEnumMember().setName("C"))));
+
+    int32EnumType = new EdmEnumTypeImpl(null, testName,
         new CsdlEnumType().setName("MyEnum")
             .setFlags(false)
             .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
             .setMembers(Arrays.asList(
                 new CsdlEnumMember().setName("A").setValue("0"),
                 new CsdlEnumMember().setName("B").setValue("1"),
-                new CsdlEnumMember().setName("C").setValue("2"))));
+                new CsdlEnumMember().setName("C").setValue("65536"))));
 
-    int32FlagType = new EdmEnumTypeImpl(null,
-        new FullQualifiedName("testNamespace", "testName"),
+    int32FlagType = new EdmEnumTypeImpl(null, testName,
         new CsdlEnumType().setName("MyEnum")
             .setFlags(true)
-            .setUnderlyingType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName())
             .setMembers(Arrays.asList(
                 new CsdlEnumMember().setName("A").setValue("2"),
                 new CsdlEnumMember().setName("B").setValue("4"),
@@ -127,22 +124,26 @@ public class EdmEnumTest {
   @Test
   public void defaultType() throws Exception {
     assertEquals(Byte.class, instance.getDefaultType());
-    EdmEnumType instance = new EdmEnumTypeImpl(null,
-        new FullQualifiedName("testNamespace", "testName"),
-        new CsdlEnumType().setName("MyEnum"));
-    assertEquals(Integer.class, instance.getUnderlyingType().getDefaultType());
+    assertEquals(Integer.class, int32FlagType.getUnderlyingType().getDefaultType());
   }
 
   @Test
   public void members() throws Exception {
     assertArrayEquals(new String[] { "first", "second" }, instance.getMemberNames().toArray());
-    assertEquals("64", instance.getMember("second").getValue());
+    assertEquals("64", otherInstance.getMember("second").getValue());
     assertNull(instance.getMember("notExisting"));
   }
 
   @Test
   public void underlyingType() throws Exception {
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte), instance.getUnderlyingType());
+  }
+
+  @Test
+  public void isFlags() throws Exception {
+    assertTrue(instance.isFlags());
+    assertFalse(nonFlagsInstance.isFlags());
+    assertFalse(int16EnumType.isFlags());
   }
 
   @Test
@@ -193,7 +194,7 @@ public class EdmEnumTest {
 
     assertEquals("A", int32EnumType.valueToString(0, false, 0, 0, 0, false));
     assertEquals("B", int32EnumType.valueToString(1, false, 0, 0, 0, false));
-    assertEquals("C", int32EnumType.valueToString(2, false, 0, 0, 0, false));
+    assertEquals("C", int32EnumType.valueToString(65536, false, 0, 0, 0, false));
 
     assertEquals("A", int16EnumType.valueToString(0, false, 0, 0, 0, false));
     assertEquals("B", int16EnumType.valueToString(1, false, 0, 0, 0, false));
@@ -228,11 +229,17 @@ public class EdmEnumTest {
 
     assertEquals(Integer.valueOf(0), int32EnumType.valueOfString("A", null, null, null, null, null, Integer.class));
     assertEquals(Integer.valueOf(1), int32EnumType.valueOfString("B", null, null, null, null, null, Integer.class));
-    assertEquals(Integer.valueOf(2), int32EnumType.valueOfString("C", null, null, null, null, null, Integer.class));
+    assertEquals(Integer.valueOf(65536), int32EnumType.valueOfString("C", null, null, null, null, null,
+        Integer.class));
 
-    assertEquals(Integer.valueOf(0), int16EnumType.valueOfString("A", null, null, null, null, null, Integer.class));
-    assertEquals(Integer.valueOf(1), int16EnumType.valueOfString("B", null, null, null, null, null, Integer.class));
-    assertEquals(Integer.valueOf(2), int16EnumType.valueOfString("C", null, null, null, null, null, Integer.class));
+    expectErrorInValueOfString(int32EnumType, "65536", null, Short.class, "converted");
+
+    assertEquals(Short.valueOf((short) 0), int16EnumType.valueOfString("A", null, null, null, null, null,
+        Short.class));
+    assertEquals(Short.valueOf((short) 1), int16EnumType.valueOfString("B", null, null, null, null, null,
+        Short.class));
+    assertEquals(Short.valueOf((short) 2), int16EnumType.valueOfString("C", null, null, null, null, null,
+        Short.class));
 
     assertEquals(Integer.valueOf(2), int32FlagType.valueOfString("A", null, null, null, null, null, Integer.class));
     assertEquals(Integer.valueOf(4), int32FlagType.valueOfString("B", null, null, null, null, null, Integer.class));
@@ -245,47 +252,31 @@ public class EdmEnumTest {
         Integer.class));
   }
 
-  private void expectErrorInValueToString(final EdmEnumType instance,
-      final Object value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode,
-      final String message) {
-    try {
-      instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
-      fail("Expected exception not thrown");
-    } catch (final EdmPrimitiveTypeException e) {
-      assertNotNull(e.getLocalizedMessage());
-      assertThat(e.getLocalizedMessage(), containsString(message));
-    }
-  }
-
-  private void expectErrorInUnderlyingType(final EdmPrimitiveTypeKind underlyingType, final String message) {
+  private void expectErrorInUnderlyingType(final EdmPrimitiveTypeKind underlyingType) {
     try {
       new EdmEnumTypeImpl(null,
           new FullQualifiedName("testNamespace", "testName"),
           new CsdlEnumType()
               .setName("MyEnum")
-              .setFlags(false)
-              .setUnderlyingType(underlyingType.getFullQualifiedName())
-              .setMembers(Arrays.asList(
-                  new CsdlEnumMember().setName("A").setValue("0"))));
+              .setUnderlyingType(underlyingType.getFullQualifiedName()));
       fail("Expected exception not thrown");
     } catch (final EdmException e) {
       assertNotNull(e.getLocalizedMessage());
-      assertThat(e.getLocalizedMessage(), containsString(message));
+      assertThat(e.getLocalizedMessage(), containsString("underlying type"));
     }
   }
 
   @Test
   public void unsupportedUnderlyingType() throws Exception {
-    // Test some random unsupported types
-    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Date, "");
-    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Geography, "");
-    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Guid, "");
+    // Test some random unsupported types.
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Date);
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.GeographyPoint);
+    expectErrorInUnderlyingType(EdmPrimitiveTypeKind.Guid);
   }
 
   @Test
   public void outOfRangeValueToString() throws Exception {
-    expectErrorInValueToString(int16EnumType, Integer.MAX_VALUE, null, null, null, null, null, "");
+    expectContentErrorInValueToString(int16EnumType, Integer.MAX_VALUE);
   }
 
   protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {
@@ -298,12 +289,10 @@ public class EdmEnumTest {
     }
   }
 
-  private void expectErrorInValueToString(final EdmPrimitiveType instance,
-      final Object value, final Boolean isNullable, final Integer maxLength,
-      final Integer precision, final Integer scale, final Boolean isUnicode,
-      final String message) {
+  private void expectErrorInValueToString(final EdmPrimitiveType instance, final Object value,
+      final Boolean isNullable, final String message) {
     try {
-      instance.valueToString(value, isNullable, maxLength, precision, scale, isUnicode);
+      instance.valueToString(value, isNullable, null, null, null, null);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
       assertNotNull(e.getLocalizedMessage());
@@ -312,24 +301,21 @@ public class EdmEnumTest {
   }
 
   protected void expectNullErrorInValueToString(final EdmPrimitiveType instance) {
-    expectErrorInValueToString(instance, null, false, null, null, null, null, "The value NULL is not allowed.");
+    expectErrorInValueToString(instance, null, false, "The value NULL is not allowed.");
   }
 
   protected void expectTypeErrorInValueToString(final EdmPrimitiveType instance, final Object value) {
-    expectErrorInValueToString(instance, value, null, null, null, null, null, "value type");
+    expectErrorInValueToString(instance, value, null, "value type");
   }
 
   protected void expectContentErrorInValueToString(final EdmPrimitiveType instance, final Object value) {
-    expectErrorInValueToString(instance, value, null, null, null, null, null, "' is not valid.");
+    expectErrorInValueToString(instance, value, null, "' is not valid.");
   }
 
-  private void expectErrorInValueOfString(final EdmPrimitiveType instance,
-      final String value, final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<?> returnType,
-      final String message) {
-
+  private void expectErrorInValueOfString(final EdmPrimitiveType instance, final String value,
+      final Boolean isNullable, final Class<?> returnType, final String message) {
     try {
-      instance.valueOfString(value, isNullable, maxLength, precision, scale, isUnicode, returnType);
+      instance.valueOfString(value, isNullable, null, null, null, null, returnType);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
       assertNotNull(e.getLocalizedMessage());
@@ -338,17 +324,16 @@ public class EdmEnumTest {
   }
 
   protected void expectTypeErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
-    expectErrorInValueOfString(instance, value, null, null, null, null, null, Class.class,
+    expectErrorInValueOfString(instance, value, null, Class.class,
         "The value type class java.lang.Class is not supported.");
   }
 
   protected void expectContentErrorInValueOfString(final EdmPrimitiveType instance, final String value) {
-    expectErrorInValueOfString(instance, value, null, null, null, null, null, instance.getDefaultType(),
-        "illegal content");
+    expectErrorInValueOfString(instance, value, null, instance.getDefaultType(), "illegal content");
   }
 
   protected void expectNullErrorInValueOfString(final EdmPrimitiveType instance) {
-    expectErrorInValueOfString(instance, null, false, null, null, null, null, instance.getDefaultType(),
+    expectErrorInValueOfString(instance, null, false, instance.getDefaultType(),
         "The literal 'null' is not allowed.");
   }
 }

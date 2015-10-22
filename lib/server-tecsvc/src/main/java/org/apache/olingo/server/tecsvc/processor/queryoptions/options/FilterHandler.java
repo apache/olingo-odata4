@@ -23,12 +23,13 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.ExpressionVisitorImpl;
@@ -37,16 +38,11 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand
 
 public class FilterHandler {
 
-  protected static final OData oData;
-  protected static final EdmPrimitiveType primBoolean;
-
-  static {
-    oData = OData.newInstance();
-    primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
-  }
+  protected static final EdmPrimitiveType primBoolean =
+      OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
 
   public static void applyFilterSystemQuery(final FilterOption filterOption, final EntityCollection entitySet,
-      final EdmBindingTarget edmEntitySet) throws ODataApplicationException {
+      final UriInfoResource uriInfo, final Edm edm) throws ODataApplicationException {
 
     if (filterOption == null) {
       return;
@@ -57,16 +53,17 @@ public class FilterHandler {
 
       while (iter.hasNext()) {
         final VisitorOperand operand = filterOption.getExpression()
-            .accept(new ExpressionVisitorImpl(iter.next(), edmEntitySet));
+            .accept(new ExpressionVisitorImpl(iter.next(), uriInfo, edm));
         final TypedOperand typedOperand = operand.asTypedOperand();
-        
-        if(typedOperand.is(primBoolean)) {
-          if(Boolean.FALSE.equals(typedOperand.getTypedValue(Boolean.class))) {
+
+        if (typedOperand.is(primBoolean)) {
+          if (Boolean.FALSE.equals(typedOperand.getTypedValue(Boolean.class))) {
             iter.remove();
           }
         } else {
-          throw new ODataApplicationException("Invalid filter expression. Filter expressions must return a value of " 
-                + "type Edm.Boolean", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+          throw new ODataApplicationException(
+              "Invalid filter expression. Filter expressions must return a value of type Edm.Boolean",
+              HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
         }
       }
 
