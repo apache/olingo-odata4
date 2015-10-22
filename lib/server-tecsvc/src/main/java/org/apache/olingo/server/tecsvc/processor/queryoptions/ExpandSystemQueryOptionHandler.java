@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -35,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
@@ -53,29 +55,28 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler
 public class ExpandSystemQueryOptionHandler {
 
   public void applyExpandQueryOptions(final EntityCollection entitySet, final EdmEntitySet edmEntitySet,
-      final ExpandOption expandOption) throws ODataApplicationException {
+      final ExpandOption expandOption, final UriInfoResource uriInfo, final Edm edm) throws ODataApplicationException {
     if (expandOption == null) {
       return;
     }
 
     for (final Entity entity : entitySet.getEntities()) {
-      applyExpandOptionToEntity(entity, edmEntitySet, expandOption);
+      applyExpandOptionToEntity(entity, edmEntitySet, expandOption, uriInfo, edm);
     }
   }
 
   public void applyExpandQueryOptions(final Entity entity, final EdmEntitySet edmEntitySet,
-      final ExpandOption expandOption)
-      throws ODataApplicationException {
+      final ExpandOption expandOption, final UriInfoResource uriInfo, final Edm edm) throws ODataApplicationException {
     if (expandOption == null) {
       return;
     }
 
-    applyExpandOptionToEntity(entity, edmEntitySet, expandOption);
+    applyExpandOptionToEntity(entity, edmEntitySet, expandOption, uriInfo, edm);
   }
 
   private void applyExpandOptionToEntity(final Entity entity, final EdmBindingTarget edmBindingTarget,
-      final ExpandOption expandOption) throws ODataApplicationException {
-    
+      final ExpandOption expandOption, final UriInfoResource uriInfo, final Edm edm) throws ODataApplicationException {
+
     final EdmEntityType entityType = edmBindingTarget.getEntityType();
 
     for (ExpandItem item : expandOption.getExpandItems()) {
@@ -103,7 +104,7 @@ public class ExpandSystemQueryOptionHandler {
         }
       }
 
-      for(EdmNavigationProperty navigationProperty: navigationProperties) {
+      for (EdmNavigationProperty navigationProperty: navigationProperties) {
         final String navPropertyName = navigationProperty.getName();
         final EdmBindingTarget targetEdmEntitySet = edmBindingTarget.getRelatedBindingTarget(navPropertyName);
 
@@ -116,7 +117,8 @@ public class ExpandSystemQueryOptionHandler {
               item.getCountOption(),
               item.getSkipOption(),
               item.getTopOption(),
-              item.getExpandOption());
+              item.getExpandOption(),
+              uriInfo, edm);
         }
       }
     }
@@ -125,11 +127,12 @@ public class ExpandSystemQueryOptionHandler {
   private void applyOptionsToEntityCollection(final EntityCollection entitySet,
       final EdmBindingTarget edmBindingTarget,
       final FilterOption filterOption, final OrderByOption orderByOption, final CountOption countOption,
-      final SkipOption skipOption, final TopOption topOption, final ExpandOption expandOption)
+      final SkipOption skipOption, final TopOption topOption, final ExpandOption expandOption,
+      final UriInfoResource uriInfo, final Edm edm)
       throws ODataApplicationException {
 
-    FilterHandler.applyFilterSystemQuery(filterOption, entitySet, edmBindingTarget);
-    OrderByHandler.applyOrderByOption(orderByOption, entitySet, edmBindingTarget);
+    FilterHandler.applyFilterSystemQuery(filterOption, entitySet, uriInfo, edm);
+    OrderByHandler.applyOrderByOption(orderByOption, entitySet, uriInfo, edm);
     CountHandler.applyCountSystemQueryOption(countOption, entitySet);
     SkipHandler.applySkipSystemQueryHandler(skipOption, entitySet);
     TopHandler.applyTopSystemQueryOption(topOption, entitySet);
@@ -137,7 +140,7 @@ public class ExpandSystemQueryOptionHandler {
     // Apply nested expand system query options to remaining entities
     if (expandOption != null) {
       for (final Entity entity : entitySet.getEntities()) {
-        applyExpandOptionToEntity(entity, edmBindingTarget, expandOption);
+        applyExpandOptionToEntity(entity, edmBindingTarget, expandOption, uriInfo, edm);
       }
     }
   }

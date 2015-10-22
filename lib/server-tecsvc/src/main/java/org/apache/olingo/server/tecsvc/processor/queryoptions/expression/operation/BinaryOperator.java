@@ -168,7 +168,15 @@ public class BinaryOperator {
     return new TypedOperand(result, primBoolean);
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  public VisitorOperand hasOperator() throws ODataApplicationException {
+    final boolean result = isBinaryComparisonNecessary()
+        && !left.getTypedValue(BigInteger.class).equals(BigInteger.ZERO)
+        && left.getTypedValue(BigInteger.class).and(BigInteger.valueOf(right.getTypedValue(Number.class).longValue()))
+            .equals(BigInteger.valueOf(right.getTypedValue(Number.class).longValue()));
+    return new TypedOperand(result, primBoolean);
+  }
+
+  @SuppressWarnings("unchecked")
   private boolean binaryComparison(final int... expect) {
     int result;
 
@@ -180,13 +188,14 @@ public class BinaryOperator {
         result = left.getTypedValue(BigInteger.class).compareTo(right.getTypedValue(BigInteger.class));
       } else if (left.isDecimalType()) {
         result = left.getTypedValue(BigDecimal.class).compareTo(right.getTypedValue(BigDecimal.class));
-      } else if(left.getValue().getClass() == right.getValue().getClass() && left.getValue() instanceof Comparable) {
-        result = ((Comparable)left.getValue()).compareTo(right.getValue());
+      } else if(left.getValue().getClass() == right.getValue().getClass()
+          && left.getValue() instanceof Comparable<?>) {
+        result = ((Comparable<Object>) left.getValue()).compareTo(right.getValue());
       } else {
         result = left.getValue().equals(right.getValue()) ? 0 : 1;
       }
     } 
-    
+
     for (int expectedValue : expect) {
       if (expectedValue == result) {
         return true;

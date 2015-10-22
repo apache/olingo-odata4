@@ -91,15 +91,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   @Override
-  public void countEntityCollection(final ODataRequest request, final ODataResponse response, final UriInfo
-      uriInfo) throws ODataApplicationException, ODataLibraryException {
+  public void countEntityCollection(final ODataRequest request, final ODataResponse response,
+      final UriInfo uriInfo) throws ODataApplicationException, ODataLibraryException {
     validateOptions(uriInfo.asUriInfoResource());
-    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo); // including checks
+    getEdmEntitySet(uriInfo); // including checks
     final EntityCollection entitySetInitial = readEntityCollection(uriInfo);
     EntityCollection entitySet = new EntityCollection();
 
     entitySet.getEntities().addAll(entitySetInitial.getEntities());
-    FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
+    FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     response.setContent(odata.createFixedFormatSerializer().count(
         entitySet.getEntities().size()));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
@@ -430,7 +430,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
     final Entity entitySerialization = expandHandler.transformEntityGraphToTree(entity, edmEntitySet, expand);
-    expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand);
+    expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand, uriInfo,
+        serviceMetadata.getEdm());
 
     final SerializerResult serializerResult = isReference ?
         serializeReference(entity, edmEntitySet, requestedFormat) :
@@ -480,9 +481,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
     // Apply system query options
-    FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, edmEntitySet);
+    FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     CountHandler.applyCountSystemQueryOption(uriInfo.getCountOption(), entitySet);
-    OrderByHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, edmEntitySet);
+    OrderByHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     SkipHandler.applySkipSystemQueryHandler(uriInfo.getSkipOption(), entitySet);
     TopHandler.applyTopSystemQueryOption(uriInfo.getTopOption(), entitySet);
 
@@ -505,7 +506,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet,
         edmEntitySet,
         expand);
-    expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand);
+    expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand, uriInfo,
+        serviceMetadata.getEdm());
     final CountOption countOption = uriInfo.getCountOption();
 
     String id;

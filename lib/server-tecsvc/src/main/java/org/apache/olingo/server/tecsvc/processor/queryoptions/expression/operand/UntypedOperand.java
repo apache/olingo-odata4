@@ -20,15 +20,21 @@ package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operan
 
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 
 public class UntypedOperand extends VisitorOperand {
 
-  public UntypedOperand(final String literal) {
+  private final Edm edm;
+
+  public UntypedOperand(final String literal, final Edm edm) {
     super(literal);
+    this.edm = edm;
   }
 
   @Override
@@ -37,22 +43,18 @@ public class UntypedOperand extends VisitorOperand {
   }
 
   @Override
-  public TypedOperand asTypedOperand(final EdmPrimitiveType... types) throws ODataApplicationException {
+  public TypedOperand asTypedOperand(final EdmPrimitiveType type) throws ODataApplicationException {
     final String literal = (String) value;
     Object newValue = null;
 
-    // First try the null literal
+    // First try the null literal.
     if ((newValue = tryCast(literal, primNull)) != null) {
       return new TypedOperand(newValue, primNull);
     }
 
-    // Than try the given types
-    for (EdmPrimitiveType type : types) {
-      newValue = tryCast(literal, type);
-
-      if (newValue != null) {
-        return new TypedOperand(newValue, type);
-      }
+    // Then try the given type.
+    if ((newValue = tryCast(literal, type)) != null) {
+      return new TypedOperand(newValue, type);
     }
 
     throw new ODataApplicationException("Cast failed", HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(),
@@ -128,6 +130,17 @@ public class UntypedOperand extends VisitorOperand {
 
     if ((newValue = tryCast(literal, primDouble)) != null) {
       return new TypedOperand(newValue, primDouble);
+    }
+
+    // Enum
+    final EdmSchema schema = edm.getSchema(edm.getEntityContainer().getNamespace());
+    final String enumValue = schema.getAlias() != null && literal.startsWith(schema.getAlias()) ?
+        literal.replace(schema.getAlias(), schema.getNamespace()) :
+        literal;
+    for (final EdmEnumType enumType : schema.getEnumTypes()) {
+      if ((newValue = tryCast(enumValue, enumType)) != null) {
+        return new TypedOperand(newValue, enumType);
+      }        
     }
 
     throw new ODataApplicationException("Could not determine type for literal " + literal,

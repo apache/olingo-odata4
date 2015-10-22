@@ -19,6 +19,7 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -41,6 +42,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   private static final String ES_COMP_ALL_PRIM = "ESCompAllPrim";
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String ES_ALL_PRIM = "ESAllPrim";
+  private static final String ES_MIX_ENUM_DEF_COLL_COMP = "ESMixEnumDefCollComp";
 
   @Test
   public void timeOfDayLiteral() {
@@ -184,6 +186,9 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     clientEntity = result.getBody().getEntities().get(1);
     assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
+
+    result = sendRequest(ES_MIX_ENUM_DEF_COLL_COMP, "PropertyEnumString has Namespace1_Alias.ENString'String1'");
+    assertTrue(result.getBody().getEntities().isEmpty());
   }
 
   @Test
@@ -994,7 +999,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     result = sendRequest(ES_ALL_PRIM, "'Test1' ne 'Test'");
     assertEquals(3, result.getBody().getEntities().size());
   }
-  
+
   @Test
   public void castException() {
     fail("ESAllPrim", "PropertyInt16 eq '1'", HttpStatusCode.BAD_REQUEST);
@@ -1004,7 +1009,6 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     fail("ESAllPrim", "PropertyInt16 eq duration'PT4S'", HttpStatusCode.BAD_REQUEST);
   }
 
-  
   @Test
   public void stringFunctionWithoutStringParameters() {
     fail("ESServerSidePaging", "contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
