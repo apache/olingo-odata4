@@ -23,7 +23,14 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -36,17 +43,18 @@ import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
-import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class TestFullResourcePath {
 
@@ -55,7 +63,7 @@ public class TestFullResourcePath {
   private final FilterValidator testFilter;
 
   public TestFullResourcePath() {
-    final Edm edm = oData.createServiceMetadata(new EdmTechTestProvider(), Collections.<EdmxReference> emptyList())
+    final Edm edm = oData.createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
         .getEdm();
     testUri = new TestUriValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
@@ -5542,15 +5550,42 @@ public class TestFullResourcePath {
   
   @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
-    testUri.run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
+    final String namespace = "namespace";
+    final String entityTypeName = "ETNavProp";
+    final FullQualifiedName nameETNavProp = new FullQualifiedName(namespace, entityTypeName);
+    final String entitySetName = "ESNavProp";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = Mockito.mock(EdmProperty.class);
+    Mockito.when(keyProperty.getType()).thenReturn(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte));
+    EdmKeyPropertyRef keyPropertyRef = Mockito.mock(EdmKeyPropertyRef.class);
+    Mockito.when(keyPropertyRef.getName()).thenReturn(keyPropertyName);
+    Mockito.when(keyPropertyRef.getProperty()).thenReturn(keyProperty);
+    EdmNavigationProperty navProperty = Mockito.mock(EdmNavigationProperty.class);
+    Mockito.when(navProperty.getName()).thenReturn(entitySetName);
+    Mockito.when(navProperty.isCollection()).thenReturn(true);
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(nameETNavProp);
+    Mockito.when(entityType.getKeyPredicateNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getKeyPropertyRefs()).thenReturn(Collections.singletonList(keyPropertyRef));
+    Mockito.when(entityType.getProperty(entitySetName)).thenReturn(navProperty);
+    Mockito.when(navProperty.getType()).thenReturn(entityType);
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn(entitySetName);
+    Mockito.when(entitySet.getEntityType()).thenReturn(entityType);
+    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
+    Mockito.when(container.getEntitySet(entitySetName)).thenReturn(entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer(null)).thenReturn(container);
+    new TestUriValidator().setEdm(mockedEdm)
+        .run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
         .goPath()
-        .at(0).isEntitySet("ESNavProp")
-        .at(0).isKeyPredicate(0, "a", "1")
-        .at(1).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
-        .at(1).isKeyPredicate(0, "a", "2")
-        .at(2).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, false)
-        .at(2).isKeyPredicate(0, "a", "3")
-        .at(3).isNavProperty("ESNavProp", EdmTechTestProvider.nameETNavProp, true);
+        .at(0).isEntitySet(entitySetName)
+        .at(0).isKeyPredicate(0, keyPropertyName, "1")
+        .at(1).isNavProperty(entitySetName, nameETNavProp, false)
+        .at(1).isKeyPredicate(0, keyPropertyName, "2")
+        .at(2).isNavProperty(entitySetName, nameETNavProp, false)
+        .at(2).isKeyPredicate(0, keyPropertyName, "3")
+        .at(3).isNavProperty(entitySetName, nameETNavProp, true);
   }
 
   @Test
@@ -5617,26 +5652,26 @@ public class TestFullResourcePath {
     
     testUri.run("ESAllPrim", "$filter=" + Short.MIN_VALUE + " eq " + Short.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Short.MIN_VALUE)
+      .left().isLiteral(Short.toString(Short.MIN_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16))
       .root()
-      .right().isLiteral("" + Short.MAX_VALUE)
+      .right().isLiteral(Short.toString(Short.MAX_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16));
 
     testUri.run("ESAllPrim", "$filter=" + Integer.MIN_VALUE + " eq " + Integer.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Integer.MIN_VALUE)
+      .left().isLiteral(Integer.toString(Integer.MIN_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32))
       .root()
-      .right().isLiteral("" + Integer.MAX_VALUE)
+      .right().isLiteral(Integer.toString(Integer.MAX_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32));
-    
+
     testUri.run("ESAllPrim", "$filter=" + Long.MIN_VALUE + " eq " + Long.MAX_VALUE)
     .goFilter().isBinary(BinaryOperatorKind.EQ)
-      .left().isLiteral("" + Long.MIN_VALUE)
+      .left().isLiteral(Long.toString(Long.MIN_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64))
       .root()
-      .right().isLiteral("" + Long.MAX_VALUE)
+      .right().isLiteral(Long.toString(Long.MAX_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64));
   }
 

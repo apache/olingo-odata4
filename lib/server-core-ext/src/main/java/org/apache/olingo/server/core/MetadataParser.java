@@ -631,7 +631,6 @@ public class MetadataParser {
             element = event.asStartElement();
             if (element.getName().getLocalPart().equals(name)) {
               reader.nextEvent(); // advance cursor
-              // System.out.println("reading = "+names[i]);
               build(reader, element, t, name);
               hit = true;
             }
@@ -640,7 +639,6 @@ public class MetadataParser {
             EndElement e = event.asEndElement();
             if (e.getName().getLocalPart().equals(name)) {
               reader.nextEvent(); // advance cursor
-              // System.out.println("done reading = "+names[i]);
               hit = true;
             }
           }

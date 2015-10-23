@@ -19,18 +19,18 @@
 package org.apache.olingo.server.core.uri.antlr;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.core.Encoder;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
-import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -38,15 +38,20 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.junit.Test;
 
 public class TestUriParserImpl {
-  Edm edm = null;
+  private final Edm edm = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
+  private final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
+  private final ResourceValidator testRes = new ResourceValidator().setEdm(edm);
+  private final FilterValidator testFilter = new FilterValidator().setEdm(edm);
+
   private final String PropertyBoolean = "PropertyBoolean=true";
   private final String PropertyByte = "PropertyByte=1";
-
   private final String PropertyDate = "PropertyDate=2013-09-25";
   private final String PropertyDateTimeOffset = "PropertyDateTimeOffset=2002-10-10T12:00:00-05:00";
   private final String PropertyDecimal = "PropertyDecimal=12";
@@ -62,17 +67,6 @@ public class TestUriParserImpl {
   private final String allKeys = PropertyString + "," + PropertyInt16 + "," + PropertyBoolean + "," + PropertyByte
       + "," + PropertySByte + "," + PropertyInt32 + "," + PropertyInt64 + "," + PropertyDecimal + "," + PropertyDate
       + "," + PropertyDateTimeOffset + "," + PropertyDuration + "," + PropertyGuid + "," + PropertyTimeOfDay;
-
-  TestUriValidator testUri = null;
-  ResourceValidator testRes = null;
-  FilterValidator testFilter = null;
-
-  public TestUriParserImpl() {
-    edm = new EdmProviderImpl(new EdmTechTestProvider());
-    testUri = new TestUriValidator().setEdm(edm);
-    testRes = new ResourceValidator().setEdm(edm);
-    testFilter = new FilterValidator().setEdm(edm);
-  }
 
   @Test
   public void testBoundFunctionImport_VarParameters() {
@@ -350,7 +344,7 @@ public class TestUriParserImpl {
     .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // with all keys
-    testRes.run("ESAllKey(" + Encoder.encode(allKeys) + ")")
+    testRes.run("ESAllKey(" + encode(allKeys) + ")")
     .isEntitySet("ESAllKey")
     .isKeyPredicate(0, "PropertyString", "'ABC'")
     .isKeyPredicate(1, "PropertyInt16", "1")
@@ -569,34 +563,46 @@ public class TestUriParserImpl {
 
   @Test
   public void testUnary() throws UriParserException {
-    testFilter.runESabc("not a").isCompr("<not <a>>");
-    testFilter.runESabc("- a eq a").isCompr("<<- <a>> eq <a>>");
-    testFilter.runESabc("-a eq a").isCompr("<<- <a>> eq <a>>");
+    testFilter.runOnETAllPrim("not PropertyBoolean").isCompr("<not <PropertyBoolean>>");
+    testFilter.runOnETAllPrim("- PropertyInt16 eq PropertyInt16").isCompr("<<- <PropertyInt16>> eq <PropertyInt16>>");
+    testFilter.runOnETAllPrim("-PropertyInt16 eq PropertyInt16").isCompr("<<- <PropertyInt16>> eq <PropertyInt16>>");
   }
 
   @Test
   public void testFilterComplexMixedPriority() throws UriParserException {
-    testFilter.runESabc("a      or c      and e     ").isCompr("< <a>         or < <c>         and  <e>      >>");
-    testFilter.runESabc("a      or c      and e eq f").isCompr("< <a>         or < <c>         and <<e> eq <f>>>>");
-    testFilter.runESabc("a      or c eq d and e     ").isCompr("< <a>         or <<<c> eq <d>> and  <e>      >>");
-    testFilter.runESabc("a      or c eq d and e eq f").isCompr("< <a>         or <<<c> eq <d>> and <<e> eq <f>>>>");
-    testFilter.runESabc("a eq b or c      and e     ").isCompr("<<<a> eq <b>> or < <c>         and  <e>      >>");
-    testFilter.runESabc("a eq b or c      and e eq f").isCompr("<<<a> eq <b>> or < <c>         and <<e> eq <f>>>>");
-    testFilter.runESabc("a eq b or c eq d and e     ").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and  <e>      >>");
-    testFilter.runESabc("a eq b or c eq d and e eq f").isCompr("<<<a> eq <b>> or <<<c> eq <d>> and <<e> eq <f>>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64")
+        .isCompr("<<PropertyInt16> or <<PropertyInt32> and <PropertyInt64>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64 eq PropertyByte")
+        .isCompr("<<PropertyInt16> or <<PropertyInt32> and <<PropertyInt64> eq <PropertyByte>>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 eq PropertyInt64 and PropertyByte")
+        .isCompr("<<PropertyInt16> or <<<PropertyInt32> eq <PropertyInt64>> and <PropertyByte>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 eq PropertyInt64 and PropertyByte eq PropertySByte")
+        .isCompr("<<PropertyInt16> or <<<PropertyInt32> eq <PropertyInt64>> "
+            + "and <<PropertyByte> eq <PropertySByte>>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 and PropertyByte")
+        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> or <<PropertyInt64> and <PropertyByte>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 and PropertyByte eq PropertySByte")
+        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> "
+            + "or <<PropertyInt64> and <<PropertyByte> eq <PropertySByte>>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 eq PropertyByte and PropertySByte")
+        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> "
+            + "or <<<PropertyInt64> eq <PropertyByte>> and <PropertySByte>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 eq PropertyByte "
+        + "and PropertySByte eq PropertyDecimal")
+        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> or <<<PropertyInt64> eq <PropertyByte>> "
+            + "and <<PropertySByte> eq <PropertyDecimal>>>>");
   }
 
   @Test
   public void testFilterSimpleSameBinaryBinaryBinaryPriority() throws UriParserException {
-
-    testFilter.runESabc("1 add 2 add 3 add 4").isCompr("<<< <1> add   <2>> add  <3>>  add <4>>");
-    testFilter.runESabc("1 add 2 add 3 div 4").isCompr("<<  <1> add   <2>> add <<3>   div <4>>>");
-    testFilter.runESabc("1 add 2 div 3 add 4").isCompr("<<  <1> add  <<2>  div  <3>>> add <4>>");
-    testFilter.runESabc("1 add 2 div 3 div 4").isCompr("<   <1> add <<<2>  div  <3>>  div <4>>>");
-    testFilter.runESabc("1 div 2 add 3 add 4").isCompr("<<< <1> div   <2>> add  <3>>  add <4>>");
-    testFilter.runESabc("1 div 2 add 3 div 4").isCompr("<<  <1> div   <2>> add <<3>   div <4>>>");
-    testFilter.runESabc("1 div 2 div 3 add 4").isCompr("<<< <1> div   <2>> div  <3>>  add <4>>");
-    testFilter.runESabc("1 div 2 div 3 div 4").isCompr("<<< <1> div   <2>> div  <3>>  div <4>>");
+    testFilter.runOnETAllPrim("1 add 2 add 3 add 4").isCompr("<<< <1> add   <2>> add  <3>>  add <4>>");
+    testFilter.runOnETAllPrim("1 add 2 add 3 div 4").isCompr("<<  <1> add   <2>> add <<3>   div <4>>>");
+    testFilter.runOnETAllPrim("1 add 2 div 3 add 4").isCompr("<<  <1> add  <<2>  div  <3>>> add <4>>");
+    testFilter.runOnETAllPrim("1 add 2 div 3 div 4").isCompr("<   <1> add <<<2>  div  <3>>  div <4>>>");
+    testFilter.runOnETAllPrim("1 div 2 add 3 add 4").isCompr("<<< <1> div   <2>> add  <3>>  add <4>>");
+    testFilter.runOnETAllPrim("1 div 2 add 3 div 4").isCompr("<<  <1> div   <2>> add <<3>   div <4>>>");
+    testFilter.runOnETAllPrim("1 div 2 div 3 add 4").isCompr("<<< <1> div   <2>> div  <3>>  add <4>>");
+    testFilter.runOnETAllPrim("1 div 2 div 3 div 4").isCompr("<<< <1> div   <2>> div  <3>>  div <4>>");
   }
 
   @Test
@@ -1163,5 +1169,9 @@ public class TestUriParserImpl {
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESMixPrimCollComp", "$select=/PropertyInt16")
     .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+
+  private final String encode(final String uriPart) {
+    return uriPart.replaceAll(":", "%3A");
   }
 }

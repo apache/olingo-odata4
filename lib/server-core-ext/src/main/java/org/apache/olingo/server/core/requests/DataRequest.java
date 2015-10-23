@@ -46,8 +46,6 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmStream;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
@@ -165,7 +163,7 @@ public class DataRequest extends ServiceRequest {
       return false;
     }
     EdmProperty property = ((UriResourcePrimitiveProperty)this.uriResourceProperty).getProperty();
-    return (property.getType() instanceof EdmStream);
+    return property.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Stream);
   }
 
   public UriResourceProperty getUriResourceProperty() {
@@ -601,9 +599,10 @@ public class DataRequest extends ServiceRequest {
 
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
-      RepresentationType valueRepresentationType = uriResourceProperty.getType() == EdmPrimitiveTypeFactory
-          .getInstance(EdmPrimitiveTypeKind.Binary) ? RepresentationType.BINARY
-          : RepresentationType.VALUE;
+      RepresentationType valueRepresentationType =
+          uriResourceProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
+              RepresentationType.BINARY :
+              RepresentationType.VALUE;
       return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), request,
           getCustomContentTypeSupport(), valueRepresentationType);
     }

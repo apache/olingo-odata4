@@ -128,7 +128,7 @@ public class MetadataParserTest {
     CsdlProperty p = ct.getProperties().get(0);
     assertEquals("CountryRegion", p.getName());
     assertEquals("Edm.String", p.getType());
-    assertEquals(false, p.isNullable());
+    assertFalse(p.isNullable());
 
     ct = provider.getComplexType(new FullQualifiedName(NS, "Location"));
     assertNotNull(ct);

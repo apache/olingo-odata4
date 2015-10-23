@@ -127,7 +127,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
 
   @Override
   public String visitTypeLiteral(final EdmType type) {
-    return "<" + type.getNamespace() + "." + type.getName() + ">";
+    return "<" + type.getFullQualifiedName().getFullQualifiedNameAsString() + ">";
   }
 
   @Override
@@ -147,7 +147,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
       tmp += item;
     }
 
-    return "<" + type.getNamespace() + "." + type.getName() + "<" + tmp + ">>";
+    return "<" + type.getFullQualifiedName().getFullQualifiedNameAsString() + "<" + tmp + ">>";
   }
 
 }

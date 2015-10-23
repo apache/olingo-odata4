@@ -273,7 +273,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     // Create new Entries
     final String filterString = "PropertyString eq null";
 
-    ClientEntity entity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1.ETAllPrim"));
+    ClientEntity entity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
 
     entity.getProperties().add(
         getFactory().newPrimitiveProperty("PropertyInt16", getFactory().newPrimitiveValueBuilder()
@@ -903,7 +903,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     // is still there, but filled is null values (primitive types)
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
 
-    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETKeyNav"));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETKeyNav"));
     newEntity.getProperties().add(getFactory().newComplexProperty("PropertyCompCompNav", null));
     newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt16",
         getFactory().newPrimitiveValueBuilder().buildInt16((short) 4)));

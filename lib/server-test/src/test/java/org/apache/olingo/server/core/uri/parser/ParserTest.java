@@ -54,6 +54,7 @@ public class ParserTest {
     EdmNavigationProperty productsNavigation = Mockito.mock(EdmNavigationProperty.class);
     EdmEntityType productsType = Mockito.mock(EdmEntityType.class);
 
+    final FullQualifiedName nameProducts = new FullQualifiedName("NS", "Products");
     Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
     Mockito.when(typeCategory.getName()).thenReturn("Category");
     Mockito.when(typeCategory.getNamespace()).thenReturn("NS");
@@ -62,7 +63,7 @@ public class ParserTest {
     Mockito.when(typeCategory.getProperty("Products")).thenReturn(productsNavigation);
     Mockito.when(container.getEntitySet("Category")).thenReturn(esCategory);
     Mockito.when(container.getEntitySet("Products")).thenReturn(esProduct);
-    Mockito.when(productsType.getName()).thenReturn("Products");
+    Mockito.when(productsType.getFullQualifiedName()).thenReturn(nameProducts);
     Mockito.when(productsType.getNamespace()).thenReturn("NS");
     Mockito.when(productsNavigation.getType()).thenReturn(productsType);
 
@@ -72,13 +73,13 @@ public class ParserTest {
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
         .goPath().first()
-        .isNavProperty("Products", new FullQualifiedName("NS", "Products"), false)
-        .isType(new FullQualifiedName("NS", "Products"), false);
+        .isNavProperty("Products", nameProducts, false)
+        .isType(nameProducts, false);
     Mockito.verifyZeroInteractions(esProduct);
   }
 
   /**
-   * Test for EntitySet with navigation to an not existing NavigationProperty (name)
+   * Test for EntitySet with navigation to a not existing NavigationProperty (name)
    * but with another EntitySet with this name defined in metadata.
    * (related to Olingo issue OLINGO-755)
    */

@@ -50,7 +50,6 @@ public class MetadataDocumentTest {
 
     final String metadata = IOUtils.toString(
         odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());
-    System.out.println(metadata);
     assertNotNull(metadata);
     assertThat(metadata, containsString("<edmx:Reference Uri=\"" + CORE_VOCABULARY + "\">"
             + "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" + "</edmx:Reference>"));

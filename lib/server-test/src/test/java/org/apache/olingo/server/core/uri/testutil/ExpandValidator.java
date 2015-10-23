@@ -23,28 +23,23 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 
 public class ExpandValidator implements TestValidator {
   private Edm edm;
   private TestValidator invokedByValidator;
 
   private int expandItemIndex;
-  private ExpandOptionImpl expandOption;
+  private ExpandOption expandOption;
   private ExpandItem expandItem;
 
   // --- Setup ---
@@ -54,7 +49,7 @@ public class ExpandValidator implements TestValidator {
     return this;
   }
 
-  public ExpandValidator setExpand(final ExpandOptionImpl expand) {
+  public ExpandValidator setExpand(final ExpandOption expand) {
     expandOption = expand;
     first();
     return this;
@@ -76,45 +71,33 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ResourceValidator goPath() {
-    UriInfoImpl uriInfo = (UriInfoImpl) expandItem.getResourcePath();
-
-    if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("goPath() can only be used on UriInfoKind.resource");
-    }
-
     return new ResourceValidator()
-    .setUpValidator(this)
-    .setEdm(edm)
-    .setUriInfoImplPath(uriInfo);
-
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoPath(expandItem.getResourcePath());
   }
 
   public FilterValidator goOrder(final int index) {
-    OrderByOptionImpl orderBy = (OrderByOptionImpl) expandItem.getOrderByOption();
-
+    final OrderByOption orderBy = expandItem.getOrderByOption();
     return new FilterValidator()
-    .setValidator(this)
-    .setEdm(edm)
-    .setExpression(orderBy.getOrders().get(index).getExpression());
+        .setValidator(this)
+        .setEdm(edm)
+        .setExpression(orderBy.getOrders().get(index).getExpression());
   }
 
   public ResourceValidator goSelectItem(final int index) {
-    SelectOptionImpl select = (SelectOptionImpl) expandItem.getSelectOption();
-
+    final SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
-    UriInfoImpl uriInfo = (UriInfoImpl) item.getResourcePath();
-
     return new ResourceValidator()
-    .setUpValidator(this)
-    .setEdm(edm)
-    .setUriInfoImplPath(uriInfo);
-
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoPath(item.getResourcePath());
   }
 
   public ExpandValidator goExpand() {
     return new ExpandValidator()
-    .setExpand((ExpandOptionImpl) expandItem.getExpandOption())
-    .setUpValidator(this);
+        .setExpand(expandItem.getExpandOption())
+        .setUpValidator(this);
   }
 
   public ExpandValidator first() {
@@ -132,7 +115,6 @@ public class ExpandValidator implements TestValidator {
       fail("not enough segments");
     }
     return this;
-
   }
 
   public ExpandValidator isSegmentStar() {
@@ -146,31 +128,31 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ExpandValidator isLevelText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getLevelsOption();
+    final QueryOption option = (QueryOption) expandItem.getLevelsOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isSkipText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSkipOption();
+    final QueryOption option = expandItem.getSkipOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isTopText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getTopOption();
+    final QueryOption option = expandItem.getTopOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isInlineCountText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getCountOption();
+    final QueryOption option = expandItem.getCountOption();
     assertEquals(text, option.getText());
     return this;
   }
 
   public ExpandValidator isSelectText(final String text) {
-    QueryOptionImpl option = (QueryOptionImpl) expandItem.getSelectOption();
+    final QueryOption option = expandItem.getSelectOption();
     assertEquals(text, option.getText());
     return this;
   }
@@ -213,18 +195,13 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ExpandValidator isSortOrder(final int index, final boolean descending) {
-    OrderByOptionImpl orderBy = (OrderByOptionImpl) expandItem.getOrderByOption();
+    OrderByOption orderBy = expandItem.getOrderByOption();
     assertEquals(descending, orderBy.getOrders().get(index).isDescending());
     return this;
   }
 
   public ExpandValidator isExpandStartType(final FullQualifiedName fullName) {
-    EdmType actualType = expandItem.getStartTypeFilter();
-
-    FullQualifiedName actualName = new FullQualifiedName(actualType.getNamespace(), actualType.getName());
-    assertEquals(fullName, actualName);
+    assertEquals(fullName, expandItem.getStartTypeFilter().getFullQualifiedName());
     return this;
-
   }
-
 }

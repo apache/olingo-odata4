@@ -42,7 +42,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.olingo.commons.core.Encoder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -283,8 +282,8 @@ public class TripPinServiceTest {
   public void testLambdaAny() throws Exception {
     // this is just testing to see the lamda expressions are going through the
     // framework, none of the system options are not implemented in example service
-    String query = "Friends/any(d:d/UserName eq 'foo')";
-    HttpResponse response = httpGET(baseURL + "/People?$filter="+Encoder.encode(query), 200);
+    String query = "Friends/any(d%3Ad/UserName%20eq%20'foo')";
+    HttpResponse response = httpGET(baseURL + "/People?$filter=" + query, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -727,9 +726,9 @@ public class TripPinServiceTest {
   }
 
   @Test
-  public void testCrossJoin() throws Exception {
-    String editUrl = baseURL + "/$crossjoin(People,Airlines)?$filter="+
-        Encoder.encode("People/UserName eq Airlines/AirlineCode");
+  public void crossJoin() throws Exception {
+    String editUrl = baseURL + "/$crossjoin(People,Airlines)?$filter="
+        + "People/UserName%20eq%20Airlines/AirlineCode";
     HttpResponse response = httpGET(editUrl, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }

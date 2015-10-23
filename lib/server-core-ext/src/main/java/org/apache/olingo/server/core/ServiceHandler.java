@@ -235,8 +235,8 @@ public interface ServiceHandler extends Processor {
   /**
    * Delete references (relationships) in an Entity
    * @param request
-   * @param deleteId; for collection valued navigation this will be non-null value; for single valued
-   * navigation property, this will be null.
+   * @param deleteId for collection valued navigation this will be non-null value;
+   *                 for single valued navigation property, this will be null
    * @param entityETag
    * @param response - always should be 204
    * @throws ODataLibraryException

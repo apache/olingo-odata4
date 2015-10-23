@@ -44,13 +44,14 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -729,7 +730,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final Boolean isUnicode, final XMLStreamWriter writer)
       throws EdmPrimitiveTypeException, XMLStreamException, SerializerException {
     if (property.isPrimitive()) {
-      if (!(type instanceof EdmString)) {
+      if (type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String)) {
         writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
             type.getKind() == EdmTypeKind.DEFINITION ?
                 "#" + type.getFullQualifiedName().getFullQualifiedNameAsString() :

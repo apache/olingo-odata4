@@ -33,7 +33,7 @@ public abstract class CsdlExpression extends CsdlAbstractEdmItem {
   }
 
   /**
-   * Casts the expression to {@link org.apache.olingo.commons.api.edm.annotation.CsdlConstantExpression}
+   * Casts the expression to {@link CsdlConstantExpression}.
    * @return Constant Expression
    */
   public CsdlConstantExpression asConstant() {
@@ -41,7 +41,7 @@ public abstract class CsdlExpression extends CsdlAbstractEdmItem {
   }
 
   /**
-   * Return true if the expression is dynamic
+   * Returns true if the expression is dynamic.
    * @return true if the expression is dynamic
    */
   public boolean isDynamic() {
@@ -49,7 +49,7 @@ public abstract class CsdlExpression extends CsdlAbstractEdmItem {
   }
 
   /**
-   * Cast the expression to {@link org.apache.olingo.commons.api.edm.annotation.CsdlDynamicExpression}
+   * Cast the expression to {@link CsdlDynamicExpression}.
    * @return Dynamic Expression
    */
   public CsdlDynamicExpression asDynamic() {

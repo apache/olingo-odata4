@@ -26,18 +26,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
-import org.apache.olingo.server.api.serializer.SerializerException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class FixedFormatDeserializerTest {
 
   private static final OData oData = OData.newInstance();
-  private final FixedFormatDeserializer deserializer;
-
-  public FixedFormatDeserializerTest() throws SerializerException {
-    deserializer = oData.createFixedFormatDeserializer();
-  }
+  private final FixedFormatDeserializer deserializer = oData.createFixedFormatDeserializer();
 
   @Test
   public void binary() throws Exception {

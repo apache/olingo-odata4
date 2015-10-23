@@ -157,7 +157,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
     URI uri = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM).build();
 
-    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName("olingo.odata.test1", "ETAllPrim"));
+    ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
     newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyInt64",
             getFactory().newPrimitiveValueBuilder().buildInt32(42)));
     newEntity.addLink(getFactory().newEntityNavigationLink(NAV_PROPERTY_ET_TWO_PRIM_ONE,

@@ -32,12 +32,11 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBinary;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmTimeOfDay;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -59,21 +58,9 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     XMLUnit.setCompareUnmatched(false);
   }
 
-  protected byte[] edmBinary(String value) throws EdmPrimitiveTypeException {
-    return EdmBinary.getInstance().valueOfString(value, true, null, null, null, true,
-        byte[].class);
-  }
-  protected Object edmDate(String value) throws EdmPrimitiveTypeException {
-    return EdmDate.getInstance().valueOfString(value, true, null, null, null, true,
-        EdmDate.getInstance().getDefaultType());
-  }
-  protected Object edmDateTimeOffset(String value) throws EdmPrimitiveTypeException {
-    return EdmDateTimeOffset.getInstance().valueOfString(value, true, null, null, null, true, 
-        EdmDateTimeOffset.getInstance().getDefaultType());
-  }  
-  protected Object edmTimeOfDay(String value) throws EdmPrimitiveTypeException {
-    return EdmTimeOfDay.getInstance().valueOfString(value, true, null, null, null, true, 
-        EdmTimeOfDay.getInstance().getDefaultType());
+  protected Object valueOf(final String value, final EdmPrimitiveTypeKind kind) throws EdmPrimitiveTypeException {
+    final EdmPrimitiveType type = OData.newInstance().createPrimitiveTypeInstance(kind);
+    return type.valueOfString(value, true, null, null, null, true, type.getDefaultType());
   }
 
   @Test
@@ -131,14 +118,17 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
     Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
     Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
-    Assert.assertArrayEquals(edmBinary("ASNFZ4mrze8="), (byte[]) result.getProperty("PropertyBinary").asPrimitive());
-    Assert.assertEquals(edmDate("2012-12-03"), result.getProperty("PropertyDate").asPrimitive());
-    Assert.assertEquals(edmDateTimeOffset("2012-12-03T07:16:23Z"), result.getProperty("PropertyDateTimeOffset")
-        .asPrimitive());
+    Assert.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
+        (byte[]) result.getProperty("PropertyBinary").asPrimitive());
+    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+        result.getProperty("PropertyDate").asPrimitive());
+    Assert.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
+        result.getProperty("PropertyDateTimeOffset").asPrimitive());
     Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
     Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
         result.getProperty("PropertyGuid").asPrimitive());
-    Assert.assertEquals(edmTimeOfDay("03:26:05"), result.getProperty("PropertyTimeOfDay").asPrimitive());
+    Assert.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
+        result.getProperty("PropertyTimeOfDay").asPrimitive());
   }
 
   @Test
@@ -198,14 +188,17 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
     Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
     Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
-    Assert.assertArrayEquals(edmBinary("ASNFZ4mrze8="), (byte[]) result.getProperty("PropertyBinary").asPrimitive());
-    Assert.assertEquals(edmDate("2012-12-03"), result.getProperty("PropertyDate").asPrimitive());
-    Assert.assertEquals(edmDateTimeOffset("2012-12-03T07:16:23Z"), result.getProperty("PropertyDateTimeOffset")
-        .asPrimitive());
+    Assert.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
+        (byte[]) result.getProperty("PropertyBinary").asPrimitive());
+    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+        result.getProperty("PropertyDate").asPrimitive());
+    Assert.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
+        result.getProperty("PropertyDateTimeOffset").asPrimitive());
     Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
     Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
         result.getProperty("PropertyGuid").asPrimitive());
-    Assert.assertEquals(edmTimeOfDay("03:26:05"), result.getProperty("PropertyTimeOfDay").asPrimitive());
+    Assert.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
+        result.getProperty("PropertyTimeOfDay").asPrimitive());
   }  
 
   @Test
@@ -477,9 +470,10 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity inline = navLink.getInlineEntity();
     Assert.assertEquals(1, inline.getProperties().size());
     Assert.assertEquals(2, inline.getNavigationBindings().size());
-    Assert.assertEquals(edmDate("2012-12-03"), inline.getProperty("PropertyDate").asPrimitive());
+    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+        inline.getProperty("PropertyDate").asPrimitive());
   } 
-  
+
   @Test
   public void primitiveProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");

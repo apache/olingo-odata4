@@ -41,12 +41,11 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
@@ -571,13 +570,15 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     EdmProperty propertyDate = mock(EdmProperty.class);
     when(propertyDate.getName()).thenReturn("PropertyDate");
     when(propertyDate.getMapping()).thenReturn(mapping);
-    when(propertyDate.getType()).thenReturn(new EdmDate());
+    when(propertyDate.getType()).thenReturn(
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date));
     when(entityType.getProperty("PropertyDate")).thenReturn(propertyDate);
 
     EdmProperty propertyDateTimeOffset = mock(EdmProperty.class);
     when(propertyDateTimeOffset.getName()).thenReturn("PropertyDateTimeOffset");
     when(propertyDateTimeOffset.getMapping()).thenReturn(mapping);
-    when(propertyDateTimeOffset.getType()).thenReturn(new EdmDateTimeOffset());
+    when(propertyDateTimeOffset.getType()).thenReturn(
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset));
     when(entityType.getProperty("PropertyDateTimeOffset")).thenReturn(propertyDateTimeOffset);
 
     String entityString =

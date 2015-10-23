@@ -21,7 +21,7 @@ package org.apache.olingo.server.core.uri.queryoption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
-public class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption {
+public abstract class SystemQueryOptionImpl extends QueryOptionImpl implements SystemQueryOption {
 
   private SystemQueryOptionKind kind;
 

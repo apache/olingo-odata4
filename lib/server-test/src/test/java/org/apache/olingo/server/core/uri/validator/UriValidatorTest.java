@@ -21,9 +21,12 @@ package org.apache.olingo.server.core.uri.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
@@ -327,7 +330,8 @@ public class UriValidatorTest {
       { URI_ACTION_ES, QO_ID },
   };
 
-  private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
   public void validatePostOnActionSystemQueryOptions() throws Exception {

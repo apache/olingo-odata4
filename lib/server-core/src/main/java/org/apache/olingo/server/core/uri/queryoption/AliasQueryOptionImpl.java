@@ -19,18 +19,18 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryOption {
 
-  private ExpressionImpl aliasValue;
+  private Expression aliasValue;
 
   @Override
-  public ExpressionImpl getValue() {
+  public Expression getValue() {
     return aliasValue;
   }
 
-  public AliasQueryOptionImpl setAliasValue(final ExpressionImpl aliasValue) {
+  public AliasQueryOption setAliasValue(final Expression aliasValue) {
     this.aliasValue = aliasValue;
     return this;
   }

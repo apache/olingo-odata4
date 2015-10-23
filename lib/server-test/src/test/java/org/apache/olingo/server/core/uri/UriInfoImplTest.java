@@ -22,12 +22,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoAll;
 import org.apache.olingo.server.api.uri.UriInfoBatch;
 import org.apache.olingo.server.api.uri.UriInfoCrossjoin;
@@ -51,13 +53,14 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.junit.Test;
 
 public class UriInfoImplTest {
 
-  Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
   public void testKind() {
@@ -154,7 +157,7 @@ public class UriInfoImplTest {
     CustomQueryOptionImpl customOption1 = new CustomQueryOptionImpl();
     customOption1.setText("B");
 
-    QueryOptionImpl queryOption = new QueryOptionImpl();
+    QueryOptionImpl queryOption = new CustomQueryOptionImpl();
 
     queryOptions.add(expand.setName(""));
     queryOptions.add(filter.setName(""));

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -33,7 +34,7 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
  */
 public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements UriResourceFunction {
 
-  protected List<UriParameterImpl> parameters;
+  protected List<UriParameter> parameters;
   protected EdmFunction function;
   protected EdmFunctionImport functionImport;
   private boolean isParameterListFilled = false;
@@ -44,14 +45,12 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
 
   @Override
   public List<UriParameter> getParameters() {
-    List<UriParameter> retList = new ArrayList<UriParameter>();
-    for (UriParameterImpl item : parameters) {
-      retList.add(item);
-    }
-    return retList;
+    return parameters == null ?
+        Collections.<UriParameter> emptyList() :
+        new ArrayList<UriParameter>(parameters);
   }
 
-  public UriResourceFunctionImpl setParameters(final List<UriParameterImpl> parameters) {
+  public UriResourceFunctionImpl setParameters(final List<UriParameter> parameters) {
     isParameterListFilled = true;
     this.parameters = parameters;
     return this;
@@ -73,11 +72,9 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
   }
 
   public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFI,
-      final List<UriParameterImpl> parameters) {
+      final List<UriParameter> parameters) {
     functionImport = edmFI;
-
     setParameters(parameters);
-
     return this;
   }
 
@@ -88,14 +85,11 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return function.getReturnType().isCollection();
+    return keyPredicates == null && function.getReturnType().isCollection();
   }
 
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     if (functionImport != null) {
       return functionImport.getName();
     } else if (function != null) {
@@ -103,7 +97,7 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
     }
     return "";
   }
-  
+
   @Override
   public String toString() {
     return getSegmentValue();

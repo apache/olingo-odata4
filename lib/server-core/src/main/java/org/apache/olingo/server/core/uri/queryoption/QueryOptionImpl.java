@@ -20,7 +20,7 @@ package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 
-public class QueryOptionImpl implements QueryOption {
+public abstract class QueryOptionImpl implements QueryOption {
   private String name;
   private String text;
 

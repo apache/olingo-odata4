@@ -20,23 +20,23 @@ package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 public class FilterOptionImpl extends SystemQueryOptionImpl implements FilterOption {
 
-  private ExpressionImpl expression;
+  private Expression expression;
 
   public FilterOptionImpl() {
     setKind(SystemQueryOptionKind.FILTER);
   }
 
-  public FilterOptionImpl setExpression(final ExpressionImpl expression) {
+  public FilterOptionImpl setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }
 
   @Override
-  public ExpressionImpl getExpression() {
+  public Expression getExpression() {
     return expression;
   }
 

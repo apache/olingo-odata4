@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
@@ -37,7 +38,7 @@ import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmBoolean;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
 public class MetadataTestITCase extends AbstractTestITCase {
@@ -57,7 +58,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
 
     final EdmTerm isBoss = edm.getTerm(new FullQualifiedName(edm.getSchemas().get(0).getNamespace(), "IsBoss"));
     assertNotNull(isBoss);
-    assertEquals(EdmBoolean.getInstance(), isBoss.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), isBoss.getType());
 
     final EdmEntitySet orders = edm.getSchemas().get(0).getEntityContainer().getEntitySet("Orders");
     assertNotNull(orders);
@@ -102,10 +103,10 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmSchema coreAlias = edm.getSchema("Core");
     assertEquals(core, coreAlias);
 
-    final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core.Description"));
+    final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core", "Description"));
     assertNotNull(descriptionTerm);
     assertEquals(descriptionTerm.getFullQualifiedName(),
-        edm.getTerm(new FullQualifiedName("Org.OData.Core.V1.Description")).getFullQualifiedName());
+        edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")).getFullQualifiedName());
 
     final EdmAnnotation description = core.getAnnotation(descriptionTerm, null);
     assertNotNull(description);
@@ -114,15 +115,16 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertEquals("Core terms needed to write vocabularies",
         description.getExpression().asConstant().getValueAsString());
 
-    final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core.IsLanguageDependent"));
+    final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core", "IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
     assertTrue(isLanguageDependent.getAppliesTo().contains(TargetType.Property));
     assertTrue(isLanguageDependent.getAppliesTo().contains(TargetType.Term));
-    assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core.Tag")), isLanguageDependent.getType());
-    assertEquals(EdmBoolean.getInstance(), ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
+    assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core", "Tag")), isLanguageDependent.getType());
+    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean),
+        ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
     assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm, null));
 
-    final EdmTerm permissions = edm.getTerm(new FullQualifiedName("Core.Permissions"));
+    final EdmTerm permissions = edm.getTerm(new FullQualifiedName("Core", "Permissions"));
     assertNotNull(permissions);
     assertTrue(permissions.getType() instanceof EdmEnumType);
 
@@ -130,18 +132,18 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final EdmSchema measures = edm.getSchema("UoM");
     assertNotNull(measures);
 
-    final EdmTerm scale = edm.getTerm(new FullQualifiedName("UoM.Scale"));
+    final EdmTerm scale = edm.getTerm(new FullQualifiedName("UoM", "Scale"));
     assertNotNull(scale);
 
     final EdmAnnotation requiresTypeInScale =
-        scale.getAnnotation(edm.getTerm(new FullQualifiedName("Core.RequiresType")), null);
+        scale.getAnnotation(edm.getTerm(new FullQualifiedName("Core", "RequiresType")), null);
     assertNotNull(requiresTypeInScale);
     assertEquals("Edm.Decimal", requiresTypeInScale.getExpression().asConstant().getValueAsString());
 
     // 3. capabilities
-    final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities.DeleteRestrictions"));
+    final EdmTerm deleteRestrictions = edm.getTerm(new FullQualifiedName("Capabilities", "DeleteRestrictions"));
     assertNotNull(deleteRestrictions);
     assertEquals(deleteRestrictions.getType().getFullQualifiedName(),
-        edm.getComplexType(new FullQualifiedName("Capabilities.DeleteRestrictionsType")).getFullQualifiedName());
+        edm.getComplexType(new FullQualifiedName("Capabilities", "DeleteRestrictionsType")).getFullQualifiedName());
   }
 }

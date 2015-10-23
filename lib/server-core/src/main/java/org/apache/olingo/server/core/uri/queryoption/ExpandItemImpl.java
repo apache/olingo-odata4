@@ -53,50 +53,49 @@ public class ExpandItemImpl implements ExpandItem {
   private boolean isRef;
   private EdmType startTypeFilter;
 
-  public ExpandItemImpl setSystemQueryOption(final SystemQueryOptionImpl sysItem) {
+  public ExpandItemImpl setSystemQueryOption(final SystemQueryOption sysItem) {
 
-    if (sysItem instanceof ExpandOptionImpl) {
+    if (sysItem instanceof ExpandOption) {
       validateDoubleSystemQueryOption(expandOption, sysItem);
-      expandOption = (ExpandOptionImpl) sysItem;
-    } else if (sysItem instanceof FilterOptionImpl) {
+      expandOption = (ExpandOption) sysItem;
+    } else if (sysItem instanceof FilterOption) {
       validateDoubleSystemQueryOption(filterOption, sysItem);
-      filterOption = (FilterOptionImpl) sysItem;
-    } else if (sysItem instanceof CountOptionImpl) {
+      filterOption = (FilterOption) sysItem;
+    } else if (sysItem instanceof CountOption) {
       validateDoubleSystemQueryOption(inlineCountOption, sysItem);
-      inlineCountOption = (CountOptionImpl) sysItem;
-    } else if (sysItem instanceof OrderByOptionImpl) {
+      inlineCountOption = (CountOption) sysItem;
+    } else if (sysItem instanceof OrderByOption) {
       validateDoubleSystemQueryOption(orderByOption, sysItem);
-      orderByOption = (OrderByOptionImpl) sysItem;
-    } else if (sysItem instanceof SearchOptionImpl) {
+      orderByOption = (OrderByOption) sysItem;
+    } else if (sysItem instanceof SearchOption) {
       validateDoubleSystemQueryOption(searchOption, sysItem);
-      searchOption = (SearchOptionImpl) sysItem;
-    } else if (sysItem instanceof SelectOptionImpl) {
+      searchOption = (SearchOption) sysItem;
+    } else if (sysItem instanceof SelectOption) {
       validateDoubleSystemQueryOption(selectOption, sysItem);
-      selectOption = (SelectOptionImpl) sysItem;
-    } else if (sysItem instanceof SkipOptionImpl) {
+      selectOption = (SelectOption) sysItem;
+    } else if (sysItem instanceof SkipOption) {
       validateDoubleSystemQueryOption(skipOption, sysItem);
-      skipOption = (SkipOptionImpl) sysItem;
-    } else if (sysItem instanceof TopOptionImpl) {
+      skipOption = (SkipOption) sysItem;
+    } else if (sysItem instanceof TopOption) {
       validateDoubleSystemQueryOption(topOption, sysItem);
-      topOption = (TopOptionImpl) sysItem;
+      topOption = (TopOption) sysItem;
     } else if (sysItem instanceof LevelsExpandOption) {
-      if(levelsExpandOption != null) {
+      if (levelsExpandOption != null) {
         throw new ODataRuntimeException("$levels"); 
       }
       levelsExpandOption = (LevelsExpandOption) sysItem;
     }
     return this;
   }
-  
+
   private void validateDoubleSystemQueryOption(final SystemQueryOption oldOption, final SystemQueryOption newOption) {
-    if(oldOption != null) {
+    if (oldOption != null) {
       throw new ODataRuntimeException(newOption.getName()); 
     }
   }
-  
-  public ExpandItemImpl setSystemQueryOptions(final List<SystemQueryOptionImpl> list) {
 
-    for (SystemQueryOptionImpl item : list) {
+  public ExpandItemImpl setSystemQueryOptions(final List<SystemQueryOption> list) {
+    for (SystemQueryOption item : list) {
       setSystemQueryOption(item);
     }
     return this;

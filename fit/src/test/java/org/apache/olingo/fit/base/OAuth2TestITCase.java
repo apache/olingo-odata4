@@ -20,6 +20,7 @@ package org.apache.olingo.fit.base;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 
@@ -103,26 +104,26 @@ public class OAuth2TestITCase extends AbstractTestITCase {
   public void testOAuth() {
     try {
       readAsAtom();
-    } catch (Exception e) {
-      System.out.println("failed for readAsAtom");
+    } catch (RuntimeException e) {
+      fail("failed for readAsAtom");
     }
 
     try {
       readAsFullJSON();
-    } catch (Exception e) {
-      System.out.println("failed for readAsFullJSON");
+    } catch (RuntimeException e) {
+      fail("failed for readAsFullJSON");
     }
 
     try {
       readAsJSON();
-    } catch (Exception e) {
-      System.out.println("failed for readAsJSON");
+    } catch (RuntimeException e) {
+      fail("failed for readAsJSON");
     }
 
     try {
       createAndDelete();
-    } catch (Exception e) {
-      System.out.println("failed for createAndDelete");
+    } catch (RuntimeException e) {
+      fail("failed for createAndDelete");
     }
   }
 

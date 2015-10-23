@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileReader;
@@ -246,8 +248,8 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        assertEquals(true, request.isPropertyRequest());
-        assertEquals(false, request.isPropertyComplex());
+        assertTrue(request.isPropertyRequest());
+        assertFalse(request.isPropertyComplex());
         assertEquals(1, request.getUriResourceEntitySet().getKeyPredicates().size());
         assertEquals("application/json;odata.metadata=minimal", request.getResponseContentType()
             .toContentTypeString());
@@ -266,8 +268,8 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        assertEquals(true, request.isPropertyRequest());
-        assertEquals(true, request.isPropertyComplex());
+        assertTrue(request.isPropertyRequest());
+        assertTrue(request.isPropertyComplex());
         assertEquals(1, request.getUriResourceEntitySet().getKeyPredicates().size());
         assertEquals("application/json;odata.metadata=minimal", request.getResponseContentType()
             .toContentTypeString());
@@ -287,8 +289,8 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        assertEquals(true, request.isPropertyRequest());
-        assertEquals(false, request.isPropertyComplex());
+        assertTrue(request.isPropertyRequest());
+        assertFalse(request.isPropertyComplex());
         assertEquals(1, request.getUriResourceEntitySet().getKeyPredicates().size());
         assertEquals("text/plain", request.getResponseContentType().toContentTypeString());
       }
@@ -307,8 +309,8 @@ public class ServiceDispatcherTest {
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
-        assertEquals(true, request.isPropertyRequest());
-        assertEquals(false, request.isPropertyComplex());
+        assertTrue(request.isPropertyRequest());
+        assertFalse(request.isPropertyComplex());
         assertEquals(1, request.getUriResourceEntitySet().getKeyPredicates().size());
         assertEquals("text/plain", request.getResponseContentType().toContentTypeString());
       }

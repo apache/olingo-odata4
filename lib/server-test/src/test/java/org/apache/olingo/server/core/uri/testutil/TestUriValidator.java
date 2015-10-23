@@ -19,12 +19,12 @@
 package org.apache.olingo.server.core.uri.testutil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -32,16 +32,14 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
-import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
-import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
@@ -95,7 +93,6 @@ public class TestUriValidator implements TestValidator {
     } catch (UriValidationException e) {
       exception = e;
     }
-
     return this;
   }
 
@@ -106,22 +103,21 @@ public class TestUriValidator implements TestValidator {
     }
 
     return new ResourceValidator()
-    .setUpValidator(this)
-    .setEdm(edm)
-    .setUriInfoImplPath(uriInfo);
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoPath(uriInfo);
   }
 
   public FilterValidator goFilter() {
-    FilterOptionImpl filter = (FilterOptionImpl) uriInfo.getFilterOption();
+    final FilterOption filter = uriInfo.getFilterOption();
     if (filter == null) {
       fail("no filter found");
     }
     return new FilterValidator().setUriValidator(this).setFilter(filter);
-
   }
 
   public ExpandValidator goExpand() {
-    ExpandOptionImpl expand = (ExpandOptionImpl) uriInfo.getExpandOption();
+    final ExpandOption expand = uriInfo.getExpandOption();
     if (expand == null) {
       fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
@@ -130,27 +126,20 @@ public class TestUriValidator implements TestValidator {
   }
 
   public ResourceValidator goSelectItemPath(final int index) {
-    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-
+    final SelectOption select = uriInfo.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
-    UriInfoImpl uriInfo1 = (UriInfoImpl) item.getResourcePath();
-
     return new ResourceValidator()
-    .setUpValidator(this)
-    .setEdm(edm)
-    .setUriInfoImplPath(uriInfo1);
-
+        .setUpValidator(this)
+        .setEdm(edm)
+        .setUriInfoPath(item.getResourcePath());
   }
 
   public TestUriValidator isSelectStartType(final int index, final FullQualifiedName fullName) {
-    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
+    final SelectOption select = uriInfo.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
     EdmType actualType = item.getStartTypeFilter();
-
-    FullQualifiedName actualName = new FullQualifiedName(actualType.getNamespace(), actualType.getName());
-    assertEquals(fullName, actualName);
+    assertEquals(fullName, actualType.getFullQualifiedName());
     return this;
-
   }
 
   // Validation
@@ -169,7 +158,7 @@ public class TestUriValidator implements TestValidator {
       fail("not enough queryParameters");
     }
 
-    CustomQueryOptionImpl option = (CustomQueryOptionImpl) list.get(index);
+    CustomQueryOption option = list.get(index);
     assertEquals(name, option.getName());
     assertEquals(value, option.getText());
     return this;
@@ -185,7 +174,6 @@ public class TestUriValidator implements TestValidator {
       assertEquals(entitySet, uriInfo.getEntitySetNames().get(i));
       i++;
     }
-
   }
 
   public TestUriValidator isExSyntax(final UriParserSyntaxException.MessageKeys messageKey) {
@@ -232,7 +220,6 @@ public class TestUriValidator implements TestValidator {
     }
 
     assertEquals(text, uriInfo.getFragment());
-
     return this;
   }
 
@@ -241,27 +228,21 @@ public class TestUriValidator implements TestValidator {
       fail("invalid resource kind: " + uriInfo.getKind().toString());
     }
 
-    assertEquals(fullName.toString(), fullName(uriInfo.getEntityTypeCast()));
+    assertEquals(fullName, uriInfo.getEntityTypeCast().getFullQualifiedName());
     return this;
   }
 
-  private String fullName(final EdmEntityType type) {
-    return type.getNamespace() + "." + type.getName();
-  }
-
   public TestUriValidator isSelectItemStar(final int index) {
-    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-
+    final SelectOption select = uriInfo.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
-    assertEquals(true, item.isStar());
+    assertTrue(item.isStar());
     return this;
   }
 
   public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
-    SelectOptionImpl select = (SelectOptionImpl) uriInfo.getSelectOption();
-
+    final SelectOption select = uriInfo.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
-    assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
+    assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
     return this;
   }
 }

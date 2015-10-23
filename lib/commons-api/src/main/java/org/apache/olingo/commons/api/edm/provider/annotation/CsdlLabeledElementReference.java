@@ -20,7 +20,7 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
 
 /**
  * The edm:LabeledElementReference expression returns the value of an
- * edm:LabeledElement (see {@link LabeledElement}) expression.
+ * edm:LabeledElement (see {@link CsdlLabeledElement}) expression.
  */
 public class CsdlLabeledElementReference extends CsdlDynamicExpression {
   private static final long serialVersionUID = -4793707024628773226L;

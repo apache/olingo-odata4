@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -55,10 +54,7 @@ public class StringHelper {
     }
 
     public int byteLength() {
-      if(data == null) {
-        return -1;
-      }
-      return data.length;
+      return data == null ? -1 : data.length;
     }
 
     public String asString() {
@@ -67,15 +63,6 @@ public class StringHelper {
 
     public String asString(final String charsetName) {
       return new String(data, Charset.forName(charsetName));
-    }
-
-    public Stream print(final OutputStream out) throws IOException {
-      out.write(data);
-      return this;
-    }
-
-    public Stream print() throws IOException {
-      return print(System.out);
     }
 
     public String asStringWithLineSeparation(String separator) throws IOException {

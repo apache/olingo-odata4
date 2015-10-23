@@ -331,7 +331,7 @@ public class CsdlSchema extends CsdlAbstractEdmItem implements CsdlAnnotatable {
   
   /**
    * Sets a list of annotations
-   * @param annotations list of annotations
+   * @param annotationGroups list of annotations
    * @return this instance
    */
   public CsdlSchema setAnnotationsGroup(final List<CsdlAnnotations> annotationGroups) {

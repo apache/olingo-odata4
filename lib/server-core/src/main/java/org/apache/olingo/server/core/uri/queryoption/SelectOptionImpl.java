@@ -27,13 +27,13 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOption {
 
-  private List<SelectItemImpl> selectItems;
+  private List<SelectItem> selectItems;
 
   public SelectOptionImpl() {
     setKind(SystemQueryOptionKind.SELECT);
   }
 
-  public SelectOptionImpl setSelectItems(final List<SelectItemImpl> selectItems) {
+  public SelectOptionImpl setSelectItems(final List<SelectItem> selectItems) {
     this.selectItems = selectItems;
     return this;
   }
@@ -41,7 +41,7 @@ public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOpt
   @Override
   public List<SelectItem> getSelectItems() {
     List<SelectItem> retList = new ArrayList<SelectItem>();
-    for (SelectItemImpl item : selectItems) {
+    for (SelectItem item : selectItems) {
       retList.add(item);
     }
     return retList;

@@ -79,7 +79,7 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     CsdlRecord csdlRecord = new CsdlRecord();
     csdlRecord.setType("ns.et");
     Edm mock = mock(Edm.class);
-    when(mock.getEntityType(new FullQualifiedName("ns.et"))).thenReturn(mock(EdmEntityType.class));
+    when(mock.getEntityType(new FullQualifiedName("ns", "et"))).thenReturn(mock(EdmEntityType.class));
     List<CsdlPropertyValue> propertyValues = new ArrayList<CsdlPropertyValue>();
     propertyValues.add(new CsdlPropertyValue());
     csdlRecord.setPropertyValues(propertyValues);
@@ -106,7 +106,7 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     CsdlRecord csdlRecord = new CsdlRecord();
     csdlRecord.setType("ns.ct");
     Edm mock = mock(Edm.class);
-    when(mock.getComplexType(new FullQualifiedName("ns.ct"))).thenReturn(mock(EdmComplexType.class));
+    when(mock.getComplexType(new FullQualifiedName("ns", "ct"))).thenReturn(mock(EdmComplexType.class));
     EdmExpression record = AbstractEdmExpression.getExpression(mock, csdlRecord);
 
     EdmDynamicExpression dynExp = assertDynamic(record);
@@ -137,7 +137,7 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     }
 
     // Enum
-    when(edm.getEnumType(new FullQualifiedName("ns.enum"))).thenReturn(mock(EdmEnumType.class));
+    when(edm.getEnumType(new FullQualifiedName("ns", "enum"))).thenReturn(mock(EdmEnumType.class));
     exp = AbstractEdmExpression.getExpression(edm, new CsdlRecord().setType("ns.enum"));
     record = exp.asDynamic().asRecord();
     try {
@@ -147,7 +147,7 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     }
 
     // Typedef
-    when(edm.getTypeDefinition(new FullQualifiedName("ns.typedef"))).thenReturn(mock(EdmTypeDefinition.class));
+    when(edm.getTypeDefinition(new FullQualifiedName("ns", "typedef"))).thenReturn(mock(EdmTypeDefinition.class));
     exp = AbstractEdmExpression.getExpression(edm, new CsdlRecord().setType("ns.typedef"));
     record = exp.asDynamic().asRecord();
     try {

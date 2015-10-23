@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -32,7 +33,6 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,10 +41,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 
 public class ServerErrorSerializerTest {
 
-  ODataSerializer ser;
+  final ODataSerializer ser;
 
-  @Before
-  public void before() throws Exception {
+  public ServerErrorSerializerTest() throws SerializerException {
     ser = OData.newInstance().createSerializer(ContentType.JSON);
   }
 
@@ -110,10 +109,10 @@ public class ServerErrorSerializerTest {
 
   @Test
   public void verifiedWithJacksonParser() throws Exception {
-    List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
-    details.add(new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget"));
     ODataServerError error =
-        new ODataServerError().setCode("Code").setMessage("Message").setTarget("Target").setDetails(details);
+        new ODataServerError().setCode("Code").setMessage("Message").setTarget("Target")
+            .setDetails(Collections.singletonList(
+                new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage").setTarget("detailTarget")));
     InputStream stream = ser.error(error).getContent();
     JsonNode tree = new ObjectMapper().readTree(stream);
     assertNotNull(tree);

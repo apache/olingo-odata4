@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
@@ -50,7 +49,7 @@ public class FixedFormatSerializerTest {
 
   @Test
   public void primitiveValue() throws Exception {
-    final EdmPrimitiveType type = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
+    final EdmPrimitiveType type = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
     assertEquals("42", IOUtils.toString(serializer.primitiveValue(type, 42,
         PrimitiveValueSerializerOptions.with().nullable(true).build())));
   }

@@ -50,12 +50,14 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRoot;
+import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
@@ -373,7 +375,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
         context.contextReadingFunctionParameters = true;
         @SuppressWarnings("unchecked")
-        List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
+        List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
         context.contextReadingFunctionParameters = false;
 
         // mark parameters as consumed
@@ -384,7 +386,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
         // collect parameter names
         List<String> names = new ArrayList<String>();
-        for (UriParameterImpl item : parameters) {
+        for (UriParameter item : parameters) {
           names.add(item.getName());
         }
 
@@ -672,12 +674,12 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
       context.contextReadingFunctionParameters = true;
       @SuppressWarnings("unchecked")
-      List<UriParameterImpl> parameters = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
+      List<UriParameter> parameters = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
       context.contextReadingFunctionParameters = false;
 
       // get names of function parameters
       List<String> names = new ArrayList<String>();
-      for (UriParameterImpl item : parameters) {
+      for (UriParameter item : parameters) {
         names.add(item.getName());
       }
 
@@ -1907,7 +1909,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         }
         
         @SuppressWarnings("unchecked")
-        List<UriParameterImpl> list = (List<UriParameterImpl>) ctx.vlNVO.get(0).accept(this);
+        List<UriParameter> list = (List<UriParameter>) ctx.vlNVO.get(0).accept(this);
         ((UriResourceWithKeysImpl) pathInfoSegment)
             .setKeyPredicates(list);
       } else {
@@ -2110,10 +2112,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSelect(final SelectContext ctx) {
-    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
-
+    List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
-      selectItems.add((SelectItemImpl) si.accept(this));
+      selectItems.add((SelectItem) si.accept(this));
     }
 
     return new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.children.get(2).getText());
@@ -2121,10 +2122,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSelectEOF(final SelectEOFContext ctx) {
-    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
-
+    List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
-      selectItems.add((SelectItemImpl) si.accept(this));
+      selectItems.add((SelectItem) si.accept(this));
     }
 
     return new SelectOptionImpl().setSelectItems(selectItems).setText(ctx.getText());
@@ -2345,7 +2345,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         prevType = getTypeInformation(last).type;
       }
 
-      FullQualifiedName finalTypeName = new FullQualifiedName(prevType.getNamespace(), prevType.getName());
+      final FullQualifiedName finalTypeName = prevType.getFullQualifiedName();
 
       // check for action
       EdmAction action = edm.getBoundAction(fullName, finalTypeName, null);

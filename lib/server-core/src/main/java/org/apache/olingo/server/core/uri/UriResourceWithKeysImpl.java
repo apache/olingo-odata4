@@ -19,10 +19,10 @@
 package org.apache.olingo.server.core.uri;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
@@ -30,7 +30,7 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements UriResourcePartTyped {
 
   protected EdmType collectionTypeFilter = null;
-  protected List<UriParameterImpl> keyPredicates = null;
+  protected List<UriParameter> keyPredicates = null;
   protected EdmType entryTypeFilter = null;
 
   public UriResourceWithKeysImpl(final UriResourceKind kind) {
@@ -46,16 +46,12 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
   }
 
   public List<UriParameter> getKeyPredicates() {
-    List<UriParameter> retList = new ArrayList<UriParameter>();
-    if (keyPredicates != null) {
-      for (UriParameterImpl item : keyPredicates) {
-        retList.add(item);
-      }
-    }
-    return retList;
+    return keyPredicates == null ?
+        Collections.<UriParameter> emptyList() :
+        new ArrayList<UriParameter>(keyPredicates);
   }
 
-  public UriResourceWithKeysImpl setKeyPredicates(final List<UriParameterImpl> list) {
+  public UriResourceWithKeysImpl setKeyPredicates(final List<UriParameter> list) {
     keyPredicates = list;
     return this;
   }
@@ -100,7 +96,7 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
   }
 
   private String getFQN(final EdmType type) {
-    return new FullQualifiedName(type.getNamespace(), type.getName()).getFullQualifiedNameAsString();
+    return type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
 }

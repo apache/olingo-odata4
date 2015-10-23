@@ -24,14 +24,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -41,16 +43,17 @@ import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
-import org.apache.olingo.server.core.uri.testutil.EdmTechTestProvider;
 import org.apache.olingo.server.core.uri.testutil.FilterTreeToText;
 import org.apache.olingo.server.tecsvc.provider.ActionProvider;
+import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.junit.Test;
 
 public class ExpressionTest {
-  Edm edm = new EdmProviderImpl(new EdmTechTestProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
   public void testSupportedOperators() {

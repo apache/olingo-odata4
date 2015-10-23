@@ -134,14 +134,14 @@ public class ConditionalITCase extends AbstractParamTecSvcITCase {
   public void updateWithoutIfMatch() throws Exception {
     executeAndExpectError(
         getClient().getCUDRequestFactory().getEntityUpdateRequest(
-            uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName("olingo.Order"))),
+            uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "Order"))),
         HttpStatusCode.PRECONDITION_REQUIRED);
   }
 
   @Test
   public void updateWithWrongIfMatch() throws Exception {
     ODataEntityUpdateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName("olingo.Order")));
+        uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "Order")));
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
@@ -184,7 +184,7 @@ public class ConditionalITCase extends AbstractParamTecSvcITCase {
     final ODataDeleteResponse response = deleteRequest.execute();
 
     ODataEntityUpdateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityUpdateRequest(
-        uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName("olingo.Order")));
+        uriEntity, UpdateType.PATCH, getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "Order")));
     request.setIfMatch(eTag);
     // This request has to be in the same session as the first in order to access the same data provider.
     request.addCustomHeader(HttpHeader.COOKIE, response.getHeader(HttpHeader.SET_COOKIE).iterator().next());

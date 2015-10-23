@@ -21,8 +21,7 @@ package org.apache.olingo.server.core.serializer.xml;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
@@ -31,15 +30,13 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ServerErrorXmlSerializerTest {
 
-  ODataSerializer ser;
+  final ODataSerializer ser;
 
-  @Before
-  public void before() throws Exception {
+  public ServerErrorXmlSerializerTest() throws SerializerException {
     ser = OData.newInstance().createSerializer(ContentType.APPLICATION_XML);
   }
 
@@ -53,7 +50,7 @@ public class ServerErrorXmlSerializerTest {
         + "<error xmlns=\"http://docs.oasis-open.org/odata/ns/metadata\">"
         + "<code>0</code>"
         + "<message>ErrorMessage</message>"
-        + "</error>", 
+        + "</error>",
         jsonString);
   }
 
@@ -64,18 +61,15 @@ public class ServerErrorXmlSerializerTest {
 
   @Test
   public void singleDetailNothingSet() throws Exception {
-    ODataErrorDetail detail = new ODataErrorDetail();
-    detail.setCode("detail code");
-    detail.setMessage("detail message");
-    
-    List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
-    details.add(detail);
-    
-    ODataServerError error = new ODataServerError().setDetails(details);
-    error.setCode("code");
-    error.setMessage("err message");
-    error.setTarget("target");
-    
+    ODataServerError error = new ODataServerError()
+        .setCode("code")
+        .setMessage("err message")
+        .setTarget("target")
+        .setDetails(Collections.singletonList(
+            new ODataErrorDetail()
+                .setCode("detail code")
+                .setMessage("detail message")));
+
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>"

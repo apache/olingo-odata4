@@ -34,13 +34,14 @@ import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
  */
 public class ServiceMetadataImpl implements ServiceMetadata {
 
-  private final EdmProviderImpl edm;
-  private final List<EdmxReference> references = new ArrayList<EdmxReference>();
+  private final Edm edm;
+  private final List<EdmxReference> references;
   private final ServiceMetadataETagSupport serviceMetadataETagSupport;
 
   public ServiceMetadataImpl(CsdlEdmProvider edmProvider, List<EdmxReference> references,
       ServiceMetadataETagSupport serviceMetadataETagSupport) {
     edm = new EdmProviderImpl(edmProvider);
+    this.references = new ArrayList<EdmxReference>();
     this.references.addAll(references);
     this.serviceMetadataETagSupport = serviceMetadataETagSupport;
   }

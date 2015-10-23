@@ -25,11 +25,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.commons.core.edm.EdmProviderImpl;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -47,7 +49,8 @@ import org.mockito.stubbing.Answer;
 
 public class PreconditionsValidatorTest {
 
-  private static final Edm edm = new EdmProviderImpl(new EdmTechProvider());
+  private static final Edm edm = OData.newInstance().createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   // -------------- POSITIVE TESTS --------------------------------------------------------------------------------
 
