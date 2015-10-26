@@ -36,4 +36,5 @@ public class EdmEntitySetImpl extends AbstractEdmBindingTarget implements EdmEnt
   public boolean isIncludeInServiceDocument() {
     return entitySet.isIncludeInServiceDocument();
   }
+
 }

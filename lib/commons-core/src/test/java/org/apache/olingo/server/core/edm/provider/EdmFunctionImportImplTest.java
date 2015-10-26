@@ -71,6 +71,7 @@ public class EdmFunctionImportImplTest {
     final String functionImportName = "functionImport";
     final CsdlFunctionImport functionImportProvider = new CsdlFunctionImport()
         .setName(functionImportName)
+        .setTitle("title")
         .setFunction(functionName)
         .setIncludeInServiceDocument(true);
     when(provider.getFunctionImport(containerName, functionImportName)).thenReturn(functionImportProvider);
@@ -78,6 +79,7 @@ public class EdmFunctionImportImplTest {
     final EdmFunctionImport functionImport = new EdmFunctionImportImpl(edm, entityContainer, functionImportProvider);
     assertEquals(functionImportName, entityContainer.getFunctionImport(functionImportName).getName());
     assertEquals("functionImport", functionImport.getName());
+    assertEquals("title", functionImport.getTitle());
     assertEquals(new FullQualifiedName("ns", functionImportName), functionImport.getFullQualifiedName());
     assertTrue(functionImport.isIncludeInServiceDocument());
     final EdmFunction function = functionImport.getUnboundFunction(Collections.<String> emptyList());

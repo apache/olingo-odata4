@@ -83,4 +83,10 @@ public class CsdlEntitySet extends CsdlBindingTarget {
     this.includeInServiceDocument = includeInServiceDocument;
     return this;
   }
+  
+  @Override
+  public CsdlEntitySet setTitle(String title) {
+    super.setTitle(title);
+    return this;
+  }
 }

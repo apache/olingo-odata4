@@ -81,29 +81,33 @@ public class ServiceDocumentJsonSerializer {
   private void writeEntitySets(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
       if (edmEntitySet.isIncludeInServiceDocument()) {
-        writeElement(gen, null, edmEntitySet.getName(), edmEntitySet.getName());
+        writeElement(gen, null, edmEntitySet.getName(), edmEntitySet.getName(), edmEntitySet.getName());
       }
     }
   }
 
   private void writeFunctionImports(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
-    for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {
-      if (edmFunctionImport.isIncludeInServiceDocument()) {
-        writeElement(gen, FUNCTION_IMPORT, edmFunctionImport.getName(), edmFunctionImport.getName());
+    for (EdmFunctionImport edmFI : container.getFunctionImports()) {
+      if (edmFI.isIncludeInServiceDocument()) {
+        writeElement(gen, FUNCTION_IMPORT, edmFI.getName(), edmFI.getName(), edmFI.getTitle());
       }
     }
   }
 
   private void writeSingletons(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmSingleton edmSingleton : container.getSingletons()) {
-      writeElement(gen, SINGLETON, edmSingleton.getName(), edmSingleton.getName());
+      writeElement(gen, SINGLETON, edmSingleton.getName(), edmSingleton.getName(), edmSingleton.getTitle());
     }
   }
 
-  private void writeElement(JsonGenerator gen, final String kind, final String reference, final String title)
+  private void writeElement(JsonGenerator gen, final String kind, final String reference, final String name,
+      final String title)
       throws IOException {
     gen.writeStartObject();
-    gen.writeObjectField(Constants.JSON_NAME, title);
+    gen.writeObjectField(Constants.JSON_NAME, name);
+    if (title != null) {
+      gen.writeObjectField(Constants.JSON_TITLE, title);
+    }
     gen.writeObjectField(Constants.JSON_URL, reference);
     if (kind != null) {
       gen.writeObjectField(KIND, kind);

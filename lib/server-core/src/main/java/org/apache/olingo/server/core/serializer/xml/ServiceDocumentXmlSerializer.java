@@ -97,7 +97,7 @@ public class ServiceDocumentXmlSerializer {
       throws XMLStreamException {
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
       if (edmEntitySet.isIncludeInServiceDocument()) {
-        writeElement(writer, true, "collection", edmEntitySet.getName(), edmEntitySet.getName());
+        writeElement(writer, true, "collection", edmEntitySet.getName(), edmEntitySet.getTitle());
       }
     }
   }
@@ -106,7 +106,7 @@ public class ServiceDocumentXmlSerializer {
       throws XMLStreamException {
     for (EdmFunctionImport edmFunctionImport : container.getFunctionImports()) {
       if (edmFunctionImport.isIncludeInServiceDocument()) {
-        writeElement(writer, false, "function-import", edmFunctionImport.getName(), edmFunctionImport.getName());
+        writeElement(writer, false, "function-import", edmFunctionImport.getName(), edmFunctionImport.getTitle());
       }
     }
   }
@@ -114,20 +114,24 @@ public class ServiceDocumentXmlSerializer {
   private void writeSingletons(final XMLStreamWriter writer, final EdmEntityContainer container)
       throws XMLStreamException {
     for (EdmSingleton edmSingleton : container.getSingletons()) {
-      writeElement(writer, false, "singleton", edmSingleton.getName(), edmSingleton.getName());
+      writeElement(writer, false, "singleton", edmSingleton.getName(), edmSingleton.getTitle());
     }
   }
 
-  private void writeElement(XMLStreamWriter writer, final boolean isApp, final String kind, final String reference,
+  private void writeElement(XMLStreamWriter writer, final boolean isApp, final String kind, final String name,
       final String title) throws XMLStreamException {
     if (isApp) {
       writer.writeStartElement(APP, kind, NS_APP);
     } else {
       writer.writeStartElement(METADATA, kind, NS_METADATA);
     }
-    writer.writeAttribute(Constants.ATTR_HREF, reference);
+    writer.writeAttribute(Constants.ATTR_HREF, name);
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_TITLE, NS_ATOM);
-    writer.writeCharacters(title);
+    if (title != null) {
+      writer.writeCharacters(title);
+    } else {
+      writer.writeCharacters(name);
+    }
     writer.writeEndElement();
     writer.writeEndElement();
   }

@@ -34,6 +34,11 @@ public class CsdlFunctionImport extends CsdlOperationImport {
   // Default include in service document is false for function imports
   private boolean includeInServiceDocument;
 
+  /**
+   * Humanreadable title
+   */
+  private String title;
+
   @Override
   public String getName() {
     return name;
@@ -114,6 +119,20 @@ public class CsdlFunctionImport extends CsdlOperationImport {
   @Override
   public CsdlFunctionImport setAnnotations(final List<CsdlAnnotation> annotations) {
     this.annotations = annotations;
+    return this;
+  }
+  
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * A human readable title for this instance
+   * @param title
+   * @return this instance
+   */
+  public CsdlFunctionImport setTitle(String title) {
+    this.title = title;
     return this;
   }
 }

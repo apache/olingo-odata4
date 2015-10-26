@@ -215,6 +215,8 @@ public interface Constants {
   String VALUE = "value";
 
   String JSON_URL = "url";
+  
+  String JSON_TITLE = "title";
 
   String JSON_COORDINATES = "coordinates";
 

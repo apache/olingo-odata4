@@ -64,6 +64,7 @@ public class EdmSingletonImplTest {
     final CsdlSingleton singletonProvider =
         new CsdlSingleton()
             .setName(singletonName)
+            .setTitle("title")
             .setType(typeName)
             .setNavigationPropertyBindings(
                 Arrays.asList(
@@ -74,6 +75,7 @@ public class EdmSingletonImplTest {
     final EdmSingleton singleton = new EdmSingletonImpl(edm, entityContainer, singletonProvider);
     assertEquals(singletonName, entityContainer.getSingleton(singletonName).getName());
     assertEquals(singletonName, singleton.getName());
+    assertEquals("title", singleton.getTitle());
     final EdmEntityType entityType = singleton.getEntityType();
     assertEquals(typeName.getNamespace(), entityType.getNamespace());
     assertEquals(typeName.getName(), entityType.getName());

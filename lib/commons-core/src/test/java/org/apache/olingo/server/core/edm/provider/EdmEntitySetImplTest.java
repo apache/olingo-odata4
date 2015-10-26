@@ -66,6 +66,7 @@ public class EdmEntitySetImplTest {
     final String entitySetName = "entitySet";
     final CsdlEntitySet entitySetProvider = new CsdlEntitySet()
         .setName(entitySetName)
+        .setTitle("title")
         .setType(typeName)
         .setNavigationPropertyBindings(Arrays.asList(
             new CsdlNavigationPropertyBinding().setPath("path")
@@ -75,6 +76,7 @@ public class EdmEntitySetImplTest {
     final EdmEntitySet entitySet = new EdmEntitySetImpl(edm, entityContainer, entitySetProvider);
     assertEquals(entitySetName, entityContainer.getEntitySet(entitySetName).getName());
     assertEquals(entitySetName, entitySet.getName());
+    assertEquals("title", entitySet.getTitle());
     final EdmEntityType entityType = entitySet.getEntityType();
     assertEquals(typeName.getNamespace(), entityType.getNamespace());
     assertEquals(typeName.getName(), entityType.getName());

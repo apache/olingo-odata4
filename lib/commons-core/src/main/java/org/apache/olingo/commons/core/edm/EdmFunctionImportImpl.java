@@ -56,4 +56,9 @@ public class EdmFunctionImportImpl extends AbstractEdmOperationImport implements
   public boolean isIncludeInServiceDocument() {
     return functionImport.isIncludeInServiceDocument();
   }
+  
+  @Override
+  public String getTitle() {
+    return functionImport.getTitle();
+  }
 }

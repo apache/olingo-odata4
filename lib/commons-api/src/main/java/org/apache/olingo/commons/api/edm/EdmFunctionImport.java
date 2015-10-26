@@ -46,6 +46,12 @@ public interface EdmFunctionImport extends EdmOperationImport {
   FullQualifiedName getFunctionFqn();
 
   /**
+   * Returns a human readable title or null if not set.
+   * @return a human readable title or null
+   */
+  String getTitle();
+  
+  /**
    * @return true if the function import must be included in the service document
    */
   boolean isIncludeInServiceDocument();

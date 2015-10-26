@@ -119,4 +119,9 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
 
     return bindingTarget;
   }
+  
+  @Override
+  public String getTitle() {
+    return target.getTitle();
+  }
 }

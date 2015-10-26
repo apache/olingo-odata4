@@ -27,6 +27,12 @@ import java.util.List;
 public interface EdmBindingTarget extends EdmNamed, EdmAnnotatable {
 
   /**
+   * Returns a human readable title or null if not set.
+   * @return a human readable title or null
+   */
+  String getTitle();
+  
+  /**
    * Returns the target for a given path.
    *
    * @param path path for which the target is returned

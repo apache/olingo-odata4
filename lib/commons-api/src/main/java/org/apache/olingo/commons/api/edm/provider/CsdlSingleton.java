@@ -59,4 +59,10 @@ public class CsdlSingleton extends CsdlBindingTarget {
     super.setAnnotations(annotations);
     return this;
   }
+  
+  @Override
+  public CsdlSingleton setTitle(String title) {
+    super.setTitle(title);
+    return this;
+  }
 }

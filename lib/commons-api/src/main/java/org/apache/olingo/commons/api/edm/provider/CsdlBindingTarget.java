@@ -34,6 +34,11 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
    * The Name.
    */
   protected String name;
+  
+  /**
+   * The human readable title.
+   */
+  protected String title;
 
   /**
    * The Type.
@@ -137,6 +142,20 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
    */
   public CsdlBindingTarget setAnnotations(final List<CsdlAnnotation> annotations) {
     this.annotations = annotations;
+    return this;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * A human readable title for this instance
+   * @param title
+   * @return this instance
+   */
+  public CsdlBindingTarget setTitle(String title) {
+    this.title = title;
     return this;
   }
 }
