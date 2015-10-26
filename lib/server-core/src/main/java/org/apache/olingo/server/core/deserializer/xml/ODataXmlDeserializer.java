@@ -63,11 +63,9 @@ import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
-
 public class ODataXmlDeserializer implements ODataDeserializer {
 
-  private static final XMLInputFactory FACTORY = new InputFactoryImpl();
+  private static final XMLInputFactory FACTORY = XMLInputFactory.newFactory();
 
   private static final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
   private static final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
@@ -137,12 +135,11 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   private void collection(final Valuable valuable, final XMLEventReader reader, final StartElement start,
-      final EdmType type, final boolean isNullable, final Integer maxLength, final Integer precision,
+      final EdmType edmType, final boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final boolean isUnicode) throws XMLStreamException, EdmPrimitiveTypeException,
       DeserializerException {
 
     List<Object> values = new ArrayList<Object>();
-    EdmType edmType = type;
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -150,7 +147,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
 
       if (event.isStartElement()) {        
         if (edmType instanceof EdmPrimitiveType) {
-          values.add(primitive(reader, event.asStartElement(), type, isNullable, 
+          values.add(primitive(reader, event.asStartElement(), edmType, isNullable,
               maxLength, precision, scale, isUnicode));          
         } else if (edmType instanceof EdmComplexType) {
           values.add(complex(reader, event.asStartElement(), (EdmComplexType) edmType));                    
@@ -323,7 +320,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         } else if (entryRefQName.equals(event.asStartElement().getName())) {
           if (navigationProperty.isCollection()) {
             throw new DeserializerException("Binding annotation: " + link.getTitle() + 
-                " must be collection of entity refercences",
+                " must be collection of entity references",
                 DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, link.getTitle());            
           }          
           link.setBindingLink(entityRef(reader, event.asStartElement()));
@@ -331,7 +328,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
         } else if (Constants.QNAME_ATOM_ELEM_FEED.equals(event.asStartElement().getName())) {
           if (navigationProperty.isCollection()) {
             throw new DeserializerException("Binding annotation: " + link.getTitle() + 
-                " must be single entity refercences",
+                " must be single entity references",
                 DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, link.getTitle());            
           }
           link.setBindingLinks(entityRefCollection(reader, event.asStartElement()));
@@ -490,9 +487,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
               } else {
                 if (link.getInlineEntitySet() != null) {
                   List<String> bindings = new ArrayList<String>();
-                  List<Entity> enities = link.getInlineEntitySet().getEntities();
+                  List<Entity> entities = link.getInlineEntitySet().getEntities();
                   
-                  for (Entity inlineEntity:enities) {
+                  for (Entity inlineEntity:entities) {
                     // check if this is reference
                     if (inlineEntity.getId() != null && inlineEntity.getProperties().isEmpty()) {
                       bindings.add(inlineEntity.getId().toASCIIString());
@@ -638,12 +635,13 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEventReader reader = getReader(input);
       final StartElement start = skipBeforeFirstStartElement(reader);
       EntityCollection entityCollection = entitySet(reader, start, edmEntityType);
-      for (Entity entity:entityCollection.getEntities()) {
-        entity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
+      if(entityCollection != null) {
+        for (Entity entity: entityCollection.getEntities()) {
+          entity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
+        }
       }
-      return DeserializerResultImpl.with().entityCollection(entityCollection)
-          .build();      
-    } catch (XMLStreamException e) {
+      return DeserializerResultImpl.with().entityCollection(entityCollection).build();
+    } catch (final XMLStreamException e) {
       throw new DeserializerException(e.getMessage(), e, DeserializerException.MessageKeys.IO_EXCEPTION);
     } catch (final EdmPrimitiveTypeException e) {
       throw new DeserializerException(e.getMessage(), e, 
