@@ -164,6 +164,7 @@ public class ContainerProvider {
         return new CsdlEntitySet()
             .setName("ESAllPrim")
             .setType(EntityTypeProvider.nameETAllPrim)
+            .setTitle("All PropertyTypes EntitySet")
             .setNavigationPropertyBindings(Arrays
                 .asList(new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrim"),
                     new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrim")))
@@ -658,6 +659,7 @@ public class ContainerProvider {
       if (name.equals("FINRTInt16")) {
         return new CsdlFunctionImport()
             .setName(name)
+            .setTitle("Simple FunctionImport")
             .setFunction(FunctionProvider.nameUFNRTInt16)
             .setIncludeInServiceDocument(true);
 
@@ -804,6 +806,7 @@ public class ContainerProvider {
       if (name.equals("SI")) {
         return new CsdlSingleton()
             .setName("SI")
+            .setTitle("Simple Singelton")
             .setType(EntityTypeProvider.nameETTwoPrim);
 
       } else if (name.equals("SINav")) {

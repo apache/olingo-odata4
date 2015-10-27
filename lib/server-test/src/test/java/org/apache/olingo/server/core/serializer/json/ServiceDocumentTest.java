@@ -67,17 +67,20 @@ public class ServiceDocumentTest {
         metadata.getServiceMetadataETagSupport().getMetadataETag().replace("\"", "\\\"")));
 
     assertTrue(jsonString.contains("ESAllPrim"));
+    assertTrue(jsonString.contains("All PropertyTypes EntitySet"));
     assertTrue(jsonString.contains("ESCollAllPrim"));
     assertTrue(jsonString.contains("ESKeyNavCont"));
     assertFalse(jsonString.contains("ESInvisible"));
 
     assertTrue(jsonString.contains("FINRTInt16"));
+    assertTrue(jsonString.contains("Simple FunctionImport"));
     assertTrue(jsonString.contains("FINRTCollETMixPrimCollCompTwoParam"));
     assertTrue(jsonString.contains("FICRTCollESKeyNavContParam"));
     assertFalse(jsonString.contains("FINInvisibleRTInt16"));
     assertTrue(jsonString.contains("FunctionImport"));
 
     assertTrue(jsonString.contains("SI"));
+    assertTrue(jsonString.contains("Simple Singelton"));
     assertTrue(jsonString.contains("SINav"));
     assertTrue(jsonString.contains("SIMedia"));
     assertTrue(jsonString.contains("Singleton"));

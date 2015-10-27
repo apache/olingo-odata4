@@ -23,5 +23,7 @@ public interface ServiceDocumentItem {
   String getName();
 
   String getUrl();
+  
+  String getTitle();
 
 }

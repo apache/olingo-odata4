@@ -104,6 +104,8 @@ public interface Constants {
   String ATTR_METADATA = "metadata";
 
   String ATTR_HREF = "href";
+  
+  String ATTR_NAME = "name";
 
   String ATTR_REF = "ref";
 

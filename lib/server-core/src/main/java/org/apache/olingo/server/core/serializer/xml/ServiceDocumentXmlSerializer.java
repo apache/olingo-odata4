@@ -126,6 +126,7 @@ public class ServiceDocumentXmlSerializer {
       writer.writeStartElement(METADATA, kind, NS_METADATA);
     }
     writer.writeAttribute(Constants.ATTR_HREF, name);
+    writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NAME , name);
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_TITLE, NS_ATOM);
     if (title != null) {
       writer.writeCharacters(title);

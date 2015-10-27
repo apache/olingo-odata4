@@ -81,7 +81,7 @@ public class ServiceDocumentJsonSerializer {
   private void writeEntitySets(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
     for (EdmEntitySet edmEntitySet : container.getEntitySets()) {
       if (edmEntitySet.isIncludeInServiceDocument()) {
-        writeElement(gen, null, edmEntitySet.getName(), edmEntitySet.getName(), edmEntitySet.getName());
+        writeElement(gen, null, edmEntitySet.getName(), edmEntitySet.getName(), edmEntitySet.getTitle());
       }
     }
   }
