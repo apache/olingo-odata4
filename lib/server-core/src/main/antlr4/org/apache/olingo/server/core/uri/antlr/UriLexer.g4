@@ -29,6 +29,7 @@ STRING          : '\''                -> more,  pushMode(MODE_STRING) ;         
 QUOTATION_MARK  : '\u0022'            -> more,  pushMode(MODE_JSON_STRING);         //reads up to next unescaped "
 SEARCH_INLINE   : '$search'           ->        pushMode(MODE_SYSTEM_QUERY_SEARCH); //
 FRAGMENT        : '#'                 ->        pushMode(MODE_FRAGMENT);            //
+STRING_JSON		: '"'				  -> more,  pushMode(MODE_JSON_STRING);			//reads up to next unescaped "
 
 GEOGRAPHY    : G E O G R A P H Y SQUOTE         -> pushMode(MODE_ODATA_GEO); //TODO make case insensitive
 GEOMETRY     : G E O M E T R Y   SQUOTE         -> pushMode(MODE_ODATA_GEO);
@@ -364,8 +365,11 @@ mode MODE_JSON_STRING;
 // Any """ characters inside a string are escaped with "\".
 //;==============================================================================
 
-STRING_IN_JSON      	: ('\\"' | ~[\u0022] )* '"' -> popMode;
-ERROR_CHARACTER_jsm		: EOF | .;
+STRING_IN_JSON				: (ESCAPED_JSON_CHAR | ~["\\])* '"' -> popMode;
+fragment ESCAPED_JSON_CHAR	: '\\' (["\\/bfnrt] | UNICODE_CHAR);
+fragment UNICODE_CHAR 		: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment HEX_DIGIT			: [0-9a-fA-F];
+ERROR_CHARACTER_jsm			: EOF | .;
 
 //;==============================================================================
 mode MODE_ODATA_GEO;

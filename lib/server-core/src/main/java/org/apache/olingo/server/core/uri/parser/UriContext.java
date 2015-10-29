@@ -95,7 +95,12 @@ public class UriContext {
    */
   public UriInfoImpl contextUriInfo;
   public boolean contextReadingFunctionParameters;
-
+  
+  /**
+   * Set to true if the parser operates on query part.
+   */
+  public boolean contextReadingQueryPart;
+  
   public UriContext() {
 
     contextExpandItemPath = null;

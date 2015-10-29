@@ -205,6 +205,7 @@ commonExpr          : OPEN commonExpr CLOSE                                     
                     | rootExpr                                                                          #altRoot     // $...
                     | AT odataIdentifier                                                                #altAlias    // @...
                     | primitiveLiteral                                                                  #altLiteral  // ...
+                    | arrayOrObject																		#altJson
                     ;
 
 unary               : (MINUS| NOT) ;
@@ -309,11 +310,15 @@ json_value          : jsonPrimitiv
                     | json_array;
 
 json_object         : BEGIN_OBJECT 
-                      STRING_IN_JSON
-                      WSP? COLON WSP? 
-                      json_value
+                      (
+					  json_key_value_pair
+					  (COMMA json_key_value_pair)*
+                      )?	
                       END_OBJECT;
 
+json_key_value_pair : STRING_IN_JSON
+                      WSP? COLON WSP? 
+                      json_value;
                                         
 //; JSON syntax: adapted to URI restrictions from [RFC4627]                 
 jsonPrimitiv        : STRING_IN_JSON

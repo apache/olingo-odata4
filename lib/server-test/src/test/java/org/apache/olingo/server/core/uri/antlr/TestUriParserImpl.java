@@ -1067,7 +1067,7 @@ public class TestUriParserImpl {
 
   @Test
   public void testAlias() throws Exception {
-    testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1)")
+    testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1")
     .goFilter().is("<<PropertyInt16> eq <@p1>>");
   }
 

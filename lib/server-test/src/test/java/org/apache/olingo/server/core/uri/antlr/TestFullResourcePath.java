@@ -2009,7 +2009,8 @@ public class TestFullResourcePath {
 
     testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)", "@parameterAlias=1");
     testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)/$count", "@parameterAlias=1");
-    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1");
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1")
+      .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
   }
 
   @Test
@@ -5674,8 +5675,95 @@ public class TestFullResourcePath {
       .right().isLiteral(Long.toString(Long.MAX_VALUE))
       .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64));
   }
+  
+  @Test
+  public void parameterAliasLiteralValidation() throws Exception {
+    testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=1");
+    testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=-2");
+    testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe'")
+      .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+    testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+  
+  @Test
+  public void functionsWithComplexParameters() throws Exception {
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+          + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":\"1\"}")
+      .goPath()
+      .at(0).isEntitySet("ESTwoKeyNav")
+      .at(1).isFunction("BFCESTwoKeyNavRTStringParam").isParameterAlias(0, "ParameterComp", "@p1")
+      .isInAliasToValueMap("@p1", "{\"PropertyInt16\":1,\"ProperyString\":\"1\"}");
+    
+    // Test JSON String lexer rule =\"3,Int16=abc},\\\nabc&test%test\b\f\r\t\u0022}
+    final String stringValueEncoded = "=\\\"3,Int16=abc},\\\\\\nabc%26test%25test\\b\\f\\r\\t\\u0022}";
+    final String stringValueDecoded = "=\\\"3,Int16=abc},\\\\\\nabc&test%test\\b\\f\\r\\t\\u0022}";
 
-  public static String encode(final String decoded) {
-    return decoded.replaceAll(":", "%3A");
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+        + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":\"" + stringValueEncoded + "\"}")
+    .goPath()
+    .at(0).isEntitySet("ESTwoKeyNav")
+    .at(1).isFunction("BFCESTwoKeyNavRTStringParam").isParameterAlias(0, "ParameterComp", "@p1")
+    .isInAliasToValueMap("@p1", "{\"PropertyInt16\":1,\"ProperyString\":\"" + stringValueDecoded + "\"}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+        + "(ParameterComp={\"PropertyString\":\"Test\",\"PropertyInt16\":1}) eq 'Test'")
+    .goFilter().left().is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
+    .isParameterText(0, "{\"PropertyString\":\"Test\",\"PropertyInt16\":1}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+        + "(ParameterComp={\"PropertyString\":\"" + stringValueEncoded + "\",\"PropertyInt16\":1}) eq 'Test'")
+    .goFilter().left().is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
+    .isParameterText(0, "{\"PropertyString\":\"=\\\"3,Int16=abc},\\\\\\nabc&test%test\\b\\f\\r\\t\\u0022}\"," 
+        + "\"PropertyInt16\":1}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"ProperyString\":\"1\"}");
+    
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+        + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":'1'}")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
+        + "(ParameterComp={\"PropertyInt16\":1,\"PropertyString\":\"Test\"})")
+      .isExSemantic(UriParserSemanticException.MessageKeys.COMPLEX_PARAMETER_IN_RESOURCE_PATH);
+    
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=null)")
+      .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+    
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)")
+      .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+    
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null")
+      .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+    
+    testUri.run("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test='null'");
+    
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test, UnknownParam=1)", "@test='null'")
+      .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
+    
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test='null'");
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null");
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)");
+    testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=null)");
+    
+    testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null&@test='1'")
+      .isExSyntax(UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS);
+  
+    testUri.runEx("ESAllPrim", "$filter=FINRTInt16() eq 0")
+      .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
+  }
+  
+  @Test
+  @Ignore("Key predicates in filter/orderby expression are not validated currently")
+  public void testKeyPredicatesInExpressions() throws Exception {
+    testUri.run("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(PropertyString='1',PropertyInt16=1)" 
+          + "/PropertyInt16 eq 1");
+    testUri.runEx("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(Prop='22',P=2)/PropertyInt16 eq 0")
+      .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+  }
+  
+  public static String encode(final String decoded) throws UnsupportedEncodingException {
+    return Encoder.encode(decoded);
   }
 }

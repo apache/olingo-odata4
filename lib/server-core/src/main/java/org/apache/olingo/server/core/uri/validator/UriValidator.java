@@ -139,6 +139,7 @@ public class UriValidator {
       validateForHttpMethod(uriInfo, httpMethod);
     }
     validateQueryOptions(uriInfo);
+    validateParameters(uriInfo);
     validateKeyPredicates(uriInfo);
     validatePropertyOperations(uriInfo, httpMethod);
   }
@@ -556,6 +557,58 @@ public class UriValidator {
     return UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
   }
 
+  private void validateParameters(final UriInfo uriInfo) throws UriValidationException {
+    for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
+      final boolean isFunction = pathSegment.getKind() == UriResourceKind.function;
+      
+      if(isFunction) {
+        final UriResourceFunction functionPathSegement = (UriResourceFunction) pathSegment;
+        final EdmFunction edmFuntion = functionPathSegement.getFunction();
+        
+        final Map<String, UriParameter> parameters = new HashMap<String, UriParameter>();
+        for(final UriParameter parameter : functionPathSegement.getParameters()) {
+          parameters.put(parameter.getName(), parameter);
+        }
+        
+        boolean firstParameter = true;
+        for(final String parameterName : edmFuntion.getParameterNames()) {
+          final UriParameter parameter = parameters.get(parameterName);
+          final boolean isNullable = edmFuntion.getParameter(parameterName).isNullable();
+          
+          if(parameter != null) {
+            /** No alias, value explicit null */
+            if(parameter.getText() == null 
+                && parameter.getAlias() == null && !isNullable) {
+              throw new UriValidationException("Missing non nullable parameter " + parameterName, 
+                  UriValidationException.MessageKeys.MISSING_PARAMETER, parameterName);
+            } else if(parameter.getText() == null && parameter.getAlias() != null) {
+              final String valueForAlias = uriInfo.getValueForAlias(parameter.getAlias());
+              /** Alias value is missing or explicit null **/
+              if(valueForAlias == null && !isNullable) {
+                throw new UriValidationException("Missing non nullable parameter " + parameterName, 
+                    UriValidationException.MessageKeys.MISSING_PARAMETER, parameterName);
+              }
+            }
+            
+            parameters.remove(parameterName);
+          } else if(!isNullable && !(firstParameter && edmFuntion.isBound())) {
+            // The first parameter of bound functions is implicit provided by the preceding path segment
+            throw new UriValidationException("Missing non nullable parameter " + parameterName, 
+                UriValidationException.MessageKeys.MISSING_PARAMETER, parameterName);
+          }
+          
+          firstParameter = false;
+        }
+        
+        if(!parameters.isEmpty()) {
+          final String parameterName = parameters.keySet().iterator().next();
+          throw new UriValidationException("Unsupported parameter " + parameterName, 
+              UriValidationException.MessageKeys.UNSUPPORTED_PARAMETER, parameterName);
+        }
+      }
+    }
+  }
+  
   private void validateKeyPredicates(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       final boolean isEntitySet = pathSegment.getKind() == UriResourceKind.entitySet;
