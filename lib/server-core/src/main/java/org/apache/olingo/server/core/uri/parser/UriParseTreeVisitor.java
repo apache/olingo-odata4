@@ -2143,7 +2143,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitSelectEOF(final SelectEOFContext ctx) {
     context.contextReadingQueryPart = true;
-    List<SelectItemImpl> selectItems = new ArrayList<SelectItemImpl>();
+    List<SelectItem> selectItems = new ArrayList<SelectItem>();
     for (SelectItemContext si : ctx.vlSI) {
       selectItems.add((SelectItem) si.accept(this));
     }

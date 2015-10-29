@@ -278,7 +278,7 @@ public class Parser {
           if (option.name.startsWith(AT)) {
             final FilterExpressionEOFContext filterExpCtx =
                 (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
-            final ExpressionImpl expression = ((FilterOptionImpl) uriParseTreeVisitor
+            final ExpressionImpl expression = (ExpressionImpl)((FilterOptionImpl) uriParseTreeVisitor
                 .visitFilterExpressionEOF(filterExpCtx)).getExpression();
 
             final UriParameterImpl parameter = new UriParameterImpl();
