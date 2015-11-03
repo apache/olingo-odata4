@@ -22,17 +22,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -134,7 +129,6 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
       ContentType responseFormat)
           throws ODataApplicationException, SerializerException {
 
-    EdmEntityType responseEdmEntityType = null; // we'll need this to build the ContextURL
     Entity responseEntity = null; // required for serialization of the response body
     EdmEntitySet responseEdmEntitySet = null; // we need this for building the contextUrl
 
@@ -163,7 +157,6 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
       if (navSegment instanceof UriResourceNavigation) {
         UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) navSegment;
         EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
-        responseEdmEntityType = edmNavigationProperty.getType();
         // contextURL displays the last segment
         responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
 
@@ -173,17 +166,7 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
         // e.g. for Products(1)/Category we have to find first the Products(1)
         Entity sourceEntity = storage.readEntityData(startEdmEntitySet, keyPredicates);
 
-        // now we have to check if the navigation is
-        // a) to-one: e.g. Products(1)/Category
-        // b) to-many with key: e.g. Categories(3)/Products(5)
-        // the key for nav is used in this case: Categories(3)/Products(5)
-        List<UriParameter> navKeyPredicates = uriResourceNavigation.getKeyPredicates();
-
-        if (navKeyPredicates.isEmpty()) { // e.g. DemoService.svc/Products(1)/Category
-          responseEntity = storage.getRelatedEntity(sourceEntity, responseEdmEntityType);
-        } else { // e.g. DemoService.svc/Categories(3)/Products(5)
-          responseEntity = storage.getRelatedEntity(sourceEntity, responseEdmEntityType, navKeyPredicates);
-        }
+        responseEntity = storage.getRelatedEntity(sourceEntity, uriResourceNavigation);
       }
     } else {
       // this would be the case for e.g. Products(1)/Category/Products(1)/Category
@@ -204,67 +187,9 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
 
     // handle $expand
     ExpandOption expandOption = uriInfo.getExpandOption();
-    // in our example: http://localhost:8080/DemoService/DemoService.svc/Categories(1)/$expand=Products
-    // or http://localhost:8080/DemoService/DemoService.svc/Products(1)?$expand=Category
-    if (expandOption != null) {
-      // retrieve the EdmNavigationProperty from the expand expression
-      // Note: in our example, we have only one NavigationProperty, so we can directly access it
-      EdmNavigationProperty edmNavigationProperty = null;
-      ExpandItem expandItem = expandOption.getExpandItems().get(0);
-      if (expandItem.isStar()) {
-        List<EdmNavigationPropertyBinding> bindings = responseEdmEntitySet.getNavigationPropertyBindings();
-        // we know that there are navigation bindings
-        // however normally in this case a check if navigation bindings exists is done
-        if (!bindings.isEmpty()) {
-          // can in our case only be 'Category' or 'Products', so we can take the first
-          EdmNavigationPropertyBinding binding = bindings.get(0);
-          EdmElement property = responseEdmEntitySet.getEntityType().getProperty(binding.getPath());
-          // we don't need to handle error cases, as it is done in the Olingo library
-          if (property instanceof EdmNavigationProperty) {
-            edmNavigationProperty = (EdmNavigationProperty) property;
-          }
-        }
-      } else {
-        // can be 'Category' or 'Products', no path supported
-        UriResource expandUriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
-        // we don't need to handle error cases, as it is done in the Olingo library
-        if (expandUriResource instanceof UriResourceNavigation) {
-          edmNavigationProperty = ((UriResourceNavigation) expandUriResource).getProperty();
-        }
-      }
-
-      // can be 'Category' or 'Products', no path supported
-      // we don't need to handle error cases, as it is done in the Olingo library
-      if (edmNavigationProperty != null) {
-        EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
-        String navPropName = edmNavigationProperty.getName();
-
-        // build the inline data
-        Link link = new Link();
-        link.setTitle(navPropName);
-        link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
-        link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
-
-        if (edmNavigationProperty.isCollection()) { // in case of Categories(1)/$expand=Products
-          // fetch the data for the $expand (to-many navigation) from backend
-          // here we get the data for the expand
-          EntityCollection expandEntityCollection =
-              storage.getRelatedEntityCollection(responseEntity, expandEdmEntityType);
-          link.setInlineEntitySet(expandEntityCollection);
-          link.setHref(expandEntityCollection.getId().toASCIIString());
-        } else { // in case of Products(1)?$expand=Category
-          // fetch the data for the $expand (to-one navigation) from backend
-          // here we get the data for the expand
-          Entity expandEntity = storage.getRelatedEntity(responseEntity, expandEdmEntityType);
-          link.setInlineEntity(expandEntity);
-          link.setHref(expandEntity.getId().toASCIIString());
-        }
-
-        // set the link - containing the expanded data - to the current entity
-        responseEntity.getNavigationLinks().add(link);
-      }
-    }
-
+    // Nested system query options are not implemented
+    validateNestedExpxandSystemQueryOptions(expandOption);
+    
     // 4. serialize
     EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
     // we need the property names of the $select, in order to build the context URL
@@ -288,6 +213,28 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+
+  private void validateNestedExpxandSystemQueryOptions(final ExpandOption expandOption) 
+      throws ODataApplicationException {
+    if(expandOption == null) {
+      return;
+    }
+    
+    for(final ExpandItem item : expandOption.getExpandItems()) {
+      if(    item.getCountOption() != null 
+          || item.getFilterOption() != null 
+          || item.getLevelsOption() != null
+          || item.getOrderByOption() != null
+          || item.getSearchOption() != null
+          || item.getSelectOption() != null
+          || item.getSkipOption() != null
+          || item.getTopOption() != null) {
+        
+        throw new ODataApplicationException("Nested expand system query options are not implemented", 
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),Locale.ENGLISH);
+      }
+    }
   }
 
   /*
@@ -317,7 +264,16 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
     DeserializerResult result = deserializer.entity(requestInputStream, edmEntityType);
     Entity requestEntity = result.getEntity();
     // 2.2 do the creation in backend, which returns the newly created entity
-    Entity createdEntity = storage.createEntityData(edmEntitySet, requestEntity);
+    
+    Entity createdEntity = null;
+    try {
+      storage.beginTransaction();
+      createdEntity = storage.createEntityData(edmEntitySet, requestEntity, request.getRawBaseUri());
+      storage.commitTransaction();
+    } catch(ODataApplicationException e) {
+      storage.rollbackTranscation();
+      throw e;
+    }
 
     // 3. serialize the response (we have to return the created entity)
     ContextURL contextUrl = ContextURL.with().entitySet(edmEntitySet).build();
@@ -329,6 +285,10 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
     SerializerResult serializedResponse = serializer.entity(serviceMetadata, edmEntityType, createdEntity, options);
 
     // 4. configure the response object
+    final String location = request.getRawBaseUri() + '/'
+        + odata.createUriHelper().buildCanonicalURL(edmEntitySet, createdEntity);
+    
+    response.setHeader(HttpHeader.LOCATION, location);
     response.setContent(serializedResponse.getContent());
     response.setStatusCode(HttpStatusCode.CREATED.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
