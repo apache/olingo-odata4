@@ -5697,9 +5697,11 @@ public class TestFullResourcePath {
       .at(1).isFunction("BFCESTwoKeyNavRTStringParam").isParameterAlias(0, "ParameterComp", "@p1")
       .isInAliasToValueMap("@p1", "{\"PropertyInt16\":1,\"ProperyString\":\"1\"}");
     
-    // Test JSON String lexer rule =\"3,Int16=abc},\\\nabc&test%test\b\f\r\t\u0022}
-    final String stringValueEncoded = "=\\\"3,Int16=abc},\\\\\\nabc%26test%25test\\b\\f\\r\\t\\u0022}";
-    final String stringValueDecoded = "=\\\"3,Int16=abc},\\\\\\nabc&test%test\\b\\f\\r\\t\\u0022}";
+    // Test JSON String lexer rule =\"3,Int16=abc},\\\nabc&test%test\b\f\r\t\u0022\\}\\{\\)\\(\\]\\[}
+    final String stringValueEncoded = "=\\\"3,Int16=abc},\\\\\\nabc%26test%25test\\b\\f\\r\\t\\u0022\\\\}\\\\{\\\\)" 
+        + "\\\\(\\\\]\\\\[}";
+    final String stringValueDecoded = "=\\\"3,Int16=abc},\\\\\\nabc&test%test\\b\\f\\r\\t\\u0022\\\\}\\\\{\\\\)" 
+        + "\\\\(\\\\]\\\\[}";
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
         + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":\"" + stringValueEncoded + "\"}")
@@ -5716,11 +5718,27 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
         + "(ParameterComp={\"PropertyString\":\"" + stringValueEncoded + "\",\"PropertyInt16\":1}) eq 'Test'")
     .goFilter().left().is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
-    .isParameterText(0, "{\"PropertyString\":\"=\\\"3,Int16=abc},\\\\\\nabc&test%test\\b\\f\\r\\t\\u0022}\"," 
-        + "\"PropertyInt16\":1}");
+    .isParameterText(0, "{\"PropertyString\":\"" + stringValueDecoded + "\",\"PropertyInt16\":1}");
     
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"ProperyString\":\"1\"}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"ProperyString\":null}")
+      .goFilter().left().isParameterText(0, null);
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3],\"ProperyString\":\"1\"}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[\"1\",\"2\",\"3\"],\"ProperyString\":\"1\"}");
+    
+    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[{\"Prop1\":123,\"Prop2\":\"Test\",\"Prop3\":[1,2,3]}," 
+        + "{\"Prop1\":{\"Prop1\":[\"Prop\\\":{]\"]}}],\"ProperyString\":\"1\"}");
     
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam" 
         + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":'1'}")
@@ -5754,6 +5772,26 @@ public class TestFullResourcePath {
   
     testUri.runEx("ESAllPrim", "$filter=FINRTInt16() eq 0")
       .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
+    
+    testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"ProperyString\":\"1\"")  
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"ProperyString\":\"1\"}}")  
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3]],\"ProperyString\":\"1\"}")  
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3,\"ProperyString\":\"1\"}")  
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3},\"ProperyString\":\"1\"}")  
+      .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
   
   @Test

@@ -304,7 +304,7 @@ arrayOrObject       : json_array
 
 json_array          : BEGIN_ARRAY json_value ( WSP? COMMA WSP? json_value)* END_ARRAY;
 
-json_value          : jsonPrimitiv
+json_value          : jsonPrimitive
                     | rootExpr
                     | json_object
                     | json_array;
@@ -321,14 +321,14 @@ json_key_value_pair : STRING_IN_JSON
                       json_value;
                                         
 //; JSON syntax: adapted to URI restrictions from [RFC4627]                 
-jsonPrimitiv        : STRING_IN_JSON
+jsonPrimitive 		: STRING_IN_JSON
                     | number_in_json
                     | TRUE
                     | FALSE
-                    | 'null'
+                    | NULLVALUE
                     ;
 
-number_in_json          : INT | DECIMAL;
+number_in_json		: INT | DECIMAL;
 
 //;------------------------------------------------------------------------------
 //; 6. Names and identifiers
