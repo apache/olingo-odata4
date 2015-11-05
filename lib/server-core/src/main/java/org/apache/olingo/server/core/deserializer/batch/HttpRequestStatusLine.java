@@ -33,7 +33,6 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 public class HttpRequestStatusLine {
   private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(?:\\?(.*))?");
 
-  private static final Set<String> HTTP_BATCH_METHODS = new HashSet<String>(Arrays.asList(new String[] { "GET" }));
   private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
       "PUT", "DELETE", "PATCH" }));
   private static final String HTTP_VERSION = "HTTP/1.1";
@@ -144,17 +143,9 @@ public class HttpRequestStatusLine {
   }
 
   public void validateHttpMethod(final boolean isChangeSet) throws BatchDeserializerException {
-    Set<String> validMethods = (isChangeSet) ? HTTP_CHANGE_SET_METHODS : HTTP_BATCH_METHODS;
-
-    if (!validMethods.contains(getMethod().toString())) {
-      if (isChangeSet) {
-        throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
-            Integer.toString(statusLine.getLineNumber()));
-      } else {
-        throw new BatchDeserializerException("Invalid query operation method",
-            MessageKeys.INVALID_QUERY_OPERATION_METHOD,
-            Integer.toString(statusLine.getLineNumber()));
-      }
+    if(isChangeSet && !HTTP_CHANGE_SET_METHODS.contains(getMethod().toString())) {
+      throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
+          Integer.toString(statusLine.getLineNumber()));
     }
   }
 

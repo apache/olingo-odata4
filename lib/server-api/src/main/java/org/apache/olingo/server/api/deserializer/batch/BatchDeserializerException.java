@@ -43,8 +43,6 @@ public class BatchDeserializerException extends DeserializerException {
     /** parameter: line */
     INVALID_METHOD,
     /** parameter: line */
-    INVALID_QUERY_OPERATION_METHOD,
-    /** parameter: line */
     INVALID_STATUS_LINE,
     /** parameter: line */
     INVALID_URI,

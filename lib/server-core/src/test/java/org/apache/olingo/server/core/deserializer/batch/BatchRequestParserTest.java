@@ -33,9 +33,9 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
-import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.junit.Test;
 
 public class BatchRequestParserTest {
@@ -437,16 +437,67 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testInvalidMethodForBatch() throws Exception {
+  public void testMethodsForIndividualRequests() throws Exception {
     final String batch = "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
-        + "POST Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + "POST Employees HTTP/1.1" + CRLF
+        + "Content-Type: application/json" + CRLF
+        + CRLF
+        + "{ \"Name\": \"Foo\" }"
+        + CRLF
+        + "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "DELETE Employees('1') HTTP/1.1" + CRLF
+        + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "PATCH Employees('1') HTTP/1.1" + CRLF
+        + "Content-Type: application/json" + CRLF
+        + CRLF
+        + "{ \"Name\": \"Foo\" }" + CRLF
+        + "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "PUT Employees('1') HTTP/1.1" + CRLF
+        + "Content-Type: application/json" + CRLF
+        + CRLF
+        + "{ \"Name\": \"Foo\" }" + CRLF
+        + "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "GET Employees('1') HTTP/1.1" + CRLF
+        + "Accept: application/json" + CRLF
         + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_QUERY_OPERATION_METHOD);
+    
+    List<BatchRequestPart> requests = parse(batch);
+    assertEquals(HttpMethod.POST, requests.get(0).getRequests().get(0).getMethod());
+    assertEquals("/Employees", requests.get(0).getRequests().get(0).getRawODataPath());
+    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
+    
+    requests = parse(batch);
+    assertEquals(HttpMethod.DELETE, requests.get(1).getRequests().get(0).getMethod());
+    assertEquals("/Employees('1')", requests.get(1).getRequests().get(0).getRawODataPath());
+    
+    requests = parse(batch);
+    assertEquals(HttpMethod.PATCH, requests.get(2).getRequests().get(0).getMethod());
+    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
+    assertEquals("/Employees('1')", requests.get(2).getRequests().get(0).getRawODataPath());
+    
+    requests = parse(batch);
+    assertEquals(HttpMethod.PUT, requests.get(3).getRequests().get(0).getMethod());
+    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
+    assertEquals("/Employees('1')", requests.get(3).getRequests().get(0).getRawODataPath());
+    
+    requests = parse(batch);
+    assertEquals(HttpMethod.GET, requests.get(4).getRequests().get(0).getMethod());
+    assertEquals("/Employees('1')", requests.get(4).getRequests().get(0).getRawODataPath());
+    
   }
 
   @Test
