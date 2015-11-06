@@ -220,7 +220,7 @@ public class SearchTokenizerTest {
         .validate();
 
 
-    SearchValidator.init("(foo OR that) AND (bar OR baz)").enableLogging()
+    SearchValidator.init("(foo OR that) AND (bar OR baz)")
         .addExpected(OPEN)
         .addExpected(WORD, "foo").addExpected(OR).addExpected(WORD, "that")
         .addExpected(CLOSE).addExpected(AND).addExpected(OPEN)

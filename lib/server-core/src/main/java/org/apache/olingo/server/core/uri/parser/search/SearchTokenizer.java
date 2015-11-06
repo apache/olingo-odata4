@@ -46,39 +46,16 @@ public class SearchTokenizer {
   private static abstract class State implements SearchQueryToken {
     private Token token = null;
     private boolean finished = false;
-    private final StringBuilder literal;
 
     public static final char EOF = 0x03;
 
     public State(Token t) {
       token = t;
-      literal = new StringBuilder();
-    }
-    public State(Token t, char c) {
-      this(t);
-      init(c);
-    }
-    public State(Token t, State consumeState) {
-      token = t;
-      literal = new StringBuilder(consumeState.getLiteral());
     }
 
     protected abstract State nextChar(char c);
 
-    public State next(char c) {
-      return nextChar(c);
-    }
-
-    public State init(char c) {
-      if(isFinished()) {
-        throw new IllegalStateException(toString() + " is already finished.");
-      }
-      literal.append(c);
-      return this;
-    }
-
     public State allowed(char c) {
-      literal.append(c);
       return this;
     }
 
@@ -139,27 +116,58 @@ public class SearchTokenizer {
 
     @Override
     public String getLiteral() {
-      return literal.toString();
+      return token.toString();
     }
 
     @Override
     public String toString() {
-      return this.getToken().toString() + "=>{" + literal.toString() + "}";
+      return this.getToken().toString() + "=>{" + getLiteral() + "}";
     }
   }
 
-  private class SearchExpressionState extends State {
+  private static abstract class LiteralState extends State {
+    private final StringBuilder literal = new StringBuilder();
+    public LiteralState(Token t) {
+      super(t);
+    }
+    public LiteralState(Token t, char c) {
+      super(t);
+      init(c);
+    }
+    public LiteralState(Token t, String initLiteral) {
+      super(t);
+      literal.append(initLiteral);
+    }
+    public State allowed(char c) {
+      literal.append(c);
+      return this;
+    }
+    @Override
+    public String getLiteral() {
+      return literal.toString();
+    }
+
+    public State init(char c) {
+      if(isFinished()) {
+        throw new IllegalStateException(toString() + " is already finished.");
+      }
+      literal.append(c);
+      return this;
+    }
+  }
+
+  private class SearchExpressionState extends LiteralState {
     public SearchExpressionState() {
       super(Token.SEARCH_EXPRESSION);
     }
     @Override
     public State nextChar(char c) {
       if (c == '(') {
-        return new OpenState(c);
+        return new OpenState();
       } else if (isWhitespace(c)) {
-        return new RwsState(c);
+        return new RwsState();
       } else if(c == ')') {
-        return new CloseState(c);
+        return new CloseState();
       } else if(isEof(c)) {
         return finish();
       } else {
@@ -173,7 +181,7 @@ public class SearchTokenizer {
     }
   }
 
-  private class SearchTermState extends State {
+  private class SearchTermState extends LiteralState {
     public SearchTermState() {
       super(Token.TERM);
     }
@@ -185,14 +193,6 @@ public class SearchTokenizer {
         return new SearchPhraseState(c);
       } else if (isAllowedChar(c)) {
         return new SearchWordState(c);
-      } else if (c == ')') {
-        finish();
-        return new CloseState(c);
-      } else if (isWhitespace(c)) {
-        finish();
-        return new RwsState(c);
-      } else if (isEof(c)) {
-        return finish();
       }
       throw new IllegalStateException(this.getClass().getName() + "->" + c);
     }
@@ -202,27 +202,24 @@ public class SearchTokenizer {
     }
   }
 
-  private class SearchWordState extends State {
+  private class SearchWordState extends LiteralState {
     public SearchWordState(char c) {
       super(Token.WORD, c);
     }
     public SearchWordState(State toConsume) {
-      super(Token.WORD, toConsume);
+      super(Token.WORD, toConsume.getLiteral());
     }
 
     @Override
     public State nextChar(char c) {
-      //      if(c == 'n' || c == 'N') {
-      //        return new NotState(c);
-      //      }
       if (isAllowedChar(c)) {
         return allowed(c);
       } else if (c == ')') {
         finish();
-        return new CloseState(c);
+        return new CloseState();
       } else if (isWhitespace(c)) {
         finish();
-        return new RwsState(c);
+        return new RwsState();
       } else if (isEof(c)) {
         return finish();
       }
@@ -230,7 +227,7 @@ public class SearchTokenizer {
     }
   }
 
-  private class SearchPhraseState extends State {
+  private class SearchPhraseState extends LiteralState {
     public SearchPhraseState(char c) {
       super(Token.PHRASE, c);
       if(c != '\'') {
@@ -249,7 +246,7 @@ public class SearchTokenizer {
         return allowed(c);
       } else if (isWhitespace(c)) {
         if(isFinished()) {
-          return new RwsState(c);
+          return new RwsState();
         }
         return allowed(c);
       } else if (isEof(c)) {
@@ -260,8 +257,8 @@ public class SearchTokenizer {
   }
 
   private class OpenState extends State {
-    public OpenState(char c) {
-      super(Token.OPEN, c);
+    public OpenState() {
+      super(Token.OPEN);
       finish();
     }
     @Override
@@ -275,8 +272,8 @@ public class SearchTokenizer {
   }
 
   private class CloseState extends State {
-    public CloseState(char c) {
-      super(Token.CLOSE, c);
+    public CloseState() {
+      super(Token.CLOSE);
       finish();
     }
 
@@ -290,7 +287,7 @@ public class SearchTokenizer {
     }
   }
 
-  private class NotState extends State {
+  private class NotState extends LiteralState {
     public NotState(char c) {
       super(Token.NOT, c);
     }
@@ -302,14 +299,14 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 3 && isWhitespace(c)) {
         finish();
-        return new RwsState(c);
+        return new RwsState();
       } else {
         return new SearchWordState(this);
       }
     }
   }
 
-  private class AndState extends State {
+  private class AndState extends LiteralState {
     public AndState(char c) {
       super(Token.AND, c);
       if(c != 'a' && c != 'A') {
@@ -324,14 +321,14 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 3 && isWhitespace(c)) {
         finish();
-        return new RwsState(c);
+        return new RwsState();
       } else {
         return new SearchWordState(this);
       }
     }
   }
 
-  private class OrState extends State {
+  private class OrState extends LiteralState {
     public OrState(char c) {
       super(Token.OR, c);
       if(c != 'o' && c != 'O') {
@@ -344,7 +341,7 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 2 && isWhitespace(c)) {
         finish();
-        return new RwsState(c);
+        return new RwsState();
       } else {
         return new SearchWordState(this);
       }
@@ -353,8 +350,8 @@ public class SearchTokenizer {
 
 
   private class RwsState extends State {
-    public RwsState(char c) {
-      super(Token.RWS, c);
+    public RwsState() {
+      super(Token.RWS);
     }
     @Override
     public State nextChar(char c) {
@@ -377,14 +374,14 @@ public class SearchTokenizer {
     State state = new SearchExpressionState();
     List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
     for (char aChar : chars) {
-      State next = state.next(aChar);
+      State next = state.nextChar(aChar);
       if (state.isFinished() && next != state) {
         states.add(state);
       }
       state = next;
     }
 
-    if(state.next(State.EOF).isFinished()) {
+    if(state.nextChar(State.EOF).isFinished()) {
       states.add(state);
     } else {
       throw new IllegalStateException("State: " + state + " not finished and list is: " + states.toString());
@@ -392,5 +389,4 @@ public class SearchTokenizer {
 
     return states;
   }
-
 }
