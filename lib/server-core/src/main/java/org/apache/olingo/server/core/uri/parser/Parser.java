@@ -55,6 +55,7 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.MetadataEOFContex
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.PathSegmentEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectEOFContext;
+import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
@@ -77,7 +78,7 @@ public class Parser {
   int logLevel = 0;
 
   private enum ParserEntryRules {
-    All, Batch, CrossJoin, Entity, ExpandItems, FilterExpression, Metadata, PathSegment, Orderby, Select
+    All, Batch, CrossJoin, Entity, ExpandItems, FilterExpression, Metadata, PathSegment, Orderby, Select, Search
   }
 
   public Parser setLogLevel(final int logLevel) {
@@ -215,8 +216,8 @@ public class Parser {
 
             systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
-            throw new UriParserSemanticException("System query option '$search' not implemented!", 
-                UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "System query option '$search");
+            SearchParser searchParser = new SearchParser();
+            systemOption = searchParser.parse(path, option.value);
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
@@ -285,15 +286,15 @@ public class Parser {
             parameter.setAlias(option.name);
             parameter.setExpression(expression);
             parameter.setText(NULL.equals(option.value) ? null : option.value);
-            
+
             if(context.contextUriInfo.getAlias(option.name) == null) {
               context.contextUriInfo.addAlias(option.name, parameter);
             } else {
-              throw new UriParserSyntaxException("Alias already specified! Name: " + option.name, 
+              throw new UriParserSyntaxException("Alias already specified! Name: " + option.name,
                   UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
             }
           }
-          
+
           final CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
           customOption.setName(option.name);
           customOption.setText(option.value);
@@ -388,6 +389,9 @@ public class Parser {
       case Select:
         ret = parser.selectEOF();
         break;
+      case Search:
+        ret = parser.searchInline();
+        break;
       default:
         break;
 
@@ -444,6 +448,9 @@ public class Parser {
           break;
         case Select:
           ret = parser.selectEOF();
+          break;
+        case Search:
+          ret = parser.searchInline();
           break;
         default:
           break;
@@ -503,7 +510,7 @@ public class Parser {
       } else {
         out.append(index);
       }
-        out.append(nL);
+      out.append(nL);
     }
     out.append(']');
     System.out.println("tokens: " + out.toString());
