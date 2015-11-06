@@ -471,6 +471,31 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals("string", defProperty.getValue());
     stream.close();
   }
+  
+  @Test
+  public void eTMixEnumDefCollCompTestWithEnumStrings() throws Exception {
+    InputStream stream = getFileAsStream("EntityETMixEnumDefCollCompWithEnumStrings.json");
+    final Entity entity = deserialize(stream, "ETMixEnumDefCollComp", ContentType.JSON);
+
+    assertEquals(6, entity.getProperties().size());
+
+    Property enumProperty = entity.getProperty("PropertyEnumString");
+    assertNotNull(enumProperty);
+    assertEquals((short) 2, enumProperty.getValue());
+
+    Property defProperty = entity.getProperty("PropertyDefString");
+    assertNotNull(defProperty);
+    assertEquals("def", defProperty.getValue());
+
+    Property complexProperty = entity.getProperty("PropertyCompMixedEnumDef");
+    List<Property> value = complexProperty.asComplex().getValue();
+    assertEquals((short) 2, value.get(0).getValue());
+
+    defProperty = ((ComplexValue) entity.getProperty("CollPropertyCompMixedEnumDef").asCollection().get(1))
+        .getValue().get(2);
+    assertEquals("def", defProperty.getValue());
+    stream.close();
+  }
 
   @Test
   public void eTCollAllPrimWithNullValue() throws Exception {

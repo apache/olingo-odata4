@@ -349,7 +349,6 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         + "  xmlns:m=\"" + Constants.NS_METADATA + "\" xmlns:d=\"" + Constants.NS_DATASERVICES + "\">\n"
         + "  <a:content type=\"application/xml\">\n"
         + "    <m:properties>\n"
-        + "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n"
         + "      <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
         + "</d:PropertyEnumString>\n"
         + "      <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"
@@ -398,9 +397,8 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     final Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(7, result.getProperties().size());
+    Assert.assertEquals(6, result.getProperties().size());
     
-    Assert.assertEquals((short) 1, result.getProperty("PropertyInt16").asPrimitive());
     Assert.assertEquals((short) 6, result.getProperty("PropertyEnumString").asEnum());
     Assert.assertEquals(3, result.getProperty("CollPropertyEnumString").asCollection().size());
     Assert.assertEquals("Test", result.getProperty("PropertyDefString").asPrimitive());

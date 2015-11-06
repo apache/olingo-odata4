@@ -468,10 +468,6 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   @Test
   public void createEntityWithEnumAndTypeDefinition() throws Exception {
     ClientEntity newEntity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETMixEnumDefCollComp"));
-    newEntity.getProperties().add(getFactory().newEnumProperty("PropertyEnumString",
-        getFactory().newEnumValue(null, "String2")));
-    newEntity.getProperties().add(getFactory().newPrimitiveProperty("PropertyDefString",
-        getFactory().newPrimitiveValueBuilder().buildString("Test String")));
     final ODataEntityCreateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityCreateRequest(
         getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESMixEnumDefCollComp").build(),
         newEntity);
@@ -481,11 +477,11 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     ClientProperty property = createdEntity.getProperty("PropertyEnumString");
     assertNotNull(property);
     // TODO: Improve client value types.
-    assertEquals("String2", isJson() ? property.getPrimitiveValue().toValue() : property.getEnumValue().getValue());
+    assertEquals("String1", isJson() ? property.getPrimitiveValue().toValue() : property.getEnumValue().getValue());
     property = createdEntity.getProperty("PropertyDefString");
     assertNotNull(property);
     // TODO: Improve client value types.
-    assertEquals("Test String", isJson() ?
+    assertEquals("1", isJson() ?
         property.getPrimitiveValue().toValue() :
         property.getEnumValue().getValue());
   }

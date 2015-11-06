@@ -561,7 +561,6 @@ public class ODataXmlSerializerTest {
   public void enumAndTypeDefinition() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
-    entity.addProperty(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, 1));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM,
         Arrays.asList(2, 4, 6)));
@@ -593,7 +592,6 @@ public class ODataXmlSerializerTest {
         + "    term=\"#olingo.odata.test1.ETMixEnumDefCollComp\" />\n"
         + "  <a:content type=\"application/xml\">\n"
         + "    <m:properties>\n"
-        + "      <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n"
         + "      <d:PropertyEnumString m:type=\"#olingo.odata.test1.ENString\">String2,String3"
         + "</d:PropertyEnumString>\n"
         + "      <d:CollPropertyEnumString m:type=\"#Collection(olingo.odata.test1.ENString)\">\n"

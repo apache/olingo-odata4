@@ -437,12 +437,12 @@ public class EntityTypeProvider {
     } else if (entityTypeName.equals(nameETMixEnumDefCollComp)) {
       return new CsdlEntityType()
           .setName(nameETMixEnumDefCollComp.getName())
-          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyEnumString"),
+              new CsdlPropertyRef().setName("PropertyDefString")))
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyInt16_NotNullable,
-              PropertyProvider.propertyEnumString_ENString,
+              PropertyProvider.propertyEnumString_ENString_NonNullable,
               PropertyProvider.collPropertyEnumString_ENString,
-              PropertyProvider.propertyTypeDefinition_TDString,
+              PropertyProvider.propertyTypeDefinition_TDString_NonNullable,
               PropertyProvider.collPropertyTypeDefinition_TDString,
               PropertyProvider.propertyComp_CTMixEnumTypeDefColl,
               PropertyProvider.propertyCompColl_CTMixEnumTypeDefColl));

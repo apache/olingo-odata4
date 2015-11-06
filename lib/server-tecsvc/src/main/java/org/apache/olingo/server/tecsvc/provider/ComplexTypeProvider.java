@@ -179,7 +179,7 @@ public class ComplexTypeProvider {
       return new CsdlComplexType()
           .setName(nameCTMixEnumDef.getName())
           .setProperties(Arrays.asList(
-              PropertyProvider.propertyEnumString_ENString_Nullable,
+              PropertyProvider.propertyEnumString_ENString,
               PropertyProvider.collPropertyEnumString_ENString,
               PropertyProvider.propertyTypeDefinition_TDString,
               PropertyProvider.collPropertyTypeDefinition_TDString));
