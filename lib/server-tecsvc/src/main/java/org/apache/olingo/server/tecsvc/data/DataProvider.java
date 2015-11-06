@@ -41,6 +41,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -50,6 +51,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -174,23 +176,28 @@ public class DataProvider {
       throws DataProviderException {
     // Weak key construction
     final HashMap<String, Object> keys = new HashMap<String, Object>();
-    for (final String keyName : entityType.getKeyPredicateNames()) {
-      final FullQualifiedName typeName = entityType.getProperty(keyName).getType().getFullQualifiedName();
+    List<String> keyPredicateNames = entityType.getKeyPredicateNames();
+    for (final String keyName : keyPredicateNames) {
+      EdmType type = entityType.getProperty(keyName).getType();
+      FullQualifiedName typeName = type.getFullQualifiedName();
+      if (type instanceof EdmTypeDefinition) {
+        typeName = ((EdmTypeDefinition) type).getUnderlyingType().getFullQualifiedName();
+      }
       Object newValue;
-      
+
       if (EdmPrimitiveTypeKind.Int16.getFullQualifiedName().equals(typeName)) {
-         newValue = (short) KEY_INT_16.incrementAndGet();
-         
-         while(!isFree(newValue, keyName, entities)) {
-           newValue = (short) KEY_INT_16.incrementAndGet();
-         }
+        newValue = (short) KEY_INT_16.incrementAndGet();
+
+        while (!isFree(newValue, keyName, entities)) {
+          newValue = (short) KEY_INT_16.incrementAndGet();
+        }
       } else if (EdmPrimitiveTypeKind.Int32.getFullQualifiedName().equals(typeName)) {
         newValue = KEY_INT_32.incrementAndGet();
-        
-        while(!isFree(newValue, keyName, entities)) {
+
+        while (!isFree(newValue, keyName, entities)) {
           newValue = KEY_INT_32.incrementAndGet();
         }
-      } else if(EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
+      } else if (EdmPrimitiveTypeKind.Int64.getFullQualifiedName().equals(typeName)) {
         // Integer keys
         newValue = KEY_INT_64.incrementAndGet();
 
@@ -204,6 +211,12 @@ public class DataProvider {
         while (!isFree(newValue, keyName, entities)) {
           newValue = String.valueOf(KEY_STRING.incrementAndGet());
         }
+      } else if (type instanceof EdmEnumType) {
+        /* In case of an enum key we only support composite keys. This way we can 0 as a key */
+        if (keyPredicateNames.size() <= 1) {
+          throw new DataProviderException("Single Enum as key not supported", HttpStatusCode.NOT_IMPLEMENTED);
+        }
+        newValue = new Short((short) 1);
       } else {
         throw new DataProviderException("Key type not supported", HttpStatusCode.NOT_IMPLEMENTED);
       }
@@ -583,21 +596,21 @@ public class DataProvider {
     return ActionData.entityCollectionAction(name, actionParameters, odata, edm);
   }
 
-  public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId, 
+  public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId,
       final String rawServiceRoot) throws DataProviderException {
-        setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));
+    setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));
   }
 
-  public void deleteReference(final Entity entity, final EdmNavigationProperty navigationProperty, 
+  public void deleteReference(final Entity entity, final EdmNavigationProperty navigationProperty,
       final String entityId, final String rawServiceRoot) throws DataProviderException {
 
     if (navigationProperty.isCollection()) {
       final Entity targetEntity = getEntityByReference(entityId, rawServiceRoot);
       final Link navigationLink = entity.getNavigationLink(navigationProperty.getName());
-      
-      if (navigationLink != null && navigationLink.getInlineEntitySet() != null 
+
+      if (navigationLink != null && navigationLink.getInlineEntitySet() != null
           && navigationLink.getInlineEntitySet().getEntities().contains(targetEntity)) {
-        
+
         // Remove partner single-valued navigation property
         if (navigationProperty.getPartner() != null) {
           final EdmNavigationProperty edmPartnerNavigationProperty = navigationProperty.getPartner();
@@ -614,7 +627,7 @@ public class DataProvider {
             }
           }
         }
-        
+
         // Remove target entity from collection-valued navigation property
         navigationLink.getInlineEntitySet().getEntities().remove(targetEntity);
       } else {
@@ -629,7 +642,7 @@ public class DataProvider {
     }
   }
 
-  protected Entity getEntityByReference(final String entityId, final String rawServiceRoot) 
+  protected Entity getEntityByReference(final String entityId, final String rawServiceRoot)
       throws DataProviderException {
     try {
       final UriResourceEntitySet uriResource = odata.createUriHelper().parseEntityId(edm, entityId, rawServiceRoot);

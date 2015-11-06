@@ -301,15 +301,68 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
-        + "\"CollPropertyString\":null,\"PropertyComp\":null,\"CollPropertyComp\":null}";
+        + "\"CollPropertyString\":[],\"PropertyComp\":null,\"CollPropertyComp\":[]}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void nullCollectionButInDataMap() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
+    Entity entity = new Entity();
+    entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
+    entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM, null));
+    entity.addProperty(new Property(null, "PropertyDefString", ValueType.PRIMITIVE, "Test"));
+    entity.addProperty(new Property(null, "CollPropertyDefString", ValueType.COLLECTION_PRIMITIVE, null));
+    ComplexValue complexValue = new ComplexValue();
+    complexValue.getValue().add(entity.getProperty("PropertyEnumString"));
+    complexValue.getValue().add(entity.getProperty("CollPropertyEnumString"));
+    complexValue.getValue().add(entity.getProperty("PropertyDefString"));
+    complexValue.getValue().add(entity.getProperty("CollPropertyDefString"));
+    entity.addProperty(new Property(null, "PropertyCompMixedEnumDef", ValueType.COMPLEX, complexValue));
+    entity.addProperty(new Property(null, "CollPropertyCompMixedEnumDef", ValueType.COLLECTION_COMPLEX, null));
+    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent());
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyEnumString\":\"String2,String3\","
+        + "\"CollPropertyEnumString\":[],"
+        + "\"PropertyDefString\":\"Test\","
+        + "\"CollPropertyDefString\":[],"
+        + "\"PropertyCompMixedEnumDef\":{\"PropertyEnumString\":\"String2,String3\","
+        + "\"CollPropertyEnumString\":[],"
+        + "\"PropertyDefString\":\"Test\",\"CollPropertyDefString\":[]},"
+        + "\"CollPropertyCompMixedEnumDef\":[]}",
+        resultString);
+  }
+  
+  @Test
+  public void nullComplexValueButInDataMapAndNullCollectionsNotInDataMap() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
+    Entity entity = new Entity();
+    entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
+    entity.addProperty(new Property(null, "PropertyDefString", ValueType.PRIMITIVE, "Test"));
+    entity.addProperty(new Property(null, "PropertyCompMixedEnumDef", ValueType.COMPLEX, null));
+    final String resultString = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent());
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyEnumString\":\"String2,String3\","
+        + "\"CollPropertyEnumString\":[],"
+        + "\"PropertyDefString\":\"Test\","
+        + "\"CollPropertyDefString\":[],"
+        + "\"PropertyCompMixedEnumDef\":null,"
+        + "\"CollPropertyCompMixedEnumDef\":[]}",
+        resultString);
   }
 
   @Test
   public void enumAndTypeDefinition() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
-    entity.addProperty(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, 1));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM,
         Arrays.asList(2, 4, 6)));
@@ -330,7 +383,6 @@ public class ODataJsonSerializerTest {
             .build()).getContent());
     Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"PropertyInt16\":1,"
         + "\"PropertyEnumString\":\"String2,String3\","
         + "\"CollPropertyEnumString\":[\"String2\",\"String3\",\"String2,String3\"],"
         + "\"PropertyDefString\":\"Test\","
@@ -431,7 +483,7 @@ public class ODataJsonSerializerTest {
         + "\"CollPropertyBoolean\":[true,null,false],\"CollPropertyByte\":[50,null,249],"
         + "\"CollPropertySByte\":[-120,null,126],\"CollPropertyInt16\":[1000,null,30112],"
         + "\"CollPropertyInt32\":[23232323,null,10000001],\"CollPropertyInt64\":[929292929292,null,444444444444],"
-        + "\"CollPropertySingle\":[1790.0,null,3210.0],\"CollPropertyDouble\":[-17900.0,null,3210.0]," 
+        + "\"CollPropertySingle\":[1790.0,null,3210.0],\"CollPropertyDouble\":[-17900.0,null,3210.0],"
         + "\"CollPropertyDecimal\":"
         + "[12,null,1234],\"CollPropertyBinary\":[\"q83v\",null,\"VGeJ\"],\"CollPropertyDate\":"
         + "[\"1958-12-03\",null,\"2013-06-25\"],\"CollPropertyDateTimeOffset\":[\"2015-08-12T03:08:34Z\",null,"

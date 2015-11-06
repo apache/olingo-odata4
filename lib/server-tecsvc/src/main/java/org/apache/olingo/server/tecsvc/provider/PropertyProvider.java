@@ -760,12 +760,12 @@ public class PropertyProvider {
           .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   // EnumProperties --------------------------------------------------------------------------------------------------
-  public static final CsdlProperty propertyEnumString_ENString = new CsdlProperty()
+  public static final CsdlProperty propertyEnumString_ENString_NonNullable = new CsdlProperty()
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString)
       .setNullable(false);
 
-  public static final CsdlProperty propertyEnumString_ENString_Nullable = new CsdlProperty()
+  public static final CsdlProperty propertyEnumString_ENString = new CsdlProperty()
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString);
 
@@ -778,6 +778,11 @@ public class PropertyProvider {
   public static final CsdlProperty propertyTypeDefinition_TDString = new CsdlProperty()
       .setName("PropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString);
+
+  public static final CsdlProperty propertyTypeDefinition_TDString_NonNullable = new CsdlProperty()
+      .setName("PropertyDefString")
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setNullable(false);
 
   public static final CsdlProperty collPropertyTypeDefinition_TDString = new CsdlProperty()
       .setName("CollPropertyDefString")

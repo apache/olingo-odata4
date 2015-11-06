@@ -187,7 +187,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(1, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("2", clientEntity.getProperty("PropertyString").getPrimitiveValue().toValue());
 
-    result = sendRequest(ES_MIX_ENUM_DEF_COLL_COMP, "PropertyEnumString has Namespace1_Alias.ENString'String1'");
+    result = sendRequest(ES_MIX_ENUM_DEF_COLL_COMP, "PropertyEnumString eq Namespace1_Alias.ENString'String2'");
     assertTrue(result.getBody().getEntities().isEmpty());
   }
 
