@@ -213,12 +213,12 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
     JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
-    final ObjectNode tree = parser.getCodec().readTree(parser);
-    if (tree == null) {
+    final JsonNode tree = parser.getCodec().readTree(parser);
+    if (tree == null || !tree.isObject()) {
       throw new DeserializerException("Invalid JSON syntax.",
           DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
     }
-    return tree;
+    return (ObjectNode) tree;
   }
 
   private Map<String, Parameter> consumeParameters(final EdmAction edmAction, final ObjectNode node)
@@ -757,7 +757,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public DeserializerResult entityReferences(final InputStream stream) throws DeserializerException {
     try {
-      ArrayList<URI> parsedValues = new ArrayList<URI>();
+      List<URI> parsedValues = new ArrayList<URI>();
       final ObjectNode tree = parseJsonTree(stream);
       final String key = Constants.JSON_ID;
       JsonNode jsonNode = tree.get(Constants.VALUE);

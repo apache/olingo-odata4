@@ -504,9 +504,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @Test
   public void validJsonValueForComplexTypeNull() throws Exception {
-    final String entityString = "{"
-        + "\"PropertyComp\":null"
-        + "}";
+    final String entityString = "{\"PropertyComp\":null}";
     final Entity entity = deserialize(entityString, "ETMixPrimCollComp");
     assertNull(entity.getProperty("PropertyComp").getValue());
   }
@@ -550,9 +548,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @Test
   public void eTMixEnumDefCollCompMultipleValuesForEnum() throws Exception {
-    String entityString = "{"
-        + "\"PropertyEnumString\" : \"String1,String2\""
-        + "}";
+    final String entityString = "{\"PropertyEnumString\": \"String1,String2\"}";
     final Entity entity = deserialize(entityString, "ETMixEnumDefCollComp");
     assertEquals((short) 3, entity.getProperty("PropertyEnumString").getValue());
   }
@@ -560,7 +556,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void mappingTest() throws Exception {
     EdmEntityType entityType = mock(EdmEntityType.class);
-    when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("napespace", "name"));
+    when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("namespace", "name"));
     List<String> propertyNames = new ArrayList<String>();
     propertyNames.add("PropertyDate");
     propertyNames.add("PropertyDateTimeOffset");
@@ -603,6 +599,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   @Test
   public void emptyInput() throws Exception {
     expectException("", "ETAllPrim", DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+  }
+
+  @Test
+  public void nonJsonInput() throws Exception {
+    expectException("0", "ETAllPrim", DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    expectException("[]", "ETAllPrim", DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+    expectException("}{", "ETAllPrim", DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
   }
 
   @Test
@@ -957,24 +960,21 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @Test
   public void invalidJsonSyntax() throws Exception {
-    String entityString =
-        "{\"PropertyInt16\":32767,}";
+    final String entityString = "{\"PropertyInt16\":32767,}";
     expectException(entityString, "ETAllPrim",
         DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
   }
 
   @Test
   public void invalidJsonValueForPrimTypeArray() throws Exception {
-    String entityString =
-        "{\"PropertyInt16\":[]}";
+    final String entityString = "{\"PropertyInt16\":[]}";
     expectException(entityString, "ETAllPrim",
         DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
 
   @Test
   public void invalidJsonValueForPrimTypeObject() throws Exception {
-    String entityString =
-        "{\"PropertyInt16\":{}}";
+    final String entityString = "{\"PropertyInt16\":{}}";
     expectException(entityString, "ETAllPrim",
         DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
@@ -991,18 +991,14 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @Test
   public void invalidJsonValueForComplexTypeTypeString() throws Exception {
-    final String entityString = "{"
-        + "\"PropertyComp\":\"InvalidString\""
-        + "}";
+    final String entityString = "{\"PropertyComp\":\"InvalidString\"}";
     expectException(entityString, "ETMixPrimCollComp",
         DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
 
   @Test
   public void invalidNullValueForComplexTypeNullableFalse() throws Exception {
-    final String entityString = "{"
-        + "\"PropertyComp\":null"
-        + "}";
+    final String entityString = "{\"PropertyComp\":null}";
     expectException(entityString, "ETTwoKeyNav",
         DeserializerException.MessageKeys.INVALID_NULL_PROPERTY);
   }
@@ -1040,18 +1036,14 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   @Test
   public void invalidNullValueForPrimIntCollectionNullableFalse() throws Exception {
-    final String entityString = "{"
-        + "\"CollPropertyInt16\":[123,\"null\",4711]"
-        + "}";
+    final String entityString = "{\"CollPropertyInt16\":[123,\"null\",4711]}";
     expectException(entityString, "ETCollAllPrim",
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
   }
 
   @Test
   public void provokedPrimitiveTypeException() throws Exception {
-    final String entityString = "{"
-        + "\"PropertyInt16\":32767000000000000000000000000000000000000"
-        + "}";
+    final String entityString = "{\"PropertyInt16\":32767000000000000000000000000000000000000}";
     expectException(entityString, "ETMixPrimCollComp",
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
   }

@@ -40,34 +40,6 @@ public class ODataJsonDeserializerBasicTest {
   }
 
   @Test
-  public void collectionProperties() throws Exception {
-    String payload = "{\n" +
-        "  \"@odata.context\": \"http://host/service/$metadata#Collection($ref)\",\n" +
-        "  \"value\": [\n" +
-        "    { \"@odata.id\": \"Orders(10643)\" },\n" +
-        "    { \"@odata.id\": \"Orders(10759)\" }\n" +
-        "  ]\n" +
-        "}";
-    List<URI> values = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
-        .getEntityReferences();
-    assertEquals(2, values.size());
-    assertEquals("Orders(10643)", values.get(0).toASCIIString());
-    assertEquals("Orders(10759)", values.get(1).toASCIIString());
-  }
-
-  @Test
-  public void properties() throws Exception {
-    String payload = "{\n" +
-        "  \"@odata.context\": \"http://host/service/$metadata#$ref\",\n" +
-        "  \"@odata.id\": \"Orders(10643)\"\n" +
-        "}";
-    List<URI> values = deserializer.entityReferences(new ByteArrayInputStream(payload
-        .getBytes())).getEntityReferences();
-    assertEquals(1, values.size());
-    assertEquals("Orders(10643)", values.get(0).toASCIIString());
-  }
-
-  @Test
   public void reference() throws Exception {
     String entityString = "{"
         + "\"@odata.context\": \"$metadata#$ref\","
@@ -76,7 +48,6 @@ public class ODataJsonDeserializerBasicTest {
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-
     assertEquals(1, entityReferences.size());
     assertEquals("ESAllPrim(0)", entityReferences.get(0).toASCIIString());
   }
@@ -135,15 +106,12 @@ public class ODataJsonDeserializerBasicTest {
 
   @Test
   public void referenceEmpty() throws Exception {
-    String entityString = "{" +
-        "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
-        "  \"value\": [" +
-        "  ]" +
-        "}";
+    final String entityString = "{\"@odata.context\": \"$metadata#Collection($ref)\","
+        + "  \"value\": [ ]"
+        + "}";
 
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
     final List<URI> entityReferences = deserializer.entityReferences(stream).getEntityReferences();
-
     assertEquals(0, entityReferences.size());
   }
 
@@ -153,9 +121,7 @@ public class ODataJsonDeserializerBasicTest {
      * See OData JSON Format chapter 13
      * ... the object that MUST contain the id of the referenced entity
      */
-    String entityString = "{ }";
-
-    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
+    InputStream stream = new ByteArrayInputStream(new byte[] { '{', '}' });
     deserializer.entityReferences(stream).getEntityReferences();
   }
 
@@ -165,13 +131,16 @@ public class ODataJsonDeserializerBasicTest {
   }
 
   @Test(expected = DeserializerException.class)
+  public void referencesInvalidJson() throws Exception {
+    deserializer.entityReferences(new ByteArrayInputStream(new byte[] { 'A' }));
+  }
+
+  @Test(expected = DeserializerException.class)
   public void referenceValueIsNotAnArray() throws Exception {
     String entityString = "{" +
         "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
         "  \"value\": \"ESAllPrim(0)\"" + // This is not allowed. Value must be followed by an array
         "}";
-
-    InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    deserializer.entityReferences(stream);
+    deserializer.entityReferences(new ByteArrayInputStream(entityString.getBytes()));
   }
 }
