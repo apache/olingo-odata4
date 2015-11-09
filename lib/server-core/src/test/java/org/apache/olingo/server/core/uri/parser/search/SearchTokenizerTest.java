@@ -86,6 +86,8 @@ public class SearchTokenizerTest {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
+    SearchValidator.init("abc AND \"x-y_z\" AND 123").validate();
+
     //
     result = tokenizer.tokenize("\"abc\"");
     Assert.assertNotNull(result);
@@ -325,12 +327,17 @@ public class SearchTokenizerTest {
     // parenthesis
     validate("(abc)");
     validate("(abc AND  def)");
-    validate("(abc AND  def)   OR  ghi ");
-    validate("(abc AND  def)       ghi ");
+    validate("(abc AND  def)   OR  ghi");
+    validate("(abc AND  def)       ghi");
     validate("abc AND (def    OR  ghi)");
     validate("abc AND (def        ghi)");
   }
-  
+
+  @Test
+  public void parseInvalid() {
+    SearchValidator.init("abc AND OR something").validate();
+  }
+
   public boolean validate(String query) {
     return new SearchValidator(query).validate();
   }

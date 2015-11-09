@@ -82,6 +82,10 @@ public class SearchTokenizer {
       return token;
     }
 
+    public boolean close() {
+      return nextChar(EOF).isFinished();
+    }
+
     static boolean isAllowedChar(final char character) {
       // TODO mibo: add missing allowed characters
       return CHAR_A <= character && character <= 'Z' // case A..Z
@@ -173,16 +177,19 @@ public class SearchTokenizer {
       if (c == CHAR_OPEN) {
         return new OpenState();
       } else if (isWhitespace(c)) {
-        return new RwsState();
+        return new RwsImplicitAndState();
       } else if(c == CHAR_CLOSE) {
         return new CloseState();
-      } else if(isEof(c)) {
-        return finish();
       } else if(isWhitespace(c)) {
         return new AndState(c);
       } else {
         return new SearchTermState().init(c);
       }
+    }
+
+    @Override
+    public boolean close() {
+      return true;
     }
 
     @Override
@@ -229,7 +236,7 @@ public class SearchTokenizer {
         return new CloseState();
       } else if (isWhitespace(c)) {
         finish();
-        return new RwsState();
+        return new RwsImplicitAndState();
       } else if (isEof(c)) {
         return finish();
       }
@@ -253,10 +260,16 @@ public class SearchTokenizer {
         return allowed(c);
       } else if (c == QUOTATION_MARK) {
         finish();
-        return allowed(c);
+        allowed(c);
+        return new SearchExpressionState();
       } else if (isWhitespace(c)) {
         if(isFinished()) {
-          return new RwsState();
+          return new RwsImplicitAndState();
+        }
+        return allowed(c);
+      } else if (c == CHAR_CLOSE) {
+        if(isFinished()) {
+          return new CloseState();
         }
         return allowed(c);
       } else if (isEof(c)) {
@@ -319,22 +332,6 @@ public class SearchTokenizer {
     }
   }
 
-  private class ImplicitAndState extends LiteralState {
-    private State followingState;
-    public ImplicitAndState(char c) {
-      super(Token.AND);
-      finish();
-      followingState = new SearchExpressionState().init(c);
-    }
-    public State nextState() {
-      return followingState;
-    }
-    @Override
-    public State nextChar(char c) {
-      return followingState.nextChar(c);
-    }
-  }
-
   private class AndState extends LiteralState {
     public AndState(char c) {
       super(Token.AND, c);
@@ -393,9 +390,10 @@ public class SearchTokenizer {
     }
   }
 
-  private class RwsState extends State {
-    public RwsState() {
-      super(Token.RWS);
+  // implicit and
+  private class RwsImplicitAndState extends State {
+    public RwsImplicitAndState() {
+      super(Token.AND);
     }
     @Override
     public State nextChar(char c) {
@@ -406,7 +404,8 @@ public class SearchTokenizer {
       } else if (c == CHAR_A) {
         return new AndState(c);
       } else {
-        return new ImplicitAndState(c);
+        finish();
+        return new SearchExpressionState().init(c);
       }
     }
   }
@@ -417,25 +416,18 @@ public class SearchTokenizer {
 
     State state = new SearchExpressionState();
     List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
-    State lastAdded = null;
     for (char aChar : chars) {
       State next = state.nextChar(aChar);
-      if (next instanceof ImplicitAndState) {
-        lastAdded = next;
-        states.add(next);
-        next = ((ImplicitAndState)next).nextState();
-      } else if (state.isFinished() && state != lastAdded) {
-        lastAdded = state;
+      if (state.isFinished()) {
         states.add(state);
       }
       state = next;
     }
 
-    final State lastState = state.nextChar(State.EOF);
-    if(lastState.isFinished()) {
-      if(state != lastAdded) {
-        states.add(state);
-      }
+    if(state.close()) {
+     if(state.isFinished()) {
+       states.add(state);
+     }
     } else {
       throw new IllegalStateException("State: " + state + " not finished and list is: " + states.toString());
     }
