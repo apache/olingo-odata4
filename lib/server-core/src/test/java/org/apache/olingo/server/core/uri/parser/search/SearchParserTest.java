@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
+import org.apache.olingo.server.api.uri.queryoption.SearchOption;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.junit.Test;
 
 public class SearchParserTest {
@@ -25,6 +27,7 @@ public class SearchParserTest {
   @Test
   public void basicParsing() {
     SearchParser parser = new SearchParser();
-    parser.parse("ESAllPrim", "abc");
+    SearchOption so = parser.parse("ESAllPrim", "abc");
+    SearchExpression se = so.getSearchExpression();
   }
 }

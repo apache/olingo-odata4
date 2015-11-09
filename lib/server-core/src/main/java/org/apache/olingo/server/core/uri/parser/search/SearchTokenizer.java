@@ -39,6 +39,7 @@ import java.util.List;
  * </code>
  */
 public class SearchTokenizer {
+  public static final char QUOTATION_MARK = '\"';
   //RWS = 1*( SP / HTAB / "%20" / "%09" )  ; "required" whitespace
   //BWS =  *( SP / HTAB / "%20" / "%09" )  ; "bad" whitespace
 
@@ -170,6 +171,8 @@ public class SearchTokenizer {
         return new CloseState();
       } else if(isEof(c)) {
         return finish();
+      } else if(isWhitespace(c)) {
+        return new AndState(c);
       } else {
         return new SearchTermState().init(c);
       }
@@ -189,7 +192,7 @@ public class SearchTokenizer {
     public State nextChar(char c) {
       if(c == 'n' || c == 'N') {
         return new NotState(c);
-      } else if (c == '\'') {
+      } else if (c == QUOTATION_MARK) {
         return new SearchPhraseState(c);
       } else if (isAllowedChar(c)) {
         return new SearchWordState(c);
@@ -230,7 +233,7 @@ public class SearchTokenizer {
   private class SearchPhraseState extends LiteralState {
     public SearchPhraseState(char c) {
       super(Token.PHRASE, c);
-      if(c != '\'') {
+      if(c != QUOTATION_MARK) {
         forbidden(c);
       }
     }
@@ -241,7 +244,7 @@ public class SearchTokenizer {
         return new SearchExpressionState().init(c);
       } else if (isAllowedPhrase(c)) {
         return allowed(c);
-      } else if (c == '\'') {
+      } else if (c == QUOTATION_MARK) {
         finish();
         return allowed(c);
       } else if (isWhitespace(c)) {
@@ -299,10 +302,26 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 3 && isWhitespace(c)) {
         finish();
-        return new RwsState();
+        return new BeforeSearchExpressionRwsState();
       } else {
         return new SearchWordState(this);
       }
+    }
+  }
+
+  private class ImplicitAndState extends LiteralState {
+    private State followingState;
+    public ImplicitAndState(char c) {
+      super(Token.AND);
+      finish();
+      followingState = new SearchExpressionState().init(c);
+    }
+    public State nextState() {
+      return followingState;
+    }
+    @Override
+    public State nextChar(char c) {
+      return followingState.nextChar(c);
     }
   }
 
@@ -321,7 +340,7 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 3 && isWhitespace(c)) {
         finish();
-        return new RwsState();
+        return new BeforeSearchExpressionRwsState();
       } else {
         return new SearchWordState(this);
       }
@@ -341,9 +360,24 @@ public class SearchTokenizer {
         return allowed(c);
       } else if(getLiteral().length() == 2 && isWhitespace(c)) {
         finish();
-        return new RwsState();
+        return new BeforeSearchExpressionRwsState();
       } else {
         return new SearchWordState(this);
+      }
+    }
+  }
+
+  // RWS [ 'AND' RWS ] searchExpr
+  private class BeforeSearchExpressionRwsState extends State {
+    public BeforeSearchExpressionRwsState() {
+      super(Token.RWS);
+    }
+    @Override
+    public State nextChar(char c) {
+      if (isWhitespace(c)) {
+        return allowed(c);
+      } else {
+        return new SearchExpressionState().init(c);
       }
     }
   }
@@ -362,7 +396,7 @@ public class SearchTokenizer {
       } else if (c == 'A' || c == 'a') {
         return new AndState(c);
       } else {
-        return new SearchExpressionState().init(c);
+        return new ImplicitAndState(c);
       }
     }
   }
@@ -373,16 +407,26 @@ public class SearchTokenizer {
 
     State state = new SearchExpressionState();
     List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
+    State lastAddedToken = null;
     for (char aChar : chars) {
       State next = state.nextChar(aChar);
-      if (state.isFinished() && next != state) {
+      if (next instanceof ImplicitAndState) {
+        lastAddedToken = next;
+        states.add(next);
+        next = ((ImplicitAndState)next).nextState();
+      } else if (state.isFinished() && state != lastAddedToken) {
+        lastAddedToken = state;
         states.add(state);
       }
       state = next;
     }
 
-    if(state.nextChar(State.EOF).isFinished()) {
+    final State lastState = state.nextChar(State.EOF);
+    if(lastState.isFinished()) {
       states.add(state);
+      if(state.getToken() != lastState.getToken()) {
+        states.add(lastState);
+      }
     } else {
       throw new IllegalStateException("State: " + state + " not finished and list is: " + states.toString());
     }

@@ -87,24 +87,24 @@ public class SearchTokenizerTest {
     List<SearchQueryToken> result;
 
     //
-    result = tokenizer.tokenize("'abc'");
+    result = tokenizer.tokenize("\"abc\"");
     Assert.assertNotNull(result);
     log(result.toString());
     Assert.assertEquals(PHRASE, result.get(0).getToken());
 
     //
-    result = tokenizer.tokenize("'9988  abs'");
+    result = tokenizer.tokenize("\"9988  abs\"");
     Assert.assertNotNull(result);
     log(result.toString());
     Assert.assertEquals(PHRASE, result.get(0).getToken());
-    Assert.assertEquals("'9988  abs'", result.get(0).getLiteral());
+    Assert.assertEquals("\"9988  abs\"", result.get(0).getLiteral());
 
     //
-    result = tokenizer.tokenize("'99_88.'");
+    result = tokenizer.tokenize("\"99_88.\"");
     Assert.assertNotNull(result);
     log(result.toString());
     Assert.assertEquals(PHRASE, result.get(0).getToken());
-    Assert.assertEquals("'99_88.'", result.get(0).getLiteral());
+    Assert.assertEquals("\"99_88.\"", result.get(0).getLiteral());
   }
 
   @Test
@@ -142,11 +142,36 @@ public class SearchTokenizerTest {
   }
 
   @Test
+  public void parseImplicitAnd() {
+    SearchValidator.init("a b").addExpected(WORD, AND, WORD).validate();
+    SearchValidator.init("a b OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
+    SearchValidator.init("a bc OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
+    SearchValidator.init("a bc c").addExpected(WORD, AND, WORD, AND, WORD).validate();
+    SearchValidator.init("(a OR x) bc c").addExpected(OPEN, WORD, OR, WORD, CLOSE, AND, WORD, AND, WORD).validate();
+  }
+
+  @Test
   public void testParseAnd() throws Exception {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
     result = tokenizer.tokenize("abc AND xyz");
+    Assert.assertNotNull(result);
+    log(result.toString());
+    Assert.assertEquals(WORD, result.get(0).getToken());
+    Assert.assertEquals(AND, result.get(1).getToken());
+    Assert.assertEquals(WORD, result.get(2).getToken());
+
+    // no lower case allowed for AND
+    result = tokenizer.tokenize("abc and xyz");
+    Assert.assertNotNull(result);
+    log(result.toString());
+    Assert.assertEquals(WORD, result.get(0).getToken());
+    Assert.assertEquals(AND, result.get(1).getToken());
+    Assert.assertEquals(WORD, result.get(2).getToken());
+
+    // implicit AND
+    result = tokenizer.tokenize("abc xyz");
     Assert.assertNotNull(result);
     log(result.toString());
     Assert.assertEquals(WORD, result.get(0).getToken());
@@ -162,13 +187,13 @@ public class SearchTokenizerTest {
     Assert.assertEquals(AND, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
 
-    result = tokenizer.tokenize("abc AND 'x-y_z' AND 123");
+    result = tokenizer.tokenize("abc AND \"x-y_z\" AND 123");
     Assert.assertNotNull(result);
     log(result.toString());
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(AND, result.get(1).getToken());
     Assert.assertEquals(PHRASE, result.get(2).getToken());
-    Assert.assertEquals("'x-y_z'", result.get(2).getLiteral());
+    Assert.assertEquals("\"x-y_z\"", result.get(2).getLiteral());
     Assert.assertEquals(AND, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
   }
