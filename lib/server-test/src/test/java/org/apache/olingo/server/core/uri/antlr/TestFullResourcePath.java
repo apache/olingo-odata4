@@ -88,6 +88,14 @@ public class TestFullResourcePath {
         .isEntitySet("ESMixEnumDefCollComp")
         .goUpUriValidator()
         .goFilter().is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>");
+
+    testUri
+        .run("ESMixEnumDefCollComp(PropertyEnumString=Namespace1_Alias.ENString'String1',PropertyDefString='abc')")
+        .goPath()
+        .at(0)
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "Namespace1_Alias.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'abc'");
   }
 
   @Test

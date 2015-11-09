@@ -26,10 +26,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -53,15 +56,18 @@ public class EdmEnumTest {
   private final EdmEnumType int32FlagType;
 
   public EdmEnumTest() {
+    Edm edm = mock(Edm.class);
     final List<CsdlEnumMember> memberList = Arrays.asList(
         new CsdlEnumMember().setName("first").setValue("1"),
         new CsdlEnumMember().setName("second").setValue("64"));
 
     final FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
 
-    instance = new EdmEnumTypeImpl(null, enumName,
+    instance = new EdmEnumTypeImpl(edm, enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
+    when(edm.getEnumType(new FullQualifiedName("namespace.name"))).thenReturn(instance);
+    when(edm.getEnumType(new FullQualifiedName("alias.name"))).thenReturn(instance);
     
     otherInstance = new EdmEnumTypeImpl(null, enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
@@ -170,11 +176,15 @@ public class EdmEnumTest {
   public void fromUriLiteral() throws Exception {
     assertNull(instance.fromUriLiteral(null));
     assertEquals("first", instance.fromUriLiteral("namespace.name'first'"));
+    assertEquals("first", instance.fromUriLiteral("alias.name'first'"));
 
-    expectErrorInFromUriLiteral(instance, "");
-    expectErrorInFromUriLiteral(instance, "name'first'");
-    expectErrorInFromUriLiteral(instance, "namespace.name'first");
-    expectErrorInFromUriLiteral(instance, "namespace.namespace'first");
+    expectErrorInFromUriLiteral(instance, "", null);
+    expectErrorInFromUriLiteral(instance, "name'first'", null);
+    expectErrorInFromUriLiteral(instance, "namespace.name'first", null);
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'first", null);
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'fi'rst", null);
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'first'", null);
+    expectErrorInFromUriLiteral(instance, "namespace.name'fir'st'", "must be of format");
   }
 
   @Test
@@ -279,13 +289,17 @@ public class EdmEnumTest {
     expectContentErrorInValueToString(int16EnumType, Integer.MAX_VALUE);
   }
 
-  protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {
+  protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value, final String error) {
     try {
       instance.fromUriLiteral(value);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
       assertNotNull(e.getLocalizedMessage());
-      assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
+      if(error == null){
+        assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
+      }else{
+        assertThat(e.getLocalizedMessage(), containsString(error));
+      }
     }
   }
 

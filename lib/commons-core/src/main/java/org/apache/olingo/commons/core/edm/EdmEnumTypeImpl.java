@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -43,7 +43,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
   private final EdmPrimitiveType underlyingType;
   private final CsdlEnumType enumType;
-  private final String uriPrefix;
+  private final FullQualifiedName enumName;
   private final String uriSuffix;
   private List<String> memberNames;
   private Map<String, EdmMember> membersMap;
@@ -67,7 +67,7 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
     }
 
     this.enumType = enumType;
-    uriPrefix = enumName.getFullQualifiedNameAsString() + '\'';
+    this.enumName = enumName;
     uriSuffix = "'";
   }
 
@@ -228,19 +228,35 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null ? null : uriPrefix + literal + uriSuffix;
+    return literal == null ? null : enumName.getFullQualifiedNameAsString() + "'" + literal + uriSuffix;
   }
 
   @Override
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
     if (literal == null) {
       return null;
-    } else if (literal.length() >= uriPrefix.length() + uriSuffix.length()
-        && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
-      return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
-    } else {
-      throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
     }
+
+    if (literal.endsWith(uriSuffix)) {
+      String[] splitLiteral = literal.split("'");
+      if (splitLiteral.length != 2) {
+        throw new EdmPrimitiveTypeException("The literal '" + literal
+            + "' must be of format FullQuallifiedTypeName'literal'");
+      }
+      // First part must be the FullQualifiedName
+      FullQualifiedName typeFqn = null;
+      try {
+        typeFqn = new FullQualifiedName(splitLiteral[0]);
+      } catch (IllegalArgumentException e) {
+        throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.", e);
+      }
+      // Get itself. This will also resolve a possible alias
+      EdmEnumType prospect = edm.getEnumType(typeFqn);
+      if (prospect != null && enumName.equals(prospect.getFullQualifiedName())) {
+        return splitLiteral[1];
+      }
+    }
+    throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
   }
 
   @Override
