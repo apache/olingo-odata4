@@ -287,15 +287,22 @@ public class SearchTokenizerTest {
     Assert.assertEquals(AND, it.next().getToken());
     Assert.assertEquals(WORD, it.next().getToken());
 
-    result = tokenizer.tokenize("abc OR orsomething");
-    log(result.toString());
-    it = result.iterator();
-    Assert.assertEquals(WORD, it.next().getToken());
-    Assert.assertEquals(OR, it.next().getToken());
-    Assert.assertEquals(WORD, it.next().getToken());
-
     SearchValidator.init("abc AND ANDsomething")
         .addExpected(WORD, AND, WORD).validate();
+
+    // FIXME (mibo): issue with implicit and
+//    SearchValidator.init("abc ANDsomething").enableLogging()
+//        .addExpected(WORD, AND, WORD).validate();
+
+//    SearchValidator.init("abc ORsomething")
+//        .addExpected(WORD, AND, WORD).validate();
+
+    SearchValidator.init("abc OR orsomething")
+        .addExpected(WORD, OR, WORD).validate();
+
+    SearchValidator.init("abc OR ORsomething")
+        .addExpected(WORD, OR, WORD).validate();
+
   }
 
   @Test
