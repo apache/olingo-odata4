@@ -68,7 +68,7 @@ public class EdmEnumTest {
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
     when(edm.getEnumType(new FullQualifiedName("namespace.name"))).thenReturn(instance);
     when(edm.getEnumType(new FullQualifiedName("alias.name"))).thenReturn(instance);
-    
+
     otherInstance = new EdmEnumTypeImpl(null, enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
@@ -178,15 +178,15 @@ public class EdmEnumTest {
     assertEquals("first", instance.fromUriLiteral("namespace.name'first'"));
     assertEquals("first", instance.fromUriLiteral("alias.name'first'"));
 
-    expectErrorInFromUriLiteral(instance, "", null);
-    expectErrorInFromUriLiteral(instance, "'", null);
-    expectErrorInFromUriLiteral(instance, "''", null);
-    expectErrorInFromUriLiteral(instance, "name'first'", null);
-    expectErrorInFromUriLiteral(instance, "namespace.name'", null);
-    expectErrorInFromUriLiteral(instance, "namespace.name'first", null);
-    expectErrorInFromUriLiteral(instance, "namespace.namespace'first", null);
-    expectErrorInFromUriLiteral(instance, "namespace.namespace'fi'rst", null);
-    expectErrorInFromUriLiteral(instance, "namespace.namespace'first'", null);
+    expectErrorInFromUriLiteral(instance, "");
+    expectErrorInFromUriLiteral(instance, "'");
+    expectErrorInFromUriLiteral(instance, "''");
+    expectErrorInFromUriLiteral(instance, "name'first'");
+    expectErrorInFromUriLiteral(instance, "namespace.name'");
+    expectErrorInFromUriLiteral(instance, "namespace.name'first");
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'first");
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'fi'rst");
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'first'");
   }
 
   @Test
@@ -291,17 +291,13 @@ public class EdmEnumTest {
     expectContentErrorInValueToString(int16EnumType, Integer.MAX_VALUE);
   }
 
-  protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value, final String error) {
+  protected void expectErrorInFromUriLiteral(final EdmPrimitiveType instance, final String value) {
     try {
       instance.fromUriLiteral(value);
       fail("Expected exception not thrown");
     } catch (final EdmPrimitiveTypeException e) {
       assertNotNull(e.getLocalizedMessage());
-      if(error == null){
-        assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
-      }else{
-        assertThat(e.getLocalizedMessage(), containsString(error));
-      }
+      assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
     }
   }
 

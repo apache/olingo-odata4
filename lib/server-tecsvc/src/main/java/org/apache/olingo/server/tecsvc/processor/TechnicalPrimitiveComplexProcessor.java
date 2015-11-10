@@ -460,8 +460,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     if (entitySet != null && !path.isEmpty()) {
       builder = builder.navOrPropertyPath(buildPropertyPath(path));
     }
-    builder = builder.selectList(type.getKind() == EdmTypeKind.PRIMITIVE ? null :
-        helper.buildContextURLSelectList((EdmStructuredType) type, expand, select));
+    builder = builder.selectList(
+        type.getKind() == EdmTypeKind.PRIMITIVE
+            || type.getKind() == EdmTypeKind.ENUM
+            || type.getKind() == EdmTypeKind.DEFINITION ?
+                null :
+                helper.buildContextURLSelectList((EdmStructuredType) type, expand, select));
     return builder.build();
   }
 

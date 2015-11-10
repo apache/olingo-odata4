@@ -483,7 +483,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       }
 
       if (property instanceof EdmProperty) {
-        if (((EdmProperty) property).isPrimitive()) {
+        if (((EdmProperty) property).isPrimitive()
+            || property.getType().getKind() == EdmTypeKind.ENUM
+            || property.getType().getKind() == EdmTypeKind.DEFINITION) {
           // create simple property
           UriResourcePrimitivePropertyImpl simpleResource = new UriResourcePrimitivePropertyImpl()
               .setProperty((EdmProperty) property);
@@ -1042,6 +1044,11 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     }
 
     type = edm.getComplexType(fullName);
+    if (type != null) {
+      return type;
+    }
+
+    type = edm.getTypeDefinition(fullName);
     if (type != null) {
       return type;
     }
@@ -1994,8 +2001,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   @Override
   public Object visitDecimalLiteral(final DecimalLiteralContext ctx) {
     final EdmType type = EdmPrimitiveTypeFactory.getInstance(
-        ctx.getText().contains("e") || ctx.getText().contains("E") ? EdmPrimitiveTypeKind.Double
-            : EdmPrimitiveTypeKind.Decimal);
+        ctx.getText().contains("e") || ctx.getText().contains("E") ?
+            EdmPrimitiveTypeKind.Double :
+            EdmPrimitiveTypeKind.Decimal);
 
     return new LiteralImpl().setText(ctx.getText()).setType(type);
   }
@@ -2216,7 +2224,9 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
       // contextSelectItem.addSegment(newSegment);
       if (element instanceof EdmProperty) {
         EdmProperty property = (EdmProperty) element;
-        if (property.isPrimitive()) {
+        if (property.isPrimitive()
+            || property.getType().getKind() == EdmTypeKind.ENUM
+            || property.getType().getKind() == EdmTypeKind.DEFINITION) {
 
           UriResourcePrimitivePropertyImpl simple = new UriResourcePrimitivePropertyImpl();
           simple.setProperty(property);
