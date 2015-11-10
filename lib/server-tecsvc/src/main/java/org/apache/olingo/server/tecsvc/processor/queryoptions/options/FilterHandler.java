@@ -53,7 +53,7 @@ public class FilterHandler {
 
       while (iter.hasNext()) {
         final VisitorOperand operand = filterOption.getExpression()
-            .accept(new ExpressionVisitorImpl(iter.next(), uriInfo, edm));
+            .accept(new ExpressionVisitorImpl(iter.next(), uriInfo));
         final TypedOperand typedOperand = operand.asTypedOperand();
 
         if (typedOperand.is(primBoolean)) {

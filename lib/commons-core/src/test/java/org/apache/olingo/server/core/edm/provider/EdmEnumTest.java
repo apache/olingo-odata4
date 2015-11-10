@@ -179,12 +179,14 @@ public class EdmEnumTest {
     assertEquals("first", instance.fromUriLiteral("alias.name'first'"));
 
     expectErrorInFromUriLiteral(instance, "", null);
+    expectErrorInFromUriLiteral(instance, "'", null);
+    expectErrorInFromUriLiteral(instance, "''", null);
     expectErrorInFromUriLiteral(instance, "name'first'", null);
+    expectErrorInFromUriLiteral(instance, "namespace.name'", null);
     expectErrorInFromUriLiteral(instance, "namespace.name'first", null);
     expectErrorInFromUriLiteral(instance, "namespace.namespace'first", null);
     expectErrorInFromUriLiteral(instance, "namespace.namespace'fi'rst", null);
     expectErrorInFromUriLiteral(instance, "namespace.namespace'first'", null);
-    expectErrorInFromUriLiteral(instance, "namespace.name'fir'st'", "must be of format");
   }
 
   @Test

@@ -44,7 +44,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
   private final EdmPrimitiveType underlyingType;
   private final CsdlEnumType enumType;
   private final FullQualifiedName enumName;
-  private final String uriSuffix;
   private List<String> memberNames;
   private Map<String, EdmMember> membersMap;
 
@@ -68,7 +67,6 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
     this.enumType = enumType;
     this.enumName = enumName;
-    uriSuffix = "'";
   }
 
   @Override
@@ -228,32 +226,43 @@ public class EdmEnumTypeImpl extends EdmTypeImpl implements EdmEnumType {
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal == null ? null : enumName.getFullQualifiedNameAsString() + "'" + literal + uriSuffix;
+    return literal == null ? null : enumName.getFullQualifiedNameAsString() + "'" + literal + "'";
   }
 
   @Override
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
     if (literal == null) {
       return null;
-    }
-
-    if (literal.endsWith(uriSuffix)) {
-      String[] splitLiteral = literal.split("'");
-      if (splitLiteral.length != 2) {
-        throw new EdmPrimitiveTypeException("The literal '" + literal
-            + "' must be of format FullQuallifiedTypeName'literal'");
-      }
-      // First part must be the FullQualifiedName
-      FullQualifiedName typeFqn = null;
-      try {
-        typeFqn = new FullQualifiedName(splitLiteral[0]);
-      } catch (IllegalArgumentException e) {
-        throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.", e);
-      }
-      // Get itself. This will also resolve a possible alias
-      EdmEnumType prospect = edm.getEnumType(typeFqn);
-      if (prospect != null && enumName.equals(prospect.getFullQualifiedName())) {
-        return splitLiteral[1];
+    } else {
+      String uriPrefix = enumName.getFullQualifiedNameAsString() + "'";
+      String uriSuffix = "'";
+      if (literal.length() >= uriPrefix.length() + uriSuffix.length()
+          && literal.startsWith(uriPrefix) && literal.endsWith(uriSuffix)) {
+        // This is the positive case where the literal is prefixed with the full qualified name of the enum type
+        return literal.substring(uriPrefix.length(), literal.length() - uriSuffix.length());
+      } else {
+        // This case will be called if the prefix might be an alias
+        if (literal.endsWith(uriSuffix)) {
+          int indexSingleQuote = literal.indexOf('\'');
+          String fqn = literal.substring(0, indexSingleQuote);
+          FullQualifiedName typeFqn = null;
+          try {
+            typeFqn = new FullQualifiedName(fqn);
+          } catch (IllegalArgumentException e) {
+            throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.", e);
+          }
+          /*
+           * Get itself. This will also resolve a possible alias. If we had an easier way to query the edm for an alias
+           * we could use this here. But since there is no such method we try to get the enum type based on a possible
+           * alias qualified name. This way the edm will resolve the alias for us. Also in a positive case the type is
+           * already cached so the EdmProvider should not be called.
+           */
+          EdmEnumType prospect = edm.getEnumType(typeFqn);
+          if (prospect != null && enumName.equals(prospect.getFullQualifiedName())
+              && literal.length() >= fqn.length() + 2) {
+            return literal.substring(fqn.length() + 1, literal.length() - 1);
+          }
+        }
       }
     }
     throw new EdmPrimitiveTypeException("The literal '" + literal + "' has illegal content.");
