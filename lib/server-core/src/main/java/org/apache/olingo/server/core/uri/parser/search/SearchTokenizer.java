@@ -73,6 +73,11 @@ public class SearchTokenizer {
       return this;
     }
 
+    public State finish(Token token) {
+      this.token = token;
+      return finish();
+    }
+
     public boolean isFinished() {
       return finished;
     }
@@ -167,12 +172,15 @@ public class SearchTokenizer {
     public SearchExpressionState() {
       super(null);
     }
+    public SearchExpressionState(String initLiteral) {
+      super(null, initLiteral);
+    }
     @Override
     public State nextChar(char c) {
       if (c == CHAR_OPEN) {
         return new OpenState();
       } else if (isWhitespace(c)) {
-        return new RwsImplicitAndState();
+        return new RwsImplicitAndOrState();
       } else if(c == CHAR_CLOSE) {
         return new CloseState();
       } else {
@@ -224,7 +232,7 @@ public class SearchTokenizer {
         return new CloseState();
       } else if (isWhitespace(c)) {
         finish();
-        return new RwsImplicitAndState();
+        return new RwsImplicitAndOrState();
       }
       return forbidden(c);
     }
@@ -254,14 +262,8 @@ public class SearchTokenizer {
         allowed(c);
         return new SearchExpressionState();
       } else if (isWhitespace(c)) {
-        if(isFinished()) {
-          return new RwsImplicitAndState();
-        }
         return allowed(c);
       } else if (c == CHAR_CLOSE) {
-        if(isFinished()) {
-          return new CloseState();
-        }
         return allowed(c);
       }
       return forbidden(c);
@@ -317,48 +319,6 @@ public class SearchTokenizer {
     }
   }
 
-  private class AndState extends LiteralState {
-    public AndState(char c) {
-      super(Token.AND, c);
-      if(c != CHAR_A) {
-        forbidden(c);
-      }
-    }
-    @Override
-    public State nextChar(char c) {
-      if (literal.length() == 1 && c == CHAR_N) {
-        return allowed(c);
-      } else if (literal.length() == 2 && c == CHAR_D) {
-        return allowed(c);
-      } else if(literal.length() == 3 && isWhitespace(c)) {
-        finish();
-        return new BeforeSearchExpressionRwsState();
-      } else {
-        return new SearchWordState(this);
-      }
-    }
-  }
-
-  private class OrState extends LiteralState {
-    public OrState(char c) {
-      super(Token.OR, c);
-      if(c != CHAR_O) {
-        forbidden(c);
-      }
-    }
-    @Override
-    public State nextChar(char c) {
-      if (literal.length() == 1 && (c == CHAR_R)) {
-        return allowed(c);
-      } else if(literal.length() == 2 && isWhitespace(c)) {
-        finish();
-        return new BeforeSearchExpressionRwsState();
-      } else {
-        return new SearchWordState(this);
-      }
-    }
-  }
-
   // RWS 'OR'  RWS searchExpr
   // RWS [ 'AND' RWS ] searchExpr
   private class BeforeSearchExpressionRwsState extends State {
@@ -376,21 +336,39 @@ public class SearchTokenizer {
   }
 
   // implicit and
-  private class RwsImplicitAndState extends State {
-    public RwsImplicitAndState() {
-      super(Token.AND);
+  private class RwsImplicitAndOrState extends LiteralState {
+    private boolean noneRws = false;
+    public RwsImplicitAndOrState() {
+      super(null);
     }
     @Override
     public State nextChar(char c) {
-      if (isWhitespace(c)) {
+      if (!noneRws && isWhitespace(c)) {
         return allowed(c);
       } else if (c == CHAR_O) {
-        return new OrState(c);
+        noneRws = true;
+        return allowed(c);
+      } else if (literal.length() == 1 && c == CHAR_R) {
+        return allowed(c);
+      } else if (literal.length() == 2 && isWhitespace(c)) {
+        finish(Token.OR);
+        return new BeforeSearchExpressionRwsState();
       } else if (c == CHAR_A) {
-        return new AndState(c);
+        noneRws = true;
+        return allowed(c);
+      } else if (literal.length() == 1 && c == CHAR_N) {
+        return allowed(c);
+      } else if (literal.length() == 2 && c == CHAR_D) {
+        return allowed(c);
+      } else if(literal.length() == 3 && isWhitespace(c)) {
+        finish(Token.AND);
+        return new BeforeSearchExpressionRwsState();
+      } else if(noneRws) {
+        finish(Token.AND);
+        return new SearchWordState(this);
       } else {
-        finish();
-        return new SearchExpressionState().init(c);
+        finish(Token.AND);
+        return new SearchExpressionState(literal.toString()).init(c);
       }
     }
   }

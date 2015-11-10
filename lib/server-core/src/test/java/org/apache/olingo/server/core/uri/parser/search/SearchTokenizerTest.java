@@ -290,12 +290,11 @@ public class SearchTokenizerTest {
     SearchValidator.init("abc AND ANDsomething")
         .addExpected(WORD, AND, WORD).validate();
 
-    // FIXME (mibo): issue with implicit and
-//    SearchValidator.init("abc ANDsomething").enableLogging()
-//        .addExpected(WORD, AND, WORD).validate();
+    SearchValidator.init("abc ANDsomething")
+        .addExpected(WORD, AND, WORD).validate();
 
-//    SearchValidator.init("abc ORsomething")
-//        .addExpected(WORD, AND, WORD).validate();
+    SearchValidator.init("abc ORsomething")
+        .addExpected(WORD, AND, WORD).validate();
 
     SearchValidator.init("abc OR orsomething")
         .addExpected(WORD, OR, WORD).validate();
