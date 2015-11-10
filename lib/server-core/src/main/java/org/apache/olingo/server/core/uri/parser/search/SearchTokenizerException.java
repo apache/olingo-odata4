@@ -18,20 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import org.apache.olingo.server.api.uri.queryoption.SearchOption;
-import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
-
-import java.util.List;
-
-public class SearchParser {
-
-  public SearchOption parse(String path, String value) {
-    SearchTokenizer tokenizer = new SearchTokenizer();
-    try {
-      List<SearchQueryToken> tokens = tokenizer.tokenize(value);
-    } catch (SearchTokenizerException e) {
-      return null;
-    }
-    return new SearchOptionImpl();
+public class SearchTokenizerException extends Exception {
+  public SearchTokenizerException(String message) {
+    super(message);
   }
 }

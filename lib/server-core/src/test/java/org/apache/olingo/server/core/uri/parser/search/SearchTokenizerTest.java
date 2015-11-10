@@ -150,7 +150,7 @@ public class SearchTokenizerTest {
   }
 
   @Test
-  public void parseImplicitAnd() {
+  public void parseImplicitAnd() throws SearchTokenizerException {
     SearchValidator.init("a b").addExpected(WORD, AND, WORD).validate();
     SearchValidator.init("a b OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
     SearchValidator.init("a bc OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
@@ -305,7 +305,7 @@ public class SearchTokenizerTest {
   }
 
   @Test
-  public void moreMixedTests() {
+  public void moreMixedTests() throws SearchTokenizerException {
     validate("abc");
     validate("NOT abc");
 
@@ -340,20 +340,23 @@ public class SearchTokenizerTest {
   }
 
   @Test
-  public void parseInvalid() {
+  public void parseInvalid() throws SearchTokenizerException {
     SearchValidator.init("abc AND OR something").validate();
+    SearchValidator.init("abc AND \"something\" )").validate();
+    //
+    SearchValidator.init("(  abc AND) OR something").validate(SearchTokenizerException.class);
   }
 
-  public boolean validate(String query) {
-    return new SearchValidator(query).validate();
+  public void validate(String query) throws SearchTokenizerException {
+    new SearchValidator(query).validate();
   }
 
-  public boolean validate(String query, SearchQueryToken.Token ... tokens) {
+  public void validate(String query, SearchQueryToken.Token ... tokens) throws SearchTokenizerException {
     SearchValidator sv = new SearchValidator(query);
     for (SearchQueryToken.Token token : tokens) {
       sv.addExpected(token);
     }
-    return sv.validate();
+    sv.validate();
   }
 
   private static class SearchValidator {
@@ -393,7 +396,17 @@ public class SearchTokenizerTest {
       }
       return this;
     }
-    private boolean validate() {
+    private void validate(Class<? extends Exception> exception) throws SearchTokenizerException {
+      try {
+        new SearchTokenizer().tokenize(searchQuery);
+      } catch (Exception e) {
+        Assert.assertEquals(exception, e.getClass());
+        return;
+      }
+      Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
+    }
+
+    private void validate() throws SearchTokenizerException {
       SearchTokenizer tokenizer = new SearchTokenizer();
       List<SearchQueryToken> result = tokenizer.tokenize(searchQuery);
       Assert.assertNotNull(result);
@@ -412,8 +425,6 @@ public class SearchTokenizerTest {
           }
         }
       }
-
-      return true;
     }
   }
 
