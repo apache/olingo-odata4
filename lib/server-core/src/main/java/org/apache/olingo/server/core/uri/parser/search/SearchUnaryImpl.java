@@ -16,11 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.uri.queryoption.search;
+package org.apache.olingo.server.core.uri.parser.search;
 
-public interface SearchUnary extends SearchExpression {
+import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchUnaryOperatorKind;
 
-  SearchUnaryOperatorKind getOperator();
-  SearchTerm getOperand();
+public class SearchUnaryImpl implements SearchUnary {
+  private final SearchTerm operand;
 
+  public SearchUnaryImpl(SearchTerm operand) {
+    this.operand = operand;
+  }
+
+  @Override
+  public SearchUnaryOperatorKind getOperator() {
+    return SearchUnaryOperatorKind.NOT;
+  }
+
+  @Override
+  public SearchTerm getOperand() {
+    return operand;
+  }
+
+  @Override
+  public String toString() {
+    return "{" + getOperator().name() + " " + operand + '}';
+  }
 }
