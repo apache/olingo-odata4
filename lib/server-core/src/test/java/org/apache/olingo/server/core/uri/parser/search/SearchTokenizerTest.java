@@ -29,8 +29,6 @@ import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.T
 
 public class SearchTokenizerTest {
 
-  private boolean logEnabled = false;
-
   @Test
   public void parseBasics() throws Exception {
     SearchTokenizer tokenizer = new SearchTokenizer();
@@ -39,25 +37,25 @@ public class SearchTokenizerTest {
     //
     result = tokenizer.tokenize("abc");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
 
     result = tokenizer.tokenize("NOT abc");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(NOT, result.get(0).getToken());
     Assert.assertEquals(WORD, result.get(1).getToken());
 
     result = tokenizer.tokenize("(abc)");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(OPEN, result.get(0).getToken());
     Assert.assertEquals(WORD, result.get(1).getToken());
     Assert.assertEquals(CLOSE, result.get(2).getToken());
 
     result = tokenizer.tokenize("((abc))");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(OPEN, result.get(0).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
     Assert.assertEquals(CLOSE, result.get(4).getToken());
@@ -71,13 +69,13 @@ public class SearchTokenizerTest {
     //
     result = tokenizer.tokenize("abc");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
 
     //
-    result = tokenizer.tokenize("9988abs");
+    result = tokenizer.tokenize("anotherWord\u1234");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
   }
 
@@ -86,29 +84,29 @@ public class SearchTokenizerTest {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
-    SearchValidator.init("abc AND \"x-y_z\" AND 123").validate();
+    SearchValidator.init("abc AND \"x-y_z\" AND olingo").validate();
 
     //
     result = tokenizer.tokenize("\"abc\"");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(PHRASE, result.get(0).getToken());
 
     //
     result = tokenizer.tokenize("\"9988  abs\"");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(PHRASE, result.get(0).getToken());
     Assert.assertEquals("\"9988  abs\"", result.get(0).getLiteral());
 
     //
     result = tokenizer.tokenize("\"99_88.\"");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(PHRASE, result.get(0).getToken());
     Assert.assertEquals("\"99_88.\"", result.get(0).getLiteral());
 
-    SearchValidator.init("abc or \"xyz\"").addExpected(WORD, AND, WORD, AND, PHRASE).validate();
+    SearchValidator.init("abc or \"xyz\"").addExpected(WORD, WORD, PHRASE).validate();
   }
 
   @Test
@@ -118,11 +116,14 @@ public class SearchTokenizerTest {
 
     result = tokenizer.tokenize("NOT abc");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(NOT, result.get(0).getToken());
     Assert.assertEquals(WORD, result.get(1).getToken());
 
-    SearchValidator.init("not abc").addExpected(WORD, AND, WORD).validate();
+    SearchValidator.init("not abc").addExpected(WORD, WORD).validate();
+    SearchValidator.init("NOT    abc").addExpected(NOT, WORD).validate();
+    SearchValidator.init("NOT    \"abc\"").addExpected(NOT, PHRASE).validate();
+    SearchValidator.init("NOT (sdf)").validate(SearchTokenizerException.class);
   }
 
   @Test
@@ -132,30 +133,30 @@ public class SearchTokenizerTest {
 
     result = tokenizer.tokenize("abc OR xyz");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(OR, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
 
-    result = tokenizer.tokenize("abc OR xyz OR 123");
+    result = tokenizer.tokenize("abc OR xyz OR olingo");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(OR, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
     Assert.assertEquals(OR, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
 
-    SearchValidator.init("abc or xyz").addExpected(WORD, AND, WORD, AND, WORD).validate();
+    SearchValidator.init("abc or xyz").addExpected(WORD, WORD, WORD).validate();
   }
 
   @Test
   public void parseImplicitAnd() throws SearchTokenizerException {
-    SearchValidator.init("a b").addExpected(WORD, AND, WORD).validate();
-    SearchValidator.init("a b OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
-    SearchValidator.init("a bc OR c").addExpected(WORD, AND, WORD, OR, WORD).validate();
-    SearchValidator.init("a bc c").addExpected(WORD, AND, WORD, AND, WORD).validate();
-    SearchValidator.init("(a OR x) bc c").addExpected(OPEN, WORD, OR, WORD, CLOSE, AND, WORD, AND, WORD).validate();
+    SearchValidator.init("a b").addExpected(WORD, WORD).validate();
+    SearchValidator.init("a b OR c").addExpected(WORD, WORD, OR, WORD).validate();
+    SearchValidator.init("a bc OR c").addExpected(WORD, WORD, OR, WORD).validate();
+    SearchValidator.init("a bc c").addExpected(WORD, WORD, WORD).validate();
+    SearchValidator.init("(a OR x) bc c").addExpected(OPEN, WORD, OR, WORD, CLOSE, WORD, WORD).validate();
   }
 
   @Test
@@ -165,7 +166,7 @@ public class SearchTokenizerTest {
 
     result = tokenizer.tokenize("abc AND xyz");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(AND, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
@@ -173,34 +174,31 @@ public class SearchTokenizerTest {
     // no lower case allowed for AND
     result = tokenizer.tokenize("abc and xyz");
     Assert.assertNotNull(result);
-    Assert.assertEquals(5, result.size());
-    log(result.toString());
+    Assert.assertEquals(3, result.size());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
-    Assert.assertEquals(AND, result.get(1).getToken());
+    Assert.assertEquals(WORD, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
-    Assert.assertEquals(AND, result.get(3).getToken());
-    Assert.assertEquals(WORD, result.get(4).getToken());
 
     // implicit AND
     result = tokenizer.tokenize("abc xyz");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
-    Assert.assertEquals(AND, result.get(1).getToken());
-    Assert.assertEquals(WORD, result.get(2).getToken());
+    Assert.assertEquals(WORD, result.get(1).getToken());
 
-    result = tokenizer.tokenize("abc AND xyz AND 123");
+    result = tokenizer.tokenize("abc AND xyz AND olingo");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(AND, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
     Assert.assertEquals(AND, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
 
-    result = tokenizer.tokenize("abc AND \"x-y_z\" AND 123");
+    result = tokenizer.tokenize("abc AND \"x-y_z\" AND olingo");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(AND, result.get(1).getToken());
     Assert.assertEquals(PHRASE, result.get(2).getToken());
@@ -214,9 +212,9 @@ public class SearchTokenizerTest {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
-    result = tokenizer.tokenize("abc AND xyz OR 123");
+    result = tokenizer.tokenize("abc AND xyz OR olingo");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Assert.assertEquals(WORD, result.get(0).getToken());
     Assert.assertEquals(AND, result.get(1).getToken());
     Assert.assertEquals(WORD, result.get(2).getToken());
@@ -233,9 +231,9 @@ public class SearchTokenizerTest {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
-    result = tokenizer.tokenize("abc AND NOT xyz OR 123");
+    result = tokenizer.tokenize("abc AND NOT xyz OR olingo");
     Assert.assertNotNull(result);
-    log(result.toString());
+    
     Iterator<SearchQueryToken> it = result.iterator();
     Assert.assertEquals(WORD, it.next().getToken());
     Assert.assertEquals(AND, it.next().getToken());
@@ -273,7 +271,7 @@ public class SearchTokenizerTest {
     Iterator<SearchQueryToken> it;
 
     result = tokenizer.tokenize("NOT abc AND nothing");
-    log(result.toString());
+    
     it = result.iterator();
     Assert.assertEquals(NOT, it.next().getToken());
     Assert.assertEquals(WORD, it.next().getToken());
@@ -281,7 +279,7 @@ public class SearchTokenizerTest {
     Assert.assertEquals(WORD, it.next().getToken());
 
     result = tokenizer.tokenize("abc AND andsomething");
-    log(result.toString());
+    
     it = result.iterator();
     Assert.assertEquals(WORD, it.next().getToken());
     Assert.assertEquals(AND, it.next().getToken());
@@ -291,17 +289,47 @@ public class SearchTokenizerTest {
         .addExpected(WORD, AND, WORD).validate();
 
     SearchValidator.init("abc ANDsomething")
-        .addExpected(WORD, AND, WORD).validate();
+        .addExpected(WORD, WORD).validate();
 
     SearchValidator.init("abc ORsomething")
-        .addExpected(WORD, AND, WORD).validate();
+        .addExpected(WORD, WORD).validate();
 
     SearchValidator.init("abc OR orsomething")
         .addExpected(WORD, OR, WORD).validate();
 
     SearchValidator.init("abc OR ORsomething")
         .addExpected(WORD, OR, WORD).validate();
+  }
 
+  @Test
+  public void unicodeInWords() throws Exception {
+    // Ll, Lm, Lo, Lt, Lu, Nl
+    SearchValidator.init("abc OR Ll\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
+        .addExpected(WORD, OR, WORD).validate();
+  }
+
+  /**
+   * unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+   * other-delims   = "!" /                   "(" / ")" / "*" / "+" / "," / ";"
+   * qchar-unescaped       = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
+   * pct-encoded-unescaped = "%" ( "0" / "1" /   "3" / "4" /   "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
+   *   / "%" "2" ( "0" / "1" /   "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
+   *   / "%" "5" ( DIGIT / "A" / "B" /   "D" / "E" / "F" )
+   *
+   * qchar-no-AMP-DQUOTE   = qchar-unescaped  / escape ( escape / quotation-mark )
+   *
+   * escape = "\" / "%5C"     ; reverse solidus U+005C
+   * quotation-mark  = DQUOTE / "%22"
+   * ALPHA  = %x41-5A / %x61-7A
+   * DIGIT  = %x30-39
+   * DQUOTE = %x22
+   *
+   * @throws Exception
+   */
+  @Test
+  public void characterInPhrase() throws Exception {
+    SearchValidator.init("\"123\" OR \"ALPHA-._~\"")
+        .addExpected(PHRASE, OR, PHRASE).validate();
   }
 
   @Test
@@ -311,32 +339,32 @@ public class SearchTokenizerTest {
 
     validate("abc AND def");
     validate("abc  OR def");
-    validate("abc     def");
+    validate("abc     def", WORD, WORD);
 
     validate("abc AND def AND ghi", WORD, AND, WORD, AND, WORD);
     validate("abc AND def  OR ghi");
     validate("abc AND def     ghi");
 
-    validate("abc  OR def AND ghi");
-    validate("abc  OR def  OR ghi");
-    validate("abc  OR def     ghi");
+    validate("abc  OR def AND ghi", WORD, OR, WORD, AND, WORD);
+    validate("abc  OR def  OR ghi", WORD, OR, WORD, OR, WORD);
+    validate("abc  OR def     ghi", WORD, OR, WORD, WORD);
 
     validate("abc     def AND ghi");
     validate("abc     def  OR ghi");
     validate("abc     def     ghi");
 
     // mixed not
-    validate("    abc         def AND     ghi");
-    validate("NOT abc  NOT    def  OR NOT ghi");
-    validate("    abc         def     NOT ghi");
+    SearchValidator.init("    abc         def AND     ghi").validate(WORD, WORD, AND, WORD);
+    validate("NOT abc  NOT    def  OR NOT ghi", NOT, WORD, NOT, WORD, OR, NOT, WORD);
+    validate("    abc         def     NOT ghi", WORD, WORD, NOT, WORD);
 
     // parenthesis
-    validate("(abc)");
-    validate("(abc AND  def)");
-    validate("(abc AND  def)   OR  ghi");
-    validate("(abc AND  def)       ghi");
-    validate("abc AND (def    OR  ghi)");
-    validate("abc AND (def        ghi)");
+    validate("(abc)", OPEN, WORD, CLOSE);
+    validate("(abc AND  def)", OPEN, WORD, AND, WORD, CLOSE);
+    validate("(abc AND  def)   OR  ghi", OPEN, WORD, AND, WORD, CLOSE, OR, WORD);
+    validate("(abc AND  def)       ghi", OPEN, WORD, AND, WORD, CLOSE, WORD);
+    validate("abc AND (def    OR  ghi)", WORD, AND, OPEN, WORD, OR, WORD, CLOSE);
+    validate("abc AND (def        ghi)", WORD, AND, OPEN, WORD, WORD, CLOSE);
   }
 
   @Test
@@ -363,6 +391,12 @@ public class SearchTokenizerTest {
     private List<Tuple> validations = new ArrayList<Tuple>();
     private boolean log;
     private final String searchQuery;
+
+    public void validate(SearchQueryToken.Token... tokens) throws SearchTokenizerException {
+      addExpected(tokens);
+      validate();
+    }
+
     private class Tuple {
       final SearchQueryToken.Token token;
       final String literal;
@@ -423,22 +457,6 @@ public class SearchTokenizerTest {
           if(validation.literal != null) {
             Assert.assertEquals(validation.literal, iToken.getLiteral());
           }
-        }
-      }
-    }
-  }
-
-
-
-  private void log(Object ... toString) {
-    if(logEnabled) {
-      System.out.println("------------");
-      if(toString == null || toString.length <= 1) {
-        System.out.println(toString == null? "NULL": (toString.length == 0? "EMPTY ARRAY": toString[0]));
-      } else {
-        int count = 1;
-        for (Object o : toString) {
-          System.out.println(count++ + ": " + o);
         }
       }
     }

@@ -73,11 +73,6 @@ public class SearchTokenizer {
       return this;
     }
 
-    public State finish(Token token) {
-      this.token = token;
-      return finish();
-    }
-
     public boolean isFinished() {
       return finished;
     }
@@ -90,23 +85,40 @@ public class SearchTokenizer {
       return this;
     }
 
-    static boolean isAllowedChar(final char character) {
+    static boolean isAllowedWord(final char character) {
       // TODO mibo: add missing allowed characters
-      return CHAR_A <= character && character <= 'Z' // case A..Z
-          || 'a' <= character && character <= 'z' // case a..z
-          || '0' <= character && character <= '9'; // case 0..9
+      int type = Character.getType(character);
+      return (type == Character.LETTER_NUMBER
+          || type == Character.LOWERCASE_LETTER
+          || type == Character.MODIFIER_LETTER
+          || type == Character.OTHER_LETTER
+          || type == Character.TITLECASE_LETTER
+          || type == Character.UPPERCASE_LETTER);
     }
 
     /**
-     * qchar-no-AMP-DQUOTE   = qchar-unescaped / escape ( escape / quotation-mark )
-     * qchar-unescaped  = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
      * unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+     * other-delims   = "!" /                   "(" / ")" / "*" / "+" / "," / ";"
+     * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
+     * pct-encoded-unescaped = "%" ( "0" / "1" /   "3" / "4" /   "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
+     *   / "%" "2" ( "0" / "1" /   "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
+     *   / "%" "5" ( DIGIT / "A" / "B" /   "D" / "E" / "F" )
+     *
+     * qchar-no-AMP-DQUOTE   = qchar-unescaped  / escape ( escape / quotation-mark )
+     *
+     * escape = "\" / "%5C"     ; reverse solidus U+005C
+     * quotation-mark  = DQUOTE / "%22"
+     *
+     * ALPHA  = %x41-5A / %x61-7A
+     * DIGIT  = %x30-39
+     * DQUOTE = %x22
+     *
      * @param character which is checked
      * @return true if character is allowed for a phrase
      */
     static boolean isAllowedPhrase(final char character) {
       // FIXME mibo: check missing
-      return isAllowedChar(character)
+      return isAlphaOrDigit(character)
           || character == '-'
           || character == '.'
           || character == '_'
@@ -117,6 +129,12 @@ public class SearchTokenizer {
           || character == '$'
           || character == '\''
           || character == '=';
+    }
+
+    private static boolean isAlphaOrDigit(char character) {
+      return 'A' <= character && character <= 'Z' // case A..Z
+          || 'a' <= character && character <= 'z' // case a..z
+          || '0' <= character && character <= '9'; // case 0..9
     }
 
     //BWS =  *( SP / HTAB / "%20" / "%09" )  ; "bad" whitespace
@@ -173,15 +191,12 @@ public class SearchTokenizer {
     public SearchExpressionState() {
       super(null);
     }
-    public SearchExpressionState(String initLiteral) {
-      super(null, initLiteral);
-    }
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (c == CHAR_OPEN) {
         return new OpenState();
       } else if (isWhitespace(c)) {
-        return new RwsImplicitAndOrState();
+        return new RwsState();
       } else if(c == CHAR_CLOSE) {
         return new CloseState();
       } else {
@@ -205,7 +220,7 @@ public class SearchTokenizer {
         return new NotState(c);
       } else if (c == QUOTATION_MARK) {
         return new SearchPhraseState(c);
-      } else if (isAllowedChar(c)) {
+      } else if (isAllowedWord(c)) {
         return new SearchWordState(c);
       }
       return forbidden(c);
@@ -219,21 +234,30 @@ public class SearchTokenizer {
   private class SearchWordState extends LiteralState {
     public SearchWordState(char c) throws SearchTokenizerException {
       super(Token.WORD, c);
+      if(!isAllowedWord(c)) {
+        forbidden(c);
+      }
     }
-    public SearchWordState(State toConsume) {
+    public SearchWordState(State toConsume) throws SearchTokenizerException {
       super(Token.WORD, toConsume.getLiteral());
+      char[] chars = literal.toString().toCharArray();
+      for (char aChar : chars) {
+        if(!isAllowedWord(aChar)) {
+          forbidden(aChar);
+        }
+      }
     }
 
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
-      if (isAllowedChar(c)) {
+      if (isAllowedWord(c)) {
         return allowed(c);
       } else if (c == CHAR_CLOSE) {
         finish();
         return new CloseState();
       } else if (isWhitespace(c)) {
         finish();
-        return new RwsImplicitAndOrState();
+        return new RwsState();
       }
       return forbidden(c);
     }
@@ -304,12 +328,51 @@ public class SearchTokenizer {
       }
     }
     @Override
-    public State nextChar(char c) {
+    public State nextChar(char c) throws SearchTokenizerException {
       if (literal.length() == 1 && c == CHAR_O) {
         return allowed(c);
       } else if (literal.length() == 2 && c == CHAR_T) {
         return allowed(c);
       } else if(literal.length() == 3 && isWhitespace(c)) {
+        finish();
+        return new BeforePhraseOrWordRwsState();
+      }
+      return forbidden(c);
+    }
+  }
+  private class AndState extends LiteralState {
+    public AndState(char c) throws SearchTokenizerException {
+      super(Token.AND, c);
+      if(c != CHAR_A) {
+        forbidden(c);
+      }
+    }
+    @Override
+    public State nextChar(char c) throws SearchTokenizerException {
+      if (literal.length() == 1 && c == CHAR_N) {
+        return allowed(c);
+      } else if (literal.length() == 2 && c == CHAR_D) {
+        return allowed(c);
+      } else if(literal.length() == 3 && isWhitespace(c)) {
+        finish();
+        return new BeforeSearchExpressionRwsState();
+      } else {
+        return new SearchWordState(this);
+      }
+    }
+  }
+  private class OrState extends LiteralState {
+    public OrState(char c) throws SearchTokenizerException {
+      super(Token.OR, c);
+      if(c != CHAR_O) {
+        forbidden(c);
+      }
+    }
+    @Override
+    public State nextChar(char c) throws SearchTokenizerException {
+      if (literal.length() == 1 && (c == CHAR_R)) {
+        return allowed(c);
+      } else if(literal.length() == 2 && isWhitespace(c)) {
         finish();
         return new BeforeSearchExpressionRwsState();
       } else {
@@ -334,47 +397,53 @@ public class SearchTokenizer {
     }
   }
 
-  // implicit and
-  private class RwsImplicitAndOrState extends LiteralState {
-    private boolean noneRws = false;
-    public RwsImplicitAndOrState() {
+  private class BeforePhraseOrWordRwsState extends State {
+    public BeforePhraseOrWordRwsState() {
       super(null);
     }
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
-      if (!noneRws && isWhitespace(c)) {
+      if (isWhitespace(c)) {
         return allowed(c);
-      } else if (c == CHAR_O) {
-        noneRws = true;
-        return allowed(c);
-      } else if (literal.length() == 1 && c == CHAR_R) {
-        return allowed(c);
-      } else if (literal.length() == 2 && isWhitespace(c)) {
-        finish(Token.OR);
-        return new BeforeSearchExpressionRwsState();
-      } else if (c == CHAR_A) {
-        noneRws = true;
-        return allowed(c);
-      } else if (literal.length() == 1 && c == CHAR_N) {
-        return allowed(c);
-      } else if (literal.length() == 2 && c == CHAR_D) {
-        return allowed(c);
-      } else if(literal.length() == 3 && isWhitespace(c)) {
-        finish(Token.AND);
-        return new BeforeSearchExpressionRwsState();
-      } else if(noneRws) {
-        finish(Token.AND);
-        return new SearchWordState(this);
+      } else if(c == '"') {
+        return new SearchPhraseState(c);
       } else {
-        finish(Token.AND);
-        return new SearchExpressionState(literal.toString()).init(c);
+        return new SearchWordState(c);
       }
     }
   }
 
-  // TODO (mibo): add (new) parse exception
-  public List<SearchQueryToken> tokenize(String searchQuery) throws SearchTokenizerException {
-    char[] chars = searchQuery.toCharArray();
+  private class RwsState extends State {
+    public RwsState() {
+      super(null);
+    }
+    @Override
+    public State nextChar(char c) throws SearchTokenizerException {
+      if (isWhitespace(c)) {
+        return allowed(c);
+      } else if (c == CHAR_O) {
+        return new OrState(c);
+      } else if (c == CHAR_A) {
+        return new AndState(c);
+      } else {
+        return new SearchExpressionState().init(c);
+      }
+    }
+  }
+
+  /**
+   * Take the search query and split into according SearchQueryToken.
+   * Before split into tokens the given search query is 'trimmed'.
+   *
+   * @param searchQuery search query to be tokenized
+   * @return list of tokens
+   * @throws SearchTokenizerException if something in query is not valid
+   *                                  (based on OData search query ABNF)
+   */
+  public List<SearchQueryToken> tokenize(final String searchQuery)
+        throws SearchTokenizerException {
+    
+    char[] chars = searchQuery.trim().toCharArray();
 
     State state = new SearchExpressionState();
     List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
