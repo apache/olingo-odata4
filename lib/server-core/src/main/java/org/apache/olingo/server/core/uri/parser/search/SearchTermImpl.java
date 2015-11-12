@@ -20,7 +20,7 @@ package org.apache.olingo.server.core.uri.parser.search;
 
 import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 
-public class SearchTermImpl implements SearchTerm {
+public class SearchTermImpl extends SearchExpressionImpl implements SearchTerm {
   private final String term;
 
   public SearchTermImpl(String term) {
@@ -34,6 +34,6 @@ public class SearchTermImpl implements SearchTerm {
 
   @Override
   public String toString() {
-    return "{'" + term + "'}";
+    return "'" + term + "'";
   }
 }

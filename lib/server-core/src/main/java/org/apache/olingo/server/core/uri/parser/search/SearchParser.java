@@ -28,8 +28,8 @@ import java.util.Iterator;
 
 public class SearchParser {
 
-  private Iterator<SearchQueryToken> tokens;
-  private SearchExpression root;
+  protected Iterator<SearchQueryToken> tokens;
+  protected SearchExpression root;
 //  private SearchQueryToken currentToken;
 
   public SearchOption parse(String path, String value) {
@@ -37,7 +37,7 @@ public class SearchParser {
     try {
       tokens = tokenizer.tokenize(value).iterator();
 //      currentToken = tokens.next();
-      root = processSearchExpression();
+      root = processTokens();
     } catch (SearchTokenizerException e) {
       return null;
     }
@@ -46,8 +46,10 @@ public class SearchParser {
     return searchOption;
   }
 
-  private SearchExpression processSearchExpression() {
+  protected SearchExpression processTokens() {
     SearchQueryToken token = nextToken();
+    
+    
     if(token.getToken() == SearchQueryToken.Token.OPEN) {
       throw illegalState();
     } else if(token.getToken() == SearchQueryToken.Token.NOT) {

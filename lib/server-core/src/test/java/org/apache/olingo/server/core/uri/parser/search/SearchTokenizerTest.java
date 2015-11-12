@@ -33,7 +33,7 @@ public class SearchTokenizerTest {
   public void parseBasics() throws Exception {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
-
+    
     //
     result = tokenizer.tokenize("abc");
     Assert.assertNotNull(result);

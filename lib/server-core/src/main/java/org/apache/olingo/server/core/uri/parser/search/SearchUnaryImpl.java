@@ -22,7 +22,7 @@ import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchUnaryOperatorKind;
 
-public class SearchUnaryImpl implements SearchUnary {
+public class SearchUnaryImpl extends SearchExpressionImpl implements SearchUnary {
   private final SearchTerm operand;
 
   public SearchUnaryImpl(SearchTerm operand) {

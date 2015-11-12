@@ -19,5 +19,17 @@
 package org.apache.olingo.server.api.uri.queryoption.search;
 
 public interface SearchExpression {
-  //No additional methods needed for now.
+  
+  boolean isSearchTerm();
+  
+  SearchTerm asSearchTerm();
+  
+  boolean isSearchBinary();
+  
+  SearchBinary asSearchBinary();
+  
+  boolean isSearchUnary();
+  
+  SearchUnary asSearchUnary();
+  
 }

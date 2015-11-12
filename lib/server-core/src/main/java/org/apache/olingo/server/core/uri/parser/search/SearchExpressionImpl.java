@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,38 +19,40 @@
 package org.apache.olingo.server.core.uri.parser.search;
 
 import org.apache.olingo.server.api.uri.queryoption.search.SearchBinary;
-import org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
 
-public class SearchBinaryImpl extends SearchExpressionImpl implements SearchBinary {
+public abstract class SearchExpressionImpl implements SearchExpression {
 
-  private final SearchBinaryOperatorKind operator;
-  private final SearchExpression left;
-  private final SearchExpression right;
-
-  public SearchBinaryImpl(SearchExpression left, SearchBinaryOperatorKind operator, SearchExpression right) {
-    this.left = left;
-    this.operator = operator;
-    this.right = right;
+  @Override
+  public boolean isSearchTerm() {
+    return this instanceof SearchTerm;
   }
 
   @Override
-  public SearchBinaryOperatorKind getOperator() {
-    return operator;
+  public SearchTerm asSearchTerm() {
+    return isSearchTerm() ? (SearchTerm) this : null;
   }
 
   @Override
-  public SearchExpression getLeftOperand() {
-    return left;
+  public boolean isSearchBinary() {
+    return this instanceof SearchBinary;
   }
 
   @Override
-  public SearchExpression getRightOperand() {
-    return right;
+  public SearchBinary asSearchBinary() {
+    return isSearchBinary() ? (SearchBinary) this : null;
   }
 
   @Override
-  public String toString() {
-    return "{" + left + " " + operator.name() + " " + right + '}';
+  public boolean isSearchUnary() {
+    return this instanceof SearchUnary;
   }
+
+  @Override
+  public SearchUnary asSearchUnary() {
+    return isSearchUnary() ? (SearchUnary) this : null;
+  }
+
 }
