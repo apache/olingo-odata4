@@ -34,12 +34,15 @@ public class SearchParserAndTokenizerTest {
 
   @Test
   public void basicParsing() throws SearchTokenizerException {
+//    SearchExpressionValidator.init("a AND b OR c").enableLogging()
+//        .validate(with("a"));
+
     SearchExpressionValidator.init("a")
         .validate(with("a"));
     SearchExpressionValidator.init("a AND b")
         .validate(with("a", and("b")));
     SearchExpressionValidator.init("a AND b AND c")
-        .validate(with("a", and("b", and("c"))));
+        .validate("{{'a' AND 'b'} AND 'c'}");
     SearchExpressionValidator.init("a OR b")
         .validate(with("a", or("b")));
     SearchExpressionValidator.init("a OR b OR c")
@@ -47,10 +50,11 @@ public class SearchParserAndTokenizerTest {
   }
 
   @Test
-  @Ignore("Currently not working")
   public void mixedParsing() throws Exception {
     SearchExpressionValidator.init("a AND b OR c")
-        .validate(with("c", or("a", and("b"))));
+        .validate("{{'a' AND 'b'} OR 'c'}");
+    SearchExpressionValidator.init("a OR b AND c")
+        .validate("{'a' OR {'b' AND 'c'}}");
   }
 
   @Ignore
@@ -156,15 +160,25 @@ public class SearchParserAndTokenizerTest {
     }
 
     private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException {
+      final SearchExpression searchExpression = getSearchExpression();
+      Assert.assertEquals(expectedSearchExpression.toString(), searchExpression.toString());
+    }
+
+    private void validate(String expectedSearchExpression) throws SearchTokenizerException {
+      final SearchExpression searchExpression = getSearchExpression();
+      Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
+    }
+
+    private SearchExpression getSearchExpression() {
       SearchParser tokenizer = new SearchParser();
       SearchOption result = tokenizer.parse(null, searchQuery);
       Assert.assertNotNull(result);
       final SearchExpression searchExpression = result.getSearchExpression();
       Assert.assertNotNull(searchExpression);
       if (log) {
-        System.out.println(expectedSearchExpression);
+        System.out.println(searchExpression);
       }
-      Assert.assertEquals(expectedSearchExpression.toString(), searchExpression.toString());
+      return searchExpression;
     }
   }
 

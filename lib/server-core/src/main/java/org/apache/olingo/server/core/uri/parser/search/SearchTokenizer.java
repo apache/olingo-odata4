@@ -442,7 +442,7 @@ public class SearchTokenizer {
    */
   public List<SearchQueryToken> tokenize(final String searchQuery)
         throws SearchTokenizerException {
-    
+
     char[] chars = searchQuery.trim().toCharArray();
 
     State state = new SearchExpressionState();

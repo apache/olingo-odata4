@@ -144,12 +144,21 @@ public class SearchParserTest extends SearchParser {
     SearchExpression se = run(Token.OPEN, Token.WORD, Token.AND, Token.WORD, Token.CLOSE, Token.AND, Token.WORD);
     assertEquals("{{'word1' AND 'word2'} AND 'word3'}", se.toString());
   }
-  
+
+  @Test
+  public void combinationAndOr() {
+    //word1 AND word2 OR word3
+    SearchExpression se = run(Token.WORD, Token.AND, Token.WORD, Token.OR, Token.WORD);
+    assertEquals("{{'word1' AND 'word2'} OR 'word3'}", se.toString());
+    //word1 OR word2 AND word3
+    se = run(Token.WORD, Token.OR, Token.WORD, Token.AND, Token.WORD);
+    assertEquals("{'word1' OR {'word2' AND 'word3'}}", se.toString());
+  }
+
 
   private SearchExpression run(SearchQueryToken.Token... tokenArray) {
     List<SearchQueryToken> tokenList = prepareTokens(tokenArray);
-    tokens = tokenList.iterator();
-    SearchExpression se = processTokens();
+    SearchExpression se = parseInternal(tokenList);
     assertNotNull(se);
     return se;
   }

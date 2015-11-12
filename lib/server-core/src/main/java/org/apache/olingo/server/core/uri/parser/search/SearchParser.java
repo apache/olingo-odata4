@@ -21,23 +21,23 @@ package org.apache.olingo.server.core.uri.parser.search;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
-import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class SearchParser {
 
-  protected Iterator<SearchQueryToken> tokens;
-  protected SearchExpression root;
-//  private SearchQueryToken currentToken;
+  private Iterator<SearchQueryToken> tokens;
+  private SearchExpression root;
+  private SearchQueryToken token;
 
   public SearchOption parse(String path, String value) {
     SearchTokenizer tokenizer = new SearchTokenizer();
     try {
       tokens = tokenizer.tokenize(value).iterator();
-//      currentToken = tokens.next();
-      root = processTokens();
+      nextToken();
+      root = processSearchExpression(null);
     } catch (SearchTokenizerException e) {
       return null;
     }
@@ -46,81 +46,98 @@ public class SearchParser {
     return searchOption;
   }
 
-  protected SearchExpression processTokens() {
-    SearchQueryToken token = nextToken();
-    
-    
+  protected SearchExpression parseInternal(List<SearchQueryToken> tokens) {
+    this.tokens = tokens.iterator();
+    nextToken();
+    return processSearchExpression(null);
+  }
+
+  private SearchExpression processSearchExpression(SearchExpression left) {
+    if(token == null) {
+      return left;
+    }
+
     if(token.getToken() == SearchQueryToken.Token.OPEN) {
+      processOpen();
       throw illegalState();
+    } else if(token.getToken() == SearchQueryToken.Token.CLOSE) {
+        processClose();
+        throw illegalState();
     } else if(token.getToken() == SearchQueryToken.Token.NOT) {
-      return processNot();
+      processNot();
     } else if(token.getToken() == SearchQueryToken.Token.PHRASE ||
         token.getToken() == SearchQueryToken.Token.WORD) {
-      return processTerm(token);
-//    } else if(token.getToken() == SearchQueryToken.Token.AND) {
-//      return processAnd();
+      return processSearchExpression(processTerm());
+    } else if(token.getToken() == SearchQueryToken.Token.AND) {
+        SearchExpression se = processAnd(left);
+        return processSearchExpression(se);
+    } else if(token.getToken() == SearchQueryToken.Token.OR) {
+        return processOr(left);
     } else {
       throw illegalState();
     }
-  }
-
-  private SearchExpression processAnd(SearchExpression se) {
-    SearchQueryToken token = nextToken();
-    if(token.getToken() == SearchQueryToken.Token.PHRASE ||
-        token.getToken() == SearchQueryToken.Token.WORD) {
-//      SearchExpression t = processTerm(token);
-      return new SearchBinaryImpl(se, SearchBinaryOperatorKind.AND, processTerm(token));
-    }
     throw illegalState();
   }
 
-  private SearchExpression processOr(SearchExpression se) {
-    SearchQueryToken token = nextToken();
-    if(token.getToken() == SearchQueryToken.Token.PHRASE ||
-        token.getToken() == SearchQueryToken.Token.WORD) {
-      return new SearchBinaryImpl(se, SearchBinaryOperatorKind.OR, processTerm(token));
-    }
-    throw illegalState();
+  private void processClose() {
+    nextToken();
+  }
+
+  private void processOpen() {
+    nextToken();
+  }
+
+  private SearchExpression processAnd(SearchExpression left) {
+    nextToken();
+    SearchExpression se = processTerm();
+    return new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
+  }
+
+  public SearchExpression processOr(SearchExpression left) {
+    nextToken();
+    SearchExpression se = processSearchExpression(left);
+    return new SearchBinaryImpl(left, SearchBinaryOperatorKind.OR, se);
   }
 
   private RuntimeException illegalState() {
     return new RuntimeException();
   }
 
-  private SearchUnaryImpl processNot() {
-    SearchQueryToken token = nextToken();
-    if(token.getToken() == SearchQueryToken.Token.PHRASE ||
-        token.getToken() == SearchQueryToken.Token.WORD) {
-      throw illegalState();
-//      return new SearchUnaryImpl(processTerm(token));
-    }
-    throw illegalState();
+  private void processNot() {
+    nextToken();
   }
 
-  private SearchQueryToken nextToken() {
-//    if(tokens.hasNext()) {
-    return tokens.next();
-//    }
+  private void nextToken() {
+    if(tokens.hasNext()) {
+     token = tokens.next();
+    } else {
+      token = null;
+    }
 //    return null;
   }
 
-  private SearchExpression processTerm(SearchQueryToken token) {
-    SearchTerm searchTerm = new SearchTermImpl(token.getLiteral());
-    if(isEof()) {
-      return searchTerm;
+  private SearchExpression processTerm() {
+    if(token.getToken() == SearchQueryToken.Token.NOT) {
+      return new SearchUnaryImpl(processPhrase());
     }
-
-    SearchQueryToken next = nextToken();
-    if(next.getToken() == SearchQueryToken.Token.AND) {
-      return processAnd(searchTerm);
-    } else if(next.getToken() == SearchQueryToken.Token.OR) {
-      return processOr(searchTerm);
+    if(token.getToken() == SearchQueryToken.Token.PHRASE) {
+      return processPhrase();
     }
-
-    throw illegalState();
+    if(token.getToken() == SearchQueryToken.Token.WORD) {
+      return processWord();
+    }
+    return null;
   }
 
-  private boolean isEof() {
-    return !tokens.hasNext();
+  private SearchTermImpl processWord() {
+    String literal = token.getLiteral();
+    nextToken();
+    return new SearchTermImpl(literal);
+  }
+
+  private SearchTermImpl processPhrase() {
+    String literal = token.getLiteral();
+    nextToken();
+    return new SearchTermImpl(literal);
   }
 }
