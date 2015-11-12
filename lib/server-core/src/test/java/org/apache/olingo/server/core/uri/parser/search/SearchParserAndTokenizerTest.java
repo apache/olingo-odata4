@@ -139,6 +139,7 @@ public class SearchParserAndTokenizerTest {
       return new SearchExpressionValidator(searchQuery);
     }
 
+    @SuppressWarnings("unused")
     private SearchExpressionValidator enableLogging() {
       log = true;
       return this;

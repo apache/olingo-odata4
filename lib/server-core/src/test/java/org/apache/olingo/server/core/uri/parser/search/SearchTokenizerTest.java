@@ -416,6 +416,8 @@ public class SearchTokenizerTest {
     private static SearchValidator init(String searchQuery) {
       return new SearchValidator(searchQuery);
     }
+    
+    @SuppressWarnings("unused")
     private SearchValidator enableLogging() {
       log = true;
       return this;

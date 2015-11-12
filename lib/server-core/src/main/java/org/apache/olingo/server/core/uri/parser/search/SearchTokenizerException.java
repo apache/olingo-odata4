@@ -19,6 +19,9 @@
 package org.apache.olingo.server.core.uri.parser.search;
 
 public class SearchTokenizerException extends Exception {
+
+  private static final long serialVersionUID = -8295456415309640166L;
+
   public SearchTokenizerException(String message) {
     super(message);
   }
