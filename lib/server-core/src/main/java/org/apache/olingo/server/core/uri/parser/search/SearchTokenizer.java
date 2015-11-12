@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.uri.parser.search;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <code>
@@ -440,13 +439,13 @@ public class SearchTokenizer {
    * @throws SearchTokenizerException if something in query is not valid
    *                                  (based on OData search query ABNF)
    */
-  public List<SearchQueryToken> tokenize(final String searchQuery)
+  public ArrayList<SearchQueryToken> tokenize(final String searchQuery)
         throws SearchTokenizerException {
     
     char[] chars = searchQuery.trim().toCharArray();
 
     State state = new SearchExpressionState();
-    List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
+    ArrayList<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
     for (char aChar : chars) {
       State next = state.nextChar(aChar);
       if (state.isFinished()) {
