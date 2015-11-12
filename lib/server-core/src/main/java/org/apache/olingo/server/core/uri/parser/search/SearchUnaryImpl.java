@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,24 +18,24 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchUnaryOperatorKind;
 
 public class SearchUnaryImpl extends SearchExpressionImpl implements SearchUnary {
-  private final SearchTerm operand;
-
-  public SearchUnaryImpl(SearchTerm operand) {
-    this.operand = operand;
-  }
+  private SearchExpression operand;
 
   @Override
   public SearchUnaryOperatorKind getOperator() {
     return SearchUnaryOperatorKind.NOT;
   }
 
+  public void setOperand(SearchExpression operand) {
+    this.operand = operand;
+  }
+
   @Override
-  public SearchTerm getOperand() {
+  public SearchExpression getOperand() {
     return operand;
   }
 

@@ -33,10 +33,7 @@ import org.junit.Test;
 public class SearchParserAndTokenizerTest {
 
   @Test
-  public void basicParsing() throws SearchTokenizerException {
-//    SearchExpressionValidator.init("a AND b OR c").enableLogging()
-//        .validate(with("a"));
-
+  public void basicParsing() throws Exception {
     SearchExpressionValidator.init("a")
         .validate(with("a"));
     SearchExpressionValidator.init("a AND b")
@@ -95,11 +92,15 @@ public class SearchParserAndTokenizerTest {
   }
 
   private static SearchExpression or(SearchExpression right) {
-    return new SearchBinaryImpl(null, OR, right);
+    SearchBinaryImpl impl = new SearchBinaryImpl(OR);
+    impl.setRight(right);
+    return impl;
   }
 
   private static SearchExpression and(SearchExpression right) {
-    return new SearchBinaryImpl(null, AND, right);
+    SearchBinaryImpl impl = new SearchBinaryImpl(AND);
+    impl.setRight(right);
+    return impl;
   }
 
   private static SearchExpression and(String right) {
@@ -111,7 +112,9 @@ public class SearchParserAndTokenizerTest {
   }
 
   private static SearchUnary not(String term) {
-    return new SearchUnaryImpl(new SearchTermImpl(term));
+    SearchUnaryImpl unary = new SearchUnaryImpl();
+    unary.setOperand(new SearchTermImpl(term));
+    return unary;
   }
 
   private static void setLeftField(String left, SearchExpression se) {
@@ -159,17 +162,18 @@ public class SearchParserAndTokenizerTest {
       Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
     }
 
-    private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException {
+    private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException,
+        SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression.toString(), searchExpression.toString());
     }
 
-    private void validate(String expectedSearchExpression) throws SearchTokenizerException {
+    private void validate(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
     }
 
-    private SearchExpression getSearchExpression() {
+    private SearchExpression getSearchExpression() throws SearchTokenizerException, SearchParserException {
       SearchParser tokenizer = new SearchParser();
       SearchOption result = tokenizer.parse(null, searchQuery);
       Assert.assertNotNull(result);
@@ -182,5 +186,4 @@ public class SearchParserAndTokenizerTest {
     }
   }
 
-  
 }

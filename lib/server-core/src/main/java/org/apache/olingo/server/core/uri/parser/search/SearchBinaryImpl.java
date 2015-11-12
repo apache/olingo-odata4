@@ -25,12 +25,18 @@ import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 public class SearchBinaryImpl extends SearchExpressionImpl implements SearchBinary {
 
   private final SearchBinaryOperatorKind operator;
-  private final SearchExpression left;
-  private final SearchExpression right;
+  private SearchExpression left;
+  private SearchExpression right;
 
-  public SearchBinaryImpl(SearchExpression left, SearchBinaryOperatorKind operator, SearchExpression right) {
-    this.left = left;
+  public SearchBinaryImpl(SearchBinaryOperatorKind operator) {
     this.operator = operator;
+  }
+
+  public void setLeft(SearchExpression left) {
+    this.left = left;
+  }
+
+  public void setRight(SearchExpression right) {
     this.right = right;
   }
 

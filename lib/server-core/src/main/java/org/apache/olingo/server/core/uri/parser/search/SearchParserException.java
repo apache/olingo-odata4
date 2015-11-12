@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 
-public class SearchTokenizerException extends UriParserSyntaxException {
+public class SearchParserException extends UriParserSemanticException {
+  private static final long serialVersionUID = 5781553037561337795L;
 
-  private static final long serialVersionUID = -8295456415309640166L;
-
-  //TODO: Translation texts
-  public SearchTokenizerException(String message) {
-    super(message, null);
+  //TODO: message keys
+  public SearchParserException() {
+    super(null, null);
   }
+
 }
