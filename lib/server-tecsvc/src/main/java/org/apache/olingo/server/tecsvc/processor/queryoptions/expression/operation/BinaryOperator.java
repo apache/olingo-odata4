@@ -37,7 +37,7 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primiti
 
 public class BinaryOperator {
   private static final int FACTOR_SECOND_INT = 1000;
-  private static final BigDecimal FACTOR_SECOND = new BigDecimal(1000);
+  private static final BigDecimal FACTOR_SECOND = BigDecimal.valueOf(FACTOR_SECOND_INT);
   private static final BigInteger EDM_SBYTE_MIN = BigInteger.valueOf(Byte.MIN_VALUE);
   private static final BigInteger EDN_SBYTE_MAX = BigInteger.valueOf(Byte.MAX_VALUE);
   private static final BigInteger EDM_BYTE_MIN = BigInteger.ZERO;
@@ -56,35 +56,29 @@ public class BinaryOperator {
   private static final int GREATER_THAN = 1;
 
   protected static final OData oData;
-  protected static final EdmPrimitiveType primString;
   protected static final EdmPrimitiveType primBoolean;
   protected static final EdmPrimitiveType primDateTimeOffset;
   protected static final EdmPrimitiveType primDate;
-  protected static final EdmPrimitiveType primTimeOfDay;
   protected static final EdmPrimitiveType primDuration;
   protected static final EdmPrimitiveType primSByte;
   protected static final EdmPrimitiveType primByte;
   protected static final EdmPrimitiveType primInt16;
   protected static final EdmPrimitiveType primInt32;
   protected static final EdmPrimitiveType primInt64;
-  protected static final EdmPrimitiveType primDecimal;
   protected static final EdmPrimitiveType primSingle;
   protected static final EdmPrimitiveType primDouble;
 
   static {
     oData = OData.newInstance();
-    primString = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
     primBoolean = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean);
     primDateTimeOffset = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
     primDate = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date);
-    primTimeOfDay = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay);
     primDuration = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
     primSByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte);
     primByte = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte);
     primInt16 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
     primInt32 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
     primInt64 = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64);
-    primDecimal = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
     primSingle = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single);
     primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
   }

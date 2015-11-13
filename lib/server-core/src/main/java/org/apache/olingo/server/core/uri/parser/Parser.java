@@ -39,10 +39,13 @@ import org.apache.olingo.server.api.uri.UriResourceCount;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
@@ -55,6 +58,7 @@ import org.apache.olingo.server.core.uri.antlr.UriParserParser.MetadataEOFContex
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.PathSegmentEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectEOFContext;
+import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
@@ -66,7 +70,6 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class Parser {
   private static final String ATOM = "atom";
@@ -274,30 +277,25 @@ public class Parser {
             throw new UriParserSyntaxException("Double system query option!", e,
                 UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, option.name);
           }
-        } else {
-          if (option.name.startsWith(AT)) {
+        } else if (option.name.startsWith(AT)) {
+          if (context.contextUriInfo.getAlias(option.name) == null) {
             final FilterExpressionEOFContext filterExpCtx =
                 (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
-            final ExpressionImpl expression = (ExpressionImpl)((FilterOptionImpl) uriParseTreeVisitor
-                .visitFilterExpressionEOF(filterExpCtx)).getExpression();
-
-            final UriParameterImpl parameter = new UriParameterImpl();
-            parameter.setAlias(option.name);
-            parameter.setExpression(expression);
-            parameter.setText(NULL.equals(option.value) ? null : option.value);
-            
-            if(context.contextUriInfo.getAlias(option.name) == null) {
-              context.contextUriInfo.addAlias(option.name, parameter);
-            } else {
-              throw new UriParserSyntaxException("Alias already specified! Name: " + option.name, 
-                  UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
-            }
+            final Expression expression = ((FilterOption) uriParseTreeVisitor.visitFilterExpressionEOF(filterExpCtx))
+                .getExpression();
+            context.contextUriInfo.addAlias((AliasQueryOption) new AliasQueryOptionImpl()
+                .setAliasValue(expression)
+                .setName(option.name)
+                .setText(NULL.equals(option.value) ? null : option.value));
+          } else {
+            throw new UriParserSyntaxException("Alias already specified! Name: " + option.name,
+                UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
           }
-          
-          final CustomQueryOptionImpl customOption = new CustomQueryOptionImpl();
-          customOption.setName(option.name);
-          customOption.setText(option.value);
-          context.contextUriInfo.addCustomQueryOption(customOption);
+        } else {
+          context.contextUriInfo.addCustomQueryOption((CustomQueryOption)
+              new CustomQueryOptionImpl()
+                  .setName(option.name)
+                  .setText(option.value));
         }
       }
 

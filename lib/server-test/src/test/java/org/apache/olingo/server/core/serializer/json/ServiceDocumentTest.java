@@ -80,7 +80,7 @@ public class ServiceDocumentTest {
     assertTrue(jsonString.contains("FunctionImport"));
 
     assertTrue(jsonString.contains("SI"));
-    assertTrue(jsonString.contains("Simple Singelton"));
+    assertTrue(jsonString.contains("Simple Singleton"));
     assertTrue(jsonString.contains("SINav"));
     assertTrue(jsonString.contains("SIMedia"));
     assertTrue(jsonString.contains("Singleton"));

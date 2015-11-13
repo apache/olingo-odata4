@@ -40,7 +40,7 @@ import org.apache.olingo.server.api.uri.queryoption.TopOption;
 public interface UriInfoResource {
 
   /**
-   * @return List of custom query options used in the URI
+   * @return List of custom query options used in the URI (without alias definitions)
    */
   List<CustomQueryOption> getCustomQueryOptions();
 
@@ -75,7 +75,6 @@ public interface UriInfoResource {
   OrderByOption getOrderByOption();
 
   /**
-   * <b>CURRENTLY NOT SUPPORTED. WILL ALWAYS RETURN NULL</b>
    * @return Object containing information of the $search option
    */
   SearchOption getSearchOption();

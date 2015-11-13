@@ -22,20 +22,19 @@ import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class FormatOptionImpl extends SystemQueryOptionImpl implements FormatOption {
-  private String value;
 
   public FormatOptionImpl() {
     setKind(SystemQueryOptionKind.FORMAT);
   }
 
   public FormatOptionImpl setFormat(final String value) {
-    this.value = value;
+    setText(value);
     return this;
   }
 
   @Override
   public String getFormat() {
-    return value;
+    return getText();
   }
 
 }

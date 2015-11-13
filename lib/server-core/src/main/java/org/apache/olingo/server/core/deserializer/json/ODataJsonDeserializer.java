@@ -107,21 +107,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           DeserializerException.MessageKeys.VALUE_ARRAY_NOT_PRESENT);
     }
 
-    final List<String> toRemove = new ArrayList<String>();
-    Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
-    while (fieldsIterator.hasNext()) {
-      Map.Entry<String, JsonNode> field = fieldsIterator.next();
-
-      if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
-        // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
-        toRemove.add(field.getKey());
-      } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
-        throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
-            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
-      }
+    if (tree.isObject()) {
+      removeAnnotations(tree);
     }
-    // remove here to avoid iterator issues.
-    tree.remove(toRemove);
     assertJsonNodeIsEmpty(tree);
 
     return entitySet;
@@ -186,21 +174,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       ObjectNode tree = parseJsonTree(stream);
       Map<String, Parameter> parameters = consumeParameters(edmAction, tree);
 
-      final List<String> toRemove = new ArrayList<String>();
-      Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
-      while (fieldsIterator.hasNext()) {
-        Map.Entry<String, JsonNode> field = fieldsIterator.next();
-
-        if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
-          // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
-          toRemove.add(field.getKey());
-        } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
-          throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
-              DeserializerException.MessageKeys.NOT_IMPLEMENTED);
-        }
+      if (tree.isObject()) {
+        removeAnnotations(tree);
       }
-      // remove here to avoid iterator issues.
-      tree.remove(toRemove);
       assertJsonNodeIsEmpty(tree);
       return DeserializerResultImpl.with().actionParameters(parameters).build();
 
@@ -209,7 +185,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private ObjectNode parseJsonTree(final InputStream stream) throws IOException, DeserializerException {
+  private ObjectNode parseJsonTree(InputStream stream) throws IOException, DeserializerException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
     JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
@@ -251,8 +227,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return parameters;
   }
 
-  private Parameter createParameter(JsonNode node, String paramName, EdmParameter edmParameter) throws
-      DeserializerException {
+  private Parameter createParameter(JsonNode node, final String paramName, final EdmParameter edmParameter)
+      throws DeserializerException {
     Parameter parameter = new Parameter();
     parameter.setName(paramName);
     if (node == null || node.isNull()) {
@@ -285,6 +261,28 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return parameter;
   }
 
+  /** Reads a parameter value from a String. */
+  public Parameter parameter(final String content, final EdmParameter parameter) throws DeserializerException {
+    try {
+      JsonParser parser = new JsonFactory(new ObjectMapper()
+          .configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true))
+          .createParser(content);
+      JsonNode node = parser.getCodec().readTree(parser);
+      if (node == null) {
+        throw new DeserializerException("Invalid JSON syntax.",
+            DeserializerException.MessageKeys.JSON_SYNTAX_EXCEPTION);
+      }
+      final Parameter result = createParameter(node, parameter.getName(), parameter);
+      if (node.isObject()) {
+        removeAnnotations((ObjectNode) node);
+        assertJsonNodeIsEmpty(node);
+      }
+      return result;
+    } catch (final IOException e) {
+      throw wrapParseException(e);
+    }
+  }
+
   /**
    * Consumes all remaining fields of Json ObjectNode and tries to map found values
    * to according Entity fields and omits OData fields to be ignored (e.g., control information).
@@ -305,16 +303,12 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         Link bindingLink = consumeBindingLink(field.getKey(), field.getValue(), edmEntityType);
         entity.getNavigationBindings().add(bindingLink);
         toRemove.add(field.getKey());
-      } else if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
-        // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
-        toRemove.add(field.getKey());
-      } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
-        throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
-            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
       }
     }
     // remove here to avoid iterator issues.
     node.remove(toRemove);
+
+    removeAnnotations(node);
   }
 
   private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node,
@@ -492,22 +486,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     // read and add all complex properties
     ComplexValue value = readComplexValue(name, type, isNullable, jsonNode);
 
-    final List<String> toRemove = new ArrayList<String>();
-    Iterator<Entry<String, JsonNode>> fieldsIterator = jsonNode.fields();
-    while (fieldsIterator.hasNext()) {
-      Entry<String, JsonNode> field = fieldsIterator.next();
-
-      if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
-        // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
-        toRemove.add(field.getKey());
-      } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
-        throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
-            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
-      }
-    }
-    // remove here to avoid iterator issues.
-    if (!jsonNode.isNull()) {
-      ((ObjectNode) jsonNode).remove(toRemove);
+    if (jsonNode.isObject()) {
+      removeAnnotations((ObjectNode) jsonNode);
     }
     // Afterwards the node must be empty
     assertJsonNodeIsEmpty(jsonNode);
@@ -651,6 +631,24 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       throw new DeserializerException("Invalid value for property: " + name + " must not be an object or array.",
           DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, name);
     }
+  }
+
+  private void removeAnnotations(ObjectNode tree) throws DeserializerException {
+    List<String> toRemove = new ArrayList<String>();
+    Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
+    while (fieldsIterator.hasNext()) {
+      Map.Entry<String, JsonNode> field = fieldsIterator.next();
+
+      if (field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX)) {
+        // Control Information is ignored for requests as per specification chapter "4.5 Control Information"
+        toRemove.add(field.getKey());
+      } else if (field.getKey().contains(ODATA_ANNOTATION_MARKER)) {
+        throw new DeserializerException("Custom annotation with field name: " + field.getKey() + " not supported",
+            DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+      }
+    }
+    // remove here to avoid iterator issues.
+    tree.remove(toRemove);
   }
 
   /**

@@ -21,6 +21,8 @@ package org.apache.olingo.server.api.deserializer;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.Parameter;
+import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
@@ -41,6 +43,13 @@ public interface FixedFormatDeserializer {
    * @param property EDM property
    */
   public Object primitiveValue(InputStream content, EdmProperty property) throws DeserializerException;
+
+  /**
+   * Reads parameter data (in URI syntax) from a String.
+   * @param content   the textual value as String
+   * @param parameter EDM parameter
+   */
+  public Parameter parameter(String content, EdmParameter parameter) throws DeserializerException;
 
   /**
    * Reads batch data from an InputStream.

@@ -19,70 +19,70 @@
 package org.apache.olingo.server.api.uri.queryoption;
 
 /**
- * Defining the supported system query options
+ * Defines the supported system query options.
  */
 
 public enum SystemQueryOptionKind {
 
   /**
-   * See {@link FilterOption}<br>
+   * @see FilterOption
    */
   FILTER("$filter"),
 
   /**
-   * See {@link FormatOption}<br>
+   * @see FormatOption
    */
   FORMAT("$format"),
 
   /**
-   * See {@link ExpandOption}<br>
+   * @see ExpandOption
    */
   EXPAND("$expand"),
 
   /**
-   * See {@link IdOption}<br>
+   * @see IdOption
    */
   ID("$id"),
 
   /**
-   * See {@link CountOption}<br>
+   * @see CountOption
    */
   COUNT("$count"),
 
   /**
-   * See {@link OrderByOption}<br>
+   * @see OrderByOption
    */
   ORDERBY("$orderby"),
 
   /**
-   * See {@link SearchOption}<br>
+   * @see SearchOption
    */
   SEARCH("$search"),
 
   /**
-   * See {@link SelectOption}<br>
+   * @see SelectOption
    */
   SELECT("$select"),
 
   /**
-   * See {@link SkipOption}<br>
+   * @see SkipOption
    */
   SKIP("$skip"),
 
   /**
-   * See {@link SkipTokenOption}<br>
+   * @see SkipTokenOption
    */
   SKIPTOKEN("$skiptoken"),
 
   /**
-   * See {@link TopOption}<br>
+   * @see TopOption
    */
   TOP("$top"),
 
   /**
-   * See {@link LevelsExpandOption}<br>
+   * @see LevelsExpandOption
    */
-  LEVELS("$level");
+  LEVELS("$levels");
 
   private String syntax;
 

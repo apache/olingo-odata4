@@ -22,7 +22,6 @@ import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class SkipTokenOptionImpl extends SystemQueryOptionImpl implements SkipTokenOption {
-  private String skipTokenValue;
 
   public SkipTokenOptionImpl() {
     setKind(SystemQueryOptionKind.SKIPTOKEN);
@@ -30,11 +29,11 @@ public class SkipTokenOptionImpl extends SystemQueryOptionImpl implements SkipTo
 
   @Override
   public String getValue() {
-    return skipTokenValue;
+    return getText();
   }
 
   public SkipTokenOptionImpl setValue(final String skipTokenValue) {
-    this.skipTokenValue = skipTokenValue;
+    setText(skipTokenValue);
     return this;
   }
 

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
@@ -35,11 +36,7 @@ public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByO
 
   @Override
   public List<OrderByItem> getOrders() {
-    List<OrderByItem> retList = new ArrayList<OrderByItem>();
-    for (OrderByItem item : orders) {
-      retList.add(item);
-    }
-    return retList;
+    return Collections.unmodifiableList(orders);
   }
 
   public OrderByOptionImpl addOrder(final OrderByItem order) {

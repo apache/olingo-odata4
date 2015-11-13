@@ -302,24 +302,19 @@ castExpr                          : CAST_WORD  WSP? ( vE1=commonExpr WSP? COMMA 
 arrayOrObject       : json_array
                     | json_object;
 
-json_array          : BEGIN_ARRAY json_value ( WSP? COMMA WSP? json_value)* END_ARRAY;
+json_array          : BEGIN_ARRAY (json_value (WS* COMMA WS* json_value)*)? END_ARRAY;
 
 json_value          : jsonPrimitive
                     | rootExpr
                     | json_object
                     | json_array;
 
-json_object         : BEGIN_OBJECT 
-                      (
-					  json_key_value_pair
-					  (COMMA json_key_value_pair)*
-                      )?	
+json_object         : BEGIN_OBJECT
+                      (json_key_value_pair (WS* COMMA WS* json_key_value_pair)*)?
                       END_OBJECT;
 
-json_key_value_pair : STRING_IN_JSON
-                      WSP? COLON WSP? 
-                      json_value;
-                                        
+json_key_value_pair : STRING_IN_JSON WS* COLON WS* json_value;
+
 //; JSON syntax: adapted to URI restrictions from [RFC4627]                 
 jsonPrimitive 		: STRING_IN_JSON
                     | number_in_json

@@ -30,7 +30,7 @@ public class AliasQueryOptionImpl extends QueryOptionImpl implements AliasQueryO
     return aliasValue;
   }
 
-  public AliasQueryOption setAliasValue(final Expression aliasValue) {
+  public AliasQueryOptionImpl setAliasValue(final Expression aliasValue) {
     this.aliasValue = aliasValue;
     return this;
   }

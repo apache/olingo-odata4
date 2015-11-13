@@ -23,14 +23,20 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
@@ -39,6 +45,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor
 import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.UntypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.VisitorOperand;
@@ -50,10 +57,12 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   private final Entity entity;
   private final UriInfoResource uriInfo;
+  private final Edm edm;
 
-  public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo) {
+  public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo, final Edm edm) {
     this.entity = entity;
     this.uriInfo = uriInfo;
+    this.edm = edm;
   }
 
   @Override
@@ -180,28 +189,44 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
     final List<UriResource> uriResourceParts = member.getUriResourceParts();
 
-    // UriResourceParts contains at least one UriResource
-    if (!(uriResourceParts.get(0) instanceof UriResourceProperty)) {
-      return throwNotImplemented();
-    }
-
-    EdmProperty currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(0)).getProperty();
-    Property currentProperty = entity.getProperty(currentEdmProperty.getName());
-
-    for (int i = 1; i < uriResourceParts.size(); i++) {
-      if (currentProperty.isComplex()) {
-        currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
-        final List<Property> complex = currentProperty.asComplex().getValue();
-        for (final Property innerProperty : complex) {
-          if (innerProperty.getName().equals(currentEdmProperty.getName())) {
-            currentProperty = innerProperty;
-            break;
+    // UriResourceParts contains at least one UriResource.
+    final UriResource initialPart = uriResourceParts.get(0);
+    if (initialPart instanceof UriResourceProperty) {
+      EdmProperty currentEdmProperty = ((UriResourceProperty) initialPart).getProperty();
+      Property currentProperty = entity.getProperty(currentEdmProperty.getName());
+      for (int i = 1; i < uriResourceParts.size(); i++) {
+        if (currentProperty.isComplex()) {
+          currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
+          final List<Property> complex = currentProperty.asComplex().getValue();
+          for (final Property innerProperty : complex) {
+            if (innerProperty.getName().equals(currentEdmProperty.getName())) {
+              currentProperty = innerProperty;
+              break;
+            }
           }
         }
       }
-    }
+      return new TypedOperand(currentProperty.getValue(), currentEdmProperty.getType(), currentEdmProperty);
 
-    return new TypedOperand(currentProperty.getValue(), currentEdmProperty.getType(), currentEdmProperty);
+    } else if (initialPart instanceof UriResourceFunction) {
+      final EdmFunction function = ((UriResourceFunction) initialPart).getFunction();
+      if (uriResourceParts.size() > 1) {
+        return throwNotImplemented();
+      }
+      final EdmType type = function.getReturnType().getType();
+      final DataProvider dataProvider = new DataProvider(OData.newInstance(), edm);
+      final List<UriParameter> parameters = ((UriResourceFunction) initialPart).getParameters();
+      return new TypedOperand(
+        type.getKind() == EdmTypeKind.ENTITY ?
+            function.getReturnType().isCollection() ?
+                dataProvider.readFunctionEntityCollection(function, parameters, uriInfo) :
+                dataProvider.readFunctionEntity(function, parameters, uriInfo) :
+            dataProvider.readFunctionPrimitiveComplex(function, parameters, uriInfo),
+        type);
+
+    } else {
+      return throwNotImplemented();
+    }
   }
 
   @Override

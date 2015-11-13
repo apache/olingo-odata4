@@ -20,6 +20,7 @@ package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operan
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -48,10 +49,16 @@ public class TypedOperand extends VisitorOperand {
 
   @Override
   public TypedOperand asTypedOperand() throws ODataApplicationException {
-    if (!isNull() && value.getClass() != getDefaultType((EdmPrimitiveType) type)) {
-      return asTypedOperand((EdmPrimitiveType) type);
+    if (isNull()) {
+      return this;
+    } else if (type instanceof EdmPrimitiveType && !(value instanceof Collection)) {
+      return value.getClass() == getDefaultType((EdmPrimitiveType) type) ?
+          this :
+          asTypedOperand((EdmPrimitiveType) type);
+    } else {
+      throw new ODataApplicationException("A single primitive-type instance is expected.",
+          HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
     }
-    return this;
   }
 
   @Override

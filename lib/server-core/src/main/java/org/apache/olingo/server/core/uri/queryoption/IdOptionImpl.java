@@ -22,19 +22,18 @@ import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class IdOptionImpl extends SystemQueryOptionImpl implements IdOption {
-  private String value;
 
   public IdOptionImpl() {
     setKind(SystemQueryOptionKind.ID);
   }
 
   public IdOptionImpl setValue(final String value) {
-    this.value = value;
+    setText(value);
     return this;
   }
 
   @Override
   public String getValue() {
-    return value;
+    return getText();
   }
 }

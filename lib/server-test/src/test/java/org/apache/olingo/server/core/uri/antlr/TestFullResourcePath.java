@@ -5527,13 +5527,11 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void testAlias() throws Exception {
+  public void alias() throws Exception {
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)", "@A='2'").goPath()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicateAlias(1, "PropertyString", "@A")
-        .isInAliasToValueMap("@A", "'2'")
-        .goUpUriValidator()
-        .isCustomParameter(0, "@A", "'2'");
+        .isInAliasToValueMap("@A", "'2'");
   }
 
   @Test
@@ -5832,6 +5830,11 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[{\"Prop1\":123,\"Prop2\":\"Test\",\"Prop3\":[1,2,3]},"
         + "{\"Prop1\":{\"Prop1\":[\"Prop\\\":{]\"]}}],\"ProperyString\":\"1\"}");
+
+    testUri.run("FINRTByteNineParam(ParameterEnum=null,ParameterDef='x',ParameterComp=@c,"
+        + "ParameterETTwoPrim=@c,CollParameterByte=@e,CollParameterEnum=@e,CollParameterDef=@e,"
+        + "CollParameterComp=@e,CollParameterETTwoPrim=@e)",
+        "@c={}&@e=[]");
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1)", "@p1={\"PropertyInt16\":1,\"ProperyString\":'1'}")

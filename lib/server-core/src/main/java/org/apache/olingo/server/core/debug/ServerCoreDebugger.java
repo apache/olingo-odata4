@@ -122,10 +122,9 @@ public class ServerCoreDebugger {
 
   public void stopRuntimeMeasurement(final int handle) {
     if (isDebugMode && handle < runtimeInformation.size()) {
-      long stopTime = System.nanoTime();
       RuntimeMeasurement runtimeMeasurement = runtimeInformation.get(handle);
       if (runtimeMeasurement != null) {
-        runtimeMeasurement.setTimeStopped(stopTime);
+        runtimeMeasurement.setTimeStopped(System.nanoTime());
       }
     }
   }

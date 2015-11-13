@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -40,11 +40,7 @@ public class SelectOptionImpl extends SystemQueryOptionImpl implements SelectOpt
 
   @Override
   public List<SelectItem> getSelectItems() {
-    List<SelectItem> retList = new ArrayList<SelectItem>();
-    for (SelectItem item : selectItems) {
-      retList.add(item);
-    }
-    return retList;
+    return selectItems == null ? Collections.<SelectItem> emptyList() : Collections.unmodifiableList(selectItems);
   }
 
 }

@@ -119,7 +119,7 @@ public class DataProvider {
       }
       return null;
     } catch (final EdmPrimitiveTypeException e) {
-      throw new DataProviderException("Wrong key!", e);
+      throw new DataProviderException("Wrong key!", HttpStatusCode.BAD_REQUEST, e);
     }
   }
 
@@ -165,7 +165,7 @@ public class DataProvider {
     try {
       newEntity.setId(URI.create(odata.createUriHelper().buildCanonicalURL(edmEntitySet, newEntity)));
     } catch (final SerializerException e) {
-      throw new DataProviderException("Unable to set entity ID!", e);
+      throw new DataProviderException("Unable to set entity ID!", HttpStatusCode.INTERNAL_SERVER_ERROR, e);
     }
     entities.add(newEntity);
 
@@ -518,48 +518,38 @@ public class DataProvider {
   public EntityCollection readFunctionEntityCollection(final EdmFunction function, final List<UriParameter> parameters,
       final UriInfoResource uriInfo) throws DataProviderException {
     return FunctionData.entityCollectionFunction(function.getName(),
-        getFunctionParameterValues(function, parameters, uriInfo),
+        getFunctionParameters(function, parameters, uriInfo),
         data);
   }
 
   public Entity readFunctionEntity(final EdmFunction function, final List<UriParameter> parameters,
       final UriInfoResource uriInfo) throws DataProviderException {
     return FunctionData.entityFunction(function.getName(),
-        getFunctionParameterValues(function, parameters, uriInfo),
+        getFunctionParameters(function, parameters, uriInfo),
         data);
   }
 
   public Property readFunctionPrimitiveComplex(final EdmFunction function, final List<UriParameter> parameters,
       final UriInfoResource uriInfo) throws DataProviderException {
     return FunctionData.primitiveComplexFunction(function.getName(),
-        getFunctionParameterValues(function, parameters, uriInfo),
+        getFunctionParameters(function, parameters, uriInfo),
         data);
   }
 
-  private Map<String, Object> getFunctionParameterValues(final EdmFunction function,
+  private Map<String, Parameter> getFunctionParameters(final EdmFunction function,
       final List<UriParameter> parameters, final UriInfoResource uriInfo) throws DataProviderException {
-    Map<String, Object> values = new HashMap<String, Object>();
+    Map<String, Parameter> values = new HashMap<String, Parameter>();
     for (final UriParameter parameter : parameters) {
       final EdmParameter edmParameter = function.getParameter(parameter.getName());
       final String text = parameter.getAlias() == null ?
           parameter.getText() :
           uriInfo.getValueForAlias(parameter.getAlias());
       if (text != null) {
-        if (edmParameter.getType().getKind() == EdmTypeKind.PRIMITIVE
-            && !edmParameter.isCollection()) {
-          final EdmPrimitiveType primitiveType = (EdmPrimitiveType) edmParameter.getType();
-          try {
-            values.put(parameter.getName(),
-                primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
-                    edmParameter.isNullable(), edmParameter.getMaxLength(),
-                    edmParameter.getPrecision(), edmParameter.getScale(), null,
-                    primitiveType.getDefaultType()));
-          } catch (final EdmPrimitiveTypeException e) {
-            throw new DataProviderException("Invalid function parameter.", e);
-          }
-        } else {
-          throw new DataProviderException("Non-primitive and collection functionn parameters are not yet supported.",
-              HttpStatusCode.NOT_IMPLEMENTED);
+        try {
+          values.put(parameter.getName(),
+              odata.createFixedFormatDeserializer().parameter(text, edmParameter));
+        } catch (final DeserializerException e) {
+          throw new DataProviderException("Invalid function parameter.", HttpStatusCode.BAD_REQUEST, e);
         }
       }
     }
@@ -654,23 +644,19 @@ public class DataProvider {
         throw new DataProviderException("Entity not found", HttpStatusCode.NOT_FOUND);
       }
     } catch (DeserializerException e) {
-      throw new DataProviderException("Invalid entity-id", HttpStatusCode.BAD_REQUEST);
+      throw new DataProviderException("Invalid entity-id", HttpStatusCode.BAD_REQUEST, e);
     }
   }
 
   public static class DataProviderException extends ODataApplicationException {
     private static final long serialVersionUID = 5098059649321796156L;
 
-    public DataProviderException(final String message, final Throwable throwable) {
-      super(message, HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT, throwable);
-    }
-
-    public DataProviderException(final String message) {
-      this(message, HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-
     public DataProviderException(final String message, final HttpStatusCode statusCode) {
       super(message, statusCode.getStatusCode(), Locale.ROOT);
+    }
+
+    public DataProviderException(final String message, final HttpStatusCode statusCode, final Throwable throwable) {
+      super(message, statusCode.getStatusCode(), Locale.ROOT, throwable);
     }
   }
 }

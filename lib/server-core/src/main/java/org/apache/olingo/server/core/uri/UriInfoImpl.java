@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.uri;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +35,8 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoMetadata;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriInfoService;
-import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -45,6 +44,7 @@ import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
@@ -52,9 +52,6 @@ import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
-import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
 
 public class UriInfoImpl implements UriInfo {
 
@@ -63,16 +60,25 @@ public class UriInfoImpl implements UriInfo {
   private List<String> entitySetNames = new ArrayList<String>(); // for $entity
   private EdmEntityType entityTypeCast; // for $entity
 
-  private List<CustomQueryOptionImpl> customQueryOptions = new ArrayList<CustomQueryOptionImpl>();
-  private Map<String, UriParameter> aliasValues = new HashMap<String, UriParameter>();
-  
+  private UriResource lastResourcePart;
+  private List<UriResource> pathParts = new ArrayList<UriResource>();
+
   private Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
       new HashMap<SystemQueryOptionKind, SystemQueryOption>();
+  private Map<String, AliasQueryOption> aliases = new HashMap<String, AliasQueryOption>();
+  private List<CustomQueryOption> customQueryOptions = new ArrayList<CustomQueryOption>();
 
   private String fragment;
 
-  private UriResource lastResourcePart;
-  private List<UriResource> pathParts = new ArrayList<UriResource>();
+  public UriInfoImpl setKind(final UriInfoKind kind) {
+    this.kind = kind;
+    return this;
+  }
+
+  @Override
+  public UriInfoKind getKind() {
+    return kind;
+  }
 
   @Override
   public UriInfoAll asUriInfoAll() {
@@ -95,6 +101,11 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
+  public UriInfoService asUriInfoService() {
+    return this;
+  }
+
+  @Override
   public UriInfoMetadata asUriInfoMetadata() {
     return this;
   }
@@ -104,60 +115,90 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
+  public UriInfoImpl addEntitySetName(final String entitySet) {
+    entitySetNames.add(entitySet);
+    return this;
+  }
+
   @Override
   public List<String> getEntitySetNames() {
     return Collections.unmodifiableList(entitySetNames);
   }
 
-  public void addEntitySetName(final String entitySet) {
-    entitySetNames.add(entitySet);
-  }
-
-  @Override
-  public List<UriResource> getUriResourceParts() {
-    List<UriResource> returnList = new ArrayList<UriResource>();
-    for (UriResource item : pathParts) {
-      returnList.add(item);
-    }
-    return Collections.unmodifiableList(returnList);
-  }
-
-  public UriInfoImpl addResourcePart(final UriResourceImpl uriPathInfo) {
-    pathParts.add(uriPathInfo);
-    lastResourcePart = uriPathInfo;
+  public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
+    entityTypeCast = type;
     return this;
   }
 
-  @Override
-  public List<CustomQueryOption> getCustomQueryOptions() {
-    List<CustomQueryOption> retList = new ArrayList<CustomQueryOption>();
-    for (CustomQueryOptionImpl item : customQueryOptions) {
-      retList.add(item);
-    }
-    return retList;
-  }
-
-  @Override
-  public String getValueForAlias(final String alias) {
-    final UriParameter parameter = aliasValues.get(alias);
-    return parameter == null ? null : parameter.getText();
-  }
-
-  public UriParameter getAlias(final String key) {
-    return aliasValues.get(key);
-  }
-  
-  public void addAlias(final String key, UriParameter parameter) {
-    aliasValues.put(key, parameter);
-  }
-  
   @Override
   public EdmEntityType getEntityTypeCast() {
     return entityTypeCast;
   }
 
-  public UriInfoImpl setEntityTypeCast(final EdmEntityType type) {
-    entityTypeCast = type;
+  public UriInfoImpl addResourcePart(final UriResource uriPathInfo) {
+    pathParts.add(uriPathInfo);
+    lastResourcePart = uriPathInfo;
+    return this;
+  }
+
+  public UriInfoImpl removeResourcePart(final int index) {
+    pathParts.remove(index);
+    return this;
+  }
+
+  public UriResource getLastResourcePart() {
+    return lastResourcePart;
+  }
+
+  @Override
+  public List<UriResource> getUriResourceParts() {
+    return Collections.unmodifiableList(pathParts);
+  }
+
+  public UriInfoImpl setQueryOptions(final List<QueryOption> list) {
+    for (final QueryOption item : list) {
+      if (item instanceof SystemQueryOption) {
+        setSystemQueryOption((SystemQueryOption) item);
+      } else if (item instanceof AliasQueryOption) {
+        addAlias((AliasQueryOption) item);
+      } else if (item instanceof CustomQueryOption) {
+        addCustomQueryOption((CustomQueryOption) item);
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Adds system query option.
+   * @param systemOption the option to be added
+   * @return this object for method chaining
+   * @throws ODataRuntimeException if an unsupported option is provided
+   * or an option of this kind has been added before
+   */
+  public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
+    final SystemQueryOptionKind kind = systemOption.getKind();
+    if (systemQueryOptions.containsKey(kind)) {
+      throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
+    }
+
+    switch (kind) {
+    case EXPAND:
+    case FILTER:
+    case FORMAT:
+    case ID:
+    case COUNT:
+    case ORDERBY:
+    case SEARCH:
+    case SELECT:
+    case SKIP:
+    case SKIPTOKEN:
+    case TOP:
+    case LEVELS:
+      systemQueryOptions.put(kind, systemOption);
+      break;
+    default:
+      throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
+    }
     return this;
   }
 
@@ -187,27 +228,12 @@ public class UriInfoImpl implements UriInfo {
   }
 
   @Override
-  public UriInfoKind getKind() {
-    return kind;
-  }
-
-  public UriInfoImpl setKind(final UriInfoKind kind) {
-    this.kind = kind;
-    return this;
-  }
-
-  public UriResource getLastResourcePart() {
-    return lastResourcePart;
-  }
-
-  @Override
   public OrderByOption getOrderByOption() {
     return (OrderByOption) systemQueryOptions.get(SystemQueryOptionKind.ORDERBY);
   }
 
   @Override
   public SearchOption getSearchOption() {
-
     return (SearchOption) systemQueryOptions.get(SystemQueryOptionKind.SEARCH);
   }
 
@@ -231,64 +257,39 @@ public class UriInfoImpl implements UriInfo {
     return (TopOption) systemQueryOptions.get(SystemQueryOptionKind.TOP);
   }
 
-  public UriInfoImpl setQueryOptions(final List<QueryOptionImpl> list) {
+  @Override
+  public List<SystemQueryOption> getSystemQueryOptions() {
+    return Collections.unmodifiableList(new ArrayList<SystemQueryOption>(systemQueryOptions.values()));
+  }
 
-    for (QueryOptionImpl item : list) {
-      if (item instanceof SystemQueryOptionImpl) {
-        setSystemQueryOption((SystemQueryOptionImpl) item);
-      } else if (item instanceof CustomQueryOptionImpl) {
-        addCustomQueryOption((CustomQueryOptionImpl) item);
-      }
-    }
+  public UriInfoImpl addAlias(final AliasQueryOption alias) {
+    aliases.put(alias.getName(), alias);
     return this;
   }
 
-  public void addCustomQueryOption(final CustomQueryOptionImpl item) {
+  @Override
+  public String getValueForAlias(final String alias) {
+    final AliasQueryOption aliasQueryOption = getAlias(alias);
+    return aliasQueryOption == null ? null : aliasQueryOption.getText();
+  }
+
+  public AliasQueryOption getAlias(final String key) {
+    return aliases.get(key);
+  }
+
+  @Override
+  public List<AliasQueryOption> getAliases() {
+    return Collections.unmodifiableList(new ArrayList<AliasQueryOption>(aliases.values()));
+  }
+
+  public UriInfoImpl addCustomQueryOption(final CustomQueryOption item) {
     customQueryOptions.add(item);
-  }
-
-  /**
-   * Adds system query option.
-   * @param systemOption the option to be added
-   * @return this object for method chaining
-   * @throws ODataRuntimeException if an unsupported option is provided
-   * or an option of this kind has been added before
-   */
-  public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
-    final SystemQueryOptionKind kind = systemOption.getKind();
-    if (systemQueryOptions.containsKey(kind)) {
-      throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
-    }
-
-    switch (kind) {
-      case EXPAND:
-      case FILTER:
-      case FORMAT:
-      case ID:
-      case COUNT:
-      case ORDERBY:
-      case SEARCH:
-      case SELECT:
-      case SKIP:
-      case SKIPTOKEN:
-      case TOP:
-      case LEVELS:
-        systemQueryOptions.put(kind, systemOption);
-        break;
-      default:
-        throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());
-    }
     return this;
   }
 
   @Override
-  public UriInfoService asUriInfoService() {
-    return this;
-  }
-
-  @Override
-  public String getFragment() {
-    return fragment;
+  public List<CustomQueryOption> getCustomQueryOptions() {
+    return Collections.unmodifiableList(customQueryOptions);
   }
 
   public UriInfoImpl setFragment(final String fragment) {
@@ -296,12 +297,8 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public void removeResourcePart(final int index) {
-    pathParts.remove(index);
-  }
-
   @Override
-  public Collection<SystemQueryOption> getSystemQueryOptions() {
-    return Collections.unmodifiableCollection(systemQueryOptions.values());
+  public String getFragment() {
+    return fragment;
   }
 }

@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 public interface UriInfoMetadata {
 
   /**
-   * @return Object containing information of the $id option
+   * @return Object containing information of the $format option
    */
   FormatOption getFormatOption();
 

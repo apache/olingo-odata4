@@ -53,19 +53,7 @@ public class ActionData {
     if ("UARTString".equals(name)) {
       return DataCreator.createPrimitive(null, "UARTString string value");
     } else if ("UARTByteNineParam".equals(name)) {
-      short count = 0;  // counts non-empty parameters
-      for (final Parameter parameter : parameters.values()) {
-        if (!(parameter.isNull()
-            || !parameter.isCollection()
-                && (parameter.isComplex() && parameter.asComplex().getValue().isEmpty()
-                    || parameter.isEntity() && ((Entity) parameter.getValue()).getProperties().isEmpty())
-            || parameter.isCollection()
-                && (parameter.isEntity() && ((EntityCollection) parameter.getValue()).getEntities().isEmpty()
-                    || parameter.asCollection().isEmpty()))) {
-          count++;
-        }
-      }
-      return DataCreator.createPrimitive(null, count);
+      return FunctionData.primitiveComplexFunction("UFNRTByteNineParam", parameters, null);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);
@@ -85,7 +73,7 @@ public class ActionData {
                   name + " int16 value: " + param16String,
                   name + " duration value: " + paramDurationString));
         } catch (EdmPrimitiveTypeException e) {
-          throw new DataProviderException("EdmPrimitiveTypeException", e);
+          throw new DataProviderException("EdmPrimitiveTypeException", HttpStatusCode.BAD_REQUEST, e);
         }
       }
       short loopCount = (Short) paramInt16.asPrimitive();
@@ -98,7 +86,7 @@ public class ActionData {
           String value = primDuration.valueToString(duration, false, null, null, null, null);
           collectionValues.add(name + " duration value: " + value);
         } catch (EdmPrimitiveTypeException e) {
-          throw new DataProviderException("EdmPrimitiveTypeException", e);
+          throw new DataProviderException("EdmPrimitiveTypeException", HttpStatusCode.BAD_REQUEST, e);
         }
         duration = duration.add(addValue);
       }
@@ -279,7 +267,7 @@ public class ActionData {
       entity.setId(URI.create(oData.createUriHelper().buildCanonicalURL(
           edm.getEntityContainer().getEntitySet(entitySetName), entity)));
     } catch (final SerializerException e) {
-      throw new DataProviderException("Unable to set entity ID!", e);
+      throw new DataProviderException("Unable to set entity ID!", HttpStatusCode.INTERNAL_SERVER_ERROR, e);
     }
   }
 

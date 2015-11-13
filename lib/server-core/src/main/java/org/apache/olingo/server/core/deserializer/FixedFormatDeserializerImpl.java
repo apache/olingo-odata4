@@ -25,15 +25,22 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.Parameter;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.core.deserializer.batch.BatchParser;
+import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 
 public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
 
@@ -76,6 +83,36 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
     } catch (final IOException e) {
       throw new DeserializerException("An I/O exception occurred.", e,
           DeserializerException.MessageKeys.IO_EXCEPTION);
+    }
+  }
+
+  @Override
+  public Parameter parameter(final String content, final EdmParameter parameter) throws DeserializerException {
+    final EdmType type = parameter.getType();
+    final EdmTypeKind kind = type.getKind();
+    if ((kind == EdmTypeKind.PRIMITIVE || kind == EdmTypeKind.DEFINITION || kind == EdmTypeKind.ENUM)
+        && !parameter.isCollection()) {
+      // The content is a primitive URI literal.
+      Parameter result = new Parameter();
+      result.setName(parameter.getName());
+      result.setType(type.getFullQualifiedName().getFullQualifiedNameAsString());
+      final EdmPrimitiveType primitiveType = (EdmPrimitiveType) type;
+      try {
+        result.setValue(type.getKind() == EdmTypeKind.ENUM ? ValueType.ENUM : ValueType.PRIMITIVE,
+            primitiveType.valueOfString(primitiveType.fromUriLiteral(content),
+                parameter.isNullable(), parameter.getMaxLength(), parameter.getPrecision(), parameter.getScale(), true,
+                parameter.getMapping() == null ?
+                    primitiveType.getDefaultType() :
+                    parameter.getMapping().getMappedJavaClass()));
+      } catch (final EdmPrimitiveTypeException e) {
+        throw new DeserializerException(
+            "Invalid value '" + content + "' for parameter " + parameter.getName(), e,
+            DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, parameter.getName());
+      }
+      return result;
+    } else {
+      // The content is a JSON array or object.
+      return new ODataJsonDeserializer(ContentType.JSON).parameter(content, parameter);
     }
   }
 

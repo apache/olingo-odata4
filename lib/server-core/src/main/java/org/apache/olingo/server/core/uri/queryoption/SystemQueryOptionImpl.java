@@ -30,7 +30,7 @@ public abstract class SystemQueryOptionImpl extends QueryOptionImpl implements S
     return kind;
   }
 
-  void setKind(final SystemQueryOptionKind kind) {
+  protected void setKind(final SystemQueryOptionKind kind) {
     this.kind = kind;
   }
 

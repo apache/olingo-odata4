@@ -331,6 +331,41 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
         complexValue.get("PropertyString").getPrimitiveValue().toValue());
   }
 
+  @Test
+  public void allParameterKinds() {
+    Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    parameters.put("ParameterEnum", getFactory().newEnumValue("Namespace1_Alias.ENString", "String1"));
+    parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("ParameterComp", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("comp")).build());
+    parameters.put("ParameterETTwoPrim", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("CollParameterByte", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("collByte")).build());
+    parameters.put("CollParameterEnum", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("collEnum")).build());
+    parameters.put("CollParameterDef", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("collDef")).build());
+    parameters.put("CollParameterComp", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("collComp")).build());
+    parameters.put("CollParameterETTwoPrim", getFactory().newPrimitiveValueBuilder().build());
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendOperationCallSegment("FINRTByteNineParam")
+            .addParameterAlias("comp", "{\"PropertyInt16\":1}")
+            .addParameterAlias("collByte", "[1]")
+            .addParameterAlias("collEnum", "[\"String1,String1\"]")
+            .addParameterAlias("collDef", "[\"Test\"]")
+            .addParameterAlias("collComp", "[{\"PropertyInt16\":11}]")
+            .build(),
+        ClientProperty.class,
+        parameters);
+    setCookieHeader(request);
+    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertShortOrInt(6, response.getBody().getPrimitiveValue().toValue());
+  }
+
   private Map<String, ClientValue> buildTwoParameters(final int parameterInt16, final String parameterString) {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt32(parameterInt16));

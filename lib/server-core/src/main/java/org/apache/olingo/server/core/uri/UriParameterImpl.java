@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.uri;
 
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriParameterImpl implements UriParameter {
   private String name;
@@ -64,7 +63,7 @@ public class UriParameterImpl implements UriParameter {
     return expression;
   }
 
-  public UriParameterImpl setExpression(final ExpressionImpl expression) {
+  public UriParameterImpl setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }
@@ -74,7 +73,7 @@ public class UriParameterImpl implements UriParameter {
     return referencedProperty;
   }
 
-  public UriParameterImpl setRefencedProperty(final String referencedProperty) {
+  public UriParameterImpl setReferencedProperty(final String referencedProperty) {
     this.referencedProperty = referencedProperty;
     return this;
   }

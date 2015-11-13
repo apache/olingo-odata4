@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -39,11 +40,7 @@ public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOpt
 
   @Override
   public List<ExpandItem> getExpandItems() {
-    List<ExpandItem> retList = new ArrayList<ExpandItem>();
-    for (ExpandItem item : expandItems) {
-      retList.add(item);
-    }
-    return retList;
+    return Collections.unmodifiableList(expandItems);
   }
 
 }

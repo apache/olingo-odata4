@@ -19,43 +19,39 @@
 package org.apache.olingo.server.tecsvc.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
-import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.ex.ODataException;
 
 public class SchemaProvider {
 
-  private EdmTechProvider prov;
-
   public static final String NAMESPACE = "olingo.odata.test1";
+
+  private final CsdlEdmProvider prov;
 
   public SchemaProvider(final EdmTechProvider prov) {
     this.prov = prov;
   }
 
   public List<CsdlSchema> getSchemas() throws ODataException {
-    List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
     CsdlSchema schema = new CsdlSchema();
     schema.setNamespace(NAMESPACE);
     schema.setAlias("Namespace1_Alias");
-    schemas.add(schema);
 
     // EnumTypes
-    List<CsdlEnumType> enumTypes = new ArrayList<CsdlEnumType>();
-    schema.setEnumTypes(enumTypes);
+    schema.setEnumTypes(Collections.singletonList(
+        prov.getEnumType(EnumTypeProvider.nameENString)));
 
     // TypeDefinitions
-    List<CsdlTypeDefinition> typeDefinitions = new ArrayList<CsdlTypeDefinition>();
-    schema.setTypeDefinitions(typeDefinitions);
-    typeDefinitions.add(prov.getTypeDefinition(TypeDefinitionProvider.nameTDString));
-    enumTypes.add(prov.getEnumType(EnumTypeProvider.nameENString));
+    schema.setTypeDefinitions(Collections.singletonList(
+        prov.getTypeDefinition(TypeDefinitionProvider.nameTDString)));
 
     // EntityTypes
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
@@ -89,24 +85,24 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
 
     // ComplexTypes
-    List<CsdlComplexType> complexType = new ArrayList<CsdlComplexType>();
-    schema.setComplexTypes(complexType);
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTPrim));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTAllPrim));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCollAllPrim));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoPrim));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixPrimCollComp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDef));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTBase));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBase));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompComp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollComp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTPrimComp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTNavFiveProp));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTBasePrimCompNav));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
-    complexType.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
+    List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
+    schema.setComplexTypes(complexTypes);
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTPrim));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTAllPrim));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCollAllPrim));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoPrim));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTMixPrimCollComp));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTMixEnumDef));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTBase));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBase));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompComp));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollComp));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTPrimComp));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTNavFiveProp));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTBasePrimCompNav));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
 
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
@@ -158,6 +154,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETMixPrimCollCompTwoParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTCollCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETKeyNavContParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTByteNineParam));
 
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
@@ -195,7 +192,7 @@ public class SchemaProvider {
     // EntityContainer
     schema.setEntityContainer(prov.getEntityContainer());
 
-    return schemas;
+    return Collections.singletonList(schema);
   }
 
 }

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -34,12 +35,12 @@ import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 public class FunctionData {
 
   protected static EntityCollection entityCollectionFunction(final String name,
-      final Map<String, Object> parameterValues, final Map<String, EntityCollection> data)
+      final Map<String, Parameter> parameters, final Map<String, EntityCollection> data)
       throws DataProviderException {
     if (name.equals("UFCRTCollETTwoKeyNavParam")) {
       final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
       EntityCollection result = new EntityCollection();
-      final int endIndex = parameterValues.isEmpty() ? 0 : getParameterInt16(parameterValues);
+      final int endIndex = parameters.isEmpty() ? 0 : getParameterInt16(parameters);
       result.getEntities().addAll(
           esTwoKeyNav.subList(0,
               endIndex < 0 ? 0 : endIndex > esTwoKeyNav.size() ? esTwoKeyNav.size() : endIndex));
@@ -54,7 +55,7 @@ public class FunctionData {
     }
   }
 
-  protected static Entity entityFunction(final String name, final Map<String, Object> parameterValues,
+  protected static Entity entityFunction(final String name, final Map<String, Parameter> parameters,
       final Map<String, EntityCollection> data) throws DataProviderException {
     final List<Entity> esTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
     if (name.equals("UFCRTETKeyNav")) {
@@ -62,12 +63,26 @@ public class FunctionData {
     } else if (name.equals("UFCRTETTwoKeyNav")) {
       return esTwoKeyNav.get(0);
     } else if (name.equals("UFCRTETTwoKeyNavParam")) {
-      final int index = parameterValues.isEmpty() ? 0 : getParameterInt16(parameterValues);
+      final int index = parameters.isEmpty() ? 0 : getParameterInt16(parameters);
       return index < 0 || index >= esTwoKeyNav.size() ? null : esTwoKeyNav.get(index);
     } else if (name.equals("UFCRTETMedia")) {
-      final int index = parameterValues.isEmpty() ? 1 : getParameterInt16(parameterValues);
+      final int index = parameters.isEmpty() ? 1 : getParameterInt16(parameters);
       final List<Entity> esMedia = data.get("ESMedia").getEntities();
       return index < 1 || index > esMedia.size() ? null : esMedia.get(index - 1);
+    } else if (name.equals("UFCRTETTwoKeyNavParamCTTwoPrim")) {
+      final List<Property> parameterProperties = parameters.get("ParameterCTTwoPrim").asComplex().getValue();
+      if (parameterProperties == null || parameterProperties.size() < 2) {
+        return null;
+      }
+      final Short parameterInt16 = (Short) parameterProperties.get(0).asPrimitive();
+      final String parameterString = (String) parameterProperties.get(1).asPrimitive();
+      for (final Entity entity : esTwoKeyNav) {
+        if (entity.getProperty("PropertyInt16").asPrimitive().equals(parameterInt16)
+            && entity.getProperty("PropertyString").asPrimitive().equals(parameterString)) {
+          return entity;
+        }
+      }
+      return null;
     } else {
       throw new DataProviderException("Function " + name + " is not yet implemented.",
           HttpStatusCode.NOT_IMPLEMENTED);
@@ -75,7 +90,7 @@ public class FunctionData {
   }
 
   @SuppressWarnings("unchecked")
-  protected static Property primitiveComplexFunction(final String name, final Map<String, Object> parameterValues,
+  protected static Property primitiveComplexFunction(final String name, final Map<String, Parameter> parameters,
       final Map<String, EntityCollection> data) throws DataProviderException {
     if (name.equals("UFNRTInt16")) {
       return DataCreator.createPrimitive(name, (short) 12345);
@@ -89,8 +104,8 @@ public class FunctionData {
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       return DataCreator.createComplex(name,
-          DataCreator.createPrimitive("PropertyInt16", getParameterInt16(parameterValues)),
-          DataCreator.createPrimitive("PropertyString", getParameterString(parameterValues)));
+          DataCreator.createPrimitive("PropertyInt16", getParameterInt16(parameters)),
+          DataCreator.createPrimitive("PropertyString", getParameterString(parameters)));
     } else if (name.equals("UFCRTCollCTTwoPrim")) {
       return DataCreator.createComplexCollection(name,
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", (short) 16),
@@ -100,12 +115,12 @@ public class FunctionData {
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 18),
               DataCreator.createPrimitive("PropertyString", "Test678")));
     } else if (name.equals("UFCRTStringTwoParam")) {
-      final String parameterString = getParameterString(parameterValues);
+      final String parameterString = getParameterString(parameters);
       // ParameterString is not provided
       if (parameterString == null) {
         return DataCreator.createPrimitive(name, null);
       } else {
-        final Short parameterInt16 = getParameterInt16(parameterValues);
+        final Short parameterInt16 = getParameterInt16(parameters);
         final StringBuilder builder = new StringBuilder();
         // if parameterInt16 <= 0 return an empty string
         for (short i = parameterInt16; i > 0; i--) {
@@ -119,8 +134,8 @@ public class FunctionData {
         return DataCreator.createPrimitive(name, builder.toString());
       }
     } else if (name.equals("UFCRTCollCTTwoPrimTwoParam")) {
-      final Short parameterInt16 = getParameterInt16(parameterValues);
-      final String parameterString = getParameterString(parameterValues);
+      final Short parameterInt16 = getParameterInt16(parameters);
+      final String parameterString = getParameterString(parameters);
       if (parameterString == null) {
         return DataCreator.createComplexCollection(name,
             Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 1),
@@ -139,17 +154,31 @@ public class FunctionData {
         }
         return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexValues);
       }
+    } else if (name.equals("UFNRTByteNineParam")) {
+      short count = 0;  // counts non-empty parameters
+      for (final Parameter parameter : parameters.values()) {
+        if (!(parameter.isNull()
+            || !parameter.isCollection()
+                && (parameter.isComplex() && parameter.asComplex().getValue().isEmpty()
+                    || parameter.isEntity() && ((Entity) parameter.getValue()).getProperties().isEmpty())
+            || parameter.isCollection()
+                && (parameter.isEntity() && ((EntityCollection) parameter.getValue()).getEntities().isEmpty()
+                    || parameter.asCollection().isEmpty()))) {
+          count++;
+        }
+      }
+      return DataCreator.createPrimitive(null, count);
     } else {
       throw new DataProviderException("Function " + name + " is not yet implemented.",
           HttpStatusCode.NOT_IMPLEMENTED);
     }
   }
 
-  private static Short getParameterInt16(final Map<String, Object> parameterValues) {
-    return (Short) parameterValues.get("ParameterInt16");
+  private static Short getParameterInt16(final Map<String, Parameter> parameters) {
+    return parameters.containsKey("ParameterInt16") ? (Short) parameters.get("ParameterInt16").getValue() : null;
   }
 
-  private static String getParameterString(final Map<String, Object> parameterValues) {
-    return (String) parameterValues.get("ParameterString");
+  private static String getParameterString(final Map<String, Parameter> parameters) {
+    return parameters.containsKey("ParameterString") ? (String) parameters.get("ParameterString").getValue() : null;
   }
 }

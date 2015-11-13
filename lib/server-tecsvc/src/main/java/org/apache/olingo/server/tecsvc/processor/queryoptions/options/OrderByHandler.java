@@ -70,9 +70,9 @@ public class OrderByHandler {
           try {
             final OrderByItem item = orderByOption.getOrders().get(i);
             final TypedOperand op1 =
-                item.getExpression().accept(new ExpressionVisitorImpl(e1, uriInfo)).asTypedOperand();
+                item.getExpression().accept(new ExpressionVisitorImpl(e1, uriInfo, edm)).asTypedOperand();
             final TypedOperand op2 =
-                item.getExpression().accept(new ExpressionVisitorImpl(e2, uriInfo)).asTypedOperand();
+                item.getExpression().accept(new ExpressionVisitorImpl(e2, uriInfo, edm)).asTypedOperand();
 
             if (op1.isNull() || op2.isNull()) {
               if (op1.isNull() && op2.isNull()) {

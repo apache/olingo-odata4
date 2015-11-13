@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainerInfo;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
@@ -50,10 +51,7 @@ public class ContainerProvider {
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
   public static final String AIRT_BYTE_NINE_PARAM = "AIRTByteNineParam";
 
-  CsdlEntityContainerInfo entityContainerInfoTest1 =
-      new CsdlEntityContainerInfo().setContainerName(nameContainer);
-
-  private EdmTechProvider prov;
+  private final CsdlEdmProvider prov;
 
   public ContainerProvider(final EdmTechProvider edmTechProvider) {
     prov = edmTechProvider;
@@ -61,12 +59,9 @@ public class ContainerProvider {
 
   public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
       throws ODataException {
-    if (entityContainerName == null) {
-      return entityContainerInfoTest1;
-    } else if (entityContainerName.equals(nameContainer)) {
-      return entityContainerInfoTest1;
+    if (entityContainerName == null || entityContainerName.equals(nameContainer)) {
+      return new CsdlEntityContainerInfo().setContainerName(nameContainer);
     }
-
     return null;
   }
 
@@ -154,6 +149,7 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrimTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollCTNavFiveProp"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTByteNineParam"));
 
     return container;
   }
@@ -209,6 +205,7 @@ public class ContainerProvider {
                                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                                     .setValue("System Query Options: $expand, $select, "
                                         + "$format; Operations: Read, Update, Delete"))));
+
       } else if (name.equals("ESTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESTwoPrim")
@@ -411,7 +408,6 @@ public class ContainerProvider {
             .setType(EntityTypeProvider.nameETAllNullable);
 
       } else if (name.equals("ESKeyNav")) {
-
         return new CsdlEntitySet()
             .setName("ESKeyNav")
             .setType(EntityTypeProvider.nameETKeyNav)
@@ -466,8 +462,7 @@ public class ContainerProvider {
                     .setTarget("ESTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNav/com.corp.odata.test1.CTNavFiveProp/NavPropertyETTwoKeyNavMany")
-                    .setTarget("ESTwoKeyNav")
-                ));
+                    .setTarget("ESTwoKeyNav")));
 
       } else if (name.equals("ESTwoKeyNav")) {
         return new CsdlEntitySet()
@@ -521,8 +516,7 @@ public class ContainerProvider {
                     .setTarget("ESBaseTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertySINav")
-                    .setTarget("SINav")
-                ));
+                    .setTarget("SINav")));
 
       } else if (name.equals("ESKeyNavCont")) {
         return new CsdlEntitySet()
@@ -546,8 +540,7 @@ public class ContainerProvider {
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
-                    .setTarget("ESKeyNav")
-                ));
+                    .setTarget("ESKeyNav")));
 
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new CsdlEntitySet()
@@ -556,8 +549,8 @@ public class ContainerProvider {
             .setNavigationPropertyBindings(Arrays.asList(
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETKeyNavMany")
-                    .setTarget("ESKeyNav"))
-            );
+                    .setTarget("ESKeyNav")));
+
       } else if (name.equals("ESTwoBaseTwoKeyNav")) {
         return new CsdlEntitySet()
             .setName("ESTwoBaseTwoKeyNav")
@@ -574,8 +567,8 @@ public class ContainerProvider {
             .setType(EntityTypeProvider.nameETFourKeyAlias);
 
       } else if (name.equals("ESMixEnumDefCollComp")) {
-        return new CsdlEntitySet().setName("ESMixEnumDefCollComp").setType(
-            EntityTypeProvider.nameETMixEnumDefCollComp);
+        return new CsdlEntitySet().setName("ESMixEnumDefCollComp")
+            .setType(EntityTypeProvider.nameETMixEnumDefCollComp);
       }
     }
 
@@ -732,12 +725,19 @@ public class ContainerProvider {
             .setFunction(FunctionProvider.nameUFCRTCollCTTwoPrim)
             .setIncludeInServiceDocument(true);
 
+      } else if (name.equals("FINRTByteNineParam")) {
+        return new CsdlFunctionImport()
+            .setName(name)
+            .setFunction(FunctionProvider.nameUFNRTByteNineParam)
+            .setIncludeInServiceDocument(true);
+
       } else if (name.equals("FICRTESMedia")) {
         return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTETMedia)
             .setEntitySet(entityContainer.getFullQualifiedNameAsString() + "/ESMedia")
             .setIncludeInServiceDocument(true);
+
       } else if (name.equals("FICRTCollESMedia")) {
         return new CsdlFunctionImport()
             .setName(name)
@@ -806,7 +806,7 @@ public class ContainerProvider {
       if (name.equals("SI")) {
         return new CsdlSingleton()
             .setName("SI")
-            .setTitle("Simple Singelton")
+            .setTitle("Simple Singleton")
             .setType(EntityTypeProvider.nameETTwoPrim);
 
       } else if (name.equals("SINav")) {
@@ -822,8 +822,7 @@ public class ContainerProvider {
                     .setTarget("ESTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETKeyNavOne")
-                    .setTarget("ESKeyNav")
-                ));
+                    .setTarget("ESKeyNav")));
 
       } else if (name.equals("SIMedia")) {
         return new CsdlSingleton()

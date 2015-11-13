@@ -18,18 +18,18 @@
  */
 package org.apache.olingo.server.api.uri;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 
 /**
- * Object acting as general access to URI information extracted from the request URI. Depending on
- * the URI info kind different interfaces are used to provide access to that information. </p>
- * Use method {@link #getKind()} to obtain URI info kind information and to perform an appropriate cast.
+ * <p>Object acting as general access to URI information extracted from the request URI.</p>
+ * <p>Depending on the URI info kind different interfaces are used to provide access to that information.
+ * Use method {@link #getKind()} to obtain URI info kind information and to perform an appropriate cast.</p>
  */
-public interface UriInfo extends
-UriInfoService, UriInfoAll, UriInfoBatch, UriInfoCrossjoin,
-UriInfoEntityId, UriInfoMetadata, UriInfoResource {
+public interface UriInfo extends UriInfoService, UriInfoMetadata, UriInfoResource, UriInfoBatch,
+    UriInfoAll, UriInfoCrossjoin, UriInfoEntityId {
 
   /**
    * See {@link UriInfoKind} for more details which kinds are allowed.
@@ -80,8 +80,14 @@ UriInfoEntityId, UriInfoMetadata, UriInfoResource {
   UriInfoResource asUriInfoResource();
 
   /**
-   * A collection of all system query options which were in the URI.
-   * @return a collection of all system query options used.
+   * Gets a list of all system query options which were in the URI.
+   * @return a list of all system query options used
    */
-  Collection<SystemQueryOption> getSystemQueryOptions();
+  List<SystemQueryOption> getSystemQueryOptions();
+
+  /**
+   * Gets a list of all alias definitions which were in the URI (including aliases not used anywhere).
+   * @return a list of all alias definitions
+   */
+  List<AliasQueryOption> getAliases();
 }

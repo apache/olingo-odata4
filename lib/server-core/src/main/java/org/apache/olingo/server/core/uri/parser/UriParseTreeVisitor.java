@@ -1473,11 +1473,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitInlinecount(final InlinecountContext ctx) {
-    CountOptionImpl inlineCount = new CountOptionImpl();
-
-    String text = ctx.children.get(2).getText();
-
-    return inlineCount.setValue(text.toLowerCase().equals("true") ? true : false).setText(text);
+    final String text = ctx.children.get(2).getText();
+    return new CountOptionImpl()
+        .setValue(text.equalsIgnoreCase("true") ? true : false)
+        .setText(text);
   }
 
   @Override
@@ -1700,7 +1699,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
         for (String item : lastKeyPredicates) {
           String property = partner.getReferencingPropertyName(item);
           if (property != null) {
-            list.add(new UriParameterImpl().setName(item).setRefencedProperty(property));
+            list.add(new UriParameterImpl().setName(item).setReferencedProperty(property));
           } else {
             if (missedKey == null) {
               missedKey = item;
@@ -1803,7 +1802,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
             String property = partner.getReferencingPropertyName(key);
             if (property != null) {
               // store the key name as referenced property
-              list.add(0, new UriParameterImpl().setName(key).setRefencedProperty(property));
+              list.add(0, new UriParameterImpl().setName(key).setReferencedProperty(property));
             }
           }
         }
@@ -2408,20 +2407,16 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitSkip(final SkipContext ctx) {
-    SkipOptionImpl skiptoken = new SkipOptionImpl();
-
-    String text = ctx.children.get(2).getText();
-
-    return skiptoken.setValue(Integer.parseInt(text)).setText(text);
+    final String text = ctx.children.get(2).getText();
+    return new SkipOptionImpl()
+        .setValue(Integer.parseInt(text))
+        .setText(text);
   }
 
   @Override
   public Object visitSkiptoken(final SkiptokenContext ctx) {
-    SkipTokenOptionImpl skiptoken = new SkipTokenOptionImpl();
-
-    String text = ctx.children.get(2).getText();
-
-    return skiptoken.setValue(text).setText(text);
+    final String text = ctx.children.get(2).getText();
+    return new SkipTokenOptionImpl().setValue(text).setText(text);
   }
 
   @Override
@@ -2456,11 +2451,10 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
 
   @Override
   public Object visitTop(final TopContext ctx) {
-    TopOptionImpl top = new TopOptionImpl();
-
-    String text = ctx.children.get(2).getText();
-
-    return top.setValue(Integer.parseInt(text)).setText(text);
+    final String text = ctx.children.get(2).getText();
+    return new TopOptionImpl()
+        .setValue(Integer.parseInt(text))
+        .setText(text);
   }
 
   @Override

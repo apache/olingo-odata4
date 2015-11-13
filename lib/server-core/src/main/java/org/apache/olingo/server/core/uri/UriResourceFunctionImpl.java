@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
   public List<UriParameter> getParameters() {
     return parameters == null ?
         Collections.<UriParameter> emptyList() :
-        new ArrayList<UriParameter>(parameters);
+        Collections.unmodifiableList(parameters);
   }
 
   public UriResourceFunctionImpl setParameters(final List<UriParameter> parameters) {
@@ -71,9 +70,9 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
     return functionImport;
   }
 
-  public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFI,
+  public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFunctionImport,
       final List<UriParameter> parameters) {
-    functionImport = edmFI;
+    functionImport = edmFunctionImport;
     setParameters(parameters);
     return this;
   }

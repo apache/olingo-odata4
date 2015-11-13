@@ -34,7 +34,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 public interface UriInfoEntityId {
 
   /**
-   * @return List of custom query options used in the URI
+   * @return List of custom query options used in the URI (without alias definitions)
    */
   List<CustomQueryOption> getCustomQueryOptions();
 

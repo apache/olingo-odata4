@@ -18,27 +18,27 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.uri.UriInfoAll;
-import org.apache.olingo.server.api.uri.UriInfoBatch;
-import org.apache.olingo.server.api.uri.UriInfoCrossjoin;
-import org.apache.olingo.server.api.uri.UriInfoEntityId;
+import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
-import org.apache.olingo.server.api.uri.UriInfoMetadata;
-import org.apache.olingo.server.api.uri.UriInfoResource;
-import org.apache.olingo.server.api.uri.UriInfoService;
-import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
@@ -47,7 +47,6 @@ import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.IdOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.QueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
@@ -63,56 +62,39 @@ public class UriInfoImplTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
-  public void testKind() {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
+  public void kind() {
+    final UriInfo uriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
     assertEquals(UriInfoKind.all, uriInfo.getKind());
   }
 
   @Test
-  public void testCasts() {
-    UriInfoImpl uriInfo = new UriInfoImpl();
+  public void casts() {
+    final UriInfo uriInfo = new UriInfoImpl();
 
-    UriInfoAll all = uriInfo.asUriInfoAll();
-    assertEquals(uriInfo, all);
-
-    UriInfoBatch batch = uriInfo.asUriInfoBatch();
-    assertEquals(uriInfo, batch);
-
-    UriInfoCrossjoin crossjoin = uriInfo.asUriInfoCrossjoin();
-    assertEquals(uriInfo, crossjoin);
-
-    UriInfoEntityId entityID = uriInfo.asUriInfoEntityId();
-    assertEquals(uriInfo, entityID);
-
-    UriInfoMetadata metadata = uriInfo.asUriInfoMetadata();
-    assertEquals(uriInfo, metadata);
-
-    UriInfoResource resource = uriInfo.asUriInfoResource();
-    assertEquals(uriInfo, resource);
-
-    UriInfoService service = uriInfo.asUriInfoService();
-    assertEquals(uriInfo, service);
-
+    assertEquals(uriInfo, uriInfo.asUriInfoAll());
+    assertEquals(uriInfo, uriInfo.asUriInfoBatch());
+    assertEquals(uriInfo, uriInfo.asUriInfoCrossjoin());
+    assertEquals(uriInfo, uriInfo.asUriInfoEntityId());
+    assertEquals(uriInfo, uriInfo.asUriInfoMetadata());
+    assertEquals(uriInfo, uriInfo.asUriInfoResource());
+    assertEquals(uriInfo, uriInfo.asUriInfoService());
   }
 
   @Test
-  public void testEntityNames() {
-    UriInfoImpl uriInfo = new UriInfoImpl();
-    uriInfo.addEntitySetName("A");
-    uriInfo.addEntitySetName("B");
-
-    assertEquals("A", uriInfo.getEntitySetNames().get(0));
-    assertEquals("B", uriInfo.getEntitySetNames().get(1));
-
+  public void entityNames() {
+    final UriInfo uriInfo = new UriInfoImpl()
+        .addEntitySetName("A")
+        .addEntitySetName("B");
+    assertArrayEquals(new String[] { "A", "B" }, uriInfo.getEntitySetNames().toArray());
   }
 
   @Test
-  public void testResourceParts() {
+  public void resourceParts() {
     UriInfoImpl uriInfo = new UriInfoImpl();
 
-    UriResourceActionImpl action = new UriResourceActionImpl();
-    UriResourceEntitySetImpl entitySet0 = new UriResourceEntitySetImpl();
-    UriResourceEntitySetImpl entitySet1 = new UriResourceEntitySetImpl();
+    final UriResourceAction action = new UriResourceActionImpl();
+    final UriResourceEntitySet entitySet0 = new UriResourceEntitySetImpl();
+    final UriResourceEntitySet entitySet1 = new UriResourceEntitySetImpl();
 
     uriInfo.addResourcePart(action);
     uriInfo.addResourcePart(entitySet0);
@@ -129,53 +111,52 @@ public class UriInfoImplTest {
   @Test(expected = ODataRuntimeException.class)
   public void doubleSystemQueryOptions() {
     new UriInfoImpl()
-    .setSystemQueryOption(new FormatOptionImpl())
-    .setSystemQueryOption(new FormatOptionImpl());
+        .setSystemQueryOption(new FormatOptionImpl())
+        .setSystemQueryOption(new FormatOptionImpl());
   }
 
   @Test
-  public void testCustomQueryOption() {
-    UriInfoImpl uriInfo = new UriInfoImpl();
+  public void customQueryOption() {
+    final QueryOption expand = new ExpandOptionImpl().setName("");
+    final QueryOption filter = new FilterOptionImpl().setName("");
+    final QueryOption format = new FormatOptionImpl().setName("");
+    final QueryOption id = new IdOptionImpl().setName("");
+    final QueryOption inlinecount = new CountOptionImpl().setName("");
+    final QueryOption orderby = new OrderByOptionImpl().setName("");
+    final QueryOption search = new SearchOptionImpl().setName("");
+    final QueryOption select = new SelectOptionImpl().setName("");
+    final QueryOption skip = new SkipOptionImpl().setName("");
+    final QueryOption skipToken = new SkipTokenOptionImpl().setName("");
+    final QueryOption top = new TopOptionImpl().setName("");
+    final QueryOption levels = new LevelsOptionImpl().setName("");
 
-    List<QueryOptionImpl> queryOptions = new ArrayList<QueryOptionImpl>();
+    final QueryOption customOption0 = new CustomQueryOptionImpl().setName("").setText("A");
+    final QueryOption customOption1 = new CustomQueryOptionImpl().setName("").setText("B");
 
-    ExpandOptionImpl expand = new ExpandOptionImpl();
-    FilterOptionImpl filter = new FilterOptionImpl();
-    FormatOptionImpl format = new FormatOptionImpl();
-    IdOptionImpl id = new IdOptionImpl();
-    CountOptionImpl inlinecount = new CountOptionImpl();
-    OrderByOptionImpl orderby = new OrderByOptionImpl();
-    SearchOptionImpl search = new SearchOptionImpl();
-    SelectOptionImpl select = new SelectOptionImpl();
-    SkipOptionImpl skip = new SkipOptionImpl();
-    SkipTokenOptionImpl skipToken = new SkipTokenOptionImpl();
-    TopOptionImpl top = new TopOptionImpl();
-    LevelsOptionImpl levels = new LevelsOptionImpl();
+    final QueryOption initialQueryOption = new CustomQueryOptionImpl();
 
-    CustomQueryOptionImpl customOption0 = new CustomQueryOptionImpl();
-    customOption0.setText("A");
-    CustomQueryOptionImpl customOption1 = new CustomQueryOptionImpl();
-    customOption1.setText("B");
+    final QueryOption alias = new AliasQueryOptionImpl().setName("alias").setText("C");
 
-    QueryOptionImpl queryOption = new CustomQueryOptionImpl();
+    final UriInfo uriInfo = new UriInfoImpl()
+        .setQueryOptions(Arrays.asList(
+            expand,
+            filter,
+            format,
+            id,
+            inlinecount,
+            orderby,
+            search,
+            select,
+            skip,
+            skipToken,
+            top,
+            customOption0,
+            customOption1,
+            levels,
+            initialQueryOption,
+            alias));
 
-    queryOptions.add(expand.setName(""));
-    queryOptions.add(filter.setName(""));
-    queryOptions.add(format.setName(""));
-    queryOptions.add(id.setName(""));
-    queryOptions.add(inlinecount.setName(""));
-    queryOptions.add(orderby.setName(""));
-    queryOptions.add(search.setName(""));
-    queryOptions.add(select.setName(""));
-    queryOptions.add(skip.setName(""));
-    queryOptions.add(skipToken.setName(""));
-    queryOptions.add(top.setName(""));
-    queryOptions.add(customOption0.setName(""));
-    queryOptions.add(customOption1.setName(""));
-    queryOptions.add(levels.setName(""));// not stored
-    queryOptions.add(queryOption.setName(""));// not stored
-    uriInfo.setQueryOptions(queryOptions);
-
+    assertEquals(12, uriInfo.getSystemQueryOptions().size());
     assertEquals(expand, uriInfo.getExpandOption());
     assertEquals(filter, uriInfo.getFilterOption());
     assertEquals(format, uriInfo.getFormatOption());
@@ -188,25 +169,44 @@ public class UriInfoImplTest {
     assertEquals(skipToken, uriInfo.getSkipTokenOption());
     assertEquals(top, uriInfo.getTopOption());
 
-    List<CustomQueryOption> customQueryOptions = uriInfo.getCustomQueryOptions();
-    assertEquals(customOption0, customQueryOptions.get(0));
-    assertEquals(customOption1, customQueryOptions.get(1));
+    assertArrayEquals(new QueryOption[] { alias }, uriInfo.getAliases().toArray());
+    assertEquals("C", uriInfo.getValueForAlias("alias"));
+
+    assertArrayEquals(new QueryOption[] { customOption0, customOption1, initialQueryOption },
+        uriInfo.getCustomQueryOptions().toArray());
   }
 
   @Test
-  public void testFragment() {
-    UriInfoImpl uriInfo = new UriInfoImpl();
-    uriInfo.setFragment("F");
+  public void fragment() {
+    final UriInfo uriInfo = new UriInfoImpl().setFragment("F");
     assertEquals("F", uriInfo.getFragment());
   }
 
   @Test
-  public void testEntityTypeCast() {
-    UriInfoImpl uriInfo = new UriInfoImpl();
-    EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
+  public void entityTypeCast() {
+    final EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
     assertNotNull(entityType);
 
-    uriInfo.setEntityTypeCast(entityType);
+    final UriInfo uriInfo = new UriInfoImpl()
+        .setEntityTypeCast(entityType);
     assertEquals(entityType, uriInfo.getEntityTypeCast());
+  }
+
+  @Test
+  public void alias() {
+    final UriInfo uriInfo = new UriInfoImpl()
+        .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("A").setText("notUsed"))
+        .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("A").setText("X"))
+        .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("B").setText("Y"))
+        .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("C").setText("Z"));
+
+    assertEquals(3, uriInfo.getAliases().size());
+    assertEquals("X", uriInfo.getValueForAlias("A"));
+    assertEquals("Y", uriInfo.getValueForAlias("B"));
+    assertEquals("Z", uriInfo.getValueForAlias("C"));
+    assertNull(uriInfo.getValueForAlias("D"));
+
+    assertTrue(uriInfo.getSystemQueryOptions().isEmpty());
+    assertTrue(uriInfo.getCustomQueryOptions().isEmpty());
   }
 }
