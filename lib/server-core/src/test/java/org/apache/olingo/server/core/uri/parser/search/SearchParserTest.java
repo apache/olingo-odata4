@@ -177,6 +177,12 @@ public class SearchParserTest extends SearchParser {
     runEx(SearchParserException.MessageKeys.INVALID_NOT_OPERAND, Token.NOT, Token.AND);
   }
 
+
+  @Test
+  public void notNotWord() throws Exception {
+    runEx(SearchParserException.MessageKeys.INVALID_NOT_OPERAND, Token.NOT, Token.NOT, Token.WORD);
+  }
+
   @Test
   public void doubleAnd() throws Exception {
     runEx(SearchParserException.MessageKeys.INVALID_OPERATOR_AFTER_AND, Token.WORD, Token.AND, Token.AND, Token.WORD);
@@ -223,17 +229,17 @@ public class SearchParserTest extends SearchParser {
     ArrayList<SearchQueryToken> tokenList = new ArrayList<SearchQueryToken>();
     int wordNumber = 1;
     int phraseNumber = 1;
-    for (int i = 0; i < tokenArray.length; i++) {
+    for (Token aTokenArray : tokenArray) {
       SearchQueryToken token = mock(SearchQueryToken.class);
-      when(token.getToken()).thenReturn(tokenArray[i]);
-      if (tokenArray[i] == Token.WORD) {
+      when(token.getToken()).thenReturn(aTokenArray);
+      if (aTokenArray == Token.WORD) {
         when(token.getLiteral()).thenReturn("word" + wordNumber);
         wordNumber++;
-      } else if (tokenArray[i] == Token.PHRASE) {
+      } else if (aTokenArray == Token.PHRASE) {
         when(token.getLiteral()).thenReturn("phrase" + phraseNumber);
         phraseNumber++;
       }
-      when(token.toString()).thenReturn("" + tokenArray[i]);
+      when(token.toString()).thenReturn("" + aTokenArray);
       tokenList.add(token);
     }
     return tokenList;

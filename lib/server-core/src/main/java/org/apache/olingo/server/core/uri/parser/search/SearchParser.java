@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.uri.parser.search;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 import org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token;
 import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
 
@@ -55,7 +56,7 @@ public class SearchParser {
   }
 
   private SearchExpression processSearchExpression(SearchExpression left) throws SearchParserException {
-    if (token == null) {
+    if (isEof()) {
       return left;
     }
 
@@ -149,15 +150,10 @@ public class SearchParser {
     return new SearchBinaryImpl(left, SearchBinaryOperatorKind.OR, se);
   }
 
-  private RuntimeException illegalState() {
-    return new RuntimeException();
-  }
-
   private SearchExpression processNot() throws SearchParserException {
     nextToken();
     if (isToken(Token.WORD) || isToken(Token.PHRASE)) {
-      SearchExpression searchExpression = processTerm();
-      return new SearchUnaryImpl(searchExpression.asSearchTerm());
+      return new SearchUnaryImpl(processWordOrPhrase());
     }
     throw new SearchParserException("NOT must be followed by a term not a " + token.getToken(),
         SearchParserException.MessageKeys.INVALID_NOT_OPERAND, token.getToken().toString());
@@ -175,21 +171,27 @@ public class SearchParser {
     if (isToken(SearchQueryToken.Token.NOT)) {
       return processNot();
     }
-    if (isToken(SearchQueryToken.Token.PHRASE)) {
-      return processPhrase();
-    } else if (isToken(SearchQueryToken.Token.WORD)) {
-      return processWord();
-    }
-    throw illegalState();
+    return processWordOrPhrase();
   }
 
-  private SearchTermImpl processWord() {
+  private SearchTerm processWordOrPhrase() throws SearchParserException {
+    if (isToken(Token.PHRASE)) {
+      return processPhrase();
+    } else if (isToken(Token.WORD)) {
+      return processWord();
+    }
+    throw new SearchParserException("Expected PHRASE||WORD found: " + token.getToken(),
+        SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN,
+        Token.PHRASE.name() + "" + Token.WORD.name(), token.getToken().toString());
+  }
+
+  private SearchTerm processWord() {
     String literal = token.getLiteral();
     nextToken();
     return new SearchTermImpl(literal);
   }
 
-  private SearchTermImpl processPhrase() {
+  private SearchTerm processPhrase() {
     String literal = token.getLiteral();
     nextToken();
     return new SearchTermImpl(literal);
