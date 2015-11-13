@@ -83,7 +83,6 @@ public class SearchParserTest extends SearchParser {
     assertEquals("phrase2", se.asSearchBinary().getRightOperand().asSearchTerm().getSearchTerm());
   }
   
-  @Ignore
   @Test
   public void simpleImplicitAnd() {
     SearchExpression se = run(Token.WORD, Token.WORD);
@@ -101,7 +100,6 @@ public class SearchParserTest extends SearchParser {
     assertEquals("phrase2", se.asSearchBinary().getRightOperand().asSearchTerm().getSearchTerm());
   }
   
-  @Ignore
   @Test
   public void simpleBrackets() {
     SearchExpression se = run(Token.OPEN, Token.WORD, Token.CLOSE);
@@ -115,7 +113,6 @@ public class SearchParserTest extends SearchParser {
     assertEquals("phrase1", se.asSearchTerm().getSearchTerm());
   }
   
-  @Ignore
   @Test
   public void simpleNot() {
     SearchExpression se = run(Token.NOT, Token.WORD);
@@ -123,13 +120,12 @@ public class SearchParserTest extends SearchParser {
     assertTrue(se.isSearchUnary());
     assertEquals("word1", se.asSearchUnary().getOperand().asSearchTerm().getSearchTerm());
     
-    se = run(Token.NOT, Token.WORD);
-    assertEquals("'phrase1'", se.toString());
+    se = run(Token.NOT, Token.PHRASE);
+    assertEquals("{NOT 'phrase1'}", se.toString());
     assertTrue(se.isSearchUnary());
     assertEquals("phrase1", se.asSearchUnary().getOperand().asSearchTerm().getSearchTerm());
   }
   
-  @Ignore
   @Test
   public void precedenceLast() {
     //word1 AND (word2 AND word3) 
@@ -137,7 +133,6 @@ public class SearchParserTest extends SearchParser {
     assertEquals("{'word1' AND {'word2' AND 'word3'}}", se.toString());
   }
   
-  @Ignore
   @Test
   public void precedenceFirst() {
     //(word1 AND word2) AND word3 

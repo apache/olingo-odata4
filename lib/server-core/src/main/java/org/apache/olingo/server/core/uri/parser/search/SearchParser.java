@@ -29,20 +29,20 @@ import java.util.List;
 public class SearchParser {
 
   private Iterator<SearchQueryToken> tokens;
-  private SearchExpression root;
   private SearchQueryToken token;
 
   public SearchOption parse(String path, String value) {
     SearchTokenizer tokenizer = new SearchTokenizer();
+    SearchExpression searchExpression;
     try {
       tokens = tokenizer.tokenize(value).iterator();
       nextToken();
-      root = processSearchExpression(null);
+      searchExpression = processSearchExpression(null);
     } catch (SearchTokenizerException e) {
       return null;
     }
     final SearchOptionImpl searchOption = new SearchOptionImpl();
-    searchOption.setSearchExpression(root);
+    searchOption.setSearchExpression(searchExpression);
     return searchOption;
   }
 
@@ -57,26 +57,47 @@ public class SearchParser {
       return left;
     }
 
-    if(token.getToken() == SearchQueryToken.Token.OPEN) {
+    SearchExpression expression = left;
+    if(isToken(SearchQueryToken.Token.OPEN)) {
       processOpen();
-      throw illegalState();
-    } else if(token.getToken() == SearchQueryToken.Token.CLOSE) {
-        processClose();
-        throw illegalState();
-    } else if(token.getToken() == SearchQueryToken.Token.NOT) {
-      processNot();
-    } else if(token.getToken() == SearchQueryToken.Token.PHRASE ||
-        token.getToken() == SearchQueryToken.Token.WORD) {
-      return processSearchExpression(processTerm());
-    } else if(token.getToken() == SearchQueryToken.Token.AND) {
-        SearchExpression se = processAnd(left);
-        return processSearchExpression(se);
-    } else if(token.getToken() == SearchQueryToken.Token.OR) {
-        return processOr(left);
-    } else {
+      expression = processSearchExpression(left);
+      validateToken(SearchQueryToken.Token.CLOSE);
+      processClose();
+    } else if(isTerm()) {
+      expression = processTerm();
+    }
+
+    if(isToken(SearchQueryToken.Token.AND) || isTerm()) {
+        expression = processAnd(expression);
+    } else if(isToken(SearchQueryToken.Token.OR)) {
+        expression = processOr(expression);
+    } else if(isEof()) {
+      return expression;
+    }
+    return expression;
+  }
+
+  private boolean isTerm() {
+    return isToken(SearchQueryToken.Token.NOT)
+        || isToken(SearchQueryToken.Token.PHRASE)
+        || isToken(SearchQueryToken.Token.WORD);
+  }
+
+  private boolean isEof() {
+    return token == null;
+  }
+
+  private boolean isToken(SearchQueryToken.Token toCheckToken) {
+    if(token == null) {
+      return false;
+    }
+    return token.getToken() == toCheckToken;
+  }
+
+  private void validateToken(SearchQueryToken.Token toValidateToken) {
+    if(!isToken(toValidateToken)) {
       throw illegalState();
     }
-    throw illegalState();
   }
 
   private void processClose() {
@@ -88,13 +109,24 @@ public class SearchParser {
   }
 
   private SearchExpression processAnd(SearchExpression left) {
-    nextToken();
-    SearchExpression se = processTerm();
-    return new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
+    if(isToken(SearchQueryToken.Token.AND)) {
+      nextToken();
+    }
+    SearchExpression se = left;
+    if(isTerm()) {
+      se = processTerm();
+      se = new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
+      return processSearchExpression(se);
+    } else {
+      se = processSearchExpression(se);
+      return new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
+    }
   }
 
   public SearchExpression processOr(SearchExpression left) {
-    nextToken();
+    if(isToken(SearchQueryToken.Token.OR)) {
+      nextToken();
+    }
     SearchExpression se = processSearchExpression(left);
     return new SearchBinaryImpl(left, SearchBinaryOperatorKind.OR, se);
   }
@@ -103,8 +135,13 @@ public class SearchParser {
     return new RuntimeException();
   }
 
-  private void processNot() {
+  private SearchExpression processNot() {
     nextToken();
+    SearchExpression searchExpression = processTerm();
+    if(searchExpression.isSearchTerm()) {
+      return new SearchUnaryImpl(searchExpression.asSearchTerm());
+    }
+    throw illegalState();
   }
 
   private void nextToken() {
@@ -113,20 +150,18 @@ public class SearchParser {
     } else {
       token = null;
     }
-//    return null;
   }
 
   private SearchExpression processTerm() {
-    if(token.getToken() == SearchQueryToken.Token.NOT) {
-      return new SearchUnaryImpl(processPhrase());
+    if(isToken(SearchQueryToken.Token.NOT)) {
+      return processNot();
     }
-    if(token.getToken() == SearchQueryToken.Token.PHRASE) {
+    if(isToken(SearchQueryToken.Token.PHRASE)) {
       return processPhrase();
-    }
-    if(token.getToken() == SearchQueryToken.Token.WORD) {
+    } else if(isToken(SearchQueryToken.Token.WORD)) {
       return processWord();
     }
-    return null;
+    throw illegalState();
   }
 
   private SearchTermImpl processWord() {

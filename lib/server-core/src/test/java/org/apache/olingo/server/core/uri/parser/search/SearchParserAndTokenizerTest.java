@@ -34,9 +34,6 @@ public class SearchParserAndTokenizerTest {
 
   @Test
   public void basicParsing() throws SearchTokenizerException {
-//    SearchExpressionValidator.init("a AND b OR c").enableLogging()
-//        .validate(with("a"));
-
     SearchExpressionValidator.init("a")
         .validate(with("a"));
     SearchExpressionValidator.init("a AND b")
@@ -55,6 +52,22 @@ public class SearchParserAndTokenizerTest {
         .validate("{{'a' AND 'b'} OR 'c'}");
     SearchExpressionValidator.init("a OR b AND c")
         .validate("{'a' OR {'b' AND 'c'}}");
+  }
+
+  @Test
+  public void notParsing() throws Exception {
+    SearchExpressionValidator.init("NOT a AND b OR c")
+        .validate("{{{NOT 'a'} AND 'b'} OR 'c'}");
+    SearchExpressionValidator.init("a OR b AND NOT c")
+        .validate("{'a' OR {'b' AND {NOT 'c'}}}");
+  }
+
+  @Test
+  public void parenthesesParsing() throws Exception {
+    SearchExpressionValidator.init("a AND (b OR c)")
+        .validate("{'a' AND {'b' OR 'c'}}");
+    SearchExpressionValidator.init("(a OR b) AND NOT c")
+        .validate("{{'a' OR 'b'} AND {NOT 'c'}}");
   }
 
   @Ignore
