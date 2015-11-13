@@ -20,14 +20,20 @@ package org.apache.olingo.server.core.uri.parser.search;
 
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 
-public class SearchTokenizerException extends UriParserSyntaxException {
+public class SearchParserException extends UriParserSyntaxException {
 
-  private static final long serialVersionUID = -8295456415309640166L;
+  private static final long serialVersionUID = 5781553037561337795L;
 
   public static enum MessageKeys implements MessageKey {
-    /** parameter: character */
-    FORBIDDEN_CHARACTER, 
-    ALREADY_FINISHED;
+    /** parameter: operatorkind */
+    INVALID_BINARY_OPERATOR_POSITION, 
+    /** parameter: operatorkind */
+    INVALID_NOT_OPERAND,
+    /** parameters: expectedToken actualToken */
+    EXPECTED_DIFFERENT_TOKEN,
+    NO_EXPRESSION_FOUND, 
+    /** parameter: operatorkind */
+    INVALID_OPERATOR_AFTER_AND;
 
     @Override
     public String getKey() {
@@ -35,13 +41,14 @@ public class SearchTokenizerException extends UriParserSyntaxException {
     }
   }
 
-  public SearchTokenizerException(final String developmentMessage, final MessageKey messageKey,
+  public SearchParserException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public SearchTokenizerException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
+  public SearchParserException(final String developmentMessage, final Throwable cause, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
+  
 }

@@ -33,7 +33,7 @@ import org.junit.Test;
 public class SearchParserAndTokenizerTest {
 
   @Test
-  public void basicParsing() throws SearchTokenizerException {
+  public void basicParsing() throws Exception {
     SearchExpressionValidator.init("a")
         .validate(with("a"));
     SearchExpressionValidator.init("a AND b")
@@ -172,17 +172,18 @@ public class SearchParserAndTokenizerTest {
       Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
     }
 
-    private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException {
+    private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException,
+        SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression.toString(), searchExpression.toString());
     }
 
-    private void validate(String expectedSearchExpression) throws SearchTokenizerException {
+    private void validate(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
     }
 
-    private SearchExpression getSearchExpression() {
+    private SearchExpression getSearchExpression() throws SearchParserException, SearchTokenizerException {
       SearchParser tokenizer = new SearchParser();
       SearchOption result = tokenizer.parse(null, searchQuery);
       Assert.assertNotNull(result);
@@ -195,5 +196,4 @@ public class SearchParserAndTokenizerTest {
     }
   }
 
-  
 }
