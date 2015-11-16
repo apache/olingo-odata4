@@ -67,6 +67,7 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.ExpandSystemQueryO
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.CountHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.FilterHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.OrderByHandler;
+import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SearchHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.ServerSidePagingHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler;
@@ -486,6 +487,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     OrderByHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     SkipHandler.applySkipSystemQueryHandler(uriInfo.getSkipOption(), entitySet);
     TopHandler.applyTopSystemQueryOption(uriInfo.getTopOption(), entitySet);
+    SearchHandler.applySearchSystemQueryOption(uriInfo.getSearchOption(), entitySet);
 
     final Integer pageSize = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getMaxPageSize();
     final Integer serverPageSize = ServerSidePagingHandler.applyServerSidePaging(uriInfo.getSkipTokenOption(),
