@@ -58,7 +58,8 @@ public class SearchHandler {
   }
 
   private static boolean isTrue(SearchTerm term, Property property) {
-    if(property.isPrimitive()) {
+    if(property.isPrimitive() && !property.isNull()) {
+      // TODO: mibo(151117): pass EDM information to do correct 'string' convertation
       String propertyString = property.asPrimitive().toString();
       return propertyString != null && propertyString.contains(term.getSearchTerm());
     }
