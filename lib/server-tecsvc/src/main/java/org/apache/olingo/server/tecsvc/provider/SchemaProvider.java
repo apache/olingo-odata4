@@ -33,17 +33,18 @@ import org.apache.olingo.commons.api.ex.ODataException;
 public class SchemaProvider {
 
   public static final String NAMESPACE = "olingo.odata.test1";
+  public static final String NAMESPACE_ALIAS = "Namespace1_Alias";
 
   private final CsdlEdmProvider prov;
 
-  public SchemaProvider(final EdmTechProvider prov) {
+  public SchemaProvider(final CsdlEdmProvider prov) {
     this.prov = prov;
   }
 
   public List<CsdlSchema> getSchemas() throws ODataException {
     CsdlSchema schema = new CsdlSchema();
     schema.setNamespace(NAMESPACE);
-    schema.setAlias("Namespace1_Alias");
+    schema.setAlias(NAMESPACE_ALIAS);
 
     // EnumTypes
     schema.setEnumTypes(Collections.singletonList(

@@ -113,7 +113,7 @@ public class ComplexTypeProvider {
           .setProperties(Arrays.asList(
               new CsdlProperty()
                   .setName("AdditionalPropString")
-                  .setType(new FullQualifiedName("Edm", "String"))));
+                  .setType(PropertyProvider.nameString)));
 
     } else if (complexTypeName.equals(nameCTTwoBase)) {
       return new CsdlComplexType()

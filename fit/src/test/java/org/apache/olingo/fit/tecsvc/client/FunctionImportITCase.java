@@ -335,10 +335,11 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   public void allParameterKinds() {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterEnum", getFactory().newEnumValue("Namespace1_Alias.ENString", "String1"));
-    parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().buildString("key1"));
     parameters.put("ParameterComp", getFactory().newPrimitiveValueBuilder().setValue(
         new ParameterAlias("comp")).build());
-    parameters.put("ParameterETTwoPrim", getFactory().newPrimitiveValueBuilder().build());
+    parameters.put("ParameterETTwoPrim",  getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("comp")).build());
     parameters.put("CollParameterByte", getFactory().newPrimitiveValueBuilder().setValue(
         new ParameterAlias("collByte")).build());
     parameters.put("CollParameterEnum", getFactory().newPrimitiveValueBuilder().setValue(
@@ -347,9 +348,10 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
         new ParameterAlias("collDef")).build());
     parameters.put("CollParameterComp", getFactory().newPrimitiveValueBuilder().setValue(
         new ParameterAlias("collComp")).build());
-    parameters.put("CollParameterETTwoPrim", getFactory().newPrimitiveValueBuilder().build());
-    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
-        .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+    parameters.put("CollParameterETTwoPrim",  getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("collComp")).build());
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendOperationCallSegment("FINRTByteNineParam")
             .addParameterAlias("comp", "{\"PropertyInt16\":1}")
             .addParameterAlias("collByte", "[1]")
@@ -360,10 +362,24 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
         ClientProperty.class,
         parameters);
     setCookieHeader(request);
-    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    ODataInvokeResponse<ClientProperty> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertShortOrInt(6, response.getBody().getPrimitiveValue().toValue());
+    assertShortOrInt(9, response.getBody().getPrimitiveValue().toValue());
+
+    // All parameters having the null value should also work, without any aliases.
+    for (final String name : parameters.keySet()) {
+      parameters.put(name, getFactory().newPrimitiveValueBuilder().build());
+    }
+    request = getClient().getInvokeRequestFactory().getFunctionInvokeRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI).appendOperationCallSegment("FINRTByteNineParam").build(),
+        ClientProperty.class,
+        parameters);
+    setCookieHeader(request);
+    response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertShortOrInt(0, response.getBody().getPrimitiveValue().toValue());
   }
 
   private Map<String, ClientValue> buildTwoParameters(final int parameterInt16, final String parameterString) {

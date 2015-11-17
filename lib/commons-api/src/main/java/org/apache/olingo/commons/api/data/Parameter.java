@@ -26,6 +26,7 @@ public class Parameter extends Valuable {
   private String name;
 
   /**
+   * Gets the name of the parameter.
    * @return name of the parameter
    */
   public String getName() {
@@ -33,6 +34,7 @@ public class Parameter extends Valuable {
   }
 
   /**
+   * Sets the name of the parameter.
    * @param name of the parameter
    */
   public void setName(final String name) {
@@ -40,27 +42,18 @@ public class Parameter extends Valuable {
   }
 
   /**
-   * Check if Valuable contains a ENTITY or COLLECTION_ENTITY ValueType
-   *
-   * @return true if ValueType is a ENTITY or COLLECTION_ENTITY, otherwise false
+   * Checks whether this parameter value is of the value type ENTITY or COLLECTION_ENTITY.
+   * @return true if the value type is ENTITY or COLLECTION_ENTITY, otherwise false
    */
   public boolean isEntity() {
-    if (isCollection()) {
-      return getValueType().getBaseType() == ValueType.ENTITY;
-    }
-    return getValueType() == ValueType.ENTITY;
+    return getValueType() == ValueType.ENTITY || getValueType() == ValueType.COLLECTION_ENTITY;
   }
 
   /**
-   * Get the value in its entity representation or null if it is not based on an entity ValueType
-   *
-   * @return entity representation or null if it is not based on an entity ValueType
+   * Gets the value in its entity representation or null if it is not based on an entity value type.
+   * @return entity representation or null if it is not based on an entity value type
    */
   public Entity asEntity() {
-    if (isCollection()) {
-      return null;
-    }
-    return isEntity() ? (Entity) getValue() : null;
+    return isEntity() && !isCollection() ? (Entity) getValue() : null;
   }
-
 }

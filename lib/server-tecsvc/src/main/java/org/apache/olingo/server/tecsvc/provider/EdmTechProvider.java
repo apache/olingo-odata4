@@ -42,9 +42,6 @@ import org.apache.olingo.commons.api.ex.ODataException;
 
 public class EdmTechProvider extends CsdlAbstractEdmProvider {
 
-  public static final String nameSpace = "olingo.odata.test1";
-  public static final String CORE_VOCABULARY_NAMESPACE = "Org.OData.Core.V1";
-
   private final SchemaProvider schemaProvider;
   private final EntityTypeProvider entityTypeProvider;
   private final ContainerProvider containerProvider;
@@ -70,8 +67,8 @@ public class EdmTechProvider extends CsdlAbstractEdmProvider {
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
     return Arrays.asList(
-        new CsdlAliasInfo().setAlias("Namespace1_Alias").setNamespace(nameSpace),
-        new CsdlAliasInfo().setAlias("Core").setNamespace(CORE_VOCABULARY_NAMESPACE));
+        new CsdlAliasInfo().setAlias(SchemaProvider.NAMESPACE_ALIAS).setNamespace(SchemaProvider.NAMESPACE),
+        new CsdlAliasInfo().setAlias("Core").setNamespace(TermProvider.CORE_VOCABULARY_NAMESPACE));
   }
 
   @Override

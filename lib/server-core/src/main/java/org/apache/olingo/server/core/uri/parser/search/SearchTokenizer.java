@@ -181,7 +181,7 @@ public class SearchTokenizer {
      * @return true if character is allowed
      */
     private static boolean isPctEncodedUnescaped(char character) {
-      String hex = Integer.toHexString((int) character);
+      String hex = Integer.toHexString(character);
       char aschar[] = hex.toCharArray();
       if(aschar[0] == '%') {
         if(aschar[1] == '2') {

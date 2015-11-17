@@ -29,9 +29,11 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpress
  */
 public class TermProvider {
 
-  public static FullQualifiedName TERM_DESCRIPTION = new FullQualifiedName("Org.OData.Core.V1", "Description");
+  public static final String CORE_VOCABULARY_NAMESPACE = "Org.OData.Core.V1";
+  public static FullQualifiedName TERM_DESCRIPTION =
+      new FullQualifiedName(CORE_VOCABULARY_NAMESPACE, "Description");
   public static FullQualifiedName TERM_LONG_DESCRIPTION =
-      new FullQualifiedName("Org.OData.Core.V1", "LongDescription");
+      new FullQualifiedName(CORE_VOCABULARY_NAMESPACE, "LongDescription");
   public static FullQualifiedName TERM_DATA = new FullQualifiedName(SchemaProvider.NAMESPACE, "Data");
 
   public CsdlTerm getTerm(FullQualifiedName termName) {

@@ -163,7 +163,7 @@ public class FunctionData {
                     || parameter.isEntity() && ((Entity) parameter.getValue()).getProperties().isEmpty())
             || parameter.isCollection()
                 && (parameter.isEntity() && ((EntityCollection) parameter.getValue()).getEntities().isEmpty()
-                    || parameter.asCollection().isEmpty()))) {
+                    || !parameter.isEntity() && parameter.asCollection().isEmpty()))) {
           count++;
         }
       }

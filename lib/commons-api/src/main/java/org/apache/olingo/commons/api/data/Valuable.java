@@ -65,10 +65,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a PRIMITIVE or COLLECTION_PRIMITIVE, otherwise false
    */
   public boolean isPrimitive() {
-    if (isCollection()) {
-      return valueType.getBaseType() == ValueType.PRIMITIVE;
-    }
-    return valueType == ValueType.PRIMITIVE;
+    return valueType == ValueType.PRIMITIVE || valueType == ValueType.COLLECTION_PRIMITIVE;
   }
 
   /**
@@ -77,10 +74,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a GEOSPATIAL or COLLECTION_GEOSPATIAL, otherwise false
    */
   public boolean isGeospatial() {
-    if (isCollection()) {
-      return valueType.getBaseType() == ValueType.GEOSPATIAL;
-    }
-    return valueType == ValueType.GEOSPATIAL;
+    return valueType == ValueType.GEOSPATIAL || valueType == ValueType.COLLECTION_GEOSPATIAL;
   }
 
   /**
@@ -89,10 +83,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a ENUM or COLLECTION_ENUM, otherwise false
    */
   public boolean isEnum() {
-    if (isCollection()) {
-      return valueType.getBaseType() == ValueType.ENUM;
-    }
-    return valueType == ValueType.ENUM;
+    return valueType == ValueType.ENUM || valueType == ValueType.COLLECTION_ENUM;
   }
 
   /**
@@ -101,10 +92,7 @@ public abstract class Valuable extends Annotatable {
    * @return true if ValueType is a COMPLEX or COLLECTION_COMPLEX, otherwise false
    */
   public boolean isComplex() {
-    if (isCollection()) {
-      return valueType.getBaseType() == ValueType.COMPLEX;
-    }
-    return valueType == ValueType.COMPLEX;
+    return valueType == ValueType.COMPLEX || valueType == ValueType.COLLECTION_COMPLEX;
   }
 
   /**
@@ -122,10 +110,7 @@ public abstract class Valuable extends Annotatable {
    * @return primitive representation or null if it is not based on a primitive ValueType
    */
   public Object asPrimitive() {
-    if (isCollection()) {
-      return null;
-    }
-    return isPrimitive() ? value : null;
+    return isPrimitive() && !isCollection() ? value : null;
   }
 
   /**
@@ -134,10 +119,7 @@ public abstract class Valuable extends Annotatable {
    * @return geospatial representation or null if it is not based on a geospatial ValueType
    */
   public Geospatial asGeospatial() {
-    if (isCollection()) {
-      return null;
-    }
-    return isGeospatial() ? (Geospatial) value : null;
+    return isGeospatial() && !isCollection() ? (Geospatial) value : null;
   }
 
   /**
@@ -146,10 +128,7 @@ public abstract class Valuable extends Annotatable {
    * @return enum representation or null if it is not based on a enum ValueType
    */
   public Object asEnum() {
-    if (isCollection()) {
-      return null;
-    }
-    return isEnum() ? value : null;
+    return isEnum() && !isCollection() ? value : null;
   }
 
   /**
@@ -158,10 +137,7 @@ public abstract class Valuable extends Annotatable {
    * @return primitive complex or null if it is not based on a complex ValueType
    */
   public ComplexValue asComplex() {
-    if (isCollection()) {
-      return null;
-    }
-    return isComplex() ? (ComplexValue) value : null;
+    return isComplex() && !isCollection() ? (ComplexValue) value : null;
   }
 
   /**

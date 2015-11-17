@@ -21,7 +21,6 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 

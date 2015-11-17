@@ -230,9 +230,9 @@ public class EntityTypeProvider {
       return new CsdlEntityType()
           .setName("ETCompCollComp")
           .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
-          .setProperties(
-              Arrays
-                  .asList(PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTCompCollComp));
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable,
+              PropertyProvider.propertyComp_CTCompCollComp));
 
     } else if (entityTypeName.equals(nameETMedia)) {
       return new CsdlEntityType()

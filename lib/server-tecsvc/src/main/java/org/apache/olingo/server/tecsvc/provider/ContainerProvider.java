@@ -170,9 +170,9 @@ public class ContainerProvider {
             .setName("ESAllPrim")
             .setType(EntityTypeProvider.nameETAllPrim)
             .setTitle("All PropertyTypes EntitySet")
-            .setNavigationPropertyBindings(Arrays
-                .asList(new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrim"),
-                    new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrim")))
+            .setNavigationPropertyBindings(Arrays.asList(
+                new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrim"),
+                new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrim")))
             .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                     "Contains entities with all primitive types")),
@@ -186,7 +186,7 @@ public class ContainerProvider {
             .setType(EntityTypeProvider.nameETCollAllPrim)
             .setAnnotations(
                 Arrays.asList(
-                    new CsdlAnnotation().setTerm("Org.OData.Core.V1.Description")
+                    new CsdlAnnotation().setTerm(TermProvider.TERM_DESCRIPTION.getFullQualifiedNameAsString())
                         .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                             .setValue("Contains entities with collection of each primitive type")),
                     new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
