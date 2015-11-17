@@ -29,26 +29,29 @@ import org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorK
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 
+import javax.xml.bind.DatatypeConverter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 public class SearchHandler {
+  private static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
   public static void applySearchSystemQueryOption(final SearchOption searchOption, final EntityCollection entitySet)
       throws ODataApplicationException {
 
     if (searchOption != null) {
+      SearchExpression se = searchOption.getSearchExpression();
       Iterator<Entity> it = entitySet.getEntities().iterator();
       while(it.hasNext()) {
         boolean keep = false;
-        Entity next = it.next();
-        List<Property> propertyList = next.getProperties();
-        for (Property property : propertyList) {
-          SearchExpression se = searchOption.getSearchExpression();
-          if(isTrue(se, property)) {
-            keep = true;
-            break;
-          }
+        Entity entity = it.next();
+        ListIterator<Property> properties = entity.getProperties().listIterator();
+        while(properties.hasNext() && !keep) {
+          keep = isTrue(se, properties.next());
         }
         if(!keep) {
           it.remove();
@@ -59,11 +62,23 @@ public class SearchHandler {
 
   private static boolean isTrue(SearchTerm term, Property property) {
     if(property.isPrimitive() && !property.isNull()) {
-      // TODO: mibo(151117): pass EDM information to do correct 'string' convertation
-      String propertyString = property.asPrimitive().toString();
+      String propertyString = asString(property);
       return propertyString != null && propertyString.contains(term.getSearchTerm());
     }
     return false;
+  }
+
+  private static String asString(Property property) {
+    // TODO: mibo(151117): improve 'string' conversion
+    Object primitive = property.asPrimitive();
+    if(primitive instanceof Calendar) {
+      return SIMPLE_DATE_FORMAT.format(((Calendar) primitive).getTime());
+    } else if(primitive instanceof Date) {
+      return SIMPLE_DATE_FORMAT.format((Date) primitive);
+    } else if(primitive instanceof byte[]) {
+      return DatatypeConverter.printBase64Binary((byte[]) primitive);
+    }
+    return primitive.toString();
   }
 
   private static boolean isTrue(SearchBinary binary, Property property) throws ODataApplicationException {
