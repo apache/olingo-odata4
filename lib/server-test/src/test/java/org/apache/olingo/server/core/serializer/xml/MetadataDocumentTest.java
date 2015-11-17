@@ -131,7 +131,7 @@ public class MetadataDocumentTest {
     assertThat(
         metadata,
         containsString("<EntitySet Name=\"ESInvisible\" EntityType=\"Namespace1_Alias.ETAllPrim\" "
-            + "IncludeInServiceDocument=\"false\"/>"));
+            + "IncludeInServiceDocument=\"false\">"));
 
     assertThat(metadata, containsString("</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>"));
 

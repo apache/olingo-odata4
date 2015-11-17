@@ -29,19 +29,10 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpress
  */
 public class TermProvider {
 
-//  <Term Name="Description" Type="Edm.String">
-//  <Annotation Term="Core.Description" String="A brief description of a model element" />
-//  <Annotation Term="Core.IsLanguageDependent" />
-//  </Term>
-//
-//  <Term Name="LongDescription" Type="Edm.String">
-//  <Annotation Term="Core.Description" String="A lengthy description of a model element" />
-//  <Annotation Term="Core.IsLanguageDependent" />
-//  </Term>
-
-  private static FullQualifiedName TERM_DESCRIPTION = new FullQualifiedName("Org.OData.Core.V1", "Description");
-  private static FullQualifiedName TERM_LONG_DESCRIPTION =
+  public static FullQualifiedName TERM_DESCRIPTION = new FullQualifiedName("Org.OData.Core.V1", "Description");
+  public static FullQualifiedName TERM_LONG_DESCRIPTION =
       new FullQualifiedName("Org.OData.Core.V1", "LongDescription");
+  public static FullQualifiedName TERM_DATA = new FullQualifiedName(SchemaProvider.NAMESPACE, "Data");
 
   public CsdlTerm getTerm(FullQualifiedName termName) {
     if (TERM_DESCRIPTION.equals(termName)) {
@@ -56,6 +47,11 @@ public class TermProvider {
               new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                   "A lengthy description of a model element")),
               new CsdlAnnotation().setTerm("Core.IsLanguageDependent")));
+    } else if (TERM_DATA.equals(termName)) {
+      return new CsdlTerm().setName("Data").setType("Edm.Boolean")
+          .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
+              new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                  "Indicates if data in the TechSvc is available for the given object"))));
     }
 
     return null;

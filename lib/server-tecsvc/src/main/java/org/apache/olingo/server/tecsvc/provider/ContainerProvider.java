@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
 import org.apache.olingo.commons.api.ex.ODataException;
 
 public class ContainerProvider {
@@ -152,6 +153,13 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTByteNineParam"));
 
+    List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+    annotations.add(new CsdlAnnotation().setTerm(TermProvider.TERM_DESCRIPTION.getFullQualifiedNameAsString())
+        .setExpression(
+            new CsdlConstantExpression(ConstantExpressionType.String,
+                "If an entity set contains data all operations are supported.")));
+    container.setAnnotations(annotations);
+
     return container;
   }
 
@@ -168,44 +176,21 @@ public class ContainerProvider {
             .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
                     "Contains entities with all primitive types")),
-                new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledForEntitySet").setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                        "System Query Options: $filter, $count, $orderby, $skip, $top, $expand, $select, $format; "
-                            + "Operations: Create, Create with Deep Insert, Create with Bind Operation, Read")),
-                new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledForEntity").setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                        "System Query Options: $expand, $select, $format; Operations: "
-                            + "Read, Update, Update with Bind Operation, Delete")),
-                new CsdlAnnotation().setTerm("Core.LongDescription").setQualifier("EnabledNavigationProperties")
-                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
-                        "NavPropertyETTwoPrimOne, NavPropertyETTwoPrimMany"))));
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
+                ));
 
       } else if (name.equals("ESCollAllPrim")) {
         return new CsdlEntitySet()
             .setName("ESCollAllPrim")
             .setType(EntityTypeProvider.nameETCollAllPrim)
             .setAnnotations(
-                Arrays
-                    .asList(
-                        new CsdlAnnotation()
-                            .setTerm("Org.OData.Core.V1.Description")
-                            .setExpression(
-                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                                    .setValue("Contains entities with collection of each primitive type")),
-                        new CsdlAnnotation()
-                            .setTerm("Org.OData.Core.V1.LongDescription")
-                            .setQualifier("EnabledForEntitySet")
-                            .setExpression(
-                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                                    .setValue("System Query Options: $filter, $count, $orderby, "
-                                        + "$skip, $top, $expand, $select, $format; Operations: Create, Read")),
-                        new CsdlAnnotation()
-                            .setTerm("Org.OData.Core.V1.LongDescription")
-                            .setQualifier("EnabledForEntity")
-                            .setExpression(
-                                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                                    .setValue("System Query Options: $expand, $select, "
-                                        + "$format; Operations: Read, Update, Delete"))));
+                Arrays.asList(
+                    new CsdlAnnotation().setTerm("Org.OData.Core.V1.Description")
+                        .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with collection of each primitive type")),
+                    new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESTwoPrim")) {
         return new CsdlEntitySet()
@@ -219,194 +204,189 @@ public class ContainerProvider {
                     .setPath("NavPropertyETAllPrimMany")
                     .setTarget("ESAllPrim")))
             .setAnnotations(Arrays.asList(
-                new CsdlAnnotation()
-                    .setTerm("Core.Description")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("Contains entities with two primitve types")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntitySet")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
-                                + "$select, $format; Operations: Create, Create with Deep Insert, "
-                                + "Create with Bind Operation, Read")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntity")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, Update, "
-                                + "Update with Bind Operation, Delete")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledNavigationProperties")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("NavPropertyETAllPrimOne, NavPropertyETAllPrimMany"))));
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with two primitve types")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       } else if (name.equals("ESMixPrimCollComp")) {
         return new CsdlEntitySet()
             .setName("ESMixPrimCollComp")
             .setType(EntityTypeProvider.nameETMixPrimCollComp)
             .setAnnotations(Arrays.asList(
-                new CsdlAnnotation()
-                    .setTerm("Core.Description")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("Contains entities with various properties of type primitive, collection "
-                                + "of primitve, complex and collection of complex")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntitySet")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
-                                + "$select, $format; Operations: Create, Read")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntity")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
-                                + "Update, Delete"))));
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with various properties of type primitive, collection "
+                            + "of primitve, complex and collection of complex")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESBase")) {
         return new CsdlEntitySet()
             .setName("ESBase")
             .setType(EntityTypeProvider.nameETBase)
             .setAnnotations(Arrays.asList(
-                new CsdlAnnotation()
-                    .setTerm("Core.Description")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("Contains entities with single inheritance")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntitySet")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
-                                + "$select, $format; Operations: Create, Read")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntity")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
-                                + "Update, Delete"))));
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with single inheritance")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESTwoBase")) {
         return new CsdlEntitySet()
             .setName("ESTwoBase")
             .setType(EntityTypeProvider.nameETTwoBase)
             .setAnnotations(Arrays.asList(
-                new CsdlAnnotation()
-                    .setTerm("Core.Description")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("Contains entities with double inheritance")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntitySet")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, "
-                                + "$select, $format; Operations: Create, Read")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntity")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, "
-                                + "Update, Delete"))));
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with double inheritance")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESTwoKeyTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESTwoKeyTwoPrim")
             .setType(EntityTypeProvider.nameETTwoKeyTwoPrim)
             .setAnnotations(Arrays.asList(
-                new CsdlAnnotation()
-                    .setTerm("Core.Description")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("Contains entities with two primitive types with two keys")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntitySet")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $filter, $count, $orderby, $skip, $top, $expand, $select,"
-                                + " $format; Operations: Create, Read")),
-                new CsdlAnnotation()
-                    .setTerm("Core.LongDescription")
-                    .setQualifier("EnabledForEntity")
-                    .setExpression(
-                        new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                            .setValue("System Query Options: $expand, $select, $format; Operations: Read, Update, "
-                                + "Delete"))));
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with two primitive types with two keys")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESBaseTwoKeyTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESBaseTwoKeyTwoPrim")
-            .setType(EntityTypeProvider.nameETBaseTwoKeyTwoPrim);
+            .setType(EntityTypeProvider.nameETBaseTwoKeyTwoPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with two primitive types with two keys")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESTwoBaseTwoKeyTwoPrim")) {
         return new CsdlEntitySet()
             .setName("ESTwoBaseTwoKeyTwoPrim")
-            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyTwoPrim);
+            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyTwoPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with two primitive types with two keys")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESAllKey")) {
         return new CsdlEntitySet()
             .setName("ESAllKey")
-            .setType(EntityTypeProvider.nameETAllKey);
+            .setType(EntityTypeProvider.nameETAllKey)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities all primitive keys")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESCompAllPrim")) {
         return new CsdlEntitySet()
             .setName("ESCompAllPrim")
-            .setType(EntityTypeProvider.nameETCompAllPrim);
+            .setType(EntityTypeProvider.nameETCompAllPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with a complext type containing all primitive types")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESCompCollAllPrim")) {
         return new CsdlEntitySet()
             .setName("ESCompCollAllPrim")
-            .setType(EntityTypeProvider.nameETCompCollAllPrim);
+            .setType(EntityTypeProvider.nameETCompCollAllPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with a complext type containing all collection primitive types")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESCompComp")) {
         return new CsdlEntitySet()
             .setName("ESCompComp")
-            .setType(EntityTypeProvider.nameETCompComp);
+            .setType(EntityTypeProvider.nameETCompComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with complex type nested in complex type")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESCompCollComp")) {
         return new CsdlEntitySet()
             .setName("ESCompCollComp")
-            .setType(EntityTypeProvider.nameETCompCollComp);
+            .setType(EntityTypeProvider.nameETCompCollComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with collection of complex type nested in complex type")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESMedia")) {
         return new CsdlEntitySet()
             .setName("ESMedia")
             .setType(EntityTypeProvider.nameETMedia)
-            .setIncludeInServiceDocument(true);
+            .setIncludeInServiceDocument(true)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains media entities")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESKeyTwoKeyComp")) {
         return new CsdlEntitySet()
             .setName("ESKeyTwoKeyComp")
-            .setType(EntityTypeProvider.nameETKeyTwoKeyComp);
+            .setType(EntityTypeProvider.nameETKeyTwoKeyComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains Keys with alias")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESInvisible")) {
         return new CsdlEntitySet()
             .setName("ESInvisible")
             .setIncludeInServiceDocument(false)
-            .setType(EntityTypeProvider.nameETAllPrim);
+            .setType(EntityTypeProvider.nameETAllPrim)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("To test the invisibility within the service document")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESServerSidePaging")) {
         return new CsdlEntitySet()
             .setName("ESServerSidePaging")
-            .setType(EntityTypeProvider.nameETServerSidePaging);
+            .setType(EntityTypeProvider.nameETServerSidePaging)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Divides the response to several pages using $skiptoken and providing a nextLink")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESAllNullable")) {
         return new CsdlEntitySet()
             .setName("ESAllNullable")
-            .setType(EntityTypeProvider.nameETAllNullable);
+            .setType(EntityTypeProvider.nameETAllNullable)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with initial values")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESKeyNav")) {
         return new CsdlEntitySet()
@@ -463,7 +443,16 @@ public class ContainerProvider {
                     .setTarget("ESTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNav/com.corp.odata.test1.CTNavFiveProp/NavPropertyETTwoKeyNavMany")
-                    .setTarget("ESTwoKeyNav")));
+                    .setTarget("ESTwoKeyNav")))
+            .setAnnotations(
+                Arrays.asList(
+                    new CsdlAnnotation().setTerm("Core.Description")
+                        .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                            .setValue("Contains entities with various navigation "
+                                + "properties including cyclic navigations")),
+                    new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString())
+                        .setExpression(
+                            new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESTwoKeyNav")) {
         return new CsdlEntitySet()
@@ -517,7 +506,14 @@ public class ContainerProvider {
                     .setTarget("ESBaseTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertySINav")
-                    .setTarget("SINav")));
+                    .setTarget("SINav")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with various navigation properties "
+                            + "including cyclic and nested navigations")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESKeyNavCont")) {
         return new CsdlEntitySet()
@@ -547,8 +543,14 @@ public class ContainerProvider {
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne")
-                    .setTarget("ESKeyNav")));
-        
+                    .setTarget("ESKeyNav")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with containment navigation properties")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
+
       } else if (name.equals("ESTwoKeyNavCont")) {
         return new CsdlEntitySet()
             .setName("ESTwoKeyNavCont")
@@ -565,8 +567,14 @@ public class ContainerProvider {
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETKeyNavContMany/NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne")
-                    .setTarget("ESKeyNav")));
-        
+                    .setTarget("ESKeyNav")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with containment navigation properties")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
+
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new CsdlEntitySet()
             .setName("ESBaseTwoKeyNav")
@@ -574,26 +582,58 @@ public class ContainerProvider {
             .setNavigationPropertyBindings(Arrays.asList(
                 new CsdlNavigationPropertyBinding()
                     .setPath("NavPropertyETKeyNavMany")
-                    .setTarget("ESKeyNav")));
+                    .setTarget("ESKeyNav")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with single inheritance and navigation properties")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESTwoBaseTwoKeyNav")) {
         return new CsdlEntitySet()
             .setName("ESTwoBaseTwoKeyNav")
-            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
+            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyNav)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with double inheritance and navigation properties")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESCompMixPrimCollComp")) {
         return new CsdlEntitySet()
             .setName("ESCompMixPrimCollComp")
-            .setType(EntityTypeProvider.nameETCompMixPrimCollComp);
+            .setType(EntityTypeProvider.nameETCompMixPrimCollComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with a complex type, "
+                            + "various nested primitve types and collections")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESFourKeyAlias")) {
         return new CsdlEntitySet()
             .setName("ESFourKeyAlias")
-            .setType(EntityTypeProvider.nameETFourKeyAlias);
+            .setType(EntityTypeProvider.nameETFourKeyAlias)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with compound key (four properties with key aliases")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESMixEnumDefCollComp")) {
         return new CsdlEntitySet().setName("ESMixEnumDefCollComp")
-            .setType(EntityTypeProvider.nameETMixEnumDefCollComp);
+            .setType(EntityTypeProvider.nameETMixEnumDefCollComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with properties of enum type, collection of enum type, type "
+                            + "definition, collection of type definition, complex and collection of complex")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       }
     }
 
