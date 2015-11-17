@@ -98,16 +98,22 @@ public class SearchTokenizer {
     }
 
     /**
-     * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
-     * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
+     * searchPhrase = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
+     *
+     * qchar-no-AMP-DQUOTE = qchar-unescaped / escape ( escape / quotation-mark )
+     *
      * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
+     *
+     * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+     *
+     * escape = "\" / "%5C" ; reverse solidus U+005C
+     *
      * pct-encoded-unescaped = "%" ( "0" / "1" / "3" / "4" / "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
      * / "%" "2" ( "0" / "1" / "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
      * / "%" "5" ( DIGIT / "A" / "B" / "D" / "E" / "F" )
      *
-     * qchar-no-AMP-DQUOTE = qchar-unescaped / escape ( escape / quotation-mark )
+     * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
      *
-     * escape = "\" / "%5C" ; reverse solidus U+005C
      * quotation-mark = DQUOTE / "%22"
      *
      * ALPHA = %x41-5A / %x61-7A
@@ -119,19 +125,100 @@ public class SearchTokenizer {
      */
     static boolean isAllowedPhrase(final char character) {
       // FIXME mibo: check missing
-      return isAlphaOrDigit(character)
-          || character == '-'
-          || character == '.'
-          || character == '_'
-          || character == '~'
-          || character == ':'
-          || character == '@'
-          || character == '/'
-          || character == '$'
-          || character == '\''
-          || character == '=';
+      return isQCharUnescaped(character) || isEscaped(character);
     }
 
+    /**
+     * escape = "\" / "%5C" ; reverse solidus U+005C
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isEscaped(char character) {
+      // TODO: mibo(151117): check how to implement
+      return false;
+    }
+
+    /**
+     * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isQCharUnescaped(char character) {
+      return isUnreserved(character)
+              || isPctEncodedUnescaped(character)
+              || isOtherDelims(character)
+              || character == ':'
+              || character == '@'
+              || character == '/'
+              || character == '$'
+              || character == '\''
+              || character == '=';
+    }
+
+    /**
+     * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isOtherDelims(char character) {
+      return character == '!'
+              || character == '('
+              || character == ')'
+              || character == '*'
+              || character == '+'
+              || character == ','
+              || character == ';';
+    }
+
+    /**
+     * pct-encoded-unescaped = "%" ( "0" / "1" / "3" / "4" / "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
+     * / "%" "2" ( "0" / "1" / "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
+     * / "%" "5" ( DIGIT / "A" / "B" / "D" / "E" / "F" )
+     *
+     * HEXDIG = DIGIT / A-to-F
+     *
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isPctEncodedUnescaped(char character) {
+      String hex = Integer.toHexString((int) character);
+      char aschar[] = hex.toCharArray();
+      if(aschar[0] == '%') {
+        if(aschar[1] == '2') {
+          return aschar[2] != '2' && isHexDigit(aschar[2]);
+        } else if(aschar[1] == '5') {
+          return aschar[2] != 'C' && isHexDigit(aschar[2]);
+        } else if(isHexDigit(aschar[1])) {
+          return isHexDigit(aschar[2]);
+        }
+      }
+      return false;
+    }
+
+    private static boolean isHexDigit(char character) {
+      return 'A' <= character && character <= 'F' // case A..F
+              || '0' <= character && character <= '9'; // case 0..9
+    }
+
+    /**
+     * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isUnreserved(char character) {
+      return isAlphaOrDigit(character)
+              || character == '-'
+              || character == '.'
+              || character == '_'
+              || character == '~';
+    }
+
+    /**
+     * ALPHA = %x41-5A / %x61-7A
+     * DIGIT = %x30-39
+     * @param character which is checked
+     * @return true if character is allowed
+     */
     private static boolean isAlphaOrDigit(char character) {
       return 'A' <= character && character <= 'Z' // case A..Z
           || 'a' <= character && character <= 'z' // case a..z
@@ -220,7 +307,7 @@ public class SearchTokenizer {
 
   private class SearchTermState extends LiteralState {
     public SearchTermState() {
-      super(Token.TERM);
+      super(null);
     }
 
     @Override

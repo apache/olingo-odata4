@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.parser.search;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -109,7 +110,40 @@ public class SearchTokenizerTest {
     SearchValidator.init("abc or \"xyz\"").addExpected(WORD, WORD, PHRASE).validate();
   }
 
+  /**
+   * https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-testcases.xml
+   * @throws Exception
+   */
   @Test
+  @Ignore("Test must be moved to SearchParserTest and SearchParserAndTokenizerTest")
+  public void parsePhraseAbnfTestcases() throws Exception {
+    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    SearchValidator.init("\"blue%20green\"").validate();
+    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    SearchValidator.init("\"blue%20green%22").validate();
+    //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
+    //    <Input>$search="blue\"green"</Input>
+    SearchValidator.init("\"blue\\\"green\"").validate();
+
+    //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
+    //    <Input>$search="blue\\green"</Input>
+    SearchValidator.init("\"blue\\\\green\"").validate();
+
+    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
+    SearchValidator.init("\"blue\"green\"").validate();
+
+    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
+    SearchValidator.init("\"blue%22green\"").validate();
+
+//    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
+//    <Input>$search=blue green</Input>
+//    SearchValidator.init("\"blue%20green\"").validate();
+    //    <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
+//    SearchValidator.init("blue%20green").validate();
+  }
+
+
+    @Test
   public void parseNot() throws Exception {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;

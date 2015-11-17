@@ -220,7 +220,7 @@ public class SearchParserTest extends SearchParser {
 
   private SearchExpression run(SearchQueryToken.Token... tokenArray) throws SearchParserException {
     List<SearchQueryToken> tokenList = prepareTokens(tokenArray);
-    SearchExpression se = parseInternal(tokenList);
+    SearchExpression se = parse(tokenList);
     assertNotNull(se);
     return se;
   }
@@ -236,7 +236,7 @@ public class SearchParserTest extends SearchParser {
         when(token.getLiteral()).thenReturn("word" + wordNumber);
         wordNumber++;
       } else if (aTokenArray == Token.PHRASE) {
-        when(token.getLiteral()).thenReturn("phrase" + phraseNumber);
+        when(token.getLiteral()).thenReturn("\"phrase" + phraseNumber + "\"");
         phraseNumber++;
       }
       when(token.toString()).thenReturn("" + aTokenArray);

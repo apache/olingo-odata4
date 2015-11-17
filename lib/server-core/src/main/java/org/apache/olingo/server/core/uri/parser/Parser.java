@@ -217,7 +217,7 @@ public class Parser {
             systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
             SearchParser searchParser = new SearchParser();
-            systemOption = searchParser.parse(path, option.value);
+            systemOption = searchParser.parse(option.value);
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);

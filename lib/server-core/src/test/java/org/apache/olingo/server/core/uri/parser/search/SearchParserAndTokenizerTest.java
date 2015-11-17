@@ -185,7 +185,7 @@ public class SearchParserAndTokenizerTest {
 
     private SearchExpression getSearchExpression() throws SearchParserException, SearchTokenizerException {
       SearchParser tokenizer = new SearchParser();
-      SearchOption result = tokenizer.parse(null, searchQuery);
+      SearchOption result = tokenizer.parse(searchQuery);
       Assert.assertNotNull(result);
       final SearchExpression searchExpression = result.getSearchExpression();
       Assert.assertNotNull(searchExpression);
@@ -195,5 +195,4 @@ public class SearchParserAndTokenizerTest {
       return searchExpression;
     }
   }
-
 }

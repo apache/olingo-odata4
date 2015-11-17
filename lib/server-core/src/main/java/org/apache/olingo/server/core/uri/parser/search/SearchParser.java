@@ -33,11 +33,11 @@ public class SearchParser {
   private Iterator<SearchQueryToken> tokens;
   private SearchQueryToken token;
 
-  public SearchOption parse(String path, String value) throws SearchParserException, SearchTokenizerException {
+  public SearchOption parse(String searchQuery) throws SearchParserException, SearchTokenizerException {
     SearchTokenizer tokenizer = new SearchTokenizer();
     SearchExpression searchExpression;
     try {
-      searchExpression = parseInternal(tokenizer.tokenize(value));
+      searchExpression = parse(tokenizer.tokenize(searchQuery));
     } catch (SearchTokenizerException e) {
       return null;
     }
@@ -46,7 +46,7 @@ public class SearchParser {
     return searchOption;
   }
 
-  protected SearchExpression parseInternal(List<SearchQueryToken> tokens) throws SearchParserException {
+  protected SearchExpression parse(List<SearchQueryToken> tokens) throws SearchParserException {
     this.tokens = tokens.iterator();
     nextToken();
     if (token == null) {
@@ -101,10 +101,7 @@ public class SearchParser {
   }
 
   private boolean isToken(SearchQueryToken.Token toCheckToken) {
-    if (token == null) {
-      return false;
-    }
-    return token.getToken() == toCheckToken;
+    return token != null && token.getToken() == toCheckToken;
   }
 
   private void validateToken(SearchQueryToken.Token toValidateToken) throws SearchParserException {
@@ -194,6 +191,6 @@ public class SearchParser {
   private SearchTerm processPhrase() {
     String literal = token.getLiteral();
     nextToken();
-    return new SearchTermImpl(literal);
+    return new SearchTermImpl(literal.substring(1,literal.length()-1));
   }
 }

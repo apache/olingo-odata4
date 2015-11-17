@@ -19,7 +19,7 @@
 package org.apache.olingo.server.core.uri.parser.search;
 
 public interface SearchQueryToken {
-  enum Token {OPEN, TERM, NOT, AND, OR, WORD, PHRASE, CLOSE}
+  enum Token {OPEN, NOT, AND, OR, WORD, PHRASE, CLOSE}
 
   Token getToken();
   String getLiteral();
