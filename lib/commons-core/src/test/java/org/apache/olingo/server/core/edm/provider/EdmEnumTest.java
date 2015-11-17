@@ -26,10 +26,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -53,16 +56,19 @@ public class EdmEnumTest {
   private final EdmEnumType int32FlagType;
 
   public EdmEnumTest() {
+    Edm edm = mock(Edm.class);
     final List<CsdlEnumMember> memberList = Arrays.asList(
         new CsdlEnumMember().setName("first").setValue("1"),
         new CsdlEnumMember().setName("second").setValue("64"));
 
     final FullQualifiedName enumName = new FullQualifiedName("namespace", "name");
 
-    instance = new EdmEnumTypeImpl(null, enumName,
+    instance = new EdmEnumTypeImpl(edm, enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
-    
+    when(edm.getEnumType(new FullQualifiedName("namespace.name"))).thenReturn(instance);
+    when(edm.getEnumType(new FullQualifiedName("alias.name"))).thenReturn(instance);
+
     otherInstance = new EdmEnumTypeImpl(null, enumName,
         new CsdlEnumType().setName("name").setMembers(memberList).setFlags(true)
             .setUnderlyingType(EdmPrimitiveTypeKind.SByte.getFullQualifiedName()));
@@ -170,11 +176,17 @@ public class EdmEnumTest {
   public void fromUriLiteral() throws Exception {
     assertNull(instance.fromUriLiteral(null));
     assertEquals("first", instance.fromUriLiteral("namespace.name'first'"));
+    assertEquals("first", instance.fromUriLiteral("alias.name'first'"));
 
     expectErrorInFromUriLiteral(instance, "");
+    expectErrorInFromUriLiteral(instance, "'");
+    expectErrorInFromUriLiteral(instance, "''");
     expectErrorInFromUriLiteral(instance, "name'first'");
+    expectErrorInFromUriLiteral(instance, "namespace.name'");
     expectErrorInFromUriLiteral(instance, "namespace.name'first");
     expectErrorInFromUriLiteral(instance, "namespace.namespace'first");
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'fi'rst");
+    expectErrorInFromUriLiteral(instance, "namespace.namespace'first'");
   }
 
   @Test

@@ -54,6 +54,7 @@ import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
+import org.apache.olingo.server.tecsvc.provider.TypeDefinitionProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -88,6 +89,14 @@ public class TestFullResourcePath {
         .isEntitySet("ESMixEnumDefCollComp")
         .goUpUriValidator()
         .goFilter().is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>");
+
+    testUri
+        .run("ESMixEnumDefCollComp(PropertyEnumString=Namespace1_Alias.ENString'String1',PropertyDefString='abc')")
+        .goPath()
+        .at(0)
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "Namespace1_Alias.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'abc'");
   }
 
   @Test
@@ -1417,6 +1426,26 @@ public class TestFullResourcePath {
         .isComplex("PropertyComp")
         .n()
         .isComplex("PropertyComp");
+
+    testUri.run("ESMixEnumDefCollComp(PropertyEnumString=olingo.odata.test1.ENString'String1',"
+        + "PropertyDefString='key1')/PropertyEnumString")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "olingo.odata.test1.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'key1'")
+        .n()
+        .isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false);
+
+    testUri.run("ESMixEnumDefCollComp(PropertyEnumString=olingo.odata.test1.ENString'String1',"
+        + "PropertyDefString='key1')/PropertyDefString")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "olingo.odata.test1.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'key1'")
+        .n()
+        .isPrimitiveProperty("PropertyDefString", TypeDefinitionProvider.nameTDString, false);
   }
 
   @Test
@@ -1451,6 +1480,26 @@ public class TestFullResourcePath {
         .isType(ComplexTypeProvider.nameCTPrimComp, true)
         .n()
         .isCount();
+
+    testUri.run("ESMixEnumDefCollComp(PropertyEnumString=olingo.odata.test1.ENString'String1',"
+        + "PropertyDefString='key1')/CollPropertyEnumString")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "olingo.odata.test1.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'key1'")
+        .n()
+        .isPrimitiveProperty("CollPropertyEnumString", EnumTypeProvider.nameENString, true);
+
+    testUri.run("ESMixEnumDefCollComp(PropertyEnumString=olingo.odata.test1.ENString'String1',"
+        + "PropertyDefString='key1')/CollPropertyDefString")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isEntitySet("ESMixEnumDefCollComp")
+        .isKeyPredicate(0, "PropertyEnumString", "olingo.odata.test1.ENString'String1'")
+        .isKeyPredicate(1, "PropertyDefString", "'key1'")
+        .n()
+        .isPrimitiveProperty("CollPropertyDefString", TypeDefinitionProvider.nameTDString, true);
   }
 
   @Test
@@ -2710,6 +2759,17 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isSelectText("PropertyCompNav/PropertyInt16");
 
+    testUri.run("ESMixEnumDefCollComp",
+        "$select=PropertyEnumString,PropertyDefString,CollPropertyEnumString,CollPropertyDefString")
+        .isKind(UriInfoKind.resource)
+        .goSelectItemPath(0).isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpUriValidator()
+        .goSelectItemPath(1).isPrimitiveProperty("PropertyDefString", TypeDefinitionProvider.nameTDString, false)
+        .goUpUriValidator()
+        .goSelectItemPath(2).isPrimitiveProperty("CollPropertyEnumString", EnumTypeProvider.nameENString, true)
+        .goUpUriValidator()
+        .goSelectItemPath(3).isPrimitiveProperty("CollPropertyDefString", TypeDefinitionProvider.nameTDString, true);
+
     testUri.runEx("ESKeyNav", "$expand=undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/undefined")
@@ -3592,7 +3652,6 @@ public class TestFullResourcePath {
         .root().right()
         .isType(PropertyProvider.nameDecimal);
 
-    //
     testFilter.runOnETAllPrim("PropertyDecimal ge PropertyDecimal")
         .is("<<PropertyDecimal> ge <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.GE)
@@ -4390,8 +4449,6 @@ public class TestFullResourcePath {
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    // testFilter.runOnETKeyNav(" Xcast(PropertyCompTwoPrim,olingo.odata.test1.CTAllPrim)");
-
     testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,olingo.odata.test1.ETKeyPrimNav)")
         .is("<cast(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyPrimNav>)>")
         .isMethod(MethodKind.CAST, 2)
@@ -4650,7 +4707,7 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
-    testFilter.runOnETTwoKeyNav(" isof(PropertyComp/PropertyComp/PropertyDuration,Edm.Duration)")
+    testFilter.runOnETTwoKeyNav("isof(PropertyComp/PropertyComp/PropertyDuration,Edm.Duration)")
         .is("<isof(<PropertyComp/PropertyComp/PropertyDuration>,<Edm.Duration>)>")
         .root()
         .isMethod(MethodKind.ISOF, 2)
@@ -4682,6 +4739,20 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().goParameter(1).isTypedLiteral(PropertyProvider.nameGuid);
+
+    testFilter.runOnETMixEnumDefCollComp("isof(PropertyEnumString,Namespace1_Alias.ENString)")
+        .isMethod(MethodKind.ISOF, 2)
+        .goParameter(0).goPath()
+        .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
+        .root().goParameter(1).isTypedLiteral(EnumTypeProvider.nameENString);
+
+    testFilter.runOnETMixEnumDefCollComp("isof(PropertyDefString,Namespace1_Alias.TDString)")
+        .isMethod(MethodKind.ISOF, 2)
+        .goParameter(0).goPath()
+        .first().isPrimitiveProperty("PropertyDefString", TypeDefinitionProvider.nameTDString, false)
+        .goUpFilterValidator()
+        .root().goParameter(1).isTypedLiteral(TypeDefinitionProvider.nameTDString);
   }
 
   @Test
@@ -4690,7 +4761,7 @@ public class TestFullResourcePath {
     testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.HAS)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
@@ -4700,8 +4771,7 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
-        .isType(EnumTypeProvider.nameENString)
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
@@ -4715,7 +4785,7 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().left().goPath()
         .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().left().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
@@ -4723,8 +4793,7 @@ public class TestFullResourcePath {
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
-        .isType(EnumTypeProvider.nameENString)
+        .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
@@ -4732,8 +4801,7 @@ public class TestFullResourcePath {
         .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String,String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
-        .isType(EnumTypeProvider.nameENString)
+        .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String", "String3"));
 
@@ -4742,7 +4810,8 @@ public class TestFullResourcePath {
         .root()
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
-        .first().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
+        .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
         .root().right().isNull();
 
     testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf')")
@@ -4957,14 +5026,14 @@ public class TestFullResourcePath {
     testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
         .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String1>>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
         .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String2>>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString)
+        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
 
@@ -4974,7 +5043,8 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
         .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
     testFilter
@@ -4986,10 +5056,11 @@ public class TestFullResourcePath {
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath()
         .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator()
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
         .root().right().goPath()
         .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isComplex("PropertyEnumString").isType(EnumTypeProvider.nameENString).goUpFilterValidator();
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false);
 
     testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has ENString'String1'")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -5330,12 +5401,14 @@ public class TestFullResourcePath {
 
     testFilter.runOrderByOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
         .isSortOrder(0, false)
-        .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOrderByOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1' desc")
         .isSortOrder(0, true)
-        .goOrder(0).left().goPath().isComplex("PropertyEnumString").goUpFilterValidator()
+        .goOrder(0).left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 1")

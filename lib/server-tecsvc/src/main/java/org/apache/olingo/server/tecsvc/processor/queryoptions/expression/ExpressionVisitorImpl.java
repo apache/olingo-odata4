@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -51,12 +50,10 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   private final Entity entity;
   private final UriInfoResource uriInfo;
-  private final Edm edm;
 
-  public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo, final Edm edm) {
+  public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo) {
     this.entity = entity;
     this.uriInfo = uriInfo;
-    this.edm = edm;
   }
 
   @Override
@@ -174,7 +171,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitLiteral(final Literal literal) throws ExpressionVisitException, ODataApplicationException {
-    return new UntypedOperand(literal.getText(), edm);
+    return new UntypedOperand(literal.getText());
   }
 
   @Override
@@ -209,7 +206,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitAlias(final String aliasName) throws ExpressionVisitException, ODataApplicationException {
-    return new UntypedOperand(uriInfo.getValueForAlias(aliasName), edm);
+    return new UntypedOperand(uriInfo.getValueForAlias(aliasName));
   }
 
   @Override

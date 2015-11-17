@@ -20,21 +20,15 @@ package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operan
 
 import java.util.Locale;
 
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 
 public class UntypedOperand extends VisitorOperand {
 
-  private final Edm edm;
-
-  public UntypedOperand(final String literal, final Edm edm) {
+  public UntypedOperand(final String literal) {
     super(literal);
-    this.edm = edm;
   }
 
   @Override
@@ -130,17 +124,6 @@ public class UntypedOperand extends VisitorOperand {
 
     if ((newValue = tryCast(literal, primDouble)) != null) {
       return new TypedOperand(newValue, primDouble);
-    }
-
-    // Enum
-    final EdmSchema schema = edm.getSchema(edm.getEntityContainer().getNamespace());
-    final String enumValue = schema.getAlias() != null && literal.startsWith(schema.getAlias()) ?
-        literal.replace(schema.getAlias(), schema.getNamespace()) :
-        literal;
-    for (final EdmEnumType enumType : schema.getEnumTypes()) {
-      if ((newValue = tryCast(enumValue, enumType)) != null) {
-        return new TypedOperand(newValue, enumType);
-      }        
     }
 
     throw new ODataApplicationException("Could not determine type for literal " + literal,
