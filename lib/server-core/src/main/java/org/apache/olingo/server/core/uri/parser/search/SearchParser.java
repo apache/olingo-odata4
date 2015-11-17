@@ -39,7 +39,9 @@ public class SearchParser {
     try {
       searchExpression = parse(tokenizer.tokenize(searchQuery));
     } catch (SearchTokenizerException e) {
-      return null;
+      String message = e.getMessage();
+      throw new SearchParserException("Tokenizer exception with message: " + message,
+              SearchParserException.MessageKeys.TOKENIZER_EXCEPTION, message);
     }
     final SearchOptionImpl searchOption = new SearchOptionImpl();
     searchOption.setSearchExpression(searchExpression);

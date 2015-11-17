@@ -23,17 +23,19 @@ import static org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOp
 
 import java.lang.reflect.Field;
 
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SearchParserAndTokenizerTest {
 
   @Test
   public void basicParsing() throws Exception {
+    SearchExpressionValidator.init("\"99\"")
+            .validate(with("99"));
     SearchExpressionValidator.init("a")
         .validate(with("a"));
     SearchExpressionValidator.init("a AND b")
@@ -70,16 +72,10 @@ public class SearchParserAndTokenizerTest {
         .validate("{{'a' OR 'b'} AND {NOT 'c'}}");
   }
 
-  @Ignore
   @Test
-  public void sebuilder() {
-    System.out.println(with("c", or("a", and("b"))).toString());
-    System.out.println(with("a", and("b", and("c"))).toString());
-    System.out.println(with("a").toString());
-    System.out.println(with(not("a")).toString());
-    System.out.println(with("a", and("b")).toString());
-    System.out.println(with("a", or("b")).toString());
-    System.out.println(with("a", and(not("b"))).toString());
+  public void invalidSearchQuery() throws Exception {
+    SearchExpressionValidator.init("99").validate(SearchParserException.class,
+            SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 
   private static SearchExpression with(String term) {
@@ -162,11 +158,13 @@ public class SearchParserAndTokenizerTest {
       return this;
     }
 
-    private void validate(Class<? extends Exception> exception) throws SearchTokenizerException {
+    private void validate(Class<? extends ODataLibraryException> exception, ODataLibraryException.MessageKey key)
+            throws SearchTokenizerException {
       try {
-        new SearchTokenizer().tokenize(searchQuery);
-      } catch (Exception e) {
+        validate(searchQuery);
+      } catch (ODataLibraryException e) {
         Assert.assertEquals(exception, e.getClass());
+        Assert.assertEquals(key, e.getMessageKey());
         return;
       }
       Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
