@@ -19,26 +19,18 @@
 package myservice.mynamespace.service;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import myservice.mynamespace.data.Storage;
-
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -55,6 +47,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
@@ -72,6 +65,9 @@ import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
+
+import myservice.mynamespace.data.Storage;
+import myservice.mynamespace.util.Util;
 
 public class DemoEntityCollectionProcessor implements EntityCollectionProcessor {
 
@@ -135,17 +131,59 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
 	
 	private void readEntityCollectionInternal(ODataRequest request, ODataResponse response, UriInfo uriInfo,
 	    ContentType responseFormat) throws ODataApplicationException, SerializerException {
-	// 1st: retrieve the requested EntitySet from the uriInfo (representation of the parsed URI)
-    List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    // in our example, the first segment is the EntitySet
-    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
-    EdmEntitySet edmEntitySet = uriResourceEntitySet.getEntitySet();
+	  
+	  // Read the collection or process ONE navigation property
+	  EdmEntitySet edmEntitySet = null; // we'll need this to build the ContextURL
+    EntityCollection entityCollection = null; // we'll need this to set the response body
 
-    // 2nd: fetch the data from backend for this requested EntitySetName and deliver as EntitySet
-    EntityCollection entityCollection = storage.readEntitySetData(edmEntitySet);
+    // 1st retrieve the requested EntitySet from the uriInfo (representation of the parsed URI)
+    List<UriResource> resourceParts = uriInfo.getUriResourceParts();
+    int segmentCount = resourceParts.size();
+
+    UriResource uriResource = resourceParts.get(0); // in our example, the first segment is the EntitySet
+    if (!(uriResource instanceof UriResourceEntitySet)) {
+      throw new ODataApplicationException("Only EntitySet is supported",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
+
+    UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResource;
+    EdmEntitySet startEdmEntitySet = uriResourceEntitySet.getEntitySet();
+
+    if (segmentCount == 1) { // this is the case for: DemoService/DemoService.svc/Categories
+      edmEntitySet = startEdmEntitySet; // the response body is built from the first (and only) entitySet
+
+      // 2nd: fetch the data from backend for this requested EntitySetName and deliver as EntitySet
+      entityCollection = storage.readEntitySetData(startEdmEntitySet);
+    } else if (segmentCount == 2) { // in case of navigation: DemoService.svc/Categories(3)/Products
+
+      UriResource lastSegment = resourceParts.get(1); // in our example we don't support more complex URIs
+      if (lastSegment instanceof UriResourceNavigation) {
+        UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) lastSegment;
+        EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
+        // from Categories(1) to Products
+        edmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
+
+        // 2nd: fetch the data from backend
+        // first fetch the entity where the first segment of the URI points to
+        List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
+        // e.g. for Categories(3)/Products we have to find the single entity: Category with ID 3
+        Entity sourceEntity = storage.readEntityData(startEdmEntitySet, keyPredicates);
+        // error handling for e.g. DemoService.svc/Categories(99)/Products
+        if (sourceEntity == null) {
+          throw new ODataApplicationException("Entity not found.",
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        }
+        // then fetch the entity collection where the entity navigates to
+        // note: we don't need to check uriResourceNavigation.isCollection(),
+        // because we are the EntityCollectionProcessor
+        entityCollection = storage.getRelatedEntityCollection(sourceEntity, uriResourceNavigation);
+      }
+    } else { // this would be the case for e.g. Products(1)/Category/Products
+      throw new ODataApplicationException("Not supported",
+          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+    }
+    List<Entity> modifiedEntityList = entityCollection.getEntities();
     EntityCollection modifiedEntityCollection = new EntityCollection();
-    List<Entity> modifiedEntityList = new ArrayList<Entity>();
-    modifiedEntityList.addAll(entityCollection.getEntities());
     
     // 3rd: Apply system query option
     // The system query options have to be applied in a defined order
@@ -161,7 +199,8 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     modifiedEntityList = applyTopQueryOption(modifiedEntityList, uriInfo.getTopOption());
     // 3.6.) Server driven paging (not part of this tutorial)
     // 3.7.) $expand
-    modifiedEntityList = applyExpandQueryOption(modifiedEntityList, edmEntitySet, uriInfo.getExpandOption());
+    // Nested system query options are not implemented
+    validateNestedExpxandSystemQueryOptions(uriInfo.getExpandOption());
     // 3.8.) $select
     SelectOption selectOption = uriInfo.getSelectOption();
     
@@ -198,73 +237,6 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
 	}
 	
-  private List<Entity> applyExpandQueryOption(List<Entity> modifiedEntityList,
-      EdmEntitySet edmEntitySet, ExpandOption expandOption) {
-
-    // in our example: http://localhost:8080/DemoService/DemoService.svc/Categories/$expand=Products
-    // or http://localhost:8080/DemoService/DemoService.svc/Products?$expand=Category
-    if (expandOption != null) {
-      // retrieve the EdmNavigationProperty from the expand expression
-      // Note: in our example, we have only one NavigationProperty, so we can directly access it
-      EdmNavigationProperty edmNavigationProperty = null;
-      ExpandItem expandItem = expandOption.getExpandItems().get(0);
-      if (expandItem.isStar()) {
-        List<EdmNavigationPropertyBinding> bindings = edmEntitySet.getNavigationPropertyBindings();
-        // we know that there are navigation bindings
-        // however normally in this case a check if navigation bindings exists is done
-        if (!bindings.isEmpty()) {
-          // can in our case only be 'Category' or 'Products', so we can take the first
-          EdmNavigationPropertyBinding binding = bindings.get(0);
-          EdmElement property = edmEntitySet.getEntityType().getProperty(binding.getPath());
-          // we don't need to handle error cases, as it is done in the Olingo library
-          if (property instanceof EdmNavigationProperty) {
-            edmNavigationProperty = (EdmNavigationProperty) property;
-          }
-        }
-      } else {
-        // can be 'Category' or 'Products', no path supported
-        UriResource uriResource = expandItem.getResourcePath().getUriResourceParts().get(0);
-        // we don't need to handle error cases, as it is done in the Olingo library
-        if (uriResource instanceof UriResourceNavigation) {
-          edmNavigationProperty = ((UriResourceNavigation) uriResource).getProperty();
-        }
-      }
-
-      // can be 'Category' or 'Products', no path supported
-      // we don't need to handle error cases, as it is done in the Olingo library
-      if (edmNavigationProperty != null) {
-        String navPropName = edmNavigationProperty.getName();
-        EdmEntityType expandEdmEntityType = edmNavigationProperty.getType();
-
-        for (Entity entity : modifiedEntityList) {
-          Link link = new Link();
-          link.setTitle(navPropName);
-          link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
-          link.setRel(Constants.NS_ASSOCIATION_LINK_REL + navPropName);
-
-          if (edmNavigationProperty.isCollection()) { // in case of Categories/$expand=Products
-            // fetch the data for the $expand (to-many navigation) from backend
-            EntityCollection expandEntityCollection = storage.getRelatedEntityCollection(entity, expandEdmEntityType);
-            link.setInlineEntitySet(expandEntityCollection);
-            final URI entityId = expandEntityCollection.getId();
-            link.setHref(entityId != null ? entityId.toASCIIString() : null);
-          } else { // in case of Products?$expand=Category
-            // fetch the data for the $expand (to-one navigation) from backend
-            // here we get the data for the expand
-            Entity expandEntity = storage.getRelatedEntity(entity, expandEdmEntityType);
-            link.setInlineEntity(expandEntity);
-            link.setHref(expandEntity != null ? expandEntity.getId().toASCIIString() : null);
-          }
-
-          // set the link - containing the expanded data - to the current entity
-          entity.getNavigationLinks().add(link);
-        }
-      }
-    }
-
-    return modifiedEntityList;
-  }
-
   private List<Entity> applyTopQueryOption(List<Entity> entityList, TopOption topOption)
       throws ODataApplicationException {
 
@@ -364,7 +336,29 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     
     return entityList;
   }
-
+  
+  private void validateNestedExpxandSystemQueryOptions(final ExpandOption expandOption) 
+      throws ODataApplicationException {
+    if(expandOption == null) {
+      return;
+    }
+    
+    for(final ExpandItem item : expandOption.getExpandItems()) {
+      if(    item.getCountOption() != null 
+          || item.getFilterOption() != null 
+          || item.getLevelsOption() != null
+          || item.getOrderByOption() != null
+          || item.getSearchOption() != null
+          || item.getSelectOption() != null
+          || item.getSkipOption() != null
+          || item.getTopOption() != null) {
+        
+        throw new ODataApplicationException("Nested expand system query options are not implemented", 
+            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),Locale.ENGLISH);
+      }
+    }
+  }
+  
   private List<Entity> applyFilterQueryOption(List<Entity> entityList, FilterOption filterOption)
       throws ODataApplicationException {
 

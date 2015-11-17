@@ -47,6 +47,9 @@
 	<module>p9_action</module>
 	<module>p9_action_preparation</module>
 	<module>p10_media</module>
+    <module>p11_batch</module>
+    <module>p12_deep_insert</module>
+    <module>p12_deep_insert_preparation</module>
   </modules>
 
   <build>
