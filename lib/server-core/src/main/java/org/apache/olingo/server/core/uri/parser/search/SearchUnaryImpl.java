@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,26 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.queryoption;
+package org.apache.olingo.server.core.uri.parser.search;
 
-import org.apache.olingo.server.api.uri.queryoption.SearchOption;
-import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchUnaryOperatorKind;
 
-public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOption {
+public class SearchUnaryImpl extends SearchExpressionImpl implements SearchUnary {
+  private final SearchTerm operand;
 
-  private SearchExpression searchExpression;
-
-  public SearchOptionImpl() {
-    setKind(SystemQueryOptionKind.SEARCH);
+  public SearchUnaryImpl(SearchTerm operand) {
+    this.operand = operand;
   }
 
   @Override
-  public SearchExpression getSearchExpression() {
-    return searchExpression;
+  public SearchUnaryOperatorKind getOperator() {
+    return SearchUnaryOperatorKind.NOT;
   }
 
-  public void setSearchExpression(SearchExpression searchExpression) {
-    this.searchExpression = searchExpression;
+  @Override
+  public SearchTerm getOperand() {
+    return operand;
+  }
+
+  @Override
+  public String toString() {
+    return "{" + getOperator().name() + " " + operand + '}';
   }
 }

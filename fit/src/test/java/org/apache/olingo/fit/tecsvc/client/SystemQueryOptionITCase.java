@@ -21,10 +21,11 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
-import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -301,18 +302,41 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void negativeSearch() {
+  public void basicSearch() {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
-            .search("ABC")
+            .search("Second")
             .build());
     setCookieHeader(request);
-    try {
-      request.execute();
-      fail();
-    } catch (ODataServerErrorException e) {
-      assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
-    }
+    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(1, entities.size());
+  }
+
+  @Test
+  public void andSearch() {
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM)
+            .search("Second AND positive")
+            .build());
+    setCookieHeader(request);
+    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(0, entities.size());
+  }
+
+  @Test
+  public void orSearch() {
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM)
+            .search("Second OR positive")
+            .build());
+    setCookieHeader(request);
+    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(2, entities.size());
   }
 }

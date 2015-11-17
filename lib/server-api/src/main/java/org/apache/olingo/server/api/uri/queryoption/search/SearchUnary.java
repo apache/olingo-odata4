@@ -18,8 +18,9 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.search;
 
-public interface SearchUnary {
+public interface SearchUnary extends SearchExpression {
 
-  SearchExpression getOperand();
+  SearchUnaryOperatorKind getOperator();
+  SearchTerm getOperand();
 
 }
