@@ -79,6 +79,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoBaseTwoKeyNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyNavCont));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoKeyNavCont));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));

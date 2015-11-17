@@ -57,6 +57,8 @@ public class EntityTypeProvider {
       "ETKeyPrimNav");
   public static final FullQualifiedName nameETKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyNavCont");
+  public static final FullQualifiedName nameETTwoKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETTwoKeyNavCont");
   public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyTwoKeyComp");
   public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETMedia");
@@ -339,11 +341,25 @@ public class EntityTypeProvider {
               PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
               PropertyProvider.propertyCompNavCont))
           .setNavigationProperties(Arrays.asList(
-              PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
+              PropertyProvider.navPropertyETTwoKeyNavOneCT_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_CT_ETTwoKeyNav,
+              PropertyProvider.navPropertyETTwoKeyNavContOne_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_ETTwoKeyNav
               ));
 
-    } else if (entityTypeName.equals(nameETTwoKeyNav)) {
+    } else if (entityTypeName.equals(nameETTwoKeyNavCont)) {
+      return new CsdlEntityType()
+      .setName("ETTwoKeyNavCont")
+      .setKey(Arrays.asList(
+          new CsdlPropertyRef().setName("PropertyInt16"),
+          new CsdlPropertyRef().setName("PropertyString")))
+      .setProperties(Arrays.asList(
+          PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable))
+      .setNavigationProperties(Arrays.asList(
+          PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
+          PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
+          ));
+} else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new CsdlEntityType()
           .setName("ETTwoKeyNav")
           .setKey(Arrays.asList(

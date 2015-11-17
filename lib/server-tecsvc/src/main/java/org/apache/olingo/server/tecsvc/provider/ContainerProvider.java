@@ -99,6 +99,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixEnumDefCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNavCont"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNavCont"));
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -524,24 +525,48 @@ public class ContainerProvider {
             .setType(EntityTypeProvider.nameETKeyNavCont)
             .setNavigationPropertyBindings(Arrays.asList(
                 new CsdlNavigationPropertyBinding()
-                    .setPath("NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setPath("NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
-                    .setPath("NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setPath("NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
-                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setPath("NavPropertyETTwoKeyNavContOne")
+                    .setTarget("ESTwoKeyNavCont"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETTwoKeyNavContMany")
+                    .setTarget("ESTwoKeyNavCont"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
-                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setPath("PropertyCompNavCont/NavPropertyETKeyNavMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
-                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContMany/NavPropertyETKeyNavOne")
+                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav"),
                 new CsdlNavigationPropertyBinding()
-                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavContOne/NavPropertyETKeyNavOne")
+                    .setPath("PropertyCompNavCont/NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne")
                     .setTarget("ESKeyNav")));
-
+        
+      } else if (name.equals("ESTwoKeyNavCont")) {
+        return new CsdlEntitySet()
+            .setName("ESTwoKeyNavCont")
+            .setType(EntityTypeProvider.nameETTwoKeyNavCont)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavContOne/NavPropertyETTwoKeyNavContOne")
+                    .setTarget("ESTwoKeyNavCont"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavContMany/NavPropertyETTwoKeyNavContOne")
+                    .setTarget("ESTwoKeyNavCont"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavContOne/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETKeyNavContMany/NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne")
+                    .setTarget("ESKeyNav")));
+        
       } else if (name.equals("ESBaseTwoKeyNav")) {
         return new CsdlEntitySet()
             .setName("ESBaseTwoKeyNav")

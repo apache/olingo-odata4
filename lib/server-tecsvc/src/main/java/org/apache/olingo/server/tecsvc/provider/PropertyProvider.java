@@ -692,19 +692,19 @@ public class PropertyProvider {
       .setCollection(false)
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
-  public static final CsdlNavigationProperty collectionNavPropertyETKeyNavContMany_CT_ETKeyNav =
+  public static final CsdlNavigationProperty collectionNavPropertyETKeyNavMany_CT_ETKeyNav =
       new CsdlNavigationProperty()
-          .setName("NavPropertyETKeyNavContMany")
+          .setName("NavPropertyETKeyNavMany")
           .setCollection(true)
           .setContainsTarget(true)
           .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
-      new CsdlNavigationProperty()
-          .setName("NavPropertyETTwoKeyNavContMany")
-          .setCollection(true)
-          .setContainsTarget(true)
-          .setType(EntityTypeProvider.nameETKeyNav);
+//  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETKeyNav =
+//      new CsdlNavigationProperty()
+//          .setName("NavPropertyETTwoKeyNavContMany")
+//          .setCollection(true)
+//          .setContainsTarget(true)
+//          .setType(EntityTypeProvider.nameETKeyNav);
 
   public static final CsdlNavigationProperty navPropertyETKeyNavOne_ETKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETKeyNavOne")
@@ -737,24 +737,47 @@ public class PropertyProvider {
       .setName("NavPropertyETAllPrimOne")
       .setType(EntityTypeProvider.nameETAllPrim);
 
-  public static final CsdlNavigationProperty navPropertyETKeyNavContOne_CT_ETeyNav = new CsdlNavigationProperty()
-      .setName("NavPropertyETKeyNavContOne")
+  public static final CsdlNavigationProperty navPropertyETKeyNavOne_CT_ETeyNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETKeyNavOne")
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETKeyNav);
 
-  public static final CsdlNavigationProperty navPropertyETTwoKeyNavContOne_CT_ETKeyNav = new CsdlNavigationProperty()
-      .setName("NavPropertyETTwoKeyNavContOne")
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavOne_CT_ETTwoKeyNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETTwoKeyNavOne")
       .setContainsTarget(true)
-      .setType(EntityTypeProvider.nameETKeyNav);
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
+
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavContOne_ETTwoKeyNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETTwoKeyNavContOne")
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
 
   public static final CsdlNavigationProperty navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav = new CsdlNavigationProperty()
       .setName("NavPropertyETTwoKeyNavContOne")
       .setContainsTarget(true)
       .setType(EntityTypeProvider.nameETTwoKeyNav);
 
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_ETTwoKeyNav =
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoKeyNavContMany")
+          .setContainsTarget(false)
+          .setCollection(true)
+          .setType(EntityTypeProvider.nameETTwoKeyNav);
+
   public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav =
       new CsdlNavigationProperty()
           .setName("NavPropertyETTwoKeyNavContMany")
+          .setContainsTarget(false)
+          .setCollection(true)
+          .setType(EntityTypeProvider.nameETTwoKeyNav);
+
+  public static final CsdlNavigationProperty navPropertyETTwoKeyNavOneCT_ETTwoKeyNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETTwoKeyNavOne")
+      .setContainsTarget(true)
+      .setType(EntityTypeProvider.nameETTwoKeyNav);
+
+  public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavMany_CT_ETTwoKeyNav =
+      new CsdlNavigationProperty()
+          .setName("NavPropertyETTwoKeyNavMany")
           .setContainsTarget(true)
           .setCollection(true)
           .setType(EntityTypeProvider.nameETTwoKeyNav);
