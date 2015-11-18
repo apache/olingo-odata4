@@ -65,13 +65,22 @@ public class SearchTokenizer {
     }
 
     public State forbidden(char c) throws SearchTokenizerException {
-      throw new SearchTokenizerException("Forbidden character for " + this.getClass().getName() + "->" + c,
+      throw new SearchTokenizerException("Forbidden character in state " + this.getToken() + "->" + c,
           SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER, "" + c);
+    }
+
+    public State invalid() throws SearchTokenizerException {
+      throw new SearchTokenizerException("Token " + this.getToken() + " is in invalid state ",
+          SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
     }
 
     public State finish() {
       this.finished = true;
       return this;
+    }
+    public State finishAs(Token token) {
+      this.finished = true;
+      return changeToken(token);
     }
 
     public boolean isFinished() {
@@ -83,6 +92,11 @@ public class SearchTokenizer {
     }
 
     public State close() {
+      return this;
+    }
+
+    protected State changeToken(Token token) {
+      this.token = token;
       return this;
     }
 
@@ -240,7 +254,7 @@ public class SearchTokenizer {
 
     @Override
     public String toString() {
-      return this.getToken().toString() + "=>{" + getLiteral() + "}";
+      return this.getToken() + "=>{" + getLiteral() + "}";
     }
   }
 
@@ -361,12 +375,28 @@ public class SearchTokenizer {
     }
 
     @Override
+    public State finish() {
+      String tmpLiteral = literal.toString();
+      if(tmpLiteral.length() == 3) {
+        if(Token.AND.name().equals(tmpLiteral)) {
+          return finishAs(Token.AND);
+        } else if(Token.NOT.name().equals(tmpLiteral)) {
+          return finishAs(Token.NOT);
+        }
+      } else if(tmpLiteral.length() == 2 && Token.OR.name().equals(tmpLiteral)) {
+        return finishAs(Token.OR);
+      }
+      return super.finish();
+    }
+
+    @Override
     public State close() {
       return finish();
     }
   }
 
   private class SearchPhraseState extends LiteralState {
+    private boolean closed = false;
     public SearchPhraseState(char c) throws SearchTokenizerException {
       super(Token.PHRASE, c);
       if (c != QUOTATION_MARK) {
@@ -376,18 +406,33 @@ public class SearchTokenizer {
 
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
-      if (isAllowedPhrase(c)) {
+      if(closed) {
+        finish();
+        if (c == CHAR_CLOSE) {
+          return new CloseState();
+        } else if (isWhitespace(c)) {
+          return new RwsState();
+        }
+      } else if (isAllowedPhrase(c)) {
         return allowed(c);
       } else if (isWhitespace(c)) {
         return allowed(c);
       } else if (c == QUOTATION_MARK) {
-        finish();
-        allowed(c);
-        return new SearchExpressionState();
-      } else if (isFinished()) {
-        return new SearchExpressionState().init(c);
+        if(literal.length() == 1) {
+          return invalid();
+        }
+        closed = true;
+        return allowed(c);
       }
       return forbidden(c);
+    }
+
+    @Override
+    public State close() {
+      if(closed) {
+        return finish();
+      }
+      return super.close();
     }
   }
 
@@ -564,6 +609,9 @@ public class SearchTokenizer {
 
     if (state.close().isFinished()) {
       states.add(state);
+    } else {
+      throw new SearchTokenizerException("Last parsed state '" + state.toString() + "' is not finished.",
+          SearchTokenizerException.MessageKeys.NOT_FINISHED_QUERY);
     }
 
     return states;

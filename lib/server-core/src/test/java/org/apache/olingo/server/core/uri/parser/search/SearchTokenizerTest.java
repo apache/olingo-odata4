@@ -91,7 +91,7 @@ public class SearchTokenizerTest {
     SearchTokenizer tokenizer = new SearchTokenizer();
     List<SearchQueryToken> result;
 
-    SearchValidator.init("abc AND \"x-y_z\" AND olingo").validate();
+    TokenizerValidator.init("abc AND \"x-y_z\" AND olingo").validate();
 
     //
     result = tokenizer.tokenize("\"abc\"");
@@ -113,7 +113,7 @@ public class SearchTokenizerTest {
     Assert.assertEquals(PHRASE, result.get(0).getToken());
     Assert.assertEquals("\"99_88.\"", result.get(0).getLiteral());
 
-    SearchValidator.init("abc or \"xyz\"").addExpected(WORD, WORD, PHRASE).validate();
+    TokenizerValidator.init("abc or \"xyz\"").validate(WORD, WORD, PHRASE);
   }
 
   /**
@@ -124,22 +124,22 @@ public class SearchTokenizerTest {
   @Ignore("Test must be moved to SearchParserTest and SearchParserAndTokenizerTest")
   public void parsePhraseAbnfTestcases() throws Exception {
     //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
-    SearchValidator.init("\"blue%20green\"").validate();
+    TokenizerValidator.init("\"blue%20green\"").validate();
     //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
-    SearchValidator.init("\"blue%20green%22").validate();
+    TokenizerValidator.init("\"blue%20green%22").validate();
     //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
     //    <Input>$search="blue\"green"</Input>
-    SearchValidator.init("\"blue\\\"green\"").validate();
+    TokenizerValidator.init("\"blue\\\"green\"").validate();
 
     //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
     //    <Input>$search="blue\\green"</Input>
-    SearchValidator.init("\"blue\\\\green\"").validate();
+    TokenizerValidator.init("\"blue\\\\green\"").validate();
 
     //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
-    SearchValidator.init("\"blue\"green\"").validate();
+    TokenizerValidator.init("\"blue\"green\"").validate();
 
     //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
-    SearchValidator.init("\"blue%22green\"").validate();
+    TokenizerValidator.init("\"blue%22green\"").validate();
 
 //    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
 //    <Input>$search=blue green</Input>
@@ -160,10 +160,10 @@ public class SearchTokenizerTest {
     Assert.assertEquals(NOT, result.get(0).getToken());
     Assert.assertEquals(WORD, result.get(1).getToken());
 
-    SearchValidator.init("not abc").addExpected(WORD, WORD).validate();
-    SearchValidator.init("NOT    abc").addExpected(NOT, WORD).validate();
-    SearchValidator.init("NOT    \"abc\"").addExpected(NOT, PHRASE).validate();
-    SearchValidator.init("NOT (sdf)").validate(SearchTokenizerException.class);
+    TokenizerValidator.init("not abc").addExpected(WORD, WORD).validate();
+    TokenizerValidator.init("NOT    abc").addExpected(NOT, WORD).validate();
+    TokenizerValidator.init("NOT    \"abc\"").addExpected(NOT, PHRASE).validate();
+    TokenizerValidator.init("NOT (sdf)").validate(SearchTokenizerException.class);
   }
 
   @Test
@@ -187,16 +187,16 @@ public class SearchTokenizerTest {
     Assert.assertEquals(OR, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
 
-    SearchValidator.init("abc or xyz").addExpected(WORD, WORD, WORD).validate();
+    TokenizerValidator.init("abc or xyz").addExpected(WORD, WORD, WORD).validate();
   }
 
   @Test
   public void parseImplicitAnd() throws SearchTokenizerException {
-    SearchValidator.init("a b").addExpected(WORD, WORD).validate();
-    SearchValidator.init("a b OR c").addExpected(WORD, WORD, OR, WORD).validate();
-    SearchValidator.init("a bc OR c").addExpected(WORD, WORD, OR, WORD).validate();
-    SearchValidator.init("a bc c").addExpected(WORD, WORD, WORD).validate();
-    SearchValidator.init("(a OR x) bc c").addExpected(OPEN, WORD, OR, WORD, CLOSE, WORD, WORD).validate();
+    TokenizerValidator.init("a b").addExpected(WORD, WORD).validate();
+    TokenizerValidator.init("a b OR c").addExpected(WORD, WORD, OR, WORD).validate();
+    TokenizerValidator.init("a bc OR c").addExpected(WORD, WORD, OR, WORD).validate();
+    TokenizerValidator.init("a bc c").addExpected(WORD, WORD, WORD).validate();
+    TokenizerValidator.init("(a OR x) bc c").addExpected(OPEN, WORD, OR, WORD, CLOSE, WORD, WORD).validate();
   }
 
   @Test
@@ -261,7 +261,7 @@ public class SearchTokenizerTest {
     Assert.assertEquals(OR, result.get(3).getToken());
     Assert.assertEquals(WORD, result.get(4).getToken());
 
-    SearchValidator.init("abc AND ANDsomething")
+    TokenizerValidator.init("abc AND ANDsomething")
         .addExpected(WORD, AND, WORD).validate();
   }
 
@@ -282,7 +282,7 @@ public class SearchTokenizerTest {
     Assert.assertEquals(OR, it.next().getToken());
     Assert.assertEquals(WORD, it.next().getToken());
 
-    SearchValidator.init("foo AND bar OR foo AND baz OR that AND bar OR that AND baz")
+    TokenizerValidator.init("foo AND bar OR foo AND baz OR that AND bar OR that AND baz")
         .addExpected(WORD, "foo").addExpected(AND)
         .addExpected(WORD, "bar").addExpected(OR)
         .addExpected(WORD, "foo").addExpected(AND)
@@ -294,7 +294,7 @@ public class SearchTokenizerTest {
         .validate();
 
 
-    SearchValidator.init("(foo OR that) AND (bar OR baz)")
+    TokenizerValidator.init("(foo OR that) AND (bar OR baz)")
         .addExpected(OPEN)
         .addExpected(WORD, "foo").addExpected(OR).addExpected(WORD, "that")
         .addExpected(CLOSE).addExpected(AND).addExpected(OPEN)
@@ -325,19 +325,19 @@ public class SearchTokenizerTest {
     Assert.assertEquals(AND, it.next().getToken());
     Assert.assertEquals(WORD, it.next().getToken());
 
-    SearchValidator.init("abc AND ANDsomething")
+    TokenizerValidator.init("abc AND ANDsomething")
         .addExpected(WORD, AND, WORD).validate();
 
-    SearchValidator.init("abc ANDsomething")
+    TokenizerValidator.init("abc ANDsomething")
         .addExpected(WORD, WORD).validate();
 
-    SearchValidator.init("abc ORsomething")
+    TokenizerValidator.init("abc ORsomething")
         .addExpected(WORD, WORD).validate();
 
-    SearchValidator.init("abc OR orsomething")
+    TokenizerValidator.init("abc OR orsomething")
         .addExpected(WORD, OR, WORD).validate();
 
-    SearchValidator.init("abc OR ORsomething")
+    TokenizerValidator.init("abc OR ORsomething")
         .addExpected(WORD, OR, WORD).validate();
   }
 
@@ -345,7 +345,7 @@ public class SearchTokenizerTest {
   @Test
   public void unicodeInWords() throws Exception {
     // Ll, Lm, Lo, Lt, Lu, Nl
-    SearchValidator.init("abc OR Ll\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
+    TokenizerValidator.init("abc OR Ll\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
         .addExpected(WORD, OR, WORD).validate();
   }
 
@@ -369,7 +369,7 @@ public class SearchTokenizerTest {
    */
   @Test
   public void characterInPhrase() throws Exception {
-    SearchValidator.init("\"123\" OR \"ALPHA-._~\"")
+    TokenizerValidator.init("\"123\" OR \"ALPHA-._~\"")
         .addExpected(PHRASE, OR, PHRASE).validate();
   }
 
@@ -395,7 +395,7 @@ public class SearchTokenizerTest {
     validate("abc     def     ghi");
 
     // mixed not
-    SearchValidator.init("    abc         def AND     ghi").validate(WORD, WORD, AND, WORD);
+    TokenizerValidator.init("    abc         def AND     ghi").validate(WORD, WORD, AND, WORD);
     validate("NOT abc  NOT    def  OR NOT ghi", NOT, WORD, NOT, WORD, OR, NOT, WORD);
     validate("    abc         def     NOT ghi", WORD, WORD, NOT, WORD);
 
@@ -409,26 +409,41 @@ public class SearchTokenizerTest {
   }
 
   @Test
-  public void parseInvalid() throws SearchTokenizerException {
-    SearchValidator.init("abc AND OR something").validate();
-    SearchValidator.init("abc AND \"something\" )").validate();
+  public void tokenizeInvalid() throws SearchTokenizerException {
     //
-    SearchValidator.init("(  abc AND) OR something").validate(SearchTokenizerException.class);
+    TokenizerValidator.init("(  abc AND) OR something").validate(SearchTokenizerException.class);
+
+    TokenizerValidator.init("\"phrase\"word").validate(SearchTokenizerException.class);
+    TokenizerValidator.init("\"p\"w").validate(SearchTokenizerException.class);
+    TokenizerValidator.init("\"\"").validate(SearchTokenizerException.class);
+  }
+
+  @Test
+  public void tokenizeInvalidQueryForParser() throws SearchTokenizerException {
+//    TokenizerValidator.init("NOT").validate(NOT);
+
+    TokenizerValidator.init("AND").validate(AND);
+    TokenizerValidator.init("OR").validate(OR);
+    TokenizerValidator.init("NOT AND").validate(NOT, AND);
+    TokenizerValidator.init("NOT OR").validate(NOT, OR);
+    TokenizerValidator.init("NOT NOT").validate(NOT, NOT);
+    TokenizerValidator.init("abc AND OR something").validate(WORD, AND, OR, WORD);
+    TokenizerValidator.init("abc AND \"something\" )").validate(WORD, AND, PHRASE, CLOSE);
   }
 
   public void validate(String query) throws SearchTokenizerException {
-    new SearchValidator(query).validate();
+    new TokenizerValidator(query).validate();
   }
 
   public void validate(String query, SearchQueryToken.Token ... tokens) throws SearchTokenizerException {
-    SearchValidator sv = new SearchValidator(query);
+    TokenizerValidator sv = new TokenizerValidator(query);
     for (SearchQueryToken.Token token : tokens) {
       sv.addExpected(token);
     }
     sv.validate();
   }
 
-  private static class SearchValidator {
+  private static class TokenizerValidator {
     private List<Tuple> validations = new ArrayList<Tuple>();
     private boolean log;
     private final String searchQuery;
@@ -450,24 +465,24 @@ public class SearchTokenizerTest {
       }
     }
 
-    private SearchValidator(String searchQuery) {
+    private TokenizerValidator(String searchQuery) {
       this.searchQuery = searchQuery;
     }
 
-    private static SearchValidator init(String searchQuery) {
-      return new SearchValidator(searchQuery);
+    private static TokenizerValidator init(String searchQuery) {
+      return new TokenizerValidator(searchQuery);
     }
     
     @SuppressWarnings("unused")
-    private SearchValidator enableLogging() {
+    private TokenizerValidator enableLogging() {
       log = true;
       return this;
     }
-    private SearchValidator addExpected(SearchQueryToken.Token token, String literal) {
+    private TokenizerValidator addExpected(SearchQueryToken.Token token, String literal) {
       validations.add(new Tuple(token, literal));
       return this;
     }
-    private SearchValidator addExpected(SearchQueryToken.Token ... token) {
+    private TokenizerValidator addExpected(SearchQueryToken.Token ... token) {
       for (SearchQueryToken.Token t : token) {
         validations.add(new Tuple(t));
       }

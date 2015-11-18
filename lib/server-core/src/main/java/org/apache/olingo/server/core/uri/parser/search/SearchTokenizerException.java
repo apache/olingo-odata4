@@ -24,9 +24,16 @@ public class SearchTokenizerException extends UriParserSyntaxException {
 
   private static final long serialVersionUID = -8295456415309640166L;
 
-  public static enum MessageKeys implements MessageKey {
+  public enum MessageKeys implements MessageKey {
     /** parameter: character */
-    FORBIDDEN_CHARACTER, 
+    FORBIDDEN_CHARACTER,
+    /** parameter: TOKEN */
+    NOT_EXPECTED_TOKEN,
+    /** parameter: - */
+    NOT_FINISHED_QUERY,
+    /** parameter: - */
+    INVALID_TOKEN_STATE,
+    /** parameter: - */
     ALREADY_FINISHED;
 
     @Override
