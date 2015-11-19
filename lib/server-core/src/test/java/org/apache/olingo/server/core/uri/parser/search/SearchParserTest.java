@@ -46,7 +46,6 @@ public class SearchParserTest extends SearchParser {
     se = run(Token.PHRASE);
     assertEquals("'phrase1'", se.toString());
     assertTrue(se.isSearchTerm());
-    // TODO: Check if quotation marks should be part of the string we deliver
     assertEquals("phrase1", se.asSearchTerm().getSearchTerm());
   }
 

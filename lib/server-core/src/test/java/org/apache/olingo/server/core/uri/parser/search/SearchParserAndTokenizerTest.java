@@ -18,15 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import static org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorKind.AND;
-import static org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorKind.OR;
-
-import java.lang.reflect.Field;
-
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
-import org.apache.olingo.server.api.uri.queryoption.search.SearchUnary;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,149 +28,86 @@ public class SearchParserAndTokenizerTest {
 
   @Test
   public void basicParsing() throws Exception {
-    SearchExpressionValidator.init("\"99\"")
-            .validate(with("99"));
-    SearchExpressionValidator.init("a")
-        .validate(with("a"));
-    SearchExpressionValidator.init("a AND b")
-        .validate(with("a", and("b")));
-    SearchExpressionValidator.init("a AND b AND c")
-        .validate("{{'a' AND 'b'} AND 'c'}");
-    SearchExpressionValidator.init("a OR b")
-        .validate(with("a", or("b")));
-    SearchExpressionValidator.init("a OR b OR c")
-        .validate(with("a", or("b", or("c"))));
+    assertQuery("\"99\"").resultsIn("'99'");
+    assertQuery("a").resultsIn("'a'");
+    assertQuery("a AND b").resultsIn("{'a' AND 'b'}");
+    assertQuery("a AND b AND c").resultsIn("{{'a' AND 'b'} AND 'c'}");
+    assertQuery("a OR b").resultsIn("{'a' OR 'b'}");
+    assertQuery("a OR b OR c").resultsIn("{'a' OR {'b' OR 'c'}}");
   }
 
   @Test
   public void mixedParsing() throws Exception {
-    SearchExpressionValidator.init("a AND b OR c")
-        .validate("{{'a' AND 'b'} OR 'c'}");
-    SearchExpressionValidator.init("a OR b AND c")
-        .validate("{'a' OR {'b' AND 'c'}}");
+    assertQuery("a AND b OR c").resultsIn("{{'a' AND 'b'} OR 'c'}");
+    assertQuery("a OR b AND c").resultsIn("{'a' OR {'b' AND 'c'}}");
   }
 
   @Test
   public void notParsing() throws Exception {
-    SearchExpressionValidator.init("NOT a AND b OR c")
-        .validate("{{{NOT 'a'} AND 'b'} OR 'c'}");
-    SearchExpressionValidator.init("a OR b AND NOT c")
-        .validate("{'a' OR {'b' AND {NOT 'c'}}}");
+    assertQuery("NOT a AND b OR c").resultsIn("{{{NOT 'a'} AND 'b'} OR 'c'}");
+    assertQuery("a OR b AND NOT c").resultsIn("{'a' OR {'b' AND {NOT 'c'}}}");
   }
 
   @Test
   public void parenthesesParsing() throws Exception {
-    SearchExpressionValidator.init("a AND (b OR c)")
-        .validate("{'a' AND {'b' OR 'c'}}");
-    SearchExpressionValidator.init("(a OR b) AND NOT c")
-        .validate("{{'a' OR 'b'} AND {NOT 'c'}}");
+    assertQuery("a AND (b OR c)").resultsIn("{'a' AND {'b' OR 'c'}}");
+    assertQuery("(a OR b) AND NOT c").resultsIn("{{'a' OR 'b'} AND {NOT 'c'}}");
+  }
+
+  @Test
+  public void parseImplicitAnd() throws Exception {
+    assertQuery("a b").resultsIn("{'a' AND 'b'}");
+    assertQuery("a b c").resultsIn("{'a' AND {'b' AND 'c'}}");
+    assertQuery("a and b").resultsIn("{'a' AND {'and' AND 'b'}}");
+    assertQuery("a b OR c").resultsIn("{{'a' AND 'b'} OR 'c'}");
+    assertQuery("a \"bc123\" OR c").resultsIn("{{'a' AND 'bc123'} OR 'c'}");
+    assertQuery("(a OR x) bc c").resultsIn("{{'a' OR 'x'} AND {'bc' AND 'c'}}");
+    assertQuery("one ((a OR x) bc c)").resultsIn("{'one' AND {{'a' OR 'x'} AND {'bc' AND 'c'}}}");
   }
 
   @Test
   public void invalidSearchQuery() throws Exception {
-    SearchExpressionValidator.init("99").validate(SearchParserException.class,
-            SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    assertQuery("99").resultsIn(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    assertQuery("NOT").resultsIn(SearchParserException.MessageKeys.INVALID_NOT_OPERAND);
+    assertQuery("AND").resultsIn(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION);
+    assertQuery("OR").resultsIn(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION);
   }
 
-  private static SearchExpression with(String term) {
-    return new SearchTermImpl(term);
+  private static Validator assertQuery(String searchQuery) {
+    return Validator.init(searchQuery);
   }
 
-  private static SearchExpression with(String left, SearchExpression right) {
-    setLeftField(left, right);
-    return right;
-  }
-
-  private static SearchUnary with(SearchUnary unary) {
-    return unary;
-  }
-
-  private static SearchExpression or(String left, SearchExpression right) {
-    SearchExpression or = or(right);
-    setLeftField(left, right);
-    return or;
-  }
-
-  private static SearchExpression and(String left, SearchExpression right) {
-    SearchExpression and = and(right);
-    setLeftField(left, right);
-    return and;
-  }
-
-  private static SearchExpression or(SearchExpression right) {
-    return new SearchBinaryImpl(null, OR, right);
-  }
-
-  private static SearchExpression and(SearchExpression right) {
-    return new SearchBinaryImpl(null, AND, right);
-  }
-
-  private static SearchExpression and(String right) {
-    return and(new SearchTermImpl(right));
-  }
-
-  private static SearchExpression or(String right) {
-    return or(new SearchTermImpl(right));
-  }
-
-  private static SearchUnary not(String term) {
-    return new SearchUnaryImpl(new SearchTermImpl(term));
-  }
-
-  private static void setLeftField(String left, SearchExpression se) {
-    try {
-      Field field = null;
-      if (se instanceof SearchUnaryImpl) {
-        field = SearchBinaryImpl.class.getDeclaredField("operand");
-      } else if (se instanceof SearchBinaryImpl) {
-        field = SearchBinaryImpl.class.getDeclaredField("left");
-      } else {
-        Assert.fail("Unexpected exception: " + se.getClass());
-      }
-      field.setAccessible(true);
-      field.set(se, new SearchTermImpl(left));
-    } catch (Exception e) {
-      Assert.fail("Unexpected exception: " + e.getClass());
-    }
-  }
-
-  private static class SearchExpressionValidator {
+  private static class Validator {
     private boolean log;
     private final String searchQuery;
 
-    private SearchExpressionValidator(String searchQuery) {
+    private Validator(String searchQuery) {
       this.searchQuery = searchQuery;
     }
 
-    private static SearchExpressionValidator init(String searchQuery) {
-      return new SearchExpressionValidator(searchQuery);
+    private static Validator init(String searchQuery) {
+      return new Validator(searchQuery);
     }
 
     @SuppressWarnings("unused")
-    private SearchExpressionValidator enableLogging() {
+    private Validator withLogging() {
       log = true;
       return this;
     }
 
-    private void validate(Class<? extends ODataLibraryException> exception, ODataLibraryException.MessageKey key)
+    private void resultsIn(ODataLibraryException.MessageKey key)
             throws SearchTokenizerException {
       try {
-        validate(searchQuery);
+        resultsIn(searchQuery);
       } catch (ODataLibraryException e) {
-        Assert.assertEquals(exception, e.getClass());
+        Assert.assertEquals(SearchParserException.class, e.getClass());
         Assert.assertEquals(key, e.getMessageKey());
         return;
       }
-      Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
+      Assert.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");
     }
 
-    private void validate(SearchExpression expectedSearchExpression) throws SearchTokenizerException,
-        SearchParserException {
-      final SearchExpression searchExpression = getSearchExpression();
-      Assert.assertEquals(expectedSearchExpression.toString(), searchExpression.toString());
-    }
-
-    private void validate(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
+    private void resultsIn(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
     }

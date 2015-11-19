@@ -129,6 +129,9 @@ public class SearchParser {
     SearchExpression se = left;
     if (isTerm()) {
       se = processTerm();
+      if(isTerm()) {
+        se = processAnd(se);
+      }
       se = new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
       return processSearchExpression(se);
     } else {
@@ -153,6 +156,10 @@ public class SearchParser {
     nextToken();
     if (isToken(Token.WORD) || isToken(Token.PHRASE)) {
       return new SearchUnaryImpl(processWordOrPhrase());
+    }
+    if(isEof()) {
+      throw new SearchParserException("NOT must be followed by a term.",
+          SearchParserException.MessageKeys.INVALID_NOT_OPERAND, "EOF");
     }
     throw new SearchParserException("NOT must be followed by a term not a " + token.getToken(),
         SearchParserException.MessageKeys.INVALID_NOT_OPERAND, token.getToken().toString());

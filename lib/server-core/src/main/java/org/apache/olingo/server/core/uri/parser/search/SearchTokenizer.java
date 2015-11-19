@@ -76,7 +76,7 @@ public class SearchTokenizer {
     }
 
     public State invalid() throws SearchTokenizerException {
-      throw new SearchTokenizerException("Token " + this.getToken() + " is in invalid state ",
+      throw new SearchTokenizerException("Token " + this.getToken() + " is in invalid state.",
           SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
     }
 
@@ -428,7 +428,7 @@ public class SearchTokenizer {
       if(closed) {
         return finish();
       }
-      return super.close();
+      return invalid();
     }
   }
 
@@ -475,15 +475,18 @@ public class SearchTokenizer {
       } else if (literal.length() == 3 && isWhitespace(c)) {
         finish();
         return new BeforePhraseOrWordRwsState();
+      } else if(isWhitespace(c)) {
+        changeToken(Token.WORD).finish();
+        return new RwsState();
       }
-      return forbidden(c);
+      return new SearchWordState(this).nextChar(c);
     }
     @Override
     public State close() throws SearchTokenizerException {
       if(Token.NOT.name().equals(literal.toString())) {
         return finish();
       }
-      return super.close();
+      return changeToken(Token.WORD).finish();
     }
   }
 
@@ -504,9 +507,18 @@ public class SearchTokenizer {
       } else if (literal.length() == 3 && isWhitespace(c)) {
         finish();
         return new BeforeSearchExpressionRwsState();
-      } else {
-        return new SearchWordState(this);
+      } else if(isWhitespace(c)) {
+        changeToken(Token.WORD).finish();
+        return new RwsState();
       }
+      return new SearchWordState(this).nextChar(c);
+    }
+    @Override
+    public State close() throws SearchTokenizerException {
+      if(Token.AND.name().equals(literal.toString())) {
+        return finish();
+      }
+      return changeToken(Token.WORD).finish();
     }
   }
 
@@ -517,7 +529,6 @@ public class SearchTokenizer {
         forbidden(c);
       }
     }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (literal.length() == 1 && (c == CHAR_R)) {
@@ -525,9 +536,18 @@ public class SearchTokenizer {
       } else if (literal.length() == 2 && isWhitespace(c)) {
         finish();
         return new BeforeSearchExpressionRwsState();
-      } else {
-        return new SearchWordState(this);
+      } else if(isWhitespace(c)) {
+        changeToken(Token.WORD).finish();
+        return new RwsState();
       }
+      return new SearchWordState(this).nextChar(c);
+    }
+    @Override
+    public State close() throws SearchTokenizerException {
+      if(Token.OR.name().equals(literal.toString())) {
+        return finish();
+      }
+      return changeToken(Token.WORD).finish();
     }
   }
 
