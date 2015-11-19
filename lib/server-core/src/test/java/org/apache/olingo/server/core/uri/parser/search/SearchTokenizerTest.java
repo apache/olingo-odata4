@@ -420,10 +420,9 @@ public class SearchTokenizerTest {
 
   @Test
   public void tokenizeInvalidQueryForParser() throws SearchTokenizerException {
-//    TokenizerValidator.init("NOT").validate(NOT);
-
     TokenizerValidator.init("AND").validate(AND);
     TokenizerValidator.init("OR").validate(OR);
+    TokenizerValidator.init("NOT").validate(NOT);
     TokenizerValidator.init("NOT AND").validate(NOT, AND);
     TokenizerValidator.init("NOT OR").validate(NOT, OR);
     TokenizerValidator.init("NOT NOT").validate(NOT, NOT);

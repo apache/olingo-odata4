@@ -54,8 +54,14 @@ public class SearchTokenizer {
     protected static final char CHAR_CLOSE = ')';
     protected static final char CHAR_OPEN = '(';
 
+    public State() {
+    }
     public State(Token t) {
       token = t;
+    }
+    public State(Token t, boolean finished) {
+      this(t);
+      this.finished = finished;
     }
 
     protected abstract State nextChar(char c) throws SearchTokenizerException;
@@ -91,7 +97,7 @@ public class SearchTokenizer {
       return token;
     }
 
-    public State close() {
+    public State close() throws SearchTokenizerException {
       return this;
     }
 
@@ -260,11 +266,9 @@ public class SearchTokenizer {
 
   private static abstract class LiteralState extends State {
     protected final StringBuilder literal = new StringBuilder();
-
-    public LiteralState(Token t) {
-      super(t);
+    public LiteralState() {
+      super();
     }
-
     public LiteralState(Token t, char c) throws SearchTokenizerException {
       super(t);
       init(c);
@@ -296,10 +300,6 @@ public class SearchTokenizer {
   }
 
   private class SearchExpressionState extends LiteralState {
-    public SearchExpressionState() {
-      super(null);
-    }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (c == CHAR_OPEN) {
@@ -320,10 +320,6 @@ public class SearchTokenizer {
   }
 
   private class SearchTermState extends LiteralState {
-    public SearchTermState() {
-      super(null);
-    }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (c == CHAR_N) {
@@ -428,7 +424,7 @@ public class SearchTokenizer {
     }
 
     @Override
-    public State close() {
+    public State close() throws SearchTokenizerException {
       if(closed) {
         return finish();
       }
@@ -438,8 +434,7 @@ public class SearchTokenizer {
 
   private class OpenState extends State {
     public OpenState() {
-      super(Token.OPEN);
-      finish();
+      super(Token.OPEN, true);
     }
 
     @Override
@@ -454,8 +449,7 @@ public class SearchTokenizer {
 
   private class CloseState extends State {
     public CloseState() {
-      super(Token.CLOSE);
-      finish();
+      super(Token.CLOSE, true);
     }
 
     @Override
@@ -483,6 +477,13 @@ public class SearchTokenizer {
         return new BeforePhraseOrWordRwsState();
       }
       return forbidden(c);
+    }
+    @Override
+    public State close() throws SearchTokenizerException {
+      if(Token.NOT.name().equals(literal.toString())) {
+        return finish();
+      }
+      return super.close();
     }
   }
 
@@ -533,10 +534,6 @@ public class SearchTokenizer {
   // RWS 'OR' RWS searchExpr
   // RWS [ 'AND' RWS ] searchExpr
   private class BeforeSearchExpressionRwsState extends State {
-    public BeforeSearchExpressionRwsState() {
-      super(null);
-    }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (isWhitespace(c)) {
@@ -548,15 +545,11 @@ public class SearchTokenizer {
   }
 
   private class BeforePhraseOrWordRwsState extends State {
-    public BeforePhraseOrWordRwsState() {
-      super(null);
-    }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (isWhitespace(c)) {
         return allowed(c);
-      } else if (c == '"') {
+      } else if (c == QUOTATION_MARK) {
         return new SearchPhraseState(c);
       } else {
         return new SearchWordState(c);
@@ -565,10 +558,6 @@ public class SearchTokenizer {
   }
 
   private class RwsState extends State {
-    public RwsState() {
-      super(null);
-    }
-
     @Override
     public State nextChar(char c) throws SearchTokenizerException {
       if (isWhitespace(c)) {
