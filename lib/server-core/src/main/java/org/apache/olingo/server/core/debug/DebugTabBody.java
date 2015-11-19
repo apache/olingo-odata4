@@ -18,19 +18,16 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
@@ -134,20 +131,11 @@ public class DebugTabBody implements DebugTab {
   }
 
   private byte[] streamToBytes(InputStream input) {
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     if (input != null) {
       try {
-        ByteBuffer inBuffer = ByteBuffer.allocate(8192);
-        ReadableByteChannel ic = Channels.newChannel(input);
-        WritableByteChannel oc = Channels.newChannel(buffer);
-        while (ic.read(inBuffer) > 0) {
-          inBuffer.flip();
-          oc.write(inBuffer);
-          inBuffer.rewind();
-        }
-        return buffer.toByteArray();
-      } catch (IOException e) {
-        throw new ODataRuntimeException("Error on reading request content");
+        return new FixedFormatDeserializerImpl().binary(input);
+      } catch (final DeserializerException e) {
+        throw new ODataRuntimeException("Error on reading request content", e);
       }
     }
     return null;

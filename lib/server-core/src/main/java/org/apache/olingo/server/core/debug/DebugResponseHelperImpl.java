@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -42,9 +41,8 @@ import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.debug.RuntimeMeasurement;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DebugResponseHelperImpl implements DebugResponseHelper {
 
@@ -141,7 +139,8 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     try {
       CircleStreamBuffer csb = new CircleStreamBuffer();
       outputStream = csb.getOutputStream();
-      JsonGenerator gen = new JsonFactory().createGenerator(outputStream, JsonEncoding.UTF8);
+      // Create JSON generator (the object mapper is necessary to write expression trees).
+      JsonGenerator gen = new ObjectMapper().getFactory().createGenerator(outputStream);
 
       gen.writeStartObject();
       DebugTab requestInfo = parts.get(0);
@@ -232,11 +231,8 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         .append("tbody > tr:hover { background-color: #cccccc; }\n")
         .append(".code { font-family: \"Courier New\", monospace; }\n")
         .append(".code, .tree li { line-height: 15px; }\n")
-        .append(".code a { text-decoration: underline; color: #666666; }\n")
-        .append(".xml .ns { font-style: italic; color: #999999; }\n")
-        .append("ul, .tree { list-style-type: none; }\n")
-        .append("div > ul.expr, div > .expand, .tree { padding-left: 0; }\n")
-        .append(".expr, .expand, .null, .numeric { padding-left: 1.5em; }\n")
+        .append("ul, .tree { padding-left: 0; list-style-type: none; }\n")
+        .append(".null, .numeric { padding-left: 1.5em; }\n")
         .append(".json { white-space: pre-wrap; }\n")
         .append("</style>\n")
         .append("</head>\n")
@@ -269,12 +265,12 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       gen.writeNull();
     } else {
       gen.writeStartObject();
-      for (Map.Entry<String, String> entry : entries.entrySet()) {
-        gen.writeFieldName(entry.getKey());
-        if (entry.getValue() == null) {
+      for (final String name : entries.keySet()) {
+        gen.writeFieldName(name);
+        if (entries.get(name) == null) {
           gen.writeNull();
         } else {
-          gen.writeString(entry.getValue());
+          gen.writeString(entries.get(name));
         }
       }
       gen.writeEndObject();
@@ -286,15 +282,11 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");
     if (entries != null && !entries.isEmpty()) {
-      for (final Entry<String, String> entry : entries.entrySet()) {
-        writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
-            .append("<td class=\"value\">");
-        if (entry.getValue() != null) {
-          writer.append(escapeHtml(entry.getValue()));
-        } else {
-          writer.append("null");
-        }
-        writer.append("</td></tr>\n");
+      for (final String name : entries.keySet()) {
+        writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+            .append("<td class=\"value\">")
+            .append(escapeHtml(entries.get(name)))
+            .append("</td></tr>\n");
       }
     }
     writer.append("</tbody>\n</table>\n");

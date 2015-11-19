@@ -39,15 +39,18 @@ import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * URI parser debug information.
@@ -87,7 +90,8 @@ public class DebugTabUri implements DebugTab {
     }
 
     appendCommonJsonObjects(gen, uriInfo.getCountOption(), uriInfo.getSkipOption(), uriInfo.getTopOption(),
-        uriInfo.getFilterOption(), uriInfo.getOrderByOption(), uriInfo.getSelectOption(), uriInfo.getExpandOption());
+        uriInfo.getFilterOption(), uriInfo.getOrderByOption(), uriInfo.getSelectOption(), uriInfo.getExpandOption(),
+        uriInfo.getSearchOption());
 
     if (!uriInfo.getAliases().isEmpty()) {
       gen.writeFieldName("aliases");
@@ -104,7 +108,7 @@ public class DebugTabUri implements DebugTab {
 
   private void appendCommonJsonObjects(JsonGenerator gen, CountOption countOption, SkipOption skipOption,
       TopOption topOption, FilterOption filterOption, OrderByOption orderByOption, SelectOption selectOption,
-      ExpandOption expandOption)
+      ExpandOption expandOption, SearchOption searchOption)
       throws IOException {
     if (countOption != null) {
       gen.writeBooleanField("isCount", countOption.getValue());
@@ -120,7 +124,7 @@ public class DebugTabUri implements DebugTab {
 
     if (filterOption != null) {
       gen.writeFieldName("filter");
-      appendJsonExpressionString(gen, filterOption.getExpression());
+      appendExpressionJson(gen, filterOption.getExpression());
     }
 
     if (orderByOption != null && !orderByOption.getOrders().isEmpty()) {
@@ -140,6 +144,11 @@ public class DebugTabUri implements DebugTab {
     if (expandOption != null && !expandOption.getExpandItems().isEmpty()) {
       gen.writeFieldName("expand");
       appendExpandedPropertiesJson(gen, expandOption.getExpandItems());
+    }
+
+    if (searchOption != null) {
+      gen.writeFieldName("search");
+      appendSearchJson(gen, searchOption.getSearchExpression());
     }
   }
 
@@ -182,7 +191,7 @@ public class DebugTabUri implements DebugTab {
       gen.writeStringField("nodeType", "order");
       gen.writeStringField("sortorder", item.isDescending() ? "desc" : "asc");
       gen.writeFieldName("expression");
-      appendJsonExpressionString(gen, item.getExpression());
+      appendExpressionJson(gen, item.getExpression());
       gen.writeEndObject();
     }
     gen.writeEndArray();
@@ -221,24 +230,24 @@ public class DebugTabUri implements DebugTab {
       gen.writeNumberField("levels", item.getLevelsOption().getValue());
     }
 
-    appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(), item
-        .getFilterOption(), item.getOrderByOption(), item.getSelectOption(), item.getExpandOption());
+    appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(),
+        item.getFilterOption(), item.getOrderByOption(), item.getSelectOption(), item.getExpandOption(),
+        item.getSearchOption());
 
     gen.writeEndObject();
   }
 
-  private void appendJsonExpressionString(JsonGenerator gen, Expression expression) throws IOException {
+  private void appendExpressionJson(JsonGenerator gen, final Expression expression) throws IOException {
     if (expression == null) {
       gen.writeNull();
-      return;
+    } else {
+      try {
+        final JsonNode tree = expression.accept(new ExpressionJsonVisitor());
+        gen.writeTree(tree);
+      } catch (final ODataException e) {
+        gen.writeString("Exception in Debug Expression visitor occurred: " + e.getMessage());
+      }
     }
-    String expressionJsonString;
-    try {
-      expressionJsonString = expression.accept(new ExpressionJsonVisitor());
-    } catch (final ODataException e) {
-      expressionJsonString = "Exception in Debug Filter visitor occurred: " + e.getMessage();
-    }
-    gen.writeRawValue(expressionJsonString);
   }
 
   private void appendSelectedPropertiesJson(JsonGenerator gen, List<SelectItem> selectItems) throws IOException {
@@ -270,28 +279,61 @@ public class DebugTabUri implements DebugTab {
     return selectedProperty;
   }
 
+  private void appendSearchJson(JsonGenerator json, final SearchExpression searchExpression) throws IOException {
+    json.writeStartObject();
+    if (searchExpression.isSearchTerm()) {
+      json.writeStringField("nodeType", "searchTerm");
+      json.writeStringField("searchTerm", searchExpression.asSearchTerm().getSearchTerm());
+    } else if (searchExpression.isSearchBinary()) {
+      json.writeStringField("nodeType", "binary");
+      json.writeStringField("operator", searchExpression.asSearchBinary().getOperator().toString());
+      json.writeFieldName("left");
+      appendSearchJson(json, searchExpression.asSearchBinary().getLeftOperand());
+      json.writeFieldName("right");
+      appendSearchJson(json, searchExpression.asSearchBinary().getRightOperand());
+    } else if (searchExpression.isSearchUnary()) {
+      json.writeStringField("nodeType", "unary");
+      json.writeStringField("operator", searchExpression.asSearchUnary().getOperator().toString());
+      json.writeFieldName("operand");
+      appendSearchJson(json, searchExpression.asSearchUnary().getOperand());
+    }
+    json.writeEndObject();
+  }
+
   @Override
   public void appendHtml(final Writer writer) throws IOException {
+    // factory for JSON generators (the object mapper is necessary to write expression trees)
+    final JsonFactory jsonFactory = new ObjectMapper().getFactory();
+
     writer.append("<h2>Resource Path</h2>\n")
-        .append("<ul class=\"json\">\n<li>\n");
-    JsonGenerator json = new JsonFactory().createGenerator(writer).setPrettyPrinter(new DefaultPrettyPrinter());
+        .append("<ul>\n<li class=\"json\">");
+    JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
     appendURIResourceParts(json, uriInfo.getUriResourceParts());
     json.close();
     writer.append("\n</li>\n</ul>\n");
 
+    if (uriInfo.getSearchOption() != null) {
+      writer.append("<h2>Search Option</h2>\n")
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
+      appendSearchJson(json, uriInfo.getSearchOption().getSearchExpression());
+      json.close();
+      writer.append("\n</li>\n</ul>\n");
+    }
+
     if (uriInfo.getFilterOption() != null) {
       writer.append("<h2>Filter Option</h2>\n")
-          .append("<ul class=\"json\">\n<li>\n");
-      json = new JsonFactory().createGenerator(writer);
-      appendJsonExpressionString(json, uriInfo.getFilterOption().getExpression());
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
+      appendExpressionJson(json, uriInfo.getFilterOption().getExpression());
       json.close();
       writer.append("\n</li>\n</ul>\n");
     }
 
     if (uriInfo.getOrderByOption() != null) {
       writer.append("<h2>OrderBy Option</h2>\n")
-          .append("<ul class=\"json\">\n<li>\n");
-      json = new JsonFactory().createGenerator(writer);
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendOrderByItemsJson(json, uriInfo.getOrderByOption().getOrders());
       json.close();
       writer.append("\n</li>\n</ul>\n");
@@ -299,8 +341,8 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getExpandOption() != null) {
       writer.append("<h2>Expand Option</h2>\n")
-          .append("<ul class=\"json\">\n<li>\n");
-      json = new JsonFactory().createGenerator(writer);
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendExpandedPropertiesJson(json, uriInfo.getExpandOption().getExpandItems());
       json.close();
       writer.append("\n</li>\n</ul>\n");
@@ -315,23 +357,18 @@ public class DebugTabUri implements DebugTab {
       writer.append("</ul>\n");
     }
 
-    if (uriInfo.getSearchOption() != null) {
-      writer.append("<h2>Search Option</h2>\n")
-          .append("<p>not yet shown here</p>\n");
-    }
-
-    if (uriInfo.getSkipOption() != null
+    if (uriInfo.getCountOption() != null
+        || uriInfo.getSkipOption() != null
         || uriInfo.getSkipTokenOption() != null
         || uriInfo.getTopOption() != null
-        || uriInfo.getCountOption() != null
         || uriInfo.getFormatOption() != null
         || uriInfo.getIdOption() != null) {
       writer.append("<h2>Unstructured System Query Options</h2>\n");
       DebugResponseHelperImpl.appendHtmlTable(writer, getQueryOptionsMap(Arrays.asList(
+          uriInfo.getCountOption(),
           uriInfo.getSkipOption(),
           uriInfo.getSkipTokenOption(),
           uriInfo.getTopOption(),
-          uriInfo.getCountOption(),
           uriInfo.getFormatOption(),
           uriInfo.getIdOption())));
     }
