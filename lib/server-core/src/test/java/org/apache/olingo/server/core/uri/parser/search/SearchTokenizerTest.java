@@ -290,11 +290,14 @@ public class SearchTokenizerTest {
   @Test
   public void tokenizeInvalid() throws SearchTokenizerException {
     //
-    assertQuery("(  abc AND) OR something").resultsIn(SearchTokenizerException.class);
+    assertQuery("(  abc AND) OR something").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
 
-    assertQuery("\"phrase\"word").resultsIn(SearchTokenizerException.class);
-    assertQuery("\"p\"w").resultsIn(SearchTokenizerException.class);
-    assertQuery("\"\"").resultsIn(SearchTokenizerException.class);
+    assertQuery("\"phrase\"word").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("\"p\"w").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("\"\"").resultsIn(SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
+    assertQuery("some AND)").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("some OR)").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("some NOT)").enableLogging().resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
   }
 
   @Test
@@ -302,9 +305,15 @@ public class SearchTokenizerTest {
     assertQuery("AND").resultsIn(AND);
     assertQuery("OR").resultsIn(OR);
     assertQuery("NOT").resultsIn(NOT);
+    assertQuery("a AND").resultsIn(WORD, AND);
+    assertQuery("o OR").resultsIn(WORD, OR);
+    assertQuery("n NOT").resultsIn(WORD, NOT);
     assertQuery("NOT AND").resultsIn(NOT, AND);
+    assertQuery("NOT and AND").resultsIn(NOT, WORD, AND);
     assertQuery("NOT OR").resultsIn(NOT, OR);
+    assertQuery("NOT a OR").resultsIn(NOT, WORD, OR);
     assertQuery("NOT NOT").resultsIn(NOT, NOT);
+    assertQuery("some AND other)").resultsIn(WORD, AND, WORD, CLOSE);
     assertQuery("abc AND OR something").resultsIn(WORD, AND, OR, WORD);
     assertQuery("abc AND \"something\" )").resultsIn(WORD, AND, PHRASE, CLOSE);
   }
@@ -359,10 +368,6 @@ public class SearchTokenizerTest {
       this.searchQuery = searchQuery;
     }
 
-    private static Validator init(String searchQuery) {
-      return new Validator(searchQuery);
-    }
-    
     @SuppressWarnings("unused")
     private Validator enableLogging() {
       log = true;
@@ -378,22 +383,26 @@ public class SearchTokenizerTest {
       }
       return this;
     }
-    private void resultsIn(Class<? extends Exception> exception) throws SearchTokenizerException {
-      try {
-        new SearchTokenizer().tokenize(searchQuery);
-      } catch (Exception e) {
-        Assert.assertEquals(exception, e.getClass());
-        return;
-      }
-      Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
-    }
+//    private void resultsIn(Class<? extends Exception> exception) throws SearchTokenizerException {
+//      try {
+//        validate();
+//      } catch (Exception e) {
+//        Assert.assertEquals(exception, e.getClass());
+//        return;
+//      }
+//      Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
+//    }
 
     private void resultsIn(SearchTokenizerException.MessageKey key)
         throws SearchTokenizerException {
       try {
-        init(searchQuery).validate();
+        validate();
       } catch (SearchTokenizerException e) {
         Assert.assertEquals("SearchTokenizerException with unexpected message was thrown.", key, e.getMessageKey());
+        if(log) {
+          System.out.println("Caught SearchTokenizerException with message key " +
+              e.getMessageKey() + " and message " + e.getMessage());
+        }
         return;
       }
       Assert.fail("No SearchTokenizerException was not thrown.");

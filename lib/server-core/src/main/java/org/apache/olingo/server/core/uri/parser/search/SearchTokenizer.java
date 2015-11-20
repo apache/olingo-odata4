@@ -84,6 +84,7 @@ public class SearchTokenizer {
       this.finished = true;
       return this;
     }
+
     public State finishAs(Token token) {
       this.finished = true;
       return changeToken(token);
@@ -95,6 +96,13 @@ public class SearchTokenizer {
 
     public Token getToken() {
       return token;
+    }
+
+    public String getTokenName() {
+      if(token == null) {
+        return "NULL";
+      }
+      return token.name();
     }
 
     public State close() throws SearchTokenizerException {
@@ -260,7 +268,7 @@ public class SearchTokenizer {
 
     @Override
     public String toString() {
-      return this.getToken() + "=>{" + getLiteral() + "}";
+      return getToken() + "=>{" + getLiteral() + "}";
     }
   }
 
@@ -292,7 +300,7 @@ public class SearchTokenizer {
     public State init(char c) throws SearchTokenizerException {
       if (isFinished()) {
         throw new SearchTokenizerException(toString() + " is already finished.",
-            SearchTokenizerException.MessageKeys.ALREADY_FINISHED);
+            SearchTokenizerException.MessageKeys.ALREADY_FINISHED, getTokenName());
       }
       literal.append(c);
       return this;
@@ -348,10 +356,9 @@ public class SearchTokenizer {
 
     public SearchWordState(State toConsume) throws SearchTokenizerException {
       super(Token.WORD, toConsume.getLiteral());
-      char[] chars = literal.toString().toCharArray();
-      for (char aChar : chars) {
-        if (!isAllowedWord(aChar)) {
-          forbidden(aChar);
+      for (int i = 0; i < literal.length(); i++) {
+        if (!isAllowedWord(literal.charAt(i))) {
+          forbidden(literal.charAt(i));
         }
       }
     }
@@ -479,7 +486,8 @@ public class SearchTokenizer {
         changeToken(Token.WORD).finish();
         return new RwsState();
       }
-      return new SearchWordState(this).nextChar(c);
+      literal.append(c);
+      return new SearchWordState(this);
     }
     @Override
     public State close() throws SearchTokenizerException {
@@ -511,7 +519,8 @@ public class SearchTokenizer {
         changeToken(Token.WORD).finish();
         return new RwsState();
       }
-      return new SearchWordState(this).nextChar(c);
+      literal.append(c);
+      return new SearchWordState(this);
     }
     @Override
     public State close() throws SearchTokenizerException {
@@ -540,7 +549,8 @@ public class SearchTokenizer {
         changeToken(Token.WORD).finish();
         return new RwsState();
       }
-      return new SearchWordState(this).nextChar(c);
+      literal.append(c);
+      return new SearchWordState(this);
     }
     @Override
     public State close() throws SearchTokenizerException {
@@ -620,7 +630,7 @@ public class SearchTokenizer {
       states.add(state);
     } else {
       throw new SearchTokenizerException("Last parsed state '" + state.toString() + "' is not finished.",
-          SearchTokenizerException.MessageKeys.NOT_FINISHED_QUERY);
+          SearchTokenizerException.MessageKeys.NOT_FINISHED_QUERY, state.getTokenName());
     }
 
     return states;

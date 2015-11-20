@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.junit.Assert;
@@ -71,6 +70,22 @@ public class SearchParserAndTokenizerTest {
     assertQuery("NOT").resultsIn(SearchParserException.MessageKeys.INVALID_NOT_OPERAND);
     assertQuery("AND").resultsIn(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION);
     assertQuery("OR").resultsIn(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION);
+
+    assertQuery("NOT a AND").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY);
+    assertQuery("NOT a OR").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY);
+    assertQuery("a AND").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY);
+    assertQuery("a OR").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY);
+
+    assertQuery("a OR b)").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT);
+    assertQuery("a NOT b)").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT);
+    assertQuery("a AND b)").resultsIn(SearchParserException.MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT);
+
+    assertQuery("(a OR b").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
+    assertQuery("(a NOT b").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
+    assertQuery("((a AND b)").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
+    assertQuery("((a AND b OR c)").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
+    assertQuery("a AND (b OR c").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
+    assertQuery("(a AND ((b OR c)").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
   }
 
   private static Validator assertQuery(String searchQuery) {
@@ -95,13 +110,17 @@ public class SearchParserAndTokenizerTest {
       return this;
     }
 
-    private void resultsIn(ODataLibraryException.MessageKey key)
+    private void resultsIn(SearchParserException.MessageKey key)
             throws SearchTokenizerException {
       try {
         resultsIn(searchQuery);
-      } catch (ODataLibraryException e) {
-        Assert.assertEquals(SearchParserException.class, e.getClass());
-        Assert.assertEquals(key, e.getMessageKey());
+      } catch (SearchParserException e) {
+        Assert.assertEquals("SearchParserException with unexpected message '" + e.getMessage() +
+            "' was thrown.", key, e.getMessageKey());
+        if(log) {
+          System.out.println("Caught SearchParserException with message key " +
+              e.getMessageKey() + " and message " + e.getMessage());
+        }
         return;
       }
       Assert.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");

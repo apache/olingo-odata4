@@ -54,7 +54,12 @@ public class SearchParser {
     if (token == null) {
       throw new SearchParserException("No search String", SearchParserException.MessageKeys.NO_EXPRESSION_FOUND);
     }
-    return processSearchExpression(null);
+    SearchExpression se = processSearchExpression(null);
+    if(!isEof()) {
+      throw new SearchParserException("Token left after end of search query parsing.",
+          SearchParserException.MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT, token.getToken().name());
+    }
+    return se;
   }
 
   private SearchExpression processSearchExpression(SearchExpression left) throws SearchParserException {
@@ -71,16 +76,15 @@ public class SearchParser {
     if (isToken(SearchQueryToken.Token.OPEN)) {
       processOpen();
       expression = processSearchExpression(left);
-      validateToken(SearchQueryToken.Token.CLOSE);
+      if (expression == null) {
+        throw new SearchParserException("Brackets must contain an expression.",
+            SearchParserException.MessageKeys.NO_EXPRESSION_FOUND);
+      }
       processClose();
     } else if (isTerm()) {
       expression = processTerm();
     }
 
-    if (expression == null) {
-      throw new SearchParserException("Brackets must contain an expression.",
-          SearchParserException.MessageKeys.NO_EXPRESSION_FOUND);
-    }
 
     if (isToken(SearchQueryToken.Token.AND) || isToken(SearchQueryToken.Token.OPEN) || isTerm()) {
       expression = processAnd(expression);
@@ -106,16 +110,13 @@ public class SearchParser {
     return token != null && token.getToken() == toCheckToken;
   }
 
-  private void validateToken(SearchQueryToken.Token toValidateToken) throws SearchParserException {
-    if (!isToken(toValidateToken)) {
-      String actualToken = token == null ? "null" : token.getToken().toString();
-      throw new SearchParserException("Expected " + toValidateToken + " but was " + actualToken,
-          SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, toValidateToken.toString(), actualToken);
+  private void processClose() throws SearchParserException {
+    if (isToken(Token.CLOSE)) {
+      nextToken();
+    } else {
+      throw new SearchParserException("Missing close bracket after open bracket.",
+          SearchParserException.MessageKeys.MISSING_CLOSE);
     }
-  }
-
-  private void processClose() {
-    nextToken();
   }
 
   private void processOpen() {
@@ -137,7 +138,10 @@ public class SearchParser {
     } else {
       if (isToken(SearchQueryToken.Token.AND) || isToken(SearchQueryToken.Token.OR)) {
         throw new SearchParserException("Operators must not be followed by an AND or an OR",
-            SearchParserException.MessageKeys.INVALID_OPERATOR_AFTER_AND, token.getToken().toString());
+            SearchParserException.MessageKeys.INVALID_OPERATOR_AFTER_AND, token.getToken().name());
+      } else if(isEof()) {
+        throw new SearchParserException("Missing search expression after AND (found end of search query)",
+            SearchParserException.MessageKeys.INVALID_END_OF_QUERY, Token.AND.name());
       }
       se = processSearchExpression(se);
       return new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, se);
@@ -147,6 +151,10 @@ public class SearchParser {
   public SearchExpression processOr(SearchExpression left) throws SearchParserException {
     if (isToken(SearchQueryToken.Token.OR)) {
       nextToken();
+    }
+    if(isEof()) {
+      throw new SearchParserException("Missing search expression after OR (found end of search query)",
+          SearchParserException.MessageKeys.INVALID_END_OF_QUERY, Token.OR.name());
     }
     SearchExpression se = processSearchExpression(left);
     return new SearchBinaryImpl(left, SearchBinaryOperatorKind.OR, se);

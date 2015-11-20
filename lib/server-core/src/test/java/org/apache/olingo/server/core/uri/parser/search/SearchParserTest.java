@@ -188,13 +188,22 @@ public class SearchParserTest extends SearchParser {
   }
 
   @Test
+  public void invalidQueryEnds() {
+    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.AND);
+    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.OR);
+    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.NOT, Token.WORD, Token.OR);
+    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.NOT, Token.WORD, Token.AND);
+    runEx(MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT, Token.WORD, Token.AND, Token.WORD, Token.CLOSE);
+  }
+
+  @Test
   public void singleAnd() {
     runEx(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION, Token.AND);
   }
 
   @Test
   public void singleOpenBracket() {
-    runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.OPEN);
+    runEx(SearchParserException.MessageKeys.NO_EXPRESSION_FOUND, Token.OPEN);
   }
 
   @Test
