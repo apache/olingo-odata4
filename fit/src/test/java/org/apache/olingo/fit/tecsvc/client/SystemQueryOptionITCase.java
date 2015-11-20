@@ -19,10 +19,11 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.util.List;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -83,7 +84,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
 
     for (int i = 0; i < 5; i++) {
       ClientEntity entity = response.getBody().getEntities().get(i);
-      assertEquals(new Integer(i + 1).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
+      assertShortOrInt(i + 1, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     }
   }
 
@@ -102,7 +103,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
 
     for (int i = 0; i < 10; i++) {
       ClientEntity entity = response.getBody().getEntities().get(i);
-      assertEquals(new Integer(i + 6).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
+      assertShortOrInt(i + 6, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     }
   }
 
@@ -118,7 +119,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
 
-    assertEquals(0, response.getBody().getEntities().size());
+    assertTrue(response.getBody().getEntities().isEmpty());
   }
 
   @Test
@@ -132,15 +133,16 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
 
-    assertEquals(0, response.getBody().getEntities().size());
+    assertTrue(response.getBody().getEntities().isEmpty());
   }
 
   @Test
-  public void filterWithTopSkipOrderByAndServerSidePaging() {
+  public void searchAndFilterWithTopSkipOrderByAndServerSidePaging() {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
-            .filter("PropertyInt16 le 105") // 1, 2, ... , 105
+            .search("\"Number:\" AND NOT \"106\"") // 1, 2, ..., 105, 107, ...
+            .filter("PropertyInt16 le 106") // 1, 2, ..., 105
             .orderBy("PropertyInt16 desc") // 105, 104, ..., 2, 1
             .count(true) // 105
             .skip(3) // 102, 101, ..., 2, 1
@@ -155,14 +157,14 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
 
     int id = 102;
 
-    // Check first 10 entities
+    // Check first 10 entities.
     for (int i = 0; i < 10; i++) {
       ClientEntity entity = response.getBody().getEntities().get(i);
-      assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
+      assertShortOrInt(id, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       id--;
     }
 
-    // Get 3 * 10 = 30 Entities and check the key
+    // Get 3 * 10 = 30 Entities and check the key.
     for (int j = 0; j < 3; j++) {
       request = getClient().getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
       setCookieHeader(request);
@@ -172,12 +174,12 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
       assertEquals(10, response.getBody().getEntities().size());
       for (int i = 0; i < 10; i++) {
         ClientEntity entity = response.getBody().getEntities().get(i);
-        assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
+        assertShortOrInt(id, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
         id--;
       }
     }
 
-    // Get the last 3 items
+    // Get the last 3 items.
     request = getClient().getRetrieveRequestFactory().getEntitySetRequest(response.getBody().getNext());
     setCookieHeader(request);
     response = request.execute();
@@ -186,12 +188,12 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
     assertEquals(3, response.getBody().getEntities().size());
     for (int i = 0; i < 3; i++) {
       ClientEntity entity = response.getBody().getEntities().get(i);
-      assertEquals(new Integer(id).toString(), entity.getProperty(PROPERTY_INT16).getValue().toString());
+      assertShortOrInt(id, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
       id--;
     }
 
     // Make sure that the body no not contain a next link
-    assertEquals(null, response.getBody().getNext());
+    assertNull(response.getBody().getNext());
   }
 
   @Test
@@ -299,7 +301,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
-  
+
   @Test
   public void basicSearch() {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
@@ -308,9 +310,9 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .search("Second")
             .build());
     setCookieHeader(request);
-    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    List<ClientEntity> entities = response.getBody().getEntities();
-    assertEquals(1, entities.size());
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(1, response.getBody().getEntities().size());
   }
 
   @Test
@@ -321,9 +323,9 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .search("Second AND positive")
             .build());
     setCookieHeader(request);
-    ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    List<ClientEntity> entities = response.getBody().getEntities();
-    assertEquals(0, entities.size());
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    assertTrue(response.getBody().getEntities().isEmpty());
   }
 
   @Test
@@ -335,7 +337,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .build());
     setCookieHeader(request);
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    List<ClientEntity> entities = response.getBody().getEntities();
-    assertEquals(2, entities.size());
+    saveCookieHeader(response);
+    assertEquals(2, response.getBody().getEntities().size());
   }
 }

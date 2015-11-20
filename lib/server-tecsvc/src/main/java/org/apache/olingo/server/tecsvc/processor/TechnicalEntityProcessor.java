@@ -471,23 +471,22 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         edmEntitySet.getEntityType();
 
     EntityCollection entitySetInitial = readEntityCollection(uriInfo);
-
     if (entitySetInitial == null) {
       entitySetInitial = new EntityCollection();
     }
 
     // Modifying the original entitySet means modifying the "database", so we have to make a shallow
-    // copy of the entity set (new EntitySet, but exactly the same data)
+    // copy of the entity set (new EntitySet, but exactly the same data).
     EntityCollection entitySet = new EntityCollection();
     entitySet.getEntities().addAll(entitySetInitial.getEntities());
 
-    // Apply system query options
+    // Apply system query options.
+    SearchHandler.applySearchSystemQueryOption(uriInfo.getSearchOption(), entitySet);
     FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     CountHandler.applyCountSystemQueryOption(uriInfo.getCountOption(), entitySet);
     OrderByHandler.applyOrderByOption(uriInfo.getOrderByOption(), entitySet, uriInfo, serviceMetadata.getEdm());
     SkipHandler.applySkipSystemQueryHandler(uriInfo.getSkipOption(), entitySet);
     TopHandler.applyTopSystemQueryOption(uriInfo.getTopOption(), entitySet);
-    SearchHandler.applySearchSystemQueryOption(uriInfo.getSearchOption(), entitySet);
 
     final Integer pageSize = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getMaxPageSize();
     final Integer serverPageSize = ServerSidePagingHandler.applyServerSidePaging(uriInfo.getSkipTokenOption(),

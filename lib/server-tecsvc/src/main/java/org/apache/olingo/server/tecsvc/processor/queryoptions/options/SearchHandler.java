@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions.options;
 
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Locale;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
@@ -29,64 +36,83 @@ import org.apache.olingo.server.api.uri.queryoption.search.SearchBinaryOperatorK
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchTerm;
 
-import javax.xml.bind.DatatypeConverter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Locale;
-
 public class SearchHandler {
-  private static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-  public static void applySearchSystemQueryOption(final SearchOption searchOption, final EntityCollection entitySet)
+  public static void applySearchSystemQueryOption(final SearchOption searchOption, EntityCollection entitySet)
       throws ODataApplicationException {
-
     if (searchOption != null) {
       SearchExpression se = searchOption.getSearchExpression();
       Iterator<Entity> it = entitySet.getEntities().iterator();
-      while(it.hasNext()) {
+      while (it.hasNext()) {
         boolean keep = false;
         Entity entity = it.next();
         ListIterator<Property> properties = entity.getProperties().listIterator();
-        while(properties.hasNext() && !keep) {
+        while (properties.hasNext() && !keep) {
           keep = isTrue(se, properties.next());
         }
-        if(!keep) {
+        if (!keep) {
           it.remove();
         }
       }
     }
   }
 
-  private static boolean isTrue(SearchTerm term, Property property) {
-    if(property.isPrimitive() && !property.isNull()) {
-      String propertyString = asString(property);
-      return propertyString != null && propertyString.contains(term.getSearchTerm());
+  private static boolean isTrue(final SearchTerm term, final Property property) {
+    if (property.isNull()) {
+      return false;
+    } else if (property.isPrimitive()) {
+      if (property.isCollection()) {
+        for (final Object primitive : property.asCollection()) {
+          final String propertyString = asString(primitive);
+          if (propertyString != null && propertyString.contains(term.getSearchTerm())) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        final String propertyString = asString(property.asPrimitive());
+        return propertyString != null && propertyString.contains(term.getSearchTerm());
+      }
+    } else if (property.isComplex()) {
+      if (property.isCollection()) {
+        for (final Object member : property.asCollection()) {
+          if (isTrue(term, (Property) member)) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        for (final Property innerProperty : property.asComplex().getValue()) {
+          if (isTrue(term, innerProperty)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    } else {
+      return false;
     }
-    return false;
   }
 
-  private static String asString(Property property) {
-    // TODO: mibo(151117): improve 'string' conversion
-    Object primitive = property.asPrimitive();
-    if(primitive instanceof Calendar) {
-      return SIMPLE_DATE_FORMAT.format(((Calendar) primitive).getTime());
-    } else if(primitive instanceof Date) {
-      return SIMPLE_DATE_FORMAT.format((Date) primitive);
-    } else if(primitive instanceof byte[]) {
+  private static String asString(final Object primitive) {
+    // TODO: improve 'string' conversion; maybe consider only String properties
+    if (primitive instanceof String) {
+      return (String) primitive;
+    } else if (primitive instanceof Calendar) {
+      return DatatypeConverter.printDateTime((Calendar) primitive);
+    } else if (primitive instanceof byte[]) {
       return DatatypeConverter.printBase64Binary((byte[]) primitive);
+    } else {
+      return primitive.toString();
     }
-    return primitive.toString();
   }
 
-  private static boolean isTrue(SearchBinary binary, Property property) throws ODataApplicationException {
+  private static boolean isTrue(final SearchBinary binary, final Property property) throws ODataApplicationException {
     SearchExpression left = binary.getLeftOperand();
     SearchExpression right = binary.getRightOperand();
-    if(binary.getOperator() == SearchBinaryOperatorKind.AND) {
+    if (binary.getOperator() == SearchBinaryOperatorKind.AND) {
       return isTrue(left, property) && isTrue(right, property);
-    } else if(binary.getOperator() == SearchBinaryOperatorKind.OR) {
+    } else if (binary.getOperator() == SearchBinaryOperatorKind.OR) {
       return isTrue(left, property) || isTrue(right, property);
     } else {
       throw new ODataApplicationException("Found unknown SearchBinaryOperatorKind: " + binary.getOperator(),
@@ -94,12 +120,13 @@ public class SearchHandler {
     }
   }
 
-  private static boolean isTrue(SearchExpression searchExpression, Property property) throws ODataApplicationException {
-    if(searchExpression.isSearchBinary()) {
+  private static boolean isTrue(final SearchExpression searchExpression, final Property property)
+      throws ODataApplicationException {
+    if (searchExpression.isSearchBinary()) {
       return isTrue(searchExpression.asSearchBinary(), property);
-    } else if(searchExpression.isSearchTerm()) {
+    } else if (searchExpression.isSearchTerm()) {
       return isTrue(searchExpression.asSearchTerm(), property);
-    } else if(searchExpression.isSearchUnary()) {
+    } else if (searchExpression.isSearchUnary()) {
       return !isTrue(searchExpression.asSearchUnary().getOperand(), property);
     }
     throw new ODataApplicationException("Found unknown SearchExpression: " + searchExpression,

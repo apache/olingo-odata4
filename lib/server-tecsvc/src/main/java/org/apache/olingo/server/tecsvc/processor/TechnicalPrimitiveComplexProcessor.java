@@ -47,8 +47,8 @@ import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.FixedFormatDeserializer;
-import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
+import org.apache.olingo.server.api.prefer.PreferencesApplied;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
 import org.apache.olingo.server.api.processor.CountComplexCollectionProcessor;
@@ -225,6 +225,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
             dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0)).getFunction(),
             ((UriResourceFunction) resourceParts.get(0)).getParameters(), resource), path) :
         getPropertyData(entity, path);
+
+    // TODO: implement filter on collection properties (on a shallow copy of the values)
+    // FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), property, uriInfo, serviceMetadata.getEdm());
 
     if (property == null && representationType != RepresentationType.COUNT) {
       if (representationType == RepresentationType.VALUE) {
