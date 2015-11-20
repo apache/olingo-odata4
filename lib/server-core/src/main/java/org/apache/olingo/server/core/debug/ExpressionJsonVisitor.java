@@ -52,6 +52,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   private static final String STRING_NAME = "String";
   private static final String BOOLEAN_NAME = "Boolean";
   private static final String NUMBER_NAME = "Number";
+  private static final String DATE_NAME = "Date";
+  private static final String TIME_NAME = "TimeOfDay";
+  private static final String DATETIMEOFFSET_NAME = "DateTimeOffset";
   private static final String ENUM_NAME = "enum";
   private static final String VALUES_NAME = "values";
   private static final String NAME_NAME = "name";
@@ -235,6 +238,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     case FRACTIONALSECONDS:
     case TOTALOFFSETMINUTES:
     case TOTALSECONDS:
+    case GEODISTANCE:
+    case GEOLENGTH:
       return NUMBER_NAME;
 
     case CONCAT:
@@ -244,14 +249,18 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     case TRIM:
       return STRING_NAME;
 
-    case CAST:
-    case GEODISTANCE:
-    case GEOLENGTH:
+    case DATE:
+      return DATE_NAME;
+
+    case TIME:
+      return TIME_NAME;
+
     case MAXDATETIME:
     case MINDATETIME:
-    case DATE:
-    case TIME:
     case NOW:
+      return DATETIMEOFFSET_NAME;
+
+    case CAST:
     default:
       return UNKNOWN_NAME;
     }
