@@ -368,7 +368,6 @@ public class SearchTokenizerTest {
       this.searchQuery = searchQuery;
     }
 
-    @SuppressWarnings("unused")
     private Validator enableLogging() {
       log = true;
       return this;

@@ -28,23 +28,15 @@ public class SearchParserException extends UriParserSyntaxException {
     NO_EXPRESSION_FOUND,
     /** parameter: message */
     TOKENIZER_EXCEPTION,
-    /** parameter: tokenCharacter */
-    INVALID_TOKEN_CHARACTER_FOUND,
-    /** parameter: operatorkind */
-    INVALID_BINARY_OPERATOR_POSITION,
     /** parameter: operatorkind */
     INVALID_NOT_OPERAND,
     /** parameters: - */
     MISSING_CLOSE,
     /** parameters: expectedToken actualToken */
     EXPECTED_DIFFERENT_TOKEN,
-    /** parameters: actualToken */
-    INVALID_END_OF_QUERY,
-    /** parameters: left_over_token */
-    INVALID_END_OF_QUERY_TOKEN_LEFT,
-    /** parameter: operatorkind */
-    INVALID_OPERATOR_AFTER_AND;
-
+    /** parameter: actual token */
+    INVALID_END_OF_QUERY;
+    
     @Override
     public String getKey() {
       return name();
@@ -60,5 +52,5 @@ public class SearchParserException extends UriParserSyntaxException {
       final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
   }
-  
+
 }

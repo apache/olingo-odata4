@@ -184,31 +184,36 @@ public class SearchParserTest extends SearchParser {
 
   @Test
   public void doubleAnd() throws Exception {
-    runEx(SearchParserException.MessageKeys.INVALID_OPERATOR_AFTER_AND, Token.WORD, Token.AND, Token.AND, Token.WORD);
+    runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.WORD, Token.AND, Token.AND, Token.WORD);
   }
 
   @Test
   public void invalidQueryEnds() {
-    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.AND);
-    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.OR);
-    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.NOT, Token.WORD, Token.OR);
-    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.NOT, Token.WORD, Token.AND);
-    runEx(MessageKeys.INVALID_END_OF_QUERY_TOKEN_LEFT, Token.WORD, Token.AND, Token.WORD, Token.CLOSE);
+    runEx(MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.WORD, Token.AND);
+    runEx(MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.WORD, Token.OR);
+    runEx(MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.NOT, Token.WORD, Token.OR);
+    runEx(MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.NOT, Token.WORD, Token.AND);
+    runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.AND, Token.WORD, Token.CLOSE);
   }
-
+  
+  @Test
+  public void invalidQueryStarts() throws Exception {
+    run(Token.WORD, Token.AND, Token.WORD, Token.AND, Token.WORD);
+  }
+  
   @Test
   public void singleAnd() {
-    runEx(SearchParserException.MessageKeys.INVALID_BINARY_OPERATOR_POSITION, Token.AND);
+    runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.AND);
   }
 
   @Test
   public void singleOpenBracket() {
-    runEx(SearchParserException.MessageKeys.NO_EXPRESSION_FOUND, Token.OPEN);
+    runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.OPEN);
   }
 
   @Test
   public void emptyBrackets() {
-    runEx(SearchParserException.MessageKeys.NO_EXPRESSION_FOUND, Token.OPEN, Token.CLOSE);
+    runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.OPEN, Token.CLOSE);
   }
 
   @Test
@@ -225,7 +230,7 @@ public class SearchParserTest extends SearchParser {
       assertEquals(key, e.getMessageKey());
     }
   }
-
+  
   private SearchExpression run(SearchQueryToken.Token... tokenArray) throws SearchParserException {
     List<SearchQueryToken> tokenList = prepareTokens(tokenArray);
     SearchExpression se = parse(tokenList);
