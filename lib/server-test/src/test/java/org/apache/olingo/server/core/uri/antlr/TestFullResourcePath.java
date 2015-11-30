@@ -45,6 +45,7 @@ import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
@@ -5428,9 +5429,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  @Ignore("$search currently not implemented")
   public void testSearch() throws Exception {
-
     testUri.run("ESTwoKeyNav", "$search=abc");
     testUri.run("ESTwoKeyNav", "$search=NOT abc");
 
@@ -5462,6 +5461,19 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav", "$search=(abc AND  def)       ghi ");
     testUri.run("ESTwoKeyNav", "$search=abc AND (def    OR  ghi)");
     testUri.run("ESTwoKeyNav", "$search=abc AND (def        ghi)");
+
+    // escaped characters
+    testUri.run("ESTwoKeyNav", "$search=\"abc\"");
+    testUri.run("ESTwoKeyNav", "$search=\"a\\\"bc\"");
+    testUri.run("ESTwoKeyNav", "$search=%22abc%22");
+    testUri.run("ESTwoKeyNav", "$search=%22a%5C%22bc%22");
+    testUri.run("ESTwoKeyNav", "$search=%22a%5C%5Cbc%22");
+
+    // wrong escaped characters
+    testUri.runEx("ESTwoKeyNav", "$search=%22a%22bc%22")
+        .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    testUri.runEx("ESTwoKeyNav", "$search=%22a%5Cbc%22")
+        .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 
   @Test

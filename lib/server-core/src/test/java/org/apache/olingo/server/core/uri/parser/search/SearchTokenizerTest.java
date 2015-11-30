@@ -250,6 +250,14 @@ public class SearchTokenizerTest {
   @Test
   public void characterInPhrase() throws Exception {
     assertQuery("\"123\" OR \"ALPHA-._~\"").resultsIn(PHRASE, OR, PHRASE);
+    //escaped characters
+    assertQuery("\"\\\"123\" OR \"\\\\abc\"").resultsIn(new Validator.Tuple(PHRASE, "\"\"123\""),
+        new Validator.Tuple(OR), new Validator.Tuple(PHRASE, "\"\\abc\""));
+    assertQuery("\"\\\"1\\\\23\"").resultsIn(new Validator.Tuple(PHRASE, "\"\"1\\23\""));
+    // exceptions
+    assertQuery("\"\\\"1\\\\").resultsIn(SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
+    assertQuery("\"1\\\"").resultsIn(SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
+    assertQuery("\"1\\23\"").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
   }
 
   @Test

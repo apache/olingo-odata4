@@ -176,6 +176,11 @@ public class TestUriValidator implements TestValidator {
     }
   }
 
+  public TestUriValidator isExceptionMessage(final ODataLibraryException.MessageKey messageKey) {
+    assertEquals(messageKey, exception.getMessageKey());
+    return this;
+  }
+
   public TestUriValidator isExSyntax(final UriParserSyntaxException.MessageKeys messageKey) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
     assertEquals(messageKey, exception.getMessageKey());
