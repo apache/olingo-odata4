@@ -5462,6 +5462,10 @@ public class TestFullResourcePath {
     testUri.run("ESTwoKeyNav", "$search=abc AND (def    OR  ghi)");
     testUri.run("ESTwoKeyNav", "$search=abc AND (def        ghi)");
 
+    // percent encoded characters
+    testUri.run("ESTwoKeyNav", "$search=%41%42%43");
+    testUri.run("ESTwoKeyNav", "$search=\"100%25\"");
+
     // escaped characters
     testUri.run("ESTwoKeyNav", "$search=\"abc\"");
     testUri.run("ESTwoKeyNav", "$search=\"a\\\"bc\"");
@@ -5473,6 +5477,8 @@ public class TestFullResourcePath {
     testUri.runEx("ESTwoKeyNav", "$search=%22a%22bc%22")
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
     testUri.runEx("ESTwoKeyNav", "$search=%22a%5Cbc%22")
+        .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    testUri.runEx("ESTwoKeyNav", "$search=not%27allowed")
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 

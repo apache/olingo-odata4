@@ -123,14 +123,7 @@ public class SearchTokenizer {
     }
 
     static boolean isAllowedWord(final char character) {
-      // TODO mibo: add missing allowed characters
-      int type = Character.getType(character);
-      return (type == Character.LETTER_NUMBER
-          || type == Character.LOWERCASE_LETTER
-          || type == Character.MODIFIER_LETTER
-          || type == Character.OTHER_LETTER
-          || type == Character.TITLECASE_LETTER
-          || type == Character.UPPERCASE_LETTER);
+      return Character.isUnicodeIdentifierStart(character);
     }
 
     /**
@@ -168,25 +161,17 @@ public class SearchTokenizer {
      * return <code>FALSE</code>.<br/>
      * <b>Furthermore</b> percent encoded characters are also not validated (and can not be validated on
      * a single character).<br/>
-     * Hence for the <code>%</code> character this method will return <code>FALSE</code>.<br/>
+     * Hence for the <code>%</code> character this method assumeS that it was percent encoded and is now decoded
+     * and will return <code>TRUE</code>.<br/>
      *
      * @param character which is checked
      * @return true if character is allowed for a phrase
      */
     static boolean isAllowedPhrase(final char character) {
-      // FIXME mibo: check missing
-      return isQCharUnescaped(character);// || isEscaped(character);
+      // the '%' is allowed because it is assumed that it was percent encoded and is now decoded
+      return isQCharUnescaped(character) || character == '%';
     }
 
-//    /**
-//     * escape = "\" / "%5C" ; reverse solidus U+005C
-//     * @param character which is checked
-//     * @return true if character is allowed
-//     */
-//    private static boolean isEscaped(char character) {
-//      // TODO: mibo(151130): is checked in SearchPhraseState
-//      return false;
-//    }
 
     /**
      * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
@@ -195,7 +180,6 @@ public class SearchTokenizer {
      */
     private static boolean isQCharUnescaped(char character) {
       return isUnreserved(character)
-//          || isPctEncodedUnescaped(character)
           || isOtherDelims(character)
           || character == ':'
           || character == '@'
@@ -219,36 +203,6 @@ public class SearchTokenizer {
           || character == ','
           || character == ';';
     }
-
-//    /**
-//     * pct-encoded-unescaped = "%" ( "0" / "1" / "3" / "4" / "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
-//     * / "%" "2" ( "0" / "1" / "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
-//     * / "%" "5" ( DIGIT / "A" / "B" / "D" / "E" / "F" )
-//     *
-//     * HEXDIG = DIGIT / A-to-F
-//     *
-//     * @param character which is checked
-//     * @return true if character is allowed
-//     */
-//    private static boolean isPctEncodedUnescaped(char character) {
-//      String hex = Integer.toHexString(character);
-//      char aschar[] = hex.toCharArray();
-//      if(aschar[0] == '%') {
-//        if(aschar[1] == '2') {
-//          return aschar[2] != '2' && isHexDigit(aschar[2]);
-//        } else if(aschar[1] == '5') {
-//          return aschar[2] != 'C' && isHexDigit(aschar[2]);
-//        } else if(isHexDigit(aschar[1])) {
-//          return isHexDigit(aschar[2]);
-//        }
-//      }
-//      return false;
-//    }
-
-//    private static boolean isHexDigit(char character) {
-//      return 'A' <= character && character <= 'F' // case A..F
-//          || '0' <= character && character <= '9'; // case 0..9
-//    }
 
     /**
      * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
