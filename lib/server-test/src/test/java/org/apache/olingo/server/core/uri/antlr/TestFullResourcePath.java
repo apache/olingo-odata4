@@ -5482,6 +5482,91 @@ public class TestFullResourcePath {
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 
+  /**
+   * https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-testcases.xml
+   * @throws Exception
+   */
+  @Test
+  public void searchQueryPhraseAbnfTestcases() throws Exception {
+    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    testUri.run("ESTwoKeyNav", "$search=\"blue%20green\"");
+    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    testUri.run("ESTwoKeyNav", "$search=\"blue%20green%22");
+    //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
+    //    <Input>$search="blue\"green"</Input>
+    testUri.run("ESTwoKeyNav", "$search=\"blue\\\"green\"");
+
+    //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
+    //    <Input>$search="blue\\green"</Input>
+    testUri.run("ESTwoKeyNav", "$search=\"blue\\\\green\"");
+    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
+    testUri.runEx("ESTwoKeyNav", "$search=\"blue\"green\"")
+            .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
+    testUri.runEx("ESTwoKeyNav", "$search=\"blue%22green\"")
+            .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+
+    //    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
+    //    <Input>$search=blue green</Input>
+    //    SearchassertQuery("\"blue%20green\"").resultsIn();
+    testUri.run("ESTwoKeyNav", "$search=blue green");
+    //    <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
+    //    SearchassertQuery("blue%20green").resultsIn();
+    testUri.run("ESTwoKeyNav", "$search=blue%20green");
+
+    //    <TestCase Name="5.1.7 Search - AND" Rule="queryOptions">
+    //    <Input>$search=blue AND green</Input>
+    testUri.run("ESTwoKeyNav", "$search=blue AND green");
+
+    //    <TestCase Name="5.1.7 Search - OR" Rule="queryOptions">
+    //    <Input>$search=blue OR green</Input>
+    testUri.run("ESTwoKeyNav", "$search=blue OR green");
+
+    //    <TestCase Name="5.1.7 Search - NOT" Rule="queryOptions">
+    //    <Input>$search=blue NOT green</Input>
+    testUri.run("ESTwoKeyNav", "$search=blue NOT green");
+
+    //    <TestCase Name="5.1.7 Search - only NOT" Rule="queryOptions">
+    //    <Input>$search=NOT blue</Input>
+    testUri.run("ESTwoKeyNav", "$search=NOT blue");
+
+    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    //    <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
+    testUri.run("ESTwoKeyNav", "$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz");
+
+    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    //    <Input>$search=(foo OR that) AND (bar OR baz)</Input>
+    testUri.run("ESTwoKeyNav", "$search=(foo OR that) AND (bar OR baz)");
+
+    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    //    <Input>$search=foo AND (bar OR baz)</Input>
+    testUri.run("ESTwoKeyNav", "$search=foo AND (bar OR baz)");
+
+    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    //    <Input>$search=(foo AND bar) OR baz</Input>
+    testUri.run("ESTwoKeyNav", "$search=(foo AND bar) OR baz");
+
+    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    //    <Input>$search=(NOT foo) OR baz</Input>
+    testUri.run("ESTwoKeyNav", "$search=(NOT foo) OR baz");
+
+    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    //    <Input>$search=(NOT foo)</Input>
+    testUri.run("ESTwoKeyNav", "$search=(NOT foo)");
+
+    //    <TestCase Name="5.1.7 Search - on entity set" Rule="odataUri">
+    //    <Input>http://serviceRoot/Products?$search=blue</Input>
+    testUri.run("ESTwoKeyNav", "$search=blue");
+
+    //    <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
+    //    <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
+    testUri.run("$all", "$search=blue");
+
+    //    <TestCase Name="5.1.7 Search - on service" Rule="odataUri">
+    //    <Input>http://serviceRoot/$all?$search=blue</Input>
+    testUri.run("$all", "$search=blue");
+  }
+
   @Test
   public void testErrors() {
     testUri.runEx("FICRTString(wrong1='ABC')/olingo.odata.test1.BFCStringRTESTwoKeyNav()")

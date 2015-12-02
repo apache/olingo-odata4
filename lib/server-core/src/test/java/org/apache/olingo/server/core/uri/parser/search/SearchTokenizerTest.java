@@ -92,40 +92,7 @@ public class SearchTokenizerTest {
     assertQuery("abc or \"xyz\"").resultsIn(WORD, WORD, PHRASE);
   }
 
-  /**
-   * https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-testcases.xml
-   * @throws Exception
-   */
   @Test
-  @Ignore("Test must be moved to SearchParserTest and SearchParserAndTokenizerTest")
-  public void parsePhraseAbnfTestcases() throws Exception {
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
-    assertQuery("\"blue%20green\"");
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
-    assertQuery("\"blue%20green%22");
-    //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
-    //    <Input>$search="blue\"green"</Input>
-    assertQuery("\"blue\\\"green\"");
-
-    //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
-    //    <Input>$search="blue\\green"</Input>
-    assertQuery("\"blue\\\\green\"");
-
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
-    assertQuery("\"blue\"green\"");
-
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
-    assertQuery("\"blue%22green\"");
-
-//    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
-//    <Input>$search=blue green</Input>
-//    SearchassertQuery("\"blue%20green\"").resultsIn();
-    //    <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
-//    SearchassertQuery("blue%20green").resultsIn();
-  }
-
-
-    @Test
   public void parseNot() throws Exception {
     assertQuery("NOT").resultsIn(NOT);
     assertQuery(" NOT ").resultsIn(NOT);
@@ -221,7 +188,6 @@ public class SearchTokenizerTest {
     assertQuery("abc OR ORsomething").resultsIn(WORD, OR, WORD);
   }
 
-  @Ignore
   @Test
   public void unicodeInWords() throws Exception {
     // Ll, Lm, Lo, Lt, Lu, Nl
@@ -392,15 +358,6 @@ public class SearchTokenizerTest {
       }
       return this;
     }
-//    private void resultsIn(Class<? extends Exception> exception) throws SearchTokenizerException {
-//      try {
-//        validate();
-//      } catch (Exception e) {
-//        Assert.assertEquals(exception, e.getClass());
-//        return;
-//      }
-//      Assert.fail("Expected exception " + exception.getClass().getSimpleName() + " was not thrown.");
-//    }
 
     private void resultsIn(SearchTokenizerException.MessageKey key)
         throws SearchTokenizerException {

@@ -311,8 +311,20 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    saveCookieHeader(response);
     assertEquals(1, response.getBody().getEntities().size());
+  }
+
+  @Test
+  public void basicSearchPhrase() {
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM)
+            .search("\"This is a \\\"$imple\\\"\\\\Phras~\" AND "
+                + "AnUnicodeWordLl\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
+            .build());
+    setCookieHeader(request);
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    assertTrue(response.getBody().getEntities().isEmpty());
   }
 
   @Test
@@ -324,7 +336,6 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    saveCookieHeader(response);
     assertTrue(response.getBody().getEntities().isEmpty());
   }
 
@@ -337,7 +348,6 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
             .build());
     setCookieHeader(request);
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();
-    saveCookieHeader(response);
     assertEquals(2, response.getBody().getEntities().size());
   }
 }
