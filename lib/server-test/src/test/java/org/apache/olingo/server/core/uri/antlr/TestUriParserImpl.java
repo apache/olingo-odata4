@@ -28,7 +28,6 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
@@ -186,11 +185,11 @@ public class TestUriParserImpl {
     .isType(EntityTypeProvider.nameETTwoKeyTwoPrim, false);
 
     testUri.runEx(ContainerProvider.AIRT_STRING + "/invalidElement")
-        .isExSemantic(UriParserSemanticException.MessageKeys.RESOURCE_PART_ONLY_FOR_TYPED_PARTS);
+        .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
   }
 
   @Test
-  public void runCount() {
+  public void count() {
 
     // count entity set
     testRes.run("ESAllPrim/$count")
@@ -338,7 +337,7 @@ public class TestUriParserImpl {
     .isKeyPredicate(0, "PropertyInt16", "1");
 
     // with two keys
-    testRes.run("ESTwoKeyTwoPrim(PropertyInt16=1, PropertyString='ABC')")
+    testRes.run("ESTwoKeyTwoPrim(PropertyInt16=1,PropertyString='ABC')")
     .isEntitySet("ESTwoKeyTwoPrim")
     .isKeyPredicate(0, "PropertyInt16", "1")
     .isKeyPredicate(1, "PropertyString", "'ABC'");
@@ -562,14 +561,14 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testUnary() throws UriParserException {
+  public void unary() throws Exception {
     testFilter.runOnETAllPrim("not PropertyBoolean").isCompr("<not <PropertyBoolean>>");
     testFilter.runOnETAllPrim("- PropertyInt16 eq PropertyInt16").isCompr("<<- <PropertyInt16>> eq <PropertyInt16>>");
     testFilter.runOnETAllPrim("-PropertyInt16 eq PropertyInt16").isCompr("<<- <PropertyInt16>> eq <PropertyInt16>>");
   }
 
   @Test
-  public void testFilterComplexMixedPriority() throws UriParserException {
+  public void filterComplexMixedPriority() throws Exception {
     testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64")
         .isCompr("<<PropertyInt16> or <<PropertyInt32> and <PropertyInt64>>>");
     testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64 eq PropertyByte")
@@ -594,7 +593,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testFilterSimpleSameBinaryBinaryBinaryPriority() throws UriParserException {
+  public void filterSimpleSameBinaryBinaryBinaryPriority() throws Exception {
     testFilter.runOnETAllPrim("1 add 2 add 3 add 4").isCompr("<<< <1> add   <2>> add  <3>>  add <4>>");
     testFilter.runOnETAllPrim("1 add 2 add 3 div 4").isCompr("<<  <1> add   <2>> add <<3>   div <4>>>");
     testFilter.runOnETAllPrim("1 add 2 div 3 add 4").isCompr("<<  <1> add  <<2>  div  <3>>> add <4>>");
@@ -1101,7 +1100,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testGeo() throws UriParserException {
+  public void geo() throws Exception {
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
     .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
     .isMethod(MethodKind.GEODISTANCE, 2);

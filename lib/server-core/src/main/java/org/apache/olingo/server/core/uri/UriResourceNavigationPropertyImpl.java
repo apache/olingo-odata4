@@ -49,10 +49,7 @@ public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl i
 
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return navigationProperty.isCollection();
+    return navigationProperty.isCollection() && keyPredicates == null;
   }
   
   @Override

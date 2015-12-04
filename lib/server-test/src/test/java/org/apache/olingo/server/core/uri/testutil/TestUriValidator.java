@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
@@ -44,6 +45,7 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 public class TestUriValidator implements TestValidator {
+  private final OData odata = OData.newInstance();
   private Edm edm;
 
   private UriInfo uriInfo;
@@ -62,17 +64,14 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator run(final String path, final String query)
       throws UriParserException, UriValidationException {
-    Parser parser = new Parser();
-    UriValidator validator = new UriValidator();
-
-    uriInfo = parser.parseUri(path, query, null, edm);
-    validator.validate(uriInfo, HttpMethod.GET);
+    uriInfo = new Parser(edm, odata).parseUri(path, query, null);
+    new UriValidator().validate(uriInfo, HttpMethod.GET);
     return this;
   }
 
   public TestUriValidator run(final String path, final String query, final String fragment)
       throws UriParserException, UriValidationException {
-    uriInfo = new Parser().parseUri(path, query, fragment, edm);
+    uriInfo = new Parser(edm, odata).parseUri(path, query, fragment);
     new UriValidator().validate(uriInfo, HttpMethod.GET);
     return this;
   }
@@ -82,10 +81,9 @@ public class TestUriValidator implements TestValidator {
   }
 
   public TestUriValidator runEx(final String path, final String query) {
-    Parser parser = new Parser();
     uriInfo = null;
     try {
-      uriInfo = parser.parseUri(path, query, null, edm);
+      uriInfo = new Parser(edm, odata).parseUri(path, query, null);
       new UriValidator().validate(uriInfo, HttpMethod.GET);
       fail("Exception expected");
     } catch (UriParserException e) {

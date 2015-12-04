@@ -55,7 +55,7 @@ public class ParserTest {
     EdmEntityType productsType = Mockito.mock(EdmEntityType.class);
 
     final FullQualifiedName nameProducts = new FullQualifiedName("NS", "Products");
-    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
+    Mockito.when(mockEdm.getEntityContainer()).thenReturn(container);
     Mockito.when(typeCategory.getName()).thenReturn("Category");
     Mockito.when(typeCategory.getNamespace()).thenReturn("NS");
     Mockito.when(esCategory.getEntityType()).thenReturn(typeCategory);
@@ -97,7 +97,7 @@ public class ParserTest {
     EdmEntityType typeProduct = Mockito.mock(EdmEntityType.class);
     FullQualifiedName fqnProduct = new FullQualifiedName("NS", "Products");
 
-    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
+    Mockito.when(mockEdm.getEntityContainer()).thenReturn(container);
     Mockito.when(typeCategory.getName()).thenReturn(fqnCategory.getName());
     Mockito.when(typeCategory.getNamespace()).thenReturn(fqnCategory.getNamespace());
     Mockito.when(typeCategory.getFullQualifiedName()).thenReturn(fqnCategory);

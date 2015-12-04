@@ -183,7 +183,7 @@ public class EdmProviderImplTest {
     when(localProvider.getAliasInfos()).thenThrow(new ODataException("msg"));
 
     Edm localEdm = new EdmProviderImpl(localProvider);
-    localEdm.getEntityContainer(null);
+    localEdm.getEntityContainer();
   }
 
   @Test
@@ -193,7 +193,7 @@ public class EdmProviderImplTest {
     assertEquals(FQN.getNamespace(), entityContainer.getNamespace());
     assertEquals(FQN.getName(), entityContainer.getName());
 
-    entityContainer = edm.getEntityContainer(null);
+    entityContainer = edm.getEntityContainer();
     assertNotNull(entityContainer);
     assertEquals(FQN.getNamespace(), entityContainer.getNamespace());
     assertEquals(FQN.getName(), entityContainer.getName());

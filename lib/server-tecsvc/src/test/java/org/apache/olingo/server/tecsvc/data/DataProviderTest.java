@@ -29,7 +29,6 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -44,8 +43,7 @@ public class DataProviderTest {
   private final Edm edm =
       oData.createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
       .getEdm();
-  private final EdmEntityContainer entityContainer = edm.getEntityContainer(
-      new FullQualifiedName("olingo.odata.test1", "Container"));
+  private final EdmEntityContainer entityContainer = edm.getEntityContainer();
 
   private final EdmEntitySet esAllPrim = entityContainer.getEntitySet("ESAllPrim");
   private final EdmEntitySet esAllKey = entityContainer.getEntitySet("ESAllKey");

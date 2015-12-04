@@ -229,6 +229,7 @@ public class EdmSchemaImplTest {
 
     assertTrue(container == edm.getEntityContainer(new FullQualifiedName(schema.getNamespace(), container.getName())));
     assertTrue(container == edm.getEntityContainer(null));
+    assertTrue(container == edm.getEntityContainer());
   }
 
   private class LocalProvider implements CsdlEdmProvider {

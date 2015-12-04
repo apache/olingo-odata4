@@ -47,6 +47,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.requests.DataRequest;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public abstract class ServiceRequest {
   protected OData odata;
@@ -240,7 +241,7 @@ public abstract class ServiceRequest {
     return null;
   }
 
-  public DataRequest parseLink(URI uri) throws UriParserException, URISyntaxException {
+  public DataRequest parseLink(URI uri) throws UriParserException, UriValidationException, URISyntaxException {
     String path = "/";
     URI servicePath = new URI(getODataRequest().getRawBaseUri());
     path = servicePath.getPath();
@@ -253,8 +254,7 @@ public abstract class ServiceRequest {
       rawPath = rawPath.substring(e+path.length());
     }
 
-    UriInfo uriInfo = new Parser().parseUri(rawPath, uri.getQuery(), null,
-        this.serviceMetadata.getEdm());
+    UriInfo uriInfo = new Parser(serviceMetadata.getEdm(), odata).parseUri(rawPath, uri.getQuery(), null);
     ServiceDispatcher dispatcher = new ServiceDispatcher(odata, serviceMetadata, null, customContentType);
     dispatcher.visit(uriInfo);
     return (DataRequest)dispatcher.request;

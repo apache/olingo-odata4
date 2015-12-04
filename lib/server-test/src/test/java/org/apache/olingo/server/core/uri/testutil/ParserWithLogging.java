@@ -20,6 +20,8 @@ package org.apache.olingo.server.core.uri.testutil;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.DiagnosticErrorListener;
+import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.parser.Parser;
 
@@ -27,7 +29,8 @@ public class ParserWithLogging extends Parser {
   TestErrorLogger errorCollector1;
   TestErrorLogger errorCollector2;
 
-  public ParserWithLogging() {
+  public ParserWithLogging(final Edm edm, final OData odata) {
+    super(edm, odata);
     errorCollector1 = new TestErrorLogger("Stage 1", 1);
     errorCollector2 = new TestErrorLogger("Stage 2", 1);
   }

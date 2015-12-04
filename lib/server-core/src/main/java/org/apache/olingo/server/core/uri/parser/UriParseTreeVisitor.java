@@ -250,7 +250,7 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public UriParseTreeVisitor(final Edm edm, final UriContext context) {
     this.edm = edm;
     this.context = context;
-    edmEntityContainer = edm.getEntityContainer(null);
+    edmEntityContainer = edm.getEntityContainer();
   }
 
   @Override
