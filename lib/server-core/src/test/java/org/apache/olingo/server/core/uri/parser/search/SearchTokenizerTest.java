@@ -191,7 +191,7 @@ public class SearchTokenizerTest {
   @Test
   public void unicodeInWords() throws Exception {
     // Ll, Lm, Lo, Lt, Lu, Nl
-    assertQuery("abc OR Ll\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
+    assertQuery("abc OR Ll\u01E3Lm\u02B5Lo\u00AALt\u01F2Lu\u03D3Nl\u216F")
         .resultsIn(WORD, OR, WORD);
   }
 
