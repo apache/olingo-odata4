@@ -203,7 +203,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
+  ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
     if (isODataMetadataNone) {
       return null;
     } else if (contextURL == null) {
@@ -767,13 +767,13 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   }
 
-  private void writeContextURL(final ContextURL contextURL, JsonGenerator json) throws IOException {
+  void writeContextURL(final ContextURL contextURL, JsonGenerator json) throws IOException {
     if (!isODataMetadataNone && contextURL != null) {
       json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
     }
   }
 
-  private void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
+  void writeMetadataETag(final ServiceMetadata metadata, JsonGenerator json) throws IOException {
     if (!isODataMetadataNone
         && metadata != null
         && metadata.getServiceMetadataETagSupport() != null
@@ -783,7 +783,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeCount(final EntityCollection entityCollection, JsonGenerator json) throws IOException {
+  void writeCount(final EntityCollection entityCollection, JsonGenerator json) throws IOException {
     if (entityCollection.getCount() != null) {
       if (isIEEE754Compatible) {
         json.writeStringField(Constants.JSON_COUNT, entityCollection.getCount().toString());
@@ -793,7 +793,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeNextLink(final EntityCollection entitySet, JsonGenerator json) throws IOException {
+  void writeNextLink(final EntityCollection entitySet, JsonGenerator json) throws IOException {
     if (entitySet.getNext() != null) {
       json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
     }

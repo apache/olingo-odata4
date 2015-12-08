@@ -18,13 +18,20 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.EntityStreamCollection;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -520,17 +527,124 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
 
     // Serialize
+//    final SerializerResult serializerResult = (isReference) ?
+//        serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
+//        serializeEntityCollection(request, entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+//            expand, select, countOption, id);
     final SerializerResult serializerResult = (isReference) ?
         serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
-        serializeEntityCollection(request, entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+        serializeEntityStreamCollectionFixed(request,
+            entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
             expand, select, countOption, id);
     response.setContent(serializerResult.getContent());
+
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     if (pageSize != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().maxPageSize(serverPageSize).build().toValueString());
     }
+  }
+
+  // just for demonstration
+  private SerializerResult serializeEntityStreamCollectionFixed(final ODataRequest request,
+      final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
+      final EdmEntityType edmEntityType,
+      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
+      final CountOption countOption, final String id) throws ODataLibraryException {
+
+    EntityStreamCollection streamCollection = new EntityStreamCollection() {
+      Iterator<Entity> entityIterator = entityCollection.getEntities().iterator();
+
+      @Override
+      public boolean hasNext() {
+        return entityIterator.hasNext();
+      }
+
+      @Override
+      public Entity nextEntity() {
+        Entity next = entityIterator.next();
+        replacePrimitiveProperty(next, "PropertyString", generateData(28192));
+//        next.getProperties().remove(1);
+//        next.addProperty(new Property(null, "PropertyString", ValueType.PRIMITIVE, generateData(28192)));
+        try {
+          TimeUnit.MILLISECONDS.sleep(2500);
+        } catch (InterruptedException e) { }
+        return next;
+      }
+
+      @Override
+      public List<Entity> getEntities() {
+        return entityCollection.getEntities();
+      }
+
+      private void replacePrimitiveProperty(Entity entity, String name, Object data) {
+        List<Property> properties = entity.getProperties();
+        int pos = 0;
+        for (Property property : properties) {
+          if(name.equals(property.getName())) {
+            properties.remove(pos);
+            entity.addProperty(new Property(null, name, ValueType.PRIMITIVE, data));
+            break;
+          }
+          pos++;
+        }
+      }
+
+      private String generateData(final int len) {
+        Random random = new Random();
+        StringBuilder b = new StringBuilder(len);
+        for (int j = 0; j < len; j++) {
+          final char c = (char) ('A' + random.nextInt('Z' - 'A' + 1));
+          b.append(c);
+        }
+        return b.toString();
+      }
+
+    };
+
+    return odata.createSerializer(requestedFormat).entityCollection(
+        serviceMetadata,
+        edmEntityType,
+        streamCollection,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(isODataMetadataNone(requestedFormat) ? null :
+                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
+            .count(countOption)
+            .expand(expand).select(select)
+            .id(id)
+            .build());
+  }
+
+  private SerializerResult serializeEntityStreamCollection(final ODataRequest request,
+      final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
+      final EdmEntityType edmEntityType,
+      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
+      final CountOption countOption, final String id) throws ODataLibraryException {
+
+    EntityStreamCollection streamCollection = new EntityStreamCollection() {
+      Iterator<Entity> test = entityCollection.getEntities().iterator();
+      @Override
+      public boolean hasNext() {
+        return test.hasNext();
+      }
+
+      @Override
+      public Entity nextEntity() {
+        return test.next();
+      }
+    };
+    return odata.createSerializer(requestedFormat).entityCollection(
+        serviceMetadata,
+        edmEntityType,
+        streamCollection,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(isODataMetadataNone(requestedFormat) ? null :
+                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
+            .count(countOption)
+            .expand(expand).select(select)
+            .id(id)
+            .build());
   }
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
