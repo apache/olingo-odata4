@@ -320,7 +320,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
             .search("\"This is a \\\"$imple\\\"\\\\Phras~\" AND "
-                + "AnUnicodeWordLl\u01E3Lm\u02B5Lo\u1BE4Lt\u01F2Lu\u03D3Nl\u216F")
+                + "AnUnicodeWordLl\u01E3Lm\u02B5Lo\u00AALt\u01F2Lu\u03D3Nl\u216F")
             .build());
     setCookieHeader(request);
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
