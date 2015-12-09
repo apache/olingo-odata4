@@ -30,6 +30,15 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
   private UnaryOperatorKind operator;
   private ExpressionImpl expression;
 
+  public UnaryImpl() {
+
+  }
+
+  public UnaryImpl(UnaryOperatorKind operator, Expression expression) {
+    this.operator = operator;
+    this.expression = (ExpressionImpl) expression;
+  }
+
   @Override
   public UnaryOperatorKind getOperator() {
     return operator;
@@ -52,6 +61,11 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     T operand = expression.accept(visitor);
     return visitor.visitUnaryOperator(operator, operand);
+  }
+
+  @Override
+  public String toString() {
+    return "{" + operator + " " + expression + '}';
   }
 
 }

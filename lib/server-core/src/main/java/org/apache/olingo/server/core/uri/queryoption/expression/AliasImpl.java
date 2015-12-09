@@ -27,6 +27,14 @@ public class AliasImpl extends ExpressionImpl implements Alias {
 
   private String parameterName;
 
+  public AliasImpl() {
+    //TODO: Delete Constructor
+  }
+
+  public AliasImpl(String parameterName) {
+    this.parameterName = parameterName;
+  }
+
   @Override
   public String getParameterName() {
     return parameterName;

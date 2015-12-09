@@ -29,6 +29,15 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
   private String text;
   private EdmType type;
 
+  public LiteralImpl() {
+
+  }
+
+  public LiteralImpl(String text, EdmType type) {
+    this.text = text;
+    this.type = type;
+  }
+
   @Override
   public String getText() {
     return text;
@@ -52,6 +61,11 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLiteral(this);
+  }
+
+  @Override
+  public String toString() {
+    return "" + text;
   }
 
 }

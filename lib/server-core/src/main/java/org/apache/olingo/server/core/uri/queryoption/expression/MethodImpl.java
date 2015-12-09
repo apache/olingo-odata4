@@ -33,6 +33,14 @@ public class MethodImpl extends ExpressionImpl implements Method {
   private MethodKind method;
   private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
 
+  public MethodImpl() {
+    // TODO: Delete constructor
+  }
+
+  public MethodImpl(MethodKind method) {
+    this.method = method;
+  }
+
   @Override
   public MethodKind getMethod() {
     return method;
@@ -64,6 +72,22 @@ public class MethodImpl extends ExpressionImpl implements Method {
       userParameters.add(parameter.accept(visitor));
     }
     return visitor.visitMethodCall(method, userParameters);
+  }
+
+  @Override
+  public String toString() {
+    String parametersString = "[";
+    boolean first = true;
+    for (Expression exp : parameters) {
+      if(first){
+        first = false;
+        parametersString = parametersString + exp.toString();
+      }else {
+        parametersString = parametersString + ", " + exp.toString();
+      }
+    }
+    parametersString = parametersString + "]";
+    return "{" + method + " " + parametersString + "}";
   }
 
 }

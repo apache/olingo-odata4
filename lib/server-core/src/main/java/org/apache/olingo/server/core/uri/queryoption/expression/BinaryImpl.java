@@ -31,6 +31,17 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
   private ExpressionImpl left;
   private ExpressionImpl right;
 
+  public BinaryImpl() {
+    // TODO: Delete
+  }
+
+  public BinaryImpl(Expression left, BinaryOperatorKind operator, Expression right) {
+    // TODO:DeleteCast
+    this.left = (ExpressionImpl) left;
+    this.operator = operator;
+    this.right = (ExpressionImpl) right;
+  }
+
   @Override
   public BinaryOperatorKind getOperator() {
     return operator;
@@ -65,6 +76,11 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
     T left = this.left.accept(visitor);
     T right = this.right.accept(visitor);
     return visitor.visitBinaryOperator(operator, left, right);
+  }
+
+  @Override
+  public String toString() {
+    return "{" + left + " " + operator.name() + " " + right + '}';
   }
 
 }
