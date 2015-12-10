@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -60,7 +61,30 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 
     expectTypeErrorInValueToString(instance, 0);
   }
-
+  
+  @Test
+  public void toTimeObject() throws Exception {
+    Calendar dateTime = Calendar.getInstance();
+    dateTime.clear();
+    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+    dateTime.set(Calendar.HOUR, 12);
+    
+    Time timeValue = instance.valueOfString("12:00:00", null, null, null, null, null, Time.class);
+    assertEquals(dateTime.getTimeInMillis(), timeValue.getTime());
+  }
+  
+  @Test
+  public void fromTimeObject() throws Exception {
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.clear();
+    dateTime.set(Calendar.HOUR, 5);
+    dateTime.set(Calendar.MINUTE, 59);
+    dateTime.set(Calendar.SECOND, 23);
+    
+    Time time = new Time(dateTime.getTimeInMillis());
+    assertEquals("05:59:23", instance.valueToString(time, null, null, null, null, null));
+  }
+  
   @Test
   public void valueOfString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
