@@ -52,6 +52,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
@@ -85,7 +86,7 @@ public class ResourceValidator implements TestValidator {
   // --- Execution ---
 
   public ResourceValidator run(final String path) {
-    ParserWithLogging testParser = new ParserWithLogging(edm, odata);
+    Parser testParser = new Parser(edm, odata);
 
     UriInfo uriInfoTmp = null;
     uriPathInfo = null;

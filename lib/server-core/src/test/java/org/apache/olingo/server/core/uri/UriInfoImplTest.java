@@ -20,24 +20,22 @@ package org.apache.olingo.server.core.uri;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.UriResourceActionImpl;
+import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
@@ -52,14 +50,10 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class UriInfoImplTest {
-
-  private static final Edm edm = OData.newInstance().createServiceMetadata(
-      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
   public void kind() {
@@ -184,9 +178,7 @@ public class UriInfoImplTest {
 
   @Test
   public void entityTypeCast() {
-    final EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
-    assertNotNull(entityType);
-
+    final EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
     final UriInfo uriInfo = new UriInfoImpl()
         .setEntityTypeCast(entityType);
     assertEquals(entityType, uriInfo.getEntityTypeCast());
