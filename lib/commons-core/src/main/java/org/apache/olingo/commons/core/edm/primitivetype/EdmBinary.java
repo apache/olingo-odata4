@@ -133,19 +133,19 @@ public class EdmBinary extends SingletonPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode) {
 
-    return value == null
-        ? isNullable == null || isNullable
-        : isBase64(value.getBytes(UTF_8)) && validateMaxLength(value, maxLength);
+    return value == null ?
+        isNullable == null || isNullable :
+        isBase64(value.getBytes(UTF_8)) && validateMaxLength(value, maxLength);
   }
 
   private static boolean validateMaxLength(final String value, final Integer maxLength) {
-    return maxLength == null ? true
-        : // Every three bytes are represented as four base-64 characters.
+    return maxLength == null ? true :
+        // Every three bytes are represented as four base-64 characters.
         // Additionally, there could be up to two padding "=" characters
         // if the number of bytes is not a multiple of three,
         // and there could be line feeds, possibly with carriage returns.
         maxLength >= (value.length() - lineEndingsLength(value)) * 3 / 4
-          - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
+            - (value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0);
   }
 
   private static int lineEndingsLength(final String value) {

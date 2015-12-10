@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -223,14 +222,7 @@ public class UriValidator {
 
   private RowIndexForUriType rowIndexForResourceKind(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
-    
-    final int nonComposableFunctionIndex = getIndexOfLastNonComposableFunction(uriInfo);
-    if(nonComposableFunctionIndex != -1 && (uriInfo.getUriResourceParts().size() - 1) > nonComposableFunctionIndex) {
-      throw new UriValidationException("Non composable functions followed by further resource parts are not allowed", 
-          UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH, 
-          uriInfo.getUriResourceParts().get(nonComposableFunctionIndex + 1).getSegmentValue());
-    }
-    
+
     int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
     UriResource lastPathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
 
@@ -249,11 +241,7 @@ public class UriValidator {
       idx = rowIndexForEntitySet(lastPathSegment);
       break;
     case function:
-      if(nonComposableFunctionIndex == -1) {
-        idx = rowIndexForFunction(lastPathSegment);
-      } else {
-        idx = RowIndexForUriType.none;
-      }
+      idx = rowIndexForFunction(lastPathSegment);
       break;
     case primitiveProperty:
       idx = rowIndexForPrimitiveProperty(lastPathSegment);
@@ -278,21 +266,6 @@ public class UriValidator {
     return idx;
   }
 
-  private int getIndexOfLastNonComposableFunction(final UriInfo uriInfo) {
-    for(int i = 0; i < uriInfo.getUriResourceParts().size(); i++) {
-      final UriResource resourcePath = uriInfo.getUriResourceParts().get(i);
-      
-      if(resourcePath instanceof UriResourceFunction) {
-        final UriResourceFunction resourceFuntion = (UriResourceFunction) resourcePath;
-        if(!resourceFuntion.getFunction().isComposable()) {
-          return i;
-        }
-      }
-    }
-    
-    return -1;
-  }
-
   private RowIndexForUriType rowIndexForValue(final UriInfo uriInfo) throws UriValidationException {
     RowIndexForUriType idx;
     int secondLastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 2;
@@ -309,9 +282,7 @@ public class UriValidator {
       break;
     case function:
       UriResourceFunction uriFunction = (UriResourceFunction) secondLastPathSegment;
-      final EdmFunctionImport functionImport = uriFunction.getFunctionImport();
-      final EdmFunction function = functionImport == null ?
-          uriFunction.getFunction() : functionImport.getUnboundFunctions().get(0);
+      final EdmFunction function = uriFunction.getFunction();
       idx = function.getReturnType().getType().getKind() == EdmTypeKind.ENTITY ?
           RowIndexForUriType.mediaStream : RowIndexForUriType.propertyPrimitiveValue;
       break;
@@ -351,32 +322,33 @@ public class UriValidator {
   }
 
   private RowIndexForUriType rowIndexForFunction(final UriResource lastPathSegment) throws UriValidationException {
-    RowIndexForUriType idx;
-    UriResourceFunction urf = (UriResourceFunction) lastPathSegment;
-    EdmReturnType rt = urf.getFunction().getReturnType();
+    final UriResourceFunction uriFunction = (UriResourceFunction) lastPathSegment;
+    final EdmReturnType returnType = uriFunction.getFunction().getReturnType();
 
-    if(!urf.getFunction().isComposable()) {
+    if (!uriFunction.getFunction().isComposable()) {
       return RowIndexForUriType.none;
     }
-    
-    
-    switch (rt.getType().getKind()) {
+
+    RowIndexForUriType idx;
+    switch (returnType.getType().getKind()) {
     case ENTITY:
-      idx = rt.isCollection() && urf.getKeyPredicates().isEmpty() ?
+      idx = returnType.isCollection() && uriFunction.getKeyPredicates().isEmpty() ?
           RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       break;
     case PRIMITIVE:
     case ENUM:
     case DEFINITION:
-      idx = rt.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
+      idx = returnType.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection :
+                                        RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
-      idx = rt.isCollection() ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
+      idx = returnType.isCollection() ? RowIndexForUriType.propertyComplexCollection :
+                                        RowIndexForUriType.propertyComplex;
       break;
     default:
-      throw new UriValidationException("Unsupported function return type: " + rt.getType().getKind(),
+      throw new UriValidationException("Unsupported function return type: " + returnType.getType().getKind(),
           UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE,
-          rt.getType().getKind().toString());
+          returnType.getType().getKind().toString());
     }
 
     return idx;
@@ -447,9 +419,7 @@ public class UriValidator {
       break;
     case function:
       final UriResourceFunction uriFunction = (UriResourceFunction) secondLastPathSegment;
-      final EdmFunctionImport functionImport = uriFunction.getFunctionImport();
-      final EdmFunction function = functionImport == null ?
-          uriFunction.getFunction() : functionImport.getUnboundFunctions().get(0);
+      final EdmFunction function = uriFunction.getFunction();
       final EdmType returnType = function.getReturnType().getType();
       switch (returnType.getKind()) {
       case ENTITY:
@@ -560,8 +530,8 @@ public class UriValidator {
   private void validateParameters(final UriInfo uriInfo) throws UriValidationException {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       final boolean isFunction = pathSegment.getKind() == UriResourceKind.function;
-      
-      if(isFunction) {
+
+      if (isFunction) {
         final UriResourceFunction functionPathSegement = (UriResourceFunction) pathSegment;
         final EdmFunction edmFuntion = functionPathSegement.getFunction();
         
@@ -613,7 +583,7 @@ public class UriValidator {
     for (UriResource pathSegment : uriInfo.getUriResourceParts()) {
       final boolean isEntitySet = pathSegment.getKind() == UriResourceKind.entitySet;
       final boolean isEntityColFunction = isEntityColFunction(pathSegment);
-      
+
       if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty || isEntityColFunction) {
         final List<UriParameter> keyPredicates = isEntitySet ?
             ((UriResourceEntitySet) pathSegment).getKeyPredicates() :
@@ -680,7 +650,7 @@ public class UriValidator {
   }
 
   private boolean isEntityColFunction(final UriResource pathSegment) {
-    if(pathSegment.getKind() == UriResourceKind.function) {
+    if (pathSegment.getKind() == UriResourceKind.function) {
       final UriResourceFunction resourceFunction = (UriResourceFunction) pathSegment;
       final EdmReturnType returnType = resourceFunction.getFunction().getReturnType();
       
@@ -689,7 +659,7 @@ public class UriValidator {
       return false;
     }
   }
-  
+
   private void validatePropertyOperations(final UriInfo uriInfo, final HttpMethod method)
       throws UriValidationException {
     final List<UriResource> parts = uriInfo.getUriResourceParts();

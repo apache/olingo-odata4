@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -31,11 +30,15 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceCount;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceValue;
@@ -46,18 +49,14 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.AllEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.BatchEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.CrossjoinEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.EntityEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandItemsEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.FilterExpressionEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.MetadataEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.PathSegmentEOFContext;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.SelectEOFContext;
+import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
@@ -71,6 +70,7 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class Parser {
   private static final String ATOM = "atom";
@@ -78,19 +78,22 @@ public class Parser {
   private static final String XML = "xml";
   private static final String AT = "@";
   private static final String NULL = "null";
+
   int logLevel = 0;
+  private final Edm edm;
+  private final OData odata;
 
   private enum ParserEntryRules {
-    All, Batch, CrossJoin, Entity, ExpandItems, FilterExpression, Metadata, PathSegment, Orderby, Select, Search
+    ExpandItems, FilterExpression, Orderby, Select
   }
 
-  public Parser setLogLevel(final int logLevel) {
-    this.logLevel = logLevel;
-    return this;
+  public Parser(final Edm edm, final OData odata) {
+    this.edm = edm;
+    this.odata = odata;
   }
 
-  public UriInfo parseUri(final String path, final String query, final String fragment, final Edm edm)
-      throws UriParserException {
+  public UriInfo parseUri(final String path, final String query, final String fragment)
+      throws UriParserException, UriValidationException {
 
     UriContext context = new UriContext();
     UriParseTreeVisitor uriParseTreeVisitor = new UriParseTreeVisitor(edm, context);
@@ -104,65 +107,74 @@ public class Parser {
       if (firstSegment.isEmpty()) {
         ensureLastSegment(firstSegment, 0, uri.pathSegmentListDecoded.size());
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.service);
-      } else if (firstSegment.startsWith("$batch")) {
+
+      } else if (firstSegment.equals("$batch")) {
         ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
-        BatchEOFContext ctxBatchEOF =
-            (BatchEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Batch);
+        context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.batch);
 
-        uriParseTreeVisitor.visitBatchEOF(ctxBatchEOF);
-      } else if (firstSegment.startsWith("$metadata")) {
+      } else if (firstSegment.equals("$metadata")) {
         ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
-        MetadataEOFContext ctxMetadataEOF =
-            (MetadataEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.Metadata);
-
-        uriParseTreeVisitor.visitMetadataEOF(ctxMetadataEOF);
-
+        context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.metadata);
         context.contextUriInfo.setFragment(uri.fragment);
-      } else if (firstSegment.startsWith("$entity")) {
 
-        context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
+      } else if (firstSegment.equals("$all")) {
+        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
+        context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.all);
+
+      } else if (firstSegment.equals("$entity")) {
         if (uri.pathSegmentListDecoded.size() > 1) {
           final String typeCastSegment = uri.pathSegmentListDecoded.get(1);
           ensureLastSegment(typeCastSegment, 2, uri.pathSegmentListDecoded.size());
-          EntityEOFContext ctxEntityEOF =
-              (EntityEOFContext) parseRule(typeCastSegment, ParserEntryRules.Entity);
-          uriParseTreeVisitor.visitEntityEOF(ctxEntityEOF);
+          context.contextUriInfo = new ResourcePathParser(edm, odata).parseDollarEntityTypeCast(typeCastSegment);
+          context.contextTypes.push(
+              uriParseTreeVisitor.new TypeInformation(context.contextUriInfo.getEntityTypeCast(), false));
+        } else {
+          context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
         }
 
-      } else if (firstSegment.startsWith("$all")) {
-        ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
-        AllEOFContext ctxResourcePathEOF =
-            (AllEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.All);
-
-        uriParseTreeVisitor.visitAllEOF(ctxResourcePathEOF);
       } else if (firstSegment.startsWith("$crossjoin")) {
         ensureLastSegment(firstSegment, 1, uri.pathSegmentListDecoded.size());
-        CrossjoinEOFContext ctxResourcePathEOF =
-            (CrossjoinEOFContext) parseRule(uri.pathSegmentListDecoded.get(0), ParserEntryRules.CrossJoin);
+        context.contextUriInfo = new ResourcePathParser(edm, odata)
+            .parseCrossjoinSegment(uri.pathSegmentListDecoded.get(0));
+        final EdmEntityContainer container = edm.getEntityContainer();
+        for (final String name : context.contextUriInfo.getEntitySetNames()) {
+          context.contextTypes.push(
+              uriParseTreeVisitor.new TypeInformation(container.getEntitySet(name).getEntityType(), true));
+        }
 
-        uriParseTreeVisitor.visitCrossjoinEOF(ctxResourcePathEOF);
       } else {
-        List<PathSegmentEOFContext> ctxPathSegments = new ArrayList<PathSegmentEOFContext>();
-        for (String pathSegment : uri.pathSegmentListDecoded) {
-          PathSegmentEOFContext ctxPathSegment =
-              (PathSegmentEOFContext) parseRule(pathSegment, ParserEntryRules.PathSegment);
-          ctxPathSegments.add(ctxPathSegment);
-        }
-
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-
-        for (PathSegmentEOFContext ctxPathSegment : ctxPathSegments) {
-          // add checks for batch, entity, metadata, all, crossjoin
-          uriParseTreeVisitor.visitPathSegmentEOF(ctxPathSegment);
+        final ResourcePathParser resourcePathParser = new ResourcePathParser(edm, odata);
+        int count = 0;
+        UriResource lastSegment = null;
+        for (final String pathSegment : uri.pathSegmentListDecoded) {
+          count++;
+          final UriResource segment = resourcePathParser.parsePathSegment(pathSegment, lastSegment);
+          if (segment != null) {
+            if (segment instanceof UriResourceCount
+                || segment instanceof UriResourceRef
+                || segment instanceof UriResourceValue) {
+              ensureLastSegment(pathSegment, count, uri.pathSegmentListDecoded.size());
+            } else if (segment instanceof UriResourceAction
+                || segment instanceof UriResourceFunction
+                && !((UriResourceFunction) segment).getFunction().isComposable()) {
+              if (count < uri.pathSegmentListDecoded.size()) {
+                throw new UriValidationException(
+                    "The segment of an action or of a non-composable function must be the last resource-path segment.",
+                    UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH,
+                    uri.pathSegmentListDecoded.get(count));
+              }
+              lastSegment = segment;
+            } else if (segment instanceof UriResourceStartingTypeFilterImpl) {
+              throw new UriParserSemanticException("First resource-path segment must not be namespace-qualified.",
+                  UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+            } else {
+              lastSegment = segment;
+            }
+            context.contextUriInfo.addResourcePart(segment);
+          }
         }
 
-        UriResource lastSegment = context.contextUriInfo.getLastResourcePart();
-        if (lastSegment instanceof UriResourceCount
-            || lastSegment instanceof UriResourceRef
-            || lastSegment instanceof UriResourceValue) {
-          final List<UriResource> parts = context.contextUriInfo.getUriResourceParts();
-          lastSegment = parts.get(parts.size() - 2);
-        }
         if (lastSegment instanceof UriResourcePartTyped) {
           UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
 
@@ -174,13 +186,12 @@ public class Parser {
       }
 
       // second, read the system query options and the custom query options
-      for (RawUri.QueryOption option : uri.queryOptionListDecoded) {
+      for (final RawUri.QueryOption option : uri.queryOptionListDecoded) {
         if (option.name.startsWith("$")) {
           SystemQueryOption systemOption = null;
           if (option.name.equals(SystemQueryOptionKind.FILTER.toString())) {
             FilterExpressionEOFContext ctxFilterExpression =
                 (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
-
             systemOption = (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
 
           } else if (option.name.equals(SystemQueryOptionKind.FORMAT.toString())) {
@@ -201,7 +212,6 @@ public class Parser {
           } else if (option.name.equals(SystemQueryOptionKind.EXPAND.toString())) {
             ExpandItemsEOFContext ctxExpandItems =
                 (ExpandItemsEOFContext) parseRule(option.value, ParserEntryRules.ExpandItems);
-
             systemOption = (ExpandOptionImpl) uriParseTreeVisitor.visitExpandItemsEOF(ctxExpandItems);
 
           } else if (option.name.equals(SystemQueryOptionKind.ID.toString())) {
@@ -210,22 +220,24 @@ public class Parser {
             idOption.setText(option.value);
             idOption.setValue(option.value);
             systemOption = idOption;
+
           } else if (option.name.equals(SystemQueryOptionKind.LEVELS.toString())) {
             throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
                 UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
+
           } else if (option.name.equals(SystemQueryOptionKind.ORDERBY.toString())) {
             OrderByEOFContext ctxOrderByExpression =
                 (OrderByEOFContext) parseRule(option.value, ParserEntryRules.Orderby);
-
             systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
+
           } else if (option.name.equals(SystemQueryOptionKind.SEARCH.toString())) {
-            SearchParser searchParser = new SearchParser();
-            systemOption = searchParser.parse(option.value);
+            systemOption = new SearchParser().parse(option.value);
+
           } else if (option.name.equals(SystemQueryOptionKind.SELECT.toString())) {
             SelectEOFContext ctxSelectEOF =
                 (SelectEOFContext) parseRule(option.value, ParserEntryRules.Select);
-
             systemOption = (SelectOptionImpl) uriParseTreeVisitor.visitSelectEOF(ctxSelectEOF);
+
           } else if (option.name.equals(SystemQueryOptionKind.SKIP.toString())) {
             SkipOptionImpl skipOption = new SkipOptionImpl();
             skipOption.setName(option.name);
@@ -238,12 +250,14 @@ public class Parser {
                   option.name, option.value);
             }
             systemOption = skipOption;
+
           } else if (option.name.equals(SystemQueryOptionKind.SKIPTOKEN.toString())) {
             SkipTokenOptionImpl skipTokenOption = new SkipTokenOptionImpl();
             skipTokenOption.setName(option.name);
             skipTokenOption.setText(option.value);
             skipTokenOption.setValue(option.value);
             systemOption = skipTokenOption;
+
           } else if (option.name.equals(SystemQueryOptionKind.TOP.toString())) {
             TopOptionImpl topOption = new TopOptionImpl();
             topOption.setName(option.name);
@@ -256,6 +270,7 @@ public class Parser {
                   option.name, option.value);
             }
             systemOption = topOption;
+
           } else if (option.name.equals(SystemQueryOptionKind.COUNT.toString())) {
             CountOptionImpl inlineCountOption = new CountOptionImpl();
             inlineCountOption.setName(option.name);
@@ -268,6 +283,7 @@ public class Parser {
                   option.name, option.value);
             }
             systemOption = inlineCountOption;
+
           } else {
             throw new UriParserSyntaxException("Unknown system query option!",
                 UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, option.name);
@@ -278,12 +294,23 @@ public class Parser {
             throw new UriParserSyntaxException("Double system query option!", e,
                 UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, option.name);
           }
+
         } else if (option.name.startsWith(AT)) {
           if (context.contextUriInfo.getAlias(option.name) == null) {
-            final FilterExpressionEOFContext filterExpCtx =
-                (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
-            final Expression expression = ((FilterOption) uriParseTreeVisitor.visitFilterExpressionEOF(filterExpCtx))
-                .getExpression();
+            // TODO: Create a proper alias-value parser that can parse also common expressions.
+            Expression expression = null;
+            if (!option.value.isEmpty() && (option.value.charAt(0) == '[' || option.value.charAt(0) == '{')) {
+              UriTokenizer tokenizer = new UriTokenizer(option.value);
+              if (!(tokenizer.next(TokenKind.jsonArrayOrObject) && tokenizer.next(TokenKind.EOF))) {
+                throw new UriParserSyntaxException("Illegal value for alias '" + option.name + "'.",
+                    UriParserSyntaxException.MessageKeys.SYNTAX);
+              }
+            } else {
+              final FilterExpressionEOFContext filterExpCtx =
+                  (FilterExpressionEOFContext) parseRule(option.value, ParserEntryRules.FilterExpression);
+              expression = ((FilterOption) uriParseTreeVisitor.visitFilterExpressionEOF(filterExpCtx))
+                  .getExpression();
+            }
             context.contextUriInfo.addAlias((AliasQueryOption) new AliasQueryOptionImpl()
                 .setAliasValue(expression)
                 .setName(option.name)
@@ -292,6 +319,7 @@ public class Parser {
             throw new UriParserSyntaxException("Alias already specified! Name: " + option.name,
                 UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
           }
+
         } else {
           context.contextUriInfo.addCustomQueryOption((CustomQueryOption)
               new CustomQueryOptionImpl()
@@ -354,21 +382,6 @@ public class Parser {
 
       // parse
       switch (entryPoint) {
-      case All:
-        ret = parser.allEOF();
-        break;
-      case Batch:
-        ret = parser.batchEOF();
-        break;
-      case CrossJoin:
-        ret = parser.crossjoinEOF();
-        break;
-      case Metadata:
-        ret = parser.metadataEOF();
-        break;
-      case PathSegment:
-        ret = parser.pathSegmentEOF();
-        break;
       case FilterExpression:
         lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.filterExpressionEOF();
@@ -381,14 +394,8 @@ public class Parser {
         lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.expandItemsEOF();
         break;
-      case Entity:
-        ret = parser.entityEOF();
-        break;
       case Select:
         ret = parser.selectEOF();
-        break;
-      case Search:
-        ret = parser.searchInline();
         break;
       default:
         break;
@@ -414,21 +421,6 @@ public class Parser {
 
         // parse
         switch (entryPoint) {
-        case All:
-          ret = parser.allEOF();
-          break;
-        case Batch:
-          ret = parser.batchEOF();
-          break;
-        case CrossJoin:
-          ret = parser.crossjoinEOF();
-          break;
-        case Metadata:
-          ret = parser.metadataEOF();
-          break;
-        case PathSegment:
-          ret = parser.pathSegmentEOF();
-          break;
         case FilterExpression:
           lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.filterExpressionEOF();
@@ -441,14 +433,8 @@ public class Parser {
           lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.expandItemsEOF();
           break;
-        case Entity:
-          ret = parser.entityEOF();
-          break;
         case Select:
           ret = parser.selectEOF();
-          break;
-        case Search:
-          ret = parser.searchInline();
           break;
         default:
           break;

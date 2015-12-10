@@ -129,8 +129,8 @@ public class ODataHandler {
 
     final int measurementUriParser = debugger.startRuntimeMeasurement("UriParser", "parseUri");
     try {
-      uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(), null,
-          serviceMetadata.getEdm());
+      uriInfo = new Parser(serviceMetadata.getEdm(), odata)
+          .parseUri(request.getRawODataPath(), request.getRawQueryPath(), null);
     } catch (final ODataLibraryException e) {
       debugger.stopRuntimeMeasurement(measurementUriParser);
       debugger.stopRuntimeMeasurement(measurementHandle);

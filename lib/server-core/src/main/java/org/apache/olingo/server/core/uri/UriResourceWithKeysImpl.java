@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements
   public List<UriParameter> getKeyPredicates() {
     return keyPredicates == null ?
         Collections.<UriParameter> emptyList() :
-        new ArrayList<UriParameter>(keyPredicates);
+        Collections.unmodifiableList(keyPredicates);
   }
 
   public UriResourceWithKeysImpl setKeyPredicates(final List<UriParameter> list) {

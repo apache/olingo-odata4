@@ -90,13 +90,15 @@ public class ErrorHandler {
       final ODataServerError serverError) {
     ContentType requestedContentType;
     try {
-      UriInfo uriInfo = new Parser().parseUri(request.getRawODataPath(), request.getRawQueryPath(),
-          null, this.metadata.getEdm());
+      final UriInfo uriInfo = new Parser(metadata.getEdm(), odata)
+          .parseUri(request.getRawODataPath(), request.getRawQueryPath(), null);
       requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, this.customContent, RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
-    } catch (UriParserException e) {
+    } catch (final UriParserException e) {
+      requestedContentType = ContentType.JSON;
+    } catch (final UriValidationException e) {
       requestedContentType = ContentType.JSON;
     }
     processError(response, serverError, requestedContentType);

@@ -76,8 +76,8 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   public void execute(ODataRequest odRequest, ODataResponse odResponse)
       throws ODataLibraryException, ODataApplicationException {
 
-    UriInfo uriInfo = new Parser().parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null,
-        this.metadata.getEdm());
+    UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
+        .parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null);
 
     new UriValidator().validate(uriInfo, odRequest.getMethod());
 

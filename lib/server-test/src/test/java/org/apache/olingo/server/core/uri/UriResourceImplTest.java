@@ -86,7 +86,7 @@ public class UriResourceImplTest {
 
     // action import
     impl = new UriResourceActionImpl();
-    EdmActionImport actionImport = edm.getEntityContainer(null).getActionImport("AIRTCTTwoPrimParam");
+    EdmActionImport actionImport = edm.getEntityContainer().getActionImport("AIRTCTTwoPrimParam");
     impl.setActionImport(actionImport);
     assertEquals(actionImport, impl.getActionImport());
     assertEquals(actionImport.getUnboundAction(), impl.getAction());
@@ -94,7 +94,7 @@ public class UriResourceImplTest {
     assertEquals("AIRTCTTwoPrimParam", impl.toString());
     assertEquals(actionImport.getUnboundAction().getReturnType().getType(), impl.getType());
 
-    actionImport = edm.getEntityContainer(null).getActionImport("AIRT");
+    actionImport = edm.getEntityContainer().getActionImport("AIRT");
     impl.setActionImport(actionImport);
     assertFalse(impl.isCollection());
     assertNull(impl.getType());
@@ -184,7 +184,7 @@ public class UriResourceImplTest {
     UriResourceEntitySetImpl impl = new UriResourceEntitySetImpl();
     assertEquals(UriResourceKind.entitySet, impl.getKind());
 
-    EdmEntitySet entitySet = edm.getEntityContainer(null).getEntitySet("ESAllPrim");
+    EdmEntitySet entitySet = edm.getEntityContainer().getEntitySet("ESAllPrim");
     impl.setEntitSet(entitySet);
 
     assertEquals("ESAllPrim", impl.toString());
@@ -207,7 +207,7 @@ public class UriResourceImplTest {
     assertEquals("", impl.toString());
 
     // function
-    EdmFunction function = edm.getEntityContainer(null).getFunctionImport("FINRTInt16")
+    EdmFunction function = edm.getEntityContainer().getFunctionImport("FINRTInt16")
         .getUnboundFunction(Collections.<String> emptyList());
     assertNotNull(function);
     impl.setFunction(function);
@@ -219,14 +219,14 @@ public class UriResourceImplTest {
 
     // function import
     impl = new UriResourceFunctionImpl();
-    EdmFunctionImport functionImport = edm.getEntityContainer(null).getFunctionImport("FINRTInt16");
+    EdmFunctionImport functionImport = edm.getEntityContainer().getFunctionImport("FINRTInt16");
     impl.setFunctionImport(functionImport, Collections.<UriParameter> emptyList());
     assertEquals(functionImport, impl.getFunctionImport());
     assertEquals("FINRTInt16", impl.toString());
 
     // function collection
     impl = new UriResourceFunctionImpl();
-    functionImport = edm.getEntityContainer(null).getFunctionImport("FICRTCollESTwoKeyNavParam");
+    functionImport = edm.getEntityContainer().getFunctionImport("FICRTCollESTwoKeyNavParam");
     assertNotNull(function);
     UriParameter parameter = new UriParameterImpl().setName("ParameterInt16");
     impl.setFunctionImport(functionImport, Collections.singletonList(parameter));
@@ -414,7 +414,7 @@ public class UriResourceImplTest {
     UriResourceSingletonImpl impl = new UriResourceSingletonImpl();
     assertEquals(UriResourceKind.singleton, impl.getKind());
 
-    EdmSingleton singleton = edm.getEntityContainer(null).getSingleton("SINav");
+    EdmSingleton singleton = edm.getEntityContainer().getSingleton("SINav");
     EdmEntityType entityTypeBaseColl = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
     impl.setSingleton(singleton);
 
