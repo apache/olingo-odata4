@@ -51,7 +51,7 @@ public class UriTokenizerTest {
 
   @Test
   public void sequence() {
-    final UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);");
+    final UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);.*/+");
     assertTrue(tokenizer.next(TokenKind.OPEN));
     assertFalse(tokenizer.next(TokenKind.OPEN));
     assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
@@ -68,6 +68,10 @@ public class UriTokenizerTest {
     assertFalse(tokenizer.next(TokenKind.EOF));
     assertTrue(tokenizer.next(TokenKind.CLOSE));
     assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.DOT));
+    assertTrue(tokenizer.next(TokenKind.STAR));
+    assertTrue(tokenizer.next(TokenKind.SLASH));
+    assertTrue(tokenizer.next(TokenKind.PLUS));
     assertTrue(tokenizer.next(TokenKind.EOF));
   }
 
@@ -100,8 +104,10 @@ public class UriTokenizerTest {
   public void qualifiedName() {
     assertTrue(new UriTokenizer("namespace.name").next(TokenKind.QualifiedName));
 
-    final UriTokenizer tokenizer = new UriTokenizer("multi.part.namespace.name");
+    final UriTokenizer tokenizer = new UriTokenizer("multi.part.namespace.name.1");
     assertTrue(tokenizer.next(TokenKind.QualifiedName));
+    assertTrue(tokenizer.next(TokenKind.DOT));
+    assertTrue(tokenizer.next(TokenKind.PrimitiveIntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
 
     assertFalse(new UriTokenizer("name").next(TokenKind.QualifiedName));
@@ -334,6 +340,7 @@ public class UriTokenizerTest {
     assertFalse(new UriTokenizer("[,1]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("[1,,2]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("[1,x]").next(TokenKind.jsonArrayOrObject));
+    assertFalse(new UriTokenizer("[+\"x\"]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("{\"name\":1,}").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("{,\"name\":1}").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("{\"name\":1,,\"name2\":2}").next(TokenKind.jsonArrayOrObject));
@@ -350,6 +357,7 @@ public class UriTokenizerTest {
     assertFalse(new UriTokenizer("[\"\\u1\"]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("[\"\\u12x\"]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("[\"\\u123x\"]").next(TokenKind.jsonArrayOrObject));
+    wrongToken(TokenKind.jsonArrayOrObject, "[{\"name\":+123.456},null]", '\\');
   }
 
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {
@@ -358,6 +366,7 @@ public class UriTokenizerTest {
     final UriTokenizer tokenizer = new UriTokenizer(value + disturbCharacter);
     assertTrue(tokenizer.next(kind));
     assertEquals(value, tokenizer.getText());
+    assertFalse(tokenizer.next(TokenKind.EOF));
 
     // Place the disturbing character at every position in the value string
     // and check that this leads to a failed token recognition.

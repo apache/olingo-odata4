@@ -39,7 +39,11 @@ public class UriTokenizer {
     CLOSE,
     COMMA,
     SEMI,
+    DOT,
+    SLASH,
     EQ,
+    STAR,
+    PLUS,
     NULL,
 
     // variable-value tokens (convention: mixed case)
@@ -63,18 +67,18 @@ public class UriTokenizer {
     jsonArrayOrObject
   }
 
-  private final String pathSegment;
+  private final String parseString;
 
   private int startIndex = 0;
   private int index = 0;
 
-  public UriTokenizer(final String pathSegment) {
-    this.pathSegment = pathSegment == null ? "" : pathSegment;
+  public UriTokenizer(final String parseString) {
+    this.parseString = parseString == null ? "" : parseString;
   }
 
   /** Returns the string value corresponding to the last successful {@link #next(TokenKind)} call. */
   public String getText() {
-    return pathSegment.substring(startIndex, index);
+    return parseString.substring(startIndex, index);
   }
 
   /**
@@ -119,14 +123,26 @@ public class UriTokenizer {
     case SEMI:
       found = nextCharacter(';');
       break;
+    case DOT:
+      found = nextCharacter('.');
+      break;
+    case SLASH:
+      found = nextCharacter('/');
+      break;
     case EQ:
       found = nextCharacter('=');
+      break;
+    case STAR:
+      found = nextCharacter('*');
+      break;
+    case PLUS:
+      found = nextCharacter('+');
       break;
     case NULL:
       found = nextConstant("null");
       break;
     case EOF:
-      found = index >= pathSegment.length();
+      found = index >= parseString.length();
       break;
 
     // Identifiers
@@ -192,8 +208,12 @@ public class UriTokenizer {
     return found;
   }
 
+  /**
+   * Moves past the given string constant if found; otherwise leaves the index unchanged.
+   * @return whether the constant has been found at the current index
+   */
   private boolean nextConstant(final String constant) {
-    if (pathSegment.startsWith(constant, index)) {
+    if (parseString.startsWith(constant, index)) {
       index += constant.length();
       return true;
     } else {
@@ -201,10 +221,14 @@ public class UriTokenizer {
     }
   }
 
+  /**
+   * Moves past the given string constant, ignoring case, if found; otherwise leaves the index unchanged.
+   * @return whether the constant has been found at the current index
+   */
   private boolean nextConstantIgnoreCase(final String constant) {
     final int length = constant.length();
-    if (index + length <= pathSegment.length()
-        && constant.equalsIgnoreCase(pathSegment.substring(index, index + length))) {
+    if (index + length <= parseString.length()
+        && constant.equalsIgnoreCase(parseString.substring(index, index + length))) {
       index += length;
       return true;
     } else {
@@ -217,7 +241,7 @@ public class UriTokenizer {
    * @return whether the given character has been found at the current index
    */
   private boolean nextCharacter(final char character) {
-    if (index < pathSegment.length() && pathSegment.charAt(index) == character) {
+    if (index < parseString.length() && parseString.charAt(index) == character) {
       index++;
       return true;
     } else {
@@ -231,8 +255,8 @@ public class UriTokenizer {
    * @return whether the given character has been found at the current index
    */
   private boolean nextCharacterRange(final char from, final char to) {
-    if (index < pathSegment.length()) {
-      final char code = pathSegment.charAt(index);
+    if (index < parseString.length()) {
+      final char code = parseString.charAt(index);
       if (code >= from && code <= to) {
         index++;
         return true;
@@ -276,16 +300,20 @@ public class UriTokenizer {
     return nextCharacter('+') || nextCharacter('-');
   }
 
+  /**
+   * Moves past an OData identifier if found; otherwise leaves the index unchanged.
+   * @return whether an OData identifier has been found at the current index
+   */
   private boolean nextODataIdentifier() {
     int count = 0;
-    if (index < pathSegment.length()) {
-      int code = pathSegment.codePointAt(index);
+    if (index < parseString.length()) {
+      int code = parseString.codePointAt(index);
       if (Character.isUnicodeIdentifierStart(code) || code == '_') {
         count++;
         // Unicode characters outside of the Basic Multilingual Plane are represented as two Java characters.
         index += Character.isSupplementaryCodePoint(code) ? 2 : 1;
-        while (index < pathSegment.length() && count < 128) {
-          code = pathSegment.codePointAt(index);
+        while (index < parseString.length() && count < 128) {
+          code = parseString.codePointAt(index);
           if (Character.isUnicodeIdentifierPart(code) && !Character.isISOControl(code)) {
             count++;
             // Unicode characters outside of the Basic Multilingual Plane are represented as two Java characters.
@@ -299,16 +327,30 @@ public class UriTokenizer {
     return count > 0;
   }
 
+  /**
+   * Moves past a qualified name if found; otherwise leaves the index unchanged.
+   * @return whether a qualified name has been found at the current index
+   */
   private boolean nextQualifiedName() {
-    int count = 0;
-    do {
+    final int lastGoodIndex = index;
+    if (!nextODataIdentifier()) {
+      return false;
+    }
+    int count = 1;
+    while (nextCharacter('.')) {
       if (nextODataIdentifier()) {
         count++;
       } else {
-        return false;
+        index--;
+        break;
       }
-    } while (nextCharacter('.'));
-    return count >= 2;
+    }
+    if (count >= 2) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+      return false;
+    }
   }
 
   private boolean nextParameterAliasName() {
@@ -323,12 +365,12 @@ public class UriTokenizer {
     if (!nextCharacter('\'')) {
       return false;
     }
-    while (index < pathSegment.length()) {
-      if (pathSegment.charAt(index) == '\'') {
+    while (index < parseString.length()) {
+      if (parseString.charAt(index) == '\'') {
         // If a single quote is followed by another single quote,
         // it represents one single quote within the string literal,
         // otherwise it marks the end of the string literal.
-        if (index + 1 < pathSegment.length() && pathSegment.charAt(index + 1) == '\'') {
+        if (index + 1 < parseString.length() && parseString.charAt(index + 1) == '\'') {
           index++;
         } else {
           break;
@@ -339,7 +381,13 @@ public class UriTokenizer {
     return nextCharacter('\'');
   }
 
+  /**
+   * Moves past an integer value if found; otherwise leaves the index unchanged.
+   * @param signed whether a sign character ('+' or '-') at the beginning is allowed
+   * @return whether an integer value has been found at the current index
+   */
   private boolean nextIntegerValue(final boolean signed) {
+    final int lastGoodIndex = index;
     if (signed) {
       nextSign();
     }
@@ -347,33 +395,53 @@ public class UriTokenizer {
     while (nextDigit()) {
       hasDigits = true;
     }
-    return hasDigits;
-  }
-
-  /** Finds and returns only decimal-number tokens with a fractional part.
-   *  Whole numbers must be found with {@link #nextIntegerValue()}.
-   */
-  private boolean nextDecimalValue() {
-    return nextIntegerValue(true) && nextCharacter('.') && nextIntegerValue(false);
+    if (hasDigits) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+      return false;
+    }
   }
 
   /**
-   * Finds and returns only floating-point-number tokens with an exponential part
-   * and the special three constants "NaN", "-INF", and "INF".
-   *  Whole numbers must be found with {@link #nextIntegerValue()}.
-   *  Decimal numbers must be found with {@link #nextDecimalValue()}.
+   * Moves past a decimal value with a fractional part if found; otherwise leaves the index unchanged.
+   * Whole numbers must be found with {@link #nextIntegerValue()}.
+   */
+  private boolean nextDecimalValue() {
+    final int lastGoodIndex = index;
+    if (nextIntegerValue(true) && nextCharacter('.') && nextIntegerValue(false)) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+      return false;
+    }
+  }
+
+  /**
+   * Moves past a floating-point-number value with an exponential part
+   * or one of the special constants "NaN", "-INF", and "INF"
+   * if found; otherwise leaves the index unchanged.
+   * Whole numbers must be found with {@link #nextIntegerValue()}.
+   * Decimal numbers must be found with {@link #nextDecimalValue()}.
    */
   private boolean nextDoubleValue() {
     if (nextConstant("NaN") || nextConstant("-INF") || nextConstant("INF")) {
       return true;
     } else {
+      final int lastGoodIndex = index;
       if (!nextIntegerValue(true)) {
         return false;
       }
       if (nextCharacter('.') && !nextIntegerValue(false)) {
+        index = lastGoodIndex;
         return false;
       }
-      return (nextCharacter('E') || nextCharacter('e')) && nextIntegerValue(true);
+      if ((nextCharacter('E') || nextCharacter('e')) && nextIntegerValue(true)) {
+        return true;
+      } else {
+        index = lastGoodIndex;
+        return false;
+      }
     }
   }
 
@@ -533,7 +601,12 @@ public class UriTokenizer {
     return false;
   }
 
+  /**
+   * Moves past a JSON string if found; otherwise leaves the index unchanged.
+   * @return whether a JSON string has been found at the current index
+   */
   private boolean nextJsonString() {
+    final int lastGoodIndex = index;
     if (nextCharacter('"')) {
       do {
         if (nextCharacter('\\')) {
@@ -541,6 +614,7 @@ public class UriTokenizer {
               || nextCharacter('n') || nextCharacter('f') || nextCharacter('r')
               || nextCharacter('"') || nextCharacter('/') || nextCharacter('\\')
               || nextCharacter('u') && nextHexDigit() && nextHexDigit() && nextHexDigit() && nextHexDigit())) {
+            index = lastGoodIndex;
             return false;
           }
         } else if (nextCharacter('"')) {
@@ -548,16 +622,17 @@ public class UriTokenizer {
         } else {
           index++;
         }
-      } while (index < pathSegment.length());
+      } while (index < parseString.length());
+      index = lastGoodIndex;
       return false;
     }
+    index = lastGoodIndex;
     return false;
   }
 
   private boolean nextJsonValue() {
     return nextConstant("null") || nextConstant("true") || nextConstant("false")
-        // If a double or decimal number is not found, the index must be reset; the internal methods don't do that.
-        || next(TokenKind.PrimitiveDoubleValue) || next(TokenKind.PrimitiveDecimalValue) || nextIntegerValue(true)
+        || nextDoubleValue() || nextDecimalValue() || nextIntegerValue(true)
         || nextJsonString()
         || nextJsonArrayOrObject();
   }
@@ -566,25 +641,42 @@ public class UriTokenizer {
     return nextJsonString() && nextCharacter(':') && nextJsonValue();
   }
 
+  /**
+   * Moves past a JSON array or object if found; otherwise leaves the index unchanged.
+   * @return whether a JSON array or object has been found at the current index
+   */
   private boolean nextJsonArrayOrObject() {
+    final int lastGoodIndex = index;
     if (nextCharacter('[')) {
       if (nextJsonValue()) {
         while (nextCharacter(',')) {
           if (!nextJsonValue()) {
+            index = lastGoodIndex;
             return false;
           }
         }
       }
-      return nextCharacter(']');
+      if (nextCharacter(']')) {
+        return true;
+      } else {
+        index = lastGoodIndex;
+        return false;
+      }
     } else if (nextCharacter('{')) {
       if (nextJsonMember()) {
         while (nextCharacter(',')) {
           if (!nextJsonMember()) {
+            index = lastGoodIndex;
             return false;
           }
         }
       }
-      return nextCharacter('}');
+      if (nextCharacter('}')) {
+        return true;
+      } else {
+        index = lastGoodIndex;
+        return false;
+      }
     } else {
       return false;
     }

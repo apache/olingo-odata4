@@ -40,18 +40,19 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
+import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.apache.olingo.server.tecsvc.provider.TypeDefinitionProvider;
 import org.junit.Ignore;
@@ -2731,17 +2732,6 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .isType(EntityTypeProvider.nameETKeyNav);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')", "$select=olingo.odata.test1.ETBaseTwoKeyNav"
-        + "/PropertyInt16")
-        .isKind(UriInfoKind.resource).goPath()
-        .first()
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'2'")
-        .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav)
-        .goSelectItem(0)
-        .first()
-        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
-
     testUri.run("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyInt16)")
         .isKind(UriInfoKind.resource)
         .goPath().first()
@@ -2762,17 +2752,6 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
         .isSelectText("PropertyCompNav/PropertyInt16");
-
-    testUri.run("ESMixEnumDefCollComp",
-        "$select=PropertyEnumString,PropertyDefString,CollPropertyEnumString,CollPropertyDefString")
-        .isKind(UriInfoKind.resource)
-        .goSelectItemPath(0).isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpUriValidator()
-        .goSelectItemPath(1).isPrimitiveProperty("PropertyDefString", TypeDefinitionProvider.nameTDString, false)
-        .goUpUriValidator()
-        .goSelectItemPath(2).isPrimitiveProperty("CollPropertyEnumString", EnumTypeProvider.nameENString, true)
-        .goUpUriValidator()
-        .goSelectItemPath(3).isPrimitiveProperty("CollPropertyDefString", TypeDefinitionProvider.nameTDString, true);
 
     testUri.runEx("ESKeyNav", "$expand=undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
@@ -2812,6 +2791,134 @@ public class TestFullResourcePath {
   public void duplicatedSearchExpand() throws Exception {
     testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($search=Test;$search=Test)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
+  }
+
+  @Test
+  public void select() throws Exception {
+    testUri.run("ESTwoKeyNav", "$select=*")
+        .isSelectItemStar(0);
+
+    testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.*")
+        .isSelectItemAllOp(0, new FullQualifiedName("olingo.odata.test1", "*"));
+    testUri.run("ESTwoKeyNav", "$select=Namespace1_Alias.*")
+        .isSelectItemAllOp(0, new FullQualifiedName("Namespace1_Alias", "*"));
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyString")
+        .goSelectItemPath(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp")
+        .goSelectItemPath(0).isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false);
+
+    testUri.run("ESAllPrim", "$select=PropertyTimeOfDay,PropertyDate,NavPropertyETTwoPrimOne")
+        .isKind(UriInfoKind.resource)
+        .goSelectItemPath(0).first().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
+        .goUpUriValidator()
+        .goSelectItemPath(1).first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
+        .goUpUriValidator()
+        .goSelectItemPath(2).first().isNavProperty("NavPropertyETTwoPrimOne", EntityTypeProvider.nameETTwoPrim, false);
+
+    testUri.run("ESMixEnumDefCollComp",
+        "$select=PropertyEnumString,PropertyDefString,CollPropertyEnumString,CollPropertyDefString")
+        .isKind(UriInfoKind.resource)
+        .goSelectItemPath(0).isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpUriValidator()
+        .goSelectItemPath(1).isPrimitiveProperty("PropertyDefString", TypeDefinitionProvider.nameTDString, false)
+        .goUpUriValidator()
+        .goSelectItemPath(2).isPrimitiveProperty("CollPropertyEnumString", EnumTypeProvider.nameENString, true)
+        .goUpUriValidator()
+        .goSelectItemPath(3).isPrimitiveProperty("CollPropertyDefString", TypeDefinitionProvider.nameTDString, true);
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyInt16")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n()
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyComp/PropertyComp")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n()
+        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false);
+
+    testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.ETBaseTwoKeyNav")
+        .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav);
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
+        "$select=olingo.odata.test1.ETBaseTwoKeyNav/PropertyInt16")
+        .isKind(UriInfoKind.resource).goPath()
+        .first()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicate(1, "PropertyString", "'2'")
+        .isSelectStartType(0, EntityTypeProvider.nameETBaseTwoKeyNav)
+        .goSelectItem(0)
+        .first()
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')/PropertyCompNav",
+        "$select=olingo.odata.test1.CTTwoBasePrimCompNav")
+        .isSelectStartType(0, ComplexTypeProvider.nameCTTwoBasePrimCompNav);
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBasePrimCompNav);
+
+    testUri.run("ESTwoKeyNav", "$select=PropertyCompNav/Namespace1_Alias.CTTwoBasePrimCompNav/PropertyInt16")
+        .goSelectItemPath(0)
+        .first()
+        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBasePrimCompNav)
+        .n()
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+
+    testUri.run("ESAllPrim", "$select=olingo.odata.test1.BAESAllPrimRTETAllPrim")
+        .goSelectItemPath(0)
+        .first()
+        .isAction(ActionProvider.nameBAESAllPrimRTETAllPrim.getName());
+    testUri.run("ESTwoKeyNav", "$select=Namespace1_Alias.BFCESTwoKeyNavRTString")
+        .goSelectItemPath(0)
+        .first()
+        .isFunction(FunctionProvider.nameBFCESTwoKeyNavRTString.getName());
+    testUri.run("ESTwoKeyNav", "$select=olingo.odata.test1.BFCESTwoKeyNavRTStringParam(ParameterComp)")
+        .goSelectItemPath(0)
+        .first()
+        .isFunction(FunctionProvider.nameBFCESTwoKeyNavRTStringParam.getName());
+
+    testUri.runEx("ESMixPrimCollComp", "$select=wrong")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp/wrong")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESMixPrimCollComp", "$select=PropertyComp///PropertyInt16")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESMixPrimCollComp", "$select=/PropertyInt16")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESMixPrimCollComp", "$select=PropertyInt16+")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.1")
+        .isExSemantic(MessageKeys.UNKNOWN_PART);
+    testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.ETKeyNav")
+        .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+    testUri.runEx("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoPrim")
+        .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+    testUri.runEx("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTwrong")
+        .isExSemantic(MessageKeys.UNKNOWN_TYPE);
+    testUri.runEx("ESTwoKeyNav", "$select=PropertyCompNav/.")
+        .isExSemantic(MessageKeys.UNKNOWN_PART);
+    testUri.runEx("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav/.")
+        .isExSemantic(MessageKeys.UNKNOWN_PART);
+    testUri.runEx("AIRT", "$select=wrong")
+        .isExSemantic(MessageKeys.ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("AIRT", "$select=olingo.odata.test1.BAESAllPrimRT")
+        .isExSemantic(MessageKeys.ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.BFwrong")
+        .isExSemantic(MessageKeys.UNKNOWN_PART);
+    testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.BFCESTwoKeyNavRTStringParam()")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testUri.runEx("ESTwoKeyNav", "$select=Namespace1_Alias.BFCESTwoKeyNavRTStringParam(ParameterComp,...)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -5950,7 +6057,7 @@ public class TestFullResourcePath {
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp={\"PropertyInt16\":1,\"PropertyString\":\"Test\"})")
-        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
+        .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
 
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=null)")
         .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
@@ -5964,7 +6071,7 @@ public class TestFullResourcePath {
     testUri.run("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test='null'");
 
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test,UnknownParam=1)", "@test='null'")
-        .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND);
+        .isExSemantic(MessageKeys.FUNCTION_NOT_FOUND);
 
     testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test='null'");
     testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null");
@@ -5975,7 +6082,7 @@ public class TestFullResourcePath {
         .isExSyntax(UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS);
 
     testUri.runEx("ESAllPrim", "$filter=FINRTInt16() eq 0")
-        .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
+        .isExSemantic(MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"")

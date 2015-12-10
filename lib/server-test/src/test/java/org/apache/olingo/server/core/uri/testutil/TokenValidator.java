@@ -29,35 +29,18 @@ import org.apache.olingo.server.core.uri.antlr.UriLexer;
 public class TokenValidator {
 
   private String input = null;
-
   private List<? extends Token> tokens = null;
   private Token curToken = null;
   private Exception curException = null;
 
   private int startMode;
-  private int logLevel = 0;
-
-  // --- Setup ---
-
-  public TokenValidator log(final int logLevel) {
-    this.logLevel = logLevel;
-    return this;
-  }
 
   // --- Execution ---
 
   public TokenValidator run(final String uri) {
     input = uri;
-
     tokens = parseInput(uri);
-    if (logLevel > 0) {
-      showTokens();
-    }
-
     first();
-    exFirst();
-    logLevel = 0;
-
     return this;
   }
 
@@ -83,31 +66,6 @@ public class TokenValidator {
       curToken = tokens.get(index);
     } catch (IndexOutOfBoundsException ex) {
       curToken = null;
-    }
-    return this;
-  }
-
-  public TokenValidator exLast() {
-    // curException = exceptions.get(exceptions.size() - 1);
-    return this;
-  }
-
-  // navigate within the exception list
-  public TokenValidator exFirst() {
-    try {
-      // curException = exceptions.get(0);
-    } catch (IndexOutOfBoundsException ex) {
-      curException = null;
-    }
-    return this;
-
-  }
-
-  public TokenValidator exAt(final int index) {
-    try {
-      // curException = exceptions.get(index);
-    } catch (IndexOutOfBoundsException ex) {
-      curException = null;
     }
     return this;
   }
@@ -162,32 +120,8 @@ public class TokenValidator {
 
   private List<? extends Token> parseInput(final String input) {
     ANTLRInputStream inputStream = new ANTLRInputStream(input);
-
-    UriLexer lexer = new UriLexerWithTrace(inputStream, logLevel, startMode);
-    // lexer.addErrorListener(new ErrorCollector(this));
+    UriLexer lexer = new UriLexer(inputStream);
+    lexer.mode(startMode);
     return lexer.getAllTokens();
   }
-
-  public TokenValidator showTokens() {
-    boolean first = true;
-    System.out.println("input: " + input);
-    String nL = "\n";
-    String out = "[" + nL;
-    for (Token token : tokens) {
-      if (!first) {
-        out += ",";
-        first = false;
-      }
-      int index = token.getType();
-      if (index != -1) {
-        out += "\"" + token.getText() + "\"" + "     " + UriLexer.VOCABULARY.getDisplayName(index) + nL;
-      } else {
-        out += "\"" + token.getText() + "\"" + "     " + index + nL;
-      }
-    }
-    out += ']';
-    System.out.println("tokens: " + out);
-    return this;
-  }
-
 }

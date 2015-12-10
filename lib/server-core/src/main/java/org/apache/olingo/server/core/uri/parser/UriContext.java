@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.parser.UriParseTreeVisitor.TypeInformation;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectItemImpl;
 
@@ -33,9 +33,9 @@ import org.apache.olingo.server.core.uri.queryoption.SelectItemImpl;
 public class UriContext {
 
   public static class LambdaVariables {
-    public boolean isCollection;
     public String name;
     public EdmType type;
+    public boolean isCollection;
   }
 
   /**
@@ -43,11 +43,14 @@ public class UriContext {
    * As lambda functions can be nested there may be more than one allowed lambda variables at a time while parsing a
    * $filter or $orderby expressions.
    */
-  public Stack<LambdaVariables> allowedLambdaVariables;
+  public Deque<LambdaVariables> allowedLambdaVariables;
   /**
    * Used to stack type information for nested $expand, $filter query options and other cases.
    */
-  public Stack<TypeInformation> contextTypes;
+  public Deque<EdmType> contextTypes;
+
+  /** Whether the context types are collections. */
+  public boolean isCollection;
 
   // CHECKSTYLE:OFF (Maven checkstyle)
   /**
@@ -106,8 +109,8 @@ public class UriContext {
     contextExpandItemPath = null;
     contextReadingFunctionParameters = false;
     contextSelectItem = null;
-    contextTypes = new Stack<UriParseTreeVisitor.TypeInformation>();
-    allowedLambdaVariables = new Stack<UriContext.LambdaVariables>();
+    contextTypes = new ArrayDeque<EdmType>();
+    allowedLambdaVariables = new ArrayDeque<UriContext.LambdaVariables>();
 
   }
 }
