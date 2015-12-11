@@ -24,6 +24,8 @@ package org.apache.olingo.server.core.uri.parser;
  * Since only the index is "moved", backing out while parsing a token is easy and used throughout.
  * There is intentionally no method to push back tokens (although it would be easy to add such a method)
  * because this tokenizer should behave like a classical token-consuming tokenizer.</p>
+ * <p>Whitespace is not an extra token but consumed with the tokens that require whitespace.
+ * Optional whitespace is not supported.</p>
  */
 public class UriTokenizer {
 
@@ -35,6 +37,9 @@ public class UriTokenizer {
     VALUE,
     COUNT,
     CROSSJOIN,
+    ROOT,
+    IT,
+
     OPEN,
     CLOSE,
     COMMA,
@@ -44,6 +49,7 @@ public class UriTokenizer {
     EQ,
     STAR,
     PLUS,
+    MINUS,
     NULL,
 
     // variable-value tokens (convention: mixed case)
@@ -51,20 +57,68 @@ public class UriTokenizer {
     QualifiedName,
     ParameterAliasName,
 
-    PrimitiveBooleanValue,
-    PrimitiveStringValue,
-    PrimitiveIntegerValue,
-    PrimitiveGuidValue,
-    PrimitiveDateValue,
-    PrimitiveDateTimeOffsetValue,
-    PrimitiveTimeOfDayValue,
-    PrimitiveDecimalValue,
-    PrimitiveDoubleValue,
-    PrimitiveDurationValue,
-    PrimitiveBinaryValue,
-    PrimitiveEnumValue,
+    BooleanValue,
+    StringValue,
+    IntegerValue,
+    GuidValue,
+    DateValue,
+    DateTimeOffsetValue,
+    TimeOfDayValue,
+    DecimalValue,
+    DoubleValue,
+    DurationValue,
+    BinaryValue,
+    EnumValue,
 
-    jsonArrayOrObject
+    jsonArrayOrObject,
+
+    OrOperator,
+    AndOperator,
+    EqualsOperator,
+    NotEqualsOperator,
+    GreaterThanOperator,
+    GreaterThanOrEqualsOperator,
+    LessThanOperator,
+    LessThanOrEqualsOperator,
+    AddOperator,
+    SubOperator,
+    MulOperator,
+    DivOperator,
+    ModOperator,
+    NotOperator,
+
+    CastMethod,
+    CeilingMethod,
+    ConcatMethod,
+    ContainsMethod,
+    DateMethod,
+    DayMethod,
+    EndswithMethod,
+    FloorMethod,
+    FractionalsecondsMethod,
+    GeoDistanceMethod,
+    GeoIntersectsMethod,
+    GeoLengthMethod,
+    HourMethod,
+    IndexofMethod,
+    IsofMethod,
+    LengthMethod,
+    MaxdatetimeMethod,
+    MindatetimeMethod,
+    MinuteMethod,
+    MonthMethod,
+    NowMethod,
+    RoundMethod,
+    SecondMethod,
+    StartswithMethod,
+    SubstringMethod,
+    TimeMethod,
+    TolowerMethod,
+    TotaloffsetminutesMethod,
+    TotalsecondsMethod,
+    ToupperMethod,
+    TrimMethod,
+    YearMethod
   }
 
   private final String parseString;
@@ -111,6 +165,13 @@ public class UriTokenizer {
     case CROSSJOIN:
       found = nextConstant("$crossjoin");
       break;
+    case ROOT:
+      found = nextConstant("$root");
+      break;
+    case IT:
+      found = nextConstant("$it");
+      break;
+
     case OPEN:
       found = nextCharacter('(');
       break;
@@ -138,6 +199,9 @@ public class UriTokenizer {
     case PLUS:
       found = nextCharacter('+');
       break;
+    case MINUS:
+      found = nextCharacter('-');
+      break;
     case NULL:
       found = nextConstant("null");
       break;
@@ -157,46 +221,188 @@ public class UriTokenizer {
       break;
 
     // Primitive Values
-    case PrimitiveBooleanValue:
+    case BooleanValue:
       found = nextBooleanValue();
       break;
-    case PrimitiveStringValue:
+    case StringValue:
       found = nextStringValue();
       break;
-    case PrimitiveIntegerValue:
+    case IntegerValue:
       found = nextIntegerValue(true);
       break;
-    case PrimitiveGuidValue:
+    case GuidValue:
       found = nextGuidValue();
       break;
-    case PrimitiveDateValue:
+    case DateValue:
       found = nextDateValue();
       break;
-    case PrimitiveDateTimeOffsetValue:
+    case DateTimeOffsetValue:
       found = nextDateTimeOffsetValue();
       break;
-    case PrimitiveTimeOfDayValue:
+    case TimeOfDayValue:
       found = nextTimeOfDayValue();
       break;
-    case PrimitiveDecimalValue:
+    case DecimalValue:
       found = nextDecimalValue();
       break;
-    case PrimitiveDoubleValue:
+    case DoubleValue:
       found = nextDoubleValue();
       break;
-    case PrimitiveDurationValue:
+    case DurationValue:
       found = nextDurationValue();
       break;
-    case PrimitiveBinaryValue:
+    case BinaryValue:
       found = nextBinaryValue();
       break;
-    case PrimitiveEnumValue:
+    case EnumValue:
       found = nextEnumValue();
       break;
 
-    // Primitive Values
+    // Complex or Collection Value
     case jsonArrayOrObject:
       found = nextJsonArrayOrObject();
+      break;
+
+    // Operators
+    case OrOperator:
+      found = nextBinaryOperator("or");
+      break;
+    case AndOperator:
+      found = nextBinaryOperator("and");
+      break;
+    case EqualsOperator:
+      found = nextBinaryOperator("eq");
+      break;
+    case NotEqualsOperator:
+      found = nextBinaryOperator("ne");
+      break;
+    case GreaterThanOperator:
+      found = nextBinaryOperator("gt");
+      break;
+    case GreaterThanOrEqualsOperator:
+      found = nextBinaryOperator("ge");
+      break;
+    case LessThanOperator:
+      found = nextBinaryOperator("lt");
+      break;
+    case LessThanOrEqualsOperator:
+      found = nextBinaryOperator("le");
+      break;
+    case AddOperator:
+      found = nextBinaryOperator("add");
+      break;
+    case SubOperator:
+      found = nextBinaryOperator("sub");
+      break;
+    case MulOperator:
+      found = nextBinaryOperator("mul");
+      break;
+    case DivOperator:
+      found = nextBinaryOperator("div");
+      break;
+    case ModOperator:
+      found = nextBinaryOperator("mod");
+      break;
+    case NotOperator:
+      found = nextConstant("not") && nextWhitespace();
+      break;
+
+    // Methods
+    case CastMethod:
+      found = nextMethod("cast");
+      break;
+    case CeilingMethod:
+      found = nextMethod("ceiling");
+      break;
+    case ConcatMethod:
+      found = nextMethod("concat");
+      break;
+    case ContainsMethod:
+      found = nextMethod("contains");
+      break;
+    case DateMethod:
+      found = nextMethod("date");
+      break;
+    case DayMethod:
+      found = nextMethod("day");
+      break;
+    case EndswithMethod:
+      found = nextMethod("endswith");
+      break;
+    case FloorMethod:
+      found = nextMethod("floor");
+      break;
+    case FractionalsecondsMethod:
+      found = nextMethod("fractionalseconds");
+      break;
+    case GeoDistanceMethod:
+      found = nextMethod("geo.distance");
+      break;
+    case GeoIntersectsMethod:
+      found = nextMethod("geo.intersects");
+      break;
+    case GeoLengthMethod:
+      found = nextMethod("geo.length");
+      break;
+    case HourMethod:
+      found = nextMethod("hour");
+      break;
+    case IndexofMethod:
+      found = nextMethod("indexof");
+      break;
+    case IsofMethod:
+      found = nextMethod("isof");
+      break;
+    case LengthMethod:
+      found = nextMethod("length");
+      break;
+    case MaxdatetimeMethod:
+      found = nextMethod("maxdatetime");
+      break;
+    case MindatetimeMethod:
+      found = nextMethod("mindatetime");
+      break;
+    case MinuteMethod:
+      found = nextMethod("minute");
+      break;
+    case MonthMethod:
+      found = nextMethod("month");
+      break;
+    case NowMethod:
+      found = nextMethod("now");
+      break;
+    case RoundMethod:
+      found = nextMethod("round");
+      break;
+    case SecondMethod:
+      found = nextMethod("second");
+      break;
+    case StartswithMethod:
+      found = nextMethod("startswith");
+      break;
+    case SubstringMethod:
+      found = nextMethod("substring");
+      break;
+    case TimeMethod:
+      found = nextMethod("time");
+      break;
+    case TolowerMethod:
+      found = nextMethod("tolower");
+      break;
+    case TotaloffsetminutesMethod:
+      found = nextMethod("totaloffsetminutes");
+      break;
+    case TotalsecondsMethod:
+      found = nextMethod("totalseconds");
+      break;
+    case ToupperMethod:
+      found = nextMethod("toupper");
+      break;
+    case TrimMethod:
+      found = nextMethod("trim");
+      break;
+    case YearMethod:
+      found = nextMethod("year");
       break;
     }
 
@@ -298,6 +504,37 @@ public class UriTokenizer {
    */
   private boolean nextSign() {
     return nextCharacter('+') || nextCharacter('-');
+  }
+
+  /**
+   * Moves past whitespace (space or horizontal tabulator) characters if found;
+   * otherwise leaves the index unchanged.
+   * @return whether whitespace characters have been found at the current index
+   */
+  private boolean nextWhitespace() {
+    int count = 0;
+    while (nextCharacter(' ') || nextCharacter('\t')) {
+      count++;
+    }
+    return count > 0;
+  }
+
+  /**
+   * Moves past the given whitespace-surrounded operator constant if found;
+   * otherwise leaves the index unchanged.
+   * @return whether the operator has been found at the current index
+   */
+  private boolean nextBinaryOperator(final String operator) {
+    return nextWhitespace() && nextConstant(operator) && nextWhitespace();
+  }
+
+  /**
+   * Moves past the given method name and its immediately following opening parenthesis if found;
+   * otherwise leaves the index unchanged.
+   * @return whether the method has been found at the current index
+   */
+  private boolean nextMethod(final String methodName) {
+    return nextConstant(methodName) && nextCharacter('(');
   }
 
   /**

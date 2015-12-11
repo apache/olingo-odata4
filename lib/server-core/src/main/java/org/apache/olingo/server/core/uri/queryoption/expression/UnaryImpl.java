@@ -53,6 +53,6 @@ public class UnaryImpl implements Unary {
 
   @Override
   public String toString() {
-    return "{" + operator + " " + expression + '}';
+    return "{" + operator.name() + " " + expression + '}';
   }
 }

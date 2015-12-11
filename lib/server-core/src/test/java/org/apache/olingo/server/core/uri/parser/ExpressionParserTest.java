@@ -20,191 +20,157 @@ package org.apache.olingo.server.core.uri.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.uri.parser.ExpressionParser.Token;
-import org.apache.olingo.server.core.uri.parser.ExpressionParser.TokenKind;
-import org.apache.olingo.server.core.uri.parser.ExpressionParser.Tokenizer;
+import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.junit.Test;
 
 public class ExpressionParserTest {
 
   @Test
   public void equality() throws Exception {
-    Expression expression = parseExpression(TokenKind.EQ_OP);
+    Expression expression = parseExpression("5 eq 5");
     assertEquals("{5 EQ 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.NE_OP);
+    expression = parseExpression("5 ne 5");
     assertEquals("{5 NE 5}", expression.toString());
   }
 
   @Test
   public void relational() throws Exception {
-    Expression expression = parseExpression(TokenKind.GT_OP);
+    Expression expression = parseExpression("5 gt 5");
     assertEquals("{5 GT 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.GE_OP);
+    expression = parseExpression("5 ge 5");
     assertEquals("{5 GE 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.LT_OP);
+    expression = parseExpression("5 lt 5");
     assertEquals("{5 LT 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.LE_OP);
+    expression = parseExpression("5 le 5");
     assertEquals("{5 LE 5}", expression.toString());
   }
 
   @Test
   public void additive() throws Exception {
-    Expression expression = parseExpression(TokenKind.ADD_OP);
+    Expression expression = parseExpression("5 add 5");
     assertEquals("{5 ADD 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.SUB_OP);
+    expression = parseExpression("5 sub 5");
     assertEquals("{5 SUB 5}", expression.toString());
   }
 
   @Test
   public void multiplicative() throws Exception {
-    Expression expression = parseExpression(TokenKind.MUL_OP);
+    Expression expression = parseExpression("5 mul 5");
     assertEquals("{5 MUL 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.DIV_OP);
+    expression = parseExpression("5 div 5");
     assertEquals("{5 DIV 5}", expression.toString());
 
-    expression = parseExpression(TokenKind.MOD_OP);
+    expression = parseExpression("5 mod 5");
     assertEquals("{5 MOD 5}", expression.toString());
   }
 
   @Test
   public void unary() throws Exception {
-    ArrayList<Token> tokens = new ArrayList<Token>();
-    tokens.add(new Token(TokenKind.MINUS, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new ExpressionParser().parse(tokenizer);
-    assertEquals("{- 5}", expression.toString());
+    Expression expression = parseExpression("-5");
+    assertEquals("{MINUS 5}", expression.toString());
 
-    tokens = new ArrayList<Token>();
-    tokens.add(new Token(TokenKind.NOT, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    tokenizer = new Tokenizer(tokens);
-    expression = new ExpressionParser().parse(tokenizer);
-    assertEquals("{not 5}", expression.toString());
+    assertEquals("{MINUS -1}", parseExpression("--1").toString());
+
+    expression = parseExpression("not 5");
+    assertEquals("{NOT 5}", expression.toString());
   }
 
   @Test
   public void grouping() throws Exception {
-    ArrayList<Token> tokens = new ArrayList<Token>();
-    tokens.add(new Token(TokenKind.MINUS, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    tokens.add(new Token(TokenKind.ADD_OP, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new ExpressionParser().parse(tokenizer);
-    assertEquals("{{- 5} ADD 5}", expression.toString());
+    Expression expression = parseExpression("-5 add 5");
+    assertEquals("{{MINUS 5} ADD 5}", expression.toString());
 
-    tokens = new ArrayList<Token>();
-    tokens.add(new Token(TokenKind.MINUS, ""));
-    tokens.add(new Token(TokenKind.OPEN, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    tokens.add(new Token(TokenKind.ADD_OP, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    tokens.add(new Token(TokenKind.CLOSE, ""));
-    tokenizer = new Tokenizer(tokens);
-    expression = new ExpressionParser().parse(tokenizer);
-    assertEquals("{- {5 ADD 5}}", expression.toString());
+    expression = parseExpression("-(5 add 5)");
+    assertEquals("{MINUS {5 ADD 5}}", expression.toString());
+  }
+
+  @Test
+  public void precedence() throws Exception {
+    assertEquals("{{MINUS 1} ADD {2 DIV 3}}", parseExpression("-1 add 2 div 3").toString());
+    assertEquals("{true OR {{NOT false} AND true}}", parseExpression("true or not false and true").toString());
   }
 
   @Test
   public void noParameterMethods() throws Exception {
-    Expression expression = parseMethod(TokenKind.Now);
+    Expression expression = parseMethod(TokenKind.NowMethod);
     assertEquals("{now []}", expression.toString());
 
-    expression = parseMethod(TokenKind.Maxdatetime);
+    expression = parseMethod(TokenKind.MaxdatetimeMethod);
     assertEquals("{maxdatetime []}", expression.toString());
 
-    expression = parseMethod(TokenKind.Mindatetime);
+    expression = parseMethod(TokenKind.MindatetimeMethod);
     assertEquals("{mindatetime []}", expression.toString());
   }
 
   @Test
   public void oneParameterMethods() throws Exception {
-    Expression expression = parseMethod(TokenKind.Length, TokenKind.PrimitiveStringValue);
-    assertEquals("{length [String1]}", expression.toString());
+    final String stringValue = "'abc'";
+    final String dateValue = "1234-12-25";
+    final String dateTimeOffsetValue = "1234-12-25T11:12:13.456Z";
 
-    expression = parseMethod(TokenKind.Tolower, TokenKind.PrimitiveStringValue);
-    assertEquals("{tolower [String1]}", expression.toString());
+    Expression expression = parseMethod(TokenKind.LengthMethod, stringValue);
+    assertEquals("{length [" + stringValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Toupper, TokenKind.PrimitiveStringValue);
-    assertEquals("{toupper [String1]}", expression.toString());
+    expression = parseMethod(TokenKind.TolowerMethod, stringValue);
+    assertEquals("{tolower [" + stringValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Trim, TokenKind.PrimitiveStringValue);
-    assertEquals("{trim [String1]}", expression.toString());
+    expression = parseMethod(TokenKind.ToupperMethod, stringValue);
+    assertEquals("{toupper [" + stringValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Year, TokenKind.PrimitiveDateValue);
-    assertEquals("{year [Date1]}", expression.toString());
+    expression = parseMethod(TokenKind.TrimMethod, stringValue);
+    assertEquals("{trim [" + stringValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Month, TokenKind.PrimitiveDateValue);
-    assertEquals("{month [Date1]}", expression.toString());
+    expression = parseMethod(TokenKind.YearMethod, dateValue);
+    assertEquals("{year [" + dateValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Day, TokenKind.PrimitiveDateValue);
-    assertEquals("{day [Date1]}", expression.toString());
+    expression = parseMethod(TokenKind.MonthMethod, dateValue);
+    assertEquals("{month [" + dateValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Hour, TokenKind.PrimitiveDateTimeOffsetValue);
-    assertEquals("{hour [DateTimeOffset1]}", expression.toString());
+    expression = parseMethod(TokenKind.DayMethod, dateValue);
+    assertEquals("{day [" + dateValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Minute, TokenKind.PrimitiveDateTimeOffsetValue);
-    assertEquals("{minute [DateTimeOffset1]}", expression.toString());
+    expression = parseMethod(TokenKind.HourMethod, dateTimeOffsetValue);
+    assertEquals("{hour [" + dateTimeOffsetValue + "]}", expression.toString());
 
-    expression = parseMethod(TokenKind.Second, TokenKind.PrimitiveDateTimeOffsetValue);
-    assertEquals("{second [DateTimeOffset1]}", expression.toString());
+    expression = parseMethod(TokenKind.MinuteMethod, dateTimeOffsetValue);
+    assertEquals("{minute [" + dateTimeOffsetValue + "]}", expression.toString());
+
+    expression = parseMethod(TokenKind.SecondMethod, dateTimeOffsetValue);
+    assertEquals("{second [" + dateTimeOffsetValue + "]}", expression.toString());
   }
 
-  @Test
-  public void twoParameterMethods() {
-
-  }
-
-  private Expression parseMethod(TokenKind... kind) throws UriParserException {
-    ArrayList<Token> tokens = new ArrayList<Token>();
-    tokens.add(new Token(kind[0], ""));
-
-    for (int i = 1; i < kind.length; i++) {
-      String text = null;
-      switch (kind[i]) {
-      case PrimitiveStringValue:
-        text = "String" + i;
-        break;
-      case PrimitiveDateValue:
-        text = "Date" + i;
-        break;
-      case PrimitiveDateTimeOffsetValue:
-        text = "DateTimeOffset" + i;
-        break;
-      default:
-        text = "" + i;
-        break;
+  private Expression parseMethod(TokenKind kind, String... parameters) throws UriParserException {
+    String expressionString = kind.name().substring(0, kind.name().indexOf("Method"))
+        .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(';
+    for (int i = 0; i < parameters.length; i++) {
+      if (i > 0) {
+        expressionString += ',';
       }
-      tokens.add(new Token(kind[i], text));
+      expressionString += parameters[i];
     }
+    expressionString += ')';
 
-    tokens.add(new Token(TokenKind.CLOSE, ""));
-    Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new ExpressionParser().parse(tokenizer);
+    Expression expression = parseExpression(expressionString);
     assertNotNull(expression);
     return expression;
   }
 
-  private Expression parseExpression(TokenKind operator) throws UriParserException {
-    ArrayList<Token> tokens = new ArrayList<Token>();
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    tokens.add(new Token(operator, ""));
-    tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
-    Tokenizer tokenizer = new Tokenizer(tokens);
-
+  private Expression parseExpression(final String expressionString) throws UriParserException {
+    UriTokenizer tokenizer = new UriTokenizer(expressionString);
     Expression expression = new ExpressionParser().parse(tokenizer);
     assertNotNull(expression);
+    assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;
   }
 }

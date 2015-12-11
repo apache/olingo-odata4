@@ -115,9 +115,9 @@ public class ResourcePathParser {
   public UriInfoImpl parseDollarEntityTypeCast(final String pathSegment) throws UriParserException {
     UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
     tokenizer = new UriTokenizer(pathSegment);
-    requireNext(TokenKind.QualifiedName);
+    ParserHelper.requireNext(tokenizer, TokenKind.QualifiedName);
     final String name = tokenizer.getText();
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     final EdmEntityType type = edm.getEntityType(new FullQualifiedName(name));
     if (type == null) {
       throw new UriParserSemanticException("Type '" + name + "' not found.",
@@ -131,11 +131,11 @@ public class ResourcePathParser {
   public UriInfoImpl parseCrossjoinSegment(final String pathSegment) throws UriParserException {
     UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.crossjoin);
     tokenizer = new UriTokenizer(pathSegment);
-    requireNext(TokenKind.CROSSJOIN);
-    requireNext(TokenKind.OPEN);
+    ParserHelper.requireNext(tokenizer, TokenKind.CROSSJOIN);
+    ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     // At least one entity-set name is mandatory.  Try to fetch all.
     do {
-      requireNext(TokenKind.ODataIdentifier);
+      ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       final String name = tokenizer.getText();
       final EdmEntitySet edmEntitySet = edmEntityContainer.getEntitySet(name);
       if (edmEntitySet == null) {
@@ -145,13 +145,13 @@ public class ResourcePathParser {
         uriInfo.addEntitySetName(name);
       }
     } while (tokenizer.next(TokenKind.COMMA));
-    requireNext(TokenKind.CLOSE);
-    requireTokenEnd();
+    ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+    ParserHelper.requireTokenEnd(tokenizer);
     return uriInfo;
   }
 
   private UriResource ref(final UriResource previous) throws UriParserException {
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     requireTyped(previous, "$ref");
     if (((UriResourcePartTyped) previous).getType() instanceof EdmEntityType) {
       return new UriResourceRefImpl();
@@ -162,7 +162,7 @@ public class ResourcePathParser {
   }
 
   private UriResource value(final UriResource previous) throws UriParserException {
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     requireTyped(previous, "$value");
     if (!((UriResourcePartTyped) previous).isCollection()) {
       return new UriResourceValueImpl();
@@ -173,7 +173,7 @@ public class ResourcePathParser {
   }
 
   private UriResource count(final UriResource previous) throws UriParserException {
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     requireTyped(previous, "$count");
     if (((UriResourcePartTyped) previous).isCollection()) {
       return new UriResourceCountImpl();
@@ -195,19 +195,19 @@ public class ResourcePathParser {
         entitySetResource.setKeyPredicates(keyPredicates);
       }
 
-      requireTokenEnd();
+      ParserHelper.requireTokenEnd(tokenizer);
       return entitySetResource;
     }
 
     final EdmSingleton edmSingleton = edmEntityContainer.getSingleton(oDataIdentifier);
     if (edmSingleton != null) {
-      requireTokenEnd();
+      ParserHelper.requireTokenEnd(tokenizer);
       return new UriResourceSingletonImpl().setSingleton(edmSingleton);
     }
 
     final EdmActionImport edmActionImport = edmEntityContainer.getActionImport(oDataIdentifier);
     if (edmActionImport != null) {
-      requireTokenEnd();
+      ParserHelper.requireTokenEnd(tokenizer);
       return new UriResourceActionImpl().setActionImport(edmActionImport);
     }
 
@@ -271,7 +271,7 @@ public class ResourcePathParser {
             UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED);
       }
     }
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     return new UriResourceNavigationPropertyImpl()
         .setNavigationProperty(navigationProperty)
         .setKeyPredicates(keyPredicate);
@@ -288,7 +288,7 @@ public class ResourcePathParser {
           previousType.getFullQualifiedName(),
           previousTyped.isCollection());
       if (boundAction != null) {
-        requireTokenEnd();
+        ParserHelper.requireTokenEnd(tokenizer);
         return new UriResourceActionImpl().setAction(boundAction);
       }
       EdmStructuredType type = edm.getEntityType(name);
@@ -386,7 +386,7 @@ public class ResourcePathParser {
         edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType(),
         edmProperty == null ? false : edmProperty.isNullable())) {
       final String literalValue = tokenizer.getText();
-      requireNext(TokenKind.CLOSE);
+      ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
       return createUriParameter(edmProperty, edmKeyPropertyRef.getName(), literalValue);
     } else {
       throw new UriParserSemanticException("The key value is not valid.",
@@ -424,10 +424,10 @@ public class ResourcePathParser {
       parameterNames.add(keyPredicateName);
       hasComma = tokenizer.next(TokenKind.COMMA);
       if (hasComma) {
-        requireNext(TokenKind.ODataIdentifier);
+        ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       }
     } while (hasComma);
-    requireNext(TokenKind.CLOSE);
+    ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
 
     return parameters;
   }
@@ -440,7 +440,7 @@ public class ResourcePathParser {
       throw new UriValidationException(keyPredicateName + " is not a valid key property name.",
           UriValidationException.MessageKeys.INVALID_KEY_PROPERTY, keyPredicateName);
     }
-    requireNext(TokenKind.EQ);
+    ParserHelper.requireNext(tokenizer, TokenKind.EQ);
     if (tokenizer.next(TokenKind.COMMA) || tokenizer.next(TokenKind.CLOSE) || tokenizer.next(TokenKind.EOF)) {
       throw new UriParserSyntaxException("Key value expected.", UriParserSyntaxException.MessageKeys.SYNTAX);
     }
@@ -512,7 +512,7 @@ public class ResourcePathParser {
         }
         ((UriResourceTypedImpl) previousTyped).setTypeFilter(type);
       }
-      requireTokenEnd();
+      ParserHelper.requireTokenEnd(tokenizer);
       return null;
     } else {
       throw new UriParserSemanticException(
@@ -572,51 +572,40 @@ public class ResourcePathParser {
             UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED);
       }
     }
-    requireTokenEnd();
+    ParserHelper.requireTokenEnd(tokenizer);
     return resource;
   }
 
   private List<UriParameter> functionParameters() throws UriParserException {
     List<UriParameter> parameters = new ArrayList<UriParameter>();
-    requireNext(TokenKind.OPEN);
+    ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     if (tokenizer.next(TokenKind.CLOSE)) {
       return parameters;
     }
     do {
-      requireNext(TokenKind.ODataIdentifier);
+      ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       final String name = tokenizer.getText();
       if (parameters.contains(name)) {
         throw new UriParserSemanticException("Duplicated function parameter " + name,
             UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, name);
       }
-      requireNext(TokenKind.EQ);
+      ParserHelper.requireNext(tokenizer, TokenKind.EQ);
       if (tokenizer.next(TokenKind.COMMA) || tokenizer.next(TokenKind.CLOSE) || tokenizer.next(TokenKind.EOF)) {
         throw new UriParserSyntaxException("Parameter value expected.", UriParserSyntaxException.MessageKeys.SYNTAX);
       }
-      if (nextPrimitiveValue()) {
+      if (tokenizer.next(TokenKind.ParameterAliasName)) {
+        parameters.add(new UriParameterImpl().setName(name).setAlias(tokenizer.getText()));
+      } else if (nextPrimitiveValue()) {
         final String literalValue = tokenizer.getText();
-        UriParameterImpl parameter = new UriParameterImpl().setName(name);
-        parameters.add(literalValue.startsWith("@") ?
-            parameter.setAlias(literalValue) :
-            parameter.setText("null".equals(literalValue) ? null : literalValue));
+        parameters.add(new UriParameterImpl().setName(name)
+            .setText("null".equals(literalValue) ? null : literalValue));
       } else {
         throw new UriParserSemanticException("Wrong parameter value.",
             UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, "");
       }
     } while (tokenizer.next(TokenKind.COMMA));
-    requireNext(TokenKind.CLOSE);
+    ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     return parameters;
-  }
-
-  private void requireNext(final TokenKind kind) throws UriParserException {
-    if (!tokenizer.next(kind)) {
-      throw new UriParserSyntaxException("Expected token '" + kind.toString() + "' not found.",
-          UriParserSyntaxException.MessageKeys.SYNTAX);
-    }
-  }
-
-  private void requireTokenEnd() throws UriParserException {
-    requireNext(TokenKind.EOF);
   }
 
   private boolean nextPrimitiveTypeValue(final EdmPrimitiveType primitiveType, final boolean nullable) {
@@ -629,64 +618,63 @@ public class ResourcePathParser {
       return true;
 
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveBooleanValue);
+      return tokenizer.next(TokenKind.BooleanValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveStringValue);
+      return tokenizer.next(TokenKind.StringValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte).equals(type)
         || odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte).equals(type)
         || odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16).equals(type)
         || odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32).equals(type)
         || odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveIntegerValue);
+      return tokenizer.next(TokenKind.IntegerValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Guid).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveGuidValue);
+      return tokenizer.next(TokenKind.GuidValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveDateValue);
+      return tokenizer.next(TokenKind.DateValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveDateTimeOffsetValue);
+      return tokenizer.next(TokenKind.DateTimeOffsetValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveTimeOfDayValue);
+      return tokenizer.next(TokenKind.TimeOfDayValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal).equals(type)) {
       // The order is important.
       // A decimal value should not be parsed as integer and let the tokenizer stop at the decimal point.
-      return tokenizer.next(TokenKind.PrimitiveDecimalValue)
-          || tokenizer.next(TokenKind.PrimitiveIntegerValue);
+      return tokenizer.next(TokenKind.DecimalValue)
+          || tokenizer.next(TokenKind.IntegerValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double).equals(type)) {
       // The order is important.
       // A floating-point value should not be parsed as decimal and let the tokenizer stop at 'E'.
       // A decimal value should not be parsed as integer and let the tokenizer stop at the decimal point.
-      return tokenizer.next(TokenKind.PrimitiveDoubleValue)
-          || tokenizer.next(TokenKind.PrimitiveDecimalValue)
-          || tokenizer.next(TokenKind.PrimitiveIntegerValue);
+      return tokenizer.next(TokenKind.DoubleValue)
+          || tokenizer.next(TokenKind.DecimalValue)
+          || tokenizer.next(TokenKind.IntegerValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveDurationValue);
+      return tokenizer.next(TokenKind.DurationValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary).equals(type)) {
-      return tokenizer.next(TokenKind.PrimitiveBinaryValue);
+      return tokenizer.next(TokenKind.BinaryValue);
     } else if (type.getKind() == EdmTypeKind.ENUM) {
-      return tokenizer.next(TokenKind.PrimitiveEnumValue);
+      return tokenizer.next(TokenKind.EnumValue);
     } else {
       return false;
     }
   }
 
   private boolean nextPrimitiveValue() {
-    return tokenizer.next(TokenKind.ParameterAliasName)
-        || tokenizer.next(TokenKind.NULL)
-        || tokenizer.next(TokenKind.PrimitiveBooleanValue)
-        || tokenizer.next(TokenKind.PrimitiveStringValue)
+    return tokenizer.next(TokenKind.NULL)
+        || tokenizer.next(TokenKind.BooleanValue)
+        || tokenizer.next(TokenKind.StringValue)
 
         // The order of the next seven expressions is important in order to avoid
         // finding partly parsed tokens (counter-intuitive as it may be, even a GUID may start with digits ...).
-        || tokenizer.next(TokenKind.PrimitiveDoubleValue)
-        || tokenizer.next(TokenKind.PrimitiveDecimalValue)
-        || tokenizer.next(TokenKind.PrimitiveGuidValue)
-        || tokenizer.next(TokenKind.PrimitiveDateTimeOffsetValue)
-        || tokenizer.next(TokenKind.PrimitiveDateValue)
-        || tokenizer.next(TokenKind.PrimitiveTimeOfDayValue)
-        || tokenizer.next(TokenKind.PrimitiveIntegerValue)
+        || tokenizer.next(TokenKind.DoubleValue)
+        || tokenizer.next(TokenKind.DecimalValue)
+        || tokenizer.next(TokenKind.GuidValue)
+        || tokenizer.next(TokenKind.DateTimeOffsetValue)
+        || tokenizer.next(TokenKind.DateValue)
+        || tokenizer.next(TokenKind.TimeOfDayValue)
+        || tokenizer.next(TokenKind.IntegerValue)
 
-        || tokenizer.next(TokenKind.PrimitiveDurationValue)
-        || tokenizer.next(TokenKind.PrimitiveBinaryValue)
-        || tokenizer.next(TokenKind.PrimitiveEnumValue);
+        || tokenizer.next(TokenKind.DurationValue)
+        || tokenizer.next(TokenKind.BinaryValue)
+        || tokenizer.next(TokenKind.EnumValue);
   }
 }

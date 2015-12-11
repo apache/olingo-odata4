@@ -208,6 +208,14 @@ public class Parser {
                 (UriParserException) e.getCause() :
                 new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
           }
+//          UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
+//          systemOption = new FilterOptionImpl().setExpression(
+//              new ExpressionParser().parse(filterTokenizer));
+//          if (!filterTokenizer.next(TokenKind.EOF)) {
+//            throw new UriParserSyntaxException("Illegal value of $filter option!",
+//                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+//                optionName, optionValue);
+//          }
 
         } else if (optionName.equals(SystemQueryOptionKind.FORMAT.toString())) {
           FormatOptionImpl formatOption = new FormatOptionImpl();

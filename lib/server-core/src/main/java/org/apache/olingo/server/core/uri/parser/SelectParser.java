@@ -92,7 +92,7 @@ public class SelectParser {
           if (type.compatibleTo(referencedType)) {
             item.setTypeFilter(type);
             if (tokenizer.next(TokenKind.SLASH)) {
-              requireNext(tokenizer, TokenKind.ODataIdentifier);
+              ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
               UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
               addSelectPath(tokenizer, type, resource);
               item.setResourcePath(resource);
@@ -105,7 +105,7 @@ public class SelectParser {
       }
 
     } else {
-      requireNext(tokenizer, TokenKind.ODataIdentifier);
+      ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       // The namespace or its alias could be a single OData identifier.
       final FullQualifiedName allOperationsInSchema = parseAllOperationsInSchema(tokenizer);
       if (allOperationsInSchema != null) {
@@ -167,10 +167,10 @@ public class SelectParser {
     List<String> names = new ArrayList<String>();
     if (tokenizer.next(TokenKind.OPEN)) {
       do {
-        requireNext(tokenizer, TokenKind.ODataIdentifier);
+        ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
         names.add(tokenizer.getText());
       } while (tokenizer.next(TokenKind.COMMA));
-      requireNext(tokenizer, TokenKind.CLOSE);
+      ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     }
     return names;
   }
@@ -229,13 +229,6 @@ public class SelectParser {
               UriParserSemanticException.MessageKeys.UNKNOWN_PART, "");
         }
       }
-    }
-  }
-
-  private void requireNext(UriTokenizer tokenizer, final TokenKind kind) throws UriParserSyntaxException {
-    if (!tokenizer.next(kind)) {
-      throw new UriParserSyntaxException("Illegal $select expression.",
-          UriParserSyntaxException.MessageKeys.SYNTAX);
     }
   }
 }

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
+
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.junit.Test;
 
@@ -44,6 +46,8 @@ public class UriTokenizerTest {
     assertTrue(new UriTokenizer("$value").next(TokenKind.VALUE));
     assertTrue(new UriTokenizer("$count").next(TokenKind.COUNT));
     assertTrue(new UriTokenizer("$crossjoin").next(TokenKind.CROSSJOIN));
+    assertTrue(new UriTokenizer("$root").next(TokenKind.ROOT));
+    assertTrue(new UriTokenizer("$it").next(TokenKind.IT));
     assertTrue(new UriTokenizer("null").next(TokenKind.NULL));
 
     wrongToken(TokenKind.REF, "$ref", 'x');
@@ -51,19 +55,19 @@ public class UriTokenizerTest {
 
   @Test
   public void sequence() {
-    final UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);.*/+");
+    final UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);.*/+-");
     assertTrue(tokenizer.next(TokenKind.OPEN));
     assertFalse(tokenizer.next(TokenKind.OPEN));
     assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
     assertEquals("A", tokenizer.getText());
     assertTrue(tokenizer.next(TokenKind.EQ));
-    assertTrue(tokenizer.next(TokenKind.PrimitiveIntegerValue));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertEquals("1", tokenizer.getText());
     assertTrue(tokenizer.next(TokenKind.COMMA));
     assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
     assertEquals("B", tokenizer.getText());
     assertTrue(tokenizer.next(TokenKind.EQ));
-    assertTrue(tokenizer.next(TokenKind.PrimitiveIntegerValue));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertEquals("2", tokenizer.getText());
     assertFalse(tokenizer.next(TokenKind.EOF));
     assertTrue(tokenizer.next(TokenKind.CLOSE));
@@ -72,6 +76,7 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.STAR));
     assertTrue(tokenizer.next(TokenKind.SLASH));
     assertTrue(tokenizer.next(TokenKind.PLUS));
+    assertTrue(tokenizer.next(TokenKind.MINUS));
     assertTrue(tokenizer.next(TokenKind.EOF));
   }
 
@@ -107,7 +112,7 @@ public class UriTokenizerTest {
     final UriTokenizer tokenizer = new UriTokenizer("multi.part.namespace.name.1");
     assertTrue(tokenizer.next(TokenKind.QualifiedName));
     assertTrue(tokenizer.next(TokenKind.DOT));
-    assertTrue(tokenizer.next(TokenKind.PrimitiveIntegerValue));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
 
     assertFalse(new UriTokenizer("name").next(TokenKind.QualifiedName));
@@ -127,174 +132,174 @@ public class UriTokenizerTest {
 
   @Test
   public void booleanValue() {
-    assertTrue(new UriTokenizer("true").next(TokenKind.PrimitiveBooleanValue));
-    assertTrue(new UriTokenizer("tRuE").next(TokenKind.PrimitiveBooleanValue));
-    assertTrue(new UriTokenizer("false").next(TokenKind.PrimitiveBooleanValue));
-    assertTrue(new UriTokenizer("False").next(TokenKind.PrimitiveBooleanValue));
+    assertTrue(new UriTokenizer("true").next(TokenKind.BooleanValue));
+    assertTrue(new UriTokenizer("tRuE").next(TokenKind.BooleanValue));
+    assertTrue(new UriTokenizer("false").next(TokenKind.BooleanValue));
+    assertTrue(new UriTokenizer("False").next(TokenKind.BooleanValue));
 
-    wrongToken(TokenKind.PrimitiveBooleanValue, "true", 'x');
+    wrongToken(TokenKind.BooleanValue, "true", 'x');
   }
 
   @Test
   public void string() {
-    assertTrue(new UriTokenizer("'ABC'").next(TokenKind.PrimitiveStringValue));
-    assertTrue(new UriTokenizer("'€\uFDFC'").next(TokenKind.PrimitiveStringValue));
+    assertTrue(new UriTokenizer("'ABC'").next(TokenKind.StringValue));
+    assertTrue(new UriTokenizer("'€\uFDFC'").next(TokenKind.StringValue));
     assertTrue(new UriTokenizer('\'' + String.valueOf(Character.toChars(0x1F603)) + '\'')
-        .next(TokenKind.PrimitiveStringValue));
+        .next(TokenKind.StringValue));
 
     final UriTokenizer tokenizer = new UriTokenizer("'AB''''C'''D");
-    assertTrue(tokenizer.next(TokenKind.PrimitiveStringValue));
+    assertTrue(tokenizer.next(TokenKind.StringValue));
     assertEquals("'AB''''C'''", tokenizer.getText());
     assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
     assertEquals("D", tokenizer.getText());
 
-    assertFalse(new UriTokenizer("A").next(TokenKind.PrimitiveStringValue));
-    assertFalse(new UriTokenizer("'A").next(TokenKind.PrimitiveStringValue));
+    assertFalse(new UriTokenizer("A").next(TokenKind.StringValue));
+    assertFalse(new UriTokenizer("'A").next(TokenKind.StringValue));
   }
 
   @Test
   public void integer() {
-    assertTrue(new UriTokenizer("1").next(TokenKind.PrimitiveIntegerValue));
-    assertTrue(new UriTokenizer("1.").next(TokenKind.PrimitiveIntegerValue));
-    assertFalse(new UriTokenizer(".1").next(TokenKind.PrimitiveIntegerValue));
-    assertTrue(new UriTokenizer("-1").next(TokenKind.PrimitiveIntegerValue));
-    assertTrue(new UriTokenizer("1234567890").next(TokenKind.PrimitiveIntegerValue));
+    assertTrue(new UriTokenizer("1").next(TokenKind.IntegerValue));
+    assertTrue(new UriTokenizer("1.").next(TokenKind.IntegerValue));
+    assertFalse(new UriTokenizer(".1").next(TokenKind.IntegerValue));
+    assertTrue(new UriTokenizer("-1").next(TokenKind.IntegerValue));
+    assertTrue(new UriTokenizer("1234567890").next(TokenKind.IntegerValue));
   }
 
   @Test
   public void guid() {
-    assertTrue(new UriTokenizer("12345678-abcd-ef12-1234-567890ABCDEF").next(TokenKind.PrimitiveGuidValue));
-    wrongToken(TokenKind.PrimitiveGuidValue, "12345678-1234-1234-1234-123456789ABC", 'G');
+    assertTrue(new UriTokenizer("12345678-abcd-ef12-1234-567890ABCDEF").next(TokenKind.GuidValue));
+    wrongToken(TokenKind.GuidValue, "12345678-1234-1234-1234-123456789ABC", 'G');
   }
 
   @Test
   public void date() {
-    assertTrue(new UriTokenizer("12345-12-25").next(TokenKind.PrimitiveDateValue));
-    assertTrue(new UriTokenizer("-0001-12-24").next(TokenKind.PrimitiveDateValue));
-    assertFalse(new UriTokenizer("1234-13-01").next(TokenKind.PrimitiveDateValue));
-    assertFalse(new UriTokenizer("1234-12-32").next(TokenKind.PrimitiveDateValue));
-    assertFalse(new UriTokenizer("123-01-01").next(TokenKind.PrimitiveDateValue));
-    assertFalse(new UriTokenizer("1234-00-01").next(TokenKind.PrimitiveDateValue));
-    assertFalse(new UriTokenizer("1234-01-00").next(TokenKind.PrimitiveDateValue));
-    wrongToken(TokenKind.PrimitiveDateValue, "2000-12-29", 'A');
-    wrongToken(TokenKind.PrimitiveDateValue, "0001-01-01", 'A');
-    wrongToken(TokenKind.PrimitiveDateValue, "-12345-01-31", 'A');
+    assertTrue(new UriTokenizer("12345-12-25").next(TokenKind.DateValue));
+    assertTrue(new UriTokenizer("-0001-12-24").next(TokenKind.DateValue));
+    assertFalse(new UriTokenizer("1234-13-01").next(TokenKind.DateValue));
+    assertFalse(new UriTokenizer("1234-12-32").next(TokenKind.DateValue));
+    assertFalse(new UriTokenizer("123-01-01").next(TokenKind.DateValue));
+    assertFalse(new UriTokenizer("1234-00-01").next(TokenKind.DateValue));
+    assertFalse(new UriTokenizer("1234-01-00").next(TokenKind.DateValue));
+    wrongToken(TokenKind.DateValue, "2000-12-29", 'A');
+    wrongToken(TokenKind.DateValue, "0001-01-01", 'A');
+    wrongToken(TokenKind.DateValue, "-12345-01-31", 'A');
   }
 
   @Test
   public void dateTimeOffset() {
-    assertTrue(new UriTokenizer("1234-12-25T11:12:13.456Z").next(TokenKind.PrimitiveDateTimeOffsetValue));
-    assertTrue(new UriTokenizer("-1234-12-25t01:12z").next(TokenKind.PrimitiveDateTimeOffsetValue));
-    assertTrue(new UriTokenizer("-1234-12-25T21:22:23+01:00").next(TokenKind.PrimitiveDateTimeOffsetValue));
-    assertTrue(new UriTokenizer("1234-12-25T11:12:13-00:30").next(TokenKind.PrimitiveDateTimeOffsetValue));
-    assertFalse(new UriTokenizer("1234-10-01").next(TokenKind.PrimitiveDateTimeOffsetValue));
-    wrongToken(TokenKind.PrimitiveDateTimeOffsetValue, "-1234-12-25T11:12:13.456+01:00", 'P');
+    assertTrue(new UriTokenizer("1234-12-25T11:12:13.456Z").next(TokenKind.DateTimeOffsetValue));
+    assertTrue(new UriTokenizer("-1234-12-25t01:12z").next(TokenKind.DateTimeOffsetValue));
+    assertTrue(new UriTokenizer("-1234-12-25T21:22:23+01:00").next(TokenKind.DateTimeOffsetValue));
+    assertTrue(new UriTokenizer("1234-12-25T11:12:13-00:30").next(TokenKind.DateTimeOffsetValue));
+    assertFalse(new UriTokenizer("1234-10-01").next(TokenKind.DateTimeOffsetValue));
+    wrongToken(TokenKind.DateTimeOffsetValue, "-1234-12-25T11:12:13.456+01:00", 'P');
   }
 
   @Test
   public void timeOfDay() {
-    assertTrue(new UriTokenizer("11:12:13").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertTrue(new UriTokenizer("11:12:13.456").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("24:00:00").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("01:60:00").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("01:00:60").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("01:00:00.").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("0:02:03").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("01:0:03").next(TokenKind.PrimitiveTimeOfDayValue));
-    assertFalse(new UriTokenizer("01:02:0").next(TokenKind.PrimitiveTimeOfDayValue));
-    wrongToken(TokenKind.PrimitiveTimeOfDayValue, "11:12", '-');
+    assertTrue(new UriTokenizer("11:12:13").next(TokenKind.TimeOfDayValue));
+    assertTrue(new UriTokenizer("11:12:13.456").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("24:00:00").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("01:60:00").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("01:00:60").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("01:00:00.").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("0:02:03").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("01:0:03").next(TokenKind.TimeOfDayValue));
+    assertFalse(new UriTokenizer("01:02:0").next(TokenKind.TimeOfDayValue));
+    wrongToken(TokenKind.TimeOfDayValue, "11:12", '-');
   }
 
   @Test
   public void decimal() {
-    assertTrue(new UriTokenizer("1.2").next(TokenKind.PrimitiveDecimalValue));
-    assertFalse(new UriTokenizer(".1").next(TokenKind.PrimitiveDecimalValue));
-    assertTrue(new UriTokenizer("-12.34").next(TokenKind.PrimitiveDecimalValue));
-    assertTrue(new UriTokenizer("1234567890.0123456789").next(TokenKind.PrimitiveDecimalValue));
-    assertFalse(new UriTokenizer("0,1").next(TokenKind.PrimitiveDecimalValue));
-    assertFalse(new UriTokenizer("0..1").next(TokenKind.PrimitiveDecimalValue));
+    assertTrue(new UriTokenizer("1.2").next(TokenKind.DecimalValue));
+    assertFalse(new UriTokenizer(".1").next(TokenKind.DecimalValue));
+    assertTrue(new UriTokenizer("-12.34").next(TokenKind.DecimalValue));
+    assertTrue(new UriTokenizer("1234567890.0123456789").next(TokenKind.DecimalValue));
+    assertFalse(new UriTokenizer("0,1").next(TokenKind.DecimalValue));
+    assertFalse(new UriTokenizer("0..1").next(TokenKind.DecimalValue));
   }
 
   @Test
   public void doubleValue() {
-    assertTrue(new UriTokenizer("NaN").next(TokenKind.PrimitiveDoubleValue));
-    assertTrue(new UriTokenizer("-INF").next(TokenKind.PrimitiveDoubleValue));
-    assertTrue(new UriTokenizer("INF").next(TokenKind.PrimitiveDoubleValue));
-    assertFalse(new UriTokenizer("inf").next(TokenKind.PrimitiveDoubleValue));
-    assertTrue(new UriTokenizer("1.2E3").next(TokenKind.PrimitiveDoubleValue));
-    assertTrue(new UriTokenizer("-12.34e-05").next(TokenKind.PrimitiveDoubleValue));
-    assertTrue(new UriTokenizer("1E2").next(TokenKind.PrimitiveDoubleValue));
-    assertFalse(new UriTokenizer("1.E2").next(TokenKind.PrimitiveDoubleValue));
-    wrongToken(TokenKind.PrimitiveDoubleValue, "-12.34E+5", 'i');
+    assertTrue(new UriTokenizer("NaN").next(TokenKind.DoubleValue));
+    assertTrue(new UriTokenizer("-INF").next(TokenKind.DoubleValue));
+    assertTrue(new UriTokenizer("INF").next(TokenKind.DoubleValue));
+    assertFalse(new UriTokenizer("inf").next(TokenKind.DoubleValue));
+    assertTrue(new UriTokenizer("1.2E3").next(TokenKind.DoubleValue));
+    assertTrue(new UriTokenizer("-12.34e-05").next(TokenKind.DoubleValue));
+    assertTrue(new UriTokenizer("1E2").next(TokenKind.DoubleValue));
+    assertFalse(new UriTokenizer("1.E2").next(TokenKind.DoubleValue));
+    wrongToken(TokenKind.DoubleValue, "-12.34E+5", 'i');
   }
 
   @Test
   public void duration() {
-    assertTrue(new UriTokenizer("duration'P'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("DURATION'P1D'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'PT'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'PT1H'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'pt1M'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'PT1S'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'PT1.2s'").next(TokenKind.PrimitiveDurationValue));
-    assertTrue(new UriTokenizer("duration'-p1dt2h3m4.5s'").next(TokenKind.PrimitiveDurationValue));
-    assertFalse(new UriTokenizer("-p1dt2h3m4.5s").next(TokenKind.PrimitiveDurationValue));
-    assertFalse(new UriTokenizer("duration'-p1dt2h3m4.5s").next(TokenKind.PrimitiveDurationValue));
-    assertFalse(new UriTokenizer("duration'2h3m4s'").next(TokenKind.PrimitiveDurationValue));
-    wrongToken(TokenKind.PrimitiveDurationValue, "duration'P1DT2H3M4.5S'", ':');
+    assertTrue(new UriTokenizer("duration'P'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("DURATION'P1D'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'PT'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'PT1H'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'pt1M'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'PT1S'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'PT1.2s'").next(TokenKind.DurationValue));
+    assertTrue(new UriTokenizer("duration'-p1dt2h3m4.5s'").next(TokenKind.DurationValue));
+    assertFalse(new UriTokenizer("-p1dt2h3m4.5s").next(TokenKind.DurationValue));
+    assertFalse(new UriTokenizer("duration'-p1dt2h3m4.5s").next(TokenKind.DurationValue));
+    assertFalse(new UriTokenizer("duration'2h3m4s'").next(TokenKind.DurationValue));
+    wrongToken(TokenKind.DurationValue, "duration'P1DT2H3M4.5S'", ':');
   }
 
   @Test
   public void binary() {
-    assertTrue(new UriTokenizer("binary''").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("Binary'bm93'").next(TokenKind.PrimitiveBinaryValue));
+    assertTrue(new UriTokenizer("binary''").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("Binary'bm93'").next(TokenKind.BinaryValue));
 
     // all cases with three base64 characters (and one fill character) at the end
-    assertTrue(new UriTokenizer("binary'QUA='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUE='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUI='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUM='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUQ='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUU='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUY='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUc='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUg='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUk='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUo='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUs='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QUw='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QU0='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QU4='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'QU8='").next(TokenKind.PrimitiveBinaryValue));
-    assertFalse(new UriTokenizer("binary'QUB='").next(TokenKind.PrimitiveBinaryValue));
+    assertTrue(new UriTokenizer("binary'QUA='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUE='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUI='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUM='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUQ='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUU='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUY='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUc='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUg='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUk='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUo='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUs='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QUw='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QU0='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QU4='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'QU8='").next(TokenKind.BinaryValue));
+    assertFalse(new UriTokenizer("binary'QUB='").next(TokenKind.BinaryValue));
 
     // all cases with two base64 characters (and two fill characters) at the end
-    assertTrue(new UriTokenizer("BINARY'VGVzdA=='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'U-RnZQ=='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'Yg=='").next(TokenKind.PrimitiveBinaryValue));
-    assertTrue(new UriTokenizer("binary'Yw=='").next(TokenKind.PrimitiveBinaryValue));
+    assertTrue(new UriTokenizer("BINARY'VGVzdA=='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'U-RnZQ=='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'Yg=='").next(TokenKind.BinaryValue));
+    assertTrue(new UriTokenizer("binary'Yw=='").next(TokenKind.BinaryValue));
 
     // without optional fill character
-    assertTrue(new UriTokenizer("binary'T0RhdGE'").next(TokenKind.PrimitiveBinaryValue));
+    assertTrue(new UriTokenizer("binary'T0RhdGE'").next(TokenKind.BinaryValue));
 
     // special character '_' (the other, '-', already has been used above)
-    assertTrue(new UriTokenizer("binary'V_ZydGVy'").next(TokenKind.PrimitiveBinaryValue));
+    assertTrue(new UriTokenizer("binary'V_ZydGVy'").next(TokenKind.BinaryValue));
 
-    wrongToken(TokenKind.PrimitiveBinaryValue, "binary'VGVzdA=='", '+');
+    wrongToken(TokenKind.BinaryValue, "binary'VGVzdA=='", '+');
   }
 
   @Test
   public void enumValue() {
-    assertTrue(new UriTokenizer("namespace.name'value'").next(TokenKind.PrimitiveEnumValue));
-    assertTrue(new UriTokenizer("namespace.name'flag1,flag2,-3'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("namespace.name'1flag'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("namespace.name'flag1,,flag2'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("namespace.name',value'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("namespace.name'value,'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("namespace.name''").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("'1'").next(TokenKind.PrimitiveEnumValue));
-    assertFalse(new UriTokenizer("1").next(TokenKind.PrimitiveEnumValue));
-    wrongToken(TokenKind.PrimitiveEnumValue, "namespace.name'_1,_2,3'", ';');
+    assertTrue(new UriTokenizer("namespace.name'value'").next(TokenKind.EnumValue));
+    assertTrue(new UriTokenizer("namespace.name'flag1,flag2,-3'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("namespace.name'1flag'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("namespace.name'flag1,,flag2'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("namespace.name',value'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("namespace.name'value,'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("namespace.name''").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("'1'").next(TokenKind.EnumValue));
+    assertFalse(new UriTokenizer("1").next(TokenKind.EnumValue));
+    wrongToken(TokenKind.EnumValue, "namespace.name'_1,_2,3'", ';');
   }
 
   @Test
@@ -358,6 +363,92 @@ public class UriTokenizerTest {
     assertFalse(new UriTokenizer("[\"\\u12x\"]").next(TokenKind.jsonArrayOrObject));
     assertFalse(new UriTokenizer("[\"\\u123x\"]").next(TokenKind.jsonArrayOrObject));
     wrongToken(TokenKind.jsonArrayOrObject, "[{\"name\":+123.456},null]", '\\');
+  }
+
+  @Test
+  public void operators() {
+    UriTokenizer tokenizer = new UriTokenizer("1 ne 2");
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertFalse(tokenizer.next(TokenKind.EqualsOperator));
+    assertTrue(tokenizer.next(TokenKind.NotEqualsOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    tokenizer = new UriTokenizer("1ne 2");
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertFalse(tokenizer.next(TokenKind.NotEqualsOperator));
+
+    tokenizer = new UriTokenizer("1 ne2");
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertFalse(tokenizer.next(TokenKind.NotEqualsOperator));
+
+    tokenizer = new UriTokenizer("1    \tle\t\t\t2");
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.LessThanOrEqualsOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    assertFalse(new UriTokenizer("nottrue").next(TokenKind.NotOperator));
+    assertFalse(new UriTokenizer("no true").next(TokenKind.NotOperator));
+
+    tokenizer = new UriTokenizer("true or not false and 1 eq 2 add 3 sub 4 mul 5 div 6 mod 7");
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.OrOperator));
+    assertTrue(tokenizer.next(TokenKind.NotOperator));
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.AndOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.EqualsOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.AddOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.SubOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.MulOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.DivOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.ModOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    tokenizer = new UriTokenizer("1 gt 2 or 3 ge 4 or 5 lt 6");
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.GreaterThanOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.OrOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.GreaterThanOrEqualsOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.OrOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.LessThanOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+  }
+
+  @Test
+  public void methods() {
+    UriTokenizer tokenizer = new UriTokenizer("now()");
+    assertTrue(tokenizer.next(TokenKind.NowMethod));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    assertFalse(new UriTokenizer("no w()").next(TokenKind.NowMethod));
+    assertFalse(new UriTokenizer("now ()").next(TokenKind.NowMethod));
+
+    assertTrue(new UriTokenizer("maxdatetime()").next(TokenKind.MaxdatetimeMethod));
+    assertTrue(new UriTokenizer("mindatetime()").next(TokenKind.MindatetimeMethod));
+
+    for (final TokenKind tokenKind : TokenKind.values()) {
+      if (tokenKind.name().endsWith("Method")) {
+        assertTrue(tokenKind.name(),
+            new UriTokenizer(
+                tokenKind.name().substring(0, tokenKind.name().indexOf("Method"))
+                    .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(')
+                .next(tokenKind));
+      }
+    }
   }
 
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {
