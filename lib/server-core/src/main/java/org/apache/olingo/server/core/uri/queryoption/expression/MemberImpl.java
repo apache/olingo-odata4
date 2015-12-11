@@ -30,19 +30,24 @@ import org.apache.olingo.server.core.uri.UriResourceImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 
-public class MemberImpl extends ExpressionImpl implements Member {
+public class MemberImpl implements Member {
 
-  private UriInfoResource path;
-  private EdmType startTypeFilter;
+  private final UriInfoResource path;
+  private final EdmType startTypeFilter;
+
+  public MemberImpl(final UriInfoResource path, final EdmType startTypeFilter) {
+    this.path = path;
+    this.startTypeFilter = startTypeFilter;
+  }
 
   @Override
   public UriInfoResource getResourcePath() {
     return path;
   }
 
-  public Member setResourcePath(final UriInfoResource pathSegments) {
-    path = pathSegments;
-    return this;
+  @Override
+  public EdmType getStartTypeFilter() {
+    return startTypeFilter;
   }
 
   @Override
@@ -89,15 +94,4 @@ public class MemberImpl extends ExpressionImpl implements Member {
     }
     return false;
   }
-
-  @Override
-  public EdmType getStartTypeFilter() {
-    return startTypeFilter;
-  }
-
-  public MemberImpl setTypeFilter(final EdmType startTypeFilter) {
-    this.startTypeFilter = startTypeFilter;
-    return this;
-  }
-
 }

@@ -25,21 +25,16 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class BinaryImpl extends ExpressionImpl implements Binary {
+public class BinaryImpl implements Binary {
 
-  private BinaryOperatorKind operator;
-  private ExpressionImpl left;
-  private ExpressionImpl right;
+  private final Expression left;
+  private final BinaryOperatorKind operator;
+  private final Expression right;
 
-  public BinaryImpl() {
-    // TODO: Delete
-  }
-
-  public BinaryImpl(Expression left, BinaryOperatorKind operator, Expression right) {
-    // TODO:DeleteCast
-    this.left = (ExpressionImpl) left;
+  public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final Expression right) {
+    this.left = left;
     this.operator = operator;
-    this.right = (ExpressionImpl) right;
+    this.right = right;
   }
 
   @Override
@@ -47,28 +42,14 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
     return operator;
   }
 
-  public Binary setOperator(final BinaryOperatorKind operator) {
-    this.operator = operator;
-    return this;
-  }
-
   @Override
   public Expression getLeftOperand() {
     return left;
   }
 
-  public void setLeftOperand(final ExpressionImpl operand) {
-    left = operand;
-  }
-
   @Override
   public Expression getRightOperand() {
     return right;
-  }
-
-  public void setRightOperand(final ExpressionImpl operand) {
-    right = operand;
-
   }
 
   @Override
@@ -82,5 +63,4 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
   public String toString() {
     return "{" + left + " " + operator.name() + " " + right + '}';
   }
-
 }

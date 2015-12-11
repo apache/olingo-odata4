@@ -24,23 +24,21 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
 
-public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral {
+public class TypeLiteralImpl implements TypeLiteral {
 
-  private EdmType type;
+  private final EdmType type;
+
+  public TypeLiteralImpl(final EdmType type) {
+    this.type = type;
+  }
 
   @Override
   public EdmType getType() {
     return type;
   }
 
-  public TypeLiteralImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitTypeLiteral(type);
   }
-
 }

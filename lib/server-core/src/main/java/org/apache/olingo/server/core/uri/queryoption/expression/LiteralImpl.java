@@ -24,16 +24,12 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 
-public class LiteralImpl extends ExpressionImpl implements Literal {
+public class LiteralImpl implements Literal {
 
-  private String text;
-  private EdmType type;
+  private final String text;
+  private final EdmType type;
 
-  public LiteralImpl() {
-
-  }
-
-  public LiteralImpl(String text, EdmType type) {
+  public LiteralImpl(final String text, final EdmType type) {
     this.text = text;
     this.type = type;
   }
@@ -43,19 +39,9 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
     return text;
   }
 
-  public LiteralImpl setText(final String text) {
-    this.text = text;
-    return this;
-  }
-
   @Override
   public EdmType getType() {
     return type;
-  }
-
-  public LiteralImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
   }
 
   @Override
@@ -65,7 +51,6 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
 
   @Override
   public String toString() {
-    return "" + text;
+    return text == null ? "" : text;
   }
-
 }

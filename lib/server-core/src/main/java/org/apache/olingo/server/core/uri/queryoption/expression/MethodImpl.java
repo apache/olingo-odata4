@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -28,17 +29,14 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor
 import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 
-public class MethodImpl extends ExpressionImpl implements Method {
+public class MethodImpl implements Method {
 
-  private MethodKind method;
-  private List<ExpressionImpl> parameters = new ArrayList<ExpressionImpl>();
+  private final MethodKind method;
+  private final List<Expression> parameters;
 
-  public MethodImpl() {
-    // TODO: Delete constructor
-  }
-
-  public MethodImpl(MethodKind method) {
+  public MethodImpl(final MethodKind method, final List<Expression> parameters) {
     this.method = method;
+    this.parameters = parameters;
   }
 
   @Override
@@ -46,48 +44,26 @@ public class MethodImpl extends ExpressionImpl implements Method {
     return method;
   }
 
-  public MethodImpl setMethod(final MethodKind methodCalls) {
-    method = methodCalls;
-    return this;
-  }
-
   @Override
   public List<Expression> getParameters() {
-    List<Expression> list = new ArrayList<Expression>();
-    for (ExpressionImpl item : parameters) {
-      list.add(item);
-    }
-    return list;
-  }
-
-  public MethodImpl addParameter(final ExpressionImpl readCommonExpression) {
-    parameters.add(readCommonExpression);
-    return this;
+    return parameters == null ?
+        Collections.<Expression> emptyList() :
+        Collections.unmodifiableList(parameters);
   }
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     List<T> userParameters = new ArrayList<T>();
-    for (ExpressionImpl parameter : parameters) {
-      userParameters.add(parameter.accept(visitor));
+    if (parameters != null) {
+      for (final Expression parameter : parameters) {
+        userParameters.add(parameter.accept(visitor));
+      }
     }
     return visitor.visitMethodCall(method, userParameters);
   }
 
   @Override
   public String toString() {
-    String parametersString = "[";
-    boolean first = true;
-    for (Expression exp : parameters) {
-      if(first){
-        first = false;
-        parametersString = parametersString + exp.toString();
-      }else {
-        parametersString = parametersString + ", " + exp.toString();
-      }
-    }
-    parametersString = parametersString + "]";
-    return "{" + method + " " + parametersString + "}";
+    return "{" + method + " " + parameters + "}";
   }
-
 }

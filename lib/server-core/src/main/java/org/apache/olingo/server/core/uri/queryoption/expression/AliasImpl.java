@@ -23,25 +23,17 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class AliasImpl extends ExpressionImpl implements Alias {
+public class AliasImpl implements Alias {
 
-  private String parameterName;
+  private final String parameterName;
 
-  public AliasImpl() {
-    //TODO: Delete Constructor
-  }
-
-  public AliasImpl(String parameterName) {
+  public AliasImpl(final String parameterName) {
     this.parameterName = parameterName;
   }
 
   @Override
   public String getParameterName() {
     return parameterName;
-  }
-
-  public void setParameter(final String ParameterName) {
-    parameterName = ParameterName;
   }
 
   @Override

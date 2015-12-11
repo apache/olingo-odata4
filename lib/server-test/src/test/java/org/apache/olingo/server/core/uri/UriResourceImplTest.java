@@ -43,7 +43,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceKind;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
@@ -59,7 +59,7 @@ public class UriResourceImplTest {
   @Test
   public void testUriParameterImpl() {
     UriParameterImpl impl = new UriParameterImpl();
-    ExpressionImpl expression = new LiteralImpl().setText("Expression");
+    Expression expression = new LiteralImpl("Expression", null);
 
     impl.setText("Text");
     impl.setName("A");
@@ -105,7 +105,7 @@ public class UriResourceImplTest {
     UriResourceLambdaAllImpl impl = new UriResourceLambdaAllImpl();
     assertEquals(UriResourceKind.lambdaAll, impl.getKind());
 
-    ExpressionImpl expression = new LiteralImpl().setText("Expression");
+    Expression expression = new LiteralImpl("Expression", null);
     impl.setExpression(expression);
     impl.setLamdaVariable("A");
 
@@ -121,7 +121,7 @@ public class UriResourceImplTest {
     UriResourceLambdaAnyImpl impl = new UriResourceLambdaAnyImpl();
     assertEquals(UriResourceKind.lambdaAny, impl.getKind());
 
-    ExpressionImpl expression = new LiteralImpl().setText("Expression");
+    Expression expression = new LiteralImpl("Expression", null);
     impl.setExpression(expression);
     impl.setLamdaVariable("A");
 

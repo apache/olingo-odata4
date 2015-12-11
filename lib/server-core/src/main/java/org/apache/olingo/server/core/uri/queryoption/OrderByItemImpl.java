@@ -19,11 +19,11 @@
 package org.apache.olingo.server.core.uri.queryoption;
 
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 public class OrderByItemImpl implements OrderByItem {
 
-  private ExpressionImpl expression;
+  private Expression expression;
   private boolean descending = false; // default sort order is ascending
 
   @Override
@@ -37,11 +37,11 @@ public class OrderByItemImpl implements OrderByItem {
   }
 
   @Override
-  public ExpressionImpl getExpression() {
+  public Expression getExpression() {
     return expression;
   }
 
-  public OrderByItem setExpression(final ExpressionImpl expression) {
+  public OrderByItem setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }

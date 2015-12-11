@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.expression;
+package org.apache.olingo.server.core.uri.parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,21 +29,21 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 import org.apache.olingo.server.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
 
-public class FilterParser {
+public class ExpressionParser {
   private Tokenizer tokenizer;
 
   private static final Map<TokenKind, BinaryOperatorKind> tokenToBinaryOperator;
   static {
-    HashMap<TokenKind, BinaryOperatorKind> temp = new HashMap<FilterParser.TokenKind, BinaryOperatorKind>();
+    Map<TokenKind, BinaryOperatorKind> temp = new HashMap<ExpressionParser.TokenKind, BinaryOperatorKind>();
     temp.put(TokenKind.OR_OP, BinaryOperatorKind.OR);
     temp.put(TokenKind.AND_OP, BinaryOperatorKind.AND);
 
@@ -66,7 +67,7 @@ public class FilterParser {
 
   private static final Map<TokenKind, UnaryOperatorKind> tokenToUnaryOperator;
   static {
-    HashMap<TokenKind, UnaryOperatorKind> temp = new HashMap<FilterParser.TokenKind, UnaryOperatorKind>();
+    Map<TokenKind, UnaryOperatorKind> temp = new HashMap<ExpressionParser.TokenKind, UnaryOperatorKind>();
     temp.put(TokenKind.MINUS, UnaryOperatorKind.MINUS);
     temp.put(TokenKind.NOT, UnaryOperatorKind.NOT);
     tokenToUnaryOperator = Collections.unmodifiableMap(temp);
@@ -74,7 +75,7 @@ public class FilterParser {
 
   private static final Map<TokenKind, MethodKind> tokenToMethod;
   static {
-    HashMap<TokenKind, MethodKind> temp = new HashMap<FilterParser.TokenKind, MethodKind>();
+    Map<TokenKind, MethodKind> temp = new HashMap<ExpressionParser.TokenKind, MethodKind>();
     temp.put(TokenKind.Cast, MethodKind.CAST);
     temp.put(TokenKind.Ceiling, MethodKind.CEILING);
     temp.put(TokenKind.Concat, MethodKind.CONCAT);
@@ -114,7 +115,7 @@ public class FilterParser {
   private static final Map<TokenKind, EdmPrimitiveTypeKind> tokenToPrimitiveType;
   static {
     /* Enum and null are not present in the map. These have to be handled differently */
-    HashMap<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<FilterParser.TokenKind, EdmPrimitiveTypeKind>();
+    Map<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<ExpressionParser.TokenKind, EdmPrimitiveTypeKind>();
     temp.put(TokenKind.PrimitiveBooleanValue, EdmPrimitiveTypeKind.Boolean);
     temp.put(TokenKind.PrimitiveStringValue, EdmPrimitiveTypeKind.String);
     // TODO:Check if int64 is correct here or if it has to be single instead
@@ -131,15 +132,14 @@ public class FilterParser {
     tokenToPrimitiveType = Collections.unmodifiableMap(temp);
   }
 
-  public Expression parse(Tokenizer tokenizer) {
-    // Initialize tokenizer
+  public Expression parse(Tokenizer tokenizer) throws UriParserException {
+    // Initialize tokenizer.
     this.tokenizer = tokenizer;
 
-    Expression exp = parseExpression();
-    return exp;
+    return parseExpression();
   }
 
-  private Expression parseExpression() {
+  private Expression parseExpression() throws UriParserException {
     Expression left = parseAnd();
 
     while (is(TokenKind.OR_OP) != null) {
@@ -152,7 +152,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseAnd() {
+  private Expression parseAnd() throws UriParserException {
     Expression left = parseExprEquality();
     while (is(TokenKind.AND_OP) != null) {
       tokenizer.getText();
@@ -163,7 +163,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprEquality() {
+  private Expression parseExprEquality() throws UriParserException {
     Expression left = parseExprRel();
 
     TokenKind nextTokenKind = is(TokenKind.EQ_OP, TokenKind.NE_OP);
@@ -179,7 +179,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprRel() {
+  private Expression parseExprRel() throws UriParserException {
     Expression left = parseExprAdd();
 
     TokenKind nextTokenKind = is(TokenKind.GT_OP, TokenKind.GE_OP, TokenKind.LT_OP, TokenKind.LE_OP);
@@ -195,7 +195,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprAdd() {
+  private Expression parseExprAdd() throws UriParserException {
     Expression left = parseExprMul();
 
     TokenKind nextTokenKind = is(TokenKind.ADD_OP, TokenKind.SUB_OP);
@@ -211,7 +211,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprMul() {
+  private Expression parseExprMul() throws UriParserException {
     Expression left = parseExprUnary();
 
     TokenKind nextTokenKind = is(TokenKind.MUL_OP, TokenKind.DIV_OP, TokenKind.MOD_OP);
@@ -227,7 +227,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprUnary() {
+  private Expression parseExprUnary() throws UriParserException {
     Expression left = null;
     TokenKind nextTokenKind = is(TokenKind.MINUS, TokenKind.NOT);
     // Null for everything other than - or NOT
@@ -246,7 +246,7 @@ public class FilterParser {
     return left;
   }
 
-  private Expression parseExprValue() {
+  private Expression parseExprValue() throws UriParserException {
     if (is(TokenKind.OPEN) != null) {
       tokenizer.getText();
       Expression exp = parseExpression();
@@ -260,7 +260,7 @@ public class FilterParser {
 
     if (is(TokenKind.RootExpr) != null) {
       tokenizer.getText();
-      // TODO: ConsumeRootExpression
+      // TODO: Consume $root Expression.
     }
 
     TokenKind nextPrimitive = isPrimitive();
@@ -269,7 +269,7 @@ public class FilterParser {
       EdmPrimitiveType type;
       if (primitiveTypeKind == null) {
         if (nextPrimitive == TokenKind.PrimitiveEnumValue) {
-          // TODO: Get enum type
+          // TODO: Get enum type.
           type = null;
         } else {
           // Null handling
@@ -283,35 +283,36 @@ public class FilterParser {
 
     TokenKind nextMethod = isMethod();
     if (nextMethod != null) {
-      MethodImpl methodImpl = new MethodImpl(tokenToMethod.get(nextMethod));
-      // Consume Method
+      MethodKind methodKind = tokenToMethod.get(nextMethod);
+      List<Expression> parameters = new ArrayList<Expression>();
+      // Consume Method name.
       tokenizer.getText();
       if (is(TokenKind.CLOSE) != null) {
-        // Consume closing bracket
+        // Consume closing parenthesis.
         tokenizer.getText();
       } else {
-        // TODO: Remove Cast
-        methodImpl.addParameter((ExpressionImpl) parseExpression());
+        parameters.add(parseExpression());
         while (is(TokenKind.COMMA) != null) {
           tokenizer.getText();
-          methodImpl.addParameter((ExpressionImpl) parseExpression());
+          parameters.add(parseExpression());
         }
         require(TokenKind.CLOSE);
       }
 
+      MethodImpl methodImpl = new MethodImpl(methodKind, parameters);
       validateMethodParameters(methodImpl);
 
       return methodImpl;
     }
 
-    throw new RuntimeException("Unexpected token");
+    throw new UriParserSyntaxException("Unexpected token", UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
-  private void validateMethodParameters(MethodImpl methodImpl) {
-    // We might validate parameter types in the future
-    int size = methodImpl.getParameters().size();
-    switch (methodImpl.getMethod()) {
-    // Must have two Parameters
+  private void validateMethodParameters(final Method method) throws UriParserException {
+    // We might validate parameter types in the future.
+    int size = method.getParameters().size();
+    switch (method.getMethod()) {
+    // Must have two Parameters.
     case CONTAINS:
     case ENDSWITH:
     case STARTSWITH:
@@ -320,10 +321,12 @@ public class FilterParser {
     case GEODISTANCE:
     case GEOINTERSECTS:
       if (size != 2) {
-        throw new RuntimeException("The method " + methodImpl.getMethod() + " needs exactly two parameters.");
+        throw new UriParserSemanticException(
+            "The method " + method.getMethod() + " needs exactly two parameters.",
+            null); // TODO: message key
       }
       break;
-    // Must have one parameter
+    // Must have one parameter.
     case LENGTH:
     case TOLOWER:
     case TOUPPER:
@@ -344,37 +347,47 @@ public class FilterParser {
     case CEILING:
     case GEOLENGTH:
       if (size != 1) {
-        throw new RuntimeException("The method: '" + methodImpl.getMethod() + "' needs exactly one parameter.");
+        throw new UriParserSemanticException(
+            "The method '" + method.getMethod() + "' needs exactly one parameter.",
+            null); // TODO: message key
       }
       break;
-    // Must have no parameter
+    // Must have no parameter.
     case NOW:
     case MAXDATETIME:
     case MINDATETIME:
       if (size != 0) {
-        throw new RuntimeException("The method: '" + methodImpl.getMethod() + "' must have no parameters.");
+        throw new UriParserSemanticException("The method '" + method.getMethod() + "' must have no parameters.",
+            null); // TODO: message key
       }
       break;
     // Variable parameter number
     case CAST:
     case ISOF:
-      if (size == 1 || size == 2) {
-        throw new RuntimeException("The method: '" + methodImpl.getMethod() + "' must have one or two parameters.");
+      if (size < 1 || size > 2) {
+        throw new UriParserSemanticException(
+            "The method '" + method.getMethod() + "' must have one or two parameters.",
+            null); // TODO: message key
       }
       break;
     case SUBSTRING:
-      if (size == 2 || size == 3) {
-        throw new RuntimeException("The method: '" + methodImpl.getMethod() + "' must have two or three parameters.");
+      if (size < 2 || size > 3) {
+        throw new UriParserSemanticException(
+            "The method '" + method.getMethod() + "' must have two or three parameters.",
+            null); // TODO: message key
       }
       break;
     default:
-      throw new RuntimeException("Unkown method: '" + methodImpl.getMethod() + "'");
+      throw new UriParserSemanticException(
+          "Unkown method '" + method.getMethod() + "'",
+          null); // TODO: message key
     }
   }
 
-  private String require(TokenKind required) {
+  private String require(TokenKind required) throws UriParserException {
     if (is(required) == null) {
-      throw new RuntimeException("Requred token: " + required);
+      throw new UriParserSyntaxException("Required token: " + required,
+          UriParserSyntaxException.MessageKeys.SYNTAX);
     }
     return tokenizer.getText();
   }

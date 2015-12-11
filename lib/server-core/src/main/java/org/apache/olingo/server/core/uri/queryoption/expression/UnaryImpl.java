@@ -25,18 +25,14 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor
 import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
-public class UnaryImpl extends ExpressionImpl implements Unary {
+public class UnaryImpl implements Unary {
 
-  private UnaryOperatorKind operator;
-  private ExpressionImpl expression;
+  private final UnaryOperatorKind operator;
+  private final Expression expression;
 
-  public UnaryImpl() {
-
-  }
-
-  public UnaryImpl(UnaryOperatorKind operator, Expression expression) {
+  public UnaryImpl(final UnaryOperatorKind operator, final Expression expression) {
     this.operator = operator;
-    this.expression = (ExpressionImpl) expression;
+    this.expression = expression;
   }
 
   @Override
@@ -44,17 +40,9 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
     return operator;
   }
 
-  public void setOperator(final UnaryOperatorKind operator) {
-    this.operator = operator;
-  }
-
   @Override
   public Expression getOperand() {
     return expression;
-  }
-
-  public void setOperand(final ExpressionImpl expression) {
-    this.expression = expression;
   }
 
   @Override
@@ -67,5 +55,4 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
   public String toString() {
     return "{" + operator + " " + expression + '}';
   }
-
 }

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmEnumType;
@@ -27,19 +27,14 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Enumeration;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class EnumerationImpl extends ExpressionImpl implements Enumeration {
+public class EnumerationImpl implements Enumeration {
 
-  private EdmEnumType type;
-  private List<String> values = new ArrayList<String>();
+  private final EdmEnumType type;
+  private final List<String> values;
 
-  @Override
-  public List<String> getValues() {
-    return values;
-  }
-
-  public EnumerationImpl addValue(final String enumValue) {
-    values.add(enumValue);
-    return this;
+  public EnumerationImpl(final EdmEnumType type, final List<String> values) {
+    this.type = type;
+    this.values = values;
   }
 
   @Override
@@ -47,14 +42,15 @@ public class EnumerationImpl extends ExpressionImpl implements Enumeration {
     return type;
   }
 
-  public EnumerationImpl setType(final EdmEnumType type) {
-    this.type = type;
-    return this;
+  @Override
+  public List<String> getValues() {
+    return values == null ?
+        Collections.<String> emptyList() :
+        Collections.unmodifiableList(values);
   }
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitEnum(type, values);
   }
-
 }

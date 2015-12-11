@@ -44,7 +44,7 @@ public class QueryOptionTest {
   public void testAliasQueryOption() {
     AliasQueryOptionImpl option = new AliasQueryOptionImpl();
 
-    Expression expression = new LiteralImpl();
+    Expression expression = new LiteralImpl(null, null);
 
     option.setAliasValue(expression);
     assertEquals(expression, option.getValue());
@@ -132,7 +132,7 @@ public class QueryOptionTest {
     FilterOptionImpl option = new FilterOptionImpl();
     assertEquals(SystemQueryOptionKind.FILTER, option.getKind());
 
-    AliasImpl expression = new AliasImpl();
+    AliasImpl expression = new AliasImpl(null);
 
     option.setExpression(expression);
     assertEquals(expression, option.getExpression());
@@ -184,7 +184,7 @@ public class QueryOptionTest {
   public void testOrderByItemImpl() {
     OrderByItemImpl option = new OrderByItemImpl();
 
-    AliasImpl expression = new AliasImpl();
+    AliasImpl expression = new AliasImpl(null);
     option.setExpression(expression);
     assertEquals(expression, option.getExpression());
 

@@ -25,15 +25,12 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements UriResourceLambdaAll {
 
   protected EdmProperty property;
-
   private String lambdaVariable;
-
-  private ExpressionImpl expression;
+  private Expression expression;
 
   public UriResourceLambdaAllImpl() {
     super(UriResourceKind.lambdaAll);
@@ -64,13 +61,13 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
     return expression;
   }
 
-  public UriResourceLambdaAllImpl setExpression(final ExpressionImpl expression) {
+  public UriResourceLambdaAllImpl setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }
-  
+
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return "all";
   }
 

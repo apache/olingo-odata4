@@ -23,23 +23,21 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.LambdaRef;
 
-public class LambdaRefImpl extends ExpressionImpl implements LambdaRef {
+public class LambdaRefImpl implements LambdaRef {
 
-  private String variableText;
+  private final String variableText;
+
+  public LambdaRefImpl(final String text) {
+    variableText = text;
+  }
 
   @Override
   public String getVariableName() {
     return variableText;
   }
 
-  public LambdaRefImpl setVariableText(final String text) {
-    variableText = text;
-    return this;
-  }
-
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLambdaReference(variableText);
   }
-
 }

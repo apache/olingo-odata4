@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.expression;
+package org.apache.olingo.server.core.uri.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,15 +24,15 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.uri.expression.FilterParser.TokenKind;
-import org.apache.olingo.server.core.uri.expression.FilterParser.Tokenizer;
-import org.apache.olingo.server.core.uri.expression.FilterParser.Token;
+import org.apache.olingo.server.core.uri.parser.ExpressionParser.Token;
+import org.apache.olingo.server.core.uri.parser.ExpressionParser.TokenKind;
+import org.apache.olingo.server.core.uri.parser.ExpressionParser.Tokenizer;
 import org.junit.Test;
 
-public class FilterParserTest {
+public class ExpressionParserTest {
 
   @Test
-  public void equality() {
+  public void equality() throws Exception {
     Expression expression = parseExpression(TokenKind.EQ_OP);
     assertEquals("{5 EQ 5}", expression.toString());
 
@@ -41,7 +41,7 @@ public class FilterParserTest {
   }
 
   @Test
-  public void relational() {
+  public void relational() throws Exception {
     Expression expression = parseExpression(TokenKind.GT_OP);
     assertEquals("{5 GT 5}", expression.toString());
 
@@ -56,7 +56,7 @@ public class FilterParserTest {
   }
 
   @Test
-  public void additive() {
+  public void additive() throws Exception {
     Expression expression = parseExpression(TokenKind.ADD_OP);
     assertEquals("{5 ADD 5}", expression.toString());
 
@@ -65,7 +65,7 @@ public class FilterParserTest {
   }
 
   @Test
-  public void multiplicative() {
+  public void multiplicative() throws Exception {
     Expression expression = parseExpression(TokenKind.MUL_OP);
     assertEquals("{5 MUL 5}", expression.toString());
 
@@ -77,31 +77,31 @@ public class FilterParserTest {
   }
 
   @Test
-  public void unary() {
+  public void unary() throws Exception {
     ArrayList<Token> tokens = new ArrayList<Token>();
     tokens.add(new Token(TokenKind.MINUS, ""));
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new FilterParser().parse(tokenizer);
+    Expression expression = new ExpressionParser().parse(tokenizer);
     assertEquals("{- 5}", expression.toString());
 
     tokens = new ArrayList<Token>();
     tokens.add(new Token(TokenKind.NOT, ""));
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     tokenizer = new Tokenizer(tokens);
-    expression = new FilterParser().parse(tokenizer);
+    expression = new ExpressionParser().parse(tokenizer);
     assertEquals("{not 5}", expression.toString());
   }
 
   @Test
-  public void grouping() {
+  public void grouping() throws Exception {
     ArrayList<Token> tokens = new ArrayList<Token>();
     tokens.add(new Token(TokenKind.MINUS, ""));
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     tokens.add(new Token(TokenKind.ADD_OP, ""));
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new FilterParser().parse(tokenizer);
+    Expression expression = new ExpressionParser().parse(tokenizer);
     assertEquals("{{- 5} ADD 5}", expression.toString());
 
     tokens = new ArrayList<Token>();
@@ -112,12 +112,12 @@ public class FilterParserTest {
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     tokens.add(new Token(TokenKind.CLOSE, ""));
     tokenizer = new Tokenizer(tokens);
-    expression = new FilterParser().parse(tokenizer);
+    expression = new ExpressionParser().parse(tokenizer);
     assertEquals("{- {5 ADD 5}}", expression.toString());
   }
 
   @Test
-  public void noParameterMethods() {
+  public void noParameterMethods() throws Exception {
     Expression expression = parseMethod(TokenKind.Now);
     assertEquals("{now []}", expression.toString());
 
@@ -129,7 +129,7 @@ public class FilterParserTest {
   }
 
   @Test
-  public void oneParameterMethods() {
+  public void oneParameterMethods() throws Exception {
     Expression expression = parseMethod(TokenKind.Length, TokenKind.PrimitiveStringValue);
     assertEquals("{length [String1]}", expression.toString());
 
@@ -166,7 +166,7 @@ public class FilterParserTest {
 
   }
 
-  private Expression parseMethod(TokenKind... kind) {
+  private Expression parseMethod(TokenKind... kind) throws UriParserException {
     ArrayList<Token> tokens = new ArrayList<Token>();
     tokens.add(new Token(kind[0], ""));
 
@@ -191,19 +191,19 @@ public class FilterParserTest {
 
     tokens.add(new Token(TokenKind.CLOSE, ""));
     Tokenizer tokenizer = new Tokenizer(tokens);
-    Expression expression = new FilterParser().parse(tokenizer);
+    Expression expression = new ExpressionParser().parse(tokenizer);
     assertNotNull(expression);
     return expression;
   }
 
-  private Expression parseExpression(TokenKind operator) {
+  private Expression parseExpression(TokenKind operator) throws UriParserException {
     ArrayList<Token> tokens = new ArrayList<Token>();
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     tokens.add(new Token(operator, ""));
     tokens.add(new Token(TokenKind.PrimitiveIntegerValue, "5"));
     Tokenizer tokenizer = new Tokenizer(tokens);
 
-    Expression expression = new FilterParser().parse(tokenizer);
+    Expression expression = new ExpressionParser().parse(tokenizer);
     assertNotNull(expression);
     return expression;
   }
