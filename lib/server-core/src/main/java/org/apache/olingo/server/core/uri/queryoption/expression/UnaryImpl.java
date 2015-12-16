@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
@@ -29,10 +30,12 @@ public class UnaryImpl implements Unary {
 
   private final UnaryOperatorKind operator;
   private final Expression expression;
+  private final EdmType type;
 
-  public UnaryImpl(final UnaryOperatorKind operator, final Expression expression) {
+  public UnaryImpl(final UnaryOperatorKind operator, final Expression expression, final EdmType type) {
     this.operator = operator;
     this.expression = expression;
+    this.type = type;
   }
 
   @Override
@@ -43,6 +46,10 @@ public class UnaryImpl implements Unary {
   @Override
   public Expression getOperand() {
     return expression;
+  }
+
+  public EdmType getType() {
+    return type;
   }
 
   @Override

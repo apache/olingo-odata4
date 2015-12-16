@@ -738,7 +738,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         tokenIndex == UriLexer.ADD ? BinaryOperatorKind.ADD : BinaryOperatorKind.SUB,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        null);
   }
 
   @Override
@@ -785,7 +786,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         BinaryOperatorKind.AND,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -815,7 +817,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         kind,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -843,7 +846,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         tokenIndex == UriLexer.EQ_ALPHA ? BinaryOperatorKind.EQ : BinaryOperatorKind.NE,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -851,7 +855,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         BinaryOperatorKind.HAS,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -875,7 +880,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         kind,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        null);
   }
 
   @Override
@@ -883,7 +889,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
     return new BinaryImpl(
         (Expression) ctx.vE1.accept(this),
         BinaryOperatorKind.OR,
-        (Expression) ctx.vE2.accept(this));
+        (Expression) ctx.vE2.accept(this),
+        EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean));
   }
 
   @Override
@@ -2294,7 +2301,8 @@ public class UriParseTreeVisitor extends UriParserBaseVisitor<Object> {
   public Expression visitAltUnary(@NotNull final UriParserParser.AltUnaryContext ctx) {
     return new UnaryImpl(
         ctx.unary().NOT() == null ? UnaryOperatorKind.MINUS : UnaryOperatorKind.NOT,
-        (Expression) ctx.commonExpr().accept(this));
+        (Expression) ctx.commonExpr().accept(this),
+        null);
   }
 
   @Override

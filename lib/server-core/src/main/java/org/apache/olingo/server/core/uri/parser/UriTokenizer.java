@@ -80,6 +80,7 @@ public class UriTokenizer {
     GreaterThanOrEqualsOperator,
     LessThanOperator,
     LessThanOrEqualsOperator,
+    HasOperator,
     AddOperator,
     SubOperator,
     MulOperator,
@@ -140,6 +141,7 @@ public class UriTokenizer {
    * The order in which this method is called with different token kinds is important,
    * not only for performance reasons but also if tokens can start with the same characters
    * (e.g., a qualified name starts with an OData identifier).
+   * The index is advanced to the end of this token if the token is found.
    * @param allowedTokenKind the kind of token to expect
    * @return <code>true</code> if the token is found; <code>false</code> otherwise
    * @see #getText()
@@ -287,6 +289,9 @@ public class UriTokenizer {
       break;
     case LessThanOrEqualsOperator:
       found = nextBinaryOperator("le");
+      break;
+    case HasOperator:
+      found = nextBinaryOperator("has");
       break;
     case AddOperator:
       found = nextBinaryOperator("add");

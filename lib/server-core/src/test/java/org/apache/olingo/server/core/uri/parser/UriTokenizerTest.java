@@ -412,7 +412,7 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
 
-    tokenizer = new UriTokenizer("1 gt 2 or 3 ge 4 or 5 lt 6");
+    tokenizer = new UriTokenizer("1 gt 2 or 3 ge 4 or 5 lt 6 or 7 has namespace.name'flag1,flag2'");
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.GreaterThanOperator));
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
@@ -424,6 +424,10 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.LessThanOperator));
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.OrOperator));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.HasOperator));
+    assertTrue(tokenizer.next(TokenKind.EnumValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
   }
 

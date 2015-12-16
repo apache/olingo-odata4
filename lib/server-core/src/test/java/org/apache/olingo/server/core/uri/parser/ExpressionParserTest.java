@@ -21,14 +21,18 @@ package org.apache.olingo.server.core.uri.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Locale;
 
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.junit.Test;
 
 public class ExpressionParserTest {
+
+  private final OData odata = OData.newInstance();
 
   @Test
   public void equality() throws Exception {
@@ -37,6 +41,12 @@ public class ExpressionParserTest {
 
     expression = parseExpression("5 ne 5");
     assertEquals("{5 NE 5}", expression.toString());
+
+    assertEquals("{1 EQ null}", parseExpression("1 eq null").toString());
+    assertEquals("{null NE 2}", parseExpression("null ne 2").toString());
+    assertEquals("{null EQ null}", parseExpression("null eq null").toString());
+
+    wrongExpression("5 eq '5'");
   }
 
   @Test
@@ -52,6 +62,14 @@ public class ExpressionParserTest {
 
     expression = parseExpression("5 le 5");
     assertEquals("{5 LE 5}", expression.toString());
+
+    assertEquals("{5 LE 5.1}", parseExpression("5 le 5.1").toString());
+
+    assertEquals("{1 GT null}", parseExpression("1 gt null").toString());
+    assertEquals("{null GE 2}", parseExpression("null ge 2").toString());
+    assertEquals("{null LE null}", parseExpression("null le null").toString());
+
+    wrongExpression("5 gt duration'PT5H'");
   }
 
   @Test
@@ -59,8 +77,37 @@ public class ExpressionParserTest {
     Expression expression = parseExpression("5 add 5");
     assertEquals("{5 ADD 5}", expression.toString());
 
-    expression = parseExpression("5 sub 5");
-    assertEquals("{5 SUB 5}", expression.toString());
+    expression = parseExpression("5 sub 5.1");
+    assertEquals("{5 SUB 5.1}", expression.toString());
+
+    expression = parseExpression("2000-02-29 sub 2016-02-29");
+    assertEquals("{2000-02-29 SUB 2016-02-29}", expression.toString());
+
+    expression = parseExpression("2000-02-29T00:00:00Z sub 2016-02-29T01:02:03Z");
+    assertEquals("{2000-02-29T00:00:00Z SUB 2016-02-29T01:02:03Z}", expression.toString());
+
+    expression = parseExpression("duration'PT1H' add duration'PT1M'");
+    assertEquals("{duration'PT1H' ADD duration'PT1M'}", expression.toString());
+
+    expression = parseExpression("2016-01-01 add duration'P60D'");
+    assertEquals("{2016-01-01 ADD duration'P60D'}", expression.toString());
+
+    expression = parseExpression("2000-02-29T00:00:00Z add duration'PT12H'");
+    assertEquals("{2000-02-29T00:00:00Z ADD duration'PT12H'}", expression.toString());
+
+    assertEquals("{1 ADD null}", parseExpression("1 add null").toString());
+    assertEquals("{null ADD 2}", parseExpression("null add 2").toString());
+    assertEquals("{null SUB null}", parseExpression("null sub null").toString());
+
+    wrongExpression("1 add '2'");
+    wrongExpression("'1' add 2");
+    wrongExpression("1 add 2000-02-29");
+    wrongExpression("11:12:13 sub 2000-02-29T11:12:13Z");
+    wrongExpression("2000-02-29 add 2016-02-29");
+    wrongExpression("2000-02-29T00:00:00Z add 2016-02-29T01:02:03Z");
+    wrongExpression("2000-02-29T00:00:00Z add 1");
+    wrongExpression("2000-02-29 sub 1");
+    wrongExpression("duration'P7D' add 2000-02-29");
   }
 
   @Test
@@ -73,6 +120,8 @@ public class ExpressionParserTest {
 
     expression = parseExpression("5 mod 5");
     assertEquals("{5 MOD 5}", expression.toString());
+
+    wrongExpression("1 mod '2'");
   }
 
   @Test
@@ -81,9 +130,12 @@ public class ExpressionParserTest {
     assertEquals("{MINUS 5}", expression.toString());
 
     assertEquals("{MINUS -1}", parseExpression("--1").toString());
+    assertEquals("{MINUS duration'PT1M'}", parseExpression("-duration'PT1M'").toString());
 
-    expression = parseExpression("not 5");
-    assertEquals("{NOT 5}", expression.toString());
+    expression = parseExpression("not false");
+    assertEquals("{NOT false}", expression.toString());
+
+    wrongExpression("-11:12:13");
   }
 
   @Test
@@ -111,6 +163,8 @@ public class ExpressionParserTest {
 
     expression = parseMethod(TokenKind.MindatetimeMethod);
     assertEquals("{mindatetime []}", expression.toString());
+
+    wrongExpression("now(1)");
   }
 
   @Test
@@ -148,16 +202,79 @@ public class ExpressionParserTest {
 
     expression = parseMethod(TokenKind.SecondMethod, dateTimeOffsetValue);
     assertEquals("{second [" + dateTimeOffsetValue + "]}", expression.toString());
+
+    expression = parseMethod(TokenKind.DateMethod, dateTimeOffsetValue);
+    assertEquals("{date [" + dateTimeOffsetValue + "]}", expression.toString());
+
+    expression = parseMethod(TokenKind.TotalsecondsMethod, "duration'PT1H'");
+    assertEquals("{totalseconds [duration'PT1H']}", expression.toString());
+
+    expression = parseMethod(TokenKind.RoundMethod, "3.141592653589793");
+    assertEquals("{round [3.141592653589793]}", expression.toString());
+
+    assertEquals("{hour [null]}", parseMethod(TokenKind.HourMethod, new String[] { null }).toString());
+
+    wrongExpression("trim()");
+    wrongExpression("trim(1)");
+    wrongExpression("ceiling('1.2')");
+  }
+
+  @Test
+  public void twoParameterMethods() throws Exception {
+    Expression expression = parseMethod(TokenKind.ContainsMethod, "'a'", "'b'");
+    assertEquals("{contains ['a', 'b']}", expression.toString());
+
+    expression = parseMethod(TokenKind.EndswithMethod, "'a'", "'b'");
+    assertEquals("{endswith ['a', 'b']}", expression.toString());
+
+    expression = parseMethod(TokenKind.StartswithMethod, "'a'", "'b'");
+    assertEquals("{startswith ['a', 'b']}", expression.toString());
+
+    expression = parseMethod(TokenKind.IndexofMethod, "'a'", "'b'");
+    assertEquals("{indexof ['a', 'b']}", expression.toString());
+
+    expression = parseMethod(TokenKind.ConcatMethod, "'a'", "'b'");
+    assertEquals("{concat ['a', 'b']}", expression.toString());
+
+    // TODO: Geo methods.
+//    expression = parseMethod(TokenKind.GeoDistanceMethod,
+//        "geography'SRID=0;Point(1.2 3.4)'", "geography'SRID=0;Point(5.6 7.8)'");
+//    assertEquals("{geo.distance [geography'SRID=0;Point(1.2 3.4)', geography'SRID=0;Point(5.6 7.8)']}",
+//        expression.toString());
+//
+//    expression = parseMethod(TokenKind.GeoIntersectsMethod);
+//    assertEquals("{geo.intersects []}", expression.toString());
+
+    assertEquals("{startswith [null, 'b']}", parseMethod(TokenKind.StartswithMethod, null, "'b'").toString());
+    assertEquals("{indexof ['a', null]}", parseMethod(TokenKind.IndexofMethod, "'a'", null).toString());
+
+    wrongExpression("concat('a')");
+    wrongExpression("endswith('a',1)");
+}
+
+  @Test
+  public void variableParameterNumberMethods() throws Exception {
+    Expression expression = parseMethod(TokenKind.SubstringMethod, "'abc'", "1", "2");
+    assertEquals("{substring ['abc', 1, 2]}", expression.toString());
+    expression = parseMethod(TokenKind.SubstringMethod, "'abc'", "1");
+    assertEquals("{substring ['abc', 1]}", expression.toString());
+
+    wrongExpression("substring('abc')");
+    wrongExpression("substring('abc',1,2,3)");
+    wrongExpression("substring(1,2)");
   }
 
   private Expression parseMethod(TokenKind kind, String... parameters) throws UriParserException {
     String expressionString = kind.name().substring(0, kind.name().indexOf("Method"))
         .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(';
-    for (int i = 0; i < parameters.length; i++) {
-      if (i > 0) {
+    boolean first = true;
+    for (final String parameter : parameters) {
+      if (first) {
+        first = false;
+      } else {
         expressionString += ',';
       }
-      expressionString += parameters[i];
+      expressionString += parameter;
     }
     expressionString += ')';
 
@@ -168,9 +285,18 @@ public class ExpressionParserTest {
 
   private Expression parseExpression(final String expressionString) throws UriParserException {
     UriTokenizer tokenizer = new UriTokenizer(expressionString);
-    Expression expression = new ExpressionParser().parse(tokenizer);
+    Expression expression = new ExpressionParser(null, odata).parse(tokenizer);
     assertNotNull(expression);
     assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;
+  }
+
+  private void wrongExpression(final String expressionString) {
+    try {
+      new ExpressionParser(null, odata).parse(new UriTokenizer(expressionString));
+      fail("Expected exception not thrown.");
+    } catch (final UriParserException e) {
+      assertNotNull(e);
+    }
   }
 }

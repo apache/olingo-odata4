@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -30,11 +31,14 @@ public class BinaryImpl implements Binary {
   private final Expression left;
   private final BinaryOperatorKind operator;
   private final Expression right;
+  private final EdmType type;
 
-  public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final Expression right) {
+  public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final Expression right,
+      final EdmType type) {
     this.left = left;
     this.operator = operator;
     this.right = right;
+    this.type = type;
   }
 
   @Override
@@ -50,6 +54,10 @@ public class BinaryImpl implements Binary {
   @Override
   public Expression getRightOperand() {
     return right;
+  }
+
+  public EdmType getType() {
+    return type;
   }
 
   @Override
