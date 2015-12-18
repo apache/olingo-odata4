@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,7 +30,7 @@ public final class PrimitiveSerializerOptions {
   private Integer precision;
   private Integer scale;
   private Boolean isUnicode;
-  
+
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -60,7 +60,7 @@ public final class PrimitiveSerializerOptions {
   public Boolean isUnicode() {
     return isUnicode;
   }
-  
+
   private PrimitiveSerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -112,7 +112,7 @@ public final class PrimitiveSerializerOptions {
       options.isUnicode = isUnicode;
       return this;
     }
-    
+
     /** Sets all facets from an EDM property. */
     public Builder facetsFrom(final EdmProperty property) {
       options.isNullable = property.isNullable();

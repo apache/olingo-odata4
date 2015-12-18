@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,7 +32,7 @@ public interface ODataDeserializer {
   /**
    * Deserializes an entity stream into an {@link org.apache.olingo.commons.api.data.Entity Entity} object.
    * Validates: property types, no double properties, correct json types.
-   * Returns a deserialized {@link org.apache.olingo.commons.api.data.Entity Entity} object and an 
+   * Returns a deserialized {@link org.apache.olingo.commons.api.data.Entity Entity} object and an
    * {@link org.apache.olingo.server.api.uri.queryoption.ExpandOption ExpandOption} object.
    * @param stream
    * @param edmEntityType
@@ -42,8 +42,8 @@ public interface ODataDeserializer {
   DeserializerResult entity(InputStream stream, EdmEntityType edmEntityType) throws DeserializerException;
 
   /**
-   * Deserializes an entity collection stream into an
-   * {@link org.apache.olingo.commons.api.data.EntityCollection EntityCollection} object.
+   * Deserializes an entity collection stream into an {@link org.apache.olingo.commons.api.data.EntityCollection
+   * EntityCollection} object.
    * @param stream
    * @param edmEntityType
    * @return {@link DeserializerResult#getEntityCollection()}

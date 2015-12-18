@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,7 +46,7 @@ public class DebugInformation {
     return request;
   }
 
-  public void setRequest(ODataRequest request) {
+  public void setRequest(final ODataRequest request) {
     this.request = request;
   }
 
@@ -59,7 +59,7 @@ public class DebugInformation {
     return applicationResponse;
   }
 
-  public void setApplicationResponse(ODataResponse applicationResponse) {
+  public void setApplicationResponse(final ODataResponse applicationResponse) {
     this.applicationResponse = applicationResponse;
   }
 
@@ -72,7 +72,7 @@ public class DebugInformation {
     return uriInfo;
   }
 
-  public void setUriInfo(UriInfo uriInfo) {
+  public void setUriInfo(final UriInfo uriInfo) {
     this.uriInfo = uriInfo;
   }
 
@@ -85,7 +85,7 @@ public class DebugInformation {
     return exception;
   }
 
-  public void setException(Exception exception) {
+  public void setException(final Exception exception) {
     this.exception = exception;
   }
 
@@ -98,7 +98,7 @@ public class DebugInformation {
     return serverEnvironmentVariables;
   }
 
-  public void setServerEnvironmentVariables(Map<String, String> serverEnvironmentVariables) {
+  public void setServerEnvironmentVariables(final Map<String, String> serverEnvironmentVariables) {
     this.serverEnvironmentVariables = serverEnvironmentVariables;
   }
 
@@ -111,7 +111,7 @@ public class DebugInformation {
     return runtimeInformation;
   }
 
-  public void setRuntimeInformation(List<RuntimeMeasurement> runtimeInformation) {
+  public void setRuntimeInformation(final List<RuntimeMeasurement> runtimeInformation) {
     this.runtimeInformation = runtimeInformation;
   }
 

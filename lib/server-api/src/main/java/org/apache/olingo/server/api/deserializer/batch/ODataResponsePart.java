@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,7 +38,7 @@ public class ODataResponsePart {
    * An ODataResponsePart represents a collection of ODataResponses.
    * A list of ODataResponseParts can be combined by the BatchSerializer to a single
    * OData batch response.
-   * 
+   *
    * @param responses A list of {@link ODataResponse}
    * @param isChangeSet whether this ODataResponsePart represents a change set
    */
@@ -53,7 +53,7 @@ public class ODataResponsePart {
    * An ODataResponsePart represents a collection of ODataResponses.
    * A list of ODataResponseParts can be combined by the BatchSerializer to a single
    * OData batch response.
-   * 
+   *
    * @param response A single {@link ODataResponse}
    * @param isChangeSet whether this ODataResponsePart represents a change set
    */
