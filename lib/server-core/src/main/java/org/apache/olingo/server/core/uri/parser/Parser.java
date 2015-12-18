@@ -46,29 +46,22 @@ import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
-import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
-import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
-import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 import org.apache.olingo.server.core.uri.antlr.UriLexer;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser;
 import org.apache.olingo.server.core.uri.antlr.UriParserParser.ExpandItemsEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.FilterExpressionEOFContext;
-import org.apache.olingo.server.core.uri.antlr.UriParserParser.OrderByEOFContext;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.IdOptionImpl;
-import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
@@ -84,9 +77,7 @@ public class Parser {
   private final Edm edm;
   private final OData odata;
 
-  private enum ParserEntryRules {
-    ExpandItems, FilterExpression, Orderby
-  }
+  private enum ParserEntryRules { ExpandItems }
 
   public Parser(final Edm edm, final OData odata) {
     this.edm = edm;
@@ -131,7 +122,7 @@ public class Parser {
       if (numberOfSegments > 1) {
         final String typeCastSegment = pathSegmentsDecoded.get(1);
         ensureLastSegment(typeCastSegment, 2, numberOfSegments);
-        context.contextUriInfo = new ResourcePathParser(edm, odata).parseDollarEntityTypeCast(typeCastSegment);
+        context.contextUriInfo = new ResourcePathParser(edm).parseDollarEntityTypeCast(typeCastSegment);
         context.contextTypes.push(context.contextUriInfo.getEntityTypeCast());
       } else {
         context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
@@ -141,7 +132,7 @@ public class Parser {
 
     } else if (firstSegment.startsWith("$crossjoin")) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
-      context.contextUriInfo = new ResourcePathParser(edm, odata).parseCrossjoinSegment(firstSegment);
+      context.contextUriInfo = new ResourcePathParser(edm).parseCrossjoinSegment(firstSegment);
       final EdmEntityContainer container = edm.getEntityContainer();
       for (final String name : context.contextUriInfo.getEntitySetNames()) {
         context.contextTypes.push(container.getEntitySet(name).getEntityType());
@@ -150,7 +141,7 @@ public class Parser {
 
     } else {
       context.contextUriInfo = new UriInfoImpl().setKind(UriInfoKind.resource);
-      final ResourcePathParser resourcePathParser = new ResourcePathParser(edm, odata);
+      final ResourcePathParser resourcePathParser = new ResourcePathParser(edm);
       int count = 0;
       UriResource lastSegment = null;
       for (final String pathSegment : pathSegmentsDecoded) {
@@ -183,7 +174,7 @@ public class Parser {
 
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
-        final EdmType type = getTypeInformation(typed);
+        final EdmType type = ParserHelper.getTypeInformation(typed);
         if (type != null) { // could be null for, e.g., actions without return type
           context.contextTypes.push(type);
         }
@@ -199,23 +190,13 @@ public class Parser {
       if (optionName.startsWith("$")) {
         SystemQueryOption systemOption = null;
         if (optionName.equals(SystemQueryOptionKind.FILTER.toString())) {
-          try {
-            FilterExpressionEOFContext ctxFilterExpression =
-                (FilterExpressionEOFContext) parseRule(optionValue, ParserEntryRules.FilterExpression);
-            systemOption = (FilterOptionImpl) uriParseTreeVisitor.visitFilterExpressionEOF(ctxFilterExpression);
-          } catch (final ParseCancellationException e) {
-            throw e.getCause() instanceof UriParserException ?
-                (UriParserException) e.getCause() :
-                new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
-          }
-//          UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
-//          systemOption = new FilterOptionImpl().setExpression(
-//              new ExpressionParser().parse(filterTokenizer));
-//          if (!filterTokenizer.next(TokenKind.EOF)) {
-//            throw new UriParserSyntaxException("Illegal value of $filter option!",
-//                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-//                optionName, optionValue);
-//          }
+          UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
+          systemOption = new FilterParser(edm, odata).parse(filterTokenizer,
+              context.contextTypes.peek() instanceof EdmStructuredType ?
+                  (EdmStructuredType) context.contextTypes.peek() :
+                  null,
+                  context.contextUriInfo.getEntitySetNames());
+          checkOptionEOF(filterTokenizer, optionName, optionValue);
 
         } else if (optionName.equals(SystemQueryOptionKind.FORMAT.toString())) {
           FormatOptionImpl formatOption = new FormatOptionImpl();
@@ -253,15 +234,13 @@ public class Parser {
               UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
 
         } else if (optionName.equals(SystemQueryOptionKind.ORDERBY.toString())) {
-          try {
-            OrderByEOFContext ctxOrderByExpression =
-                (OrderByEOFContext) parseRule(optionValue, ParserEntryRules.Orderby);
-            systemOption = (OrderByOptionImpl) uriParseTreeVisitor.visitOrderByEOF(ctxOrderByExpression);
-          } catch (final ParseCancellationException e) {
-            throw e.getCause() instanceof UriParserException ?
-                (UriParserException) e.getCause() :
-                new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
-          }
+          UriTokenizer orderByTokenizer = new UriTokenizer(optionValue);
+          systemOption = new OrderByParser(edm, odata).parse(orderByTokenizer,
+              context.contextTypes.peek() instanceof EdmStructuredType ?
+                  (EdmStructuredType) context.contextTypes.peek() :
+                  null,
+                  context.contextUriInfo.getEntitySetNames());
+          checkOptionEOF(orderByTokenizer, optionName, optionValue);
 
         } else if (optionName.equals(SystemQueryOptionKind.SEARCH.toString())) {
           systemOption = new SearchParser().parse(optionValue);
@@ -273,11 +252,7 @@ public class Parser {
                   (EdmStructuredType) context.contextTypes.peek() :
                   null,
               context.isCollection);
-          if (!selectTokenizer.next(TokenKind.EOF)) {
-            throw new UriParserSyntaxException("Illegal value of $select option!",
-                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                optionName, optionValue);
-          }
+          checkOptionEOF(selectTokenizer, optionName, optionValue);
 
         } else if (optionName.equals(SystemQueryOptionKind.SKIP.toString())) {
           SkipOptionImpl skipOption = new SkipOptionImpl();
@@ -343,15 +318,12 @@ public class Parser {
                   UriParserSyntaxException.MessageKeys.SYNTAX);
             }
           } else {
-            try {
-              final FilterExpressionEOFContext filterExpCtx =
-                  (FilterExpressionEOFContext) parseRule(optionValue, ParserEntryRules.FilterExpression);
-              expression = ((FilterOption) uriParseTreeVisitor.visitFilterExpressionEOF(filterExpCtx))
-                  .getExpression();
-            } catch (final ParseCancellationException e) {
-              throw e.getCause() instanceof UriParserException ?
-                  (UriParserException) e.getCause() :
-                  new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
+            UriTokenizer aliasValueTokenizer = new UriTokenizer(optionValue);
+            expression = new ExpressionParser(edm, odata).parse(aliasValueTokenizer, null,
+                context.contextUriInfo.getEntitySetNames());
+            if (!aliasValueTokenizer.next(TokenKind.EOF)) {
+              throw new UriParserSyntaxException("Illegal value for alias '" + optionName + "'.",
+                  UriParserSyntaxException.MessageKeys.SYNTAX);
             }
           }
           context.contextUriInfo.addAlias((AliasQueryOption) new AliasQueryOptionImpl()
@@ -384,28 +356,13 @@ public class Parser {
     return index > 0 && index < value.length() - 1 && index == value.lastIndexOf('/');
   }
 
-  protected static EdmType getTypeInformation(final UriResourcePartTyped resourcePart) {
-    EdmType type = null;
-    if (resourcePart instanceof UriResourceWithKeysImpl) {
-      final UriResourceWithKeysImpl lastPartWithKeys = (UriResourceWithKeysImpl) resourcePart;
-      if (lastPartWithKeys.getTypeFilterOnEntry() != null) {
-        type = lastPartWithKeys.getTypeFilterOnEntry();
-      } else if (lastPartWithKeys.getTypeFilterOnCollection() != null) {
-        type = lastPartWithKeys.getTypeFilterOnCollection();
-      } else {
-        type = lastPartWithKeys.getType();
-      }
-
-    } else if (resourcePart instanceof UriResourceTypedImpl) {
-      final UriResourceTypedImpl lastPartTyped = (UriResourceTypedImpl) resourcePart;
-      type = lastPartTyped.getTypeFilter() == null ?
-          lastPartTyped.getType() :
-          lastPartTyped.getTypeFilter();
-    } else {
-      type = resourcePart.getType();
+  private void checkOptionEOF(UriTokenizer tokenizer, final String optionName, final String optionValue)
+      throws UriParserException {
+    if (!tokenizer.next(TokenKind.EOF)) {
+      throw new UriParserSyntaxException("Illegal value of '" + optionName + "' option!",
+          UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+          optionName, optionValue);
     }
-
-    return type;
   }
 
   private ParserRuleContext parseRule(final String input, final ParserEntryRules entryPoint)
@@ -435,14 +392,6 @@ public class Parser {
 
       // parse
       switch (entryPoint) {
-      case FilterExpression:
-        lexer.mode(Lexer.DEFAULT_MODE);
-        ret = parser.filterExpressionEOF();
-        break;
-      case Orderby:
-        lexer.mode(Lexer.DEFAULT_MODE);
-        ret = parser.orderByEOF();
-        break;
       case ExpandItems:
         lexer.mode(Lexer.DEFAULT_MODE);
         ret = parser.expandItemsEOF();
@@ -471,14 +420,6 @@ public class Parser {
 
         // parse
         switch (entryPoint) {
-        case FilterExpression:
-          lexer.mode(Lexer.DEFAULT_MODE);
-          ret = parser.filterExpressionEOF();
-          break;
-        case Orderby:
-          lexer.mode(Lexer.DEFAULT_MODE);
-          ret = parser.orderByEOF();
-          break;
         case ExpandItems:
           lexer.mode(Lexer.DEFAULT_MODE);
           ret = parser.expandItemsEOF();

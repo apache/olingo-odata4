@@ -25,17 +25,10 @@ public class UriResourceValueImpl extends UriResourceImpl implements UriResource
 
   public UriResourceValueImpl() {
     super(UriResourceKind.value);
-
   }
 
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return "$value";
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

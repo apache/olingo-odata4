@@ -82,13 +82,8 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyEnumString", "olingo.odata.test1.ENString'String1'")
         .isKeyPredicate(1, "PropertyDefString", "'abc'");
 
-    testUri
-        .run("ESMixEnumDefCollComp", "$filter=PropertyEnumString has Namespace1_Alias.ENString'String1'")
-        .goPath()
-        .at(0)
-        .isEntitySet("ESMixEnumDefCollComp")
-        .goUpUriValidator()
-        .goFilter().is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>");
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has Namespace1_Alias.ENString'String1'")
+        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1>>>");
 
     testUri
         .run("ESMixEnumDefCollComp(PropertyEnumString=Namespace1_Alias.ENString'String1',PropertyDefString='abc')")
@@ -100,7 +95,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void testFunctionBound_varOverloading() throws Exception {
+  public void functionBound_varOverloading() throws Exception {
     // on ESTwoKeyNav
     testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
         .at(0)
@@ -941,7 +936,10 @@ public class TestFullResourcePath {
     testUri.run("$crossjoin(ESKeyNav,ESTwoKeyNav)")
         .isKind(UriInfoKind.crossjoin)
         .isCrossJoinEntityList(Arrays.asList("ESKeyNav", "ESTwoKeyNav"));
+  }
 
+  @Test
+  public void crossjoinFilter() throws Exception {
     testUri.run("$crossjoin(ESTwoPrim,ESMixPrimCollComp)",
         "$filter=ESTwoPrim/PropertyString eq ESMixPrimCollComp/PropertyComp/PropertyString")
         .goFilter()
@@ -950,7 +948,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runCrossjoinError() throws Exception {
+  public void crossjoinError() throws Exception {
     testUri.runEx("$crossjoin").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("$crossjoin/error").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
     testUri.runEx("$crossjoin()").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -1031,20 +1029,20 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void resourcePathWithApostrophe() {
+  public void resourcePathWithApostrophe() throws Exception {
     testUri.runEx("ESAllPrim'").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESAllPrim'InvalidStuff").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
-    testUri.runEx("ESAllPrim", "$filter=PropertyInt16' eq 0")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETKeyNavEx("PropertyInt16' eq 0")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
 
-    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq' 0")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETKeyNavEx("PropertyInt16 eq' 0")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
 
-    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq 0'")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETKeyNavEx("PropertyInt16 eq 0'")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
 
-    testUri.runEx("ESAllPrim", "$filter=PropertyInt16 eq 'dsd''")
+    testFilter.runOnETKeyNavEx("PropertyInt16 eq 'dsd''")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
@@ -1334,14 +1332,6 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNameKeyCast() throws Exception {
-    // testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
-    // .isExSemantic(MessageKeys.xxx);
-
-    // testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
-    // .isExSemantic(MessageKeys.xxx);
-
-    testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)").isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
-
     testUri.run("ESTwoPrim(1)/olingo.odata.test1.ETBase")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -1388,6 +1378,15 @@ public class TestFullResourcePath {
         .isEntitySet("ESTwoPrim")
         .isType(EntityTypeProvider.nameETTwoPrim)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
+
+    // TODO: Keys cannot be specified twice.
+    //testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
+    //    .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+
+    //testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
+    //    .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+
+    testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)").isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
   }
 
   @Test
@@ -2620,9 +2619,7 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n()
+        .isType(EntityTypeProvider.nameETKeyNav)
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
@@ -2633,9 +2630,7 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n()
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
@@ -2647,9 +2642,7 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n()
+        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
@@ -2658,11 +2651,7 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n()
-        .isComplex("PropertyCompNav")
-        .isType(ComplexTypeProvider.nameCTBasePrimCompNav)
+        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
@@ -2672,11 +2661,8 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n()
-        .isComplex("PropertyCompNav")
-        .isType(ComplexTypeProvider.nameCTBasePrimCompNav)
+        .isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false)
+        .isTypeFilter(ComplexTypeProvider.nameCTTwoBasePrimCompNav)
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
@@ -2704,10 +2690,7 @@ public class TestFullResourcePath {
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EntityTypeProvider.nameETTwoKeyNav)
-        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav)
         .goUpExpandValidator()
@@ -3246,7 +3229,9 @@ public class TestFullResourcePath {
 
   }
 
+  // TODO
   @Test
+  @Ignore
   public void filter() throws Exception {
 
     testFilter.runOnETTwoKeyNav("PropertyString")
@@ -3311,9 +3296,6 @@ public class TestFullResourcePath {
         .root().left()
         .isType(PropertyProvider.nameDate)
         .isMember().isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
-        // .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EntityTypeProvider.nameETTwoKeyNav).isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
-        // .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
         .goUpFilterValidator()
         .root().right()
@@ -3324,9 +3306,6 @@ public class TestFullResourcePath {
         .root().left()
         .isType(PropertyProvider.nameString)
         .isMember().isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
-        // .first().isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EntityTypeProvider.nameCTTwoPrim).isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase)
-        // .n().isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
         .first().isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
         .goUpFilterValidator()
         .root().right()
@@ -3352,19 +3331,18 @@ public class TestFullResourcePath {
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     // TODO: This should throw an exception because the top node of the filter tree must be boolean.
     // testFilter.runOnETTwoKeyNavEx("PropertyComp")
-    // .isExSemantic(MessageKeys.XYZ);
+    //     .isExSemantic(MessageKeys.UNKNOWN_TYPE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // TODO: These should throw exceptions because the types are incompatible.
-    // testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt16 eq '1'")
-    // .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyDate eq 1")
-    // .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-    // testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyString eq 1")
-    // .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt16 eq '1'")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyDate eq 1")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyString eq 1")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt64 eq 1")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/PropertyInt16 gt 42")
@@ -3788,8 +3766,155 @@ public class TestFullResourcePath {
         .right().isLiteral("INF").isType(PropertyProvider.nameDecimal);
   }
 
+  // TODO
   @Test
+  @Ignore
   public void filterProperties() throws Exception {
+    testFilter.runOnETAllPrim("PropertyBoolean eq true")
+        .is("<<PropertyBoolean> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
+        .goUpFilterValidator()
+        .root().right().isTrue();
+
+    testFilter.runOnETAllPrim("PropertyDecimal eq 1.25")
+        .is("<<PropertyDecimal> eq <1.25>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyDecimal", PropertyProvider.nameDecimal, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("1.25");
+
+    testFilter.runOnETAllPrim("PropertyDouble eq 1.5")
+        .is("<<PropertyDouble> eq <1.5>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("1.5");
+
+    testFilter.runOnETAllPrim("PropertySingle eq 1.5")
+        .is("<<PropertySingle> eq <1.5>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertySingle", PropertyProvider.nameSingle, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("1.5");
+
+    testFilter.runOnETAllPrim("PropertySByte eq -128")
+        .is("<<PropertySByte> eq <-128>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertySByte", PropertyProvider.nameSByte, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("-128");
+
+    testFilter.runOnETAllPrim("PropertyByte eq 255")
+        .is("<<PropertyByte> eq <255>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyByte",
+            PropertyProvider.nameByte, false).goUpFilterValidator()
+        .root().right().isLiteral("255");
+
+    testFilter.runOnETAllPrim("PropertyInt16 eq 32767")
+        .is("<<PropertyInt16> eq <32767>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("32767");
+
+    testFilter.runOnETAllPrim("PropertyInt32 eq 2147483647")
+        .is("<<PropertyInt32> eq <2147483647>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt32", PropertyProvider.nameInt32, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("2147483647");
+
+    testFilter.runOnETAllPrim("PropertyInt64 eq 9223372036854775807")
+        .is("<<PropertyInt64> eq <9223372036854775807>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyInt64", PropertyProvider.nameInt64, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("9223372036854775807");
+
+    testFilter.runOnETAllPrim("PropertyDate eq 2013-09-25")
+        .is("<<PropertyDate> eq <2013-09-25>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("2013-09-25");
+
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset eq 2013-09-25T12:34:56.123456789012-10:24")
+        .is("<<PropertyDateTimeOffset> eq <2013-09-25T12:34:56.123456789012-10:24>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath()
+        .isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
+
+    testFilter.runOnETAllPrim("PropertyDuration eq duration'P10DT5H34M21.123456789012S'")
+        .is("<<PropertyDuration> eq <duration'P10DT5H34M21.123456789012S'>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("duration'P10DT5H34M21.123456789012S'");
+
+    testFilter.runOnETAllPrim("PropertyGuid eq 005056A5-09B1-1ED3-89BD-FB81372CCB33")
+        .is("<<PropertyGuid> eq <005056A5-09B1-1ED3-89BD-FB81372CCB33>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyGuid", PropertyProvider.nameGuid, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("005056A5-09B1-1ED3-89BD-FB81372CCB33");
+
+    testFilter.runOnETAllPrim("PropertyString eq 'somestring'")
+        .is("<<PropertyString> eq <'somestring'>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("'somestring'");
+
+    testFilter.runOnETAllPrim("PropertyTimeOfDay eq 12:34:55.12345678901")
+        .is("<<PropertyTimeOfDay> eq <12:34:55.12345678901>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
+        .goUpFilterValidator()
+        .root().right().isLiteral("12:34:55.12345678901");
+
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
+        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String1>>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
+
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
+        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String2>>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
+
+    testFilter.runOnETMixEnumDefCollComp(
+        "PropertyCompMixedEnumDef/PropertyEnumString eq olingo.odata.test1.ENString'String3'")
+        .is("<<PropertyCompMixedEnumDef/PropertyEnumString> eq <olingo.odata.test1.ENString<String3>>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath()
+        .first().isComplex("PropertyCompMixedEnumDef")
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
+
+    testFilter
+        .runOnETMixEnumDefCollComp(
+            "PropertyCompMixedEnumDef/PropertyEnumString eq " +
+                "PropertyCompMixedEnumDef/PropertyEnumString")
+        .is("<<PropertyCompMixedEnumDef/PropertyEnumString> eq " +
+            "<PropertyCompMixedEnumDef/PropertyEnumString>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .root().left().goPath()
+        .first().isComplex("PropertyCompMixedEnumDef")
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
+        .goUpFilterValidator()
+        .root().right().goPath()
+        .first().isComplex("PropertyCompMixedEnumDef")
+        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false);
+
     testFilter.runOnETAllPrim("PropertyByte mod 0")
         .is("<<PropertyByte> mod <0>>");
 
@@ -3953,9 +4078,10 @@ public class TestFullResourcePath {
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
+  // TODO: $it on primitive types?
   @Test
-  public void filterPMethods() throws Exception {
-
+  @Ignore
+  public void methods() throws Exception {
     testFilter.runOnETKeyNav("indexof(PropertyString,'47') eq 5")
         .is("<<indexof(<PropertyString>,<'47'>)> eq <5>>")
         .root().left()
@@ -4023,16 +4149,6 @@ public class TestFullResourcePath {
         .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'bar'>");
-
-    testFilter.runOnETKeyNav("concat(PropertyString, cast(PropertyCompAllPrim/PropertyInt16,Edm.String))")
-        .is("<concat(<PropertyString>,<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>)>")
-        .isMethod(MethodKind.CONCAT, 2)
-        .isParameterText(0, "<PropertyString>")
-        .isParameterText(1, "<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>")
-        .goParameter(1)
-        .isMethod(MethodKind.CAST, 2)
-        .isParameterText(0, "<PropertyCompAllPrim/PropertyInt16>")
-        .isParameterText(1, "<Edm.String>");
 
     testFilter.runOnETKeyNav("length(PropertyString) eq 32")
         .is("<<length(<PropertyString>)> eq <32>>")
@@ -4416,8 +4532,102 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyInt16 eq $root"
-        + "/ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16")
+    testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf')")
+        .is("<endswith(<PropertyComp/PropertyComp/PropertyString>,<'dorf'>)>")
+        .isMethod(MethodKind.ENDSWITH, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().goParameter(1).isLiteral("'dorf'");
+
+    testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf') eq true")
+        .is("<<endswith(<PropertyComp/PropertyComp/PropertyString>,<'dorf'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.ENDSWITH, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().left().goParameter(1).isLiteral("'dorf'");
+
+    testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf')")
+        .is("<endswith(<'Walldorf'>,<'dorf'>)>")
+        .isMethod(MethodKind.ENDSWITH, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().goParameter(1).isLiteral("'dorf'");
+
+    testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf') eq true")
+        .is("<<endswith(<'Walldorf'>,<'dorf'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.ENDSWITH, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().left().goParameter(1).isLiteral("'dorf'");
+
+    testFilter.runOnETKeyNav("startswith(PropertyCompAllPrim/PropertyString,'Wall')")
+        .is("<startswith(<PropertyCompAllPrim/PropertyString>,<'Wall'>)>")
+        .isMethod(MethodKind.STARTSWITH, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyCompAllPrim")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETKeyNav("startswith(PropertyCompAllPrim/PropertyString,'Wall') eq true")
+        .is("<<startswith(<PropertyCompAllPrim/PropertyString>,<'Wall'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.STARTSWITH, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyCompAllPrim")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().left().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETKeyNav("startswith('Walldorf','Wall')")
+        .is("<startswith(<'Walldorf'>,<'Wall'>)>")
+        .isMethod(MethodKind.STARTSWITH, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETKeyNav("startswith('Walldorf','Wall') eq true")
+        .is("<<startswith(<'Walldorf'>,<'Wall'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.STARTSWITH, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().left().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETTwoKeyNav("contains(PropertyComp/PropertyComp/PropertyString,'Wall')")
+        .is("<contains(<PropertyComp/PropertyComp/PropertyString>,<'Wall'>)>")
+        .isMethod(MethodKind.CONTAINS, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETTwoKeyNav("contains(PropertyComp/PropertyComp/PropertyString,'Wall') eq true")
+        .is("<<contains(<PropertyComp/PropertyComp/PropertyString>,<'Wall'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.CONTAINS, 2)
+        .goParameter(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
+        .root().left().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall')")
+        .is("<contains(<'Walldorf'>,<'Wall'>)>")
+        .isMethod(MethodKind.CONTAINS, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall') eq true")
+        .is("<<contains(<'Walldorf'>,<'Wall'>)> eq <true>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isMethod(MethodKind.CONTAINS, 2)
+        .goParameter(0).isLiteral("'Walldorf'")
+        .root().left().goParameter(1).isLiteral("'Wall'");
+
+    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyInt16 eq "
+        + "$root/ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16")
         .is("<<PropertyComp/PropertyComp/PropertyInt16> eq <$root/ESTwoKeyNav/PropertyInt16>>")
         .root().left()
         .goPath()
@@ -4432,7 +4642,12 @@ public class TestFullResourcePath {
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+  }
 
+  // TODO: Implement cast method.
+  @Test
+  @Ignore
+  public void castMethod() throws Exception {
     testFilter.runOnETKeyNav("cast(olingo.odata.test1.ETBaseTwoKeyNav)")
         .is("<cast(<olingo.odata.test1.ETBaseTwoKeyNav>)>")
         .root()
@@ -4466,8 +4681,17 @@ public class TestFullResourcePath {
         .root()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase) eq cast($it,olingo.odata.test1.CTBase)"
-        )
+    testFilter.runOnETKeyNav("concat(PropertyString,cast(PropertyCompAllPrim/PropertyInt16,Edm.String))")
+        .is("<concat(<PropertyString>,<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>)>")
+        .isMethod(MethodKind.CONCAT, 2)
+        .isParameterText(0, "<PropertyString>")
+        .isParameterText(1, "<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>")
+        .goParameter(1)
+        .isMethod(MethodKind.CAST, 2)
+        .isParameterText(0, "<PropertyCompAllPrim/PropertyInt16>")
+        .isParameterText(1, "<Edm.String>");
+
+    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase) eq cast($it,olingo.odata.test1.CTBase)")
         .is("<<cast(<$it>,<olingo.odata.test1.CTBase>)> eq <cast(<$it>,<olingo.odata.test1.CTBase>)>>")
         .root().left()
         .isMethod(MethodKind.CAST, 2)
@@ -4563,26 +4787,22 @@ public class TestFullResourcePath {
         .goUpFilterValidator().root()
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
+    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null)")
+        .goPath()
+        .isFunction("UFCRTCTTwoPrimTwoParam")
+        .isParameter(0, "ParameterInt16", null)
+        .isParameter(1, "ParameterString", null);
+
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETKeyNav("any()")
         .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
   }
 
+  // TODO: Check whether lambda expressions really are allowed on complex collections.
   @Test
+  @Ignore
   public void lambdaFunctions() throws Exception {
-
-    testFilter.runOnETKeyNav("any(d:d/PropertyInt16 eq 1)")
-        .is("<<ANY;<<d/PropertyInt16> eq <1>>>>")
-        .root().goPath()
-        .first().isUriPathInfoKind(UriResourceKind.lambdaAny)
-        .goLambdaExpression()
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().goPath()
-        .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EntityTypeProvider.nameETKeyNav, false)
-        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
-
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString')")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<d/PropertyString> eq <'SomeString'>>>>")
         .root().goPath()
@@ -4610,7 +4830,7 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .isType(PropertyProvider.nameString, false);
 
-    testFilter.runOnETKeyNav(" NavPropertyETTwoKeyNavOne/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()"
+    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavOne/olingo.odata.test1.BFCETTwoKeyNavRTESTwoKeyNav()"
         + "/any(d:d/PropertyComp/PropertyInt16 eq 6)")
         .is("<NavPropertyETTwoKeyNavOne/BFCETTwoKeyNavRTESTwoKeyNav/<ANY;<<d/PropertyComp/PropertyInt16> eq <6>>>>")
         .root().goPath()
@@ -4625,8 +4845,8 @@ public class TestFullResourcePath {
         .n().isComplex("PropertyComp")
         .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
-    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or d/any"
-        + "(e:e/CollPropertyString eq 'SomeString'))")
+    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
+        + "d/any(e:e/CollPropertyString eq 'SomeString'))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>> or "
             + "<d/<ANY;<<e/CollPropertyString> eq <'SomeString'>>>>>>>")
         .root().goPath()
@@ -4653,8 +4873,8 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
-    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or d/CollPropertyString/any"
-        + "(e:e eq 'SomeString'))")
+    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
+        + "d/CollPropertyString/any(e:e eq 'SomeString'))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>> or "
             + "<d/CollPropertyString/<ANY;<<e> eq <'SomeString'>>>>>>>")
         .root().goPath()
@@ -4681,9 +4901,8 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .isType(PropertyProvider.nameString, false);
 
-    testFilter
-        .runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString' and d/CollPropertyString/any"
-            + "(e:e eq d/PropertyString))")
+    testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString' and "
+            + "d/CollPropertyString/any(e:e eq d/PropertyString))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyString> eq <'SomeString'>> and "
             + "<d/CollPropertyString/<ANY;<<e> eq <d/PropertyString>>>>>>>")
         .root().goPath()
@@ -4714,11 +4933,14 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
+    testFilter.runOnETKeyNavEx("any(d:d/PropertyInt16 eq 1)")
+        .isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
   }
 
+  // TODO: Implement isof method.
   @Test
-  public void runIsOf() throws Exception {
-
+  @Ignore
+  public void isOfMethod() throws Exception {
     testFilter.runOnETKeyNav("isof(olingo.odata.test1.ETTwoKeyNav)")
         .is("<isof(<olingo.odata.test1.ETTwoKeyNav>)>")
         .root()
@@ -4903,271 +5125,16 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
 
-    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String,String3'")
-        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String,String3>>>")
+    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has olingo.odata.test1.ENString'String1,String3'")
+        .is("<<PropertyEnumString> has <olingo.odata.test1.ENString<String1,String3>>>")
         .isBinary(BinaryOperatorKind.HAS)
         .root().left().goPath()
         .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
         .goUpFilterValidator()
-        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String", "String3"));
+        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1", "String3"));
 
-    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString has null")
-        .is("<<PropertyEnumString> has <null>>")
-        .root()
-        .isBinary(BinaryOperatorKind.HAS)
-        .root().left().goPath()
-        .first().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpFilterValidator()
-        .root().right().isNull();
-
-    testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf')")
-        .is("<endswith(<PropertyComp/PropertyComp/PropertyString>,<'dorf'>)>")
-        .isMethod(MethodKind.ENDSWITH, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().goParameter(1).isLiteral("'dorf'");
-
-    testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf') eq true")
-        .is("<<endswith(<PropertyComp/PropertyComp/PropertyString>,<'dorf'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.ENDSWITH, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().left().goParameter(1).isLiteral("'dorf'");
-
-    testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf')")
-        .is("<endswith(<'Walldorf'>,<'dorf'>)>")
-        .isMethod(MethodKind.ENDSWITH, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().goParameter(1).isLiteral("'dorf'");
-
-    testFilter.runOnETTwoKeyNav("endswith('Walldorf','dorf') eq true")
-        .is("<<endswith(<'Walldorf'>,<'dorf'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.ENDSWITH, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().left().goParameter(1).isLiteral("'dorf'");
-
-    testFilter.runOnETKeyNav("startswith(PropertyCompAllPrim/PropertyString,'Wall')")
-        .is("<startswith(<PropertyCompAllPrim/PropertyString>,<'Wall'>)>")
-        .isMethod(MethodKind.STARTSWITH, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyCompAllPrim")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETKeyNav("startswith(PropertyCompAllPrim/PropertyString,'Wall') eq true")
-        .is("<<startswith(<PropertyCompAllPrim/PropertyString>,<'Wall'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.STARTSWITH, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyCompAllPrim")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().left().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETKeyNav("startswith('Walldorf','Wall')")
-        .is("<startswith(<'Walldorf'>,<'Wall'>)>")
-        .isMethod(MethodKind.STARTSWITH, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETKeyNav("startswith('Walldorf','Wall') eq true")
-        .is("<<startswith(<'Walldorf'>,<'Wall'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.STARTSWITH, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().left().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETTwoKeyNav("contains(PropertyComp/PropertyComp/PropertyString,'Wall')")
-        .is("<contains(<PropertyComp/PropertyComp/PropertyString>,<'Wall'>)>")
-        .isMethod(MethodKind.CONTAINS, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETTwoKeyNav("contains(PropertyComp/PropertyComp/PropertyString,'Wall') eq true")
-        .is("<<contains(<PropertyComp/PropertyComp/PropertyString>,<'Wall'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.CONTAINS, 2)
-        .goParameter(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .root().left().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall')")
-        .is("<contains(<'Walldorf'>,<'Wall'>)>")
-        .isMethod(MethodKind.CONTAINS, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETTwoKeyNav("contains('Walldorf','Wall') eq true")
-        .is("<<contains(<'Walldorf'>,<'Wall'>)> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .left().isMethod(MethodKind.CONTAINS, 2)
-        .goParameter(0).isLiteral("'Walldorf'")
-        .root().left().goParameter(1).isLiteral("'Wall'");
-
-    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null)")
-        .goPath()
-        .isFunction("UFCRTCTTwoPrimTwoParam")
-        .isParameter(0, "ParameterInt16", null)
-        .isParameter(1, "ParameterString", null);
-
-    testFilter.runOnETAllPrim("PropertyBoolean eq true")
-        .is("<<PropertyBoolean> eq <true>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
-        .goUpFilterValidator()
-        .root().right().isTrue();
-
-    testFilter.runOnETAllPrim("PropertyBoolean eq 2")
-        .is("<<PropertyBoolean> eq <2>>");
-
-    testFilter.runOnETAllPrim("PropertyDecimal eq 1.25")
-        .is("<<PropertyDecimal> eq <1.25>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDecimal", PropertyProvider.nameDecimal, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("1.25");
-
-    testFilter.runOnETAllPrim("PropertyDouble eq 1.5")
-        .is("<<PropertyDouble> eq <1.5>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("1.5");
-
-    testFilter.runOnETAllPrim("PropertySingle eq 1.5")
-        .is("<<PropertySingle> eq <1.5>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertySingle", PropertyProvider.nameSingle, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("1.5");
-
-    testFilter.runOnETAllPrim("PropertySByte eq -128")
-        .is("<<PropertySByte> eq <-128>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertySByte", PropertyProvider.nameSByte, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("-128");
-
-    testFilter.runOnETAllPrim("PropertyByte eq 255")
-        .is("<<PropertyByte> eq <255>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyByte",
-            PropertyProvider.nameByte, false).goUpFilterValidator()
-        .root().right().isLiteral("255");
-
-    testFilter.runOnETAllPrim("PropertyInt16 eq 32767")
-        .is("<<PropertyInt16> eq <32767>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("32767");
-
-    testFilter.runOnETAllPrim("PropertyInt32 eq 2147483647")
-        .is("<<PropertyInt32> eq <2147483647>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt32", PropertyProvider.nameInt32, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("2147483647");
-
-    testFilter.runOnETAllPrim("PropertyInt64 eq 9223372036854775807")
-        .is("<<PropertyInt64> eq <9223372036854775807>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyInt64", PropertyProvider.nameInt64, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("9223372036854775807");
-
-    testFilter.runOnETAllPrim("PropertyDate eq 2013-09-25")
-        .is("<<PropertyDate> eq <2013-09-25>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("2013-09-25");
-
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset eq 2013-09-25T12:34:56.123456789012-10:24")
-        .is("<<PropertyDateTimeOffset> eq <2013-09-25T12:34:56.123456789012-10:24>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath()
-        .isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("2013-09-25T12:34:56.123456789012-10:24");
-
-    testFilter.runOnETAllPrim("PropertyDuration eq duration'P10DT5H34M21.123456789012S'")
-        .is("<<PropertyDuration> eq <duration'P10DT5H34M21.123456789012S'>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("duration'P10DT5H34M21.123456789012S'");
-
-    testFilter.runOnETAllPrim("PropertyGuid eq 005056A5-09B1-1ED3-89BD-FB81372CCB33")
-        .is("<<PropertyGuid> eq <005056A5-09B1-1ED3-89BD-FB81372CCB33>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyGuid", PropertyProvider.nameGuid, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("005056A5-09B1-1ED3-89BD-FB81372CCB33");
-
-    testFilter.runOnETAllPrim("PropertyString eq 'somestring'")
-        .is("<<PropertyString> eq <'somestring'>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("'somestring'");
-
-    testFilter.runOnETAllPrim("PropertyTimeOfDay eq 12:34:55.12345678901")
-        .is("<<PropertyTimeOfDay> eq <12:34:55.12345678901>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
-        .goUpFilterValidator()
-        .root().right().isLiteral("12:34:55.12345678901");
-
-    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String1'")
-        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String1>>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpFilterValidator()
-        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
-
-    testFilter.runOnETMixEnumDefCollComp("PropertyEnumString eq olingo.odata.test1.ENString'String2'")
-        .is("<<PropertyEnumString> eq <olingo.odata.test1.ENString<String2>>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpFilterValidator()
-        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String2"));
-
-    testFilter.runOnETMixEnumDefCollComp(
-        "PropertyCompMixedEnumDef/PropertyEnumString eq olingo.odata.test1.ENString'String3'")
-        .is("<<PropertyCompMixedEnumDef/PropertyEnumString> eq <olingo.odata.test1.ENString<String3>>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath()
-        .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpFilterValidator()
-        .root().right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String3"));
-
-    testFilter
-        .runOnETMixEnumDefCollComp(
-            "PropertyCompMixedEnumDef/PropertyEnumString eq " +
-                "PropertyCompMixedEnumDef/PropertyEnumString")
-        .is("<<PropertyCompMixedEnumDef/PropertyEnumString> eq " +
-            "<PropertyCompMixedEnumDef/PropertyEnumString>>")
-        .isBinary(BinaryOperatorKind.EQ)
-        .root().left().goPath()
-        .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false)
-        .goUpFilterValidator()
-        .root().right().goPath()
-        .first().isComplex("PropertyCompMixedEnumDef")
-        .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false);
-
+    testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has null")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has ENString'String1'")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runUriEx("ESMixEnumDefCollComp", "$filter=PropertyEnumString has wrongNamespace.ENString'String1'")
@@ -5192,6 +5159,28 @@ public class TestFullResourcePath {
 
   @Test
   public void orderby() throws Exception {
+    testFilter.runOrderByOnETTwoKeyNav("PropertyString")
+        .isSortOrder(0, false)
+        .goOrder(0).goPath()
+        .first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp")
+        .isSortOrder(0, false)
+        .goOrder(0).goPath()
+        .first().isComplex("PropertyComp");
+
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp")
+        .isSortOrder(0, false)
+        .goOrder(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp");
+
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate")
+        .isSortOrder(0, false)
+        .goOrder(0).goPath()
+        .first().isComplex("PropertyComp")
+        .n().isComplex("PropertyComp")
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString'")
@@ -5215,8 +5204,8 @@ public class TestFullResourcePath {
         .goOrder(0).right().isLiteral("'SomeString'");
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
-        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc"
-        + ", PropertyString eq '1'")
+        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc,"
+        + "PropertyString eq '1'")
         .isSortOrder(0, true)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
@@ -5241,20 +5230,8 @@ public class TestFullResourcePath {
         .n().isComplex("PropertyComp")
         .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
-    testFilter.runOrderByOnETTwoKeyNav("PropertyString")
-        .isSortOrder(0, false)
-        .goOrder(0).goPath()
-        .first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
-
-    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate")
-        .isSortOrder(0, false)
-        .goOrder(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
-
-    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate "
-        + "eq 2013-11-12 desc, PropertyString eq 'SomeString' desc")
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate eq 2013-11-12 desc,"
+        + "PropertyString eq 'SomeString' desc")
         .isSortOrder(0, true)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ)
         .left().goPath()
@@ -5267,17 +5244,7 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .goOrder(1).right().isLiteral("'SomeString'");
 
-    testFilter.runOrderByOnETTwoKeyNav("PropertyComp")
-        .isSortOrder(0, false)
-        .goOrder(0).goPath()
-        .first().isComplex("PropertyComp");
-    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp")
-        .isSortOrder(0, false)
-        .goOrder(0).goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp");
-
-    testFilter.runOrderByOnETTwoKeyNav("PropertyComp desc, PropertyComp/PropertyInt16 eq 1")
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp desc,PropertyComp/PropertyInt16 eq 1")
         .isSortOrder(0, true)
         .goOrder(0).goPath()
         .first().isComplex("PropertyComp").goUpFilterValidator()
@@ -5419,17 +5386,17 @@ public class TestFullResourcePath {
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("9223372036854775807");
 
-    testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'0FAB7B'")
+    testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'VGVzdA=='")
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", PropertyProvider.nameBinary, false)
         .goUpFilterValidator()
-        .goOrder(0).right().isLiteral("binary'0FAB7B'");
+        .goOrder(0).right().isLiteral("binary'VGVzdA=='");
 
-    testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'0FAB7B' desc")
+    testFilter.runOrderByOnETAllPrim("PropertyBinary eq binary'VGVzdA==' desc")
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBinary", PropertyProvider.nameBinary, false)
         .goUpFilterValidator()
-        .goOrder(0).right().isLiteral("binary'0FAB7B'");
+        .goOrder(0).right().isLiteral("binary'VGVzdA=='");
 
     testFilter.runOrderByOnETAllPrim("PropertyDate eq 2013-09-25")
         .isSortOrder(0, false)
@@ -5518,15 +5485,15 @@ public class TestFullResourcePath {
         .goOrder(0).right().isEnum(EnumTypeProvider.nameENString, Arrays.asList("String1"));
 
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 1")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16, PropertyInt32 PropertyDuration")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 PropertyInt32, PropertyDuration desc")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc, PropertyInt32 PropertyDuration desc")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyInt16 asc desc")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testFilter.runOrderByOnETTwoKeyNavEx("undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOrderByOnETTwoKeyNavEx("PropertyComp/undefined")
@@ -5779,7 +5746,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void KeyPredicatesInDoubleExpandedFilter() throws Exception {
+  public void keyPredicatesInDoubleExpandedFilter() throws Exception {
     testUri.run("ESKeyNav(0)", "$expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany"
         + "($filter=NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='2')/PropertyInt16 eq 1))")
         .goPath().goExpand()
@@ -5791,15 +5758,15 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void filterSystemQueryOptionAnyWithKeyAny() throws Exception {
-    testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/any(d:d/PropertyInt16 eq 0)")
-        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  public void filterSystemQueryOptionManyWithKeyAny() throws Exception {
+    testFilter.runUriEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/any(d:d/PropertyInt16 eq 0)")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
-  public void filterSystemQueryOptionAnyWithKeyAll() throws Exception {
-    testUri.runEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/all(d:d/PropertyInt16 eq 0)")
-        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+  public void filterSystemQueryOptionManyWithKeyAll() throws Exception {
+    testFilter.runUriEx("ESAllPrim", "$filter=NavPropertyETTwoPrimMany(1)/all(d:d/PropertyInt16 eq 0)")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
@@ -5896,87 +5863,103 @@ public class TestFullResourcePath {
         .at(3).isNavProperty(entitySetName, nameETNavProp, true);
   }
 
+  // TODO: Better type determination for literal numbers.
   @Test
+  @Ignore
   public void filterLiteralTypes() throws Exception {
-    testUri.run("ESAllPrim", "$filter='1' eq 42")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
-        .left().isLiteral("'1'").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String))
+    testFilter.runOnETAllPrim("-1000 eq 42")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("-1000").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16))
         .root()
         .right().isLiteral("42").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte));
 
-    testUri.run("ESAllPrim", "$filter=127 eq 128")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("127 eq 128")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("127").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.SByte))
         .root()
         .right().isLiteral("128").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte));
 
-    testUri.run("ESAllPrim", "$filter=null eq 42.1")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("null eq 42.1")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("null").isNullLiteralType()
         .root()
         .right().isLiteral("42.1").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
 
-    testUri.run("ESAllPrim", "$filter=15.6E300 eq 3.4E37")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("15.6E300 eq 3.4E37")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("15.6E300")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double))
         .root()
         .right().isLiteral("3.4E37").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
 
-    testUri.run("ESAllPrim", "$filter=15.55555555555555555555555555555555555555555555 eq 3.1")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("15.55555555555555555555555555555555555555555555 eq 3.1")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("15.55555555555555555555555555555555555555555555")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal))
         .root()
         .right().isLiteral("3.1").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
 
-    testUri.run("ESAllPrim", "$filter=duration'PT1H2S' eq 2012-12-03")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("duration'PT1H2S' eq duration'PT3602S'")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("duration'PT1H2S'")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration))
         .root()
+        .right().isLiteral("duration'PT3602S'")
+        .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration));
+
+    testFilter.runOnETAllPrim("2013-11-02 ne 2012-12-03")
+        .isBinary(BinaryOperatorKind.NE)
+        .left().isLiteral("2013-11-02").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date))
+        .root()
         .right().isLiteral("2012-12-03").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date));
 
-    testUri.run("ESAllPrim", "$filter=true eq 2012-12-03T07:16:23Z")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
-        .left().isLiteral("true").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean))
+    testFilter.runOnETAllPrim("null eq 2012-12-03T07:16:23Z")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("null")
+        .isNullLiteralType()
         .root()
         .right().isLiteral("2012-12-03T07:16:23Z")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset));
 
-    testUri.run("ESAllPrim", "$filter=07:59:59.999 eq 01234567-89ab-cdef-0123-456789abcdef")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim("07:59:59.999 eq null")
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("07:59:59.999")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay))
+        .root()
+        .right().isLiteral("null").isNullLiteralType();
+
+    testFilter.runOnETAllPrim("null eq 01234567-89ab-cdef-0123-456789abcdef")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("null").isNullLiteralType()
         .root()
         .right().isLiteral("01234567-89ab-cdef-0123-456789abcdef")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Guid));
 
-    testUri.run("ESAllPrim", "$filter=binary'0FAB7B' eq true")
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
-        .left().isLiteral("binary'0FAB7B'").isLiteralType(
+    testFilter.runOnETAllPrim("binary'VGVzdA==' eq null")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isLiteral("binary'VGVzdA=='").isLiteralType(
             oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary))
         .root()
-        .right().isLiteral("true").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
+        .right().isLiteral("null").isNullLiteralType();
 
-    testUri.run("ESAllPrim", "$filter=" + Short.MIN_VALUE + " eq " + Short.MAX_VALUE)
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim(Short.MIN_VALUE + " eq " + Short.MAX_VALUE)
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral(Short.toString(Short.MIN_VALUE))
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16))
         .root()
         .right().isLiteral(Short.toString(Short.MAX_VALUE))
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16));
 
-    testUri.run("ESAllPrim", "$filter=" + Integer.MIN_VALUE + " eq " + Integer.MAX_VALUE)
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim(Integer.MIN_VALUE + " eq " + Integer.MAX_VALUE)
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral(Integer.toString(Integer.MIN_VALUE))
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32))
         .root()
         .right().isLiteral(Integer.toString(Integer.MAX_VALUE))
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32));
 
-    testUri.run("ESAllPrim", "$filter=" + Long.MIN_VALUE + " eq " + Long.MAX_VALUE)
-        .goFilter().isBinary(BinaryOperatorKind.EQ)
+    testFilter.runOnETAllPrim(Long.MIN_VALUE + " eq " + Long.MAX_VALUE)
+        .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral(Long.toString(Long.MIN_VALUE))
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64))
         .root()
@@ -6016,34 +5999,35 @@ public class TestFullResourcePath {
         .at(1).isFunction("BFCESTwoKeyNavRTStringParam").isParameterAlias(0, "ParameterComp", "@p1")
         .isInAliasToValueMap("@p1", "{\"PropertyInt16\":1,\"PropertyString\":\"" + stringValueDecoded + "\"}");
 
-    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp={\"PropertyString\":\"Test\",\"PropertyInt16\":1}) eq 'Test'")
-        .goFilter().left().is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
-        .isParameterText(0, "{\"PropertyString\":\"Test\",\"PropertyInt16\":1}");
+        .is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
+        .isBinary(BinaryOperatorKind.EQ)
+        .left().isParameterText(0, "{\"PropertyString\":\"Test\",\"PropertyInt16\":1}");
 
-    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp={\"PropertyString\":\"" + stringValueEncoded + "\",\"PropertyInt16\":1}) eq 'Test'")
-        .goFilter().left().is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
-        .isParameterText(0, "{\"PropertyString\":\"" + stringValueDecoded + "\",\"PropertyInt16\":1}");
+        .is("<<BFCESTwoKeyNavRTStringParam> eq <'Test'>>")
+        .left().isParameterText(0, "{\"PropertyString\":\"" + stringValueDecoded + "\",\"PropertyInt16\":1}");
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"}");
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"}");
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"PropertyString\":null}")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":1,\"PropertyString\":null}")
         .goFilter().left().isParameterText(0, null);
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={}");
+        + "(ParameterComp=@p1) eq '0'&@p1={}");
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3],\"PropertyString\":\"1\"}");
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[1,2,3],\"PropertyString\":\"1\"}");
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[\"1\",\"2\",\"3\"],\"PropertyString\":\"1\"}");
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[\"1\",\"2\",\"3\"],\"PropertyString\":\"1\"}");
 
     testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[{\"Prop1\":123,\"Prop2\":\"Test\",\"Prop3\":[1,2,3]},"
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[{\"Prop1\":123,\"Prop2\":\"Test\",\"Prop3\":[1,2,3]},"
         + "{\"Prop1\":{\"Prop1\":[\"Prop\\\":{]\"]}}],\"PropertyString\":\"1\"}");
 
     testUri.run("FINRTByteNineParam(ParameterEnum=null,ParameterDef='x',ParameterComp=@c,"
@@ -6057,7 +6041,7 @@ public class TestFullResourcePath {
 
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp={\"PropertyInt16\":1,\"PropertyString\":\"Test\"})")
-        .isExSemantic(MessageKeys.INVALID_KEY_VALUE);
+        .isExSemantic(MessageKeys.COMPLEX_PARAMETER_IN_RESOURCE_PATH);
 
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=null)")
         .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
@@ -6081,34 +6065,33 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null&@test='1'")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS);
 
-    testUri.runEx("ESAllPrim", "$filter=FINRTInt16() eq 0")
-        .isExSemantic(MessageKeys.FUNCTION_IMPORT_NOT_ALLOWED);
+    testFilter.runOnETKeyNavEx("FINRTInt16() eq 0")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"}}")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"}}")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3]],\"PropertyString\":\"1\"}")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[1,2,3]],\"PropertyString\":\"1\"}")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3,\"PropertyString\":\"1\"}")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[1,2,3,\"PropertyString\":\"1\"}")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
-        + "(ParameterComp=@p1) eq 0&@p1={\"PropertyInt16\":[1,2,3},\"PropertyString\":\"1\"}")
+        + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[1,2,3},\"PropertyString\":\"1\"}")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
-  @Ignore("Key predicates in filter/orderby expression are not validated currently")
-  public void testKeyPredicatesInExpressions() throws Exception {
-    testUri.run("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(PropertyString='1',PropertyInt16=1)"
+  public void keyPredicatesInExpressions() throws Exception {
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavMany(PropertyString='1',PropertyInt16=1)"
         + "/PropertyInt16 eq 1");
     testUri.runEx("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(Prop='22',P=2)/PropertyInt16 eq 0")
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);

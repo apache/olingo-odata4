@@ -25,21 +25,16 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 
 public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl implements UriResourceNavigation {
 
-  protected EdmNavigationProperty navigationProperty;
+  private final EdmNavigationProperty navigationProperty;
 
-  public UriResourceNavigationPropertyImpl() {
+  public UriResourceNavigationPropertyImpl(final EdmNavigationProperty property) {
     super(UriResourceKind.navigationProperty);
+    navigationProperty = property;
   }
 
   @Override
   public EdmNavigationProperty getProperty() {
     return navigationProperty;
-  }
-
-  public UriResourceNavigationPropertyImpl setNavigationProperty(final EdmNavigationProperty property) {
-    navigationProperty = property;
-    return this;
-
   }
 
   @Override
@@ -51,15 +46,9 @@ public class UriResourceNavigationPropertyImpl extends UriResourceWithKeysImpl i
   public boolean isCollection() {
     return navigationProperty.isCollection() && keyPredicates == null;
   }
-  
+
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return navigationProperty.getName();
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

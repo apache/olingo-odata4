@@ -24,12 +24,13 @@ import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
 
 public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements UriResourceLambdaVariable {
 
-  private EdmType type;
-  private boolean isCollection;
-  private String variableText;
+  private final String variableText;
+  private final EdmType type;
 
-  public UriResourceLambdaVarImpl() {
+  public UriResourceLambdaVarImpl(final String variableText, final EdmType type) {
     super(UriResourceKind.lambdaVariable);
+    this.variableText = variableText;
+    this.type = type;
   }
 
   @Override
@@ -37,39 +38,18 @@ public class UriResourceLambdaVarImpl extends UriResourceTypedImpl implements Ur
     return variableText;
   }
 
-  public UriResourceLambdaVarImpl setVariableText(final String variableText) {
-    this.variableText = variableText;
-    return this;
-  }
-
   @Override
   public EdmType getType() {
     return type;
   }
 
-  public UriResourceLambdaVarImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-
-  }
-
   @Override
   public boolean isCollection() {
-    return isCollection;
-  }
-
-  public UriResourceLambdaVarImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
+    return false;
   }
 
   @Override
   public String getSegmentValue() {
     return variableText;
-  }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
   }
 }

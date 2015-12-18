@@ -22,7 +22,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 
 /**
- * Covers Functionimports and BoundFunction in URI
+ * Abstract class for resource-path elements in URI.
  */
 public abstract class UriResourceImpl implements UriResource {
   protected UriResourceKind kind;
@@ -36,4 +36,8 @@ public abstract class UriResourceImpl implements UriResource {
     return kind;
   }
 
+  @Override
+  public String toString() {
+    return getSegmentValue();
+  }
 }

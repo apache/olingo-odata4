@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.uri.UriInfo;
@@ -33,9 +34,6 @@ import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
-import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.UriResourceActionImpl;
-import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CustomQueryOptionImpl;
@@ -86,9 +84,9 @@ public class UriInfoImplTest {
   public void resourceParts() {
     UriInfoImpl uriInfo = new UriInfoImpl();
 
-    final UriResourceAction action = new UriResourceActionImpl();
-    final UriResourceEntitySet entitySet0 = new UriResourceEntitySetImpl();
-    final UriResourceEntitySet entitySet1 = new UriResourceEntitySetImpl();
+    final UriResourceAction action = new UriResourceActionImpl((EdmAction) null);
+    final UriResourceEntitySet entitySet0 = new UriResourceEntitySetImpl(null);
+    final UriResourceEntitySet entitySet1 = new UriResourceEntitySetImpl(null);
 
     uriInfo.addResourcePart(action);
     uriInfo.addResourcePart(entitySet0);

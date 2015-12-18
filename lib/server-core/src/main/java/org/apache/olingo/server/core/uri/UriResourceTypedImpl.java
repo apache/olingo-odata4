@@ -41,14 +41,9 @@ public abstract class UriResourceTypedImpl extends UriResourceImpl implements Ur
   }
 
   public String getSegmentValue(final boolean includeFilters) {
-    if (includeFilters) {
-      if (typeFilter != null) {
-        return getSegmentValue() + "/" + typeFilter.getFullQualifiedName().toString();
-      } else {
-        return getSegmentValue();
-      }
-    }
-    return getSegmentValue();
+    return includeFilters && typeFilter != null ?
+        getSegmentValue() + "/" + typeFilter.getFullQualifiedName().getFullQualifiedNameAsString() :
+        getSegmentValue();
   }
 
   @Override

@@ -40,10 +40,14 @@ public class UriTokenizer {
     ROOT,
     IT,
 
+    ANY,
+    ALL,
+
     OPEN,
     CLOSE,
     COMMA,
     SEMI,
+    COLON,
     DOT,
     SLASH,
     EQ,
@@ -119,7 +123,10 @@ public class UriTokenizer {
     TotalsecondsMethod,
     ToupperMethod,
     TrimMethod,
-    YearMethod
+    YearMethod,
+
+    AscSuffix,
+    DescSuffix
   }
 
   private final String parseString;
@@ -174,6 +181,13 @@ public class UriTokenizer {
       found = nextConstant("$it");
       break;
 
+    case ANY:
+      found = nextConstant("any");
+      break;
+    case ALL:
+      found = nextConstant("all");
+      break;
+
     case OPEN:
       found = nextCharacter('(');
       break;
@@ -185,6 +199,9 @@ public class UriTokenizer {
       break;
     case SEMI:
       found = nextCharacter(';');
+      break;
+    case COLON:
+      found = nextCharacter(':');
       break;
     case DOT:
       found = nextCharacter('.');
@@ -409,6 +426,14 @@ public class UriTokenizer {
     case YearMethod:
       found = nextMethod("year");
       break;
+
+    // Suffixes
+    case AscSuffix:
+      found = nextSuffix("asc");
+      break;
+    case DescSuffix:
+      found = nextSuffix("desc");
+      break;
     }
 
     if (found) {
@@ -540,6 +565,15 @@ public class UriTokenizer {
    */
   private boolean nextMethod(final String methodName) {
     return nextConstant(methodName) && nextCharacter('(');
+  }
+
+  /**
+   * Moves past (required) whitespace and the given suffix name if found;
+   * otherwise leaves the index unchanged.
+   * @return whether the suffix has been found at the current index
+   */
+  private boolean nextSuffix(final String suffixName) {
+    return nextWhitespace() && nextConstant(suffixName);
   }
 
   /**

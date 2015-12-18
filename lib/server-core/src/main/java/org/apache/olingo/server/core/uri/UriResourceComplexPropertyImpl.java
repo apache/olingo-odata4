@@ -26,20 +26,16 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 
 public class UriResourceComplexPropertyImpl extends UriResourceTypedImpl implements UriResourceComplexProperty {
 
-  protected EdmProperty property;
+  private final EdmProperty property;
 
-  public UriResourceComplexPropertyImpl() {
+  public UriResourceComplexPropertyImpl(final EdmProperty property) {
     super(UriResourceKind.complexProperty);
+    this.property = property;
   }
 
   @Override
   public EdmProperty getProperty() {
     return property;
-  }
-
-  public UriResourceComplexPropertyImpl setProperty(final EdmProperty property) {
-    this.property = property;
-    return this;
   }
 
   @Override
@@ -63,13 +59,7 @@ public class UriResourceComplexPropertyImpl extends UriResourceTypedImpl impleme
   }
 
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return property.getName();
   }
-  
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

@@ -57,7 +57,7 @@ public class UriResourceImplTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
-  public void testUriParameterImpl() {
+  public void uriParameterImpl() {
     UriParameterImpl impl = new UriParameterImpl();
     Expression expression = new LiteralImpl("Expression", null);
 
@@ -73,21 +73,20 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceActionImpl() {
-    UriResourceActionImpl impl = new UriResourceActionImpl();
+  public void uriResourceActionImpl() {
+    UriResourceActionImpl impl = new UriResourceActionImpl((EdmAction) null);
     assertEquals(UriResourceKind.action, impl.getKind());
     assertEquals("", impl.toString());
 
     // action
     EdmAction action = edm.getUnboundAction(ActionProvider.nameUARTETTwoKeyTwoPrimParam);
-    impl.setAction(action);
+    impl = new UriResourceActionImpl(action);
     assertEquals(action, impl.getAction());
     assertEquals(ActionProvider.nameUARTETTwoKeyTwoPrimParam.getName(), impl.toString());
 
     // action import
-    impl = new UriResourceActionImpl();
     EdmActionImport actionImport = edm.getEntityContainer().getActionImport("AIRTCTTwoPrimParam");
-    impl.setActionImport(actionImport);
+    impl = new UriResourceActionImpl(actionImport);
     assertEquals(actionImport, impl.getActionImport());
     assertEquals(actionImport.getUnboundAction(), impl.getAction());
     assertFalse(impl.isCollection());
@@ -95,20 +94,16 @@ public class UriResourceImplTest {
     assertEquals(actionImport.getUnboundAction().getReturnType().getType(), impl.getType());
 
     actionImport = edm.getEntityContainer().getActionImport("AIRT");
-    impl.setActionImport(actionImport);
+    impl = new UriResourceActionImpl(actionImport);
     assertFalse(impl.isCollection());
     assertNull(impl.getType());
   }
 
   @Test
-  public void testUriResourceLambdaAllImpl() {
-    UriResourceLambdaAllImpl impl = new UriResourceLambdaAllImpl();
-    assertEquals(UriResourceKind.lambdaAll, impl.getKind());
-
+  public void uriResourceLambdaAllImpl() {
     Expression expression = new LiteralImpl("Expression", null);
-    impl.setExpression(expression);
-    impl.setLamdaVariable("A");
-
+    UriResourceLambdaAllImpl impl = new UriResourceLambdaAllImpl("A", expression);
+    assertEquals(UriResourceKind.lambdaAll, impl.getKind());
     assertFalse(impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLambdaVariable());
@@ -117,14 +112,10 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceLambdaAnyImpl() {
-    UriResourceLambdaAnyImpl impl = new UriResourceLambdaAnyImpl();
-    assertEquals(UriResourceKind.lambdaAny, impl.getKind());
-
+  public void uriResourceLambdaAnyImpl() {
     Expression expression = new LiteralImpl("Expression", null);
-    impl.setExpression(expression);
-    impl.setLamdaVariable("A");
-
+    UriResourceLambdaAnyImpl impl = new UriResourceLambdaAnyImpl("A", expression);
+    assertEquals(UriResourceKind.lambdaAny, impl.getKind());
     assertFalse(impl.isCollection());
     assertEquals(expression, impl.getExpression());
     assertEquals("A", impl.getLambdaVariable());
@@ -133,14 +124,11 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceComplexPropertyImpl() {
-    UriResourceComplexPropertyImpl impl = new UriResourceComplexPropertyImpl();
-    assertEquals(UriResourceKind.complexProperty, impl.getKind());
-
+  public void uriResourceComplexPropertyImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
     EdmProperty property = (EdmProperty) entityType.getProperty("PropertyCompNav");
-    impl.setProperty(property);
-
+    UriResourceComplexPropertyImpl impl = new UriResourceComplexPropertyImpl(property);
+    assertEquals(UriResourceKind.complexProperty, impl.getKind());
     assertEquals(property, impl.getProperty());
     assertEquals(property.getName(), impl.toString());
     assertFalse(impl.isCollection());
@@ -158,14 +146,11 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourcePrimitivePropertyImpl() {
-    UriResourcePrimitivePropertyImpl impl = new UriResourcePrimitivePropertyImpl();
-    assertEquals(UriResourceKind.primitiveProperty, impl.getKind());
-
+  public void uriResourcePrimitivePropertyImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETKeyNav);
     EdmProperty property = (EdmProperty) entityType.getProperty("PropertyInt16");
-    impl.setProperty(property);
-
+    UriResourcePrimitivePropertyImpl impl = new UriResourcePrimitivePropertyImpl(property);
+    assertEquals(UriResourceKind.primitiveProperty, impl.getKind());
     assertEquals(property, impl.getProperty());
     assertEquals(property.getName(), impl.toString());
     assertFalse(impl.isCollection());
@@ -173,20 +158,17 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceCountImpl() {
+  public void uriResourceCountImpl() {
     UriResourceCountImpl impl = new UriResourceCountImpl();
     assertEquals(UriResourceKind.count, impl.getKind());
     assertEquals("$count", impl.toString());
   }
 
   @Test
-  public void testUriResourceEntitySetImpl() {
-    UriResourceEntitySetImpl impl = new UriResourceEntitySetImpl();
-    assertEquals(UriResourceKind.entitySet, impl.getKind());
-
+  public void uriResourceEntitySetImpl() {
     EdmEntitySet entitySet = edm.getEntityContainer().getEntitySet("ESAllPrim");
-    impl.setEntitSet(entitySet);
-
+    UriResourceEntitySetImpl impl = new UriResourceEntitySetImpl(entitySet);
+    assertEquals(UriResourceKind.entitySet, impl.getKind());
     assertEquals("ESAllPrim", impl.toString());
     assertEquals(entitySet, impl.getEntitySet());
 
@@ -201,8 +183,8 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceFunctionImpl() {
-    UriResourceFunctionImpl impl = new UriResourceFunctionImpl();
+  public void uriResourceFunctionImpl() {
+    UriResourceFunctionImpl impl = new UriResourceFunctionImpl(null, null, null);
     assertEquals(UriResourceKind.function, impl.getKind());
     assertEquals("", impl.toString());
 
@@ -210,39 +192,38 @@ public class UriResourceImplTest {
     EdmFunction function = edm.getEntityContainer().getFunctionImport("FINRTInt16")
         .getUnboundFunction(Collections.<String> emptyList());
     assertNotNull(function);
-    impl.setFunction(function);
+    impl = new UriResourceFunctionImpl(null, function, null);
 
     assertEquals(function, impl.getFunction());
     assertEquals("UFNRTInt16", impl.toString());
     assertEquals(function.getReturnType().getType(), impl.getType());
-    assertFalse(impl.isParameterListFilled());
+    assertTrue(impl.getParameters().isEmpty());
 
     // function import
-    impl = new UriResourceFunctionImpl();
     EdmFunctionImport functionImport = edm.getEntityContainer().getFunctionImport("FINRTInt16");
-    impl.setFunctionImport(functionImport, Collections.<UriParameter> emptyList());
+    impl = new UriResourceFunctionImpl(functionImport, functionImport.getUnboundFunctions().get(0),
+        Collections.<UriParameter> emptyList());
     assertEquals(functionImport, impl.getFunctionImport());
     assertEquals("FINRTInt16", impl.toString());
 
     // function collection
-    impl = new UriResourceFunctionImpl();
     functionImport = edm.getEntityContainer().getFunctionImport("FICRTCollESTwoKeyNavParam");
-    assertNotNull(function);
     UriParameter parameter = new UriParameterImpl().setName("ParameterInt16");
-    impl.setFunctionImport(functionImport, Collections.singletonList(parameter));
+    impl = new UriResourceFunctionImpl(functionImport,
+        functionImport.getUnboundFunction(Collections.singletonList("ParameterInt16")),
+        Collections.singletonList(parameter));
     assertEquals("FICRTCollESTwoKeyNavParam", impl.toString());
 
-    impl.setFunction(functionImport.getUnboundFunction(Collections.singletonList("ParameterInt16")));
     assertTrue(impl.isCollection());
     impl.setKeyPredicates(Collections.<UriParameter> emptyList());
     assertFalse(impl.isCollection());
 
+    assertFalse(impl.getParameters().isEmpty());
     assertEquals(parameter, impl.getParameters().get(0));
-    assertTrue(impl.isParameterListFilled());
   }
 
   @Test
-  public void testUriResourceImplKeyPred() {
+  public void uriResourceImplKeyPred() {
     final EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
     class Mock extends UriResourceWithKeysImpl {
 
@@ -306,7 +287,7 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceImplTyped() {
+  public void uriResourceImplTyped() {
     final EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
     class Mock extends UriResourceTypedImpl {
 
@@ -344,18 +325,15 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceItImpl() {
-    UriResourceItImpl impl = new UriResourceItImpl();
-    assertEquals(UriResourceKind.it, impl.getKind());
-
+  public void uriResourceItImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
+    UriResourceItImpl impl = new UriResourceItImpl(entityType, false);
+    assertEquals(UriResourceKind.it, impl.getKind());
     assertEquals("$it", impl.toString());
-
-    impl.setType(entityType);
     assertEquals(entityType, impl.getType());
-
     assertFalse(impl.isCollection());
-    impl.setCollection(true);
+
+    impl = new UriResourceItImpl(entityType, true);
     assertTrue(impl.isCollection());
     impl.setKeyPredicates(Collections.singletonList(
         (UriParameter) new UriParameterImpl().setName("ParameterInt16")));
@@ -363,15 +341,13 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceNavigationPropertyImpl() {
-    UriResourceNavigationPropertyImpl impl = new UriResourceNavigationPropertyImpl();
-    assertEquals(UriResourceKind.navigationProperty, impl.getKind());
-
+  public void uriResourceNavigationPropertyImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
     EdmNavigationProperty property = (EdmNavigationProperty) entityType.getProperty("NavPropertyETKeyNavMany");
     assertNotNull(property);
 
-    impl.setNavigationProperty(property);
+    UriResourceNavigationPropertyImpl impl = new UriResourceNavigationPropertyImpl(property);
+    assertEquals(UriResourceKind.navigationProperty, impl.getKind());
     assertEquals(property, impl.getProperty());
 
     assertEquals("NavPropertyETKeyNavMany", impl.toString());
@@ -384,25 +360,22 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceRefImpl() {
+  public void uriResourceRefImpl() {
     UriResourceRefImpl impl = new UriResourceRefImpl();
     assertEquals(UriResourceKind.ref, impl.getKind());
     assertEquals("$ref", impl.toString());
   }
 
   @Test
-  public void testUriResourceRootImpl() {
-    UriResourceRootImpl impl = new UriResourceRootImpl();
-    assertEquals(UriResourceKind.root, impl.getKind());
-
+  public void uriResourceRootImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
+    UriResourceRootImpl impl = new UriResourceRootImpl(entityType, false);
+    assertEquals(UriResourceKind.root, impl.getKind());
     assertEquals("$root", impl.toString());
-
-    impl.setType(entityType);
     assertEquals(entityType, impl.getType());
-
     assertFalse(impl.isCollection());
-    impl.setCollection(true);
+
+    impl = new UriResourceRootImpl(entityType, true);
     assertTrue(impl.isCollection());
     impl.setKeyPredicates(Collections.singletonList(
         (UriParameter) new UriParameterImpl().setName("ParameterInt16")));
@@ -410,14 +383,11 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceSingletonImpl() {
-    UriResourceSingletonImpl impl = new UriResourceSingletonImpl();
-    assertEquals(UriResourceKind.singleton, impl.getKind());
-
+  public void uriResourceSingletonImpl() {
     EdmSingleton singleton = edm.getEntityContainer().getSingleton("SINav");
     EdmEntityType entityTypeBaseColl = edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav);
-    impl.setSingleton(singleton);
-
+    UriResourceSingletonImpl impl = new UriResourceSingletonImpl(singleton);
+    assertEquals(UriResourceKind.singleton, impl.getKind());
     assertEquals("SINav", impl.toString());
     assertEquals(singleton, impl.getSingleton());
 
@@ -433,41 +403,33 @@ public class UriResourceImplTest {
   }
 
   @Test
-  public void testUriResourceValueImpl() {
+  public void uriResourceValueImpl() {
     UriResourceValueImpl impl = new UriResourceValueImpl();
     assertEquals(UriResourceKind.value, impl.getKind());
     assertEquals("$value", impl.toString());
   }
 
   @Test
-  public void testUriResourceLambdaVarImpl() {
-    UriResourceLambdaVarImpl impl = new UriResourceLambdaVarImpl();
-    assertEquals(UriResourceKind.lambdaVariable, impl.getKind());
-
+  public void uriResourceLambdaVarImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
-    impl.setType(entityType);
-    impl.setVariableText("A");
-
+    UriResourceLambdaVarImpl impl = new UriResourceLambdaVarImpl("A", entityType);
+    assertEquals(UriResourceKind.lambdaVariable, impl.getKind());
     assertEquals("A", impl.toString());
     assertEquals(entityType, impl.getType());
     assertEquals("A", impl.getVariableName());
     assertFalse(impl.isCollection());
-    impl.setCollection(true);
-    assertTrue(impl.isCollection());
   }
 
   @Test
-  public void testUriResourceStartingTypeFilterImpl() {
-    UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl();
-
+  public void uriResourceStartingTypeFilterImpl() {
     EdmEntityType entityType = edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav);
 
-    impl.setType(entityType);
+    UriResourceStartingTypeFilterImpl impl = new UriResourceStartingTypeFilterImpl(entityType, false);
     assertEquals("olingo.odata.test1.ETTwoKeyNav", impl.toString());
     assertEquals(entityType, impl.getType());
-
     assertFalse(impl.isCollection());
-    impl.setCollection(true);
+
+    impl = new UriResourceStartingTypeFilterImpl(entityType, true);
     assertTrue(impl.isCollection());
     impl.setKeyPredicates(Collections.singletonList(
         (UriParameter) new UriParameterImpl().setName("ParameterInt16")));

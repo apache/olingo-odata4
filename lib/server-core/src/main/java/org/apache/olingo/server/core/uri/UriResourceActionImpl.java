@@ -31,11 +31,19 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
  */
 public class UriResourceActionImpl extends UriResourceImpl implements UriResourceAction {
 
-  protected EdmAction action;
-  protected EdmActionImport actionImport;
+  private final EdmActionImport actionImport;
+  private final EdmAction action;
 
-  public UriResourceActionImpl() {
+  public UriResourceActionImpl(final EdmActionImport actionImport) {
     super(UriResourceKind.action);
+    this.actionImport = actionImport;
+    this.action = actionImport.getUnboundAction();
+  }
+
+  public UriResourceActionImpl(final EdmAction action) {
+    super(UriResourceKind.action);
+    this.actionImport = null;
+    this.action = action;
   }
 
   @Override
@@ -43,38 +51,21 @@ public class UriResourceActionImpl extends UriResourceImpl implements UriResourc
     return action;
   }
 
-  public UriResourceActionImpl setAction(final EdmAction action) {
-    this.action = action;
-    return this;
-  }
-
   @Override
   public EdmActionImport getActionImport() {
     return actionImport;
   }
 
-  public UriResourceActionImpl setActionImport(final EdmActionImport actionImport) {
-    this.actionImport = actionImport;
-    setAction(actionImport.getUnboundAction());
-    return this;
-  }
-
   @Override
   public boolean isCollection() {
-    if (action.getReturnType() != null) {
-      return action.getReturnType().isCollection();
-    }
-    return false;
+    return action.getReturnType() != null && action.getReturnType().isCollection();
   }
 
   @Override
   public EdmType getType() {
-    if (action.getReturnType() != null) {
-      return action.getReturnType().getType();
-    }
-    return null;
+    return action.getReturnType() == null ? null : action.getReturnType().getType();
   }
-  
+
   @Override
   public String getSegmentValue(final boolean includeFilters) {
     return actionImport == null ? (action == null ? "" : action.getName()) : actionImport.getName();
@@ -84,14 +75,9 @@ public class UriResourceActionImpl extends UriResourceImpl implements UriResourc
   public String getSegmentValue() {
     return getSegmentValue(false);
   }
-  
+
   @Override
   public String toString(final boolean includeFilters) {
     return getSegmentValue(includeFilters);
-  }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
   }
 }

@@ -27,14 +27,8 @@ public abstract class ExpandTreeBuilder {
   public abstract ExpandTreeBuilder expand(EdmNavigationProperty edmNavigationProperty);
 
   protected ExpandItemImpl buildExpandItem(final EdmNavigationProperty edmNavigationProperty) {
-    final ExpandItemImpl expandItem = new ExpandItemImpl();
-    final UriInfoImpl uriInfo = new UriInfoImpl();
-    final UriResourceNavigationPropertyImpl resourceNavigation = new UriResourceNavigationPropertyImpl();
-
-    resourceNavigation.setNavigationProperty(edmNavigationProperty);
-    uriInfo.addResourcePart(resourceNavigation);
-    expandItem.setResourcePath(uriInfo);
-
-    return expandItem;
+    return new ExpandItemImpl()
+        .setResourcePath(new UriInfoImpl()
+            .addResourcePart(new UriResourceNavigationPropertyImpl(edmNavigationProperty)));
   }
 }

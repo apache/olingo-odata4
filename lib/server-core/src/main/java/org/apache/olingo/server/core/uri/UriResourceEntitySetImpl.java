@@ -25,20 +25,17 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 
 public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements UriResourceEntitySet {
-  protected EdmEntitySet edmEntitySet = null;
 
-  public UriResourceEntitySetImpl() {
+  private final EdmEntitySet edmEntitySet;
+
+  public UriResourceEntitySetImpl(final EdmEntitySet edmEntitySet) {
     super(UriResourceKind.entitySet);
+    this.edmEntitySet = edmEntitySet;
   }
 
   @Override
   public EdmEntitySet getEntitySet() {
     return edmEntitySet;
-  }
-
-  public UriResourceEntitySetImpl setEntitSet(final EdmEntitySet edmES) {
-    edmEntitySet = edmES;
-    return this;
   }
 
   @Override
@@ -57,13 +54,7 @@ public class UriResourceEntitySetImpl extends UriResourceWithKeysImpl implements
   }
   
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return edmEntitySet.getName();
-  }
-  
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
   }
 }

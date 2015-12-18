@@ -55,7 +55,7 @@ public class UriTokenizerTest {
 
   @Test
   public void sequence() {
-    final UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);.*/+-");
+    UriTokenizer tokenizer = new UriTokenizer("(A=1,B=2);.*/+-");
     assertTrue(tokenizer.next(TokenKind.OPEN));
     assertFalse(tokenizer.next(TokenKind.OPEN));
     assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
@@ -77,6 +77,22 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.SLASH));
     assertTrue(tokenizer.next(TokenKind.PLUS));
     assertTrue(tokenizer.next(TokenKind.MINUS));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    tokenizer = new UriTokenizer("any(a:true) or all(b:false)");
+    assertTrue(tokenizer.next(TokenKind.ANY));
+    assertTrue(tokenizer.next(TokenKind.OPEN));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.COLON));
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.OrOperator));
+    assertTrue(tokenizer.next(TokenKind.ALL));
+    assertTrue(tokenizer.next(TokenKind.OPEN));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.COLON));
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
     assertTrue(tokenizer.next(TokenKind.EOF));
   }
 
@@ -453,6 +469,19 @@ public class UriTokenizerTest {
                 .next(tokenKind));
       }
     }
+  }
+
+  @Test
+  public void suffixes() {
+    UriTokenizer tokenizer = new UriTokenizer("p1 asc,p2 desc");
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.AscSuffix));
+    assertTrue(tokenizer.next(TokenKind.COMMA));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.DescSuffix));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    wrongToken(TokenKind.DescSuffix, " desc", 'D');
   }
 
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {

@@ -28,6 +28,7 @@ import java.util.Locale;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.junit.Test;
 
 public class ExpressionParserTest {
@@ -127,7 +128,7 @@ public class ExpressionParserTest {
   @Test
   public void unary() throws Exception {
     Expression expression = parseExpression("-5");
-    assertEquals("{MINUS 5}", expression.toString());
+    assertEquals("-5", expression.toString());
 
     assertEquals("{MINUS -1}", parseExpression("--1").toString());
     assertEquals("{MINUS duration'PT1M'}", parseExpression("-duration'PT1M'").toString());
@@ -135,13 +136,13 @@ public class ExpressionParserTest {
     expression = parseExpression("not false");
     assertEquals("{NOT false}", expression.toString());
 
-    wrongExpression("-11:12:13");
+    wrongExpression("not 11:12:13");
   }
 
   @Test
   public void grouping() throws Exception {
     Expression expression = parseExpression("-5 add 5");
-    assertEquals("{{MINUS 5} ADD 5}", expression.toString());
+    assertEquals("{-5 ADD 5}", expression.toString());
 
     expression = parseExpression("-(5 add 5)");
     assertEquals("{MINUS {5 ADD 5}}", expression.toString());
@@ -149,7 +150,7 @@ public class ExpressionParserTest {
 
   @Test
   public void precedence() throws Exception {
-    assertEquals("{{MINUS 1} ADD {2 DIV 3}}", parseExpression("-1 add 2 div 3").toString());
+    assertEquals("{-1 ADD {2 DIV 3}}", parseExpression("-1 add 2 div 3").toString());
     assertEquals("{true OR {{NOT false} AND true}}", parseExpression("true or not false and true").toString());
   }
 
@@ -264,7 +265,8 @@ public class ExpressionParserTest {
     wrongExpression("substring(1,2)");
   }
 
-  private Expression parseMethod(TokenKind kind, String... parameters) throws UriParserException {
+  private Expression parseMethod(TokenKind kind, String... parameters)
+      throws UriParserException, UriValidationException {
     String expressionString = kind.name().substring(0, kind.name().indexOf("Method"))
         .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(';
     boolean first = true;
@@ -283,9 +285,10 @@ public class ExpressionParserTest {
     return expression;
   }
 
-  private Expression parseExpression(final String expressionString) throws UriParserException {
+  private Expression parseExpression(final String expressionString)
+      throws UriParserException, UriValidationException {
     UriTokenizer tokenizer = new UriTokenizer(expressionString);
-    Expression expression = new ExpressionParser(null, odata).parse(tokenizer);
+    Expression expression = new ExpressionParser(null, odata).parse(tokenizer, null, null);
     assertNotNull(expression);
     assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;
@@ -293,9 +296,11 @@ public class ExpressionParserTest {
 
   private void wrongExpression(final String expressionString) {
     try {
-      new ExpressionParser(null, odata).parse(new UriTokenizer(expressionString));
+      new ExpressionParser(null, odata).parse(new UriTokenizer(expressionString), null, null);
       fail("Expected exception not thrown.");
     } catch (final UriParserException e) {
+      assertNotNull(e);
+    } catch (final UriValidationException e) {
       assertNotNull(e);
     }
   }

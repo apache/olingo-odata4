@@ -32,10 +32,9 @@ import org.apache.olingo.server.core.uri.queryoption.SelectItemImpl;
  */
 public class UriContext {
 
-  public static class LambdaVariables {
+  public static class LambdaVariable {
     public String name;
     public EdmType type;
-    public boolean isCollection;
   }
 
   /**
@@ -43,7 +42,7 @@ public class UriContext {
    * As lambda functions can be nested there may be more than one allowed lambda variables at a time while parsing a
    * $filter or $orderby expressions.
    */
-  public Deque<LambdaVariables> allowedLambdaVariables;
+  public Deque<LambdaVariable> allowedLambdaVariables;
   /**
    * Used to stack type information for nested $expand, $filter query options and other cases.
    */
@@ -110,7 +109,7 @@ public class UriContext {
     contextReadingFunctionParameters = false;
     contextSelectItem = null;
     contextTypes = new ArrayDeque<EdmType>();
-    allowedLambdaVariables = new ArrayDeque<UriContext.LambdaVariables>();
+    allowedLambdaVariables = new ArrayDeque<UriContext.LambdaVariable>();
 
   }
 }

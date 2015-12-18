@@ -94,4 +94,9 @@ public class MemberImpl implements Member {
     }
     return false;
   }
+
+  @Override
+  public String toString() {
+    return path.getUriResourceParts().toString() + (startTypeFilter == null ? "" : startTypeFilter);
+  }
 }

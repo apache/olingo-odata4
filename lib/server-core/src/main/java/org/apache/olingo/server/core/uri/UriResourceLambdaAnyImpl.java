@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.uri;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriResourceKind;
@@ -28,12 +27,13 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 
 public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements UriResourceLambdaAny {
 
-  protected EdmProperty property;
-  private String lambdaVariable;
-  private Expression expression;
+  private final String lambdaVariable;
+  private final Expression expression;
 
-  public UriResourceLambdaAnyImpl() {
+  public UriResourceLambdaAnyImpl(final String lambdaVariable, final Expression expression) {
     super(UriResourceKind.lambdaAny);
+    this.lambdaVariable = lambdaVariable;
+    this.expression = expression;
   }
 
   @Override
@@ -51,28 +51,13 @@ public class UriResourceLambdaAnyImpl extends UriResourceTypedImpl implements Ur
     return lambdaVariable;
   }
 
-  public UriResourceLambdaAnyImpl setLamdaVariable(final String lambdaVariable) {
-    this.lambdaVariable = lambdaVariable;
-    return this;
-  }
-
   @Override
   public Expression getExpression() {
     return expression;
   }
 
-  public UriResourceLambdaAnyImpl setExpression(final Expression expression) {
-    this.expression = expression;
-    return this;
-  }
-
   @Override
   public String getSegmentValue() {
     return "any";
-  }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
   }
 }

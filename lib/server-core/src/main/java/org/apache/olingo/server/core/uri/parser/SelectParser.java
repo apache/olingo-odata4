@@ -156,10 +156,10 @@ public class SelectParser {
         throw new UriParserSemanticException("Function not found.",
             UriParserSemanticException.MessageKeys.UNKNOWN_PART, qualifiedName.getFullQualifiedNameAsString());
       } else {
-        return new UriResourceFunctionImpl().setFunction(boundFunction);
+        return new UriResourceFunctionImpl(null, boundFunction, null);
       }
     } else {
-      return new UriResourceActionImpl().setAction(boundAction);
+      return new UriResourceActionImpl(boundAction);
     }
   }
 
@@ -187,16 +187,16 @@ public class SelectParser {
             UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE,
             referencedType.getName(), name);
       } else {
-        resource.addResourcePart(new UriResourceNavigationPropertyImpl().setNavigationProperty(navigationProperty));
+        resource.addResourcePart(new UriResourceNavigationPropertyImpl(navigationProperty));
       }
 
     } else if (property.isPrimitive()
         || property.getType().getKind() == EdmTypeKind.ENUM
         || property.getType().getKind() == EdmTypeKind.DEFINITION) {
-      resource.addResourcePart(new UriResourcePrimitivePropertyImpl().setProperty(property));
+      resource.addResourcePart(new UriResourcePrimitivePropertyImpl(property));
 
     } else {
-      UriResourceComplexPropertyImpl complexPart = new UriResourceComplexPropertyImpl().setProperty(property);
+      UriResourceComplexPropertyImpl complexPart = new UriResourceComplexPropertyImpl(property);
       resource.addResourcePart(complexPart);
       if (tokenizer.next(TokenKind.SLASH)) {
         if (tokenizer.next(TokenKind.QualifiedName)) {

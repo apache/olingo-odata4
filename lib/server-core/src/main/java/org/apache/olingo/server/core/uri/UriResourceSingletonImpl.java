@@ -26,21 +26,16 @@ import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class UriResourceSingletonImpl extends UriResourceTypedImpl implements UriResourceSingleton {
 
-  private EdmSingleton singleton;
+  private final EdmSingleton singleton;
 
-  public UriResourceSingletonImpl() {
+  public UriResourceSingletonImpl(final EdmSingleton singleton) {
     super(UriResourceKind.singleton);
+    this.singleton = singleton;
   }
 
   @Override
   public EdmSingleton getSingleton() {
     return singleton;
-  }
-
-  public UriResourceSingletonImpl setSingleton(final EdmSingleton singleton) {
-
-    this.singleton = singleton;
-    return this;
   }
 
   @Override
@@ -62,15 +57,9 @@ public class UriResourceSingletonImpl extends UriResourceTypedImpl implements Ur
   public boolean isCollection() {
     return false;
   }
-  
+
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return singleton.getName();
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }
