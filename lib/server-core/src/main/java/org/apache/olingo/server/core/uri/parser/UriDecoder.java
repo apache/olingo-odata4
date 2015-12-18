@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -93,7 +93,7 @@ public class UriDecoder {
    * @return list of elements (can be empty)
    */
   static List<String> splitSkipEmpty(final String input, final char c) {
-    if(input.isEmpty() || input.length() == 1 && input.charAt(0) == c) {
+    if (input.isEmpty() || input.length() == 1 && input.charAt(0) == c) {
       return Collections.emptyList();
     }
 
@@ -103,13 +103,13 @@ public class UriDecoder {
     int end;
 
     while ((end = input.indexOf(c, start)) >= 0) {
-      if(start != end) {
+      if (start != end) {
         list.add(input.substring(start, end));
       }
       start = end + 1;
     }
 
-    if(input.charAt(input.length()-1) != c) {
+    if (input.charAt(input.length() - 1) != c) {
       list.add(input.substring(start));
     }
 

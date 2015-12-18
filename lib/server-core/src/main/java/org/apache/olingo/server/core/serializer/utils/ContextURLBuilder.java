@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,17 +31,17 @@ import org.apache.olingo.commons.core.Encoder;
  */
 public final class ContextURLBuilder {
 
-  private ContextURLBuilder() { /* private ctor for helper class */ }
+  private ContextURLBuilder() { /* private ctor for helper class */}
 
   public static URI create(final ContextURL contextURL) {
     StringBuilder result = new StringBuilder();
     if (contextURL.getServiceRoot() != null) {
       result.append(contextURL.getServiceRoot());
-    } else if(contextURL.getODataPath() != null) {
+    } else if (contextURL.getODataPath() != null) {
       String oDataPath = contextURL.getODataPath();
       char[] chars = oDataPath.toCharArray();
-      for (int i = 1; i < chars.length-1; i++) {
-        if(chars[i] == '/' && chars[i-1] != '/') {
+      for (int i = 1; i < chars.length - 1; i++) {
+        if (chars[i] == '/' && chars[i - 1] != '/') {
           result.append("../");
         }
       }
@@ -52,8 +52,8 @@ public final class ContextURLBuilder {
       result.append('#');
       if (contextURL.isCollection()) {
         result.append("Collection(")
-        .append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()))
-        .append(")");
+            .append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()))
+            .append(")");
       } else {
         result.append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()));
       }
@@ -79,9 +79,9 @@ public final class ContextURLBuilder {
       }
       if (contextURL.isCollection()) {
         result.append('#')
-              .append("Collection(")
-              .append(ContextURL.Suffix.REFERENCE.getRepresentation())
-              .append(")");
+            .append("Collection(")
+            .append(ContextURL.Suffix.REFERENCE.getRepresentation())
+            .append(")");
       } else {
         result.append('#').append(ContextURL.Suffix.REFERENCE.getRepresentation());
       }

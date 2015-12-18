@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -62,7 +62,7 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
   }
 
   @Override
-  public Object primitiveValue(InputStream content, final EdmProperty property) throws DeserializerException {
+  public Object primitiveValue(final InputStream content, final EdmProperty property) throws DeserializerException {
     if (property == null || !property.isPrimitive()) {
       throw new DeserializerException("Wrong property.", DeserializerException.MessageKeys.NOT_IMPLEMENTED);
     }
@@ -103,7 +103,7 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
                 parameter.isNullable(), parameter.getMaxLength(), parameter.getPrecision(), parameter.getScale(), true,
                 parameter.getMapping() == null ?
                     primitiveType.getDefaultType() :
-                    parameter.getMapping().getMappedJavaClass()));
+                      parameter.getMapping().getMappedJavaClass()));
       } catch (final EdmPrimitiveTypeException e) {
         throw new DeserializerException(
             "Invalid value '" + content + "' for parameter " + parameter.getName(), e,
@@ -119,7 +119,7 @@ public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
   @Override
   public List<BatchRequestPart> parseBatchRequest(final InputStream content, final String boundary,
       final BatchOptions options)
-      throws BatchDeserializerException {
+          throws BatchDeserializerException {
     final BatchParser parser = new BatchParser();
 
     return parser.parseBatchRequest(content, boundary, options);

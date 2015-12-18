@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -63,19 +63,20 @@ public class UriContext {
    */
   public ExpandItemImpl contextExpandItemPath;
   // CHECKSTYLE:ON (Maven checkstyle)
-  
-  //CHECKSTYLE:OFF (Maven checkstyle)
+
+  // CHECKSTYLE:OFF (Maven checkstyle)
   /**
-   * Set to true in method {@link UriParseTreeVisitor#visitExpandPath} right before 
-   * calling {@link  org.apache.olingo.server.core.uri.parser.UriParseTreeVisitor#readResourcePathSegment}
-   * After reading the path the variable is set back to false
-   * 
-   * readResourcePathSegment handles all navigation properties, it depends on the context if key predicates are allowed or not.
-   * In case of expand 
+   * Set to true in method {@link UriParseTreeVisitor#visitExpandPath} right before
+   * calling {@link org.apache.olingo.server.core.uri.parser.UriParseTreeVisitor#readResourcePathSegment} After reading
+   * the path the variable is set back to false
+   *
+   * readResourcePathSegment handles all navigation properties, it depends on the context if key predicates are allowed
+   * or not.
+   * In case of expand
    */
   public boolean contextVisitExpandResourcePath;
-  //CHECKSTYLE:ON (Maven checkstyle)
-  
+  // CHECKSTYLE:ON (Maven checkstyle)
+
   // CHECKSTYLE:OFF (Maven checkstyle)
   /**
    * Set within method
@@ -95,12 +96,12 @@ public class UriContext {
    */
   public UriInfoImpl contextUriInfo;
   public boolean contextReadingFunctionParameters;
-  
+
   /**
    * Set to true if the parser operates on query part.
    */
   public boolean contextReadingQueryPart;
-  
+
   public UriContext() {
 
     contextExpandItemPath = null;

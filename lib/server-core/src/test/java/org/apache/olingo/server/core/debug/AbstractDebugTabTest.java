@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,14 +26,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 public abstract class AbstractDebugTabTest {
 
-  protected String createHtml(DebugTab tab) throws IOException {
+  protected String createHtml(final DebugTab tab) throws IOException {
     StringWriter writer = new StringWriter();
     tab.appendHtml(writer);
     writer.flush();
     return writer.toString();
   }
 
-  protected String createJson(DebugTab tab) throws IOException {
+  protected String createJson(final DebugTab tab) throws IOException {
     StringWriter writer = new StringWriter();
     JsonGenerator gen = new JsonFactory().createGenerator(writer);
     tab.appendJson(gen);

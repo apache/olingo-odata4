@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -110,9 +110,9 @@ public class DebugTabStacktrace implements DebugTab {
     }
     final StackTraceElement details = throwable.getStackTrace()[0];
     writer.append("<h2>").append(throwable.getClass().getCanonicalName()).append("</h2>\n")
-        .append("<p>")
-        .append(DebugResponseHelperImpl.escapeHtml(getMessageText(throwable)))
-        .append("</p>\n");
+    .append("<p>")
+    .append(DebugResponseHelperImpl.escapeHtml(getMessageText(throwable)))
+    .append("</p>\n");
     appendStackTraceElement(details, true, true, writer);
   }
 
@@ -120,15 +120,15 @@ public class DebugTabStacktrace implements DebugTab {
       final boolean isFirst, final boolean isLast, final Writer writer) throws IOException {
     if (isFirst) {
       writer.append("<table>\n<thead>\n")
-          .append("<tr>\n<th class=\"name\">Class</th>\n")
-          .append("<th class=\"name\">Method</th>\n")
-          .append("<th class=\"value\">Line number in class</th>\n</tr>\n")
-          .append("</thead>\n<tbody>\n");
+      .append("<tr>\n<th class=\"name\">Class</th>\n")
+      .append("<th class=\"name\">Method</th>\n")
+      .append("<th class=\"value\">Line number in class</th>\n</tr>\n")
+      .append("</thead>\n<tbody>\n");
     }
     writer.append("<tr>\n<td class=\"name\">").append(stackTraceElement.getClassName()).append("</td>\n")
-        .append("<td class=\"name\">").append(stackTraceElement.getMethodName()).append("</td>\n")
-        .append("<td class=\"value\">").append(Integer.toString(stackTraceElement.getLineNumber()))
-        .append("</td>\n</tr>\n");
+    .append("<td class=\"name\">").append(stackTraceElement.getMethodName()).append("</td>\n")
+    .append("<td class=\"value\">").append(Integer.toString(stackTraceElement.getLineNumber()))
+    .append("</td>\n</tr>\n");
     if (isLast) {
       writer.append("</tbody>\n</table>\n");
     }

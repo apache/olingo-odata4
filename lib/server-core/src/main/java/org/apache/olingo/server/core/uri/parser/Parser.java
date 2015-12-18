@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -285,9 +285,9 @@ public class Parser {
             final Expression expression = ((FilterOption) uriParseTreeVisitor.visitFilterExpressionEOF(filterExpCtx))
                 .getExpression();
             context.contextUriInfo.addAlias((AliasQueryOption) new AliasQueryOptionImpl()
-                .setAliasValue(expression)
-                .setName(option.name)
-                .setText(NULL.equals(option.value) ? null : option.value));
+            .setAliasValue(expression)
+            .setName(option.name)
+            .setText(NULL.equals(option.value) ? null : option.value));
           } else {
             throw new UriParserSyntaxException("Alias already specified! Name: " + option.name,
                 UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, option.name);
@@ -295,8 +295,8 @@ public class Parser {
         } else {
           context.contextUriInfo.addCustomQueryOption((CustomQueryOption)
               new CustomQueryOptionImpl()
-                  .setName(option.name)
-                  .setText(option.value));
+          .setName(option.name)
+          .setText(option.value));
         }
       }
 
@@ -304,7 +304,7 @@ public class Parser {
     } catch (ParseCancellationException e) {
       throw e.getCause() instanceof UriParserException ?
           (UriParserException) e.getCause() :
-          new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
+            new UriParserSyntaxException("Syntax error", e, UriParserSyntaxException.MessageKeys.SYNTAX);
     }
   }
 
@@ -335,7 +335,7 @@ public class Parser {
 
       // create parser
       if (logLevel > 0) {
-        //TODO: Discuss if we should keep this code
+        // TODO: Discuss if we should keep this code
         lexer = new UriLexer(new ANTLRInputStream(input));
         showTokens(input, lexer.getAllTokens());
       }

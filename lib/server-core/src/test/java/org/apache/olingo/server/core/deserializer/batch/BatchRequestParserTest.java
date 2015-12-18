@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -474,30 +474,30 @@ public class BatchRequestParserTest {
         + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-    
+
     List<BatchRequestPart> requests = parse(batch);
     assertEquals(HttpMethod.POST, requests.get(0).getRequests().get(0).getMethod());
     assertEquals("/Employees", requests.get(0).getRequests().get(0).getRawODataPath());
     assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
-    
+
     requests = parse(batch);
     assertEquals(HttpMethod.DELETE, requests.get(1).getRequests().get(0).getMethod());
     assertEquals("/Employees('1')", requests.get(1).getRequests().get(0).getRawODataPath());
-    
+
     requests = parse(batch);
     assertEquals(HttpMethod.PATCH, requests.get(2).getRequests().get(0).getMethod());
     assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
     assertEquals("/Employees('1')", requests.get(2).getRequests().get(0).getRawODataPath());
-    
+
     requests = parse(batch);
     assertEquals(HttpMethod.PUT, requests.get(3).getRequests().get(0).getMethod());
     assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
     assertEquals("/Employees('1')", requests.get(3).getRequests().get(0).getRawODataPath());
-    
+
     requests = parse(batch);
     assertEquals(HttpMethod.GET, requests.get(4).getRequests().get(0).getMethod());
     assertEquals("/Employees('1')", requests.get(4).getRequests().get(0).getRawODataPath());
-    
+
   }
 
   @Test

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -65,10 +65,10 @@ public final class ContentNegotiator {
 
   private static List<ContentType> getSupportedContentTypes(
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-      throws ContentNegotiatorException {
+          throws ContentNegotiatorException {
     final List<ContentType> defaultSupportedContentTypes = getDefaultSupportedContentTypes(representationType);
     final List<ContentType> result = customContentTypeSupport == null ? defaultSupportedContentTypes :
-        customContentTypeSupport.modifySupportedContentTypes(defaultSupportedContentTypes, representationType);
+      customContentTypeSupport.modifySupportedContentTypes(defaultSupportedContentTypes, representationType);
     if (result == null || result.isEmpty()) {
       throw new ContentNegotiatorException("No content type has been specified as supported.",
           ContentNegotiatorException.MessageKeys.NO_CONTENT_TYPE_SUPPORTED);
@@ -79,7 +79,7 @@ public final class ContentNegotiator {
 
   public static ContentType doContentNegotiation(final FormatOption formatOption, final ODataRequest request,
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-      throws ContentNegotiatorException {
+          throws ContentNegotiatorException {
     final List<ContentType> supportedContentTypes =
         getSupportedContentTypes(customContentTypeSupport, representationType);
     final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
@@ -93,7 +93,7 @@ public final class ContentNegotiator {
         result = getAcceptedType(
             AcceptType.fromContentType(contentType == null ?
                 ContentType.create(formatOption.getFormat()) : contentType),
-            supportedContentTypes);
+                supportedContentTypes);
       } catch (final IllegalArgumentException e) {
         // Exception results in result = null for next check.
       }
@@ -127,8 +127,8 @@ public final class ContentNegotiator {
 
   private static ContentType mapContentType(final String formatString) {
     return JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
-    XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
-    ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+        XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+            ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
   }
 
   private static ContentType getAcceptedType(final List<AcceptType> acceptedContentTypes,
@@ -164,7 +164,7 @@ public final class ContentNegotiator {
 
   public static void checkSupport(final ContentType contentType,
       final CustomContentTypeSupport customContentTypeSupport, final RepresentationType representationType)
-      throws ContentNegotiatorException {
+          throws ContentNegotiatorException {
     for (ContentType supportedContentType : getSupportedContentTypes(customContentTypeSupport, representationType)) {
       if (AcceptType.fromContentType(supportedContentType).get(0).matches(contentType)) {
         return;

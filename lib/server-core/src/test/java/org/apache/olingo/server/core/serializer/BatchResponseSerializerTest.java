@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -106,7 +106,7 @@ public class BatchResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE,
-            ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=UTF-8");
+        ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=UTF-8");
     response.setContent(IOUtils.toInputStream("Wälter Winter" + CRLF));
 
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
@@ -124,7 +124,7 @@ public class BatchResponseSerializerTest {
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
     final BatchLineReader reader =
-            new BatchLineReader(content);
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -233,8 +233,8 @@ public class BatchResponseSerializerTest {
     changeSetResponse.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     changeSetResponse.setHeader(HttpHeader.CONTENT_ID, "1");
 
-//    byte[] umlauts = "äüö".getBytes(CS_UTF_8);
-//    changeSetResponse.setHeader("Custom-Header", new String(umlauts, CS_UTF_8));
+    //    byte[] umlauts = "äüö".getBytes(CS_UTF_8);
+    //    changeSetResponse.setHeader("Custom-Header", new String(umlauts, CS_UTF_8));
     changeSetResponse.setHeader("Custom-Header", "äüö");
     responses = new ArrayList<ODataResponse>(1);
     responses.add(changeSetResponse);
@@ -251,7 +251,7 @@ public class BatchResponseSerializerTest {
     assertEquals(25, body.size());
     // TODO: check: with latest change in BatchResponseSerializer is not possible
     // to set header values with UTF-8 (only iso-8859-1)
-//    assertEquals("Custom-Header: Ã¤Ã¼Ã¶" + CRLF, body.get(19));
+    //    assertEquals("Custom-Header: Ã¤Ã¼Ã¶" + CRLF, body.get(19));
     assertEquals("Custom-Header: äüö" + CRLF, body.get(19));
   }
 
@@ -261,7 +261,7 @@ public class BatchResponseSerializerTest {
     ODataResponse response = new ODataResponse();
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE,
-            ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=iso-8859-1");
+        ContentType.APPLICATION_JSON.toContentTypeString() + "; charset=iso-8859-1");
     byte[] payload = ("Wälter Winter" + CRLF).getBytes("iso-8859-1");
     response.setContent(new ByteArrayInputStream(payload));
 
@@ -280,7 +280,7 @@ public class BatchResponseSerializerTest {
     final InputStream content = serializer.serialize(parts, BOUNDARY);
     assertNotNull(content);
     final BatchLineReader reader =
-            new BatchLineReader(content);
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 
@@ -419,7 +419,7 @@ public class BatchResponseSerializerTest {
 
     assertNotNull(content);
     final BatchLineReader reader =
-            new BatchLineReader(content);
+        new BatchLineReader(content);
     final List<String> body = reader.toList();
     reader.close();
 

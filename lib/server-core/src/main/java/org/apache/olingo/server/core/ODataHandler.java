@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -63,7 +63,7 @@ public class ODataHandler {
   private UriInfo uriInfo;
   private Exception lastThrownException;
 
-  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, ServerCoreDebugger debugger) {
+  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
     odata = server;
     this.serviceMetadata = serviceMetadata;
     this.debugger = debugger;
@@ -159,8 +159,8 @@ public class ODataHandler {
   }
 
   public void handleException(final ODataRequest request, final ODataResponse response,
-      final ODataServerError serverError, Exception exception) {
-    this.lastThrownException = exception;
+      final ODataServerError serverError, final Exception exception) {
+    lastThrownException = exception;
     ErrorProcessor exceptionProcessor;
     try {
       exceptionProcessor = selectProcessor(ErrorProcessor.class);
@@ -172,7 +172,7 @@ public class ODataHandler {
     try {
       requestedContentType = ContentNegotiator.doContentNegotiation(
           uriInfo == null ? null : uriInfo.getFormatOption(), request, getCustomContentTypeSupport(),
-          RepresentationType.ERROR);
+              RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
@@ -184,8 +184,8 @@ public class ODataHandler {
   private void validateODataVersion(final ODataRequest request) throws ODataHandlerException {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
     if (maxVersion != null && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-        throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
-            ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+      throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
+          ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
     }
   }
 
@@ -212,7 +212,7 @@ public class ODataHandler {
     return customContentTypeSupport;
   }
 
-  public void register(CustomETagSupport customETagSupport) {
+  public void register(final CustomETagSupport customETagSupport) {
     this.customETagSupport = customETagSupport;
   }
 

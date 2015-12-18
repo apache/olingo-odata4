@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -115,7 +115,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     return value;
   }
 
-  private Object complex(final XMLEventReader reader, final StartElement start, EdmComplexType edmComplex)
+  private Object complex(final XMLEventReader reader, final StartElement start, final EdmComplexType edmComplex)
       throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
     ComplexValue value = new ComplexValue();
     boolean foundEndProperty = false;
@@ -165,7 +165,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Property property(final XMLEventReader reader, final StartElement start, final EdmType edmType,
       final boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final boolean isUnicode, final boolean isCollection)
-      throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
+          throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
 
     final Property property = new Property();
 
@@ -182,7 +182,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     return property;
   }
 
-  private ValueType getValueType(EdmType edmType, boolean isCollection) {
+  private ValueType getValueType(final EdmType edmType, final boolean isCollection) {
     if (edmType instanceof EdmPrimitiveType) {
       if (edmType instanceof EdmEnumType) {
         return isCollection ? ValueType.COLLECTION_ENUM : ValueType.ENUM;
@@ -231,7 +231,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public DeserializerResult property(InputStream input, EdmProperty edmProperty)
+  public DeserializerResult property(final InputStream input, final EdmProperty edmProperty)
       throws DeserializerException {
     try {
       final XMLEventReader reader = getReader(input);
@@ -342,7 +342,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     }
   }
 
-  private List<String> entityRefCollection(XMLEventReader reader, StartElement start)
+  private List<String> entityRefCollection(final XMLEventReader reader, final StartElement start)
       throws XMLStreamException {
     boolean foundEndElement = false;
     ArrayList<String> references = new ArrayList<String>();
@@ -360,7 +360,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     return references;
   }
 
-  private String entityRef(XMLEventReader reader, StartElement start) throws XMLStreamException {
+  private String entityRef(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
     boolean foundEndElement = false;
     final Attribute entityRefId = start.getAttributeByName(Constants.QNAME_ATOM_ATTR_ID);
     while (reader.hasNext() && !foundEndElement) {
@@ -388,7 +388,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
 
   private void properties(final XMLEventReader reader, final StartElement start, final Entity entity,
       final EdmEntityType edmEntityType)
-      throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
+          throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
 
     boolean foundEndProperties = false;
     while (reader.hasNext() && !foundEndProperties) {
@@ -547,7 +547,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public DeserializerResult entity(InputStream input, EdmEntityType edmEntityType)
+  public DeserializerResult entity(final InputStream input, final EdmEntityType edmEntityType)
       throws DeserializerException {
     try {
       final XMLEventReader reader = getReader(input);
@@ -633,7 +633,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public DeserializerResult entityCollection(InputStream input, EdmEntityType edmEntityType)
+  public DeserializerResult entityCollection(final InputStream input, final EdmEntityType edmEntityType)
       throws DeserializerException {
     try {
       final XMLEventReader reader = getReader(input);
@@ -654,7 +654,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public DeserializerResult entityReferences(InputStream stream) throws DeserializerException {
+  public DeserializerResult entityReferences(final InputStream stream) throws DeserializerException {
     try {
       XMLEventReader reader = getReader(stream);
       ArrayList<URI> references = new ArrayList<URI>();
@@ -677,7 +677,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
 
   @Override
-  public DeserializerResult actionParameters(InputStream stream, EdmAction edmAction)
+  public DeserializerResult actionParameters(final InputStream stream, final EdmAction edmAction)
       throws DeserializerException {
     Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
     if (edmAction.getParameterNames() == null || edmAction.getParameterNames().isEmpty()
@@ -724,8 +724,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     }
   }
 
-  private void consumeParameters(EdmAction edmAction, XMLEventReader reader,
-      StartElement start, Map<String, Parameter> parameters) throws DeserializerException,
+  private void consumeParameters(final EdmAction edmAction, final XMLEventReader reader,
+      final StartElement start, final Map<String, Parameter> parameters) throws DeserializerException,
       EdmPrimitiveTypeException, XMLStreamException {
 
     List<String> parameterNames = edmAction.getParameterNames();
@@ -763,8 +763,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     }
   }
 
-  private Parameter createParameter(XMLEventReader reader, StartElement start, String paramName,
-      EdmParameter edmParameter) throws DeserializerException, EdmPrimitiveTypeException, XMLStreamException {
+  private Parameter createParameter(final XMLEventReader reader, final StartElement start, final String paramName,
+      final EdmParameter edmParameter) throws DeserializerException, EdmPrimitiveTypeException, XMLStreamException {
 
     Parameter parameter = new Parameter();
     parameter.setName(paramName);

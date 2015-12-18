@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -191,7 +191,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
 
   @Override
   public JsonNode visitEnum(final EdmEnumType type, final List<String> enumValues) throws ExpressionVisitException,
-      ODataApplicationException {
+  ODataApplicationException {
     ObjectNode result = nodeFactory.objectNode()
         .put(NODE_TYPE_NAME, ENUM_NAME)
         .put(TYPE_NAME, getTypeString(type));
@@ -266,7 +266,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     }
   }
 
-  private String getType(BinaryOperatorKind operator) {
+  private String getType(final BinaryOperatorKind operator) {
     switch (operator) {
     case MUL:
     case DIV:
@@ -302,8 +302,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     final UriResource lastSegment = uriResourceParts.get(uriResourceParts.size() - 1);
     final EdmType type = lastSegment instanceof UriResourcePartTyped ?
         ((UriResourcePartTyped) lastSegment).getType() :
-        null;
-    return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
+          null;
+        return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
 }
