@@ -83,7 +83,9 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: complex parameter value */
     COMPLEX_PARAMETER_IN_RESOURCE_PATH, 
     /** parameter: function import name */
-    FUNCTION_IMPORT_NOT_ALLOWED;
+    FUNCTION_IMPORT_NOT_ALLOWED, 
+    /** parameters: left type, right type */
+    TYPES_NOT_COMPATIBLE;
     
     @Override
     public String getKey() {

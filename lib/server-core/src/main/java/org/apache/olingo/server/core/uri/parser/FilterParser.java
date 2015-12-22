@@ -21,7 +21,7 @@ package org.apache.olingo.server.core.uri.parser;
 import java.util.Collection;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
@@ -38,7 +38,7 @@ public class FilterParser {
     this.odata = odata;
   }
 
-  public FilterOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType,
+  public FilterOption parse(UriTokenizer tokenizer, final EdmType referencedType,
       final Collection<String> crossjoinEntitySetNames)
       throws UriParserException, UriValidationException {
     final Expression filterExpression = new ExpressionParser(edm, odata)

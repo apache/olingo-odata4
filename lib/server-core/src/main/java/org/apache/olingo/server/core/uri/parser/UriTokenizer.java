@@ -219,7 +219,7 @@ public class UriTokenizer {
       found = nextCharacter('+');
       break;
     case MINUS:
-      found = nextCharacter('-');
+      found = nextMinus();
       break;
     case NULL:
       found = nextConstant("null");
@@ -442,6 +442,27 @@ public class UriTokenizer {
       index = previousIndex;
     }
     return found;
+  }
+
+  private boolean nextMinus() {
+    if(parseString.startsWith("-", index)) {
+      final int lastGoodIndex = index;
+      
+      if(nextDoubleValue()) {
+        index = lastGoodIndex;
+        return false;
+      } else if(nextDecimalValue()) {
+        index = lastGoodIndex;
+        return false;
+      } else if(nextIntegerValue(true)) {
+        index = lastGoodIndex;
+        return false;
+      } else {
+        index++;
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

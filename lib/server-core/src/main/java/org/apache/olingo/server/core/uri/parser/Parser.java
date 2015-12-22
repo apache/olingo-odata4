@@ -191,10 +191,8 @@ public class Parser {
         SystemQueryOption systemOption = null;
         if (optionName.equals(SystemQueryOptionKind.FILTER.toString())) {
           UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
-          systemOption = new FilterParser(edm, odata).parse(filterTokenizer,
-              context.contextTypes.peek() instanceof EdmStructuredType ?
-                  (EdmStructuredType) context.contextTypes.peek() :
-                  null,
+          // The Referring type could also be a primitive type not only a structured type
+          systemOption = new FilterParser(edm, odata).parse(filterTokenizer, context.contextTypes.peek(),
                   context.contextUriInfo.getEntitySetNames());
           checkOptionEOF(filterTokenizer, optionName, optionValue);
 

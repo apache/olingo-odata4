@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.Encoder;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
@@ -3231,7 +3232,6 @@ public class TestFullResourcePath {
 
   // TODO
   @Test
-  @Ignore
   public void filter() throws Exception {
 
     testFilter.runOnETTwoKeyNav("PropertyString")
@@ -3334,21 +3334,22 @@ public class TestFullResourcePath {
     //     .isExSemantic(MessageKeys.UNKNOWN_TYPE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt16 eq '1'")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyDate eq 1")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyComp/PropertyString eq 1")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt64 eq 1")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/PropertyInt16 gt 42")
-        .isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/NavPropertyETTwoKeyNavOne eq null")
-        .isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
 
     testFilter.runOnETAllPrim("PropertySByte eq PropertySByte")
         .is("<<PropertySByte> eq <PropertySByte>>")
@@ -3758,12 +3759,13 @@ public class TestFullResourcePath {
         .root().right()
         .isType(PropertyProvider.nameDecimal);
 
+    // Numeric promotion: Double is considered the widest type
     testFilter.runOnETAllPrim("PropertyDecimal sub NaN")
-        .right().isLiteral("NaN").isType(PropertyProvider.nameDecimal);
+        .right().isLiteral("NaN").isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal sub -INF")
-        .right().isLiteral("-INF").isType(PropertyProvider.nameDecimal);
+        .right().isLiteral("-INF").isType(PropertyProvider.nameDouble);
     testFilter.runOnETAllPrim("PropertyDecimal sub INF")
-        .right().isLiteral("INF").isType(PropertyProvider.nameDecimal);
+        .right().isLiteral("INF").isType(PropertyProvider.nameDouble);
   }
 
   // TODO
@@ -4078,9 +4080,7 @@ public class TestFullResourcePath {
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
-  // TODO: $it on primitive types?
   @Test
-  @Ignore
   public void methods() throws Exception {
     testFilter.runOnETKeyNav("indexof(PropertyString,'47') eq 5")
         .is("<<indexof(<PropertyString>,<'47'>)> eq <5>>")
@@ -4482,7 +4482,7 @@ public class TestFullResourcePath {
         .root().left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnCTTwoPrim("$it/PropertyString eq 'SomeString'")
@@ -4529,7 +4529,7 @@ public class TestFullResourcePath {
         .goParameter(0)
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
 
     testFilter.runOnETTwoKeyNav("endswith(PropertyComp/PropertyComp/PropertyString,'dorf')")
@@ -4646,7 +4646,6 @@ public class TestFullResourcePath {
 
   // TODO: Implement cast method.
   @Test
-  @Ignore
   public void castMethod() throws Exception {
     testFilter.runOnETKeyNav("cast(olingo.odata.test1.ETBaseTwoKeyNav)")
         .is("<cast(<olingo.odata.test1.ETBaseTwoKeyNav>)>")
@@ -4795,13 +4794,14 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETKeyNav("any()")
-        .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
+    // TODO Is that case makes not really sense, each any / all lambda expr must 
+    // containing at least one lambdaVariableExpr 
+//    testFilter.runOnETKeyNav("any()")
+//        .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
   }
 
   // TODO: Check whether lambda expressions really are allowed on complex collections.
   @Test
-  @Ignore
   public void lambdaFunctions() throws Exception {
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString')")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<d/PropertyString> eq <'SomeString'>>>>")
@@ -4846,9 +4846,9 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
-        + "d/any(e:e/CollPropertyString eq 'SomeString'))")
-        .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>> or "
-            + "<d/<ANY;<<e/CollPropertyString> eq <'SomeString'>>>>>>>")
+        + "d/CollPropertyString/any(e:e eq 'SomeString'))")
+        .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>>" 
+            + " or <d/CollPropertyString/<ANY;<<e> eq <'SomeString'>>>>>>>")
         .root().goPath()
         .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
@@ -4866,12 +4866,13 @@ public class TestFullResourcePath {
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .n().isUriPathInfoKind(UriResourceKind.lambdaAny)
+        .n().isUriPathInfoKind(UriResourceKind.primitiveProperty)
+        .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
+        .at(2).isUriPathInfoKind(UriResourceKind.lambdaAny)        
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        .n().isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true);
+        .isType(EdmString.getInstance().getFullQualifiedName(), false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
         + "d/CollPropertyString/any(e:e eq 'SomeString'))")
@@ -4934,12 +4935,10 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETKeyNavEx("any(d:d/PropertyInt16 eq 1)")
-        .isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
-  // TODO: Implement isof method.
   @Test
-  @Ignore
   public void isOfMethod() throws Exception {
     testFilter.runOnETKeyNav("isof(olingo.odata.test1.ETTwoKeyNav)")
         .is("<isof(<olingo.odata.test1.ETTwoKeyNav>)>")
@@ -4962,7 +4961,7 @@ public class TestFullResourcePath {
         .left().isMethod(MethodKind.ISOF, 1)
         .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne, olingo.odata.test1.ETKeyNav) eq true")
+    testFilter.runOnETKeyNav("isof(NavPropertyETKeyNavOne,olingo.odata.test1.ETKeyNav) eq true")
         .is("<<isof(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyNav>)> eq <true>>")
         .root().isBinary(BinaryOperatorKind.EQ)
         .left().isMethod(MethodKind.ISOF, 2)
@@ -5865,7 +5864,6 @@ public class TestFullResourcePath {
 
   // TODO: Better type determination for literal numbers.
   @Test
-  @Ignore
   public void filterLiteralTypes() throws Exception {
     testFilter.runOnETAllPrim("-1000 eq 42")
         .isBinary(BinaryOperatorKind.EQ)

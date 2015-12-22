@@ -30,8 +30,11 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+// TODO
+@Ignore
 public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_TWO_PRIM = "ESTwoPrim";
