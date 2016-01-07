@@ -27,7 +27,7 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -67,8 +67,7 @@ public class TestUriParserImpl {
       + "," + PropertyDateTimeOffset + "," + PropertyDuration + "," + PropertyGuid + "," + PropertyTimeOfDay;
 
   @Test
-  public void testBoundFunctionImport_VarParameters() {
-
+  public void boundFunctionImport_VarParameters() {
     // no input
     testRes.run("ESKeyNav(1)/olingo.odata.test1.BFCETKeyNavRTETKeyNav()")
     .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
@@ -89,9 +88,8 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testFunctionBound_varReturnType() {
-
-    String esTwoKeyNav = "ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')";
+  public void functionBound_varReturnType() {
+    final String esTwoKeyNav = "ESTwoKeyNav(PropertyInt16=1,PropertyString='ABC')";
 
     // returning primitive
     testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTString()")
@@ -151,8 +149,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void runActionImport_VarReturnType() {
-
+  public void actionImport_VarReturnType() {
     testRes.run(ContainerProvider.AIRT_STRING).isKind(UriInfoKind.resource)
     .first()
     .isActionImport(ContainerProvider.AIRT_STRING)
@@ -189,7 +186,6 @@ public class TestUriParserImpl {
 
   @Test
   public void count() {
-
     // count entity set
     testRes.run("ESAllPrim/$count")
     .at(0)
@@ -216,7 +212,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void runCrossJoin() throws Exception {
+  public void crossJoin() throws Exception {
     testUri.run("$crossjoin(ESAllKey)")
     .isKind(UriInfoKind.crossjoin)
     .isCrossJoinEntityList(Arrays.asList("ESAllKey"));
@@ -226,29 +222,15 @@ public class TestUriParserImpl {
     .isCrossJoinEntityList(Arrays.asList("ESAllKey", "ESTwoPrim"));
   }
 
-  @Test(expected = UriValidationException.class)
-  public void testEntityFailOnValidation1() throws Exception {
+  @Test
+  public void entityFailOnValidation() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllKey")
-    .isIdText("ESAllKey")
-    .goFilter().is("<<PropertyInt16> eq <123>>");
-  }
-
-  @Test(expected = UriParserSyntaxException.class)
-  public void testEntityFailOnValidation2() throws Exception {
-    // simple entity set; with qualifiedentityTypeName; with 2xformat(before and after), expand, filter
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim",
-        "$format=xml&$expand=*&abc=123&$id=ESBase&xyz=987&$filter=PropertyInt16 eq 123&$format=atom&$select=*")
-        .isFormatText("atom")
-        .isCustomParameter(0, "abc", "123")
-        .isIdText("ESBase")
-        .isCustomParameter(1, "xyz", "987")
-        .isSelectItemStar(0);
+    testUri.runEx("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllKey")
+        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
   }
 
   @Test
-  public void testEntity() throws Exception {
-
+  public void entity() throws Exception {
     // simple entity set
     testUri.run("$entity", "$id=ESAllPrim").isKind(UriInfoKind.entityId)
     .isKind(UriInfoKind.entityId)
@@ -311,14 +293,11 @@ public class TestUriParserImpl {
     .isKind(UriInfoKind.entityId)
     .isEntityType(EntityTypeProvider.nameETBase)
     .isIdText("ESTwoPrim")
-    .isExpandText("*")
     .goExpand().first().isSegmentStar();
-
   }
 
   @Test
   public void entitySet() throws Exception {
-
     // plain entity set
     testRes.run("ESAllPrim")
     .isEntitySet("ESAllPrim")
@@ -342,7 +321,7 @@ public class TestUriParserImpl {
     .isKeyPredicate(1, "PropertyString", "'ABC'");
 
     // with all keys
-    testRes.run("ESAllKey(" + encode(allKeys) + ")")
+    testRes.run("ESAllKey(" + allKeys + ")")
     .isEntitySet("ESAllKey")
     .isKeyPredicate(0, "PropertyString", "'ABC'")
     .isKeyPredicate(1, "PropertyInt16", "1")
@@ -360,10 +339,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet_NavigationProperty() {
-
-    // plain entity set ...
-
+  public void entitySet_NavigationProperty() {
     // with navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne")
     .at(0)
@@ -467,10 +443,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet_Property() {
-
-    // plain entity set ...
-
+  public void entitySet_Property() {
     // with property
     testRes.run("ESAllPrim(1)/PropertyString")
     .at(0)
@@ -499,8 +472,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testEntitySet_TypeFilter() {
-
+  public void entitySet_TypeFilter() {
     // filter
     testRes.run("ESTwoPrim/olingo.odata.test1.ETBase")
     .at(0)
@@ -556,57 +528,53 @@ public class TestUriParserImpl {
     .at(1)
     .isPrimitiveProperty("AdditionalPropertyString_5", PropertyProvider.nameString, false)
     .isType(PropertyProvider.nameString);
-
   }
 
   @Test
   public void unary() throws Exception {
-    testFilter.runOnETAllPrim("not PropertyBoolean").isCompr("<not <PropertyBoolean>>");
-    testFilter.runOnETAllPrim("-PropertyInt16 eq PropertyInt16").isCompr("<<- <PropertyInt16>> eq <PropertyInt16>>");
+    testFilter.runOnETAllPrim("not PropertyBoolean").is("<not <PropertyBoolean>>");
+    testFilter.runOnETAllPrim("-PropertyInt16 eq PropertyInt16").is("<<- <PropertyInt16>> eq <PropertyInt16>>");
   }
 
-  // TODO: Use correct types.
   @Test
-  @Ignore
   public void filterComplexMixedPriority() throws Exception {
-    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64")
-        .isCompr("<<PropertyInt16> or <<PropertyInt32> and <PropertyInt64>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 and PropertyInt64 eq PropertyByte")
-        .isCompr("<<PropertyInt16> or <<PropertyInt32> and <<PropertyInt64> eq <PropertyByte>>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 eq PropertyInt64 and PropertyByte")
-        .isCompr("<<PropertyInt16> or <<<PropertyInt32> eq <PropertyInt64>> and <PropertyByte>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 or PropertyInt32 eq PropertyInt64 and PropertyByte eq PropertySByte")
-        .isCompr("<<PropertyInt16> or <<<PropertyInt32> eq <PropertyInt64>> "
+    testFilter.runOnETAllPrim("PropertyBoolean or true and false")
+        .is("<<PropertyBoolean> or <<true> and <false>>>");
+    testFilter.runOnETAllPrim("PropertyBoolean or true and PropertyInt64 eq PropertyByte")
+        .is("<<PropertyBoolean> or <<true> and <<PropertyInt64> eq <PropertyByte>>>>");
+    testFilter.runOnETAllPrim("PropertyBoolean or PropertyInt32 eq PropertyInt64 and true")
+        .is("<<PropertyBoolean> or <<<PropertyInt32> eq <PropertyInt64>> and <true>>>");
+    testFilter.runOnETAllPrim("PropertyBoolean or PropertyInt32 eq PropertyInt64 and PropertyByte eq PropertySByte")
+        .is("<<PropertyBoolean> or <<<PropertyInt32> eq <PropertyInt64>> "
             + "and <<PropertyByte> eq <PropertySByte>>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 and PropertyByte")
-        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> or <<PropertyInt64> and <PropertyByte>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 and PropertyByte eq PropertySByte")
-        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> "
-            + "or <<PropertyInt64> and <<PropertyByte> eq <PropertySByte>>>>");
-    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 eq PropertyByte and PropertySByte")
-        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> "
-            + "or <<<PropertyInt64> eq <PropertyByte>> and <PropertySByte>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyBoolean and true")
+        .is("<<<PropertyInt16> eq <PropertyInt32>> or <<PropertyBoolean> and <true>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyBoolean and PropertyByte eq PropertySByte")
+        .is("<<<PropertyInt16> eq <PropertyInt32>> "
+            + "or <<PropertyBoolean> and <<PropertyByte> eq <PropertySByte>>>>");
+    testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 eq PropertyByte and PropertyBoolean")
+        .is("<<<PropertyInt16> eq <PropertyInt32>> "
+            + "or <<<PropertyInt64> eq <PropertyByte>> and <PropertyBoolean>>>");
     testFilter.runOnETAllPrim("PropertyInt16 eq PropertyInt32 or PropertyInt64 eq PropertyByte "
         + "and PropertySByte eq PropertyDecimal")
-        .isCompr("<<<PropertyInt16> eq <PropertyInt32>> or <<<PropertyInt64> eq <PropertyByte>> "
+        .is("<<<PropertyInt16> eq <PropertyInt32>> or <<<PropertyInt64> eq <PropertyByte>> "
             + "and <<PropertySByte> eq <PropertyDecimal>>>>");
   }
 
   @Test
   public void filterSimpleSameBinaryBinaryBinaryPriority() throws Exception {
-    testFilter.runOnETAllPrim("1 add 2 add 3 add 4").isCompr("<<< <1> add   <2>> add  <3>>  add <4>>");
-    testFilter.runOnETAllPrim("1 add 2 add 3 div 4").isCompr("<<  <1> add   <2>> add <<3>   div <4>>>");
-    testFilter.runOnETAllPrim("1 add 2 div 3 add 4").isCompr("<<  <1> add  <<2>  div  <3>>> add <4>>");
-    testFilter.runOnETAllPrim("1 add 2 div 3 div 4").isCompr("<   <1> add <<<2>  div  <3>>  div <4>>>");
-    testFilter.runOnETAllPrim("1 div 2 add 3 add 4").isCompr("<<< <1> div   <2>> add  <3>>  add <4>>");
-    testFilter.runOnETAllPrim("1 div 2 add 3 div 4").isCompr("<<  <1> div   <2>> add <<3>   div <4>>>");
-    testFilter.runOnETAllPrim("1 div 2 div 3 add 4").isCompr("<<< <1> div   <2>> div  <3>>  add <4>>");
-    testFilter.runOnETAllPrim("1 div 2 div 3 div 4").isCompr("<<< <1> div   <2>> div  <3>>  div <4>>");
+    testFilter.runOnETAllPrim("1 add 2 add 3 add 4 ge 0").isCompr("<<<< <1> add   <2>> add  <3>>  add <4>> ge <0>>");
+    testFilter.runOnETAllPrim("1 add 2 add 3 div 4 ge 0").isCompr("<<<  <1> add   <2>> add <<3>   div <4>>> ge <0>>");
+    testFilter.runOnETAllPrim("1 add 2 div 3 add 4 ge 0").isCompr("<<<  <1> add  <<2>  div  <3>>> add <4>> ge <0>>");
+    testFilter.runOnETAllPrim("1 add 2 div 3 div 4 ge 0").isCompr("<<   <1> add <<<2>  div  <3>>  div <4>>> ge <0>>");
+    testFilter.runOnETAllPrim("1 div 2 add 3 add 4 ge 0").isCompr("<<<< <1> div   <2>> add  <3>>  add <4>> ge <0>>");
+    testFilter.runOnETAllPrim("1 div 2 add 3 div 4 ge 0").isCompr("<<<  <1> div   <2>> add <<3>   div <4>>> ge <0>>");
+    testFilter.runOnETAllPrim("1 div 2 div 3 add 4 ge 0").isCompr("<<<< <1> div   <2>> div  <3>>  add <4>> ge <0>>");
+    testFilter.runOnETAllPrim("1 div 2 div 3 div 4 ge 0").isCompr("<<<< <1> div   <2>> div  <3>>  div <4>> ge <0>>");
   }
 
   @Test
-  public void testFunctionImport_VarParameters() {
-
+  public void functionImport_VarParameters() {
     // no input
     testRes.run("FINRTInt16()")
     .isFunctionImport("FINRTInt16")
@@ -627,7 +595,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testFunctionImport_VarReturning() {
+  public void functionImport_VarReturning() {
     // returning primitive
     testRes.run("FINRTInt16()")
     .isFunctionImport("FINRTInt16")
@@ -666,8 +634,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testFunctionImportChain() {
-
+  public void functionImportChain() {
     // test chain; returning single complex
     testRes.run("FICRTCTAllPrimTwoParam(ParameterString='ABC',ParameterInt16=1)/PropertyInt16")
     .at(0)
@@ -710,12 +677,10 @@ public class TestUriParserImpl {
     .isKeyPredicate(1, "PropertyString", "'ABC'")
     .at(1)
     .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
-
   }
 
   @Test
-  public void testMetaData() throws Exception {
-
+  public void metaData() throws Exception {
     // Parsing the fragment may be used if a uri has to be parsed on the consumer side.
     // On the producer side this feature is currently not supported, so the context fragment
     // part is only available as text.
@@ -879,12 +844,12 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testRef() throws Exception {
+  public void ref() throws Exception {
     testUri.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne/$ref");
   }
 
   @Test
-  public void testSingleton() {
+  public void singleton() {
     // plain singleton
     testRes.run("SINav")
     .isSingleton("SINav")
@@ -892,10 +857,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testNavigationProperty() {
-
-    // plain entity set ...
-
+  public void navigationProperty() {
     // with navigation property
     testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavOne")
     .at(0).isEntitySet("ESKeyNav")
@@ -969,10 +931,7 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testSingleton_Property() {
-
-    // plain singleton ...
-
+  public void singleton_Property() {
     // with property
     testRes.run("SINav/PropertyInt16")
     .at(0)
@@ -1002,72 +961,51 @@ public class TestUriParserImpl {
   }
 
   @Test
-  public void testValue() throws Exception {
+  public void value() throws Exception {
     testUri.run("ESAllPrim(1)/PropertyString/$value");
   }
 
-  @Test(expected = UriValidationException.class)
-  public void testMemberStartingWithCastFailOnValidation1() throws Exception {
+  @Test
+  public void memberStartingWithCastFailOnValidation1() throws Exception {
     // on EntityType entry
-    testUri.run("ESTwoKeyNav(ParameterInt16=1,PropertyString='ABC')",
+    testUri.runEx("ESTwoKeyNav(Property16=1,PropertyString='ABC')",
         "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
-        .goFilter().root().isMember()
-        .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
-        // .at(0)
-        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(EntityTypeProvider.nameETTwoKeyNav, false)
-        // .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        .at(0).isType(PropertyProvider.nameDate);
-  }
-
-  @Test(expected = UriValidationException.class)
-  public void testMemberStartingWithCastFailOnValidation2() throws Exception {
-    testUri.run("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')",
-        "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
-        .goFilter().root().isMember()
-        .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
-        // .at(0)
-        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(ComplexTypeProvider.nameCTTwoPrim, false)
-        // .isTypeFilterOnEntry(ComplexTypeProvider.nameCTBase)
-        .at(0).isType(PropertyProvider.nameString);
+        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
   }
 
   @Test
-  public void testMemberStartingWithCast() throws Exception {
+  public void memberStartingWithCastFailOnValidation2() throws Exception {
+    testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')",
+        "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
+        .isExSemantic(UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE);
+  }
 
+  @Test
+  public void memberStartingWithCast() throws Exception {
     // on EntityType collection
-    testUri.run("ESTwoKeyNav", "$filter=olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate")
-    .goFilter().root().isMember()
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate eq null")
+    .left()
+    .isMember()
     .isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
-    // .at(0)
-    // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-    // .isType(EntityTypeProvider.nameETTwoKeyNav, true)
-    // .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
     .at(0).isType(PropertyProvider.nameDate);
 
     // on Complex collection
     testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')",
-        "$filter=olingo.odata.test1.CTBase/AdditionalPropString")
-        .goFilter().root().isMember()
+        "$filter=olingo.odata.test1.CTBase/AdditionalPropString eq null")
+        .goFilter().left().isMember()
         .isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
-        // .at(0)
-        // .isUriPathInfoKind(UriResourceKind.startingTypeFilter)
-        // .isType(ComplexTypeProvider.nameCTTwoPrim, true)
-        // .isTypeFilterOnCollection(ComplexTypeProvider.nameCTBase)
         .at(0).isType(PropertyProvider.nameString);
-
   }
 
   @Test
-  public void testComplexTypeCastFollowingAsCollection() throws Exception {
+  public void complexTypeCastFollowingAsCollection() throws Exception {
     testUri.run("FICRTCollCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='2')/olingo.odata.test1.CTBase");
   }
 
   @Test
-  public void testAlias() throws Exception {
-    testUri.run("ESAllPrim", "$filter=PropertyInt16 eq @p1&@p1=1")
-    .goFilter().is("<<PropertyInt16> eq <@p1>>");
+  public void alias() throws Exception {
+    testFilter.runOnETAllPrim("PropertyInt16 eq @p1&@p1=1")
+        .is("<<PropertyInt16> eq <@p1>>");
   }
 
   @Test
@@ -1087,26 +1025,22 @@ public class TestUriParserImpl {
   @Test
   public void customQueryOption() throws Exception {
     testUri.run("ESTwoKeyNav", "custom")
-    .isCustomParameter(0, "custom", "");
+        .isCustomParameter(0, "custom", "");
     testUri.run("ESTwoKeyNav", "custom=ABC")
-    .isCustomParameter(0, "custom", "ABC");
+        .isCustomParameter(0, "custom", "ABC");
   }
 
   @Test
   @Ignore("Geo types are not supported yet.")
   public void geo() throws Exception {
     testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
-    .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
-    .isMethod(MethodKind.GEODISTANCE, 2);
+        .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
+        .isMethod(MethodKind.GEODISTANCE, 2);
     testFilter.runOnETAllPrim("geo.length(PropertySByte)")
-    .is("<geo.length(<PropertySByte>)>")
-    .isMethod(MethodKind.GEOLENGTH, 1);
+        .is("<geo.length(<PropertySByte>)>")
+        .isMethod(MethodKind.GEOLENGTH, 1);
     testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
-    .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
-    .isMethod(MethodKind.GEOINTERSECTS, 2);
-  }
-
-  private final String encode(final String uriPart) {
-    return uriPart.replaceAll(":", "%3A");
+        .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
+        .isMethod(MethodKind.GEOINTERSECTS, 2);
   }
 }

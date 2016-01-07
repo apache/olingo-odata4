@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.uri.parser;
 import java.util.Collection;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
@@ -43,7 +44,13 @@ public class FilterParser {
       throws UriParserException, UriValidationException {
     final Expression filterExpression = new ExpressionParser(edm, odata)
         .parse(tokenizer, referencedType, crossjoinEntitySetNames);
-    // TODO: Check that the expression is boolean.
-    return new FilterOptionImpl().setExpression(filterExpression);
+    final EdmType type = ExpressionParser.getType(filterExpression);
+    if (type == null || type.equals(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean))) {
+      return new FilterOptionImpl().setExpression(filterExpression);
+    } else {
+      throw new UriParserSemanticException("Filter expressions must be boolean.",
+          UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+          "Edm.Boolean", type.getFullQualifiedName().getFullQualifiedNameAsString());
+    }
   }
 }

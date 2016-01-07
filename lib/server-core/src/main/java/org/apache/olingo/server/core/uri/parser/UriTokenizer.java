@@ -40,6 +40,15 @@ public class UriTokenizer {
     ROOT,
     IT,
 
+    EXPAND,
+    FILTER,
+    LEVELS,
+    ORDERBY,
+    SEARCH,
+    SELECT,
+    SKIP,
+    TOP,
+
     ANY,
     ALL,
 
@@ -53,8 +62,9 @@ public class UriTokenizer {
     EQ,
     STAR,
     PLUS,
-    MINUS,
+
     NULL,
+    MAX,
 
     // variable-value tokens (convention: mixed case)
     ODataIdentifier,
@@ -76,6 +86,13 @@ public class UriTokenizer {
 
     jsonArrayOrObject,
 
+    Word,
+    Phrase,
+
+    OrOperatorSearch,
+    AndOperatorSearch,
+    NotOperatorSearch,
+
     OrOperator,
     AndOperator,
     EqualsOperator,
@@ -90,6 +107,7 @@ public class UriTokenizer {
     MulOperator,
     DivOperator,
     ModOperator,
+    MinusOperator,
     NotOperator,
 
     CastMethod,
@@ -161,6 +179,10 @@ public class UriTokenizer {
     boolean found = false;
     final int previousIndex = index;
     switch (allowedTokenKind) {
+    case EOF:
+      found = index >= parseString.length();
+      break;
+
     // Constants
     case REF:
       found = nextConstant("$ref");
@@ -179,6 +201,31 @@ public class UriTokenizer {
       break;
     case IT:
       found = nextConstant("$it");
+      break;
+
+    case EXPAND:
+      found = nextConstant("$expand");
+      break;
+    case FILTER:
+      found = nextConstant("$filter");
+      break;
+    case LEVELS:
+      found = nextConstant("$levels");
+      break;
+    case ORDERBY:
+      found = nextConstant("$orderby");
+      break;
+    case SEARCH:
+      found = nextConstant("$search");
+      break;
+    case SELECT:
+      found = nextConstant("$select");
+      break;
+    case SKIP:
+      found = nextConstant("$skip");
+      break;
+    case TOP:
+      found = nextConstant("$top");
       break;
 
     case ANY:
@@ -218,14 +265,12 @@ public class UriTokenizer {
     case PLUS:
       found = nextCharacter('+');
       break;
-    case MINUS:
-      found = nextMinus();
-      break;
+
     case NULL:
       found = nextConstant("null");
       break;
-    case EOF:
-      found = index >= parseString.length();
+    case MAX:
+      found = nextConstant("max");
       break;
 
     // Identifiers
@@ -282,6 +327,25 @@ public class UriTokenizer {
       found = nextJsonArrayOrObject();
       break;
 
+    // Search
+    case Word:
+      found = nextWord();
+      break;
+    case Phrase:
+      found = nextPhrase();
+      break;
+
+    // Operators in Search Expressions
+    case OrOperatorSearch:
+      found = nextBinaryOperator("OR");
+      break;
+    case AndOperatorSearch:
+      found = nextAndOperatorSearch();
+      break;
+    case NotOperatorSearch:
+      found = nextUnaryOperator("NOT");
+      break;
+
     // Operators
     case OrOperator:
       found = nextBinaryOperator("or");
@@ -325,8 +389,12 @@ public class UriTokenizer {
     case ModOperator:
       found = nextBinaryOperator("mod");
       break;
+    case MinusOperator:
+      // To avoid unnecessary minus operators for negative numbers, we have to check what follows the minus sign.
+      found = nextCharacter('-') && !nextDigit() && !nextConstant("INF");
+      break;
     case NotOperator:
-      found = nextConstant("not") && nextWhitespace();
+      found = nextUnaryOperator("not");
       break;
 
     // Methods
@@ -444,27 +512,6 @@ public class UriTokenizer {
     return found;
   }
 
-  private boolean nextMinus() {
-    if(parseString.startsWith("-", index)) {
-      final int lastGoodIndex = index;
-      
-      if(nextDoubleValue()) {
-        index = lastGoodIndex;
-        return false;
-      } else if(nextDecimalValue()) {
-        index = lastGoodIndex;
-        return false;
-      } else if(nextIntegerValue(true)) {
-        index = lastGoodIndex;
-        return false;
-      } else {
-        index++;
-        return true;
-      }
-    }
-    return false;
-  }
-
   /**
    * Moves past the given string constant if found; otherwise leaves the index unchanged.
    * @return whether the constant has been found at the current index
@@ -569,34 +616,6 @@ public class UriTokenizer {
     }
     return count > 0;
   }
-
-  /**
-   * Moves past the given whitespace-surrounded operator constant if found;
-   * otherwise leaves the index unchanged.
-   * @return whether the operator has been found at the current index
-   */
-  private boolean nextBinaryOperator(final String operator) {
-    return nextWhitespace() && nextConstant(operator) && nextWhitespace();
-  }
-
-  /**
-   * Moves past the given method name and its immediately following opening parenthesis if found;
-   * otherwise leaves the index unchanged.
-   * @return whether the method has been found at the current index
-   */
-  private boolean nextMethod(final String methodName) {
-    return nextConstant(methodName) && nextCharacter('(');
-  }
-
-  /**
-   * Moves past (required) whitespace and the given suffix name if found;
-   * otherwise leaves the index unchanged.
-   * @return whether the suffix has been found at the current index
-   */
-  private boolean nextSuffix(final String suffixName) {
-    return nextWhitespace() && nextConstant(suffixName);
-  }
-
   /**
    * Moves past an OData identifier if found; otherwise leaves the index unchanged.
    * @return whether an OData identifier has been found at the current index
@@ -648,6 +667,38 @@ public class UriTokenizer {
       index = lastGoodIndex;
       return false;
     }
+  }
+
+  /**
+   * Moves past the given whitespace-surrounded operator constant if found.
+   * @return whether the operator has been found at the current index
+   */
+  private boolean nextBinaryOperator(final String operator) {
+    return nextWhitespace() && nextConstant(operator) && nextWhitespace();
+  }
+
+  /**
+   * Moves past the given whitespace-suffixed operator constant if found.
+   * @return whether the operator has been found at the current index
+   */
+  private boolean nextUnaryOperator(final String operator) {
+    return nextConstant(operator) && nextWhitespace();
+  }
+
+  /**
+   * Moves past the given method name and its immediately following opening parenthesis if found.
+   * @return whether the method has been found at the current index
+   */
+  private boolean nextMethod(final String methodName) {
+    return nextConstant(methodName) && nextCharacter('(');
+  }
+
+  /**
+   * Moves past (required) whitespace and the given suffix name if found.
+   * @return whether the suffix has been found at the current index
+   */
+  private boolean nextSuffix(final String suffixName) {
+    return nextWhitespace() && nextConstant(suffixName);
   }
 
   private boolean nextParameterAliasName() {
@@ -977,5 +1028,53 @@ public class UriTokenizer {
     } else {
       return false;
     }
+  }
+
+  private boolean nextAndOperatorSearch() {
+    if (nextWhitespace()) {
+      final int lastGoodIndex = index;
+      if (nextUnaryOperator("OR")) {
+        return false;
+      } else if (!(nextUnaryOperator("AND"))) {
+        index = lastGoodIndex;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean nextWord() {
+    int count = 0;
+    while (index < parseString.length()) {
+      final int code = parseString.codePointAt(index);
+      if (Character.isUnicodeIdentifierStart(code)) {
+        count++;
+        // Unicode characters outside of the Basic Multilingual Plane are represented as two Java characters.
+        index += Character.isSupplementaryCodePoint(code) ? 2 : 1;
+      } else {
+        break;
+      }
+    }
+    final String word = parseString.substring(index - count, index);
+    return count > 0 && !("OR".equals(word) || "AND".equals(word) || "NOT".equals(word));
+  }
+
+  private boolean nextPhrase() {
+    if (nextCharacter('"')) {
+      do {
+        if (nextCharacter('\\')) {
+          if (!(nextCharacter('\\') || nextCharacter('"'))) {
+            return false;
+          }
+        } else if (nextCharacter('"')) {
+          return true;
+        } else {
+          index++;
+        }
+      } while (index < parseString.length());
+      return false;
+    }
+    return false;
   }
 }

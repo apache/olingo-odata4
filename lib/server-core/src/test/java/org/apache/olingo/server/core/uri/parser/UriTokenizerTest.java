@@ -76,7 +76,7 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.STAR));
     assertTrue(tokenizer.next(TokenKind.SLASH));
     assertTrue(tokenizer.next(TokenKind.PLUS));
-    assertTrue(tokenizer.next(TokenKind.MINUS));
+    assertTrue(tokenizer.next(TokenKind.MinusOperator));
     assertTrue(tokenizer.next(TokenKind.EOF));
 
     tokenizer = new UriTokenizer("any(a:true) or all(b:false)");
@@ -93,6 +93,45 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.COLON));
     assertTrue(tokenizer.next(TokenKind.BooleanValue));
     assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+  }
+
+  @Test
+  public void systemQueryOptions() {
+    UriTokenizer tokenizer = new UriTokenizer("$expand=*;$filter=true;$levels=max;$orderby=false");
+    assertTrue(tokenizer.next(TokenKind.EXPAND));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.STAR));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.FILTER));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.LEVELS));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.MAX));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.ORDERBY));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.BooleanValue));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    tokenizer = new UriTokenizer("$search=A;$select=*;$skip=1;$top=2");
+    assertTrue(tokenizer.next(TokenKind.SEARCH));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.SELECT));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.STAR));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.SKIP));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
+    assertTrue(tokenizer.next(TokenKind.SEMI));
+    assertTrue(tokenizer.next(TokenKind.TOP));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
   }
 
@@ -390,11 +429,11 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
 
-    tokenizer = new UriTokenizer("1ne 2");
+    tokenizer = new UriTokenizer("-1ne 2");
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertFalse(tokenizer.next(TokenKind.NotEqualsOperator));
 
-    tokenizer = new UriTokenizer("1 ne2");
+    tokenizer = new UriTokenizer("1 ne-2");
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertFalse(tokenizer.next(TokenKind.NotEqualsOperator));
 
@@ -403,6 +442,11 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.LessThanOrEqualsOperator));
     assertTrue(tokenizer.next(TokenKind.IntegerValue));
     assertTrue(tokenizer.next(TokenKind.EOF));
+
+    assertTrue(new UriTokenizer("-x").next(TokenKind.MinusOperator));
+    assertFalse(new UriTokenizer("-1").next(TokenKind.MinusOperator));
+    assertFalse(new UriTokenizer("-INF").next(TokenKind.MinusOperator));
+    assertFalse(new UriTokenizer("+").next(TokenKind.MinusOperator));
 
     assertFalse(new UriTokenizer("nottrue").next(TokenKind.NotOperator));
     assertFalse(new UriTokenizer("no true").next(TokenKind.NotOperator));
@@ -482,6 +526,38 @@ public class UriTokenizerTest {
     assertTrue(tokenizer.next(TokenKind.EOF));
 
     wrongToken(TokenKind.DescSuffix, " desc", 'D');
+  }
+
+  @Test
+  public void search() {
+    UriTokenizer tokenizer = new UriTokenizer("a AND b OR NOT \"c\" d");
+    assertTrue(tokenizer.next(TokenKind.Word));
+    assertTrue(tokenizer.next(TokenKind.AndOperatorSearch));
+    assertTrue(tokenizer.next(TokenKind.Word));
+    assertFalse(tokenizer.next(TokenKind.AndOperatorSearch));
+    assertTrue(tokenizer.next(TokenKind.OrOperatorSearch));
+    assertTrue(tokenizer.next(TokenKind.NotOperatorSearch));
+    assertTrue(tokenizer.next(TokenKind.Phrase));
+    assertTrue(tokenizer.next(TokenKind.AndOperatorSearch));
+    assertTrue(tokenizer.next(TokenKind.Word));
+    assertFalse(tokenizer.next(TokenKind.AndOperatorSearch));
+    assertFalse(tokenizer.next(TokenKind.Word));
+    assertFalse(tokenizer.next(TokenKind.Phrase));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    assertTrue(new UriTokenizer("\"a\\\\x\\\"\"").next(TokenKind.Phrase));
+    assertFalse(new UriTokenizer("\"a\\\"").next(TokenKind.Phrase));
+    assertFalse(new UriTokenizer("\"a\\x\"").next(TokenKind.Phrase));
+    wrongToken(TokenKind.Phrase, "\"a\"", '\\');
+
+    final String outsideBmpLetter = String.valueOf(Character.toChars(0x10330));
+    assertTrue(new UriTokenizer("\"" + outsideBmpLetter + "\"").next(TokenKind.Phrase));
+
+    assertTrue(new UriTokenizer(outsideBmpLetter).next(TokenKind.Word));
+    assertFalse(new UriTokenizer("1").next(TokenKind.Word));
+    assertFalse(new UriTokenizer("AND").next(TokenKind.Word));
+    assertFalse(new UriTokenizer("OR").next(TokenKind.Word));
+    assertFalse(new UriTokenizer("NOT").next(TokenKind.Word));
   }
 
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {

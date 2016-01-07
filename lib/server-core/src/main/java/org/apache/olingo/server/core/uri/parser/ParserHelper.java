@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -36,6 +37,8 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.core.ODataImpl;
 import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
@@ -88,8 +91,9 @@ public class ParserHelper {
         TokenKind.EnumValue);
   }
 
-  protected static List<UriParameter> parseFunctionParameters(UriTokenizer tokenizer, final boolean withComplex)
-      throws UriParserException {
+  protected static List<UriParameter> parseFunctionParameters(UriTokenizer tokenizer,
+      final Edm edm, final EdmType referringType, final boolean withComplex)
+      throws UriParserException, UriValidationException {
     List<UriParameter> parameters = new ArrayList<UriParameter>();
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     if (tokenizer.next(TokenKind.CLOSE)) {
@@ -115,6 +119,13 @@ public class ParserHelper {
           throw new UriParserSemanticException("A JSON array or object is not allowed as parameter value.",
               UriParserSemanticException.MessageKeys.COMPLEX_PARAMETER_IN_RESOURCE_PATH, tokenizer.getText());
         }
+      } else if (withComplex) {
+        final Expression expression = new ExpressionParser(edm, odata).parse(tokenizer, referringType, null);
+        parameters.add(new UriParameterImpl().setName(name)
+            .setText(expression instanceof Literal ?
+                "null".equals(((Literal) expression).getText()) ? null : ((Literal) expression).getText() :
+                null)
+            .setExpression(expression instanceof Literal ? null : expression));
       } else if (nextPrimitiveValue(tokenizer) == null) {
         throw new UriParserSemanticException("Wrong parameter value.",
             UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, "");
@@ -386,5 +397,24 @@ public class ParserHelper {
     }
 
     return type;
+  }
+
+  protected static int parseNonNegativeInteger(final String optionName, final String optionValue,
+      final boolean zeroAllowed) throws UriParserException {
+    int value;
+    try {
+      value = Integer.parseInt(optionValue);
+    } catch (final NumberFormatException e) {
+      throw new UriParserSyntaxException("Illegal value of '" + optionName + "' option!", e,
+          UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+          optionName, optionValue);
+    }
+    if (value > 0 || value == 0 && zeroAllowed) {
+      return value;
+    } else {
+      throw new UriParserSyntaxException("Illegal value of '" + optionName + "' option!",
+          UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+          optionName, optionValue);
+    }
   }
 }

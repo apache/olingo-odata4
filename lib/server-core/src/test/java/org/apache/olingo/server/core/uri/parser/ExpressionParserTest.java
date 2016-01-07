@@ -22,9 +22,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
@@ -260,9 +262,17 @@ public class ExpressionParserTest {
     expression = parseMethod(TokenKind.SubstringMethod, "'abc'", "1");
     assertEquals("{substring ['abc', 1]}", expression.toString());
 
+    assertEquals("{cast [Edm.SByte]}", parseMethod(TokenKind.CastMethod, "Edm.SByte").toString());
+    assertEquals("{cast [42, Edm.SByte]}", parseMethod(TokenKind.CastMethod, "42", "Edm.SByte").toString());
+
+    assertEquals("{isof [Edm.SByte]}", parseMethod(TokenKind.IsofMethod, "Edm.SByte").toString());
+    assertEquals("{isof [42, Edm.SByte]}", parseMethod(TokenKind.IsofMethod, "42", "Edm.SByte").toString());
+
     wrongExpression("substring('abc')");
     wrongExpression("substring('abc',1,2,3)");
     wrongExpression("substring(1,2)");
+    wrongExpression("cast(1,2)");
+    wrongExpression("isof(Edm.Int16,2)");
   }
 
   private Expression parseMethod(TokenKind kind, String... parameters)
@@ -288,7 +298,7 @@ public class ExpressionParserTest {
   private Expression parseExpression(final String expressionString)
       throws UriParserException, UriValidationException {
     UriTokenizer tokenizer = new UriTokenizer(expressionString);
-    Expression expression = new ExpressionParser(null, odata).parse(tokenizer, null, null);
+    Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null);
     assertNotNull(expression);
     assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;
@@ -296,7 +306,7 @@ public class ExpressionParserTest {
 
   private void wrongExpression(final String expressionString) {
     try {
-      new ExpressionParser(null, odata).parse(new UriTokenizer(expressionString), null, null);
+      new ExpressionParser(mock(Edm.class), odata).parse(new UriTokenizer(expressionString), null, null);
       fail("Expected exception not thrown.");
     } catch (final UriParserException e) {
       assertNotNull(e);

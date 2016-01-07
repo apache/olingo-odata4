@@ -53,4 +53,10 @@ public class EnumerationImpl implements Enumeration {
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitEnum(type, values);
   }
+
+  @Override
+  public String toString() {
+    return type == null ? null :
+      type.getFullQualifiedName().getFullQualifiedNameAsString() + getValues();
+  }
 }

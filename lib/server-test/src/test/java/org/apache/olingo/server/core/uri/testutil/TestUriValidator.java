@@ -140,6 +140,20 @@ public class TestUriValidator implements TestValidator {
     return this;
   }
 
+  public TestUriValidator isSelectItemStar(final int index) {
+    final SelectOption select = uriInfo.getSelectOption();
+    SelectItem item = select.getSelectItems().get(index);
+    assertTrue(item.isStar());
+    return this;
+  }
+
+  public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
+    final SelectOption select = uriInfo.getSelectOption();
+    SelectItem item = select.getSelectItems().get(index);
+    assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
+    return this;
+  }
+
   // Validation
   public TestUriValidator isKind(final UriInfoKind kind) {
     assertEquals(kind, uriInfo.getKind());
@@ -202,16 +216,6 @@ public class TestUriValidator implements TestValidator {
     return this;
   }
 
-  public TestUriValidator isExpandText(final String text) {
-    assertEquals(text, uriInfo.getExpandOption().getText());
-    return this;
-  }
-
-  public TestUriValidator isSelectText(final String text) {
-    assertEquals(text, uriInfo.getSelectOption().getText());
-    return this;
-  }
-
   public TestUriValidator isFormatText(final String text) {
     assertEquals(text, uriInfo.getFormatOption().getText());
     return this;
@@ -232,20 +236,6 @@ public class TestUriValidator implements TestValidator {
     }
 
     assertEquals(fullName, uriInfo.getEntityTypeCast().getFullQualifiedName());
-    return this;
-  }
-
-  public TestUriValidator isSelectItemStar(final int index) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertTrue(item.isStar());
-    return this;
-  }
-
-  public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
     return this;
   }
 }

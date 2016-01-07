@@ -35,11 +35,8 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-// TODO
-@Ignore
 public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_COMP_ALL_PRIM = "ESCompAllPrim";
@@ -212,7 +209,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
         sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyBoolean eq not null");
     assertEquals(0, result.getBody().getEntities().size());
 
-    result = sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyBoolean eq 0 add -(5 add null)");
+    result = sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyInt16 eq 0 add -(5 add null)");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
@@ -357,7 +354,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void notOperator() {
-    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not(PropertyInt16 eq 1)");
+    ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not (PropertyInt16 eq 1)");
     assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);

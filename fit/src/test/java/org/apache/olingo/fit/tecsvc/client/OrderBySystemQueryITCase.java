@@ -30,11 +30,8 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-// TODO
-@Ignore
 public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
   private static final String ES_TWO_PRIM = "ESTwoPrim";
@@ -74,7 +71,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void multipleOrderBy() {
-    final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16");
+    final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16");
     assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
@@ -90,7 +87,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void multipleOrderByDescending() {
     final ODataRetrieveResponse<ClientEntitySet> response =
-        sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16 desc");
+        sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16 desc");
     assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);

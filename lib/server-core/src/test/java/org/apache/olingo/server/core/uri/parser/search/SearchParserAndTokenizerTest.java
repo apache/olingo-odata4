@@ -35,7 +35,7 @@ public class SearchParserAndTokenizerTest {
     assertQuery("a AND b AND c").resultsIn("{{'a' AND 'b'} AND 'c'}");
     assertQuery("a OR b").resultsIn("{'a' OR 'b'}");
     assertQuery("a OR b OR c").resultsIn("{{'a' OR 'b'} OR 'c'}");
-    
+
     assertQuery("NOT a NOT b").resultsIn("{{NOT 'a'} AND {NOT 'b'}}");
     assertQuery("NOT a AND NOT b").resultsIn("{{NOT 'a'} AND {NOT 'b'}}");
     assertQuery("NOT a OR NOT b").resultsIn("{{NOT 'a'} OR {NOT 'b'}}");
@@ -59,16 +59,16 @@ public class SearchParserAndTokenizerTest {
     assertQuery("a AND (b OR c)").resultsIn("{'a' AND {'b' OR 'c'}}");
     assertQuery("(a OR b) AND NOT c").resultsIn("{{'a' OR 'b'} AND {NOT 'c'}}");
     assertQuery("(a OR B) AND (c OR d AND NOT e OR (f))")
-            .resultsIn("{{'a' OR 'B'} AND {{'c' OR {'d' AND {NOT 'e'}}} OR 'f'}}");
+        .resultsIn("{{'a' OR 'B'} AND {{'c' OR {'d' AND {NOT 'e'}}} OR 'f'}}");
     assertQuery("(a OR B) (c OR d NOT e OR (f))")
-      .resultsIn("{{'a' OR 'B'} AND {{'c' OR {'d' AND {NOT 'e'}}} OR 'f'}}");
+        .resultsIn("{{'a' OR 'B'} AND {{'c' OR {'d' AND {NOT 'e'}}} OR 'f'}}");
     assertQuery("((((a))))").resultsIn("'a'");
     assertQuery("((((a)))) ((((a))))").resultsIn("{'a' AND 'a'}");
     assertQuery("((((a)))) OR ((((a))))").resultsIn("{'a' OR 'a'}");
     assertQuery("((((((a)))) ((((c))) OR (((C)))) ((((a))))))").resultsIn("{{'a' AND {'c' OR 'C'}} AND 'a'}");
     assertQuery("((((\"a\")))) OR ((((\"a\"))))").resultsIn("{'a' OR 'a'}");
   }
-  
+
   @Test
   public void parseImplicitAnd() throws Exception {
     assertQuery("a b").resultsIn("{'a' AND 'b'}");
@@ -103,7 +103,7 @@ public class SearchParserAndTokenizerTest {
     assertQuery("((a AND b OR c)").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
     assertQuery("a AND (b OR c").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
     assertQuery("(a AND ((b OR c)").resultsIn(SearchParserException.MessageKeys.MISSING_CLOSE);
-    
+
     assertQuery("NOT NOT a").resultsIn(SearchParserException.MessageKeys.INVALID_NOT_OPERAND);
     assertQuery("NOT (a)").resultsIn(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
@@ -186,7 +186,6 @@ public class SearchParserAndTokenizerTest {
     //    <Input>http://serviceRoot/Products?$search=blue</Input>
     assertQuery("blue").resultsIn("'blue'");
 
-
     // below cases can not be tested here
     //    <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
     //    <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
@@ -194,68 +193,47 @@ public class SearchParserAndTokenizerTest {
     //    <Input>http://serviceRoot/$all?$search=blue</Input>
   }
 
-
   private static Validator assertQuery(String searchQuery) {
-    return Validator.init(searchQuery);
+    return new Validator(searchQuery);
   }
 
   private static class Validator {
-    private boolean log;
     private final String searchQuery;
 
     private Validator(String searchQuery) {
       this.searchQuery = searchQuery;
     }
 
-    private static Validator init(String searchQuery) {
-      return new Validator(searchQuery);
-    }
-
-    @SuppressWarnings("unused")
-    private Validator withLogging() {
-      log = true;
-      return this;
-    }
-
-    private void resultsIn(SearchParserException.MessageKey key)
-            throws SearchTokenizerException {
+    private void resultsIn(SearchParserException.MessageKey key) throws SearchTokenizerException {
       try {
         resultsIn(searchQuery);
       } catch (SearchParserException e) {
         Assert.assertEquals("SearchParserException with unexpected message '" + e.getMessage() +
             "' was thrown.", key, e.getMessageKey());
-        if(log) {
-          System.out.println("Caught SearchParserException with message key " +
-              e.getMessageKey() + " and message " + e.getMessage());
-        }
         return;
       }
       Assert.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");
     }
-    
+
     public void resultsInExpectedTerm(final String actualToken) throws SearchTokenizerException {
       try {
         resultsIn(searchQuery);
-      } catch(SearchParserException e) {
+      } catch (SearchParserException e) {
         Assert.assertEquals(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, e.getMessageKey());
         Assert.assertEquals("Expected PHRASE||WORD found: " + actualToken, e.getMessage());
       }
     }
-    
+
     private void resultsIn(String expectedSearchExpression) throws SearchTokenizerException, SearchParserException {
       final SearchExpression searchExpression = getSearchExpression();
       Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
     }
 
     private SearchExpression getSearchExpression() throws SearchParserException, SearchTokenizerException {
-      SearchParser tokenizer = new SearchParser();
-      SearchOption result = tokenizer.parse(searchQuery);
+      SearchOption result = new SearchParser().parse(searchQuery);
       Assert.assertNotNull(result);
       final SearchExpression searchExpression = result.getSearchExpression();
       Assert.assertNotNull(searchExpression);
-      if (log) {
-        System.out.println(searchExpression);
-      }
       return searchExpression;
     }
   }

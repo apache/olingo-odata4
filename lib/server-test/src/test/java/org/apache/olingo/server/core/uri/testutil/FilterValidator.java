@@ -46,13 +46,16 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
+import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class FilterValidator implements TestValidator {
@@ -127,7 +130,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
-    return runUriOrderByEx("ESTwoKeyNav", "$orderby=" + orderBy.trim());
+    return runUriEx("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException, UriValidationException {
@@ -225,19 +228,6 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator runUriOrderByEx(final String path, final String query) {
-    exception = null;
-    try {
-      new Parser(edm, odata).parseUri(path, query, null);
-      fail("Expected exception not thrown.");
-    } catch (final UriParserException e) {
-      exception = e;
-    } catch (final UriValidationException e) {
-      exception = e;
-    }
-    return this;
-  }
-
   // --- Navigation ---
 
   public ExpandValidator goUpToExpandValidator() {
@@ -274,8 +264,8 @@ public class FilterValidator implements TestValidator {
   // --- Validation ---
 
   /**
-   * Validates the serialized filterTree against a given filterString
-   * The given expected filterString is compressed before to allow better readable code in the unit tests
+   * Validates the serialized filterTree against a given filterString.
+   * The given expected filterString is compressed before to allow better readable code in the unit tests.
    * @param toBeCompr
    * @return {@link FilterValidator}
    */
@@ -310,14 +300,19 @@ public class FilterValidator implements TestValidator {
     EdmType actualType = null;
 
     if (curExpression instanceof Member) {
-      Member member = (Member) curExpression;
-      actualType = member.getType();
+      actualType = ((Member) curExpression).getType();
     } else if (curExpression instanceof TypeLiteral) {
-      TypeLiteral typeLiteral = (TypeLiteral) curExpression;
-      actualType = typeLiteral.getType();
+      actualType = ((TypeLiteral) curExpression).getType();
     } else if (curExpression instanceof Literal) {
-      Literal typeLiteral = (Literal) curExpression;
-      actualType = typeLiteral.getType();
+      actualType = ((Literal) curExpression).getType();
+    } else if (curExpression instanceof Enumeration) {
+      actualType = ((Enumeration) curExpression).getType();
+    } else if (curExpression instanceof Unary) {
+      actualType = ((UnaryImpl) curExpression).getType();
+    } else if (curExpression instanceof Binary) {
+      actualType = ((BinaryImpl) curExpression).getType();
+    } else if (curExpression instanceof Method) {
+      actualType = ((MethodImpl) curExpression).getType();
     }
 
     if (actualType == null) {
@@ -349,7 +344,6 @@ public class FilterValidator implements TestValidator {
 
     curExpression = ((Binary) curExpression).getRightOperand();
     return this;
-
   }
 
   public FilterValidator isLiteral(final String literalText) {
@@ -361,9 +355,9 @@ public class FilterValidator implements TestValidator {
     assertEquals(literalText, actualLiteralText);
     return this;
   }
-  
-  public FilterValidator isLiteralType(EdmType edmType) {
-    if(!(curExpression instanceof Literal)) {
+
+  public FilterValidator isLiteralType(final EdmType edmType) {
+    if (!(curExpression instanceof Literal)) {
       fail("Current expression is not a literal");
     }
     
@@ -374,7 +368,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator isNullLiteralType() {
-    if(!(curExpression instanceof Literal)) {
+    if (!(curExpression instanceof Literal)) {
       fail("Current expression is not a literal");
     }
 
@@ -494,13 +488,5 @@ public class FilterValidator implements TestValidator {
     assertEquals(UriParserSemanticException.class, exception.getClass());
     assertEquals(messageKey, exception.getMessageKey());
     return this;
-  }
-
-  public FilterValidator isNull() {
-    return isLiteral("null");
-  }
-
-  public FilterValidator isTrue() {
-    return isLiteral("true");
   }
 }

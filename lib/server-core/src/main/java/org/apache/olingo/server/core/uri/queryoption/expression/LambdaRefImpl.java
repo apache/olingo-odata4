@@ -40,4 +40,9 @@ public class LambdaRefImpl implements LambdaRef {
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLambdaReference(variableText);
   }
+
+  @Override
+  public String toString() {
+    return variableText;
+  }
 }

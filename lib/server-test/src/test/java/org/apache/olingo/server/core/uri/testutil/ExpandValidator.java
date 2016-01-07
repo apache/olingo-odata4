@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.testutil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -151,12 +152,6 @@ public class ExpandValidator implements TestValidator {
     return this;
   }
 
-  public ExpandValidator isSelectText(final String text) {
-    final QueryOption option = expandItem.getSelectOption();
-    assertEquals(text, option.getText());
-    return this;
-  }
-
   public ExpandValidator isSelectItemStar(final int index) {
     SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
@@ -168,12 +163,6 @@ public class ExpandValidator implements TestValidator {
     SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
-    return this;
-  }
-
-  public ExpandValidator isFilterOptionText(final String text) {
-    QueryOption option = expandItem.getFilterOption();
-    assertEquals(text, option.getText());
     return this;
   }
 
@@ -201,7 +190,13 @@ public class ExpandValidator implements TestValidator {
   }
 
   public ExpandValidator isExpandStartType(final FullQualifiedName fullName) {
+    assertNotNull(expandItem.getStartTypeFilter());
     assertEquals(fullName, expandItem.getStartTypeFilter().getFullQualifiedName());
+    return this;
+  }
+
+  public ExpandValidator isSearchSerialized(final String serialized) {
+    assertEquals(serialized, expandItem.getSearchOption().getSearchExpression().toString());
     return this;
   }
 }

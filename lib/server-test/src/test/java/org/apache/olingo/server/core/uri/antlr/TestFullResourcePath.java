@@ -18,29 +18,19 @@
  */
 package org.apache.olingo.server.core.uri.antlr;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.Encoder;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
@@ -56,19 +46,17 @@ import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.apache.olingo.server.tecsvc.provider.TypeDefinitionProvider;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class TestFullResourcePath {
 
   private static final OData oData = OData.newInstance();
+  private static final Edm edm = oData.createServiceMetadata(
+      new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
   private final TestUriValidator testUri;
   private final FilterValidator testFilter;
 
   public TestFullResourcePath() {
-    final Edm edm = oData.createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
-        .getEdm();
     testUri = new TestUriValidator().setEdm(edm);
     testFilter = new FilterValidator().setEdm(edm);
   }
@@ -1033,16 +1021,10 @@ public class TestFullResourcePath {
   public void resourcePathWithApostrophe() throws Exception {
     testUri.runEx("ESAllPrim'").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("ESAllPrim'InvalidStuff").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
-
-    testFilter.runOnETKeyNavEx("PropertyInt16' eq 0")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-
-    testFilter.runOnETKeyNavEx("PropertyInt16 eq' 0")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-
+    testFilter.runOnETKeyNavEx("PropertyInt16' eq 0").isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
+    testFilter.runOnETKeyNavEx("PropertyInt16 eq' 0").isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETKeyNavEx("PropertyInt16 eq 0'")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-
     testFilter.runOnETKeyNavEx("PropertyInt16 eq 'dsd''")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
@@ -1306,13 +1288,13 @@ public class TestFullResourcePath {
 
   @Test
   public void runEsNameParaKeys() throws Exception {
-    testUri.run(encode("ESAllKey(PropertyString='O''Neil',PropertyBoolean=true,PropertyByte=255,"
+    testUri.run("ESAllKey(PropertyString='O''Neil',PropertyBoolean=true,PropertyByte=255,"
         + "PropertySByte=-128,PropertyInt16=-32768,PropertyInt32=-2147483648,"
         + "PropertyInt64=-9223372036854775808,PropertyDecimal=1,PropertyDate=2013-09-25,"
         + "PropertyDateTimeOffset=2002-10-10T12:00:00-05:00,"
         + "PropertyDuration=duration'P50903316DT2H25M4S',"
         + "PropertyGuid=12345678-1234-1234-1234-123456789012,"
-        + "PropertyTimeOfDay=12:34:55)"))
+        + "PropertyTimeOfDay=12:34:55)")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESAllKey")
@@ -1380,12 +1362,11 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoPrim)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase);
 
-    // TODO: Keys cannot be specified twice.
-    //testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
-    //    .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
-
-    //testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
-    //    .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
+    // Keys cannot be specified twice.
+    testUri.runEx("ESTwoPrim(1)/olingo.odata.test1.ETBase(1)")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+    testUri.runEx("ESTwoPrim/olingo.odata.test1.ETBase(1)/olingo.odata.test1.ETTwoBase(1)")
+        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
 
     testUri.runEx("ESBase/olingo.odata.test1.ETTwoPrim(1)").isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
   }
@@ -2321,8 +2302,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runExpand() throws Exception {
-
+  public void expandStar() throws Exception {
     testUri.run("ESKeyNav(1)", "$expand=*")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
@@ -2353,7 +2333,10 @@ public class TestFullResourcePath {
         .first()
         .isSegmentStar()
         .isLevelText("max");
+  }
 
+  @Test
+  public void expandNavigationRef() throws Exception {
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
@@ -2441,7 +2424,10 @@ public class TestFullResourcePath {
         .goUpExpandValidator()
         .isSkipText("1")
         .isTopText("3");
+  }
 
+  @Test
+  public void expandNavigationCount() throws Exception {
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$count")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
@@ -2467,7 +2453,10 @@ public class TestFullResourcePath {
         .n().isCount()
         .goUpExpandValidator()
         .isFilterSerialized("<<PropertyInt16> gt <1>>");
+  }
 
+  @Test
+  public void expandNavigationOptions() throws Exception {
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($filter=PropertyInt16 eq 1)")
         .isKind(UriInfoKind.resource).goPath().goExpand()
         .first()
@@ -2521,7 +2510,6 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
         .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
-        .isSelectText("PropertyString")
         .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($expand=NavPropertyETTwoKeyNavOne)")
@@ -2562,7 +2550,6 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
         .isType(EntityTypeProvider.nameETKeyNav, true)
         .goUpExpandValidator()
-        .isSelectText("PropertyString")
         .goSelectItem(0).isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavOne($levels=max)")
@@ -2594,6 +2581,12 @@ public class TestFullResourcePath {
         .isSkipText("1")
         .isTopText("2");
 
+    testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany($search=Country AND Western)")
+        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .first().goPath().first().isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
+        .goUpExpandValidator()
+        .isSearchSerialized("{'Country' AND 'Western'}");
+
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='Hugo')", "$expand=NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath()
         .first()
@@ -2604,7 +2597,10 @@ public class TestFullResourcePath {
         .goPath().first()
         .isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
         .isType(EntityTypeProvider.nameETKeyNav, true);
+  }
 
+  @Test
+  public void expandTypeCasts() throws Exception {
     testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETKeyNavMany")
         .isKind(UriInfoKind.resource).goPath().first()
         .goExpand().first()
@@ -2635,15 +2631,13 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true);
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')",
-        "$expand=olingo.odata.test1.ETBaseTwoKeyNav"
-            + "/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav")
+        "$expand=olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETTwoKeyNavMany/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath().first()
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .goExpand().first()
         .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
         .goPath().first()
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
@@ -2724,7 +2718,6 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
-        .isSelectText("PropertyInt16")
         .goSelectItem(0).isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.run("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyCompNav/PropertyInt16)")
@@ -2735,7 +2728,9 @@ public class TestFullResourcePath {
         .isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
         .isType(EntityTypeProvider.nameETKeyNav)
         .goUpExpandValidator()
-        .isSelectText("PropertyCompNav/PropertyInt16");
+        .goSelectItem(0)
+        .first().isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTNavFiveProp, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testUri.runEx("ESKeyNav", "$expand=undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
@@ -2744,7 +2739,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runDuplicatedSystemQueryOptionsInExpand() throws UriParserException, UriValidationException {
+  public void duplicatedSystemQueryOptionsInExpand() throws Exception {
     testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($select=PropertyInt16;$select=PropertyInt16)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
 
@@ -2768,11 +2763,7 @@ public class TestFullResourcePath {
 
     testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($skip=2;$skip=2)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
-  }
 
-  @Test
-  @Ignore("$search in expand currently not implemented")
-  public void duplicatedSearchExpand() throws Exception {
     testUri.runEx("ESKeyNav", "$expand=NavPropertyETKeyNavOne($search=Test;$search=Test)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
@@ -2906,8 +2897,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runTop() throws Exception {
-    // top
+  public void top() throws Exception {
     testUri.run("ESKeyNav", "$top=1")
         .isKind(UriInfoKind.resource).goPath()
         .isEntitySet("ESKeyNav")
@@ -2918,20 +2908,16 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .isTopText("0");
 
-    testUri.run("ESKeyNav", "$top=-3")
-        .isKind(UriInfoKind.resource).goPath()
-        .isEntitySet("ESKeyNav")
-        .isTopText("-3");
-
     testUri.runEx("ESKeyNav", "$top=undefined")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testUri.runEx("ESKeyNav", "$top=")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    testUri.runEx("ESKeyNav", "$top=-3")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
-  public void runFormat() throws Exception {
-    // format
+  public void format() throws Exception {
     testUri.run("ESKeyNav(1)", "$format=atom")
         .isKind(UriInfoKind.resource).goPath()
         .isFormatText("atom");
@@ -2963,8 +2949,7 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runCount() throws Exception {
-    // count
+  public void count() throws Exception {
     testUri.run("ESAllPrim", "$count=true")
         .isKind(UriInfoKind.resource).goPath()
         .isInlineCountText("true");
@@ -2979,19 +2964,18 @@ public class TestFullResourcePath {
 
   @Test
   public void skip() throws Exception {
-    // skip
     testUri.run("ESAllPrim", "$skip=3")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("3");
     testUri.run("ESAllPrim", "$skip=0")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipText("0");
-    testUri.run("ESAllPrim", "$skip=-3")
-        .isKind(UriInfoKind.resource).goPath()
-        .isSkipText("-3");
+
     testUri.runEx("ESAllPrim", "$skip=F")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testUri.runEx("ESAllPrim", "$skip=")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    testUri.runEx("ESAllPrim", "$skip=-3")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
@@ -3000,6 +2984,9 @@ public class TestFullResourcePath {
     testUri.run("ESAllPrim", "$skiptoken=foo")
         .isKind(UriInfoKind.resource).goPath()
         .isSkipTokenText("foo");
+
+    testUri.runEx("ESAllPrim", "$skiptoken=")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -3010,7 +2997,6 @@ public class TestFullResourcePath {
 
   @Test
   public void misc() throws Exception {
-
     testUri.run("")
         .isKind(UriInfoKind.service);
     testUri.run("/")
@@ -3227,56 +3213,47 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isValue();
-
   }
 
-  // TODO
   @Test
   public void filter() throws Exception {
+    testFilter.runOnETAllPrim("PropertyBoolean")
+        .is("<PropertyBoolean>")
+        .isType(PropertyProvider.nameBoolean);
 
-    testFilter.runOnETTwoKeyNav("PropertyString")
-        .is("<PropertyString>")
-        .isType(PropertyProvider.nameString);
+    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyInt16 gt 0")
+        .is("<<PropertyComp/PropertyInt16> gt <0>>")
+        .left().isType(PropertyProvider.nameInt16);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyInt16")
-        .is("<PropertyComp/PropertyInt16>")
-        .isType(PropertyProvider.nameInt16);
+    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate ne null")
+        .is("<<PropertyComp/PropertyComp/PropertyDate> ne <null>>")
+        .left().isType(PropertyProvider.nameDate);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate")
-        .is("<PropertyComp/PropertyComp/PropertyDate>")
-        .isType(PropertyProvider.nameDate);
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne eq null")
+        .is("<<NavPropertyETTwoKeyNavOne> eq <null>>")
+        .left().isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne")
-        .is("<NavPropertyETTwoKeyNavOne>")
-        .isType(EntityTypeProvider.nameETTwoKeyNav);
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString eq ''")
+        .is("<<NavPropertyETTwoKeyNavOne/PropertyString> eq <''>>")
+        .left().isType(PropertyProvider.nameString);
 
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyString")
-        .is("<NavPropertyETTwoKeyNavOne/PropertyString>")
-        .isType(PropertyProvider.nameString);
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp eq null")
+        .is("<<NavPropertyETTwoKeyNavOne/PropertyComp> eq <null>>")
+        .left().isType(ComplexTypeProvider.nameCTPrimComp);
 
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp")
-        .is("<NavPropertyETTwoKeyNavOne/PropertyComp>")
-        .isType(ComplexTypeProvider.nameCTPrimComp);
-
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp/PropertyComp")
-        .is("<NavPropertyETTwoKeyNavOne/PropertyComp/PropertyComp>")
-        .isType(ComplexTypeProvider.nameCTAllPrim);
-
-    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp/PropertyInt16")
-        .is("<NavPropertyETTwoKeyNavOne/PropertyComp/PropertyInt16>")
-        .isType(PropertyProvider.nameInt16);
+    testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp/PropertyComp eq null")
+        .is("<<NavPropertyETTwoKeyNavOne/PropertyComp/PropertyComp> eq <null>>")
+        .left().isType(ComplexTypeProvider.nameCTAllPrim);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/PropertyComp/PropertyInt16 eq 1")
         .is("<<NavPropertyETTwoKeyNavOne/PropertyComp/PropertyInt16> eq <1>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isLiteral("1");
+        .left().isType(PropertyProvider.nameInt16)
+        .root().right().isLiteral("1");
 
     testFilter.runOnETTwoKeyNav("NavPropertyETKeyNavMany(1)/NavPropertyETTwoKeyNavMany(PropertyString='2')/"
         + "PropertyString eq 'SomeString'")
         .is("<<NavPropertyETKeyNavMany/NavPropertyETTwoKeyNavMany/PropertyString> eq <'SomeString'>>")
-        .root().left()
+        .left()
         .isType(PropertyProvider.nameString)
         .isMember().goPath()
         .first()
@@ -3293,7 +3270,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETTwoKeyNav("olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
         .is("<<PropertyDate> eq <2013-11-12>>")
-        .root().left()
+        .left()
         .isType(PropertyProvider.nameDate)
         .isMember().isMemberStartType(EntityTypeProvider.nameETBaseTwoKeyNav).goPath()
         .first().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
@@ -3303,7 +3280,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnCTTwoPrim("olingo.odata.test1.CTBase/AdditionalPropString eq 'SomeString'")
         .is("<<AdditionalPropString> eq <'SomeString'>>")
-        .root().left()
+        .left()
         .isType(PropertyProvider.nameString)
         .isMember().isMemberStartType(ComplexTypeProvider.nameCTBase).goPath()
         .first().isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
@@ -3314,7 +3291,7 @@ public class TestFullResourcePath {
     testFilter
         .runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate eq 2013-11-12")
         .is("<<NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate> eq <2013-11-12>>")
-        .root().left()
+        .left()
         .isType(PropertyProvider.nameDate)
         .root().right()
         .isLiteral("2013-11-12");
@@ -3322,20 +3299,15 @@ public class TestFullResourcePath {
     testFilter
         .runOnETTwoKeyNav("PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase/AdditionalPropString eq 'SomeString'")
         .is("<<PropertyCompTwoPrim/olingo.odata.test1.CTTwoBase/AdditionalPropString> eq <'SomeString'>>")
-        .root().left()
+        .left()
         .isType(PropertyProvider.nameString)
         .root().right()
         .isLiteral("'SomeString'");
 
-    testFilter.runOnETTwoKeyNavEx("invalid")
-        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-    // TODO: This should throw an exception because the top node of the filter tree must be boolean.
-    // testFilter.runOnETTwoKeyNavEx("PropertyComp")
-    //     .isExSemantic(MessageKeys.UNKNOWN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid")
-        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+    testFilter.runOnETTwoKeyNavEx("invalid").isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp").isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
+    testFilter.runOnETTwoKeyNavEx("PropertyComp/invalid").isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testFilter.runOnETTwoKeyNavEx("concat('a','b')/invalid").isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/concat('a','b')")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt16 eq '1'")
@@ -3347,437 +3319,307 @@ public class TestFullResourcePath {
     testFilter.runOnETTwoKeyNavEx("PropertyComp/PropertyInt64 eq 1")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/PropertyInt16 gt 42")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
     testFilter.runOnETTwoKeyNavEx("NavPropertyETKeyNavMany/NavPropertyETTwoKeyNavOne eq null")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
+        .isExSemantic(MessageKeys.TYPES_NOT_COMPATIBLE);
+  }
 
+  @Test
+  public void filterBinaryOperators() throws Exception {
     testFilter.runOnETAllPrim("PropertySByte eq PropertySByte")
         .is("<<PropertySByte> eq <PropertySByte>>")
         .isBinary(BinaryOperatorKind.EQ)
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
+        .left().isType(PropertyProvider.nameSByte)
+        .root().right().isType(PropertyProvider.nameSByte);
 
     testFilter.runOnETAllPrim("PropertySByte ne PropertySByte")
         .is("<<PropertySByte> ne <PropertySByte>>")
         .isBinary(BinaryOperatorKind.NE)
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
+        .left().isType(PropertyProvider.nameSByte)
+        .root().right().isType(PropertyProvider.nameSByte);
 
-    testFilter.runOnETAllPrim("PropertySByte add PropertySByte")
-        .is("<<PropertySByte> add <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertySByte add PropertySByte gt 0")
+        .is("<<<PropertySByte> add <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
 
-    testFilter.runOnETAllPrim("PropertyByte add PropertyByte")
-        .is("<<PropertyByte> add <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyInt16 add PropertyInt16")
-        .is("<<PropertyInt16> add <PropertyInt16>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isType(PropertyProvider.nameInt16);
-    testFilter.runOnETAllPrim("PropertyInt32 add PropertyInt32")
-        .is("<<PropertyInt32> add <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt32)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyByte add PropertyByte gt 0")
+        .is("<<<PropertyByte> add <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyInt16 add PropertyInt16 gt 0")
+        .is("<<<PropertyInt16> add <PropertyInt16>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt16)
+        .root().left().right().isType(PropertyProvider.nameInt16);
+    testFilter.runOnETAllPrim("PropertyInt32 add PropertyInt32 gt 0")
+        .is("<<<PropertyInt32> add <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt32)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 add PropertyInt64 gt 0")
+        .is("<<<PropertyInt64> add <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertySingle add PropertySingle gt 0")
+        .is("<<<PropertySingle> add <PropertySingle>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSingle)
+        .root().left().right().isType(PropertyProvider.nameSingle);
+    testFilter.runOnETAllPrim("PropertyDouble add PropertyDouble gt 0")
+        .is("<<<PropertyDouble> add <PropertyDouble>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDouble)
+        .root().left().right().isType(PropertyProvider.nameDouble);
+    testFilter.runOnETAllPrim("PropertyDecimal add PropertyDecimal gt 0")
+        .is("<<<PropertyDecimal> add <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertySByte add PropertyDecimal gt 0")
+        .is("<<<PropertySByte> add <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertySByte add PropertyInt32 gt 0")
+        .is("<<<PropertySByte> add <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertySByte add PropertyInt64 gt 0")
+        .is("<<<PropertySByte> add <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset add PropertyDuration ne null")
+        .is("<<<PropertyDateTimeOffset> add <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDateTimeOffset)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertyDuration add PropertyDuration ne null")
+        .is("<<<PropertyDuration> add <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDuration)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertyDate add PropertyDuration ne null")
+        .is("<<<PropertyDate> add <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDate)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertySByte sub PropertySByte gt 0")
+        .is("<<<PropertySByte> sub <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyByte sub PropertyByte gt 0")
+        .is("<<<PropertyByte> sub <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyInt16 sub PropertyInt16 gt 0")
+        .is("<<<PropertyInt16> sub <PropertyInt16>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt16)
+        .root().left().right().isType(PropertyProvider.nameInt16);
+    testFilter.runOnETAllPrim("PropertyInt32 sub PropertyInt32 gt 0")
+        .is("<<<PropertyInt32> sub <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt32)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 sub PropertyInt64 gt 0")
+        .is("<<<PropertyInt64> sub <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertySingle sub PropertySingle gt 0")
+        .is("<<<PropertySingle> sub <PropertySingle>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSingle)
+        .root().left().right().isType(PropertyProvider.nameSingle);
+    testFilter.runOnETAllPrim("PropertyDouble sub PropertyDouble gt 0")
+        .is("<<<PropertyDouble> sub <PropertyDouble>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDouble)
+        .root().left().right().isType(PropertyProvider.nameDouble);
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyDecimal gt 0")
+        .is("<<<PropertyDecimal> sub <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt32 gt 0")
+        .is("<<<PropertyDecimal> sub <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt64 gt 0")
+        .is("<<<PropertyDecimal> sub <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyByte gt 0")
+        .is("<<<PropertyDecimal> sub <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDuration ne null")
+        .is("<<<PropertyDateTimeOffset> sub <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDateTimeOffset)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertyDuration sub PropertyDuration ne null")
+        .is("<<<PropertyDuration> sub <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDuration)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDateTimeOffset ne null")
+        .is("<<<PropertyDateTimeOffset> sub <PropertyDateTimeOffset>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDateTimeOffset)
+        .root().left().right().isType(PropertyProvider.nameDateTimeOffset);
+    testFilter.runOnETAllPrim("PropertyDate sub PropertyDuration ne null")
+        .is("<<<PropertyDate> sub <PropertyDuration>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDate)
+        .root().left().right().isType(PropertyProvider.nameDuration);
+    testFilter.runOnETAllPrim("PropertyDate sub PropertyDate ne null")
+        .is("<<<PropertyDate> sub <PropertyDate>> ne <null>>")
+        .left().left().isType(PropertyProvider.nameDate)
+        .root().left().right().isType(PropertyProvider.nameDate);
+    testFilter.runOnETAllPrim("PropertySByte mul PropertySByte gt 0")
+        .is("<<<PropertySByte> mul <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyByte mul PropertyByte gt 0")
+        .is("<<<PropertyByte> mul <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyInt16 mul PropertyInt16 gt 0")
+        .is("<<<PropertyInt16> mul <PropertyInt16>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt16)
+        .root().left().right().isType(PropertyProvider.nameInt16);
+    testFilter.runOnETAllPrim("PropertyInt32 mul PropertyInt32 gt 0")
+        .is("<<<PropertyInt32> mul <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt32)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt64 gt 0")
+        .is("<<<PropertyInt64> mul <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertySingle mul PropertySingle gt 0")
+        .is("<<<PropertySingle> mul <PropertySingle>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSingle)
+        .root().left().right().isType(PropertyProvider.nameSingle);
+    testFilter.runOnETAllPrim("PropertyDouble mul PropertyDouble gt 0")
+        .is("<<<PropertyDouble> mul <PropertyDouble>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDouble)
+        .root().left().right().isType(PropertyProvider.nameDouble);
+    testFilter.runOnETAllPrim("PropertyDecimal mul PropertyDecimal gt 0")
+        .is("<<<PropertyDecimal> mul <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt32 gt 0")
+        .is("<<<PropertyInt64> mul <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertySByte gt 0")
+        .is("<<<PropertyInt64> mul <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyDecimal gt 0")
+        .is("<<<PropertyInt64> mul <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertySByte div PropertySByte gt 0")
+        .is("<<<PropertySByte> div <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyByte div PropertyByte gt 0")
+        .is("<<<PropertyByte> div <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyInt16 div PropertyInt16 gt 0")
+        .is("<<<PropertyInt16> div <PropertyInt16>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt16)
+        .root().left().right().isType(PropertyProvider.nameInt16);
+    testFilter.runOnETAllPrim("PropertyInt32 div PropertyInt32 gt 0")
+        .is("<<<PropertyInt32> div <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt32)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 div PropertyInt64 gt 0")
+        .is("<<<PropertyInt64> div <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertySingle div PropertySingle gt 0")
+        .is("<<<PropertySingle> div <PropertySingle>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSingle)
+        .root().left().right().isType(PropertyProvider.nameSingle);
+    testFilter.runOnETAllPrim("PropertyDouble div PropertyDouble gt 0")
+        .is("<<<PropertyDouble> div <PropertyDouble>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDouble)
+        .root().left().right().isType(PropertyProvider.nameDouble);
+    testFilter.runOnETAllPrim("PropertyDecimal div PropertyDecimal gt 0")
+        .is("<<<PropertyDecimal> div <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertyByte div PropertyInt32 gt 0")
+        .is("<<<PropertyByte> div <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyByte div PropertyDecimal gt 0")
+        .is("<<<PropertyByte> div <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertyByte div PropertySByte gt 0")
+        .is("<<<PropertyByte> div <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
 
-    testFilter.runOnETAllPrim("PropertyInt64 add PropertyInt64")
-        .is("<<PropertyInt64> add <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertySingle add PropertySingle")
-        .is("<<PropertySingle> add <PropertySingle>>")
-        .root().left()
-        .isType(PropertyProvider.nameSingle)
-        .root().right()
-        .isType(PropertyProvider.nameSingle);
-    testFilter.runOnETAllPrim("PropertyDouble add PropertyDouble")
-        .is("<<PropertyDouble> add <PropertyDouble>>")
-        .root().left()
-        .isType(PropertyProvider.nameDouble)
-        .root().right()
-        .isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal add PropertyDecimal")
-        .is("<<PropertyDecimal> add <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertySByte add PropertyDecimal")
-        .is("<<PropertySByte> add <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertySByte add PropertyInt32")
-        .is("<<PropertySByte> add <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertySByte add PropertyInt64")
-        .is("<<PropertySByte> add <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset add PropertyDuration")
-        .is("<<PropertyDateTimeOffset> add <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDateTimeOffset)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertyDuration add PropertyDuration")
-        .is("<<PropertyDuration> add <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDuration)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertyDate add PropertyDuration")
-        .is("<<PropertyDate> add <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDate)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertySByte sub PropertySByte")
-        .is("<<PropertySByte> sub <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
-    testFilter.runOnETAllPrim("PropertyByte sub PropertyByte")
-        .is("<<PropertyByte> sub <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyInt16 sub PropertyInt16")
-        .is("<<PropertyInt16> sub <PropertyInt16>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isType(PropertyProvider.nameInt16);
-    testFilter.runOnETAllPrim("PropertyInt32 sub PropertyInt32")
-        .is("<<PropertyInt32> sub <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt32)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyInt64 sub PropertyInt64")
-        .is("<<PropertyInt64> sub <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertySingle sub PropertySingle")
-        .is("<<PropertySingle> sub <PropertySingle>>")
-        .root().left()
-        .isType(PropertyProvider.nameSingle)
-        .root().right()
-        .isType(PropertyProvider.nameSingle);
-    testFilter.runOnETAllPrim("PropertyDouble sub PropertyDouble")
-        .is("<<PropertyDouble> sub <PropertyDouble>>")
-        .root().left()
-        .isType(PropertyProvider.nameDouble)
-        .root().right()
-        .isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyDecimal")
-        .is("<<PropertyDecimal> sub <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt32")
-        .is("<<PropertyDecimal> sub <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyInt64")
-        .is("<<PropertyDecimal> sub <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertyDecimal sub PropertyByte")
-        .is("<<PropertyDecimal> sub <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDuration")
-        .is("<<PropertyDateTimeOffset> sub <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDateTimeOffset)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertyDuration sub PropertyDuration")
-        .is("<<PropertyDuration> sub <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDuration)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertyDateTimeOffset sub PropertyDateTimeOffset")
-        .is("<<PropertyDateTimeOffset> sub <PropertyDateTimeOffset>>")
-        .root().left()
-        .isType(PropertyProvider.nameDateTimeOffset)
-        .root().right()
-        .isType(PropertyProvider.nameDateTimeOffset);
-    testFilter.runOnETAllPrim("PropertyDate sub PropertyDuration")
-        .is("<<PropertyDate> sub <PropertyDuration>>")
-        .root().left()
-        .isType(PropertyProvider.nameDate)
-        .root().right()
-        .isType(PropertyProvider.nameDuration);
-    testFilter.runOnETAllPrim("PropertyDate sub PropertyDate")
-        .is("<<PropertyDate> sub <PropertyDate>>")
-        .root().left()
-        .isType(PropertyProvider.nameDate)
-        .root().right()
-        .isType(PropertyProvider.nameDate);
-    testFilter.runOnETAllPrim("PropertySByte mul PropertySByte")
-        .is("<<PropertySByte> mul <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
-    testFilter.runOnETAllPrim("PropertyByte mul PropertyByte")
-        .is("<<PropertyByte> mul <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyInt16 mul PropertyInt16")
-        .is("<<PropertyInt16> mul <PropertyInt16>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isType(PropertyProvider.nameInt16);
-    testFilter.runOnETAllPrim("PropertyInt32 mul PropertyInt32")
-        .is("<<PropertyInt32> mul <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt32)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt64")
-        .is("<<PropertyInt64> mul <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertySingle mul PropertySingle")
-        .is("<<PropertySingle> mul <PropertySingle>>")
-        .root().left()
-        .isType(PropertyProvider.nameSingle)
-        .root().right()
-        .isType(PropertyProvider.nameSingle);
-    testFilter.runOnETAllPrim("PropertyDouble mul PropertyDouble")
-        .is("<<PropertyDouble> mul <PropertyDouble>>")
-        .root().left()
-        .isType(PropertyProvider.nameDouble)
-        .root().right()
-        .isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal mul PropertyDecimal")
-        .is("<<PropertyDecimal> mul <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyInt32")
-        .is("<<PropertyInt64> mul <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertySByte")
-        .is("<<PropertyInt64> mul <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
-    testFilter.runOnETAllPrim("PropertyInt64 mul PropertyDecimal")
-        .is("<<PropertyInt64> mul <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertySByte div PropertySByte")
-        .is("<<PropertySByte> div <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
-    testFilter.runOnETAllPrim("PropertyByte div PropertyByte")
-        .is("<<PropertyByte> div <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyInt16 div PropertyInt16")
-        .is("<<PropertyInt16> div <PropertyInt16>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isType(PropertyProvider.nameInt16);
-    testFilter.runOnETAllPrim("PropertyInt32 div PropertyInt32")
-        .is("<<PropertyInt32> div <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt32)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyInt64 div PropertyInt64")
-        .is("<<PropertyInt64> div <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertySingle div PropertySingle")
-        .is("<<PropertySingle> div <PropertySingle>>")
-        .root().left()
-        .isType(PropertyProvider.nameSingle)
-        .root().right()
-        .isType(PropertyProvider.nameSingle);
-    testFilter.runOnETAllPrim("PropertyDouble div PropertyDouble")
-        .is("<<PropertyDouble> div <PropertyDouble>>")
-        .root().left()
-        .isType(PropertyProvider.nameDouble)
-        .root().right()
-        .isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal div PropertyDecimal")
-        .is("<<PropertyDecimal> div <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertyByte div PropertyInt32")
-        .is("<<PropertyByte> div <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyByte div PropertyDecimal")
-        .is("<<PropertyByte> div <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
-    testFilter.runOnETAllPrim("PropertyByte div PropertySByte")
-        .is("<<PropertyByte> div <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyByte div 0 gt 0")
+        .is("<<<PropertyByte> div <0>> gt <0>>");
 
-    testFilter.runOnETAllPrim("PropertyByte div 0")
-        .is("<<PropertyByte> div <0>>");
+    testFilter.runOnETAllPrim("0 div 0 gt 0")
+        .is("<<<0> div <0>> gt <0>>");
 
-    testFilter.runOnETAllPrim("0 div 0")
-        .is("<<0> div <0>>");
-
-    testFilter.runOnETAllPrim("PropertySByte mod PropertySByte")
-        .is("<<PropertySByte> mod <PropertySByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameSByte)
-        .root().right()
-        .isType(PropertyProvider.nameSByte);
-    testFilter.runOnETAllPrim("PropertyByte mod PropertyByte")
-        .is("<<PropertyByte> mod <PropertyByte>>")
-        .root().left()
-        .isType(PropertyProvider.nameByte)
-        .root().right()
-        .isType(PropertyProvider.nameByte);
-    testFilter.runOnETAllPrim("PropertyInt16 mod PropertyInt16")
-        .is("<<PropertyInt16> mod <PropertyInt16>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt16)
-        .root().right()
-        .isType(PropertyProvider.nameInt16);
-    testFilter.runOnETAllPrim("PropertyInt32 mod PropertyInt32")
-        .is("<<PropertyInt32> mod <PropertyInt32>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt32)
-        .root().right()
-        .isType(PropertyProvider.nameInt32);
-    testFilter.runOnETAllPrim("PropertyInt64 mod PropertyInt64")
-        .is("<<PropertyInt64> mod <PropertyInt64>>")
-        .root().left()
-        .isType(PropertyProvider.nameInt64)
-        .root().right()
-        .isType(PropertyProvider.nameInt64);
-    testFilter.runOnETAllPrim("PropertySingle mod PropertySingle")
-        .is("<<PropertySingle> mod <PropertySingle>>")
-        .root().left()
-        .isType(PropertyProvider.nameSingle)
-        .root().right()
-        .isType(PropertyProvider.nameSingle);
-    testFilter.runOnETAllPrim("PropertyDouble mod PropertyDouble")
-        .is("<<PropertyDouble> mod <PropertyDouble>>")
-        .root().left()
-        .isType(PropertyProvider.nameDouble)
-        .root().right()
-        .isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal mod PropertyDecimal")
-        .is("<<PropertyDecimal> mod <PropertyDecimal>>")
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
+    testFilter.runOnETAllPrim("PropertySByte mod PropertySByte gt 0")
+        .is("<<<PropertySByte> mod <PropertySByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSByte)
+        .root().left().right().isType(PropertyProvider.nameSByte);
+    testFilter.runOnETAllPrim("PropertyByte mod PropertyByte gt 0")
+        .is("<<<PropertyByte> mod <PropertyByte>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameByte)
+        .root().left().right().isType(PropertyProvider.nameByte);
+    testFilter.runOnETAllPrim("PropertyInt16 mod PropertyInt16 gt 0")
+        .is("<<<PropertyInt16> mod <PropertyInt16>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt16)
+        .root().left().right().isType(PropertyProvider.nameInt16);
+    testFilter.runOnETAllPrim("PropertyInt32 mod PropertyInt32 gt 0")
+        .is("<<<PropertyInt32> mod <PropertyInt32>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt32)
+        .root().left().right().isType(PropertyProvider.nameInt32);
+    testFilter.runOnETAllPrim("PropertyInt64 mod PropertyInt64 gt 0")
+        .is("<<<PropertyInt64> mod <PropertyInt64>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameInt64)
+        .root().left().right().isType(PropertyProvider.nameInt64);
+    testFilter.runOnETAllPrim("PropertySingle mod PropertySingle gt 0")
+        .is("<<<PropertySingle> mod <PropertySingle>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameSingle)
+        .root().left().right().isType(PropertyProvider.nameSingle);
+    testFilter.runOnETAllPrim("PropertyDouble mod PropertyDouble gt 0")
+        .is("<<<PropertyDouble> mod <PropertyDouble>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDouble)
+        .root().left().right().isType(PropertyProvider.nameDouble);
+    testFilter.runOnETAllPrim("PropertyDecimal mod PropertyDecimal gt 0")
+        .is("<<<PropertyDecimal> mod <PropertyDecimal>> gt <0>>")
+        .left().left().isType(PropertyProvider.nameDecimal)
+        .root().left().right().isType(PropertyProvider.nameDecimal);
 
     testFilter.runOnETAllPrim("PropertyDecimal ge PropertyDecimal")
         .is("<<PropertyDecimal> ge <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.GE)
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
+        .left().isType(PropertyProvider.nameDecimal)
+        .root().right().isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal lt PropertyDecimal")
         .is("<<PropertyDecimal> lt <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.LT)
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
+        .left().isType(PropertyProvider.nameDecimal)
+        .root().right().isType(PropertyProvider.nameDecimal);
     testFilter.runOnETAllPrim("PropertyDecimal le PropertyDecimal")
         .is("<<PropertyDecimal> le <PropertyDecimal>>")
         .isBinary(BinaryOperatorKind.LE)
-        .root().left()
-        .isType(PropertyProvider.nameDecimal)
-        .root().right()
-        .isType(PropertyProvider.nameDecimal);
+        .left().isType(PropertyProvider.nameDecimal)
+        .root().right().isType(PropertyProvider.nameDecimal);
 
-    // Numeric promotion: Double is considered the widest type
-    testFilter.runOnETAllPrim("PropertyDecimal sub NaN")
+    // Numeric promotion: Double is considered the widest type.
+    testFilter.runOnETAllPrim("PropertyDecimal ne NaN")
         .right().isLiteral("NaN").isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal sub -INF")
+    testFilter.runOnETAllPrim("PropertyDecimal gt -INF")
         .right().isLiteral("-INF").isType(PropertyProvider.nameDouble);
-    testFilter.runOnETAllPrim("PropertyDecimal sub INF")
+    testFilter.runOnETAllPrim("PropertyDecimal lt INF")
         .right().isLiteral("INF").isType(PropertyProvider.nameDouble);
   }
 
-  // TODO
   @Test
-  @Ignore
   public void filterProperties() throws Exception {
     testFilter.runOnETAllPrim("PropertyBoolean eq true")
         .is("<<PropertyBoolean> eq <true>>")
         .isBinary(BinaryOperatorKind.EQ)
         .root().left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
-        .root().right().isTrue();
+        .root().right().isLiteral("true");
 
     testFilter.runOnETAllPrim("PropertyDecimal eq 1.25")
         .is("<<PropertyDecimal> eq <1.25>>")
@@ -3917,37 +3759,43 @@ public class TestFullResourcePath {
         .first().isComplex("PropertyCompMixedEnumDef")
         .n().isPrimitiveProperty("PropertyEnumString", EnumTypeProvider.nameENString, false);
 
-    testFilter.runOnETAllPrim("PropertyByte mod 0")
-        .is("<<PropertyByte> mod <0>>");
+    testFilter.runOnETAllPrim("PropertyByte mod 0 gt 0")
+        .is("<<<PropertyByte> mod <0>> gt <0>>");
+  }
 
-    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias)")
-        .is("<UFCRTETTwoKeyNavParamCTTwoPrim>")
-        .goPath()
+  @Test
+  public void filterFunctions() throws Exception {
+    testFilter.runOnETAllPrim(
+        "olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias) eq null")
+        .is("<<UFCRTETTwoKeyNavParamCTTwoPrim> eq <null>>")
+        .left().goPath()
         .first()
         .isFunction("UFCRTETTwoKeyNavParamCTTwoPrim")
         .isParameterAlias(0, "ParameterCTTwoPrim", "@ParamAlias");
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
-        + "(ParameterString=PropertyComp/PropertyComp/PropertyString)(PropertyInt16=1,PropertyString='2')"
-        + "/PropertyString eq 'SomeString'")
-        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
+        + "(ParameterString=PropertyComp/PropertyComp/PropertyString)/PropertyString eq 'SomeString'")
+        .is("<<PropertyComp/BFCCTPrimCompRTETTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
-        .first()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isFunction("BFCCTPrimCompRTESTwoKeyNavParam")
-        .isParameter(0, "ParameterString", "PropertyComp/PropertyComp/PropertyString")
-        .goParameter(0)
-        .isMember()
+        .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isFunction("BFCCTPrimCompRTETTwoKeyNavParam")
+        .goParameter(0).isMember()
         .goPath()
-        .first().isComplex("PropertyComp")
-        .n().isComplex("PropertyComp")
-        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false).goUpFilterValidator()
-        .goUpToResourceValidator()
+        .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false)
+        .goUpFilterValidator().goUpToResourceValidator()
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()"
+        + "(PropertyInt16=1,PropertyString='2')/PropertyString eq 'SomeString'")
+        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
+        .root().left().goPath()
+        .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isFunction("BFCCTPrimCompRTESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
         + "(ParameterString=null)/PropertyString eq 'SomeString'")
@@ -3957,9 +3805,7 @@ public class TestFullResourcePath {
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTETTwoKeyNavParam")
-        .goParameter(0)
-        .isNull()
-        .goUpToResourceValidator()
+        .isParameter(0, "ParameterString", null)
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
@@ -3969,59 +3815,43 @@ public class TestFullResourcePath {
         .root().left().goPath()
         .first()
         .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
-        .n()
-        .isFunction("BFCESTwoKeyNavRTString");
+        .n().isFunction("BFCESTwoKeyNavRTString");
 
-    testFilter.runOnETTwoKeyNav("$it/olingo.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
-        .is("<<$it/BFESTwoKeyNavRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
+    testFilter.runOnETKeyNav("$it/olingo.odata.test1.BFCETKeyNavRTETKeyNav()/PropertyString eq 'SomeString'")
+        .is("<<$it/BFCETKeyNavRTETKeyNav/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
-        .first()
-        .isIt()
-        .n()
-        .isFunction("BFESTwoKeyNavRTESTwoKeyNav")
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .first().isIt()
+        .n().isFunction("BFCETKeyNavRTETKeyNav")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("olingo.odata.test1.BFESTwoKeyNavRTESTwoKeyNav()/PropertyString eq 'SomeString'")
-        .is("<<BFESTwoKeyNavRTESTwoKeyNav/PropertyString> eq <'SomeString'>>")
+    testFilter.runOnETTwoKeyNav("olingo.odata.test1.BFCESTwoKeyNavRTCTTwoPrim()/PropertyString eq 'SomeString'")
+        .is("<<BFCESTwoKeyNavRTCTTwoPrim/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
-        .first()
-        .isFunction("BFESTwoKeyNavRTESTwoKeyNav")
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .first().isFunction("BFCESTwoKeyNavRTCTTwoPrim")
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("NavPropertyETTwoKeyNavOne/olingo.odata.test1.BFCETTwoKeyNavRTETTwoKeyNav()"
         + "/PropertyComp/PropertyComp/PropertyString eq 'Walldorf'")
         .is("<<NavPropertyETTwoKeyNavOne/BFCETTwoKeyNavRTETTwoKeyNav/PropertyComp/PropertyComp/PropertyString> "
             + "eq <'Walldorf'>>")
         .root().left().goPath()
-        .first()
-        .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
-        .n()
-        .isFunction("BFCETTwoKeyNavRTETTwoKeyNav")
-        .n()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+        .n().isFunction("BFCETTwoKeyNavRTETTwoKeyNav")
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
-    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNavParam"
-        + "(ParameterString='1')"
-        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')"
-        + "/PropertyString eq 'SomeString'")
-        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNavParam/olingo.odata.test1.ETBaseTwoKeyNav/PropertyString> "
+    testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()"
+        + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=2,PropertyString='3')/PropertyString eq 'SomeString'")
+        .is("<<PropertyComp/BFCCTPrimCompRTESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav/PropertyString> "
             + "eq <'SomeString'>>")
         .root().left().goPath()
-        .first()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isFunction("BFCCTPrimCompRTESTwoKeyNavParam")
-        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isFunction("BFCCTPrimCompRTESTwoKeyNav")
+        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "2")
         .isKeyPredicate(1, "PropertyString", "'3'")
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNavSingle("$it/olingo.odata.test1.BFCETTwoKeyNavRTCTTwoPrim()/olingo.odata.test1.CTBase"
         + "/PropertyString eq 'SomeString'")
@@ -4071,59 +3901,58 @@ public class TestFullResourcePath {
         .root().left().goPath()
         .first()
         .isFunction("UFCRTETTwoKeyNavParam")
-        .isParameter(0, "ParameterInt16", "PropertyInt16")
-        .n()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
-        .n()
-        .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
-        .n()
-        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+        .goParameter(0)
+        .isMember().goPath().first().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false)
+        .goUpFilterValidator().goUpToResourceValidator()
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
   }
 
   @Test
   public void methods() throws Exception {
     testFilter.runOnETKeyNav("indexof(PropertyString,'47') eq 5")
         .is("<<indexof(<PropertyString>,<'47'>)> eq <5>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.INDEXOF, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'47'>");
 
     testFilter.runOnETKeyNav("tolower(PropertyString) eq 'foo'")
         .is("<<tolower(<PropertyString>)> eq <'foo'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOLOWER, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("toupper(PropertyString) eq 'FOO'")
         .is("<<toupper(<PropertyString>)> eq <'FOO'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOUPPER, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("trim(PropertyString) eq 'fooba'")
         .is("<<trim(<PropertyString>)> eq <'fooba'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TRIM, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<4>)> eq <'foo'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SUBSTRING, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<4>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<4>)> eq <'foo'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SUBSTRING, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<4>");
 
     testFilter.runOnETKeyNav("substring(PropertyString,2,4) eq 'foo'")
         .is("<<substring(<PropertyString>,<2>,<4>)> eq <'foo'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SUBSTRING, 3)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<2>")
@@ -4131,355 +3960,355 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("concat(PropertyString,PropertyCompTwoPrim/PropertyString) eq 'foo'")
         .is("<<concat(<PropertyString>,<PropertyCompTwoPrim/PropertyString>)> eq <'foo'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<PropertyCompTwoPrim/PropertyString>");
 
     testFilter.runOnETKeyNav("concat(PropertyString,'bar') eq 'foobar'")
         .is("<<concat(<PropertyString>,<'bar'>)> eq <'foobar'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'bar'>");
 
     testFilter.runOnETKeyNav("concat(PropertyString,'bar') eq 'foobar'")
         .is("<<concat(<PropertyString>,<'bar'>)> eq <'foobar'>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<'bar'>");
 
     testFilter.runOnETKeyNav("length(PropertyString) eq 32")
         .is("<<length(<PropertyString>)> eq <32>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.LENGTH, 1)
         .isParameterText(0, "<PropertyString>");
 
     testFilter.runOnETAllPrim("year(PropertyDate) eq 2013")
         .is("<<year(<PropertyDate>)> eq <2013>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("year(2013-09-25) eq 2013")
         .is("<<year(<2013-09-25>)> eq <2013>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("year(PropertyDateTimeOffset) eq 2013")
         .is("<<year(<PropertyDateTimeOffset>)> eq <2013>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("year(2013-09-25T12:34:56.123456789012-10:24) eq 2013")
         .is("<<year(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2013>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.YEAR, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("month(PropertyDate) eq 9")
         .is("<<month(<PropertyDate>)> eq <9>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("month(2013-09-25) eq 9")
         .is("<<month(<2013-09-25>)> eq <9>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("month(PropertyDateTimeOffset) eq 9")
         .is("<<month(<PropertyDateTimeOffset>)> eq <9>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("month(2013-09-25T12:34:56.123456789012-10:24) eq 9")
         .is("<<month(<2013-09-25T12:34:56.123456789012-10:24>)> eq <9>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MONTH, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("day(PropertyDate) eq 25")
         .is("<<day(<PropertyDate>)> eq <25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<PropertyDate>");
 
     testFilter.runOnETAllPrim("day(2013-09-25) eq 25")
         .is("<<day(<2013-09-25>)> eq <25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<2013-09-25>");
 
     testFilter.runOnETAllPrim("day(PropertyDateTimeOffset) eq 25")
         .is("<<day(<PropertyDateTimeOffset>)> eq <25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("day(2013-09-25T12:34:56.123456789012-10:24) eq 25")
         .is("<<day(<2013-09-25T12:34:56.123456789012-10:24>)> eq <25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DAY, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("hour(PropertyDateTimeOffset) eq 2")
         .is("<<hour(<PropertyDateTimeOffset>)> eq <2>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("hour(PropertyDateTimeOffset) eq 2")
         .is("<<hour(<PropertyDateTimeOffset>)> eq <2>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("hour(2013-09-25T12:34:56.123456789012-10:24) eq 2")
         .is("<<hour(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("hour(PropertyTimeOfDay) eq 2")
         .is("<<hour(<PropertyTimeOfDay>)> eq <2>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("hour(12:34:55.123456789012) eq 12")
         .is("<<hour(<12:34:55.123456789012>)> eq <12>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.HOUR, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("minute(PropertyDateTimeOffset) eq 34")
         .is("<<minute(<PropertyDateTimeOffset>)> eq <34>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("minute(2013-09-25T12:34:56.123456789012-10:24) eq 34")
         .is("<<minute(<2013-09-25T12:34:56.123456789012-10:24>)> eq <34>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("minute(PropertyTimeOfDay) eq 34")
         .is("<<minute(<PropertyTimeOfDay>)> eq <34>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("minute(12:34:55.123456789012) eq 34")
         .is("<<minute(<12:34:55.123456789012>)> eq <34>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MINUTE, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("second(PropertyDateTimeOffset) eq 56")
         .is("<<second(<PropertyDateTimeOffset>)> eq <56>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("second(2013-09-25T12:34:56.123456789012-10:24) eq 56")
         .is("<<second(<2013-09-25T12:34:56.123456789012-10:24>)> eq <56>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("second(PropertyTimeOfDay) eq 56")
         .is("<<second(<PropertyTimeOfDay>)> eq <56>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("second(12:34:55.123456789012) eq 56")
         .is("<<second(<12:34:55.123456789012>)> eq <56>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.SECOND, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("fractionalseconds(PropertyDateTimeOffset) eq 123456789012")
         .is("<<fractionalseconds(<PropertyDateTimeOffset>)> eq <123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("fractionalseconds(2013-09-25T12:34:56.123456789012-10:24) eq 123456789012")
         .is("<<fractionalseconds(<2013-09-25T12:34:56.123456789012-10:24>)> eq <123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("fractionalseconds(PropertyTimeOfDay) eq 123456789012")
         .is("<<fractionalseconds(<PropertyTimeOfDay>)> eq <123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<PropertyTimeOfDay>");
 
     testFilter.runOnETAllPrim("fractionalseconds(12:34:55.123456789012) eq 123456789012")
         .is("<<fractionalseconds(<12:34:55.123456789012>)> eq <123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FRACTIONALSECONDS, 1)
         .isParameterText(0, "<12:34:55.123456789012>");
 
     testFilter.runOnETAllPrim("totalseconds(PropertyDuration) eq 4711")
         .is("<<totalseconds(<PropertyDuration>)> eq <4711>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOTALSECONDS, 1)
         .isParameterText(0, "<PropertyDuration>");
 
     testFilter.runOnETAllPrim("totalseconds(duration'P10DT5H34M21.123456789012S') eq 4711")
         .is("<<totalseconds(<duration'P10DT5H34M21.123456789012S'>)> eq <4711>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOTALSECONDS, 1)
         .isParameterText(0, "<duration'P10DT5H34M21.123456789012S'>");
 
     testFilter.runOnETAllPrim("date(PropertyDateTimeOffset) eq 2013-09-25")
         .is("<<date(<PropertyDateTimeOffset>)> eq <2013-09-25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DATE, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("date(2013-09-25T12:34:56.123456789012-10:24) eq 2013-09-25")
         .is("<<date(<2013-09-25T12:34:56.123456789012-10:24>)> eq <2013-09-25>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.DATE, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("time(PropertyDateTimeOffset) eq 12:34:55.123456789012")
         .is("<<time(<PropertyDateTimeOffset>)> eq <12:34:55.123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TIME, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("time(2013-09-25T12:34:56.123456789012-10:24) eq 12:34:55.123456789012")
         .is("<<time(<2013-09-25T12:34:56.123456789012-10:24>)> eq <12:34:55.123456789012>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TIME, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
     testFilter.runOnETAllPrim("round(PropertyDouble) eq 17")
         .is("<<round(<PropertyDouble>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("round(17.45e1) eq 17")
         .is("<<round(<17.45e1>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<17.45e1>");
 
     testFilter.runOnETAllPrim("round(PropertyDecimal) eq 17")
         .is("<<round(<PropertyDecimal>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("round(17.45) eq 17")
         .is("<<round(<17.45>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.ROUND, 1)
         .isParameterText(0, "<17.45>");
 
     testFilter.runOnETAllPrim("floor(PropertyDouble) eq 17")
         .is("<<floor(<PropertyDouble>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("floor(17.45e1) eq 17")
         .is("<<floor(<17.45e1>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<17.45e1>");
 
     testFilter.runOnETAllPrim("floor(PropertyDecimal) eq 17")
         .is("<<floor(<PropertyDecimal>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("floor(17.45) eq 17")
         .is("<<floor(<17.45>)> eq <17>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.FLOOR, 1)
         .isParameterText(0, "<17.45>");
 
     testFilter.runOnETAllPrim("ceiling(PropertyDouble) eq 18")
         .is("<<ceiling(<PropertyDouble>)> eq <18>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<PropertyDouble>");
 
     testFilter.runOnETAllPrim("ceiling(17.55e1) eq 18")
         .is("<<ceiling(<17.55e1>)> eq <18>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<17.55e1>");
 
     testFilter.runOnETAllPrim("ceiling(PropertyDecimal) eq 18")
         .is("<<ceiling(<PropertyDecimal>)> eq <18>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<PropertyDecimal>");
 
     testFilter.runOnETAllPrim("ceiling(17.55) eq 18")
         .is("<<ceiling(<17.55>)> eq <18>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CEILING, 1)
         .isParameterText(0, "<17.55>");
 
     testFilter.runOnETAllPrim("totaloffsetminutes(PropertyDateTimeOffset) eq 4711")
         .is("<<totaloffsetminutes(<PropertyDateTimeOffset>)> eq <4711>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOTALOFFSETMINUTES, 1)
         .isParameterText(0, "<PropertyDateTimeOffset>");
 
     testFilter.runOnETAllPrim("totaloffsetminutes(2013-09-25T12:34:56.123456789012-10:24) eq 4711")
         .is("<<totaloffsetminutes(<2013-09-25T12:34:56.123456789012-10:24>)> eq <4711>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.TOTALOFFSETMINUTES, 1)
         .isParameterText(0, "<2013-09-25T12:34:56.123456789012-10:24>");
 
-    testFilter.runOnETAllPrim("mindatetime()")
-        .is("<mindatetime()>")
-        .isMethod(MethodKind.MINDATETIME, 0);
+    testFilter.runOnETAllPrim("mindatetime() ne null")
+        .is("<<mindatetime()> ne <null>>")
+        .left().isMethod(MethodKind.MINDATETIME, 0);
 
     testFilter.runOnETAllPrim("mindatetime() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<mindatetime()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MINDATETIME, 0);
 
-    testFilter.runOnETAllPrim("maxdatetime()")
-        .is("<maxdatetime()>")
-        .isMethod(MethodKind.MAXDATETIME, 0);
+    testFilter.runOnETAllPrim("maxdatetime() ne null")
+        .is("<<maxdatetime()> ne <null>>")
+        .left().isMethod(MethodKind.MAXDATETIME, 0);
 
     testFilter.runOnETAllPrim("maxdatetime() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<maxdatetime()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.MAXDATETIME, 0);
 
-    testFilter.runOnETAllPrim("now()")
-        .is("<now()>")
-        .isMethod(MethodKind.NOW, 0);
+    testFilter.runOnETAllPrim("now() ne null")
+        .is("<<now()> ne <null>>")
+        .left().isMethod(MethodKind.NOW, 0);
 
     testFilter.runOnETAllPrim("now() eq 2013-09-25T12:34:56.123456789012-10:24")
         .is("<<now()> eq <2013-09-25T12:34:56.123456789012-10:24>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.NOW, 0);
 
     testFilter.runOnETTwoKeyNav("$it/PropertyString eq 'SomeString'")
         .is("<<$it/PropertyString> eq <'SomeString'>>")
-        .root().left()
+        .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
@@ -4487,7 +4316,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnCTTwoPrim("$it/PropertyString eq 'SomeString'")
         .is("<<$it/PropertyString> eq <'SomeString'>>")
-        .root().left()
+        .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
         .isType(ComplexTypeProvider.nameCTTwoPrim, false)
@@ -4495,7 +4324,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnString("$it eq 'Walldorf'")
         .is("<<$it> eq <'Walldorf'>>")
-        .root().left()
+        .left()
         .goPath()
         .first().isUriPathInfoKind(UriResourceKind.it)
         .isType(PropertyProvider.nameString, false);
@@ -4512,7 +4341,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnString("endswith($it,'sap.com') eq false")
         .is("<<endswith(<$it>,<'sap.com'>)> eq <false>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.ENDSWITH, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<'sap.com'>")
@@ -4644,44 +4473,42 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
   }
 
-  // TODO: Implement cast method.
   @Test
   public void castMethod() throws Exception {
-    testFilter.runOnETKeyNav("cast(olingo.odata.test1.ETBaseTwoKeyNav)")
-        .is("<cast(<olingo.odata.test1.ETBaseTwoKeyNav>)>")
-        .root()
+    testFilter.runOnETKeyNav("cast(olingo.odata.test1.ETBaseTwoKeyNav) ne null")
+        .is("<<cast(<olingo.odata.test1.ETBaseTwoKeyNav>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 1)
         .isParameterText(0, "<olingo.odata.test1.ETBaseTwoKeyNav>")
-        .goParameter(0)
-        .isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
+        .goParameter(0).isTypedLiteral(EntityTypeProvider.nameETBaseTwoKeyNav);
 
-    testFilter.runOnETKeyNav("cast(PropertyCompTwoPrim,olingo.odata.test1.CTBase)")
-        .is("<cast(<PropertyCompTwoPrim>,<olingo.odata.test1.CTBase>)>")
-        .root()
+    testFilter.runOnETKeyNav("cast(PropertyCompTwoPrim,olingo.odata.test1.CTBase) ne null")
+        .is("<<cast(<PropertyCompTwoPrim>,<olingo.odata.test1.CTBase>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<PropertyCompTwoPrim>")
         .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
-        .isComplex("PropertyCompTwoPrim").isType(ComplexTypeProvider.nameCTTwoPrim, false)
+        .isComplexProperty("PropertyCompTwoPrim", ComplexTypeProvider.nameCTTwoPrim, false)
         .goUpFilterValidator()
-        .root()
-        .goParameter(1)
-        .isTypedLiteral(ComplexTypeProvider.nameCTBase);
+        .root().left()
+        .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase)")
-        .is("<cast(<$it>,<olingo.odata.test1.CTBase>)>")
-        .root()
+    testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase) ne null")
+        .is("<<cast(<$it>,<olingo.odata.test1.CTBase>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<olingo.odata.test1.CTBase>")
         .goParameter(0).goPath().first()
         .isIt().isType(EntityTypeProvider.nameETKeyNav, false)
         .goUpFilterValidator()
-        .root()
+        .root().left()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnETKeyNav("concat(PropertyString,cast(PropertyCompAllPrim/PropertyInt16,Edm.String))")
-        .is("<concat(<PropertyString>,<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>)>")
+    testFilter.runOnETKeyNav("concat(PropertyString,cast(PropertyCompAllPrim/PropertyInt16,Edm.String)) ne ''")
+        .is("<<concat(<PropertyString>,<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>)> ne <''>>")
+        .left()
         .isMethod(MethodKind.CONCAT, 2)
         .isParameterText(0, "<PropertyString>")
         .isParameterText(1, "<cast(<PropertyCompAllPrim/PropertyInt16>,<Edm.String>)>")
@@ -4692,7 +4519,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("cast($it,olingo.odata.test1.CTBase) eq cast($it,olingo.odata.test1.CTBase)")
         .is("<<cast(<$it>,<olingo.odata.test1.CTBase>)> eq <cast(<$it>,<olingo.odata.test1.CTBase>)>>")
-        .root().left()
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .isParameterText(0, "<$it>")
         .isParameterText(1, "<olingo.odata.test1.CTBase>")
@@ -4711,82 +4538,94 @@ public class TestFullResourcePath {
         .root().right()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTBase);
 
-    testFilter.runOnInt32("cast(Edm.Int32)")
-        .is("<cast(<Edm.Int32>)>")
+    testFilter.runOnInt32("cast(Edm.Int32) gt 0")
+        .is("<<cast(<Edm.Int32>)> gt <0>>")
+        .left()
         .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(PropertyProvider.nameInt32);
 
-    testFilter.runOnDateTimeOffset("cast(Edm.DateTimeOffset)")
-        .is("<cast(<Edm.DateTimeOffset>)>")
+    testFilter.runOnDateTimeOffset("cast(Edm.DateTimeOffset) ne null")
+        .is("<<cast(<Edm.DateTimeOffset>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(PropertyProvider.nameDateTimeOffset);
 
-    testFilter.runOnDuration("cast(Edm.Duration)")
-        .is("<cast(<Edm.Duration>)>")
+    testFilter.runOnDuration("cast(Edm.Duration) ne null")
+        .is("<<cast(<Edm.Duration>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(PropertyProvider.nameDuration);
 
-    testFilter.runOnTimeOfDay("cast(Edm.TimeOfDay)")
-        .is("<cast(<Edm.TimeOfDay>)>")
+    testFilter.runOnTimeOfDay("cast(Edm.TimeOfDay) ne null")
+        .is("<<cast(<Edm.TimeOfDay>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 1)
         .goParameter(0).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
-    testFilter.runOnETKeyNav("cast(CollPropertyInt16,Edm.Int32)")
-        .is("<cast(<CollPropertyInt16>,<Edm.Int32>)>")
+    testFilter.runOnETKeyNav("cast(CollPropertyInt16,Edm.Int32) ne null")
+        .is("<<cast(<CollPropertyInt16>,<Edm.Int32>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath().first()
         .isPrimitiveProperty("CollPropertyInt16", PropertyProvider.nameInt16, true)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(PropertyProvider.nameInt32);
 
     testFilter.runOnETTwoKeyNav(
-        "cast(PropertyComp/PropertyComp/PropertyDateTimeOffset,Edm.DateTimeOffset)")
-        .is("<cast(<PropertyComp/PropertyComp/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)>")
+        "cast(PropertyComp/PropertyComp/PropertyDateTimeOffset,Edm.DateTimeOffset) ne null")
+        .is("<<cast(<PropertyComp/PropertyComp/PropertyDateTimeOffset>,<Edm.DateTimeOffset>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n().isPrimitiveProperty("PropertyDateTimeOffset", PropertyProvider.nameDateTimeOffset, false)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(PropertyProvider.nameDateTimeOffset);
 
-    testFilter.runOnETTwoKeyNav("cast(PropertyComp/PropertyComp/PropertyDuration,Edm.Duration)")
-        .is("<cast(<PropertyComp/PropertyComp/PropertyDuration>,<Edm.Duration>)>")
+    testFilter.runOnETTwoKeyNav("cast(PropertyComp/PropertyComp/PropertyDuration,Edm.Duration) ne null")
+        .is("<<cast(<PropertyComp/PropertyComp/PropertyDuration>,<Edm.Duration>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n().isPrimitiveProperty("PropertyDuration", PropertyProvider.nameDuration, false)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(PropertyProvider.nameDuration);
 
-    testFilter.runOnETTwoKeyNav("cast(PropertyComp/PropertyComp/PropertyTimeOfDay,Edm.TimeOfDay)")
-        .is("<cast(<PropertyComp/PropertyComp/PropertyTimeOfDay>,<Edm.TimeOfDay>)>")
+    testFilter.runOnETTwoKeyNav("cast(PropertyComp/PropertyComp/PropertyTimeOfDay,Edm.TimeOfDay) ne null")
+        .is("<<cast(<PropertyComp/PropertyComp/PropertyTimeOfDay>,<Edm.TimeOfDay>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n().isPrimitiveProperty("PropertyTimeOfDay", PropertyProvider.nameTimeOfDay, false)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(PropertyProvider.nameTimeOfDay);
 
-    testFilter.runOnETKeyNav("cast(PropertyCompAllPrim,olingo.odata.test1.CTTwoPrim)")
-        .is("<cast(<PropertyCompAllPrim>,<olingo.odata.test1.CTTwoPrim>)>")
+    testFilter.runOnETKeyNav("cast(PropertyCompAllPrim,olingo.odata.test1.CTTwoPrim) ne null")
+        .is("<<cast(<PropertyCompAllPrim>,<olingo.odata.test1.CTTwoPrim>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isComplexProperty("PropertyCompAllPrim", ComplexTypeProvider.nameCTAllPrim, false)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(ComplexTypeProvider.nameCTTwoPrim);
 
-    testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,olingo.odata.test1.ETKeyPrimNav)")
-        .is("<cast(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyPrimNav>)>")
+    testFilter.runOnETKeyNav("cast(NavPropertyETKeyNavOne,olingo.odata.test1.ETKeyPrimNav) ne null")
+        .is("<<cast(<NavPropertyETKeyNavOne>,<olingo.odata.test1.ETKeyPrimNav>)> ne <null>>")
+        .left()
         .isMethod(MethodKind.CAST, 2)
         .goParameter(0).goPath()
         .first().isNavProperty("NavPropertyETKeyNavOne", EntityTypeProvider.nameETKeyNav, false)
-        .goUpFilterValidator().root()
+        .goUpFilterValidator().root().left()
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
-    testFilter.runOnETAllPrim("olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null)")
+    testFilter.runOnETAllPrim(
+        "olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null) ne null")
+        .left()
         .goPath()
         .isFunction("UFCRTCTTwoPrimTwoParam")
         .isParameter(0, "ParameterInt16", null)
@@ -4794,13 +4633,8 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-    // TODO Is that case makes not really sense, each any / all lambda expr must 
-    // containing at least one lambdaVariableExpr 
-//    testFilter.runOnETKeyNav("any()")
-//        .isMember().goPath().first().isUriPathInfoKind(UriResourceKind.lambdaAny);
   }
 
-  // TODO: Check whether lambda expressions really are allowed on complex collections.
   @Test
   public void lambdaFunctions() throws Exception {
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString')")
@@ -4872,7 +4706,7 @@ public class TestFullResourcePath {
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
-        .isType(EdmString.getInstance().getFullQualifiedName(), false);
+        .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
         + "d/CollPropertyString/any(e:e eq 'SomeString'))")
@@ -4934,6 +4768,8 @@ public class TestFullResourcePath {
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
+    testFilter.runOnETKeyNavEx("any()")
+        .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testFilter.runOnETKeyNavEx("any(d:d/PropertyInt16 eq 1)")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
@@ -5294,21 +5130,21 @@ public class TestFullResourcePath {
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
-        .goOrder(0).right().isTrue();
+        .goOrder(0).right().isLiteral("true");
 
     testFilter.runOrderByOnETAllPrim("PropertyBoolean eq true desc")
         .isSortOrder(0, true)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyBoolean", PropertyProvider.nameBoolean, false)
         .goUpFilterValidator()
-        .goOrder(0).right().isTrue();
+        .goOrder(0).right().isLiteral("true");
 
-    testFilter.runOrderByOnETAllPrim(encode("PropertyDouble eq 3.5E+38"))
+    testFilter.runOrderByOnETAllPrim("PropertyDouble eq 3.5E+38")
         .isSortOrder(0, false)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("3.5E+38");
 
-    testFilter.runOrderByOnETAllPrim(encode("PropertyDouble eq 3.5E+38 desc")).isSortOrder(0, true)
+    testFilter.runOrderByOnETAllPrim("PropertyDouble eq 3.5E+38 desc").isSortOrder(0, true)
         .goOrder(0).left().goPath().isPrimitiveProperty("PropertyDouble", PropertyProvider.nameDouble, false)
         .goUpFilterValidator()
         .goOrder(0).right().isLiteral("3.5E+38");
@@ -5556,8 +5392,16 @@ public class TestFullResourcePath {
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 
+  @Test
+  public void searchTree() throws Exception {
+    testUri.run("ESTwoKeyNav", "$expand=NavPropertyETKeyNavMany($search=(abc AND def) OR NOT ghi)")
+        .goExpand().isSearchSerialized("{{'abc' AND 'def'} OR {NOT 'ghi'}}");
+  }
+
   /**
-   * https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-testcases.xml
+   * See <a href=
+   * "https://tools.oasis-open.org/version-control/browse/wsvn/odata/trunk/spec/ABNF/odata-abnf-testcases.xml">test
+   * cases at OASIS</a>.
    */
   @Test
   public void searchQueryPhraseAbnfTestcases() throws Exception {
@@ -5725,14 +5569,14 @@ public class TestFullResourcePath {
   @Test
   public void simpleKeyInExpandSystemQueryOption() throws Exception {
     testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(-365)($filter=PropertyString eq 'Test String1')")
-        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
   public void compoundKeyInExpandSystemQueryOption() throws Exception {
     testUri.runEx("ESAllPrim(0)", "$expand=NavPropertyETTwoPrimMany(PropertyInt16=1,PropertyString=2)"
         + "($filter=PropertyString eq 'Test String1')")
-        .isExSemantic(MessageKeys.KEY_NOT_ALLOWED);
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -5822,47 +5666,6 @@ public class TestFullResourcePath {
     testUri.runEx("olingo.odata.test1.SINav").isExSemantic(MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
   }
 
-  @Test
-  public void navPropertySameNameAsEntitySet() throws Exception {
-    final String namespace = "namespace";
-    final String entityTypeName = "ETNavProp";
-    final FullQualifiedName nameETNavProp = new FullQualifiedName(namespace, entityTypeName);
-    final String entitySetName = "ESNavProp";
-    final String keyPropertyName = "a";
-    EdmProperty keyProperty = Mockito.mock(EdmProperty.class);
-    Mockito.when(keyProperty.getType()).thenReturn(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte));
-    EdmKeyPropertyRef keyPropertyRef = Mockito.mock(EdmKeyPropertyRef.class);
-    Mockito.when(keyPropertyRef.getName()).thenReturn(keyPropertyName);
-    Mockito.when(keyPropertyRef.getProperty()).thenReturn(keyProperty);
-    EdmNavigationProperty navProperty = Mockito.mock(EdmNavigationProperty.class);
-    Mockito.when(navProperty.getName()).thenReturn(entitySetName);
-    Mockito.when(navProperty.isCollection()).thenReturn(true);
-    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
-    Mockito.when(entityType.getFullQualifiedName()).thenReturn(nameETNavProp);
-    Mockito.when(entityType.getKeyPredicateNames()).thenReturn(Collections.singletonList(keyPropertyName));
-    Mockito.when(entityType.getKeyPropertyRefs()).thenReturn(Collections.singletonList(keyPropertyRef));
-    Mockito.when(entityType.getNavigationProperty(entitySetName)).thenReturn(navProperty);
-    Mockito.when(navProperty.getType()).thenReturn(entityType);
-    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
-    Mockito.when(entitySet.getName()).thenReturn(entitySetName);
-    Mockito.when(entitySet.getEntityType()).thenReturn(entityType);
-    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
-    Mockito.when(container.getEntitySet(entitySetName)).thenReturn(entitySet);
-    Edm mockedEdm = Mockito.mock(Edm.class);
-    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
-    new TestUriValidator().setEdm(mockedEdm)
-        .run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
-        .goPath()
-        .at(0).isEntitySet(entitySetName)
-        .at(0).isKeyPredicate(0, keyPropertyName, "1")
-        .at(1).isNavProperty(entitySetName, nameETNavProp, false)
-        .at(1).isKeyPredicate(0, keyPropertyName, "2")
-        .at(2).isNavProperty(entitySetName, nameETNavProp, false)
-        .at(2).isKeyPredicate(0, keyPropertyName, "3")
-        .at(3).isNavProperty(entitySetName, nameETNavProp, true);
-  }
-
-  // TODO: Better type determination for literal numbers.
   @Test
   public void filterLiteralTypes() throws Exception {
     testFilter.runOnETAllPrim("-1000 eq 42")
@@ -6093,9 +5896,5 @@ public class TestFullResourcePath {
         + "/PropertyInt16 eq 1");
     testUri.runEx("ESTwoKeyNav", "$filter=NavPropertyETTwoKeyNavMany(Prop='22',P=2)/PropertyInt16 eq 0")
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
-  }
-
-  public static String encode(final String decoded) throws UnsupportedEncodingException {
-    return Encoder.encode(decoded);
   }
 }

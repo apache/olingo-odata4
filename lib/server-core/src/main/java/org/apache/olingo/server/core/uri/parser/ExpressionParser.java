@@ -47,9 +47,6 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmByte;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmSByte;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
@@ -161,7 +158,7 @@ public class ExpressionParser {
 
   private static final Map<TokenKind, EdmPrimitiveTypeKind> tokenToPrimitiveType;
   static {
-    /* Enum and null are not present in the map. These have to be handled differently */
+    /* Enum and null are not present in the map. These have to be handled differently. */
     Map<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<TokenKind, EdmPrimitiveTypeKind>();
     temp.put(TokenKind.BooleanValue, EdmPrimitiveTypeKind.Boolean);
     temp.put(TokenKind.StringValue, EdmPrimitiveTypeKind.String);
@@ -242,9 +239,9 @@ public class ExpressionParser {
   }
 
   private Expression parseExprRel() throws UriParserException, UriValidationException {
-    if(tokenizer.next(TokenKind.IsofMethod)) {
-      // The isof method is a terminal. So no further operators are allowed
-      return parseIsOfMethod(TokenKind.IsofMethod);
+    if (tokenizer.next(TokenKind.IsofMethod)) {
+      // The isof method is a terminal.  So no further operators are allowed.
+      return parseIsOfOrCastMethod(MethodKind.ISOF);
     } else {
       Expression left = parseExprAdd();
       TokenKind operatorTokenKind = ParserHelper.next(tokenizer,
@@ -264,30 +261,25 @@ public class ExpressionParser {
     }
   }
 
-  private Expression parseIsOfMethod(final TokenKind lastToken) throws UriParserException, UriValidationException {
-    if(lastToken == TokenKind.IsofMethod) {
-      // The TokenKind 'IsOfMethod' consumes also the opening parenthesis 
-
-      // The first parameter could be an expression or a type literal
-      final List<Expression> parameters = new ArrayList<Expression>();
+  private Expression parseIsOfOrCastMethod(final MethodKind kind) throws UriParserException, UriValidationException {
+    // The TokenKind 'IsOfMethod' consumes also the opening parenthesis.
+    // The first parameter could be an expression or a type literal.
+    List<Expression> parameters = new ArrayList<Expression>();
+    parameters.add(parseExpression());
+    if (!(parameters.get(0) instanceof TypeLiteral)) {
+      // The first parameter is not a type literal, so there must be a second parameter.
+      ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       parameters.add(parseExpression());
-      if(!(parameters.get(0) instanceof TypeLiteral)) {
-        // The first parameter is not a type literal, so there must be a second parameter
-        ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
-        parameters.add(parseExpression());
-        
-        // The second parameter must be a type literal
-        if(!(parameters.get(1) instanceof TypeLiteral)) {
-          throw new UriParserSemanticException("Type literal extected", 
-              UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
-        }
+
+      // The second parameter must be a type literal.
+      if (!(parameters.get(1) instanceof TypeLiteral)) {
+        throw new UriParserSemanticException("Type literal expected.",
+            UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
       }
-      
-      ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
-      return new MethodImpl(MethodKind.ISOF, parameters);
-    } else {
-      throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
     }
+
+    ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+    return new MethodImpl(kind, parameters);
   }
 
   private Expression parseExprAdd() throws UriParserException, UriValidationException {
@@ -296,9 +288,9 @@ public class ExpressionParser {
     // Null for everything other than ADD or SUB
     while (operatorTokenKind != null) {
       final Expression right = parseExprMul();
-      checkAddSubTypes(left, right, operatorTokenKind == TokenKind.AddOperator);
-      left = new BinaryImpl(left, tokenToBinaryOperator.get(operatorTokenKind), right,
-          odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
+      final EdmType resultType = getAddSubTypeAndCheckLeftAndRight(left, right,
+          operatorTokenKind == TokenKind.SubOperator);
+      left = new BinaryImpl(left, tokenToBinaryOperator.get(operatorTokenKind), right, resultType);
       operatorTokenKind = ParserHelper.next(tokenizer, TokenKind.AddOperator, TokenKind.SubOperator);
     }
     return left;
@@ -328,10 +320,7 @@ public class ExpressionParser {
   }
 
   private Expression parseExprUnary() throws UriParserException, UriValidationException {
-    final TokenKind operatorTokenKind = ParserHelper.next(tokenizer, TokenKind.MINUS, TokenKind.NotOperator, 
-                                                                     TokenKind.CastMethod);
-    
-    if(operatorTokenKind == TokenKind.MINUS) {
+    if (tokenizer.next(TokenKind.MinusOperator)) {
       final Expression expression = parseExprPrimary();
       checkType(expression,
           EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
@@ -339,37 +328,14 @@ public class ExpressionParser {
           EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
           EdmPrimitiveTypeKind.Duration);
       return new UnaryImpl(UnaryOperatorKind.MINUS, expression, getType(expression));
-    } else if(operatorTokenKind == TokenKind.NotOperator) {
+    } else if (tokenizer.next(TokenKind.NotOperator)) {
       final Expression expression = parseExprPrimary();
       checkType(expression, EdmPrimitiveTypeKind.Boolean);
       return new UnaryImpl(UnaryOperatorKind.NOT, expression, getType(expression));
-    } else if(operatorTokenKind == TokenKind.CastMethod) {
-      return parseCastMethod(operatorTokenKind);
+    } else if (tokenizer.next(TokenKind.CastMethod)) {
+      return parseIsOfOrCastMethod(MethodKind.CAST);
     } else {
-      final Expression expression = parseExprPrimary();
-      return expression;
-    }
-  }
-
-  private Expression parseCastMethod(final TokenKind lastToken) throws UriParserException, UriValidationException {
-    // The TokenKind 'CastMethod' consumes also the opening parenthesis 
-    if(lastToken == TokenKind.CastMethod) {
-      final List<Expression> parameters = new ArrayList<Expression>();
-      parameters.add(parseExpression());
-      
-      if(!(parameters.get(0) instanceof TypeLiteral)) {
-        ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
-        parameters.add(parseExpression());
-        if(!(parameters.get(1) instanceof TypeLiteral)) {
-          throw new UriParserSemanticException("Type literal extected", 
-              UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
-        }
-      }
-      
-      ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
-      return new MethodImpl(MethodKind.CAST, parameters);
-    } else {
-      throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
+      return parseExprPrimary();
     }
   }
 
@@ -433,22 +399,20 @@ public class ExpressionParser {
   private Expression parseMethod(final TokenKind nextMethod) throws UriParserException, UriValidationException {
     // The method token text includes the opening parenthesis so that method calls can be recognized unambiguously.
     // OData identifiers have to be considered after that.
-    
     final MethodKind methodKind = tokenToMethod.get(nextMethod);
     return new MethodImpl(methodKind, parseMethodParameters(methodKind));
   }
 
-  private Expression parsePrimitive(TokenKind nextPrimitive) throws UriParserException {
+  private Expression parsePrimitive(final TokenKind primitiveTokenKind) throws UriParserException {
     final String primitiveValueLiteral = tokenizer.getText();
-    if (nextPrimitive == TokenKind.EnumValue) {
+    if (primitiveTokenKind == TokenKind.EnumValue) {
       return createEnumExpression(primitiveValueLiteral);
     } else {
-      EdmPrimitiveTypeKind primitiveTypeKind = tokenToPrimitiveType.get(nextPrimitive);
-      
-      if(primitiveTypeKind == EdmPrimitiveTypeKind.Int64) {
+      EdmPrimitiveTypeKind primitiveTypeKind = tokenToPrimitiveType.get(primitiveTokenKind);
+      if (primitiveTypeKind == EdmPrimitiveTypeKind.Int64) {
         primitiveTypeKind = determineIntegerType(primitiveValueLiteral);
       }
-      
+
       final EdmPrimitiveType type = primitiveTypeKind == null ?
           // Null handling
           null :
@@ -472,12 +436,11 @@ public class ExpressionParser {
       } else {
         typeKind = EdmPrimitiveTypeKind.Int64;
       }
-    } catch (NumberFormatException e) {
-      // This should never happen. Because the tokenizer has figured out that the literal is an integer
-      throw new UriParserSyntaxException(intValueAsString + " is not an integer", 
+    } catch (final NumberFormatException e) {
+      // This should never happen because the tokenizer has figured out that the literal is an integer.
+      throw new UriParserSyntaxException("'" + intValueAsString + "' is not an integer.", e,
           UriParserSyntaxException.MessageKeys.SYNTAX);
     }
-
     return typeKind;
   }
 
@@ -622,19 +585,19 @@ public class ExpressionParser {
       if (filterType == null) {
         filterType = edm.getComplexType(fullQualifiedName);
       }
-      
-      if(filterType == null) {
-        filterType = getEdmType(fullQualifiedName);
+
+      if (filterType == null) {
+        filterType = getPrimitiveType(fullQualifiedName);
       }
-      
-      if(filterType == null) {
+
+      if (filterType == null) {
         filterType = edm.getEnumType(fullQualifiedName);
       }
-      
-      if(filterType == null) {
+
+      if (filterType == null) {
         filterType = edm.getTypeDefinition(fullQualifiedName);
       }
-      
+
       if (filterType != null) {
         if (tokenizer.next(TokenKind.SLASH)) {
           // Leading type cast
@@ -642,30 +605,29 @@ public class ExpressionParser {
           startTypeFilter = filterType;
 
           final TokenKind tokenKind = ParserHelper.next(tokenizer, TokenKind.QualifiedName, TokenKind.ODataIdentifier);
-          parseMemberExpression(tokenKind, uriInfo, new UriResourceStartingTypeFilterImpl(filterType, false), 
-              false);
+          parseMemberExpression(tokenKind, uriInfo, new UriResourceStartingTypeFilterImpl(filterType, false), false);
         } else {
           // Type literal
           return new TypeLiteralImpl(filterType);
         }
       } else {
-        // Must be bound or unbound function. 
+        // Must be bound or unbound function.
         parseFunction(fullQualifiedName, uriInfo, referringType, true);
       }
     } else if (lastTokenKind == TokenKind.ODataIdentifier) {
       parseFirstMemberODataIdentifier(uriInfo);
     }
-    
+
     return new MemberImpl(uriInfo, startTypeFilter);
   }
 
-  private EdmType getEdmType(final FullQualifiedName fullQualifiedName) {
-    if(!fullQualifiedName.getNamespace().equals(EdmPrimitiveType.EDM_NAMESPACE)) {
+  private EdmType getPrimitiveType(final FullQualifiedName fullQualifiedName) {
+    if (EdmPrimitiveType.EDM_NAMESPACE.equals(fullQualifiedName.getNamespace())) {
+      final EdmPrimitiveTypeKind primitiveTypeKind = EdmPrimitiveTypeKind.valueOf(fullQualifiedName.getName());
+      return primitiveTypeKind == null ? null : odata.createPrimitiveTypeInstance(primitiveTypeKind);
+    } else {
       return null;
     }
-    
-    final EdmPrimitiveTypeKind primitiveTypeKind = EdmPrimitiveTypeKind.valueOfFQN(fullQualifiedName);
-    return primitiveTypeKind == null ? null : EdmPrimitiveTypeFactory.getInstance(primitiveTypeKind);
   }
 
   private void parseDollarRoot(UriInfoImpl uriInfo) throws UriParserException, UriValidationException {
@@ -694,7 +656,7 @@ public class ExpressionParser {
     parseSingleNavigationExpr(uriInfo, resource);
   }
 
-  private void parseDollarIt(UriInfoImpl uriInfo, EdmType referringType) 
+  private void parseDollarIt(UriInfoImpl uriInfo, final EdmType referringType)
       throws UriParserException, UriValidationException {
     UriResourceItImpl itResource = new UriResourceItImpl(referringType, false);
     uriInfo.addResourcePart(itResource);
@@ -759,16 +721,14 @@ public class ExpressionParser {
       if (edmEntityType != null) {
         if (allowTypeFilter) {
           setTypeFilter(lastResource, edmEntityType);
-          
-          if(tokenizer.next(TokenKind.SLASH)) {
-            final TokenKind nextTokenKind = ParserHelper.next(tokenizer, TokenKind.QualifiedName, 
-                                                                         TokenKind.ODataIdentifier);
-            if(nextTokenKind == TokenKind.ODataIdentifier) {
-              parsePropertyPathExpr(uriInfo, lastResource);
-            } else if(nextTokenKind == TokenKind.QualifiedName) {
+
+          if (tokenizer.next(TokenKind.SLASH)) {
+            if (tokenizer.next(TokenKind.QualifiedName)) {
               parseBoundFunction(fullQualifiedName, uriInfo, lastResource);
+            } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
+              parsePropertyPathExpr(uriInfo, lastResource);
             } else {
-              throw new UriParserSyntaxException("Extected OData Identifier or Full Qualified Name", 
+              throw new UriParserSyntaxException("Expected OData Identifier or Full Qualified Name.",
                   UriParserSyntaxException.MessageKeys.SYNTAX);
             }
           }
@@ -814,7 +774,9 @@ public class ExpressionParser {
 
     if (property == null) {
       throw new UriParserSemanticException("Unknown property.",
-          UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, oDataIdentifier);
+          UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE,
+          lastType.getFullQualifiedName().getFullQualifiedNameAsString(),
+          oDataIdentifier);
     }
 
     if (property.getType() instanceof EdmComplexType) {
@@ -823,7 +785,9 @@ public class ExpressionParser {
       uriInfo.addResourcePart(complexResource);
 
       if (property.isCollection()) {
-        parseCollectionPathExpr(uriInfo, complexResource);
+        if (tokenizer.next(TokenKind.SLASH)) {
+          parseCollectionPathExpr(uriInfo, complexResource);
+        }
       } else {
         parseComplexPathExpr(uriInfo, complexResource);
       }
@@ -847,7 +811,9 @@ public class ExpressionParser {
       uriInfo.addResourcePart(primitiveResource);
 
       if (property.isCollection()) {
-        parseCollectionPathExpr(uriInfo, primitiveResource);
+        if (tokenizer.next(TokenKind.SLASH)) {
+          parseCollectionPathExpr(uriInfo, primitiveResource);
+        }
       } else {
         parseSinglePathExpr(uriInfo, primitiveResource);
       }
@@ -856,7 +822,6 @@ public class ExpressionParser {
 
   private void parseSingleNavigationExpr(UriInfoImpl uriInfo, final UriResourcePartTyped lastResource)
       throws UriParserException, UriValidationException {
-    // TODO: Is that correct?
     if (tokenizer.next(TokenKind.SLASH)) {
       final TokenKind tokenKind = ParserHelper.next(tokenizer, TokenKind.QualifiedName, TokenKind.ODataIdentifier);
       parseMemberExpression(tokenKind, uriInfo, lastResource, true);
@@ -865,8 +830,22 @@ public class ExpressionParser {
 
   private void parseCollectionNavigationExpr(UriInfoImpl uriInfo, UriResourcePartTyped lastResource)
       throws UriParserException, UriValidationException {
-    // TODO: Is type cast missing?
-    if (tokenizer.next(TokenKind.OPEN)) {
+    boolean hasSlash = false;
+    if (tokenizer.next(TokenKind.SLASH)) {
+      hasSlash = true;
+      if (tokenizer.next(TokenKind.QualifiedName)) {
+        final FullQualifiedName qualifiedName = new FullQualifiedName(tokenizer.getText());
+        final EdmEntityType edmEntityType = edm.getEntityType(qualifiedName);
+        if (edmEntityType == null) {
+          parseBoundFunction(qualifiedName, uriInfo, lastResource);
+        } else {
+          setTypeFilter(lastResource, edmEntityType);
+        }
+        hasSlash = false;
+      }
+    }
+
+    if (!hasSlash && tokenizer.next(TokenKind.OPEN)) {
       if (lastResource instanceof UriResourceNavigation) {
         ((UriResourceNavigationPropertyImpl) lastResource).setKeyPredicates(
               ParserHelper.parseNavigationKeyPredicate(tokenizer,
@@ -883,7 +862,10 @@ public class ExpressionParser {
       }
       parseSingleNavigationExpr(uriInfo, lastResource);
     }
-    parseCollectionPathExpr(uriInfo, lastResource);
+
+    if (hasSlash || tokenizer.next(TokenKind.SLASH)) {
+      parseCollectionPathExpr(uriInfo, lastResource);
+    }
   }
 
   private void parseSinglePathExpr(UriInfoImpl uriInfo, final UriResourcePartTyped lastResource)
@@ -932,25 +914,23 @@ public class ExpressionParser {
 
   private void parseCollectionPathExpr(UriInfoImpl uriInfo, final UriResourcePartTyped lastResource)
       throws UriParserException, UriValidationException {
-
-    if (tokenizer.next(TokenKind.SLASH)) {
-      if (tokenizer.next(TokenKind.COUNT)) {
-        uriInfo.addResourcePart(new UriResourceCountImpl());
-      } else if (tokenizer.next(TokenKind.ANY)) {
-        uriInfo.addResourcePart(parseLambdaRest(TokenKind.ANY, lastResource));
-      } else if (tokenizer.next(TokenKind.ALL)) {
-        uriInfo.addResourcePart(parseLambdaRest(TokenKind.ALL, lastResource));
-      } else if (tokenizer.next(TokenKind.QualifiedName)) {
-        final FullQualifiedName fullQualifiedName = new FullQualifiedName(tokenizer.getText());
-        parseBoundFunction(fullQualifiedName, uriInfo, lastResource);
-      }
+    // The initial slash (see grammar) must have been checked and consumed by the caller.
+    if (tokenizer.next(TokenKind.COUNT)) {
+      uriInfo.addResourcePart(new UriResourceCountImpl());
+    } else if (tokenizer.next(TokenKind.ANY)) {
+      uriInfo.addResourcePart(parseLambdaRest(TokenKind.ANY, lastResource));
+    } else if (tokenizer.next(TokenKind.ALL)) {
+      uriInfo.addResourcePart(parseLambdaRest(TokenKind.ALL, lastResource));
+    } else if (tokenizer.next(TokenKind.QualifiedName)) {
+      final FullQualifiedName fullQualifiedName = new FullQualifiedName(tokenizer.getText());
+      parseBoundFunction(fullQualifiedName, uriInfo, lastResource);
     }
   }
 
   private void parseFunction(final FullQualifiedName fullQualifiedName, UriInfoImpl uriInfo,
       final EdmType lastType, final boolean lastIsCollection) throws UriParserException, UriValidationException {
 
-    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, true);
+    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, edm, referringType, true);
     final List<String> parameterNames = ParserHelper.getParameterNames(parameters);
     final EdmFunction boundFunction = edm.getBoundFunction(fullQualifiedName,
         lastType.getFullQualifiedName(), lastIsCollection, parameterNames);
@@ -966,18 +946,19 @@ public class ExpressionParser {
       return;
     }
 
-    throw new UriParserSemanticException("No function found.",
+    throw new UriParserSemanticException("No function '" + fullQualifiedName + "' found.",
         UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, fullQualifiedName.getFullQualifiedNameAsString());
   }
 
   private void parseBoundFunction(final FullQualifiedName fullQualifiedName, UriInfoImpl uriInfo,
       final UriResourcePartTyped lastResource) throws UriParserException, UriValidationException {
-    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, true);
+    final EdmType type = lastResource.getType();
+    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, edm, referringType, true);
     final List<String> parameterNames = ParserHelper.getParameterNames(parameters);
     final EdmFunction boundFunction = edm.getBoundFunction(fullQualifiedName,
-        lastResource.getType().getFullQualifiedName(), lastResource.isCollection(), parameterNames);
+        type.getFullQualifiedName(), lastResource.isCollection(), parameterNames);
     if (boundFunction == null) {
-      throw new UriParserSemanticException("Bound function not found.",
+      throw new UriParserSemanticException("Bound function '" + fullQualifiedName + "' not found.",
           UriParserSemanticException.MessageKeys.FUNCTION_NOT_FOUND, fullQualifiedName.getFullQualifiedNameAsString());
     }
     parseFunctionRest(uriInfo, boundFunction, parameters);
@@ -995,19 +976,23 @@ public class ExpressionParser {
     if (function.isComposable()) {
       if (edmType instanceof EdmEntityType ) {
         if (isCollection) {
-          parseCollectionNavigationExpr(uriInfo, functionResource); 
+          parseCollectionNavigationExpr(uriInfo, functionResource);
         } else {
           parseSingleNavigationExpr(uriInfo, functionResource);
         }
       } else if (edmType instanceof EdmComplexType) {
         if (isCollection) {
-          parseCollectionPathExpr(uriInfo, functionResource);
+          if (tokenizer.next(TokenKind.SLASH)) {
+            parseCollectionPathExpr(uriInfo, functionResource);
+          }
         } else {
           parseComplexPathExpr(uriInfo, functionResource);
         }
       } else if (edmType instanceof EdmPrimitiveType) {
         if (isCollection) {
-          parseCollectionPathExpr(uriInfo, functionResource);
+          if (tokenizer.next(TokenKind.SLASH)) {
+            parseCollectionPathExpr(uriInfo, functionResource);
+          }
         } else {
           parseSinglePathExpr(uriInfo, functionResource);
         }
@@ -1077,7 +1062,7 @@ public class ExpressionParser {
         TokenKind.YearMethod);
   }
 
-  private EdmType getType(final Expression expression) throws UriParserException {
+  protected static EdmType getType(final Expression expression) throws UriParserException {
     EdmType type;
     if (expression instanceof Literal) {
       type = ((Literal) expression).getType();
@@ -1108,13 +1093,12 @@ public class ExpressionParser {
     return type;
   }
 
-  private boolean isType(final Expression expression, final EdmPrimitiveTypeKind... kinds) throws UriParserException {
-    final EdmType expressionType = getType(expression);
-    if (expressionType == null) {
+  private boolean isType(final EdmType type, final EdmPrimitiveTypeKind... kinds) throws UriParserException {
+    if (type == null) {
       return true;
     }
     for (final EdmPrimitiveTypeKind kind : kinds) {
-      if (expressionType.equals(odata.createPrimitiveTypeInstance(kind))) {
+      if (type.equals(odata.createPrimitiveTypeInstance(kind))) {
         return true;
       }
     }
@@ -1122,12 +1106,13 @@ public class ExpressionParser {
   }
 
   private void checkType(final Expression expression, final EdmPrimitiveTypeKind... kinds) throws UriParserException {
-    if (!isType(expression, kinds)) {
+    final EdmType type = getType(expression);
+    if (!isType(type, kinds)) {
       throw new UriParserSemanticException("Incompatible type.",
           UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, // TODO: better message
-          getType(expression) == null ?
+          type == null ?
               "" :
-              getType(expression).getFullQualifiedName().getFullQualifiedNameAsString());
+              type.getFullQualifiedName().getFullQualifiedNameAsString());
     }
   }
 
@@ -1137,21 +1122,21 @@ public class ExpressionParser {
     if (leftType == null || rightType == null || leftType.equals(rightType)) {
       return;
     }
-    
+
     // Numeric promotion for Edm.Byte and Edm.SByte
-    if((leftType instanceof EdmByte || leftType instanceof EdmSByte) 
-        && (rightType instanceof EdmByte || rightType instanceof EdmSByte)) {
+    if (isType(leftType, EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte)
+        && isType(rightType, EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte)) {
       return;
     }
-    
+
     if (leftType.getKind() != EdmTypeKind.PRIMITIVE
         || rightType.getKind() != EdmTypeKind.PRIMITIVE
         || !(((EdmPrimitiveType) leftType).isCompatible((EdmPrimitiveType) rightType)
-        || ((EdmPrimitiveType) rightType).isCompatible((EdmPrimitiveType) leftType)))
-        {
+        || ((EdmPrimitiveType) rightType).isCompatible((EdmPrimitiveType) leftType))) {
       throw new UriParserSemanticException("Incompatible types.",
-          UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE, leftType.getFullQualifiedName().toString(), 
-                                                                       rightType.getFullQualifiedName().toString());
+          UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+          leftType.getFullQualifiedName().getFullQualifiedNameAsString(),
+          rightType.getFullQualifiedName().getFullQualifiedNameAsString());
     }
   }
 
@@ -1164,12 +1149,12 @@ public class ExpressionParser {
     }
     return type;
   }
-  
+
   private boolean isEnumType(final Expression expression) throws UriParserException {
     final EdmType expressionType = getType(expression);
     return expressionType == null
         || expressionType.getKind() == EdmTypeKind.ENUM
-        || isType(expression,
+        || isType(expressionType,
             EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
             EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte);
   }
@@ -1208,44 +1193,69 @@ public class ExpressionParser {
         EdmPrimitiveTypeKind.Date, EdmPrimitiveTypeKind.TimeOfDay,
         EdmPrimitiveTypeKind.DateTimeOffset, EdmPrimitiveTypeKind.Duration);
     if (!(((EdmPrimitiveType) leftType).isCompatible((EdmPrimitiveType) rightType)
-    || ((EdmPrimitiveType) rightType).isCompatible((EdmPrimitiveType) leftType))) {
+        || ((EdmPrimitiveType) rightType).isCompatible((EdmPrimitiveType) leftType))) {
       throw new UriParserSemanticException("Incompatible types.",
-          UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, ""); // TODO: better message
+          UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+          leftType.getFullQualifiedName().getFullQualifiedNameAsString(),
+          rightType.getFullQualifiedName().getFullQualifiedNameAsString());
     }
   }
 
-  private void checkAddSubTypes(final Expression left, final Expression right, final boolean isAdd)
+  private EdmType getAddSubTypeAndCheckLeftAndRight(final Expression left, final Expression right, final boolean isSub)
       throws UriParserException {
     final EdmType leftType = getType(left);
     final EdmType rightType = getType(right);
-    if (leftType == null || rightType == null
-        || isType(left,
+    if (leftType == null || rightType == null) {
+      return null;
+    }
+    if (isType(leftType,
             EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
             EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
             EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double)
-        && isType(right,
+        && isType(rightType,
             EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
             EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
             EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double)) {
-      return;
+      // The result type must be able to handle the overflow,
+      // so we return always a wider type than the types of the operands.
+      if (isType(leftType, EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double)
+          || isType(rightType,
+              EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double)) {
+        return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
+      } else if (isType(leftType, EdmPrimitiveTypeKind.Int64) || isType(rightType, EdmPrimitiveTypeKind.Int64)) {
+        return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal);
+      } else if (isType(leftType, EdmPrimitiveTypeKind.Int32) || isType(rightType, EdmPrimitiveTypeKind.Int32)) {
+        return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int64);
+      } else if (isType(leftType, EdmPrimitiveTypeKind.Int16) || isType(rightType, EdmPrimitiveTypeKind.Int16)) {
+        return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
+      } else {
+        return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16);
+      }
     }
-    if (isType(left, EdmPrimitiveTypeKind.DateTimeOffset)
-        && (isType(right, EdmPrimitiveTypeKind.Duration)
-        || isType(right, EdmPrimitiveTypeKind.DateTimeOffset) && !isAdd)) {
-      return;
+    if ((isType(leftType, EdmPrimitiveTypeKind.DateTimeOffset)
+        || isType(leftType, EdmPrimitiveTypeKind.Duration))
+        && isType(rightType, EdmPrimitiveTypeKind.Duration)) {
+      return leftType;
     }
-    if (isType(left, EdmPrimitiveTypeKind.Duration) && isType(right, EdmPrimitiveTypeKind.Duration)
-        || isType(left, EdmPrimitiveTypeKind.Date)
-        && (isType(right, EdmPrimitiveTypeKind.Duration) || isType(right, EdmPrimitiveTypeKind.Date) && !isAdd)) {
-      return;
+    if (isType(leftType, EdmPrimitiveTypeKind.Date) && isType(rightType, EdmPrimitiveTypeKind.Duration)) {
+      return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
+    }
+    if (isSub
+        && (isType(leftType, EdmPrimitiveTypeKind.DateTimeOffset)
+            && isType(rightType, EdmPrimitiveTypeKind.DateTimeOffset)
+            || isType(leftType, EdmPrimitiveTypeKind.Date)
+            && isType(rightType, EdmPrimitiveTypeKind.Date))) {
+      return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration);
     }
     throw new UriParserSemanticException("Incompatible types.",
-        UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, ""); // TODO: better message
+        UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+        leftType.getFullQualifiedName().getFullQualifiedNameAsString(),
+        rightType.getFullQualifiedName().getFullQualifiedNameAsString());
   }
 
   private void checkStructuredTypeFilter(final EdmType type, final EdmType filterType)
       throws UriParserException {
-    if (!(filterType instanceof EdmStructuredType && ((EdmStructuredType)filterType).compatibleTo(type))) {
+    if (!(filterType instanceof EdmStructuredType && ((EdmStructuredType) filterType).compatibleTo(type))) {
       throw new UriParserSemanticException("Incompatible type filter.",
           UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER,
           filterType.getFullQualifiedName().getFullQualifiedNameAsString());

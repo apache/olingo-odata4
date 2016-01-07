@@ -41,4 +41,8 @@ public class AliasImpl implements Alias {
     return visitor.visitAlias(parameterName);
   }
 
+  @Override
+  public String toString() {
+    return parameterName;
+  }
 }

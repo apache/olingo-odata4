@@ -18,16 +18,22 @@
  */
 package org.apache.olingo.server.core.uri.antlr;
 
-import org.antlr.v4.runtime.Lexer;
-import org.apache.olingo.server.core.uri.testutil.TokenValidator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.olingo.server.core.uri.parser.UriTokenizer;
+import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.junit.Test;
 
+/**
+ * Tests originally written for the ANTLR lexer.
+ */
 public class TestLexer {
 
   private TokenValidator test = null;
 
-  private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";// last two chars are not in
-  // cPCT_ENCODED_UNESCAPED
+  // The last two chars are not in cPCT_ENCODED_UNESCAPED.
+  private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";
   private static final String cUNRESERVED = "ABCabc123-._~";
   private static final String cOTHER_DELIMS = "!()*+,;";
   private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
@@ -39,265 +45,279 @@ public class TestLexer {
   }
 
   @Test
-  public void test() {
-
-    // test.log(1).run("ESAllPrim?$orderby=PropertyDouble eq 3.5E+38");
-  }
-
-  // ;------------------------------------------------------------------------------
-  // ; 0. URI
-  // ;------------------------------------------------------------------------------
-
-  @Test
-  public void testUnary() {
-    test.run("- a eq a").isAllInput();
+  public void unary() {
+    test.run("-a eq a").has(TokenKind.MinusOperator, TokenKind.ODataIdentifier, TokenKind.EqualsOperator,
+        TokenKind.ODataIdentifier).isInput();
   }
 
   @Test
-  public void testUriTokens() {
-    test.globalMode(UriLexer.MODE_QUERY);
-    test.run("#").isText("#").isType(UriLexer.FRAGMENT);
-    test.run("$count").isText("$count").isType(UriLexer.COUNT);
-    test.run("$ref").isText("$ref").isType(UriLexer.REF);
-    test.run("$value").isText("$value").isType(UriLexer.VALUE);
+  public void uriTokens() {
+//    test.run("#").isType(TokenKind.FRAGMENT).isInput();
+    test.run("$count").has(TokenKind.COUNT).isInput();
+    test.run("$ref").has(TokenKind.REF).isInput();
+    test.run("$value").has(TokenKind.VALUE).isInput();
   }
 
-  // ;------------------------------------------------------------------------------
-  // ; 2. Query Options
-  // ;------------------------------------------------------------------------------
   @Test
-  public void testQueryOptionsTokens() {
+  public void queryOptionsTokens() {
+    test.run("$skip=1").has(TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$skip=2").has(TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$skip=123").has(TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
 
-    test.globalMode(UriLexer.MODE_QUERY);
-    test.run("$skip=1").isAllText("$skip=1").isType(UriLexer.SKIP_QO);
-    test.run("$skip=2").isAllText("$skip=2").isType(UriLexer.SKIP_QO);
-    test.run("$skip=123").isAllText("$skip=123").isType(UriLexer.SKIP_QO);
+    test.run("$top=1").has(TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$top=2").has(TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$top=123").has(TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue).isInput();
 
-    test.run("$top=1").isAllText("$top=1").isType(UriLexer.TOP);
-    test.run("$top=2").isAllText("$top=2").isType(UriLexer.TOP);
-    test.run("$top=123").isAllText("$top=123").isType(UriLexer.TOP);
+    test.run("$levels=1").has(TokenKind.LEVELS, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$levels=2").has(TokenKind.LEVELS, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$levels=123").has(TokenKind.LEVELS, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+    test.run("$levels=max").has(TokenKind.LEVELS, TokenKind.EQ, TokenKind.MAX).isInput();
 
-    test.run("$levels=1").isAllText("$levels=1").isType(UriLexer.LEVELS);
-    test.run("$levels=2").isAllText("$levels=2").isType(UriLexer.LEVELS);
-    test.run("$levels=123").isAllText("$levels=123").isType(UriLexer.LEVELS);
-    test.run("$levels=max").isAllText("$levels=max").isType(UriLexer.LEVELS);
+//    test.run("$format=atom").has(TokenKind.FORMAT, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
+//    test.run("$format=json").has(TokenKind.FORMAT, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
+//    test.run("$format=xml").has(TokenKind.FORMAT,, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
+//    test.run("$format=abc/def").has(TokenKind.FORMAT, TokenKind.EQ,
+//        TokenKind.ODataIdentifier, TokenKind.SLASH, TokenKind.ODataIdentifier).isInput();
 
-    test.run("$format=atom").isAllText("$format=atom").isType(UriLexer.FORMAT);
-    test.run("$format=json").isAllText("$format=json").isType(UriLexer.FORMAT);
-    test.run("$format=xml").isAllText("$format=xml").isType(UriLexer.FORMAT);
-    test.run("$format=abc/def").isAllText("$format=abc/def").isType(UriLexer.FORMAT);
+//    test.run("$id=123").has(TokenKind.ID, TokenKind.EQ, TokenKind.IntegerValue).isInput();
+//    test.run("$id=ABC").has(TokenKind.ID, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
 
-    test.run("$id=123").isAllText("$id=123").isType(UriLexer.ID);
-    test.run("$id=ABC").isAllText("$id=ABC").isType(UriLexer.ID);
+//    test.run("$skiptoken=ABC").has(TokenKind.SKIPTOKEN, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
+//    test.run("$skiptoken=ABC").has(TokenKind.SKIPTOKEN, TokenKind.EQ, TokenKind.ODataIdentifier).isInput();
 
-    test.run("$skiptoken=ABC").isAllText("$skiptoken=ABC").isType(UriLexer.SKIPTOKEN);
-    test.run("$skiptoken=ABC").isAllText("$skiptoken=ABC").isType(UriLexer.SKIPTOKEN);
-
-    test.run("$search=\"ABC\"").isAllText("$search=\"ABC\"").isType(UriLexer.SEARCH);
-    test.run("$search=ABC").isAllText("$search=ABC").isType(UriLexer.SEARCH);
-    test.run("$search=\"A%20B%20C\"").isAllText("$search=\"A%20B%20C\"").isType(UriLexer.SEARCH);
-    test.run("$search=Test Test").isAllText("$search=Test Test").isType(UriLexer.SEARCH);
-    test.run("$search=Test&$filter=ABC eq 1").isAllText("$search=Test&$filter=ABC eq 1").isType(UriLexer.SEARCH);
+    test.run("$search=\"ABC\"").has(TokenKind.SEARCH, TokenKind.EQ, TokenKind.Phrase).isInput();
+    test.run("$search=ABC").has(TokenKind.SEARCH, TokenKind.EQ, TokenKind.Word).isInput();
+    test.run("$search=\"A%20B%20C\"").has(TokenKind.SEARCH, TokenKind.EQ, TokenKind.Phrase).isInput();
+    test.run("$search=Test Test").has(TokenKind.SEARCH, TokenKind.EQ, TokenKind.Word,
+        TokenKind.AndOperatorSearch, TokenKind.Word).isInput();
+    test.run("$search=Test&$filter=ABC eq 1").has(TokenKind.SEARCH, TokenKind.EQ, TokenKind.Word);
   }
-  
+
   @Test
-  public void testQueryOptionsDefaultMode() {
-    // First set query mode, than use expand(switches to default mode) and use nested system query options
-    test.globalMode(UriLexer.MODE_QUERY);
-    test.run("$expand=ABC($skip=1)").isAllText("$expand=ABC($skip=1)").at(4).isType(UriLexer.SKIP_QO);
-    test.run("$expand=ABC($skip=2)").isAllText("$expand=ABC($skip=2)").at(4).isType(UriLexer.SKIP_QO);
-    test.run("$expand=ABC($skip=123)").isAllText("$expand=ABC($skip=123)").at(4).isType(UriLexer.SKIP_QO);
-    test.run("$expand=ABC($search=abc)").isAllText("$expand=ABC($search=abc)").at(4).isType(UriLexer.SEARCH_INLINE);
-    test.run("$expand=ABC($search=\"123\")").isAllText("$expand=ABC($search=\"123\")")
-                                            .at(4).isType(UriLexer.SEARCH_INLINE)
-                                            .at(6).isType(UriLexer.SEARCHPHRASE);
-    test.run("$expand=ABC($top=1)").isAllText("$expand=ABC($top=1)").at(4).isType(UriLexer.TOP);
-    test.run("$expand=ABC($top=2)").isAllText("$expand=ABC($top=2)").at(4).isType(UriLexer.TOP);
-    test.run("$expand=ABC($top=123)").isAllText("$expand=ABC($top=123)").at(4).isType(UriLexer.TOP);
-    
-    test.run("$expand=ABC($expand=DEF($skip=1))").isAllText("$expand=ABC($expand=DEF($skip=1))")
-                                                 .at(8).isType(UriLexer.SKIP_QO);
-    test.run("$expand=ABC($expand=DEF($skip=2))").isAllText("$expand=ABC($expand=DEF($skip=2))")
-                                                 .at(8).isType(UriLexer.SKIP_QO);
-    test.run("$expand=ABC($expand=DEF($skip=123))").isAllText("$expand=ABC($expand=DEF($skip=123))")
-                                                 .at(8).isType(UriLexer.SKIP_QO);
-    
-    test.run("$expand=ABC($expand=DEF($top=1))").isAllText("$expand=ABC($expand=DEF($top=1))")
-                                                .at(8).isType(UriLexer.TOP);
-    test.run("$expand=ABC($expand=DEF($top=2))").isAllText("$expand=ABC($expand=DEF($top=2))")
-                                                .at(8).isType(UriLexer.TOP);
-    test.run("$expand=ABC($expand=DEF($top=123))").isAllText("$expand=ABC($expand=DEF($top=123))")
-                                                  .at(8).isType(UriLexer.TOP);
-    test.run("$expand=ABC($expand=DEF($search=Test Test))").isAllText("$expand=ABC($expand=DEF($search=Test Test))")
-                                                        .at(8).isType(UriLexer.SEARCH_INLINE)
-                                                        .at(10).isType(UriLexer.SEARCHWORD)
-                                                        .at(12).isType(UriLexer.SEARCHWORD);
+  public void queryOptionsDefaultMode() {
+    test.run("$expand=ABC($skip=1)").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE).isInput();
+    test.run("$expand=ABC($skip=123)").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE).isInput();
+    test.run("$expand=ABC($search=abc)").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SEARCH, TokenKind.EQ, TokenKind.Word, TokenKind.CLOSE).isInput();
+    test.run("$expand=ABC($search=\"123\")").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SEARCH, TokenKind.EQ, TokenKind.Phrase, TokenKind.CLOSE).isInput();
+    test.run("$expand=ABC($top=1)").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE).isInput();
+    test.run("$expand=ABC($top=123)").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE).isInput();
+
+    test.run("$expand=ABC($expand=DEF($skip=1))").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
+    test.run("$expand=ABC($expand=DEF($skip=123))").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.SKIP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
+
+    test.run("$expand=ABC($expand=DEF($top=1))").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
+    test.run("$expand=ABC($expand=DEF($top=123))").has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+        TokenKind.OPEN, TokenKind.TOP, TokenKind.EQ, TokenKind.IntegerValue, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
+
+    test.run("$expand=ABC($expand=DEF($search=Test Test))")
+        .has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.SEARCH, TokenKind.EQ, TokenKind.Word,
+            TokenKind.AndOperatorSearch, TokenKind.Word, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
     test.run("$expand=ABC($expand=DEF($search=\"Test\" \"Test\"))")
-                .isAllText("$expand=ABC($expand=DEF($search=\"Test\" \"Test\"))")
-                .at(8).isType(UriLexer.SEARCH_INLINE)
-                .at(10).isType(UriLexer.SEARCHPHRASE)
-                .at(12).isType(UriLexer.SEARCHPHRASE);
+        .has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.SEARCH, TokenKind.EQ, TokenKind.Phrase,
+            TokenKind.AndOperatorSearch, TokenKind.Phrase, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
     test.run("$expand=ABC($expand=DEF($search=\"Test\" \"Test\";$filter=PropertyInt16 eq 0;$orderby=PropertyInt16))")
-                .isAllText("$expand=ABC($expand=DEF($search=\"Test\" \"Test\";$filter=PropertyInt16 " + 
-                           "eq 0;$orderby=PropertyInt16))")
-                .at(8).isType(UriLexer.SEARCH_INLINE)
-                .at(10).isType(UriLexer.SEARCHPHRASE)
-                .at(12).isType(UriLexer.SEARCHPHRASE)
-                .at(13).isType(UriLexer.SEMI)
-                .at(14).isType(UriLexer.FILTER)
-                .at(22).isType(UriLexer.ORDERBY);
-  }
-  
-  // ;------------------------------------------------------------------------------
-  // ; 4. Expressions
-  // ;------------------------------------------------------------------------------
-  @Test
-  public void testQueryExpressions() {
-    test.globalMode(Lexer.DEFAULT_MODE);
-
-    test.run("$it").isText("$it").isType(UriLexer.IT);
-
-    test.run("$filter=contains(").at(2).isText("contains(").isType(UriLexer.CONTAINS_WORD);
-
-    test.run("$filter=containsabc").at(2).isText("containsabc")
-    .isType(UriLexer.ODATAIDENTIFIER); // test that this is a ODI
-
-    test.run("$filter=startswith(").at(2).isText("startswith(").isType(UriLexer.STARTSWITH_WORD);
-    test.run("$filter=endswith(").at(2).isText("endswith(").isType(UriLexer.ENDSWITH_WORD);
-    test.run("$filter=length(").at(2).isText("length(").isType(UriLexer.LENGTH_WORD);
-    test.run("$filter=indexof(").at(2).isText("indexof(").isType(UriLexer.INDEXOF_WORD);
-    test.run("$filter=substring(").at(2).isText("substring(").isType(UriLexer.SUBSTRING_WORD);
-    test.run("$filter=tolower(").at(2).isText("tolower(").isType(UriLexer.TOLOWER_WORD);
-    test.run("$filter=toupper(").at(2).isText("toupper(").isType(UriLexer.TOUPPER_WORD);
-    test.run("$filter=trim(").at(2).isText("trim(").isType(UriLexer.TRIM_WORD);
-    test.run("$filter=concat(").at(2).isText("concat(").isType(UriLexer.CONCAT_WORD);
-
+        .has(TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.EXPAND, TokenKind.EQ, TokenKind.ODataIdentifier,
+            TokenKind.OPEN, TokenKind.SEARCH, TokenKind.EQ, TokenKind.Phrase,
+            TokenKind.AndOperatorSearch, TokenKind.Phrase, TokenKind.SEMI,
+            TokenKind.FILTER, TokenKind.EQ, TokenKind.ODataIdentifier, TokenKind.EqualsOperator,
+            TokenKind.IntegerValue, TokenKind.SEMI,
+            TokenKind.ORDERBY, TokenKind.EQ, TokenKind.ODataIdentifier, TokenKind.CLOSE, TokenKind.CLOSE)
+        .isInput();
   }
 
-  // ;------------------------------------------------------------------------------
-  // ; 7. Literal Data Values
-  // ;------------------------------------------------------------------------------
+  @Test
+  public void queryExpressions() {
+    test.run("$it").has(TokenKind.IT).isText("$it");
+
+    test.run("$filter=contains(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.ContainsMethod).isText("contains(");
+
+    test.run("$filter=containsabc").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.ODataIdentifier)
+        .isText("containsabc");
+
+    test.run("$filter=startswith(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.StartswithMethod)
+        .isText("startswith(");
+    test.run("$filter=endswith(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.EndswithMethod).isText("endswith(");
+    test.run("$filter=length(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.LengthMethod).isText("length(");
+    test.run("$filter=indexof(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.IndexofMethod).isText("indexof(");
+    test.run("$filter=substring(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.SubstringMethod).isText("substring(");
+    test.run("$filter=tolower(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.TolowerMethod).isText("tolower(");
+    test.run("$filter=toupper(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.ToupperMethod).isText("toupper(");
+    test.run("$filter=trim(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.TrimMethod).isText("trim(");
+    test.run("$filter=concat(").has(TokenKind.FILTER, TokenKind.EQ, TokenKind.ConcatMethod).isText("concat(");
+  }
 
   @Test
-  public void testLiteralDataValues() {
-    test.globalMode(Lexer.DEFAULT_MODE);
+  public void literalDataValues() {
     // null
-    test.run("null").isInput().isType(UriLexer.NULLVALUE);
+    test.run("null").has(TokenKind.NULL).isInput();
 
     // binary
-    test.run("binary'ABCD'").isInput().isType(UriLexer.BINARY);
-    test.run("BiNaRy'ABCD'").isInput().isType(UriLexer.BINARY);
+    test.run("binary'ABCD'").has(TokenKind.BinaryValue).isInput();
+    test.run("BiNaRy'ABCD'").has(TokenKind.BinaryValue).isInput();
 
     // boolean
-    test.run("true").isInput().isType(UriLexer.TRUE);
-    test.run("false").isInput().isType(UriLexer.FALSE);
-    test.run("TrUe").isInput().isType(UriLexer.BOOLEAN);
-    test.run("FaLsE").isInput().isType(UriLexer.BOOLEAN);
+    test.run("true").has(TokenKind.BooleanValue).isInput();
+    test.run("false").has(TokenKind.BooleanValue).isInput();
+    test.run("TrUe").has(TokenKind.BooleanValue).isInput();
+    test.run("FaLsE").has(TokenKind.BooleanValue).isInput();
 
     // Lexer rule INT
-    test.run("123").isInput().isType(UriLexer.INT);
-    test.run("123456789").isInput().isType(UriLexer.INT);
-    test.run("+123").isInput().isType(UriLexer.INT);
-    test.run("+123456789").isInput().isType(UriLexer.INT);
-    test.run("-123").isInput().isType(UriLexer.INT);
-    test.run("-123456789").isInput().isType(UriLexer.INT);
+    test.run("123").has(TokenKind.IntegerValue).isInput();
+    test.run("123456789").has(TokenKind.IntegerValue).isInput();
+    test.run("+123").has(TokenKind.IntegerValue).isInput();
+    test.run("+123456789").has(TokenKind.IntegerValue).isInput();
+    test.run("-123").has(TokenKind.IntegerValue).isInput();
+    test.run("-123456789").has(TokenKind.IntegerValue).isInput();
 
     // Lexer rule DECIMAL
-    test.run("0.1").isInput().isType(UriLexer.DECIMAL);
-    test.run("1.1").isInput().isType(UriLexer.DECIMAL);
-    test.run("+0.1").isInput().isType(UriLexer.DECIMAL);
-    test.run("+1.1").isInput().isType(UriLexer.DECIMAL);
-    test.run("-0.1").isInput().isType(UriLexer.DECIMAL);
-    test.run("-1.1").isInput().isType(UriLexer.DECIMAL);
+    test.run("0.1").has(TokenKind.DecimalValue).isInput();
+    test.run("1.1").has(TokenKind.DecimalValue).isInput();
+    test.run("+0.1").has(TokenKind.DecimalValue).isInput();
+    test.run("+1.1").has(TokenKind.DecimalValue).isInput();
+    test.run("-0.1").has(TokenKind.DecimalValue).isInput();
+    test.run("-1.1").has(TokenKind.DecimalValue).isInput();
 
     // Lexer rule EXP
-    test.run("1.1e+1").isInput().isType(UriLexer.DECIMAL);
-    test.run("1.1e-1").isInput().isType(UriLexer.DECIMAL);
+    test.run("1.1e+1").has(TokenKind.DoubleValue).isInput();
+    test.run("1.1e-1").has(TokenKind.DoubleValue).isInput();
 
-    test.run("NaN").isInput().isType(UriLexer.NANINFINITY);
-    test.run("-INF").isInput().isType(UriLexer.NANINFINITY);
-    test.run("INF").isInput().isType(UriLexer.NANINFINITY);
+    test.run("NaN").has(TokenKind.DoubleValue).isInput();
+    test.run("-INF").has(TokenKind.DoubleValue).isInput();
+    test.run("INF").has(TokenKind.DoubleValue).isInput();
 
     // Lexer rule GUID
-    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").isInput().isType(UriLexer.GUID);
-    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").isInput().isType(UriLexer.GUID);
+    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").has(TokenKind.GuidValue).isInput();
+    test.run("1234ABCD-12AB-23CD-45EF-123456780ABC").has(TokenKind.GuidValue).isInput();
 
     // Lexer rule DATE
-    test.run("2013-11-15").isInput().isType(UriLexer.DATE);
+    test.run("2013-11-15").has(TokenKind.DateValue).isInput();
 
     // Lexer rule DATETIMEOFFSET
-    test.run("2013-11-15T13:35Z").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("2013-11-15T13:35:10Z").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("2013-11-15T13:35:10.1234Z").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35Z").has(TokenKind.DateTimeOffsetValue).isInput();
+    test.run("2013-11-15T13:35:10Z").has(TokenKind.DateTimeOffsetValue).isInput();
+    test.run("2013-11-15T13:35:10.1234Z").has(TokenKind.DateTimeOffsetValue).isInput();
 
-    test.run("2013-11-15T13:35:10.1234+01:30").isInput().isType(UriLexer.DATETIMEOFFSET);
-    test.run("2013-11-15T13:35:10.1234-01:12").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35:10.1234+01:30").has(TokenKind.DateTimeOffsetValue).isInput();
+    test.run("2013-11-15T13:35:10.1234-01:12").has(TokenKind.DateTimeOffsetValue).isInput();
 
-    test.run("2013-11-15T13:35Z").isInput().isType(UriLexer.DATETIMEOFFSET);
+    test.run("2013-11-15T13:35Z").has(TokenKind.DateTimeOffsetValue).isInput();
 
     // Lexer rule DURATION
-    test.run("duration'PT67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT67.89S'").isInput().isType(UriLexer.DURATION);
+    test.run("duration'PT67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT67.89S'").has(TokenKind.DurationValue).isInput();
 
-    test.run("duration'PT5M'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT5M67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT5M67.89S'").isInput().isType(UriLexer.DURATION);
+    test.run("duration'PT5M'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT5M67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT5M67.89S'").has(TokenKind.DurationValue).isInput();
 
-    test.run("duration'PT4H'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT4H67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT4H67.89S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT4H5M'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT4H5M67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'PT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
+    test.run("duration'PT4H'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT4H67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT4H67.89S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT4H5M'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT4H5M67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'PT4H5M67.89S'").has(TokenKind.DurationValue).isInput();
 
-    test.run("duration'P3D'");
-    test.run("duration'P3DT67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT67.89S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT5M'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT5M67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT5M67.89S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H67.89S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H5M'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H5M67S'").isInput().isType(UriLexer.DURATION);
-    test.run("duration'P3DT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
+    test.run("duration'P3D'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT67.89S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT5M'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT5M67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT5M67.89S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H67.89S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H5M'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H5M67S'").has(TokenKind.DurationValue).isInput();
+    test.run("duration'P3DT4H5M67.89S'").has(TokenKind.DurationValue).isInput();
 
-    test.run("DuRaTiOn'P3DT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
-    test.run("DuRaTiOn'-P3DT4H5M67.89S'").isInput().isType(UriLexer.DURATION);
+    test.run("DuRaTiOn'P3DT4H5M67.89S'").has(TokenKind.DurationValue).isInput();
+    test.run("DuRaTiOn'-P3DT4H5M67.89S'").has(TokenKind.DurationValue).isInput();
 
-    test.run("20:00").isInput().isType(UriLexer.TIMEOFDAY);
-    test.run("20:15:01").isInput().isType(UriLexer.TIMEOFDAY);
-    test.run("20:15:01.02").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:00").has(TokenKind.TimeOfDayValue).isInput();
+    test.run("20:15:01").has(TokenKind.TimeOfDayValue).isInput();
+    test.run("20:15:01.02").has(TokenKind.TimeOfDayValue).isInput();
 
-    test.run("20:15:01.02").isInput().isType(UriLexer.TIMEOFDAY);
+    test.run("20:15:01.02").has(TokenKind.TimeOfDayValue).isInput();
 
     // String
-    test.run("'ABC'").isText("'ABC'").isType(UriLexer.STRING);
-    test.run("'A%20C'").isInput().isType(UriLexer.STRING);
-    test.run("'%20%20%20ABC'").isInput().isType(UriLexer.STRING);
-
+    test.run("'ABC'").has(TokenKind.StringValue).isInput();
+    test.run("'A%20C'").has(TokenKind.StringValue).isInput();
+    test.run("'%20%20%20ABC'").has(TokenKind.StringValue).isInput();
   }
 
   @Test
-  public void testDelims() {
-    String reserved = "/";
-    test.globalMode(UriLexer.MODE_QUERY);
+  public void delims() {
+    final String reserved = "/";
     // Test lexer rule UNRESERVED
-    test.run("$format=A/" + cUNRESERVED).isAllInput().isType(UriLexer.FORMAT);
-    test.run("$format=A/" + cUNRESERVED + reserved).isType(UriLexer.FORMAT).at(4).isText(cUNRESERVED);
+//    test.run("$format=A/" + cUNRESERVED).has(TokenKind.FORMAT).isInput();
+//    test.run("$format=A/" + cUNRESERVED + reserved).has(TokenKind.FORMAT).isText(cUNRESERVED);
     // Test lexer rule PCT_ENCODED
-    test.run("$format=A/" + cPCT_ENCODED).isAllInput().isType(UriLexer.FORMAT);
-    test.run("$format=A/" + cPCT_ENCODED + reserved).isType(UriLexer.FORMAT).at(4).isText(cPCT_ENCODED);
+//    test.run("$format=A/" + cPCT_ENCODED).has(TokenKind.FORMAT).isInput();
+//    test.run("$format=A/" + cPCT_ENCODED + reserved).has(TokenKind.FORMAT).isText(cPCT_ENCODED);
     // Test lexer rule SUB_DELIMS
-    test.run("$format=A/" + cSUB_DELIMS).isAllInput().isType(UriLexer.FORMAT);
-    test.run("$format=A/" + cSUB_DELIMS + reserved).isType(UriLexer.FORMAT).at(4).isText("$");
+//    test.run("$format=A/" + cSUB_DELIMS).has(TokenKind.FORMAT).isInput();
+//    test.run("$format=A/" + cSUB_DELIMS + reserved).has(TokenKind.FORMAT).isText("$");
     // Test lexer rule PCHAR rest
-    test.run("$format=A/:@").isAllText("$format=A/:@").isType(UriLexer.FORMAT);
-    test.run("$format=A/:@" + reserved).isType(UriLexer.FORMAT).at(4).isText(":@");
+//    test.run("$format=A/:@").has(TokenKind.FORMAT).isInput();
+//    test.run("$format=A/:@" + reserved).has(TokenKind.FORMAT).isText(":@");
     // Test lexer rule PCHAR all
-    test.run("$format=" + cPCHAR + "/" + cPCHAR).isAllInput().isType(UriLexer.FORMAT);
-
+//    test.run("$format=" + cPCHAR + "/" + cPCHAR).has(TokenKind.FORMAT).isInput();
   }
 
+  public class TokenValidator {
+
+    private String input = null;
+    private UriTokenizer tokenizer = null;
+    private String curText = null;
+
+    public TokenValidator run(final String uri) {
+      input = uri;
+      tokenizer = new UriTokenizer(uri);
+      curText = "";
+      return this;
+    }
+
+    public TokenValidator has(final TokenKind... expected) {
+      for (final TokenKind kind : expected) {
+        assertTrue(tokenizer.next(kind));
+        curText += tokenizer.getText();
+      }
+      return this;
+    }
+
+    public TokenValidator isText(final String expected) {
+      assertEquals(expected, tokenizer.getText());
+      return this;
+    }
+
+    public TokenValidator isInput() {
+      assertEquals(input, curText);
+      assertTrue(tokenizer.next(TokenKind.EOF));
+      return this;
+    }
+  }
 }

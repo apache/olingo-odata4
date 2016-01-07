@@ -261,30 +261,33 @@ public class ResourcePathParser {
       throws UriParserException, UriValidationException {
     final FullQualifiedName name = new FullQualifiedName(tokenizer.getText());
     requireTyped(previous, name.getFullQualifiedNameAsString());
-      final UriResourcePartTyped previousTyped = (UriResourcePartTyped) previous;
-      final EdmType previousTypeFilter = getPreviousTypeFilter(previousTyped);
-      final EdmType previousType = previousTypeFilter == null ? previousTyped.getType() : previousTypeFilter;
-      final EdmAction boundAction = edm.getBoundAction(name,
-          previousType.getFullQualifiedName(),
-          previousTyped.isCollection());
-      if (boundAction != null) {
-        ParserHelper.requireTokenEnd(tokenizer);
-        return new UriResourceActionImpl(boundAction);
-      }
-      EdmStructuredType type = edm.getEntityType(name);
-      if (type == null) {
-        type = edm.getComplexType(name);
-      }
-      if (type != null) {
-        return typeCast(name, type, previousTyped);
-      }
-      if (tokenizer.next(TokenKind.EOF)) {
-        throw new UriParserSemanticException("Type '" + name.getFullQualifiedNameAsString() + "' not found.",
-            UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, name.getFullQualifiedNameAsString());
-      }
-      return functionCall(null, name,
-          previousType.getFullQualifiedName(),
-          previousTyped.isCollection());
+    final UriResourcePartTyped previousTyped = (UriResourcePartTyped) previous;
+    final EdmType previousTypeFilter = getPreviousTypeFilter(previousTyped);
+    final EdmType previousType = previousTypeFilter == null ? previousTyped.getType() : previousTypeFilter;
+
+    // We check for bound actions first because they cannot be followed by anything.
+    final EdmAction boundAction =
+        edm.getBoundAction(name, previousType.getFullQualifiedName(), previousTyped.isCollection());
+    if (boundAction != null) {
+      ParserHelper.requireTokenEnd(tokenizer);
+      return new UriResourceActionImpl(boundAction);
+    }
+
+    // Type casts can be syntactically indistinguishable from bound function calls in the case of additional keys.
+    // But normally they are shorter, so they come next.
+    final EdmStructuredType type = previousTyped.getType() instanceof EdmEntityType ?
+        edm.getEntityType(name) :
+        edm.getComplexType(name);
+    if (type != null) {
+      return typeCast(name, type, previousTyped);
+    }
+    if (tokenizer.next(TokenKind.EOF)) {
+      throw new UriParserSemanticException("Type '" + name.getFullQualifiedNameAsString() + "' not found.",
+          UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, name.getFullQualifiedNameAsString());
+    }
+
+    // Now a bound function call is the only remaining option.
+    return functionCall(null, name, previousType.getFullQualifiedName(), previousTyped.isCollection());
   }
 
   private void requireTyped(final UriResource previous, final String forWhat) throws UriParserException {
@@ -317,8 +320,13 @@ public class ResourcePathParser {
           ((UriResourceWithKeysImpl) previousTyped).setEntryTypeFilter(type);
         }
         if (tokenizer.next(TokenKind.OPEN)) {
-          ((UriResourceWithKeysImpl) previousTyped).setKeyPredicates(
-              ParserHelper.parseKeyPredicate(tokenizer, (EdmEntityType) type, null));
+          final List<UriParameter> keys = ParserHelper.parseKeyPredicate(tokenizer, (EdmEntityType) type, null);
+          if (previousTyped.isCollection()) {
+            ((UriResourceWithKeysImpl) previousTyped).setKeyPredicates(keys);
+          } else {
+            throw new UriParserSemanticException("Key not allowed here.",
+                UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED);
+          }
         }
       } else {
         previousTypeFilter = ((UriResourceTypedImpl) previousTyped).getTypeFilter();
@@ -351,7 +359,7 @@ public class ResourcePathParser {
   private UriResource functionCall(final EdmFunctionImport edmFunctionImport,
       final FullQualifiedName boundFunctionName, final FullQualifiedName bindingParameterTypeName,
       final boolean isBindingParameterCollection) throws UriParserException, UriValidationException {
-    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, false);
+    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, edm, null, false);
     final List<String> names = ParserHelper.getParameterNames(parameters);
     EdmFunction function = null;
     if (edmFunctionImport != null) {
