@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,7 +35,7 @@ public class DebugTabRuntime implements DebugTab {
 
   private final RuntimeNode rootNode;
 
-  public DebugTabRuntime(List<RuntimeMeasurement> runtimeInformation) {
+  public DebugTabRuntime(final List<RuntimeMeasurement> runtimeInformation) {
     rootNode = new RuntimeNode();
     for (final RuntimeMeasurement runtimeMeasurement : runtimeInformation) {
       rootNode.add(runtimeMeasurement);
@@ -49,11 +49,11 @@ public class DebugTabRuntime implements DebugTab {
   }
 
   @Override
-  public void appendJson(JsonGenerator gen) throws IOException {
+  public void appendJson(final JsonGenerator gen) throws IOException {
     appendJsonChildren(gen, rootNode);
   }
 
-  private void appendJsonChildren(JsonGenerator gen, RuntimeNode node) throws IOException {
+  private void appendJsonChildren(final JsonGenerator gen, final RuntimeNode node) throws IOException {
     gen.writeStartArray();
     for (RuntimeNode child : node.children) {
       appendJsonNode(gen, child);
@@ -61,7 +61,7 @@ public class DebugTabRuntime implements DebugTab {
     gen.writeEndArray();
   }
 
-  private void appendJsonNode(JsonGenerator gen, RuntimeNode node) throws IOException {
+  private void appendJsonNode(final JsonGenerator gen, final RuntimeNode node) throws IOException {
     gen.writeStartObject();
     gen.writeStringField("class", node.className);
     gen.writeStringField("method ", node.methodName);
@@ -90,25 +90,25 @@ public class DebugTabRuntime implements DebugTab {
       throws IOException {
     if (node.className != null) {
       writer.append("<li>\n")
-          .append("<span class=\"code\">")
-          .append("<span class=\"draw\">").append(draw)
-          .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")
-          .append("<span class=\"class\">").append(node.className).append("</span>.")
-          .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
-          .append("</span></span>");
+      .append("<span class=\"code\">")
+      .append("<span class=\"draw\">").append(draw)
+      .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")
+      .append("<span class=\"class\">").append(node.className).append("</span>.")
+      .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
+      .append("</span></span>");
       long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / 1000;
       writer.append("<span class=\"").append(time == 0 ? "null" : "numeric")
-          .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
-          .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")
-          .append("</span>\n");
+      .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
+      .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")
+      .append("</span>\n");
     }
     if (!node.children.isEmpty()) {
       writer.append("<ol class=\"tree\">\n");
       for (final RuntimeNode childNode : node.children) {
         appendRuntimeNode(childNode,
             node.className == null ? draw : draw + (isLast ? "&nbsp;" : "&#x2502;") + "&nbsp;&nbsp;",
-            node.children.indexOf(childNode) == node.children.size() - 1,
-            writer);
+                node.children.indexOf(childNode) == node.children.size() - 1,
+                writer);
       }
       writer.append("</ol>\n");
     }

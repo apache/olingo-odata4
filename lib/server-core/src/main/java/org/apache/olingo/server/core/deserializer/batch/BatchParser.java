@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -34,7 +34,7 @@ public class BatchParser {
 
   public List<BatchRequestPart> parseBatchRequest(final InputStream content, final String boundary,
       final BatchOptions options)
-          throws BatchDeserializerException {
+      throws BatchDeserializerException {
     this.options = options;
 
     BatchRequestTransformator transformator = new BatchRequestTransformator(options.getRawBaseUri(),
@@ -44,7 +44,7 @@ public class BatchParser {
 
   private List<BatchRequestPart> parse(final InputStream in, final String boundary,
       final BatchRequestTransformator transformator)
-      throws BatchDeserializerException {
+          throws BatchDeserializerException {
     try {
       return parseBatch(in, boundary, transformator);
     } catch (IOException e) {
@@ -72,7 +72,7 @@ public class BatchParser {
   }
 
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary) throws IOException,
-      BatchDeserializerException {
+  BatchDeserializerException {
     final BatchLineReader reader = new BatchLineReader(in);
     final List<Line> message = reader.toLineList();
     reader.close();

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -98,7 +98,7 @@ public class UriHelperImpl implements UriHelper {
   }
 
   @Override
-  public UriResourceEntitySet parseEntityId(Edm edm, String entityId, String rawServiceRoot) 
+  public UriResourceEntitySet parseEntityId(final Edm edm, final String entityId, final String rawServiceRoot)
       throws DeserializerException {
 
     String oDataPath = entityId;
@@ -112,7 +112,7 @@ public class UriHelperImpl implements UriHelper {
           new Parser(edm, new ODataImpl()).parseUri(oDataPath, null, null).getUriResourceParts();
       if (uriResourceParts.size() == 1 && uriResourceParts.get(0).getKind() == UriResourceKind.entitySet) {
         final UriResourceEntitySet entityUriResource = (UriResourceEntitySet) uriResourceParts.get(0);
-        
+
         return entityUriResource;
       }
 

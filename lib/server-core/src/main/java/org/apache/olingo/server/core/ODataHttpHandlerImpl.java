@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -98,7 +98,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     convertToHttp(response, odResponse);
   }
 
-  private Map<String, String> createEnvironmentVariablesMap(HttpServletRequest request) {
+  private Map<String, String> createEnvironmentVariablesMap(final HttpServletRequest request) {
     Map<String, String> environment = new LinkedHashMap<String, String>();
     environment.put("authType", request.getAuthType());
     environment.put("localAddr", request.getLocalAddr());
@@ -184,7 +184,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     }
   }
 
-  private ODataRequest fillODataRequest(ODataRequest odRequest, final HttpServletRequest httpRequest,
+  private ODataRequest fillODataRequest(final ODataRequest odRequest, final HttpServletRequest httpRequest,
       final int split) throws ODataLibraryException {
     final int requestHandle = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "fillODataRequest");
     try {

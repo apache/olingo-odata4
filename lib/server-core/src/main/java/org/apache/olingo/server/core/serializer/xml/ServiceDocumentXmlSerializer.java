@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -55,7 +55,7 @@ public class ServiceDocumentXmlSerializer {
   public void writeServiceDocument(final XMLStreamWriter writer) throws XMLStreamException {
     final String metadataUri =
         (serviceRoot == null ? "" : serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
-            + Constants.METADATA;
+        + Constants.METADATA;
 
     writer.writeStartDocument(ODataSerializer.DEFAULT_CHARSET, "1.0");
     writer.writeStartElement(APP, "service", NS_APP);
@@ -86,7 +86,7 @@ public class ServiceDocumentXmlSerializer {
     writer.writeEndElement(); // end service
   }
 
-  private void writeServiceDocuments(XMLStreamWriter writer) throws XMLStreamException {
+  private void writeServiceDocuments(final XMLStreamWriter writer) throws XMLStreamException {
     for (EdmxReference reference : metadata.getReferences()) {
       final String referenceString = reference.getUri().toASCIIString();
       writeElement(writer, false, "service-document", referenceString, referenceString);
@@ -118,7 +118,7 @@ public class ServiceDocumentXmlSerializer {
     }
   }
 
-  private void writeElement(XMLStreamWriter writer, final boolean isApp, final String kind, final String name,
+  private void writeElement(final XMLStreamWriter writer, final boolean isApp, final String kind, final String name,
       final String title) throws XMLStreamException {
     if (isApp) {
       writer.writeStartElement(APP, kind, NS_APP);
@@ -126,7 +126,7 @@ public class ServiceDocumentXmlSerializer {
       writer.writeStartElement(METADATA, kind, NS_METADATA);
     }
     writer.writeAttribute(Constants.ATTR_HREF, name);
-    writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NAME , name);
+    writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NAME, name);
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_TITLE, NS_ATOM);
     if (title != null) {
       writer.writeCharacters(title);

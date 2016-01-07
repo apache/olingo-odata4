@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -176,7 +176,6 @@ public class SearchParserTest extends SearchParser {
     runEx(SearchParserException.MessageKeys.INVALID_NOT_OPERAND, Token.NOT, Token.AND);
   }
 
-
   @Test
   public void notNotWord() throws Exception {
     runEx(SearchParserException.MessageKeys.INVALID_NOT_OPERAND, Token.NOT, Token.NOT, Token.WORD);
@@ -195,12 +194,12 @@ public class SearchParserTest extends SearchParser {
     runEx(MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.NOT, Token.WORD, Token.AND);
     runEx(MessageKeys.INVALID_END_OF_QUERY, Token.WORD, Token.AND, Token.WORD, Token.CLOSE);
   }
-  
+
   @Test
   public void invalidQueryStarts() throws Exception {
     run(Token.WORD, Token.AND, Token.WORD, Token.AND, Token.WORD);
   }
-  
+
   @Test
   public void singleAnd() {
     runEx(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, Token.AND);
@@ -222,7 +221,7 @@ public class SearchParserTest extends SearchParser {
     runEx(SearchParserException.MessageKeys.NO_EXPRESSION_FOUND, emptyArray);
   }
 
-  private void runEx(MessageKeys key, Token... tokenArray) {
+  private void runEx(final MessageKeys key, final Token... tokenArray) {
     try {
       run(tokenArray);
       fail("Expected UriParserSyntaxException with key " + key);
@@ -230,15 +229,15 @@ public class SearchParserTest extends SearchParser {
       assertEquals(key, e.getMessageKey());
     }
   }
-  
-  private SearchExpression run(SearchQueryToken.Token... tokenArray) throws SearchParserException {
+
+  private SearchExpression run(final SearchQueryToken.Token... tokenArray) throws SearchParserException {
     List<SearchQueryToken> tokenList = prepareTokens(tokenArray);
     SearchExpression se = parse(tokenList);
     assertNotNull(se);
     return se;
   }
 
-  public List<SearchQueryToken> prepareTokens(SearchQueryToken.Token... tokenArray) {
+  public List<SearchQueryToken> prepareTokens(final SearchQueryToken.Token... tokenArray) {
     ArrayList<SearchQueryToken> tokenList = new ArrayList<SearchQueryToken>();
     int wordNumber = 1;
     int phraseNumber = 1;

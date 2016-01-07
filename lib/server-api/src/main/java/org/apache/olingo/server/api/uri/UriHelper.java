@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -67,7 +67,7 @@ public interface UriHelper {
    * @return the key predicate
    */
   String buildKeyPredicate(EdmEntityType edmEntityType, Entity entity) throws SerializerException;
-  
+
   /**
    * Parses a given entity-id. Provides the entity set and key predicates.
    * A canonical entiy-id to an entity must follow the pattern
@@ -76,10 +76,10 @@ public interface UriHelper {
    * with an entity-container name if not in the default entity container) and a
    * syntactically valid key that identifies a single entity; example:
    * <code>http://example.server.com/service.svc/Employees('42')</code>.
-   * 
+   *
    * @param edm the edm the entity belongs to
    * @param entityId URI of the entity-id
-   * @param rawServiceRoot  the root URI of the service
+   * @param rawServiceRoot the root URI of the service
    * @return {@link UriResourceEntitySet} - contains the entity set and the key predicates
    * @throws DeserializerException in case the entity-id is malformed
    */

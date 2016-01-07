@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -59,7 +59,10 @@ public interface Preferences {
   /** Whether the preference <code>odata.track-changes</code> has been set. */
   public boolean hasTrackChanges();
 
-  public enum Return { REPRESENTATION, MINIMAL }
+  public enum Return {
+    REPRESENTATION, MINIMAL
+  }
+
   /**
    * Gets the value of the preference <code>return</code> or <code>null</code> if not set
    * or the value is not valid.
@@ -73,7 +76,7 @@ public interface Preferences {
    * Gets the value of the preference <code>wait</code> or <code>null</code> if not set
    * or the value is not valid.
    * @return the number of seconds the client is prepared to wait for the service
-   *         to process the request synchronously
+   * to process the request synchronously
    */
   public Integer getWait();
 
@@ -104,7 +107,7 @@ public interface Preferences {
     public Map<String, String> getParameters() {
       return parameters == null ?
           Collections.<String, String> emptyMap() :
-          Collections.unmodifiableMap(parameters);
+            Collections.unmodifiableMap(parameters);
     }
   }
 }

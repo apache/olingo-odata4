@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,23 +39,23 @@ public interface FixedFormatDeserializer {
 
   /**
    * Reads primitive-type data from an InputStream.
-   * @param content  the textual value as input stream
+   * @param content the textual value as input stream
    * @param property EDM property
    */
   public Object primitiveValue(InputStream content, EdmProperty property) throws DeserializerException;
 
   /**
    * Reads parameter data (in URI syntax) from a String.
-   * @param content   the textual value as String
+   * @param content the textual value as String
    * @param parameter EDM parameter
    */
   public Parameter parameter(String content, EdmParameter parameter) throws DeserializerException;
 
   /**
    * Reads batch data from an InputStream.
-   * @param content  the data as multipart input stream
+   * @param content the data as multipart input stream
    * @param boundary the boundary between the parts
-   * @param options  options for the deserializer
+   * @param options options for the deserializer
    * @return a list of batch-request parts
    */
   public List<BatchRequestPart> parseBatchRequest(InputStream content, String boundary, BatchOptions options)

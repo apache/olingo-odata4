@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -205,18 +205,18 @@ public class MetadataDocumentXmlSerializerTest {
         "<edmx:Reference " +
             "Uri=\"http://localhost/odata/odata/v4.0/referenceWithInclude\">" +
             "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
-            "</edmx:Reference>"));
+        "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference " +
             "Uri=\"http://localhost/odata/odata/v4.0/referenceWithTwoIncludes\">" +
             "<edmx:Include Namespace=\"Org.OData.Core.2\" Alias=\"Core2\"/>" +
             "<edmx:Include Namespace=\"Org.OData.Core.3\" Alias=\"Core3\"/>" +
-            "</edmx:Reference>"));
+        "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos\">" +
             "<edmx:IncludeAnnotations TermNamespace=\"TermNs.2\" Qualifier=\"Q.2\" TargetNamespace=\"TargetNS.2\"/>" +
             "<edmx:IncludeAnnotations TermNamespace=\"TermNs.3\" Qualifier=\"Q.3\" TargetNamespace=\"TargetNS.3\"/>" +
-            "</edmx:Reference>"));
+        "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
             "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
@@ -225,7 +225,7 @@ public class MetadataDocumentXmlSerializerTest {
             "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"/>" +
             "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
             "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"/>" +
-            "</edmx:Reference>"));
+        "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAllAndNull\">" +
             "<edmx:Include Namespace=\"referenceWithAllAndNull.1\"/>" +
@@ -235,7 +235,7 @@ public class MetadataDocumentXmlSerializerTest {
             "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.6\" " +
             "TargetNamespace=\"TargetNS\"/>" +
             "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.7\"/>" +
-            "</edmx:Reference>"));
+        "</edmx:Reference>"));
   }
 
   @Test
@@ -404,12 +404,12 @@ public class MetadataDocumentXmlSerializerTest {
     private final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
     private final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
     private final CsdlProperty propertyInt16_NotNullable = new CsdlProperty()
-        .setName("PropertyInt16")
-        .setType(nameInt16)
-        .setNullable(false);
+    .setName("PropertyInt16")
+    .setType(nameInt16)
+    .setNullable(false);
     private final CsdlProperty propertyString = new CsdlProperty()
-        .setName("PropertyString")
-        .setType(nameString);
+    .setName("PropertyString")
+    .setType(nameString);
 
     private final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
     private final FullQualifiedName nameCTTwoPrimBase = new FullQualifiedName(nameSpace, "CTTwoPrimBase");
@@ -426,10 +426,10 @@ public class MetadataDocumentXmlSerializerTest {
     public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
       if (nameENString.equals(enumTypeName)) {
         return new CsdlEnumType()
-            .setName(nameENString.getName())
-            .setFlags(true)
-            .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
-            .setMembers(Collections.singletonList(new CsdlEnumMember().setName("String1").setValue("1")));
+        .setName(nameENString.getName())
+        .setFlags(true)
+        .setUnderlyingType(EdmPrimitiveTypeKind.Int16.getFullQualifiedName())
+        .setMembers(Collections.singletonList(new CsdlEnumMember().setName("String1").setValue("1")));
       }
       return null;
     }
@@ -438,16 +438,16 @@ public class MetadataDocumentXmlSerializerTest {
     public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
       if (entityTypeName.equals(nameETAbstract)) {
         return new CsdlEntityType()
-            .setName("ETAbstract")
-            .setAbstract(true)
-            .setProperties(Collections.singletonList(propertyString));
+        .setName("ETAbstract")
+        .setAbstract(true)
+        .setProperties(Collections.singletonList(propertyString));
 
       } else if (entityTypeName.equals(nameETAbstractBase)) {
         return new CsdlEntityType()
-            .setName("ETAbstractBase")
-            .setBaseType(nameETAbstract)
-            .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
-            .setProperties(Collections.singletonList(propertyInt16_NotNullable));
+        .setName("ETAbstractBase")
+        .setBaseType(nameETAbstract)
+        .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
+        .setProperties(Collections.singletonList(propertyInt16_NotNullable));
       }
       return null;
     }
@@ -456,15 +456,15 @@ public class MetadataDocumentXmlSerializerTest {
     public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
       if (complexTypeName.equals(nameCTTwoPrim)) {
         return new CsdlComplexType()
-            .setName("CTTwoPrim")
-            .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
+        .setName("CTTwoPrim")
+        .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
 
       }
       if (complexTypeName.equals(nameCTTwoPrimBase)) {
         return new CsdlComplexType()
-            .setName("CTTwoPrimBase")
-            .setBaseType(nameCTTwoPrim)
-            .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
+        .setName("CTTwoPrimBase")
+        .setBaseType(nameCTTwoPrim)
+        .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyString));
       }
       return null;
 
@@ -475,8 +475,8 @@ public class MetadataDocumentXmlSerializerTest {
       if (actionName.equals(nameUARTPrimParam)) {
         return Collections.singletonList(
             new CsdlAction().setName("UARTPrimParam")
-                .setParameters(Collections.singletonList(
-                    new CsdlParameter().setName("ParameterInt16").setType(nameInt16)))
+            .setParameters(Collections.singletonList(
+                new CsdlParameter().setName("ParameterInt16").setType(nameInt16)))
                 .setReturnType(new CsdlReturnType().setType(nameString)));
       }
       return null;
@@ -487,9 +487,9 @@ public class MetadataDocumentXmlSerializerTest {
       if (functionName.equals(nameUFNRTInt16)) {
         return Collections.singletonList(
             new CsdlFunction()
-                .setName("UFNRTInt16")
-                .setParameters(Collections.<CsdlParameter> emptyList())
-                .setReturnType(new CsdlReturnType().setType(nameInt16)));
+            .setName("UFNRTInt16")
+            .setParameters(Collections.<CsdlParameter> emptyList())
+            .setReturnType(new CsdlReturnType().setType(nameInt16)));
       }
       return null;
     }
@@ -499,8 +499,8 @@ public class MetadataDocumentXmlSerializerTest {
         throws ODataException {
       if (entitySetName.equals("ESAllPrim")) {
         return new CsdlEntitySet()
-            .setName("ESAllPrim")
-            .setType(nameETAbstractBase);
+        .setName("ESAllPrim")
+        .setType(nameETAbstractBase);
       }
       return null;
     }
@@ -510,8 +510,8 @@ public class MetadataDocumentXmlSerializerTest {
         throws ODataException {
       if (singletonName.equals("SI")) {
         return new CsdlSingleton()
-            .setName("SI")
-            .setType(nameETAbstractBase);
+        .setName("SI")
+        .setType(nameETAbstractBase);
       }
       return null;
     }
@@ -522,8 +522,8 @@ public class MetadataDocumentXmlSerializerTest {
       if (entityContainer.equals(nameContainer)) {
         if (actionImportName.equals("AIRTPrimParam")) {
           return new CsdlActionImport()
-              .setName("AIRTPrimParam")
-              .setAction(nameUARTPrimParam);
+          .setName("AIRTPrimParam")
+          .setAction(nameUARTPrimParam);
         }
       }
       return null;
@@ -532,13 +532,13 @@ public class MetadataDocumentXmlSerializerTest {
     @Override
     public CsdlFunctionImport getFunctionImport(final FullQualifiedName entityContainer,
         final String functionImportName)
-        throws ODataException {
+            throws ODataException {
       if (entityContainer.equals(nameContainer)) {
         if (functionImportName.equals("FINRTInt16")) {
           return new CsdlFunctionImport()
-              .setName("FINRTInt16")
-              .setFunction(nameUFNRTInt16)
-              .setIncludeInServiceDocument(true);
+          .setName("FINRTInt16")
+          .setFunction(nameUFNRTInt16)
+          .setIncludeInServiceDocument(true);
         }
       }
       return null;
@@ -576,9 +576,9 @@ public class MetadataDocumentXmlSerializerTest {
       // EntityContainer
       schema.setEntityContainer(getEntityContainer());
 
-      //Terms
+      // Terms
       schema.setTerms(Arrays.asList(
-          getTerm(new FullQualifiedName("ns","term")),
+          getTerm(new FullQualifiedName("ns", "term")),
           getTerm(new FullQualifiedName("namespace", "Term1")),
           getTerm(new FullQualifiedName("ns", "Term2")),
           getTerm(new FullQualifiedName("ns", "Term3")),
@@ -621,27 +621,27 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public CsdlTypeDefinition getTypeDefinition(FullQualifiedName typeDefinitionName) throws ODataException {
+    public CsdlTypeDefinition getTypeDefinition(final FullQualifiedName typeDefinitionName) throws ODataException {
       return null;
     }
 
     @Override
-    public CsdlTerm getTerm(FullQualifiedName termName) throws ODataException {
+    public CsdlTerm getTerm(final FullQualifiedName termName) throws ODataException {
       if (new FullQualifiedName("ns", "term").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("term");
 
-      } else if(new FullQualifiedName("namespace", "Term1").equals(termName)){
+      } else if (new FullQualifiedName("namespace", "Term1").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("Term1");
 
-      } else if(new FullQualifiedName("ns", "Term2").equals(termName)){
+      } else if (new FullQualifiedName("ns", "Term2").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("Term2")
             .setNullable(false).setDefaultValue("default").setMaxLength(1).setPrecision(2).setScale(3);
 
-      } else if(new FullQualifiedName("ns", "Term3").equals(termName)){
+      } else if (new FullQualifiedName("ns", "Term3").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("Term3")
             .setAppliesTo(Arrays.asList("Property", "EntitySet", "Schema"));
 
-      } else if(new FullQualifiedName("ns", "Term4").equals(termName)){
+      } else if (new FullQualifiedName("ns", "Term4").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("Term4").setBaseTerm("namespace.Term1");
 
       }
@@ -649,7 +649,8 @@ public class MetadataDocumentXmlSerializerTest {
     }
 
     @Override
-    public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
+    public CsdlAnnotations getAnnotationsGroup(final FullQualifiedName targetName, final String qualifier)
+        throws ODataException {
       if (new FullQualifiedName("Alias", "ETAbstract").equals(targetName) && "Tablett".equals(qualifier)) {
         CsdlAnnotations annoGroup = new CsdlAnnotations();
         annoGroup.setTarget("Alias.ETAbstract");
@@ -690,50 +691,50 @@ public class MetadataDocumentXmlSerializerTest {
         // logical expressions
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.And)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Or)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Not)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setAnnotations(innerAnnotations)));
 
         // comparison
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Eq)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Ne)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Gt)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Ge)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Lt)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Le)
-                .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
-                .setAnnotations(innerAnnotations)));
+            .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
+            .setAnnotations(innerAnnotations)));
 
         // Other
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
@@ -748,12 +749,12 @@ public class MetadataDocumentXmlSerializerTest {
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlCast()
-                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
-                .setMaxLength(1)
-                .setPrecision(2)
-                .setScale(3)
-                .setType("Edm.String")
-                .setAnnotations(innerAnnotations)));
+            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+            .setMaxLength(1)
+            .setPrecision(2)
+            .setScale(3)
+            .setType("Edm.String")
+            .setAnnotations(innerAnnotations)));
 
         List<CsdlExpression> items = new ArrayList<CsdlExpression>();
         items.add(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"));
@@ -764,25 +765,25 @@ public class MetadataDocumentXmlSerializerTest {
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlIf()
-                .setGuard(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
-                .setThen(new CsdlConstantExpression(ConstantExpressionType.String, "Then"))
-                .setElse(new CsdlConstantExpression(ConstantExpressionType.String, "Else"))
-                .setAnnotations(innerAnnotations)));
+            .setGuard(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
+            .setThen(new CsdlConstantExpression(ConstantExpressionType.String, "Then"))
+            .setElse(new CsdlConstantExpression(ConstantExpressionType.String, "Else"))
+            .setAnnotations(innerAnnotations)));
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlIsOf()
-                .setMaxLength(1)
-                .setPrecision(2)
-                .setScale(3)
-                .setType("Edm.String")
-                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
-                .setAnnotations(innerAnnotations)));
+            .setMaxLength(1)
+            .setPrecision(2)
+            .setScale(3)
+            .setType("Edm.String")
+            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+            .setAnnotations(innerAnnotations)));
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLabeledElement()
-                .setName("NameAtt")
-                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
-                .setAnnotations(innerAnnotations)));
+            .setName("NameAtt")
+            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+            .setAnnotations(innerAnnotations)));
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlLabeledElementReference().setValue("LabeledElementReferenceValue")));
@@ -800,9 +801,9 @@ public class MetadataDocumentXmlSerializerTest {
             .setExpression(new CsdlPropertyPath().setValue("PropertyPathValue")));
 
         CsdlPropertyValue prop = new CsdlPropertyValue()
-            .setProperty("PropName")
-            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
-            .setAnnotations(innerAnnotations);
+        .setProperty("PropName")
+        .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
+        .setAnnotations(innerAnnotations);
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlRecord().setType("Alias.ETAbstract")
                 .setPropertyValues(Arrays.asList(prop))
@@ -810,8 +811,8 @@ public class MetadataDocumentXmlSerializerTest {
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term")
             .setExpression(new CsdlUrlRef()
-                .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "URLRefValue"))
-                .setAnnotations(innerAnnotations)));
+            .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "URLRefValue"))
+            .setAnnotations(innerAnnotations)));
 
         return annoGroup;
       }

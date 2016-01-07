@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,7 +35,7 @@ public class RuntimeMeasurement {
    * Sets the class name.
    * @param className the name of the class that is measured
    */
-  public void setClassName(String className) {
+  public void setClassName(final String className) {
     this.className = className;
   }
 
@@ -51,7 +51,7 @@ public class RuntimeMeasurement {
    * Sets the method name.
    * @param methodName the name of the method that is measured
    */
-  public void setMethodName(String methodName) {
+  public void setMethodName(final String methodName) {
     this.methodName = methodName;
   }
 
@@ -68,7 +68,7 @@ public class RuntimeMeasurement {
    * @param timeStarted the start time in nanoseconds
    * @see System#nanoTime()
    */
-  public void setTimeStarted(long timeStarted) {
+  public void setTimeStarted(final long timeStarted) {
     this.timeStarted = timeStarted;
   }
 
@@ -86,7 +86,7 @@ public class RuntimeMeasurement {
    * @param timeStopped the stop time in nanoseconds
    * @see System#nanoTime()
    */
-  public void setTimeStopped(long timeStopped) {
+  public void setTimeStopped(final long timeStopped) {
     this.timeStopped = timeStopped;
   }
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -57,7 +57,7 @@ public class SearchTokenizerTest {
     assertQuery("notAw0rd").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
   }
 
-  private Validator.Tuple word(String literal) {
+  private Validator.Tuple word(final String literal) {
     return Validator.tuple(WORD, literal);
   }
 
@@ -71,20 +71,20 @@ public class SearchTokenizerTest {
     //
     result = tokenizer.tokenize("\"abc\"");
     Assert.assertNotNull(result);
-    
+
     Assert.assertEquals(PHRASE, result.get(0).getToken());
 
     //
     result = tokenizer.tokenize("\"9988  abs\"");
     Assert.assertNotNull(result);
-    
+
     Assert.assertEquals(PHRASE, result.get(0).getToken());
     Assert.assertEquals("\"9988  abs\"", result.get(0).getLiteral());
 
     //
     result = tokenizer.tokenize("\"99_88.\"");
     Assert.assertNotNull(result);
-    
+
     Assert.assertEquals(PHRASE, result.get(0).getToken());
     Assert.assertEquals("\"99_88.\"", result.get(0).getLiteral());
 
@@ -135,7 +135,7 @@ public class SearchTokenizerTest {
     assertQuery("abc xyz").resultsIn(WORD, WORD);
     assertQuery("abc AND xyz AND olingo").resultsIn(WORD, AND, WORD, AND, WORD);
     assertQuery("abc AND \"x-y_z\"  AND olingo")
-        .resultsIn(WORD, AND, PHRASE, AND, WORD);
+    .resultsIn(WORD, AND, PHRASE, AND, WORD);
   }
 
   @Test
@@ -144,7 +144,6 @@ public class SearchTokenizerTest {
     assertQuery("abc AND xyz OR olingo").resultsIn(WORD, AND, WORD, OR, WORD);
     assertQuery("abc AND ANDsomething").addExpected(WORD, AND, WORD);
   }
-
 
   @Test
   public void parseCombinations() throws Exception {
@@ -155,26 +154,24 @@ public class SearchTokenizerTest {
     assertQuery("abc AND NOT xyz OR olingo").resultsIn(WORD, AND, NOT, WORD, OR, WORD);
 
     assertQuery("foo AND bar OR foo AND baz OR that AND bar OR that AND baz")
-        .addExpected(WORD, "foo").addExpected(AND)
-        .addExpected(WORD, "bar").addExpected(OR)
-        .addExpected(WORD, "foo").addExpected(AND)
-        .addExpected(WORD, "baz").addExpected(OR)
-        .addExpected(WORD, "that").addExpected(AND)
-        .addExpected(WORD, "bar").addExpected(OR)
-        .addExpected(WORD, "that").addExpected(AND)
-        .addExpected(WORD, "baz")
-        .validate();
-
+    .addExpected(WORD, "foo").addExpected(AND)
+    .addExpected(WORD, "bar").addExpected(OR)
+    .addExpected(WORD, "foo").addExpected(AND)
+    .addExpected(WORD, "baz").addExpected(OR)
+    .addExpected(WORD, "that").addExpected(AND)
+    .addExpected(WORD, "bar").addExpected(OR)
+    .addExpected(WORD, "that").addExpected(AND)
+    .addExpected(WORD, "baz")
+    .validate();
 
     assertQuery("(foo OR that) AND (bar OR baz)")
-        .addExpected(OPEN)
-        .addExpected(WORD, "foo").addExpected(OR).addExpected(WORD, "that")
-        .addExpected(CLOSE).addExpected(AND).addExpected(OPEN)
-        .addExpected(WORD, "bar").addExpected(OR).addExpected(WORD, "baz")
-        .addExpected(CLOSE)
-        .validate();
+    .addExpected(OPEN)
+    .addExpected(WORD, "foo").addExpected(OR).addExpected(WORD, "that")
+    .addExpected(CLOSE).addExpected(AND).addExpected(OPEN)
+    .addExpected(WORD, "bar").addExpected(OR).addExpected(WORD, "baz")
+    .addExpected(CLOSE)
+    .validate();
   }
-
 
   @Test
   public void parseSpecial() throws Exception {
@@ -191,23 +188,23 @@ public class SearchTokenizerTest {
   public void unicodeInWords() throws Exception {
     // Ll, Lm, Lo, Lt, Lu, Nl
     assertQuery("abc OR Ll\u01E3Lm\u02B5Lo\u00AALt\u01F2Lu\u03D3Nl\u216F")
-        .resultsIn(WORD, OR, WORD);
+    .resultsIn(WORD, OR, WORD);
   }
 
   /**
-   * unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
-   * other-delims   = "!" /                   "(" / ")" / "*" / "+" / "," / ";"
-   * qchar-unescaped       = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
-   * pct-encoded-unescaped = "%" ( "0" / "1" /   "3" / "4" /   "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
-   *   / "%" "2" ( "0" / "1" /   "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
-   *   / "%" "5" ( DIGIT / "A" / "B" /   "D" / "E" / "F" )
+   * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
+   * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
+   * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
+   * pct-encoded-unescaped = "%" ( "0" / "1" / "3" / "4" / "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
+   * / "%" "2" ( "0" / "1" / "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
+   * / "%" "5" ( DIGIT / "A" / "B" / "D" / "E" / "F" )
    *
-   * qchar-no-AMP-DQUOTE   = qchar-unescaped  / escape ( escape / quotation-mark )
+   * qchar-no-AMP-DQUOTE = qchar-unescaped / escape ( escape / quotation-mark )
    *
-   * escape = "\" / "%5C"     ; reverse solidus U+005C
-   * quotation-mark  = DQUOTE / "%22"
-   * ALPHA  = %x41-5A / %x61-7A
-   * DIGIT  = %x30-39
+   * escape = "\" / "%5C" ; reverse solidus U+005C
+   * quotation-mark = DQUOTE / "%22"
+   * ALPHA = %x41-5A / %x61-7A
+   * DIGIT = %x30-39
    * DQUOTE = %x22
    *
    * @throws Exception
@@ -217,7 +214,7 @@ public class SearchTokenizerTest {
     assertQuery("\"123\" OR \"ALPHA-._~\"").resultsIn(PHRASE, OR, PHRASE);
     assertQuery("\"100%Olingo\"").resultsIn(new Validator.Tuple(PHRASE, "\"100%Olingo\""));
     assertQuery("\"100'Olingo\"").resultsIn(new Validator.Tuple(PHRASE, "\"100'Olingo\""));
-    //escaped characters
+    // escaped characters
     assertQuery("\"\\\"123\" OR \"\\\\abc\"").resultsIn(new Validator.Tuple(PHRASE, "\"\"123\""),
         new Validator.Tuple(OR), new Validator.Tuple(PHRASE, "\"\\abc\""));
     assertQuery("\"\\\"1\\\\23\"").resultsIn(new Validator.Tuple(PHRASE, "\"\"1\\23\""));
@@ -293,15 +290,15 @@ public class SearchTokenizerTest {
     assertQuery("abc AND \"something\" )").resultsIn(WORD, AND, PHRASE, CLOSE);
   }
 
-  public void validate(String query) throws SearchTokenizerException {
+  public void validate(final String query) throws SearchTokenizerException {
     new Validator(query);
   }
 
-  public Validator assertQuery(String query) throws SearchTokenizerException {
+  public Validator assertQuery(final String query) throws SearchTokenizerException {
     return new Validator(query);
   }
 
-  public void validate(String query, SearchQueryToken.Token ... tokens) throws SearchTokenizerException {
+  public void validate(final String query, final SearchQueryToken.Token... tokens) throws SearchTokenizerException {
     Validator sv = new Validator(query);
     for (SearchQueryToken.Token token : tokens) {
       sv.addExpected(token);
@@ -314,32 +311,37 @@ public class SearchTokenizerTest {
     private boolean log;
     private final String searchQuery;
 
-    public void resultsIn(SearchQueryToken.Token... tokens) throws SearchTokenizerException {
+    public void resultsIn(final SearchQueryToken.Token... tokens) throws SearchTokenizerException {
       addExpected(tokens);
       validate();
     }
-    public void resultsIn(Tuple... tuple) throws SearchTokenizerException {
+
+    public void resultsIn(final Tuple... tuple) throws SearchTokenizerException {
       for (Tuple t : tuple) {
         addExpected(t.token, t.literal);
       }
       validate();
     }
-    public static Tuple tuple(SearchQueryToken.Token token, String literal) {
+
+    public static Tuple tuple(final SearchQueryToken.Token token, final String literal) {
       return new Tuple(token, literal);
     }
+
     private static class Tuple {
       final SearchQueryToken.Token token;
       final String literal;
-      public Tuple(SearchQueryToken.Token token, String literal) {
+
+      public Tuple(final SearchQueryToken.Token token, final String literal) {
         this.token = token;
         this.literal = literal;
       }
-      public Tuple(SearchQueryToken.Token token) {
+
+      public Tuple(final SearchQueryToken.Token token) {
         this(token, null);
       }
     }
 
-    private Validator(String searchQuery) {
+    private Validator(final String searchQuery) {
       this.searchQuery = searchQuery;
     }
 
@@ -347,24 +349,26 @@ public class SearchTokenizerTest {
       log = true;
       return this;
     }
-    private Validator addExpected(SearchQueryToken.Token token, String literal) {
+
+    private Validator addExpected(final SearchQueryToken.Token token, final String literal) {
       validations.add(new Tuple(token, literal));
       return this;
     }
-    private Validator addExpected(SearchQueryToken.Token ... token) {
+
+    private Validator addExpected(final SearchQueryToken.Token... token) {
       for (SearchQueryToken.Token t : token) {
         validations.add(new Tuple(t));
       }
       return this;
     }
 
-    private void resultsIn(SearchTokenizerException.MessageKey key)
+    private void resultsIn(final SearchTokenizerException.MessageKey key)
         throws SearchTokenizerException {
       try {
         validate();
       } catch (SearchTokenizerException e) {
         Assert.assertEquals("SearchTokenizerException with unexpected message was thrown.", key, e.getMessageKey());
-        if(log) {
+        if (log) {
           System.out.println("Caught SearchTokenizerException with message key " +
               e.getMessageKey() + " and message " + e.getMessage());
         }
@@ -377,17 +381,17 @@ public class SearchTokenizerTest {
       SearchTokenizer tokenizer = new SearchTokenizer();
       List<SearchQueryToken> result = tokenizer.tokenize(searchQuery);
       Assert.assertNotNull(result);
-      if(log) {
+      if (log) {
         System.out.println(result);
       }
-      if(validations.size() != 0) {
+      if (validations.size() != 0) {
         Assert.assertEquals(validations.size(), result.size());
 
         Iterator<Tuple> validationIt = validations.iterator();
         for (SearchQueryToken iToken : result) {
           Tuple validation = validationIt.next();
           Assert.assertEquals(validation.token, iToken.getToken());
-          if(validation.literal != null) {
+          if (validation.literal != null) {
             Assert.assertEquals(validation.literal, iToken.getLiteral());
           }
         }

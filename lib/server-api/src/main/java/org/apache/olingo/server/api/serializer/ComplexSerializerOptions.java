@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,7 +28,7 @@ public class ComplexSerializerOptions {
   private ContextURL contextURL;
   private ExpandOption expand;
   private SelectOption select;
-  
+
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
     return contextURL;
@@ -43,7 +43,7 @@ public class ComplexSerializerOptions {
   public SelectOption getSelect() {
     return select;
   }
-  
+
   private ComplexSerializerOptions() {}
 
   /** Initializes the options builder. */
@@ -77,7 +77,7 @@ public class ComplexSerializerOptions {
       options.select = select;
       return this;
     }
-    
+
     /** Builds the OData serializer options. */
     public ComplexSerializerOptions build() {
       return options;

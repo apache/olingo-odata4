@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -59,7 +59,7 @@ public class DebugTabUri implements DebugTab {
 
   private final UriInfo uriInfo;
 
-  public DebugTabUri(UriInfo uriInfo) {
+  public DebugTabUri(final UriInfo uriInfo) {
     this.uriInfo = uriInfo;
   }
 
@@ -69,7 +69,7 @@ public class DebugTabUri implements DebugTab {
   }
 
   @Override
-  public void appendJson(JsonGenerator gen) throws IOException {
+  public void appendJson(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
 
     if (!uriInfo.getUriResourceParts().isEmpty()) {
@@ -106,10 +106,12 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndObject();
   }
 
-  private void appendCommonJsonObjects(JsonGenerator gen, CountOption countOption, SkipOption skipOption,
-      TopOption topOption, FilterOption filterOption, OrderByOption orderByOption, SelectOption selectOption,
-      ExpandOption expandOption, SearchOption searchOption)
-      throws IOException {
+  private void appendCommonJsonObjects(final JsonGenerator gen, final CountOption countOption,
+      final SkipOption skipOption,
+      final TopOption topOption, final FilterOption filterOption, final OrderByOption orderByOption,
+      final SelectOption selectOption,
+      final ExpandOption expandOption, final SearchOption searchOption)
+          throws IOException {
     if (countOption != null) {
       gen.writeBooleanField("isCount", countOption.getValue());
     }
@@ -152,7 +154,8 @@ public class DebugTabUri implements DebugTab {
     }
   }
 
-  private void appendURIResourceParts(JsonGenerator gen, List<UriResource> uriResourceParts) throws IOException {
+  private void appendURIResourceParts(final JsonGenerator gen, final List<UriResource> uriResourceParts)
+      throws IOException {
     gen.writeStartArray();
     for (UriResource resource : uriResourceParts) {
       gen.writeStartObject();
@@ -171,7 +174,7 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndArray();
   }
 
-  private void appendParameters(JsonGenerator gen, final String name, final List<UriParameter> parameters)
+  private void appendParameters(final JsonGenerator gen, final String name, final List<UriParameter> parameters)
       throws IOException {
     if (!parameters.isEmpty()) {
       Map<String, String> parameterMap = new LinkedHashMap<String, String>();
@@ -184,7 +187,7 @@ public class DebugTabUri implements DebugTab {
     }
   }
 
-  private void appendOrderByItemsJson(JsonGenerator gen, final List<OrderByItem> orders) throws IOException {
+  private void appendOrderByItemsJson(final JsonGenerator gen, final List<OrderByItem> orders) throws IOException {
     gen.writeStartArray();
     for (final OrderByItem item : orders) {
       gen.writeStartObject();
@@ -197,7 +200,8 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndArray();
   }
 
-  private void appendExpandedPropertiesJson(JsonGenerator gen, List<ExpandItem> expandItems) throws IOException {
+  private void appendExpandedPropertiesJson(final JsonGenerator gen, final List<ExpandItem> expandItems)
+      throws IOException {
     gen.writeStartArray();
     for (ExpandItem item : expandItems) {
       appendExpandItemJson(gen, item);
@@ -205,7 +209,7 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndArray();
   }
 
-  private void appendExpandItemJson(JsonGenerator gen, ExpandItem item) throws IOException {
+  private void appendExpandItemJson(final JsonGenerator gen, final ExpandItem item) throws IOException {
     gen.writeStartObject();
 
     if (item.isStar()) {
@@ -237,7 +241,7 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndObject();
   }
 
-  private void appendExpressionJson(JsonGenerator gen, final Expression expression) throws IOException {
+  private void appendExpressionJson(final JsonGenerator gen, final Expression expression) throws IOException {
     if (expression == null) {
       gen.writeNull();
     } else {
@@ -250,7 +254,8 @@ public class DebugTabUri implements DebugTab {
     }
   }
 
-  private void appendSelectedPropertiesJson(JsonGenerator gen, List<SelectItem> selectItems) throws IOException {
+  private void appendSelectedPropertiesJson(final JsonGenerator gen, final List<SelectItem> selectItems)
+      throws IOException {
     gen.writeStartArray();
     for (SelectItem selectItem : selectItems) {
       gen.writeString(getSelectString(selectItem));
@@ -279,7 +284,7 @@ public class DebugTabUri implements DebugTab {
     return selectedProperty;
   }
 
-  private void appendSearchJson(JsonGenerator json, final SearchExpression searchExpression) throws IOException {
+  private void appendSearchJson(final JsonGenerator json, final SearchExpression searchExpression) throws IOException {
     json.writeStartObject();
     if (searchExpression.isSearchTerm()) {
       json.writeStringField("nodeType", "searchTerm");
@@ -306,7 +311,7 @@ public class DebugTabUri implements DebugTab {
     final JsonFactory jsonFactory = new ObjectMapper().getFactory();
 
     writer.append("<h2>Resource Path</h2>\n")
-        .append("<ul>\n<li class=\"json\">");
+    .append("<ul>\n<li class=\"json\">");
     JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
     appendURIResourceParts(json, uriInfo.getUriResourceParts());
     json.close();
@@ -314,7 +319,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getSearchOption() != null) {
       writer.append("<h2>Search Option</h2>\n")
-          .append("<ul>\n<li class=\"json\">");
+      .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendSearchJson(json, uriInfo.getSearchOption().getSearchExpression());
       json.close();
@@ -323,7 +328,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getFilterOption() != null) {
       writer.append("<h2>Filter Option</h2>\n")
-          .append("<ul>\n<li class=\"json\">");
+      .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendExpressionJson(json, uriInfo.getFilterOption().getExpression());
       json.close();
@@ -332,7 +337,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getOrderByOption() != null) {
       writer.append("<h2>OrderBy Option</h2>\n")
-          .append("<ul>\n<li class=\"json\">");
+      .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendOrderByItemsJson(json, uriInfo.getOrderByOption().getOrders());
       json.close();
@@ -341,7 +346,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getExpandOption() != null) {
       writer.append("<h2>Expand Option</h2>\n")
-          .append("<ul>\n<li class=\"json\">");
+      .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendExpandedPropertiesJson(json, uriInfo.getExpandOption().getExpandItems());
       json.close();
@@ -350,7 +355,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getSelectOption() != null) {
       writer.append("<h2>Selected Properties</h2>\n")
-          .append("<ul>\n");
+      .append("<ul>\n");
       for (final SelectItem selectItem : uriInfo.getSelectOption().getSelectItems()) {
         writer.append("<li>").append(getSelectString(selectItem)).append("</li>\n");
       }

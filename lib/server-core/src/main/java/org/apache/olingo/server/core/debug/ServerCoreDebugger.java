@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,11 +46,11 @@ public class ServerCoreDebugger {
   private DebugSupport debugSupport;
   private String debugFormat;
 
-  public ServerCoreDebugger(OData odata) {
+  public ServerCoreDebugger(final OData odata) {
     this.odata = odata;
   }
 
-  public void resolveDebugMode(HttpServletRequest request) {
+  public void resolveDebugMode(final HttpServletRequest request) {
     if (debugSupport != null) {
       // Should we read the parameter from the servlet here and ignore multiple parameters?
       debugFormat = request.getParameter(DebugSupport.ODATA_DEBUG_QUERY_PARAMETER);
@@ -63,7 +63,7 @@ public class ServerCoreDebugger {
 
   public ODataResponse createDebugResponse(final ODataRequest request, final ODataResponse response,
       final Exception exception, final UriInfo uriInfo, final Map<String, String> serverEnvironmentVariables) {
-    //Failsafe so we do not generate unauthorized debug messages
+    // Failsafe so we do not generate unauthorized debug messages
     if (!isDebugMode) {
       return response;
     }
@@ -129,7 +129,7 @@ public class ServerCoreDebugger {
     }
   }
 
-  public void setDebugSupportProcessor(DebugSupport debugSupport) {
+  public void setDebugSupportProcessor(final DebugSupport debugSupport) {
     this.debugSupport = debugSupport;
   }
 

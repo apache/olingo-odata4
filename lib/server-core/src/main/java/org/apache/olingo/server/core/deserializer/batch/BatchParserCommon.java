@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,7 +35,7 @@ public class BatchParserCommon {
 
   private static final String PATTERN_BOUNDARY =
       "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|"
-      + "\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
+          + "\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)\\r\\n\\s*", Pattern.DOTALL);
   private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
 
@@ -147,7 +147,7 @@ public class BatchParserCommon {
     return messageParts;
   }
 
-  private static void removeEndingCRLFFromList(List<Line> list) {
+  private static void removeEndingCRLFFromList(final List<Line> list) {
     if (list.size() > 0) {
       Line lastLine = list.remove(list.size() - 1);
       list.add(removeEndingCRLF(lastLine));
@@ -163,7 +163,7 @@ public class BatchParserCommon {
     }
   }
 
-  public static Header consumeHeaders(List<Line> remainingMessage) {
+  public static Header consumeHeaders(final List<Line> remainingMessage) {
     final int headerLineNumber = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
     final Header headers = new Header(headerLineNumber);
     final Iterator<Line> iter = remainingMessage.iterator();
@@ -189,7 +189,7 @@ public class BatchParserCommon {
     return headers;
   }
 
-  public static void consumeBlankLine(List<Line> remainingMessage, final boolean isStrict)
+  public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchDeserializerException {
     if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r?\n\\s*")) {
       remainingMessage.remove(0);
@@ -226,7 +226,7 @@ public class BatchParserCommon {
   }
 
   public static InputStream convertLineListToInputStream(final List<Line> list, final Charset charset,
-                                                         final int length) {
+      final int length) {
     final String message = trimLineListToLength(list, length);
 
     return new ByteArrayInputStream(message.getBytes(charset));

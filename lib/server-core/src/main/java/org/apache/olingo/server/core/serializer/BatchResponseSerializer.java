@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -110,24 +110,24 @@ public class BatchResponseSerializer {
 
   private void appendHeader(final String name, final String value, final BodyBuilder builder) {
     builder.append(name)
-        .append(COLON)
-        .append(SP)
-        .append(value)
-        .append(CRLF);
+    .append(COLON)
+    .append(SP)
+    .append(value)
+    .append(CRLF);
   }
 
   private void appendStatusLine(final ODataResponse response, final BodyBuilder builder) {
     builder.append("HTTP/1.1")
-        .append(SP)
-        .append(response.getStatusCode())
-        .append(SP)
-        .append(getStatusCodeInfo(response))
-        .append(CRLF);
+    .append(SP)
+    .append(response.getStatusCode())
+    .append(SP)
+    .append(getStatusCodeInfo(response))
+    .append(CRLF);
   }
 
-  private String getStatusCodeInfo(ODataResponse response) {
+  private String getStatusCodeInfo(final ODataResponse response) {
     HttpStatusCode status = HttpStatusCode.fromStatusCode(response.getStatusCode());
-    if(status == null) {
+    if (status == null) {
       throw new ODataRuntimeException("Invalid status code in response '" + response.getStatusCode() + "'");
     }
     return status.getInfo();
@@ -189,17 +189,17 @@ public class BatchResponseSerializer {
       return tmp;
     }
 
-    public BodyBuilder append(String string) {
-      byte [] b = string.getBytes(CHARSET_ISO_8859_1);
+    public BodyBuilder append(final String string) {
+      byte[] b = string.getBytes(CHARSET_ISO_8859_1);
       put(b);
       return this;
     }
 
-    private void put(byte[] b) {
-      if(isClosed) {
+    private void put(final byte[] b) {
+      if (isClosed) {
         throw new RuntimeException("BodyBuilder is closed.");
       }
-      if(buffer.remaining() < b.length) {
+      if (buffer.remaining() < b.length) {
         buffer.flip();
         int newSize = (buffer.limit() * 2) + b.length;
         ByteBuffer tmp = ByteBuffer.allocate(newSize);
@@ -209,15 +209,16 @@ public class BatchResponseSerializer {
       buffer.put(b);
     }
 
-    public BodyBuilder append(int statusCode) {
+    public BodyBuilder append(final int statusCode) {
       return append(String.valueOf(statusCode));
     }
 
-    public BodyBuilder append(Body body) {
+    public BodyBuilder append(final Body body) {
       put(body.getContent());
       return this;
     }
 
+    @Override
     public String toString() {
       return new String(buffer.array(), 0, buffer.position(), CHARSET_ISO_8859_1);
     }
@@ -229,8 +230,8 @@ public class BatchResponseSerializer {
   private class Body {
     private final byte[] content;
 
-    public Body(ODataResponse response) {
-      this.content = getBody(response);
+    public Body(final ODataResponse response) {
+      content = getBody(response);
     }
 
     public int getLength() {

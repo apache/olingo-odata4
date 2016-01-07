@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,7 +39,7 @@ public class DebugTabRequest implements DebugTab {
   private final String protocol;
   private final Map<String, List<String>> headers;
 
-  public DebugTabRequest(ODataRequest request) {
+  public DebugTabRequest(final ODataRequest request) {
     if (request != null) {
       method = request.getMethod() == null ? UNKOWN_MSG : request.getMethod().toString();
       uri = request.getRawRequestUri() == null ? UNKOWN_MSG : request.getRawRequestUri();
@@ -56,24 +56,24 @@ public class DebugTabRequest implements DebugTab {
   @Override
   public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Request Method</h2>\n")
-        .append("<p>").append(method).append("</p>\n")
-        .append("<h2>Request URI</h2>\n")
-        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri)).append("</p>\n")
-        .append("<h2>Request Protocol</h2>\n")
-        .append("<p>").append(DebugResponseHelperImpl.escapeHtml(protocol)).append("</p>\n");
+    .append("<p>").append(method).append("</p>\n")
+    .append("<h2>Request URI</h2>\n")
+    .append("<p>").append(DebugResponseHelperImpl.escapeHtml(uri)).append("</p>\n")
+    .append("<h2>Request Protocol</h2>\n")
+    .append("<p>").append(DebugResponseHelperImpl.escapeHtml(protocol)).append("</p>\n");
     writer.append("<h2>Request Headers</h2>\n");
 
     writer.append("<table>\n<thead>\n")
-        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
-        .append("</thead>\n<tbody>\n");
+    .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
+    .append("</thead>\n<tbody>\n");
     for (final Map.Entry<String, List<String>> entry : headers.entrySet()) {
       List<String> headersList = entry.getValue();
       if (headersList != null && !headersList.isEmpty()) {
         for (String headerValue : headersList) {
           writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
-              .append("<td class=\"value\">")
-              .append(DebugResponseHelperImpl.escapeHtml(headerValue))
-              .append("</td></tr>\n");
+          .append("<td class=\"value\">")
+          .append(DebugResponseHelperImpl.escapeHtml(headerValue))
+          .append("</td></tr>\n");
         }
       }
     }
@@ -86,7 +86,7 @@ public class DebugTabRequest implements DebugTab {
   }
 
   @Override
-  public void appendJson(JsonGenerator gen) throws IOException {
+  public void appendJson(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
     gen.writeStringField("method", method);
 

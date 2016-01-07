@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,10 +17,6 @@
  * under the License.
  */
 package org.apache.olingo.server.core.serializer;
-
-import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.serializer.SerializerException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +29,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.serializer.SerializerException;
 
 public class AsyncResponseSerializer {
   private static final int BUFFER_SIZE = 8192;
@@ -59,10 +59,10 @@ public class AsyncResponseSerializer {
   }
 
   private void appendResponseHeader(final ODataResponse response,
-                                    final ByteArrayOutputStream buffer) throws IOException {
+      final ByteArrayOutputStream buffer) throws IOException {
     final Map<String, List<String>> header = response.getAllHeaders();
 
-    for (final Map.Entry<String, List<String>> entry: header.entrySet()) {
+    for (final Map.Entry<String, List<String>> entry : header.entrySet()) {
       appendHeader(entry.getKey(), entry.getValue(), buffer);
     }
   }
@@ -80,7 +80,7 @@ public class AsyncResponseSerializer {
     append(HTTP_VERSION + SP + response.getStatusCode() + SP + status + CRLF, buffer);
   }
 
-  private void appendBody(ODataResponse response, ByteArrayOutputStream buffer) throws IOException {
+  private void appendBody(final ODataResponse response, final ByteArrayOutputStream buffer) throws IOException {
     InputStream input = response.getContent();
     if (input != null) {
       ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);

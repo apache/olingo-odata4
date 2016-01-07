@@ -119,92 +119,98 @@ public class SearchParserAndTokenizerTest {
    */
   @Test
   public void searchQueryPhraseAbnfTestcases() throws Exception {
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    // <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
     assertQuery("\"blue green\"").resultsIn("'blue green'");
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    // <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
     assertQuery("\"blue green\"").resultsIn("'blue green'");
-    //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
-    //    <Input>$search="blue\"green"</Input>
+    // <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
+    // <Input>$search="blue\"green"</Input>
     assertQuery("\"blue\\\"green\"").resultsIn("'blue\"green'");
 
-    //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
-    //    <Input>$search="blue\\green"</Input>
+    // <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
+    // <Input>$search="blue\\green"</Input>
     assertQuery("\"blue\\\\green\"").resultsIn("'blue\\green'");
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
+    // <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
     assertQuery("\"blue\"green\"").resultsIn(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
+    // <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
     assertQuery("\"blue\"green\"").resultsIn(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
 
-    //    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
-    //    <Input>$search=blue green</Input>
+    // <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
+    // <Input>$search=blue green</Input>
     assertQuery("blue green").resultsIn("{'blue' AND 'green'}");
-    //    <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
+    // <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
     assertQuery("blue green").resultsIn("{'blue' AND 'green'}");
 
-    //    <TestCase Name="5.1.7 Search - AND" Rule="queryOptions">
-    //    <Input>$search=blue AND green</Input>
+    // <TestCase Name="5.1.7 Search - AND" Rule="queryOptions">
+    // <Input>$search=blue AND green</Input>
     assertQuery("blue AND green").resultsIn("{'blue' AND 'green'}");
 
-    //    <TestCase Name="5.1.7 Search - OR" Rule="queryOptions">
-    //    <Input>$search=blue OR green</Input>
+    // <TestCase Name="5.1.7 Search - OR" Rule="queryOptions">
+    // <Input>$search=blue OR green</Input>
     assertQuery("blue OR green").resultsIn("{'blue' OR 'green'}");
 
-    //    <TestCase Name="5.1.7 Search - NOT" Rule="queryOptions">
-    //    <Input>$search=blue NOT green</Input>
+    // <TestCase Name="5.1.7 Search - NOT" Rule="queryOptions">
+    // <Input>$search=blue NOT green</Input>
     assertQuery("blue NOT green").resultsIn("{'blue' AND {NOT 'green'}}");
 
-    //    <TestCase Name="5.1.7 Search - only NOT" Rule="queryOptions">
-    //    <Input>$search=NOT blue</Input>
+    // <TestCase Name="5.1.7 Search - only NOT" Rule="queryOptions">
+    // <Input>$search=NOT blue</Input>
     assertQuery("NOT blue").resultsIn("{NOT 'blue'}");
 
-    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
-    //    <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
+    // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    // <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
     assertQuery("foo AND bar OR foo AND baz OR that AND bar OR that AND baz")
         .resultsIn("{{{{'foo' AND 'bar'} OR {'foo' AND 'baz'}} OR {'that' AND 'bar'}} OR {'that' AND 'baz'}}");
 
-    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
-    //    <Input>$search=(foo OR that) AND (bar OR baz)</Input>
+    // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    // <Input>$search=(foo OR that) AND (bar OR baz)</Input>
     assertQuery("(foo OR that) AND (bar OR baz)").resultsIn("{{'foo' OR 'that'} AND {'bar' OR 'baz'}}");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=foo AND (bar OR baz)</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=foo AND (bar OR baz)</Input>
     assertQuery("foo AND (bar OR baz)").resultsIn("{'foo' AND {'bar' OR 'baz'}}");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(foo AND bar) OR baz</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(foo AND bar) OR baz</Input>
     assertQuery("(foo AND bar) OR baz").resultsIn("{{'foo' AND 'bar'} OR 'baz'}");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(NOT foo) OR baz</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(NOT foo) OR baz</Input>
     assertQuery("(NOT foo) OR baz").resultsIn("{{NOT 'foo'} OR 'baz'}");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(NOT foo)</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(NOT foo)</Input>
     assertQuery("(NOT foo)").resultsIn("{NOT 'foo'}");
 
-    //    <TestCase Name="5.1.7 Search - on entity set" Rule="odataUri">
-    //    <Input>http://serviceRoot/Products?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on entity set" Rule="odataUri">
+    // <Input>http://serviceRoot/Products?$search=blue</Input>
     assertQuery("blue").resultsIn("'blue'");
 
     // below cases can not be tested here
-    //    <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
-    //    <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
-    //    <TestCase Name="5.1.7 Search - on service" Rule="odataUri">
-    //    <Input>http://serviceRoot/$all?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
+    // <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on service" Rule="odataUri">
+    // <Input>http://serviceRoot/$all?$search=blue</Input>
   }
 
-  private static Validator assertQuery(String searchQuery) {
-    return new Validator(searchQuery);
+  private static Validator assertQuery(final String searchQuery) {
+    return Validator.init(searchQuery);
   }
 
   private static class Validator {
     private final String searchQuery;
 
-    private Validator(String searchQuery) {
+    private Validator(final String searchQuery) {
       this.searchQuery = searchQuery;
     }
 
-    private void resultsIn(SearchParserException.MessageKey key) throws SearchTokenizerException {
+    private static Validator init(final String searchQuery) {
+      return new Validator(searchQuery);
+    }
+
+    private void resultsIn(final SearchParserException.MessageKey key)
+        throws SearchTokenizerException {
+
       try {
         resultsIn(searchQuery);
       } catch (SearchParserException e) {
