@@ -536,8 +536,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         serializeEntityStreamCollectionFixed(request,
             entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
             expand, select, countOption, id);
-    response.setContent(serializerResult.getContent());
-
+    if(serializerResult.isNioSupported()) {
+      response.setChannel(serializerResult.getChannel());
+    } else {
+      response.setContent(serializerResult.getContent());
+    }
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     if (pageSize != null) {
@@ -631,6 +634,9 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
       @Override
       public Entity nextEntity() {
+        try {
+          TimeUnit.MILLISECONDS.sleep(1000);
+        } catch (InterruptedException e) { }
         return test.next();
       }
     };
@@ -646,6 +652,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
             .id(id)
             .build());
   }
+
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
       entityCollection, final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType,

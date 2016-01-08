@@ -18,8 +18,14 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
+
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityStreamCollection;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -30,75 +36,81 @@ import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.Channel;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 
-public class StreamSerializerResult implements SerializerResult {
-  private InputStream content;
+public class ChannelSerializerResult implements SerializerResult {
+  private ReadableByteChannel channel;
 
-  private static class StreamInputStream extends InputStream {
-    private String head;
-    private String tail;
-    private int tailCount = 0;
-    private int headCount = 0;
-    private int entityCount = 0;
-    private InputStream inputStream = null;
+  private static class StreamChannel implements ReadableByteChannel {
+    private static final Charset DEFAULT = Charset.forName("UTF-8");
+    private ByteBuffer head;
+    private ByteBuffer tail;
     private ODataJsonStreamSerializer jsonSerializer;
     private EntityStreamCollection coll;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntitySerializerOptions options;
 
-    public StreamInputStream(EntityStreamCollection coll, EdmEntityType entityType, String head,
+    public StreamChannel(EntityStreamCollection coll, EdmEntityType entityType, String head,
         ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata,
         EntitySerializerOptions options, String tail) {
       this.coll = coll;
       this.entityType = entityType;
-      this.head = head;
+      this.head = ByteBuffer.wrap(head.getBytes(DEFAULT));
       this.jsonSerializer = jsonSerializer;
       this.metadata = metadata;
       this.options = options;
-      this.tail = tail;
+      this.tail = ByteBuffer.wrap(tail.getBytes(DEFAULT));
     }
 
     @Override
-    public int read() throws IOException {
-      if (headCount < head.length()) {
-        return head.charAt(headCount++);
-      }
-      if (inputStream == null && coll.hasNext()) {
-        try {
-          inputStream = serEntity(coll.nextEntity());
-          entityCount++;
-          if (entityCount > 1) {
-            return (int) ',';
-          }
-        } catch (SerializerException e) {
-          inputStream = null;
-          return read();
+    public int read(ByteBuffer dest) throws IOException {
+      ByteBuffer buffer = getCurrentBuffer();
+      if (buffer != null && buffer.hasRemaining()) {
+        int r = buffer.remaining();
+        if(r <= dest.remaining()) {
+          dest.put(buffer);
+        } else {
+          byte[] buf = new byte[dest.remaining()];
+          buffer.get(buf);
+          dest.put(buf);
         }
-      }
-      if (inputStream != null) {
-        int read = inputStream.read();
-        if (read == -1) {
-          inputStream = null;
-          return read();
-        }
-        return read;
-      }
-      if (tailCount < tail.length()) {
-        return tail.charAt(tailCount++);
+        return r;
       }
       return -1;
     }
 
-    private InputStream serEntity(Entity entity) throws SerializerException {
+    ByteBuffer currentBuffer;
+
+    private ByteBuffer getCurrentBuffer() {
+      if(currentBuffer == null) {
+        currentBuffer = head;
+      } if(!currentBuffer.hasRemaining()) {
+        if (coll.hasNext()) {
+          try {
+            // FIXME: mibo_160108: Inefficient buffer handling, replace
+            currentBuffer = serEntity(coll.nextEntity());
+            if(coll.hasNext()) {
+              ByteBuffer b = ByteBuffer.allocate(currentBuffer.position() + 1);
+              currentBuffer.flip();
+              b.put(currentBuffer).put(",".getBytes(DEFAULT));
+              currentBuffer = b;
+            }
+            currentBuffer.flip();
+          } catch (SerializerException e) {
+            return getCurrentBuffer();
+          }
+        } else if(tail.hasRemaining()) {
+          currentBuffer = tail;
+        } else {
+          return null;
+        }
+      }
+      return currentBuffer;
+    }
+
+    private ByteBuffer serEntity(Entity entity) throws SerializerException {
       try {
         CircleStreamBuffer buffer = new CircleStreamBuffer();
         OutputStream outputStream = buffer.getOutputStream();
@@ -111,23 +123,32 @@ public class StreamSerializerResult implements SerializerResult {
 
         json.close();
         outputStream.close();
-        return buffer.getInputStream();
+        return buffer.getBuffer();
       } catch (final IOException e) {
-        return new ByteArrayInputStream(("ERROR" + e.getMessage()).getBytes());
-//      } catch (SerializerException e) {
-//        return new ByteArrayInputStream(("ERROR" + e.getMessage()).getBytes());
+        return ByteBuffer.wrap(("ERROR" + e.getMessage()).getBytes());
       }
+    }
+
+
+    @Override
+    public boolean isOpen() {
+      return false;
+    }
+
+    @Override
+    public void close() throws IOException {
+
     }
   }
 
   @Override
   public InputStream getContent() {
-    return content;
+    return Channels.newInputStream(this.channel);
   }
 
   @Override
   public ReadableByteChannel getChannel() {
-    return Channels.newChannel(getContent());
+    return this.channel;
   }
 
   @Override
@@ -135,8 +156,8 @@ public class StreamSerializerResult implements SerializerResult {
     return true;
   }
 
-  private StreamSerializerResult(InputStream content) {
-    this.content = content;
+  private ChannelSerializerResult(ReadableByteChannel channel) {
+    this.channel = channel;
   }
 
   public static SerializerResultBuilder with(EntityStreamCollection coll, EdmEntityType entityType,
@@ -173,8 +194,8 @@ public class StreamSerializerResult implements SerializerResult {
     }
 
     public SerializerResult build() {
-      InputStream input = new StreamInputStream(coll, entityType, head, jsonSerializer, metadata, options, tail);
-      return new StreamSerializerResult(input);
+      ReadableByteChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
+      return new ChannelSerializerResult(input);
     }
   }
 }

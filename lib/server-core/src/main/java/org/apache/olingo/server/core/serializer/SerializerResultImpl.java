@@ -19,6 +19,9 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.InputStream;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 import org.apache.olingo.server.api.serializer.SerializerResult;
 
@@ -28,6 +31,16 @@ public class SerializerResultImpl implements SerializerResult {
   @Override
   public InputStream getContent() {
     return content;
+  }
+
+  @Override
+  public ReadableByteChannel getChannel() {
+    return Channels.newChannel(getContent());
+  }
+
+  @Override
+  public boolean isNioSupported() {
+    return false;
   }
 
   public static SerializerResultBuilder with() {

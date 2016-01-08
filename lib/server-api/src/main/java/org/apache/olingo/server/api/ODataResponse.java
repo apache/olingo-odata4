@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api;
 
 import java.io.InputStream;
+import java.nio.channels.ReadableByteChannel;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ public class ODataResponse {
   private int statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode();
   private final HttpHeaders headers = new HttpHeaders();
   private InputStream content;
+  private ReadableByteChannel channel;
 
   /**
    * Sets the status code.
@@ -132,4 +134,15 @@ public class ODataResponse {
     return content;
   }
 
+  public void setChannel(final ReadableByteChannel channel) {
+    this.channel = channel;
+  }
+
+  public ReadableByteChannel getChannel() {
+    return channel;
+  }
+
+  public boolean isChannelAvailable() {
+    return channel != null;
+  }
 }

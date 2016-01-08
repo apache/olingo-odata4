@@ -149,7 +149,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    if (odResponse.getContent() != null) {
+    if (odResponse.getContent() != null || odResponse.isChannelAvailable()) {
       copyContent(odResponse, response);
     }
   }
@@ -160,7 +160,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     try {
       ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
       output = Channels.newChannel(servletResponse.getOutputStream());
-      input = Channels.newChannel(odataResponse.getContent());
+      if(odataResponse.isChannelAvailable()) {
+        input = odataResponse.getChannel();
+      } else {
+        input = Channels.newChannel(odataResponse.getContent());
+      }
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);

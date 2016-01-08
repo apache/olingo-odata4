@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import java.io.InputStream;
+import java.nio.channels.ReadableByteChannel;
 
 /**
  * Result type for {@link ODataSerializer} methods
@@ -29,4 +30,8 @@ public interface SerializerResult {
    * @return serialized content
    */
   InputStream getContent();
+
+  ReadableByteChannel getChannel();
+
+  boolean isNioSupported();
 }

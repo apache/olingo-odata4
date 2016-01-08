@@ -58,6 +58,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
+import org.apache.olingo.server.core.serializer.ChannelSerializerResult;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.StreamSerializerResult;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
@@ -134,7 +135,9 @@ public class ODataJsonStreamSerializer extends ODataJsonSerializer {
         opt.expand(options.getExpand()).select(options
             .getSelect()).writeOnlyReferences(options.getWriteOnlyReferences());
       }
-      return StreamSerializerResult.with(coll, entityType, this, metadata, opt.build())
+//      return StreamSerializerResult.with(coll, entityType, this, metadata, opt.build())
+//          .addHead(head).addTail(tail).build();
+      return ChannelSerializerResult.with(coll, entityType, this, metadata, opt.build())
           .addHead(head).addTail(tail).build();
     } catch (final IOException e) {
       cachedException =

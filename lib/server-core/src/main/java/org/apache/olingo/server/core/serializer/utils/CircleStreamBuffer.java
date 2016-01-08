@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -191,6 +192,25 @@ public class CircleStreamBuffer {
     }
 
     return readBuffer.get();
+  }
+
+  public ByteBuffer getBuffer() throws IOException {
+    if (readClosed) {
+      throw new IOException("Tried to read from closed stream.");
+    }
+    writeMode = false;
+
+    // FIXME: mibo_160108: This is not efficient and only for test/poc reasons
+    int reqSize = 0;
+    for (ByteBuffer byteBuffer : bufferQueue) {
+      reqSize += byteBuffer.position();
+    }
+    ByteBuffer tmp = ByteBuffer.allocateDirect(reqSize);
+    for (ByteBuffer byteBuffer : bufferQueue) {
+      byteBuffer.flip();
+      tmp.put(byteBuffer);
+    }
+    return tmp;
   }
 
   // #############################################
