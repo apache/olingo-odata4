@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -32,13 +31,14 @@ public class UriDecoderTest {
 
   @Test
   public void split() throws Exception {
-    assertTrue(UriDecoder.splitAndDecodePath("").isEmpty());
-    assertTrue(UriDecoder.splitAndDecodePath("/").isEmpty());
+    assertEquals(Arrays.asList(""), UriDecoder.splitAndDecodePath(""));
+    assertEquals(Arrays.asList("", ""), UriDecoder.splitAndDecodePath("/"));
     assertEquals(Arrays.asList("a"), UriDecoder.splitAndDecodePath("a"));
-    assertEquals(Arrays.asList("a"), UriDecoder.splitAndDecodePath("a/"));
-    assertEquals(Arrays.asList("a"), UriDecoder.splitAndDecodePath("/a"));
-    assertEquals(Arrays.asList("a", "a"), UriDecoder.splitAndDecodePath("a/a"));
-    assertEquals(Arrays.asList("a", "a"), UriDecoder.splitAndDecodePath("/a/a"));
+    assertEquals(Arrays.asList("a", ""), UriDecoder.splitAndDecodePath("a/"));
+    assertEquals(Arrays.asList("", "a"), UriDecoder.splitAndDecodePath("/a"));
+    assertEquals(Arrays.asList("a", "b"), UriDecoder.splitAndDecodePath("a/b"));
+    assertEquals(Arrays.asList("", "a", "b"), UriDecoder.splitAndDecodePath("/a/b"));
+    assertEquals(Arrays.asList("", "a", "", "", "b", ""), UriDecoder.splitAndDecodePath("/a///b/"));
   }
 
   @Test
@@ -49,7 +49,7 @@ public class UriDecoderTest {
 
   @Test
   public void options() throws Exception {
-    assertTrue(UriDecoder.splitAndDecodeOptions("").isEmpty());
+    checkOption("", "", "");
 
     checkOption("a", "a", "");
     checkOption("a=b", "a", "b");
@@ -67,6 +67,7 @@ public class UriDecoderTest {
 
     checkOption("=&=", "", "");
     assertEquals(2, UriDecoder.splitAndDecodeOptions("=&=").size());
+    assertEquals(13, UriDecoder.splitAndDecodeOptions("&&&&&&&&&&&&").size());
 
     checkOption("=&c=d", "", "");
     checkOption("=&c=d", "c", "d");

@@ -19,8 +19,6 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ public class UriDecoder {
   /** Splits the path string at '/' characters and percent-decodes the resulting path segments. */
   protected static List<String> splitAndDecodePath(final String path) throws UriParserSyntaxException {
     List<String> pathSegmentsDecoded = new ArrayList<String>();
-    for (final String segment : splitSkipEmpty(path, '/')) {
+    for (final String segment : split(path, '/')) {
       pathSegmentsDecoded.add(decode(segment));
     }
     return pathSegmentsDecoded;
@@ -42,58 +40,39 @@ public class UriDecoder {
   /**
    * Splits the query-option string at '&' characters, the resulting parts at '=' characters,
    * and separately percent-decodes names and values of the resulting name-value pairs.
+   * If there is no '=' character in an option, the whole option is considered as name.
    */
   protected static List<QueryOption> splitAndDecodeOptions(final String queryOptionString)
       throws UriParserSyntaxException {
-    if (queryOptionString == null || queryOptionString.isEmpty()) {
-      return Collections.emptyList();
-    }
-
     List<QueryOption> queryOptions = new ArrayList<QueryOption>();
-    for (final String option : splitSkipEmpty(queryOptionString, '&')) {
-      final List<String> pair = splitFirst(option, '=');
+    for (final String option : split(queryOptionString, '&')) {
+      final int pos = option.indexOf('=');
+      final String name = pos >= 0 ? option.substring(0, pos)  : option;
+      final String text = pos >= 0 ? option.substring(pos + 1) : "";
       queryOptions.add(new CustomQueryOptionImpl()
-          .setName(decode(pair.get(0)))
-          .setText(decode(pair.get(1))));
+          .setName(decode(name))
+          .setText(decode(text)));
     }
     return queryOptions;
   }
 
-  private static List<String> splitFirst(final String input, final char c) {
-    int pos = input.indexOf(c);
-    if (pos >= 0) {
-      return Arrays.asList(input.substring(0, pos), input.substring(pos + 1));
-    } else {
-      return Arrays.asList(input, "");
-    }
-  }
-
   /**
-   * Splits the input string at the given character and drops all empty elements.
+   * Splits the input string at the given character.
    * @param input string to split
    * @param c character at which to split
    * @return list of elements (can be empty)
    */
-  private static List<String> splitSkipEmpty(final String input, final char c) {
-    if (input.isEmpty() || input.length() == 1 && input.charAt(0) == c) {
-      return Collections.emptyList();
-    }
-
+  private static List<String> split(final String input, final char c) {
     List<String> list = new LinkedList<String>();
 
     int start = 0;
     int end;
-
     while ((end = input.indexOf(c, start)) >= 0) {
-      if (start != end) {
-        list.add(input.substring(start, end));
-      }
+      list.add(input.substring(start, end));
       start = end + 1;
     }
 
-    if (input.charAt(input.length() - 1) != c) {
-      list.add(input.substring(start));
-    }
+    list.add(input.substring(start));
 
     return list;
   }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.antlr;
+package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -3010,6 +3010,11 @@ public class TestFullResourcePath {
 
     testUri.run("$batch")
         .isKind(UriInfoKind.batch);
+
+    testUri.runEx("//").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("$metadata/").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("//$metadata").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
+    testUri.runEx("ESKeyNav//$count").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
 
     testUri.runEx("$metadata/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
     testUri.runEx("$batch/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);

@@ -269,7 +269,7 @@ public class SearchTokenizerTest {
     assertQuery("\"\"").resultsIn(SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
     assertQuery("some AND)").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
     assertQuery("some OR)").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
-    assertQuery("some NOT)").enableLogging().resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("some NOT)").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
   }
 
   @Test
@@ -308,7 +308,6 @@ public class SearchTokenizerTest {
 
   private static class Validator {
     private List<Tuple> validations = new ArrayList<Tuple>();
-    private boolean log;
     private final String searchQuery;
 
     public void resultsIn(final SearchQueryToken.Token... tokens) throws SearchTokenizerException {
@@ -345,11 +344,6 @@ public class SearchTokenizerTest {
       this.searchQuery = searchQuery;
     }
 
-    private Validator enableLogging() {
-      log = true;
-      return this;
-    }
-
     private Validator addExpected(final SearchQueryToken.Token token, final String literal) {
       validations.add(new Tuple(token, literal));
       return this;
@@ -368,10 +362,6 @@ public class SearchTokenizerTest {
         validate();
       } catch (SearchTokenizerException e) {
         Assert.assertEquals("SearchTokenizerException with unexpected message was thrown.", key, e.getMessageKey());
-        if (log) {
-          System.out.println("Caught SearchTokenizerException with message key " +
-              e.getMessageKey() + " and message " + e.getMessage());
-        }
         return;
       }
       Assert.fail("No SearchTokenizerException was not thrown.");
@@ -381,9 +371,6 @@ public class SearchTokenizerTest {
       SearchTokenizer tokenizer = new SearchTokenizer();
       List<SearchQueryToken> result = tokenizer.tokenize(searchQuery);
       Assert.assertNotNull(result);
-      if (log) {
-        System.out.println(result);
-      }
       if (validations.size() != 0) {
         Assert.assertEquals(validations.size(), result.size());
 

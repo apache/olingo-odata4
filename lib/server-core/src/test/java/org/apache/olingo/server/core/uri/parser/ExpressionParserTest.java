@@ -290,15 +290,13 @@ public class ExpressionParserTest {
     }
     expressionString += ')';
 
-    Expression expression = parseExpression(expressionString);
-    assertNotNull(expression);
-    return expression;
+    return parseExpression(expressionString);
   }
 
   private Expression parseExpression(final String expressionString)
       throws UriParserException, UriValidationException {
     UriTokenizer tokenizer = new UriTokenizer(expressionString);
-    Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null);
+    final Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null);
     assertNotNull(expression);
     assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;
@@ -306,7 +304,7 @@ public class ExpressionParserTest {
 
   private void wrongExpression(final String expressionString) {
     try {
-      new ExpressionParser(mock(Edm.class), odata).parse(new UriTokenizer(expressionString), null, null);
+      parseExpression(expressionString);
       fail("Expected exception not thrown.");
     } catch (final UriParserException e) {
       assertNotNull(e);

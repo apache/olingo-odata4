@@ -224,34 +224,34 @@ public class SearchParserTest extends SearchParser {
   private void runEx(final MessageKeys key, final Token... tokenArray) {
     try {
       run(tokenArray);
-      fail("Expected UriParserSyntaxException with key " + key);
+      fail("Expected SearchParserException with key " + key);
     } catch (SearchParserException e) {
       assertEquals(key, e.getMessageKey());
     }
   }
 
-  private SearchExpression run(final SearchQueryToken.Token... tokenArray) throws SearchParserException {
+  private SearchExpression run(final Token... tokenArray) throws SearchParserException {
     List<SearchQueryToken> tokenList = prepareTokens(tokenArray);
     SearchExpression se = parse(tokenList);
     assertNotNull(se);
     return se;
   }
 
-  public List<SearchQueryToken> prepareTokens(final SearchQueryToken.Token... tokenArray) {
+  public List<SearchQueryToken> prepareTokens(final Token... tokenArray) {
     ArrayList<SearchQueryToken> tokenList = new ArrayList<SearchQueryToken>();
     int wordNumber = 1;
     int phraseNumber = 1;
-    for (Token aTokenArray : tokenArray) {
+    for (Token aToken : tokenArray) {
       SearchQueryToken token = mock(SearchQueryToken.class);
-      when(token.getToken()).thenReturn(aTokenArray);
-      if (aTokenArray == Token.WORD) {
+      when(token.getToken()).thenReturn(aToken);
+      if (aToken == Token.WORD) {
         when(token.getLiteral()).thenReturn("word" + wordNumber);
         wordNumber++;
-      } else if (aTokenArray == Token.PHRASE) {
+      } else if (aToken == Token.PHRASE) {
         when(token.getLiteral()).thenReturn("\"phrase" + phraseNumber + "\"");
         phraseNumber++;
       }
-      when(token.toString()).thenReturn("" + aTokenArray);
+      when(token.toString()).thenReturn("" + aToken);
       tokenList.add(token);
     }
     return tokenList;

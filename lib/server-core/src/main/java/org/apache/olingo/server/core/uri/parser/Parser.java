@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class Parser {
   private static final String ATOM = "atom";
   private static final String JSON = "json";
   private static final String XML = "xml";
+  private static final String DOLLAR = "$";
   private static final String AT = "@";
   private static final String NULL = "null";
 
@@ -78,14 +80,19 @@ public class Parser {
     Deque<EdmType> contextTypes = new ArrayDeque<EdmType>();
     boolean contextIsCollection = false;
 
-    final List<String> pathSegmentsDecoded = UriDecoder.splitAndDecodePath(path);
-    final int numberOfSegments = pathSegmentsDecoded.size();
+    List<String> pathSegmentsDecoded = UriDecoder.splitAndDecodePath(path);
+    int numberOfSegments = pathSegmentsDecoded.size();
+    // Remove an initial empty segment resulting from the expected '/' at the beginning of the path.
+    if (numberOfSegments > 1 && pathSegmentsDecoded.get(0).isEmpty()) {
+      pathSegmentsDecoded.remove(0);
+      numberOfSegments--;
+    }
 
     // first, read the decoded path segments
-    final String firstSegment = numberOfSegments == 0 ? "" : pathSegmentsDecoded.get(0);
+    final String firstSegment = pathSegmentsDecoded.get(0);
 
     if (firstSegment.isEmpty()) {
-      ensureLastSegment(firstSegment, 0, numberOfSegments);
+      ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.service);
 
     } else if (firstSegment.equals("$batch")) {
@@ -168,11 +175,12 @@ public class Parser {
     }
 
     // second, read the system query options and the custom query options
-    final List<QueryOption> options = UriDecoder.splitAndDecodeOptions(query);
+    final List<QueryOption> options =
+        query == null ? Collections.<QueryOption> emptyList() : UriDecoder.splitAndDecodeOptions(query);
     for (final QueryOption option : options) {
       final String optionName = option.getName();
       final String optionValue = option.getText();
-      if (optionName.startsWith("$")) {
+      if (optionName.startsWith(DOLLAR)) {
         SystemQueryOption systemOption = null;
         if (optionName.equals(SystemQueryOptionKind.FILTER.toString())) {
           UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
@@ -315,7 +323,7 @@ public class Parser {
               UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, optionName);
         }
 
-      } else {
+      } else if (!optionName.isEmpty()) {
         contextUriInfo.addCustomQueryOption((CustomQueryOption) option);
       }
     }

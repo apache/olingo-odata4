@@ -114,7 +114,7 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testIEEE754ParameterContentNegotiation() throws Exception {
-    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)?$format=application/json;IEEE754Compatible=true");
+    final URL url = new URL(SERVICE_URI + "ESAllPrim(32767)?$format=application/json;IEEE754Compatible=true");
     final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=false");
@@ -131,7 +131,7 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
   @Test
   public void testIEEE754ParameterViaAcceptHeader() throws Exception {
-    final URL url = new URL(SERVICE_URI + "/ESAllPrim(32767)");
+    final URL url = new URL(SERVICE_URI + "ESAllPrim(32767)");
     final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod(HttpMethod.GET.name());
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;IEEE754Compatible=true");

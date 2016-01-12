@@ -50,7 +50,7 @@ public class SearchParser {
       searchExpression = parse(tokenizer.tokenize(searchQuery));
     } catch (SearchTokenizerException e) {
       String message = e.getMessage();
-      throw new SearchParserException("Tokenizer exception with message: " + message,
+      throw new SearchParserException("Tokenizer exception with message: " + message, e,
           SearchParserException.MessageKeys.TOKENIZER_EXCEPTION, message);
     }
     final SearchOptionImpl searchOption = new SearchOptionImpl();

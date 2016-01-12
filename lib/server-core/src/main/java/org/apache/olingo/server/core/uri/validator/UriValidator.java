@@ -286,9 +286,9 @@ public class UriValidator {
           RowIndexForUriType.mediaStream : RowIndexForUriType.propertyPrimitiveValue;
       break;
     default:
-      throw new UriValidationException("Unexpected kind in path segment before $value: "
-          + secondLastPathSegment.getKind(), UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE,
-          secondLastPathSegment.toString());
+      throw new UriValidationException(
+          "Unexpected kind in path segment before $value: " + secondLastPathSegment.getKind(),
+          UriValidationException.MessageKeys.UNALLOWED_KIND_BEFORE_VALUE, secondLastPathSegment.toString());
     }
     return idx;
   }
@@ -302,9 +302,9 @@ public class UriValidator {
       return ((UriResourcePartTyped) secondLastPathSegment).isCollection() ?
           RowIndexForUriType.references : RowIndexForUriType.reference;
     } else {
-      throw new UriValidationException("secondLastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
-          .toString());
+      throw new UriValidationException(
+          "secondLastPathSegment not a class of UriResourcePartTyped: " + lastPathSegment.getClass(),
+          UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment.toString());
     }
   }
 
@@ -314,40 +314,36 @@ public class UriValidator {
       return ((UriResourcePartTyped) lastPathSegment).isCollection() ?
           RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
     } else {
-      throw new UriValidationException("lastPathSegment not a class of UriResourcePartTyped: "
-          + lastPathSegment.getClass(), UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment
-          .toString());
+      throw new UriValidationException(
+          "lastPathSegment not a class of UriResourcePartTyped: " + lastPathSegment.getClass(),
+          UriValidationException.MessageKeys.LAST_SEGMENT_NOT_TYPED, lastPathSegment.toString());
     }
   }
 
   private RowIndexForUriType rowIndexForFunction(final UriResource lastPathSegment) throws UriValidationException {
     final UriResourceFunction uriFunction = (UriResourceFunction) lastPathSegment;
-    final EdmReturnType returnType = uriFunction.getFunction().getReturnType();
-
     if (!uriFunction.getFunction().isComposable()) {
       return RowIndexForUriType.none;
     }
 
+    final boolean isCollection = uriFunction.isCollection();
+    final EdmTypeKind typeKind = uriFunction.getFunction().getReturnType().getType().getKind();
     RowIndexForUriType idx;
-    switch (returnType.getType().getKind()) {
+    switch (typeKind) {
     case ENTITY:
-      idx = returnType.isCollection() && uriFunction.getKeyPredicates().isEmpty() ?
-          RowIndexForUriType.entitySet : RowIndexForUriType.entity;
+      idx = isCollection ? RowIndexForUriType.entitySet : RowIndexForUriType.entity;
       break;
     case PRIMITIVE:
     case ENUM:
     case DEFINITION:
-      idx = returnType.isCollection() ? RowIndexForUriType.propertyPrimitiveCollection :
-                                        RowIndexForUriType.propertyPrimitive;
+      idx = isCollection ? RowIndexForUriType.propertyPrimitiveCollection : RowIndexForUriType.propertyPrimitive;
       break;
     case COMPLEX:
-      idx = returnType.isCollection() ? RowIndexForUriType.propertyComplexCollection :
-                                        RowIndexForUriType.propertyComplex;
+      idx = isCollection ? RowIndexForUriType.propertyComplexCollection : RowIndexForUriType.propertyComplex;
       break;
     default:
-      throw new UriValidationException("Unsupported function return type: " + returnType.getType().getKind(),
-          UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE,
-          returnType.getType().getKind().toString());
+      throw new UriValidationException("Unsupported function return type: " + typeKind,
+          UriValidationException.MessageKeys.UNSUPPORTED_FUNCTION_RETURN_TYPE, typeKind.toString());
     }
 
     return idx;
@@ -512,18 +508,17 @@ public class UriValidator {
       for (SystemQueryOption option : uriInfo.getSystemQueryOptions()) {
         options.append(option.getName()).append(" ");
       }
-      throw new UriValidationException("System query option " + options.toString() + " not allowed for method "
-          + httpMethod, UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
+      throw new UriValidationException(
+          "System query option " + options.toString() + " not allowed for method " + httpMethod,
+          UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD,
           options.toString(), httpMethod.toString());
     }
   }
 
   private boolean isAction(final UriInfo uriInfo) {
     List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
-    if (uriResourceParts.isEmpty()) {
-      return false;
-    }
-    return UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
+    return !uriResourceParts.isEmpty()
+        && UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
   }
 
   private void validateParameters(final UriInfo uriInfo) throws UriValidationException {
@@ -531,18 +526,18 @@ public class UriValidator {
       final boolean isFunction = pathSegment.getKind() == UriResourceKind.function;
 
       if (isFunction) {
-        final UriResourceFunction functionPathSegement = (UriResourceFunction) pathSegment;
-        final EdmFunction edmFuntion = functionPathSegement.getFunction();
+        final UriResourceFunction functionPathSegment = (UriResourceFunction) pathSegment;
+        final EdmFunction edmFunction = functionPathSegment.getFunction();
 
         final Map<String, UriParameter> parameters = new HashMap<String, UriParameter>();
-        for (final UriParameter parameter : functionPathSegement.getParameters()) {
+        for (final UriParameter parameter : functionPathSegment.getParameters()) {
           parameters.put(parameter.getName(), parameter);
         }
 
         boolean firstParameter = true;
-        for (final String parameterName : edmFuntion.getParameterNames()) {
+        for (final String parameterName : edmFunction.getParameterNames()) {
           final UriParameter parameter = parameters.get(parameterName);
-          final boolean isNullable = edmFuntion.getParameter(parameterName).isNullable();
+          final boolean isNullable = edmFunction.getParameter(parameterName).isNullable();
 
           if (parameter != null) {
             /** No alias, value explicit null */
@@ -560,7 +555,7 @@ public class UriValidator {
             }
 
             parameters.remove(parameterName);
-          } else if (!isNullable && !(firstParameter && edmFuntion.isBound())) {
+          } else if (!isNullable && !(firstParameter && edmFunction.isBound())) {
             // The first parameter of bound functions is implicit provided by the preceding path segment
             throw new UriValidationException("Missing non nullable parameter " + parameterName,
                 UriValidationException.MessageKeys.MISSING_PARAMETER, parameterName);
@@ -586,11 +581,11 @@ public class UriValidator {
       if (isEntitySet || pathSegment.getKind() == UriResourceKind.navigationProperty || isEntityColFunction) {
         final List<UriParameter> keyPredicates = isEntitySet ?
             ((UriResourceEntitySet) pathSegment).getKeyPredicates() :
-            isEntityColFunction ? ((UriResourceFunction) pathSegment).getKeyPredicates()
-                : ((UriResourceNavigation) pathSegment).getKeyPredicates();
+            isEntityColFunction ?
+                ((UriResourceFunction) pathSegment).getKeyPredicates() :
+                ((UriResourceNavigation) pathSegment).getKeyPredicates();
 
         if (keyPredicates != null) {
-
                 final EdmEntityType entityType = isEntitySet ?
                     ((UriResourceEntitySet) pathSegment).getEntityType() :
                       isEntityColFunction ? (EdmEntityType) ((UriResourceFunction) pathSegment).getType()

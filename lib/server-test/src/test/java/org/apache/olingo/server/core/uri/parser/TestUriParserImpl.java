@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.antlr;
+package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Arrays;
 import java.util.Collections;

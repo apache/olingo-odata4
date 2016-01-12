@@ -157,7 +157,7 @@ public class ParserHelper {
     final List<EdmKeyPropertyRef> keyPropertyRefs = edmEntityType.getKeyPropertyRefs();
     if (tokenizer.next(TokenKind.CLOSE)) {
       throw new UriParserSemanticException(
-          "Expected " + keyPropertyRefs.size() + " key predicates but none.",
+          "Expected " + keyPropertyRefs.size() + " key predicates but got none.",
           UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
           Integer.toString(keyPropertyRefs.size()), "0");
     }

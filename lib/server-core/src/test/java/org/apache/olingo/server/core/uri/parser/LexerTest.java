@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.uri.antlr;
+package org.apache.olingo.server.core.uri.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,21 +28,9 @@ import org.junit.Test;
 /**
  * Tests originally written for the ANTLR lexer.
  */
-public class TestLexer {
+public class LexerTest {
 
-  private TokenValidator test = null;
-
-  // The last two chars are not in cPCT_ENCODED_UNESCAPED.
-  private static final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";
-  private static final String cUNRESERVED = "ABCabc123-._~";
-  private static final String cOTHER_DELIMS = "!()*+,;";
-  private static final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
-
-  private static final String cPCHAR = cUNRESERVED + cPCT_ENCODED + cSUB_DELIMS + ":@";
-
-  public TestLexer() {
-    test = new TokenValidator();
-  }
+  private TokenValidator test = new TokenValidator();
 
   @Test
   public void unary() {
@@ -271,7 +259,14 @@ public class TestLexer {
 
   @Test
   public void delims() {
-    final String reserved = "/";
+    // The last two chars are not in cPCT_ENCODED_UNESCAPED.
+//    final String cPCT_ENCODED = "%45%46%47" + "%22" + "%5C";
+//    final String cUNRESERVED = "ABCabc123-._~";
+//    final String cOTHER_DELIMS = "!()*+,;";
+//    final String cSUB_DELIMS = "$&'=" + cOTHER_DELIMS;
+
+//    private static final String cPCHAR = cUNRESERVED + cPCT_ENCODED + cSUB_DELIMS + ":@";
+//    final String reserved = "/";
     // Test lexer rule UNRESERVED
 //    test.run("$format=A/" + cUNRESERVED).has(TokenKind.FORMAT).isInput();
 //    test.run("$format=A/" + cUNRESERVED + reserved).has(TokenKind.FORMAT).isText(cUNRESERVED);
