@@ -49,8 +49,6 @@ public class UriValidationException extends ODataLibraryException {
     DOUBLE_KEY_PROPERTY,
     /** parameter: untyped segment name */
     LAST_SEGMENT_NOT_TYPED,
-    /** parameter: untyped segment name */
-    SECOND_LAST_SEGMENT_NOT_TYPED,
     /** parameter: unallowed kind before $value */
     UNALLOWED_KIND_BEFORE_VALUE,
     /** parameter: unallowed kind before $count */

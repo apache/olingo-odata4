@@ -560,9 +560,10 @@ public class ExpressionParser {
       }
       break;
 
-    default:
-      throw new UriParserSemanticException("Unkown method '" + methodKind.name() + "'",
-          UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, methodKind.name()); // TODO: better message
+    // Can have one or two parameters.  These methods are handled elsewhere.
+    case CAST:
+    case ISOF:
+      break;
     }
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     return parameters;
@@ -1108,11 +1109,10 @@ public class ExpressionParser {
   private void checkType(final Expression expression, final EdmPrimitiveTypeKind... kinds) throws UriParserException {
     final EdmType type = getType(expression);
     if (!isType(type, kinds)) {
-      throw new UriParserSemanticException("Incompatible type.",
-          UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, // TODO: better message
-          type == null ?
-              "" :
-              type.getFullQualifiedName().getFullQualifiedNameAsString());
+      throw new UriParserSemanticException("Incompatible types.",
+          UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+          type == null ? "" : type.getFullQualifiedName().getFullQualifiedNameAsString(),
+          Arrays.deepToString(kinds));
     }
   }
 
@@ -1166,8 +1166,8 @@ public class ExpressionParser {
       return new EnumerationImpl(enumType,
           Arrays.asList(enumType.fromUriLiteral(primitiveValueLiteral).split(",")));
     } catch (final EdmPrimitiveTypeException e) {
-      // TODO: Better error message.
-      throw new UriParserSemanticException("Wrong enumeration value.", e,
+      // This part should not be reached, so a general error message key can be re-used.
+      throw new UriParserSemanticException("Wrong enumeration value '" + primitiveValueLiteral + "'.", e,
           UriParserSemanticException.MessageKeys.UNKNOWN_PART, primitiveValueLiteral);
     }
   }
