@@ -19,25 +19,9 @@
 package org.apache.olingo.server.api.uri.queryoption.search;
 
 public enum SearchUnaryOperatorKind {
-  NOT("not");
-
-  private String syntax;
-
-  private SearchUnaryOperatorKind(final String syntax) {
-    this.syntax = syntax;
-  }
-
-  @Override
-  public String toString() {
-    return syntax;
-  }
+  NOT;
 
   public static SearchUnaryOperatorKind get(final String operator) {
-    for (SearchUnaryOperatorKind op : SearchUnaryOperatorKind.values()) {
-      if (op.toString().equals(operator)) {
-        return op;
-      }
-    }
-    return null;
+    return NOT.equals(operator) ? NOT : null;
   }
 }

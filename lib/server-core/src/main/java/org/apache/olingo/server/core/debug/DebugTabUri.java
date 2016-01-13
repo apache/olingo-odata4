@@ -27,11 +27,13 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
+import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -72,7 +74,8 @@ public class DebugTabUri implements DebugTab {
   public void appendJson(final JsonGenerator gen) throws IOException {
     gen.writeStartObject();
 
-    if (!uriInfo.getUriResourceParts().isEmpty()) {
+    gen.writeStringField("kind", uriInfo.getKind().name());
+    if (uriInfo.getKind() == UriInfoKind.resource) {
       gen.writeFieldName("uriResourceParts");
       appendURIResourceParts(gen, uriInfo.getUriResourceParts());
     }
@@ -161,6 +164,10 @@ public class DebugTabUri implements DebugTab {
       gen.writeStartObject();
       gen.writeStringField("uriResourceKind", resource.getKind().toString());
       gen.writeStringField("segment", resource.toString());
+      if (resource instanceof UriResourcePartTyped && ((UriResourcePartTyped) resource).getType() != null) {
+        gen.writeStringField("type",
+            ((UriResourcePartTyped) resource).getType().getFullQualifiedName().getFullQualifiedNameAsString());
+      }
       if (resource instanceof UriResourceEntitySet) {
         appendParameters(gen, "keys", ((UriResourceEntitySet) resource).getKeyPredicates());
       } else if (resource instanceof UriResourceNavigation) {
@@ -231,7 +238,12 @@ public class DebugTabUri implements DebugTab {
     }
 
     if (item.getLevelsOption() != null) {
-      gen.writeNumberField("levels", item.getLevelsOption().getValue());
+      gen.writeFieldName("levels");
+      if (item.getLevelsOption().isMax()) {
+          gen.writeString("max");
+      } else {
+        gen.writeNumber(item.getLevelsOption().getValue());
+      }
     }
 
     appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(),
@@ -275,9 +287,9 @@ public class DebugTabUri implements DebugTab {
       boolean first = true;
       for (UriResource resourcePart : selectItem.getResourcePath().getUriResourceParts()) {
         if (!first) {
-          selectedProperty += "/";
+          selectedProperty += '/';
         }
-        selectedProperty = resourcePart.toString();
+        selectedProperty += resourcePart.toString();
         first = false;
       }
     }
@@ -309,17 +321,22 @@ public class DebugTabUri implements DebugTab {
   public void appendHtml(final Writer writer) throws IOException {
     // factory for JSON generators (the object mapper is necessary to write expression trees)
     final JsonFactory jsonFactory = new ObjectMapper().getFactory();
+    JsonGenerator json;
 
-    writer.append("<h2>Resource Path</h2>\n")
-    .append("<ul>\n<li class=\"json\">");
-    JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-    appendURIResourceParts(json, uriInfo.getUriResourceParts());
-    json.close();
-    writer.append("\n</li>\n</ul>\n");
+    if (uriInfo.getKind() == UriInfoKind.resource) {
+      writer.append("<h2>Resource Path</h2>\n")
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
+      appendURIResourceParts(json, uriInfo.getUriResourceParts());
+      json.close();
+      writer.append("\n</li>\n</ul>\n");
+    } else {
+      writer.append("<h2>Kind</h2>\n<p>").append(uriInfo.getKind().name()).append("</p>\n");
+    }
 
     if (uriInfo.getSearchOption() != null) {
       writer.append("<h2>Search Option</h2>\n")
-      .append("<ul>\n<li class=\"json\">");
+          .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendSearchJson(json, uriInfo.getSearchOption().getSearchExpression());
       json.close();
@@ -328,7 +345,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getFilterOption() != null) {
       writer.append("<h2>Filter Option</h2>\n")
-      .append("<ul>\n<li class=\"json\">");
+          .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendExpressionJson(json, uriInfo.getFilterOption().getExpression());
       json.close();
@@ -337,7 +354,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getOrderByOption() != null) {
       writer.append("<h2>OrderBy Option</h2>\n")
-      .append("<ul>\n<li class=\"json\">");
+          .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendOrderByItemsJson(json, uriInfo.getOrderByOption().getOrders());
       json.close();
@@ -346,7 +363,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getExpandOption() != null) {
       writer.append("<h2>Expand Option</h2>\n")
-      .append("<ul>\n<li class=\"json\">");
+          .append("<ul>\n<li class=\"json\">");
       json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
       appendExpandedPropertiesJson(json, uriInfo.getExpandOption().getExpandItems());
       json.close();
@@ -355,7 +372,7 @@ public class DebugTabUri implements DebugTab {
 
     if (uriInfo.getSelectOption() != null) {
       writer.append("<h2>Selected Properties</h2>\n")
-      .append("<ul>\n");
+          .append("<ul>\n");
       for (final SelectItem selectItem : uriInfo.getSelectOption().getSelectItems()) {
         writer.append("<li>").append(getSelectString(selectItem)).append("</li>\n");
       }

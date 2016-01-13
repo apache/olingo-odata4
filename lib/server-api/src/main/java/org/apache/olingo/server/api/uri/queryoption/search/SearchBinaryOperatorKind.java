@@ -19,27 +19,16 @@
 package org.apache.olingo.server.api.uri.queryoption.search;
 
 public enum SearchBinaryOperatorKind {
-  // and/or
-  AND("and"), OR("or");
-
-  private String syntax;
-
-  private SearchBinaryOperatorKind(final String syntax) {
-    this.syntax = syntax;
-  }
-
-  @Override
-  public String toString() {
-    return syntax;
-  }
+  AND,
+  OR;
 
   public static SearchBinaryOperatorKind get(final String operator) {
-    for (SearchBinaryOperatorKind op : SearchBinaryOperatorKind.values()) {
-      if (op.toString().equals(operator)) {
-        return op;
-      }
+    if (AND.name().equals(operator)) {
+      return AND;
+    } else if (OR.name().equals(operator)) {
+      return OR;
+    } else {
+      return null;
     }
-    return null;
   }
-
 }
