@@ -33,7 +33,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.AbstractODataObject;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -172,8 +171,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     if (propertyValueQName.equals(start.getName())) {
       // retrieve name from context
       final Attribute context = start.getAttributeByName(contextQName);
-      if (context != null) {
-        property.setName(StringUtils.substringAfterLast(context.getValue(), "/"));
+      if (context != null && context.getValue() != null) {
+        final int pos = context.getValue().lastIndexOf('/');
+        property.setName(pos == -1 ? "" : context.getValue().substring(pos + 1));
       }
     } else {
       property.setName(start.getName().getLocalPart());

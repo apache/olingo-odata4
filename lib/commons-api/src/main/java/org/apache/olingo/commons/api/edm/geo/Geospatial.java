@@ -102,10 +102,8 @@ public abstract class Geospatial implements Serializable {
   protected Geospatial(final Dimension dimension, final Type type, final SRID srid) {
     this.dimension = dimension;
     this.type = type;
-    this.srid = srid == null
-        ? new SRID()
-    : srid;
-        this.srid.setDimension(dimension);
+    this.srid = srid == null ? new SRID() : srid;
+    this.srid.setDimension(dimension);
   }
 
   /**

@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmAnnotations;
@@ -444,7 +443,7 @@ public class EdmImplCachingTest {
         private static final long serialVersionUID = 3109256773218160485L;
 
         {
-          put(StringUtils.EMPTY, schema);
+          put("", schema);
         }
       };
     }

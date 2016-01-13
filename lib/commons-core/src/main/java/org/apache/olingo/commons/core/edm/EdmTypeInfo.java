@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -54,9 +53,10 @@ public class EdmTypeInfo {
     }
 
     public EdmTypeInfo build() {
-      return new EdmTypeInfo(edm, typeExpression.indexOf('.') == -1 && StringUtils.isNotBlank(defaultNamespace)
-          ? defaultNamespace + "." + typeExpression
-              : typeExpression);
+      return new EdmTypeInfo(edm,
+          typeExpression.indexOf('.') == -1 && defaultNamespace != null && !defaultNamespace.isEmpty() ?
+              defaultNamespace + "." + typeExpression :
+              typeExpression);
     }
   }
 
@@ -98,7 +98,7 @@ public class EdmTypeInfo {
       typeName = baseType.substring(lastDotIdx + 1);
     }
 
-    if (StringUtils.isBlank(typeName)) {
+    if (typeName == null || typeName.isEmpty()) {
       throw new IllegalArgumentException("Null or empty type name in " + typeExpression);
     }
 
