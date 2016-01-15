@@ -156,26 +156,6 @@ public class ExpressionParser {
     tokenToMethod = Collections.unmodifiableMap(temp);
   }
 
-  private static final Map<TokenKind, EdmPrimitiveTypeKind> tokenToPrimitiveType;
-  static {
-    /* Enum and null are not present in the map. These have to be handled differently. */
-    Map<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<TokenKind, EdmPrimitiveTypeKind>();
-    temp.put(TokenKind.BooleanValue, EdmPrimitiveTypeKind.Boolean);
-    temp.put(TokenKind.StringValue, EdmPrimitiveTypeKind.String);
-    // TODO: Check if int64 is correct here or if it has to be decimal or single or double instead.
-    temp.put(TokenKind.IntegerValue, EdmPrimitiveTypeKind.Int64);
-    temp.put(TokenKind.GuidValue, EdmPrimitiveTypeKind.Guid);
-    temp.put(TokenKind.DateValue, EdmPrimitiveTypeKind.Date);
-    temp.put(TokenKind.DateTimeOffsetValue, EdmPrimitiveTypeKind.DateTimeOffset);
-    temp.put(TokenKind.TimeOfDayValue, EdmPrimitiveTypeKind.TimeOfDay);
-    temp.put(TokenKind.DecimalValue, EdmPrimitiveTypeKind.Decimal);
-    temp.put(TokenKind.DoubleValue, EdmPrimitiveTypeKind.Double);
-    temp.put(TokenKind.DurationValue, EdmPrimitiveTypeKind.Duration);
-    temp.put(TokenKind.BinaryValue, EdmPrimitiveTypeKind.Binary);
-
-    tokenToPrimitiveType = Collections.unmodifiableMap(temp);
-  }
-
   private final Edm edm;
   private final OData odata;
 
@@ -408,7 +388,7 @@ public class ExpressionParser {
     if (primitiveTokenKind == TokenKind.EnumValue) {
       return createEnumExpression(primitiveValueLiteral);
     } else {
-      EdmPrimitiveTypeKind primitiveTypeKind = tokenToPrimitiveType.get(primitiveTokenKind);
+      EdmPrimitiveTypeKind primitiveTypeKind = ParserHelper.tokenToPrimitiveType.get(primitiveTokenKind);
       if (primitiveTypeKind == EdmPrimitiveTypeKind.Int64) {
         primitiveTypeKind = determineIntegerType(primitiveValueLiteral);
       }

@@ -19,9 +19,11 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -49,6 +51,42 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 public class ParserHelper {
 
   private static final OData odata = new ODataImpl();
+
+  protected static final Map<TokenKind, EdmPrimitiveTypeKind> tokenToPrimitiveType;
+  static {
+    /* Enum and null are not present in the map. These have to be handled differently. */
+    Map<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<TokenKind, EdmPrimitiveTypeKind>();
+    temp.put(TokenKind.BooleanValue, EdmPrimitiveTypeKind.Boolean);
+    temp.put(TokenKind.StringValue, EdmPrimitiveTypeKind.String);
+    // TODO: Check if int64 is correct here or if it has to be decimal or single or double instead.
+    temp.put(TokenKind.IntegerValue, EdmPrimitiveTypeKind.Int64);
+    temp.put(TokenKind.GuidValue, EdmPrimitiveTypeKind.Guid);
+    temp.put(TokenKind.DateValue, EdmPrimitiveTypeKind.Date);
+    temp.put(TokenKind.DateTimeOffsetValue, EdmPrimitiveTypeKind.DateTimeOffset);
+    temp.put(TokenKind.TimeOfDayValue, EdmPrimitiveTypeKind.TimeOfDay);
+    temp.put(TokenKind.DecimalValue, EdmPrimitiveTypeKind.Decimal);
+    temp.put(TokenKind.DoubleValue, EdmPrimitiveTypeKind.Double);
+    temp.put(TokenKind.DurationValue, EdmPrimitiveTypeKind.Duration);
+    temp.put(TokenKind.BinaryValue, EdmPrimitiveTypeKind.Binary);
+
+    temp.put(TokenKind.GeographyPoint, EdmPrimitiveTypeKind.GeographyPoint);
+    temp.put(TokenKind.GeometryPoint, EdmPrimitiveTypeKind.GeometryPoint);
+    temp.put(TokenKind.GeographyLineString, EdmPrimitiveTypeKind.GeographyLineString);
+    temp.put(TokenKind.GeometryLineString, EdmPrimitiveTypeKind.GeometryLineString);
+    temp.put(TokenKind.GeographyPolygon, EdmPrimitiveTypeKind.GeographyPolygon);
+    temp.put(TokenKind.GeometryPolygon, EdmPrimitiveTypeKind.GeometryPolygon);
+    temp.put(TokenKind.GeographyMultiPoint, EdmPrimitiveTypeKind.GeographyMultiPoint);
+    temp.put(TokenKind.GeometryMultiPoint, EdmPrimitiveTypeKind.GeometryMultiPoint);
+    temp.put(TokenKind.GeographyMultiLineString, EdmPrimitiveTypeKind.GeographyMultiLineString);
+    temp.put(TokenKind.GeometryMultiLineString, EdmPrimitiveTypeKind.GeometryMultiLineString);
+    temp.put(TokenKind.GeographyMultiPolygon, EdmPrimitiveTypeKind.GeographyMultiPolygon);
+    temp.put(TokenKind.GeometryMultiPolygon, EdmPrimitiveTypeKind.GeometryMultiPolygon);
+    // TODO: Geo collections
+//    temp.put(TokenKind.GeographyCollection, EdmPrimitiveTypeKind.GeographyCollection);
+//    temp.put(TokenKind.GeometryCollection, EdmPrimitiveTypeKind.GeometryCollection);
+
+    tokenToPrimitiveType = Collections.unmodifiableMap(temp);
+  }
 
   public static void requireNext(UriTokenizer tokenizer, final TokenKind required) throws UriParserException {
     if (!tokenizer.next(required)) {
@@ -88,7 +126,25 @@ public class ParserHelper {
 
         TokenKind.DurationValue,
         TokenKind.BinaryValue,
-        TokenKind.EnumValue);
+        TokenKind.EnumValue,
+
+        // Geography and geometry literals are defined to be primitive,
+        // although they contain several parts with their own meaning.
+        TokenKind.GeographyPoint,
+        TokenKind.GeometryPoint,
+        TokenKind.GeographyLineString,
+        TokenKind.GeometryLineString,
+        TokenKind.GeographyPolygon,
+        TokenKind.GeometryPolygon,
+        TokenKind.GeographyMultiPoint,
+        TokenKind.GeometryMultiPoint,
+        TokenKind.GeographyMultiLineString,
+        TokenKind.GeometryMultiLineString,
+        TokenKind.GeographyMultiPolygon,
+        TokenKind.GeometryMultiPolygon);
+        // TODO: Geo collections
+//        TokenKind.GeographyCollection,
+//        TokenKind.GeometryCollection);
   }
 
   protected static List<UriParameter> parseFunctionParameters(UriTokenizer tokenizer,
@@ -326,6 +382,7 @@ public class ParserHelper {
     } else if (nullable && tokenizer.next(TokenKind.NULL)) {
       return true;
 
+    // Special handling for frequently-used types and types with more than one token kind.
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean).equals(type)) {
       return tokenizer.next(TokenKind.BooleanValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String).equals(type)) {
@@ -338,31 +395,33 @@ public class ParserHelper {
       return tokenizer.next(TokenKind.IntegerValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Guid).equals(type)) {
       return tokenizer.next(TokenKind.GuidValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date).equals(type)) {
-      return tokenizer.next(TokenKind.DateValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset).equals(type)) {
-      return tokenizer.next(TokenKind.DateTimeOffsetValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.TimeOfDay).equals(type)) {
-      return tokenizer.next(TokenKind.TimeOfDayValue);
     } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal).equals(type)) {
       // The order is important.
       // A decimal value should not be parsed as integer and let the tokenizer stop at the decimal point.
       return tokenizer.next(TokenKind.DecimalValue)
           || tokenizer.next(TokenKind.IntegerValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double).equals(type)) {
+    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double).equals(type)
+        || odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Single).equals(type)) {
       // The order is important.
       // A floating-point value should not be parsed as decimal and let the tokenizer stop at 'E'.
       // A decimal value should not be parsed as integer and let the tokenizer stop at the decimal point.
       return tokenizer.next(TokenKind.DoubleValue)
           || tokenizer.next(TokenKind.DecimalValue)
           || tokenizer.next(TokenKind.IntegerValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Duration).equals(type)) {
-      return tokenizer.next(TokenKind.DurationValue);
-    } else if (odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary).equals(type)) {
-      return tokenizer.next(TokenKind.BinaryValue);
     } else if (type.getKind() == EdmTypeKind.ENUM) {
       return tokenizer.next(TokenKind.EnumValue);
     } else {
+      // Check the types that have not been checked already above.
+      for (final Entry<TokenKind, EdmPrimitiveTypeKind> entry : tokenToPrimitiveType.entrySet()) {
+        final EdmPrimitiveTypeKind kind = entry.getValue();
+        if ((kind == EdmPrimitiveTypeKind.Date || kind == EdmPrimitiveTypeKind.DateTimeOffset
+            || kind == EdmPrimitiveTypeKind.TimeOfDay || kind == EdmPrimitiveTypeKind.Duration
+            || kind == EdmPrimitiveTypeKind.Binary
+            || kind.isGeospatial())
+            && odata.createPrimitiveTypeInstance(kind).equals(type)) {
+          return tokenizer.next(entry.getKey());
+        }
+      }
       return false;
     }
   }

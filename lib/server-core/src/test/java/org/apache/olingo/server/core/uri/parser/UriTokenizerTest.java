@@ -560,6 +560,70 @@ public class UriTokenizerTest {
     assertFalse(new UriTokenizer("NOT").next(TokenKind.Word));
   }
 
+  @Test
+  public void geoPoint() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;Point(1.23 4.56)'").next(TokenKind.GeographyPoint));
+    assertTrue(new UriTokenizer("GeOgRaPhY'SrId=4326;pOiNt(1 2)'").next(TokenKind.GeographyPoint));
+    assertTrue(new UriTokenizer("geography'srid=4326;point(1.2E3 4.5E-6)'").next(TokenKind.GeographyPoint));
+    wrongToken(TokenKind.GeographyPoint, "geography'SRID=4326;Point(1.23 4.56)'", 'x');
+
+    assertTrue(new UriTokenizer("geometry'SRID=0;Point(1 2)'").next(TokenKind.GeometryPoint));
+    assertFalse(new UriTokenizer("geometry'SRID=123456;Point(1 2)'").next(TokenKind.GeometryPoint));
+    assertFalse(new UriTokenizer("geometry'SRID=123456;Point(1)'").next(TokenKind.GeometryPoint));
+    wrongToken(TokenKind.GeometryPoint, "geometry'SRID=0;Point(1.23 4.56)'", ',');
+  }
+
+  @Test
+  public void geoLineString() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;LineString(1.23 4.56,7 8)'")
+        .next(TokenKind.GeographyLineString));
+    wrongToken(TokenKind.GeographyLineString, "geography'SRID=4326;LineString(1.23 4.56,7 8)'", '{');
+
+    assertTrue(new UriTokenizer("geometry'SRID=0;LineString(1 2,3 4,5 6,7 8)'")
+        .next(TokenKind.GeometryLineString));
+    wrongToken(TokenKind.GeometryLineString, "geometry'SRID=0;LineString(1 2,3 4,5 6,7 8)'", '.');
+  }
+
+  @Test
+  public void geoPolygon() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;Polygon((0 0,1 0,0 1,0 0))'").next(TokenKind.GeographyPolygon));
+    assertTrue(new UriTokenizer("geometry'SRID=0;Polygon((0 0,1 0,0 1,0 0))'").next(TokenKind.GeometryPolygon));
+    wrongToken(TokenKind.GeometryPolygon,
+        "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))'",
+        'x');
+  }
+
+  @Test
+  public void geoMultiPoint() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiPoint()'").next(TokenKind.GeographyMultiPoint));
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiPoint((0 0))'").next(TokenKind.GeographyMultiPoint));
+    assertTrue(new UriTokenizer("geometry'SRID=0;MultiPoint((0 0),(1 1))'").next(TokenKind.GeometryMultiPoint));
+    wrongToken(TokenKind.GeometryMultiPoint, "geometry'SRID=0;MultiPoint((0 0),(1 1),(2.3 4.5))'", 'x');
+  }
+
+  @Test
+  public void geoMultiLineString() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiLineString()'").next(TokenKind.GeographyMultiLineString));
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiLineString((1 2,3 4))'")
+        .next(TokenKind.GeographyMultiLineString));
+
+    wrongToken(TokenKind.GeometryMultiLineString,
+        "geometry'SRID=0;MultiLineString((1.23 4.56,7 8),(0 0,1 1),(2 2,3 3))'",
+        '}');
+  }
+
+  @Test
+  public void geoMultiPolygon() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiPolygon()'").next(TokenKind.GeographyMultiPolygon));
+    assertTrue(new UriTokenizer("geography'SRID=4326;MultiPolygon(((0 0,1 0,0 1,0 0)))'")
+        .next(TokenKind.GeographyMultiPolygon));
+
+    wrongToken(TokenKind.GeometryMultiPolygon,
+        "geometry'SRID=0;MultiPolygon(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)),"
+            + "((0 0,40 0,40 40,0 40,0 0),(10 10,20 10,20 20,10 20,10 10)))'",
+        'x');
+  }
+
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {
     assertFalse(new UriTokenizer(disturbCharacter + value).next(kind));
 

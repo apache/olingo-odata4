@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -38,11 +38,11 @@ import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestUriParserImpl {
-  private final Edm edm = OData.newInstance().createServiceMetadata(
+  private static final OData oData = OData.newInstance();
+  private final Edm edm = oData.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
   private final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
   private final ResourceValidator testRes = new ResourceValidator().setEdm(edm);
@@ -1031,16 +1031,17 @@ public class TestUriParserImpl {
   }
 
   @Test
-  @Ignore("Geo types are not supported yet.")
   public void geo() throws Exception {
-    testFilter.runOnETAllPrim("geo.distance(PropertySByte,PropertySByte)")
-        .is("<geo.distance(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodKind.GEODISTANCE, 2);
-    testFilter.runOnETAllPrim("geo.length(PropertySByte)")
-        .is("<geo.length(<PropertySByte>)>")
-        .isMethod(MethodKind.GEOLENGTH, 1);
-    testFilter.runOnETAllPrim("geo.intersects(PropertySByte,PropertySByte)")
-        .is("<geo.intersects(<PropertySByte>,<PropertySByte>)>")
-        .isMethod(MethodKind.GEOINTERSECTS, 2);
+    testFilter.runOnETAllPrim("geo.distance(geometry'SRID=0;Point(0 0)',geometry'SRID=0;Point(1 1)') lt 1.5")
+        .left().isMethod(MethodKind.GEODISTANCE, 2)
+        .goParameter(0).isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.GeometryPoint))
+        .root().left()
+        .goParameter(1).isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.GeometryPoint));
+    testFilter.runOnETAllPrim("geo.length(geometry'SRID=0;LineString(0 0,1 1)') lt 1.5")
+        .left().isMethod(MethodKind.GEOLENGTH, 1)
+        .goParameter(0).isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.GeometryLineString));
+    testFilter.runOnETAllPrim("geo.intersects(geometry'SRID=0;Point(0 0)',null)")
+        .isMethod(MethodKind.GEOINTERSECTS, 2)
+        .goParameter(0).isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.GeometryPoint));
   }
 }

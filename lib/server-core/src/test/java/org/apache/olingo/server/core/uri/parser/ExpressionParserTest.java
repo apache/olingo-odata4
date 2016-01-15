@@ -239,14 +239,17 @@ public class ExpressionParserTest {
     expression = parseMethod(TokenKind.ConcatMethod, "'a'", "'b'");
     assertEquals("{concat ['a', 'b']}", expression.toString());
 
-    // TODO: Geo methods.
-//    expression = parseMethod(TokenKind.GeoDistanceMethod,
-//        "geography'SRID=0;Point(1.2 3.4)'", "geography'SRID=0;Point(5.6 7.8)'");
-//    assertEquals("{geo.distance [geography'SRID=0;Point(1.2 3.4)', geography'SRID=0;Point(5.6 7.8)']}",
-//        expression.toString());
-//
-//    expression = parseMethod(TokenKind.GeoIntersectsMethod);
-//    assertEquals("{geo.intersects []}", expression.toString());
+    expression = parseMethod(TokenKind.GeoDistanceMethod,
+        "geography'SRID=0;Point(1.2 3.4)'", "geography'SRID=0;Point(5.6 7.8)'");
+    assertEquals("{geo.distance [geography'SRID=0;Point(1.2 3.4)', geography'SRID=0;Point(5.6 7.8)']}",
+        expression.toString());
+
+    expression = parseMethod(TokenKind.GeoIntersectsMethod,
+        "geometry'SRID=0;Point(1.2 3.4)'",
+        "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))'");
+    assertEquals("{geo.intersects [geometry'SRID=0;Point(1.2 3.4)', "
+        + "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))']}",
+        expression.toString());
 
     assertEquals("{startswith [null, 'b']}", parseMethod(TokenKind.StartswithMethod, null, "'b'").toString());
     assertEquals("{indexof ['a', null]}", parseMethod(TokenKind.IndexofMethod, "'a'", null).toString());
