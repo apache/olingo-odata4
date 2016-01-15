@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class MultiLineString extends ComposedGeospatial<LineString> {
 
-  private static final long serialVersionUID = -5042414471218124125L;
-  
   /**
    * Creates a new MultiLineString
    * 
@@ -43,9 +41,9 @@ public class MultiLineString extends ComposedGeospatial<LineString> {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyMultiLineString
-            : EdmPrimitiveTypeKind.GeometryMultiLineString;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyMultiLineString :
+        EdmPrimitiveTypeKind.GeometryMultiLineString;
   }
 
 }

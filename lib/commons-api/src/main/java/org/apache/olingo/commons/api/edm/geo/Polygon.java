@@ -27,14 +27,11 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class Polygon extends Geospatial {
 
-  private static final long serialVersionUID = 7797602503445391678L;
-
   final ComposedGeospatial<Point> interior;
-
   final ComposedGeospatial<Point> exterior;
-  
+
   /**
-   * Creates a new polygon
+   * Creates a new polygon.
    * 
    * @param dimension   Dimension of the polygon
    * @param srid        SRID values
@@ -69,8 +66,33 @@ public class Polygon extends Geospatial {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyPolygon
-            : EdmPrimitiveTypeKind.GeometryPolygon;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyPolygon :
+        EdmPrimitiveTypeKind.GeometryPolygon;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final Polygon polygon = (Polygon) o;
+    return dimension == polygon.dimension
+        && (srid == null ? polygon.srid == null : srid.equals(polygon.srid))
+        && (interior == null ? polygon.interior == null : interior.equals(polygon.interior))
+        && (exterior == null ? polygon.exterior == null : exterior.equals(polygon.exterior));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = dimension == null ? 0 : dimension.hashCode();
+    result = 31 * result + (srid == null ? 0 : srid.hashCode());
+    result = 31 * result + (interior == null ? 0 : interior.hashCode());
+    result = 31 * result + (exterior == null ? 0 : exterior.hashCode());
+    return result;
   }
 }

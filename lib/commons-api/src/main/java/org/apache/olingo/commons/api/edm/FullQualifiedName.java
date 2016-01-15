@@ -28,7 +28,6 @@ public final class FullQualifiedName implements Serializable {
   private static final long serialVersionUID = -4063629050858999076L;
 
   private final String namespace;
-
   private final String name;
 
   private final String fqn;
@@ -90,24 +89,14 @@ public final class FullQualifiedName implements Serializable {
       return false;
     }
 
-    FullQualifiedName that = (FullQualifiedName) o;
-
-    if (namespace != null ? !namespace.equals(that.namespace) : that.namespace != null) {
-      return false;
-    }
-    if (name != null ? !name.equals(that.name) : that.name != null) {
-      return false;
-    }
-    return !(fqn != null ? !fqn.equals(that.fqn) : that.fqn != null);
-
+    final FullQualifiedName that = (FullQualifiedName) o;
+    return (namespace == null ? that.namespace == null : namespace.equals(that.namespace))
+        && (name == null ? that.name == null : name.equals(that.name));
   }
 
   @Override
   public int hashCode() {
-    int result = namespace != null ? namespace.hashCode() : 0;
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    result = 31 * result + (fqn != null ? fqn.hashCode() : 0);
-    return result;
+    return fqn == null ? 0 : fqn.hashCode();
   }
 
   @Override

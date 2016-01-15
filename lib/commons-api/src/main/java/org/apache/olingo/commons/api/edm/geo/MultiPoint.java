@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class MultiPoint extends ComposedGeospatial<Point> {
 
-  private static final long serialVersionUID = 4951011255142116129L;
-  
   /**
    * Creates a new collection of points
    * @param dimension   Dimension of the points
@@ -42,9 +40,9 @@ public class MultiPoint extends ComposedGeospatial<Point> {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyMultiPoint
-            : EdmPrimitiveTypeKind.GeometryMultiPoint;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyMultiPoint :
+        EdmPrimitiveTypeKind.GeometryMultiPoint;
   }
 
 }

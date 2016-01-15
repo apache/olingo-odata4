@@ -18,21 +18,13 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
  * Base class for all geospatial info.
  */
-public abstract class Geospatial implements Serializable {
+public abstract class Geospatial {
 
-  private static final long serialVersionUID = 5409612902190067390L;
-  
   /**
    * Dimension of the geospatial type
    */
@@ -46,7 +38,7 @@ public abstract class Geospatial implements Serializable {
      */
     GEOGRAPHY
   }
-  
+
   /**
    * Type of the geospatial type
    */
@@ -122,7 +114,7 @@ public abstract class Geospatial implements Serializable {
    * @return type.
    * @see Type
    */
-  public Type getType() {
+  public Type getGeoType() {
     return type;
   }
 
@@ -134,25 +126,10 @@ public abstract class Geospatial implements Serializable {
   public SRID getSrid() {
     return srid;
   }
-  
+
   /**
    * Returns the {@link EdmPrimitiveTypeKind}
    * @return Edm primitve type kind
    */
   public abstract EdmPrimitiveTypeKind getEdmPrimitiveTypeKind();
-
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
 }
