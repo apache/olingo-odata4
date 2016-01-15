@@ -88,7 +88,6 @@ import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.fit.metadata.EntityType;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
-import org.apache.olingo.fit.methods.MERGE;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.serializer.FITAtomDeserializer;
 import org.apache.olingo.fit.utils.AbstractUtilities;
@@ -412,23 +411,6 @@ public abstract class AbstractServices {
   protected void addErrorBatchResponse(final Exception e, final String contentId, final ByteArrayOutputStream bos)
       throws IOException {
     addSingleBatchResponse(xml.createFaultResponse(Accept.XML.toString(), e), contentId, bos);
-  }
-
-  @MERGE
-  @Path("/{entitySetName}({entityId})")
-  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  @Consumes({ MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON })
-  public Response mergeEntity(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @HeaderParam("If-Match") @DefaultValue(StringUtils.EMPTY) final String ifMatch,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      final String changes) {
-
-    return patchEntity(uriInfo, accept, contentType, prefer, ifMatch, entitySetName, entityId, changes);
   }
 
   @PATCH
@@ -1497,34 +1479,6 @@ public abstract class AbstractServices {
 
     return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
         accept, contentType, prefer, entitySetName, entityId, path, format, changes, true);
-  }
-
-  /**
-   * Replace property.
-   *
-   * @param accept
-   * @param entitySetName
-   * @param entityId
-   * @param path
-   * @param format
-   * @param changes
-   * @return response
-   */
-  @MERGE
-  @Path("/{entitySetName}({entityId})/{path:.*}")
-  public Response mergeProperty(
-      @Context final UriInfo uriInfo,
-      @HeaderParam("Accept") @DefaultValue(StringUtils.EMPTY) final String accept,
-      @HeaderParam("Content-Type") @DefaultValue(StringUtils.EMPTY) final String contentType,
-      @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
-      @PathParam("entitySetName") final String entitySetName,
-      @PathParam("entityId") final String entityId,
-      @PathParam("path") final String path,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
-      final String changes) {
-
-    return replaceProperty(uriInfo.getRequestUri().toASCIIString(),
-        accept, contentType, prefer, entitySetName, entityId, path, format, changes, false);
   }
 
   /**

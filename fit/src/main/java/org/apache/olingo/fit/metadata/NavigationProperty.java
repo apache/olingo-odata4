@@ -21,19 +21,8 @@ package org.apache.olingo.fit.metadata;
 public class NavigationProperty extends AbstractMetadataElement {
 
   private final String name;
-
-  // -----------------------
-  // just for v3
-  // -----------------------
-  private String releationship;
-
-  private String toRole;
-  // -----------------------
-
   private String type;
-
   private String target;
-
   private boolean entitySet;
 
   public NavigationProperty(final String name) {
@@ -42,22 +31,6 @@ public class NavigationProperty extends AbstractMetadataElement {
 
   public String getName() {
     return name;
-  }
-
-  public String getReleationship() {
-    return releationship;
-  }
-
-  public void setReleationship(final String releationship) {
-    this.releationship = releationship;
-  }
-
-  public String getToRole() {
-    return toRole;
-  }
-
-  public void setToRole(final String toRole) {
-    this.toRole = toRole;
   }
 
   public String getType() {

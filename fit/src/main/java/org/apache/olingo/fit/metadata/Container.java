@@ -26,23 +26,15 @@ import java.util.Map;
 public class Container extends AbstractMetadataElement {
 
   private final String name;
-
   private final Map<String, EntitySet> entitySets;
-
-  private final Map<String, AssociationSet> associationSets;
 
   public Container(final String name) {
     this.name = name;
     entitySets = new HashMap<String, EntitySet>();
-    associationSets = new HashMap<String, AssociationSet>();
   }
 
   public String getName() {
     return name;
-  }
-
-  public AssociationSet getAssociationSet(final String association) {
-    return associationSets.get(association);
   }
 
   public Collection<EntitySet> getEntitySets() {
@@ -66,11 +58,6 @@ public class Container extends AbstractMetadataElement {
 
   public Container addEntitySet(final String name, final EntitySet entitySet) {
     entitySets.put(name, entitySet);
-    return this;
-  }
-
-  public Container addAssociationSet(final String name, final AssociationSet associationSet) {
-    associationSets.put(name, associationSet);
     return this;
   }
 }

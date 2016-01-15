@@ -36,25 +36,25 @@ public interface EdmConstantExpression extends EdmExpression {
   Object asPrimitive();
 
   /**
-   * A list of enum members or empty list if this expression is of type primitve or geospatial.
+   * A list of enum members or empty list if this expression is of type primitive or geospatial.
    * @return a list of all enum members or empty list
    */
   List<String> asEnumMembers();
 
   /**
-   * Return the Enum type name or null if this expression is of type primitve or geospatial.
+   * Return the Enum type name or null if this expression is of type primitive or geospatial.
    * @return enum type name or null
    */
   String getEnumTypeName();
 
   /**
-   * Return the geospatial object or null if this expression is of type primitve or enum.
+   * Return the geospatial object or null if this expression is of type primitive or enum.
    * @return geospatial object or null
    */
   Geospatial asGeospatial();
 
   /**
-   * Returns the value of the expression as String
+   * Returns the value of the expression as String.
    * @return String representation of the expression
    */
   String getValueAsString();

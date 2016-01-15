@@ -79,7 +79,7 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
 
   @Test
   @Ignore
-  public void testUpateSingleValuedNavtiogationReference() throws Exception {
+  public void updateSingleValuedNavigationReference() throws Exception {
     URI targetURI =
         getClient().newURIBuilder(testStaticServiceRootURL)
         .appendEntitySetSegment("People")

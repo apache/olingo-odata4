@@ -25,18 +25,13 @@ import java.util.Map;
 public class Schema extends AbstractMetadataElement {
 
   private final String namespace;
-
   private final Map<String, Container> containers;
-
-  private final Map<String, Association> associations;
-
   private final Map<String, EntityType> entityTypes;
 
   public Schema(final String namespace) {
     this.namespace = namespace;
     entityTypes = new HashMap<String, EntityType>();
     containers = new HashMap<String, Container>();
-    associations = new HashMap<String, Association>();
   }
 
   public String getNamespace() {
@@ -66,15 +61,6 @@ public class Schema extends AbstractMetadataElement {
 
   public Schema addContainer(final String name, final Container container) {
     containers.put(name, container);
-    return this;
-  }
-
-  public Association getAssociation(final String name) {
-    return associations.get(name);
-  }
-
-  public Schema addAssociation(final String name, final Association association) {
-    associations.put(name, association);
     return this;
   }
 }
