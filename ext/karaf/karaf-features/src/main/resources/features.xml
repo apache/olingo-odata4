@@ -24,7 +24,6 @@
     <bundle>mvn:org.apache.commons/commons-lang3/${commons.lang3.version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/stax2-api/${woodstox.stax2-api.version}</bundle>
     <bundle>mvn:com.fasterxml/aalto-xml/${aalto-xml.version}</bundle>
-    <bundle>wrap:mvn:org.antlr/antlr4-runtime/${antlr.version}/$Bundle-SymbolicName=antlr4-runtime&amp;Bundle-Version=${antlr.version}&amp;Export-Package=org.antlr.v4.runtime*</bundle>
 
     <bundle>mvn:com.fasterxml.jackson.core/jackson-core/${jackson.version}</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson.version}</bundle>
