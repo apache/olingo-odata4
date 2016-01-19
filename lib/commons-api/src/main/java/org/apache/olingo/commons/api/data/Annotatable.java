@@ -21,11 +21,6 @@ package org.apache.olingo.commons.api.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
  * An element with instance annotations.
  */
@@ -40,30 +35,5 @@ public abstract class Annotatable {
    */
   public List<Annotation> getAnnotations() {
     return annotations;
-  }
-
-  /**
-   * Compare for equality.
-   *
-   * @param obj to compared with
-   * @return <code>true</code> if equal, otherwise <code>false</code>
-   */
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  /**
-   * Create the hash code.
-   * @return hash code for this instance.
-   */
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 }

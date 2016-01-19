@@ -22,13 +22,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
 import org.apache.olingo.commons.api.edm.provider.CsdlOnDeleteAction;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 @JsonDeserialize(using = ClientCsdlOnDelete.OnDeleteDeserializer.class)
-class ClientCsdlOnDelete extends CsdlOnDelete {
+class ClientCsdlOnDelete extends CsdlOnDelete implements Serializable {
 
   private static final long serialVersionUID = -7130889202653716784L;
 

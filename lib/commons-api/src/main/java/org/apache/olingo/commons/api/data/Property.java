@@ -79,4 +79,22 @@ public class Property extends Valuable {
   public boolean isNull() {
     return getValue() == null || "Edm.Null".equals(getType());
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o)
+        && (name == null ? ((Property) o).name == null : name.equals(((Property) o).name));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (name == null ? 0 : name.hashCode());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return (name == null ? "null" : name) + '=' + (getValue() == null ? "null" : getValue());
+  }
 }

@@ -29,8 +29,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  */
 public class CsdlNull extends CsdlDynamicExpression implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = 3696395405429914435L;
-
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   @Override

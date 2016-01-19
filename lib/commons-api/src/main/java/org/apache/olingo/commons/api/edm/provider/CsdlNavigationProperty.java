@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
-  private static final long serialVersionUID = -788021920718310799L;
-
   private String name;
 
   private FullQualifiedName type;

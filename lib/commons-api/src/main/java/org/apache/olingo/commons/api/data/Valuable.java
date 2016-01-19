@@ -171,4 +171,34 @@ public abstract class Valuable extends Annotatable {
   public ValueType getValueType() {
     return valueType;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final Valuable other = (Valuable) o;
+    return getAnnotations().equals(other.getAnnotations())
+        && (valueType == null ? other.valueType == null : valueType.equals(other.valueType))
+        && (value == null ? other.value == null : value.equals(other.value))
+        && (type == null ? other.type == null : type.equals(other.type));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getAnnotations().hashCode();
+    result = 31 * result + (valueType == null ? 0 : valueType.hashCode());
+    result = 31 * result + (value == null ? 0 : value.hashCode());
+    result = 31 * result + (type == null ? 0 : type.hashCode());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return value == null ? "null" : value.toString();
+  }
 }

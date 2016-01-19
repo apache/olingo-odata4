@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlActionImport extends CsdlOperationImport {
 
-  private static final long serialVersionUID = 9186148718228340987L;
-
   private FullQualifiedName action;
 
   @Override

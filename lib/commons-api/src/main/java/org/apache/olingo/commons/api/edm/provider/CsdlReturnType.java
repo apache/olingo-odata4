@@ -26,8 +26,6 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  */
 public class CsdlReturnType extends CsdlAbstractEdmItem {
 
-  private static final long serialVersionUID = 4816954124986010965L;
-
   private String type;
 
   private boolean isCollection;

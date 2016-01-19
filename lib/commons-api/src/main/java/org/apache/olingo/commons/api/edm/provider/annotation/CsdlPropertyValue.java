@@ -25,15 +25,12 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
-
 /**
  * The edm:PropertyValue element supplies a value to a property on the type instantiated by an 
  * edm:Record expression (See {@link org.apache.olingo.commons.api.edm.annotation.EdmRecord}). 
  * The value is obtained by evaluating an expression.
  */
-public class CsdlPropertyValue extends CsdlAbstractEdmItem implements CsdlAnnotatable{
-
-  private static final long serialVersionUID = -6671376680245613990L;
+public class CsdlPropertyValue extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private String property;
   private CsdlExpression value;

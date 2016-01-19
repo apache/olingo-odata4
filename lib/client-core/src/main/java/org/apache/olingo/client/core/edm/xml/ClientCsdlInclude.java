@@ -22,13 +22,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.olingo.client.api.edm.xml.Include;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 @JsonDeserialize(using = ClientCsdlInclude.IncludeDeserializer.class)
-class ClientCsdlInclude extends CsdlAbstractEdmItem implements Include {
+class ClientCsdlInclude extends CsdlAbstractEdmItem implements Serializable, Include {
 
   private static final long serialVersionUID = -5450008299655584221L;
 

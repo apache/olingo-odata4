@@ -22,8 +22,6 @@ import java.util.Collection;
 
 public abstract class CsdlDynamicExpression extends CsdlExpression {
 
-  private static final long serialVersionUID = 179628476369962030L;
-  
   /**
    * Returns true if the expression is a logical expression
    * @return true if the expression is a logical expression

@@ -29,8 +29,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  */
 public class CsdlIf extends CsdlDynamicExpression implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = -8571383625077590656L;
-
   private CsdlExpression guard;
   private CsdlExpression _then;
   private CsdlExpression _else;

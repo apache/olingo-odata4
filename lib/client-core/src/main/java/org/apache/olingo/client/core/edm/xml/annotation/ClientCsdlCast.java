@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.edm.xml.annotation;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.olingo.client.core.edm.xml.AbstractClientCsdlEdmDeserializer;
 import org.apache.olingo.client.core.edm.xml.ClientCsdlAnnotation;
@@ -31,7 +32,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientCsdlCast.CastDeserializer.class)
-class ClientCsdlCast extends CsdlCast {
+class ClientCsdlCast extends CsdlCast implements Serializable {
 
   private static final long serialVersionUID = 3312415984116005313L;
 

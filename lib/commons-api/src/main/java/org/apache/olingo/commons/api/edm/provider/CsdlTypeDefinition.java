@@ -29,8 +29,6 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  */
 public class CsdlTypeDefinition extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
-  private static final long serialVersionUID = 3718980071229613048L;
-
   private String name;
 
   private FullQualifiedName underlyingType;

@@ -24,7 +24,6 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  *  navigation properties of structured types, and properties of structured types.
  */
 public class CsdlPath extends CsdlDynamicExpression {
-  private static final long serialVersionUID = 6458406537881061846L;
   
   private String value;
 

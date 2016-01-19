@@ -40,4 +40,22 @@ public class Annotation extends Valuable {
   public void setTerm(final String term) {
     this.term = term;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o)
+        && (term == null ? ((Annotation) o).term == null : term.equals(((Annotation) o).term));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (term == null ? 0 : term.hashCode());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return term == null ? "null" : term;
+  }
 }

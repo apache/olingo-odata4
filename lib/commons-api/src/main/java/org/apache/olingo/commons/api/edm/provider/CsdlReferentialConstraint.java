@@ -26,8 +26,6 @@ import java.util.List;
  */
 public class CsdlReferentialConstraint extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = -7467707499798840075L;
-
   private String property;
 
   private String referencedProperty;

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
@@ -89,15 +88,15 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
           throws EdmPrimitiveTypeException {
 
-    final String[] pointCoo = StringUtils.split(point, ' ');
-    if (pointCoo == null || pointCoo.length != 2) {
+    final List<String> pointCoo = split(point, ' ');
+    if (pointCoo == null || pointCoo.size() != 2) {
       throw new EdmPrimitiveTypeException("The literal '" + point + "' has illegal content.");
     }
 
     final Point result = new Point(this.dimension, srid);
-    result.setX(EdmDouble.getInstance().valueOfString(pointCoo[0],
+    result.setX(EdmDouble.getInstance().valueOfString(pointCoo.get(0),
         isNullable, maxLength, precision, scale, isUnicode, Double.class));
-    result.setY(EdmDouble.getInstance().valueOfString(pointCoo[1],
+    result.setY(EdmDouble.getInstance().valueOfString(pointCoo.get(1),
         isNullable, maxLength, precision, scale, isUnicode, Double.class));
 
     return result;
@@ -118,7 +117,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     final Matcher matcher = getMatcher(PATTERN, value);
 
     final List<Point> points = new ArrayList<Point>();
-    for (String pointCoo : StringUtils.split(matcher.group(4), ',')) {
+    for (final String pointCoo : split(matcher.group(4), ',')) {
       points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
           isNullable, maxLength, precision, scale, isUnicode));
     }
@@ -131,7 +130,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
           throws EdmPrimitiveTypeException {
 
     final List<Point> points = new ArrayList<Point>();
-    for (String pointCoo : StringUtils.split(lineString, ',')) {
+    for (final String pointCoo : split(lineString, ',')) {
       points.add(newPoint(null, pointCoo, isNullable, maxLength, precision, scale, isUnicode));
     }
 
@@ -162,7 +161,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
         lineString = lineString.substring(1);
       }
       if (lineString.endsWith(")")) {
-        lineString = StringUtils.substringBeforeLast(lineString, ")");
+        lineString = lineString.substring(0, lineString.length() - 1);
       }
 
       lineStrings.add(newLineString(null, lineString, isNullable, maxLength, precision, scale, isUnicode));
@@ -178,11 +177,11 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     final String[] first = polygon.split("\\),\\(");
 
     final List<Point> interior = new ArrayList<Point>();
-    for (String pointCoo : StringUtils.split(first[0].substring(1, first[0].length()), ',')) {
+    for (final String pointCoo : split(first[0].substring(1, first[0].length()), ',')) {
       interior.add(newPoint(null, pointCoo, isNullable, maxLength, precision, scale, isUnicode));
     }
     final List<Point> exterior = new ArrayList<Point>();
-    for (String pointCoo : StringUtils.split(first[1].substring(0, first[1].length() - 1), ',')) {
+    for (final String pointCoo : split(first[1].substring(0, first[1].length() - 1), ',')) {
       exterior.add(newPoint(null, pointCoo, isNullable, maxLength, precision, scale, isUnicode));
     }
 
@@ -204,15 +203,16 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     final Matcher matcher = getMatcher(PATTERN, value);
 
     final List<Polygon> polygons = new ArrayList<Polygon>();
-    for (String coo : matcher.group(4).contains(")),((")
-        ? matcher.group(4).split("\\)\\),\\(\\(") : new String[] { matcher.group(4) }) {
+    for (String coo : matcher.group(4).contains(")),((") ?
+        matcher.group(4).split("\\)\\),\\(\\(") :
+        new String[] { matcher.group(4) }) {
 
       String polygon = coo;
       if (polygon.startsWith("((")) {
         polygon = polygon.substring(1);
       }
       if (polygon.endsWith("))")) {
-        polygon = StringUtils.substringBeforeLast(polygon, ")");
+        polygon = polygon.substring(0, polygon.length() - 1);
       }
       if (polygon.charAt(0) != '(') {
         polygon = "(" + polygon;
@@ -242,7 +242,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     case MULTIPOINT:
       final List<Point> points = new ArrayList<Point>();
-      for (String pointCoo : StringUtils.split(matcher.group(4), ',')) {
+      for (final String pointCoo : split(matcher.group(4), ',')) {
         points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));
       }
@@ -257,7 +257,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     case MULTILINESTRING:
       final List<LineString> lineStrings = new ArrayList<LineString>();
-      for (String coo : StringUtils.split(matcher.group(4), ',')) {
+      for (final String coo : split(matcher.group(4), ',')) {
         lineStrings.add(newLineString(null, coo.substring(1, coo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));
       }
@@ -272,7 +272,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     case MULTIPOLYGON:
       final List<Polygon> polygons = new ArrayList<Polygon>();
-      for (String coo : StringUtils.split(matcher.group(4), ',')) {
+      for (final String coo : split(matcher.group(4), ',')) {
         polygons.add(newPolygon(null, coo.substring(1, coo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));
       }
@@ -529,5 +529,22 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
     }
 
     return result.append(")'").toString();
+  }
+
+  private List<String> split(final String input, final char separator) {
+    if (input == null) {
+      return null;
+    }
+    List<String> list = new ArrayList<String>();
+    int start = 0;
+    int end;
+    while ((end = input.indexOf(separator, start)) >= 0) {
+      list.add(input.substring(start, end));
+      start = end + 1;
+    }
+    if (start < input.length()) {
+      list.add(input.substring(start));
+    }
+    return list;
   }
 }

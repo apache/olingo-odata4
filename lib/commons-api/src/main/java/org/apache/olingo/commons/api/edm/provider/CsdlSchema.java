@@ -26,8 +26,6 @@ import java.util.List;
  */
 public class CsdlSchema extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = -1527213201328056750L;
-
   private String namespace;
 
   private String alias;

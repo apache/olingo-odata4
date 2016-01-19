@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlEnumType extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
-  private static final long serialVersionUID = -718032622783883403L;
-
   private String name;
 
   private boolean isFlags;

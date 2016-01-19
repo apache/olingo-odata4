@@ -30,7 +30,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  * Casts the value obtained from its single child expression to the specified type
  */
 public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable {
-  private static final long serialVersionUID = 7664148202663405946L;
 
   private String type;
   private Integer maxLength;

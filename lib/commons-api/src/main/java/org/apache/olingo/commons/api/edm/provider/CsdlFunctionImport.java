@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlFunctionImport extends CsdlOperationImport {
 
-  private static final long serialVersionUID = 8479762299534736719L;
-
   private FullQualifiedName function;
 
   // Default include in service document is false for function imports

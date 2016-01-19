@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.edm.xml;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.edm.geo.SRID;
@@ -29,10 +30,11 @@ import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 
 @JsonDeserialize(using = ClientCsdlTerm.TermDeserializer.class)
-class ClientCsdlTerm extends CsdlTerm {
+class ClientCsdlTerm extends CsdlTerm implements Serializable {
 
   private static final long serialVersionUID = -8350072064720586186L;
 

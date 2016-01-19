@@ -36,4 +36,21 @@ public class ComplexValue extends Linked {
   public List<Property> getValue() {
     return value;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o) && value.equals(((ComplexValue) o).value);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + value.hashCode();
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return value.toString();
+  }
 }

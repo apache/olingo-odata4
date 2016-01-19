@@ -22,12 +22,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 @JsonDeserialize(using = ClientCsdlReferentialConstraint.ReferentialConstraintDeserializer.class)
-class ClientCsdlReferentialConstraint extends CsdlReferentialConstraint {
+class ClientCsdlReferentialConstraint extends CsdlReferentialConstraint implements Serializable {
 
   private static final long serialVersionUID = -5822115908069878139L;
 

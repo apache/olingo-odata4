@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlSingleton extends CsdlBindingTarget {
 
-  private static final long serialVersionUID = -3997943079062565895L;
-
   @Override
   public CsdlSingleton setName(final String name) {
     this.name = name;

@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlEntityType extends CsdlStructuralType {
 
-  private static final long serialVersionUID = -1564752618679704024L;
-
   private List<CsdlPropertyRef> key;
 
   private boolean hasStream = false;

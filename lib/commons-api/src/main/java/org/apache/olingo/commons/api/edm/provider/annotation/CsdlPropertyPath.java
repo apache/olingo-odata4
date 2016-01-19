@@ -23,7 +23,6 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  * abstract type Edm.PropertyPath.
  */
 public class CsdlPropertyPath extends CsdlDynamicExpression {
-  private static final long serialVersionUID = -8182384289259575448L;
 
   private String value;
 

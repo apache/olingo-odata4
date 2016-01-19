@@ -27,12 +27,9 @@ import java.util.List;
  */
 public class EntityCollection extends AbstractODataObject {
 
-  private Integer count;
-
   private final List<Entity> entities = new ArrayList<Entity>();
-
+  private Integer count;
   private URI next;
-
   private URI deltaLink;
 
   /**
@@ -96,5 +93,27 @@ public class EntityCollection extends AbstractODataObject {
    */
   public void setDeltaLink(final URI deltaLink) {
     this.deltaLink = deltaLink;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (!super.equals(o)) {
+      return false;
+    }
+    final EntityCollection other = (EntityCollection) o;
+    return entities.equals(other.entities)
+        && (count == null ? other.count == null : count.equals(other.count))
+        && (next == null ? other.next == null : next.equals(other.next))
+        && (deltaLink == null ? other.deltaLink == null : deltaLink.equals(other.deltaLink));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + entities.hashCode();
+    result = 31 * result + (count == null ? 0 : count.hashCode());
+    result = 31 * result + (next == null ? 0 : next.hashCode());
+    result = 31 * result + (deltaLink == null ? 0 : deltaLink.hashCode());
+    return result;
   }
 }

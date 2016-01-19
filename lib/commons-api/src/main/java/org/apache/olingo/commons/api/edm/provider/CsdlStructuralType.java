@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public abstract class CsdlStructuralType extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
-  private static final long serialVersionUID = 8662852373514258646L;
-
   /**
    * The Name.
    */

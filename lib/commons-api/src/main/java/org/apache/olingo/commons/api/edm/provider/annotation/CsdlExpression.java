@@ -22,8 +22,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 
 public abstract class CsdlExpression extends CsdlAbstractEdmItem {
 
-  private static final long serialVersionUID = 4731101778893577444L;
-
   /**
    * Return true if the expression is constant
    * @return true if the expression is constant

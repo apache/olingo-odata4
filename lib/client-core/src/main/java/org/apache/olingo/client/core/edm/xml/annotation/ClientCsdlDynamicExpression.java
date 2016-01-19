@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.edm.xml.annotation;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.olingo.client.core.edm.xml.AbstractClientCsdlEdmDeserializer;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlDynamicExpression;
@@ -38,7 +39,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientCsdlDynamicExpression.DynamicExpressionDeserializer.class)
-public abstract class ClientCsdlDynamicExpression extends CsdlDynamicExpression {
+public abstract class ClientCsdlDynamicExpression extends CsdlDynamicExpression implements Serializable {
 
   private static final long serialVersionUID = 1093411847477874348L;
 

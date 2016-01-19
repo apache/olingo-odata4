@@ -22,12 +22,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 @JsonDeserialize(using = ClientCsdlNavigationPropertyBinding.NavigationPropertyBindingDeserializer.class)
-class ClientCsdlNavigationPropertyBinding extends CsdlNavigationPropertyBinding {
+class ClientCsdlNavigationPropertyBinding extends CsdlNavigationPropertyBinding implements Serializable {
 
   private static final long serialVersionUID = -7056978592235483660L;
 
