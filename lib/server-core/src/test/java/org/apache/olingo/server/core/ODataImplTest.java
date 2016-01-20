@@ -35,11 +35,7 @@ public class ODataImplTest {
     assertNotNull(odata.createSerializer(ContentType.JSON_NO_METADATA));
     assertNotNull(odata.createSerializer(ContentType.JSON));
     assertNotNull(odata.createSerializer(ContentType.APPLICATION_JSON));
-  }
-
-  @Test(expected = SerializerException.class)
-  public void jsonSerializerForODataMetadataFull() throws SerializerException {
-    odata.createSerializer(ContentType.JSON_FULL_METADATA);
+    assertNotNull(odata.createSerializer(ContentType.JSON_FULL_METADATA));
   }
 
   @Test
