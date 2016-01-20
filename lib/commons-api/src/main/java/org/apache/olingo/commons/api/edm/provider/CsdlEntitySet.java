@@ -87,4 +87,10 @@ public class CsdlEntitySet extends CsdlBindingTarget {
     super.setTitle(title);
     return this;
   }
+  
+  @Override
+  public CsdlEntitySet setMapping(CsdlMapping mapping) {
+    this.mapping = mapping;
+    return this;
+  }
 }

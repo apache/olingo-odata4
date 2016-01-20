@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -32,7 +32,7 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
    * The Name.
    */
   protected String name;
-  
+
   /**
    * The human readable title.
    */
@@ -48,6 +48,11 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
    */
   protected List<CsdlNavigationPropertyBinding> navigationPropertyBindings =
       new ArrayList<CsdlNavigationPropertyBinding>();
+
+  /**
+   * Mapping for server use cases
+   */
+  protected CsdlMapping mapping;
 
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
@@ -154,6 +159,20 @@ public abstract class CsdlBindingTarget extends CsdlAbstractEdmItem implements C
    */
   public CsdlBindingTarget setTitle(String title) {
     this.title = title;
+    return this;
+  }
+
+  public CsdlMapping getMapping() {
+    return mapping;
+  }
+
+  /**
+   * Sets the mapping object for this binding target.
+   * @param mapping
+   * @return this instance
+   */
+  public CsdlBindingTarget setMapping(CsdlMapping mapping) {
+    this.mapping = mapping;
     return this;
   }
 }
