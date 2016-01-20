@@ -5698,12 +5698,13 @@ public class TestFullResourcePath {
         .root()
         .right().isLiteral("3.4E37").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
 
-    testFilter.runOnETAllPrim("15.55555555555555555555555555555555555555555555 eq 3.1")
+    testFilter.runOnETAllPrim("15.55555555555555555555555555555555555555555555 eq -12345678901234567890")
         .isBinary(BinaryOperatorKind.EQ)
         .left().isLiteral("15.55555555555555555555555555555555555555555555")
         .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal))
         .root()
-        .right().isLiteral("3.1").isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
+        .right().isLiteral("-12345678901234567890")
+        .isLiteralType(oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal));
 
     testFilter.runOnETAllPrim("duration'PT1H2S' eq duration'PT3602S'")
         .isBinary(BinaryOperatorKind.EQ)

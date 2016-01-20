@@ -96,6 +96,8 @@ public class UriTokenizer {
     GeometryMultiLineString,
     GeographyMultiPolygon,
     GeometryMultiPolygon,
+    GeographyCollection,
+    GeometryCollection,
 
     jsonArrayOrObject,
 
@@ -371,6 +373,12 @@ public class UriTokenizer {
       break;
     case GeometryMultiPolygon:
       found = nextGeoMultiPolygon(false);
+      break;
+    case GeographyCollection:
+      found = nextGeoCollection(true);
+      break;
+    case GeometryCollection:
+      found = nextGeoCollection(false);
       break;
 
     // Complex or Collection Value
@@ -1057,10 +1065,13 @@ public class UriTokenizer {
     }
   }
 
+  private boolean nextPoint() {
+    return nextConstantIgnoreCase("Point") && nextPointData();
+  }
+
   private boolean nextGeoPoint(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("Point") && nextPointData()
+        && nextSrid() && nextCharacter(';') && nextPoint()
         && nextCharacter('\'');
   }
 
@@ -1074,7 +1085,10 @@ public class UriTokenizer {
     final int lastGoodIndex = index;
     if (nextCharacter('(') && nextPosition()) {
       int count = 1;
+      final String firstPosition = isRing ? parseString.substring(lastGoodIndex + 1, index) : null;
+      int positionStart = -1;
       while (nextCharacter(',')) {
+        positionStart = index;
         if (nextPosition()) {
           count++;
         } else {
@@ -1082,10 +1096,16 @@ public class UriTokenizer {
           return false;
         }
       }
-      // TODO: Check that the first and last ring positions are identical.
       if (count < (isRing ? 4 : 2)) {
         index = lastGoodIndex;
         return false;
+      }
+      if (isRing) {
+        final String lastPosition = parseString.substring(positionStart, index);
+        if (!lastPosition.equals(firstPosition)) {
+          index = lastGoodIndex;
+          return false;
+        }
       }
       if (!nextCharacter(')')) {
         index = lastGoodIndex;
@@ -1098,10 +1118,13 @@ public class UriTokenizer {
     }
   }
 
+  private boolean nextLineString() {
+    return nextConstantIgnoreCase("LineString") && nextLineStringData(false);
+  }
+
   private boolean nextGeoLineString(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("LineString") && nextLineStringData(false)
+        && nextSrid() && nextCharacter(';') && nextLineString() 
         && nextCharacter('\'');
   }
 
@@ -1130,66 +1153,125 @@ public class UriTokenizer {
     }
   }
 
+  private boolean nextPolygon() {
+    return nextConstantIgnoreCase("Polygon") && nextPolygonData();
+  }
+
   private boolean nextGeoPolygon(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("Polygon") && nextPolygonData()
+        && nextSrid() && nextCharacter(';') && nextPolygon() 
         && nextCharacter('\'');
   }
 
   private boolean nextMultiPoint() {
-    if (nextPointData()) {
+    if (nextConstantIgnoreCase("MultiPoint") && nextCharacter('(') && nextPointData()) {
       while (nextCharacter(',')) {
         if (!nextPointData()) {
           return false;
         }
       }
     }
-    return true;
+    return nextCharacter(')');
   }
 
   private boolean nextGeoMultiPoint(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("MultiPoint") && nextCharacter('(') && nextMultiPoint() && nextCharacter(')')
+        && nextSrid() && nextCharacter(';') && nextMultiPoint()
         && nextCharacter('\'');
   }
 
   private boolean nextMultiLineString() {
-    if (nextLineStringData(false)) {
+    if (nextConstantIgnoreCase("MultiLineString") && nextCharacter('(') && nextLineStringData(false)) {
       while (nextCharacter(',')) {
         if (!nextLineStringData(false)) {
           return false;
         }
       }
     }
-    return true;
+    return nextCharacter(')');
   }
 
   private boolean nextGeoMultiLineString(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("MultiLineString")
-        && nextCharacter('(') && nextMultiLineString() && nextCharacter(')')
+        && nextSrid() && nextCharacter(';') && nextMultiLineString()
         && nextCharacter('\'');
   }
 
   private boolean nextMultiPolygon() {
-    if (nextPolygonData()) {
+    if (nextConstantIgnoreCase("MultiPolygon") && nextCharacter('(') && nextPolygonData()) {
       while (nextCharacter(',')) {
         if (!nextPolygonData()) {
           return false;
         }
       }
     }
-    return true;
+    return nextCharacter(')');
   }
 
   private boolean nextGeoMultiPolygon(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';')
-        && nextConstantIgnoreCase("MultiPolygon")
-        && nextCharacter('(') && nextMultiPolygon() && nextCharacter(')')
+        && nextSrid() && nextCharacter(';') && nextMultiPolygon()
+        && nextCharacter('\'');
+  }
+
+  /**
+   * Moves past geo data if found; otherwise leaves the index unchanged.
+   * @return whether geo data has been found at the current index
+   */
+  private boolean nextGeo() {
+    final int lastGoodIndex = index;
+    if (nextPoint()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextLineString()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextPolygon()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextMultiPoint()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextMultiLineString()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextMultiPolygon()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+    }
+    if (nextCollection()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+      return false;
+    }
+  }
+
+  private boolean nextCollection() {
+    if (nextConstantIgnoreCase("Collection") && nextCharacter('(') && nextGeo()) {
+      while (nextCharacter(',')) {
+        if (!nextGeo()) {
+          return false;
+        }
+      }
+    }
+    return nextCharacter(')');
+  }
+
+  private boolean nextGeoCollection(final boolean isGeography) {
+    return nextGeoPrefix(isGeography) && nextCharacter('\'')
+        && nextSrid() && nextCharacter(';') && nextCollection()
         && nextCharacter('\'');
   }
 

@@ -343,7 +343,7 @@ public class ExpressionParser {
     }
 
     if (tokenizer.next(TokenKind.jsonArrayOrObject)) {
-      // TODO: Can the type be determined?
+      // There is no obvious way how the type could be determined.
       return new LiteralImpl(tokenizer.getText(), null);
     }
 
@@ -417,9 +417,9 @@ public class ExpressionParser {
         typeKind = EdmPrimitiveTypeKind.Int64;
       }
     } catch (final NumberFormatException e) {
-      // This should never happen because the tokenizer has figured out that the literal is an integer.
-      throw new UriParserSyntaxException("'" + intValueAsString + "' is not an integer.", e,
-          UriParserSyntaxException.MessageKeys.SYNTAX);
+      // The number cannot be formatted wrongly because the tokenizer already checked the format
+      // but it is too large for Long and therefore too large for Edm.Int64.
+      typeKind = EdmPrimitiveTypeKind.Decimal;
     }
     return typeKind;
   }
@@ -686,7 +686,7 @@ public class ExpressionParser {
       }
     } else {
       // Must be a property.
-      parseMemberExpression(TokenKind.ODataIdentifier, uriInfo, null, true); // TODO: Find last resource.
+      parseMemberExpression(TokenKind.ODataIdentifier, uriInfo, null, true);
     }
   }
 
@@ -996,9 +996,10 @@ public class ExpressionParser {
     ParserHelper.requireNext(tokenizer, TokenKind.COLON);
     lambdaVariables.addFirst(new UriResourceLambdaVarImpl(lambbdaVariable,
         lastResource == null ? referringType : lastResource.getType()));
+    // The ABNF suggests that the "lambaPredicateExpr" must contain at least one lambdaVariable,
+    // so arguably this could be checked in expression parsing or later in validation.
     final Expression lambdaPredicateExpr = parseExpression();
     lambdaVariables.removeFirst();
-    // TODO: The ABNF suggests that the "lambaPredicateExpr" must contain at least one lambdaVariable.
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     if (lastTokenKind == TokenKind.ALL) {
       return new UriResourceLambdaAllImpl(lambbdaVariable, lambdaPredicateExpr);

@@ -22,28 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <code>
- * searchExpr = ( OPEN BWS searchExpr BWS CLOSE
- * / searchTerm
- * ) [ searchOrExpr
- * / searchAndExpr
- * ]
- *
- * searchOrExpr = RWS 'OR' RWS searchExpr
+ * <pre>
+ * searchExpr    = ( OPEN BWS searchExpr BWS CLOSE / searchTerm )
+ *                 [ searchOrExpr / searchAndExpr ]
+ * searchOrExpr  = RWS 'OR' RWS searchExpr
  * searchAndExpr = RWS [ 'AND' RWS ] searchExpr
+ * searchTerm    = [ 'NOT' RWS ] ( searchPhrase / searchWord )
+ * searchPhrase  = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
+ * searchWord    = 1*ALPHA ; Actually: any character from the Unicode categories L or Nl,
+ *                                     but not the words AND, OR, and NOT
+ * </pre>
  *
- * searchTerm = [ 'NOT' RWS ] ( searchPhrase / searchWord )
- * searchPhrase = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
- * searchWord = 1*ALPHA ; Actually: any character from the Unicode categories L or Nl,
- * ; but not the words AND, OR, and NOT
- * </code>
- *
- * <b>ATTENTION:</b> For a <code>searchPhrase</code> the percent encoding is not supported by the
- * <code>SearchTokenizer</code>.<br/>
- * This was a decision based on that the <code>org.apache.olingo.server.core.uri.parser.Parser</code>
- * already handles in his <code>parseUri</code> method each query as <code>percent decoded</code> strings (see
- * line <i>177ff</i> (<code>for (RawUri.QueryOption option : uri.queryOptionListDecoded)</code>).
- *
+ * <b>ATTENTION:</b> This class does not support a percent-encoded <code>searchPhrase</code> because the URI parser's
+ * {@link org.apache.olingo.server.core.uri.parser.Parser#parseUri(String, String, String) parseUri} method
+ * <em>percent decodes</em> each query before calling parsers of query options.
  */
 public class SearchTokenizer {
 
@@ -75,17 +67,18 @@ public class SearchTokenizer {
 
     protected abstract State nextChar(char c) throws SearchTokenizerException;
 
+    /** @param c allowed character */
     public State allowed(final char c) {
       return this;
     }
 
     public State forbidden(final char c) throws SearchTokenizerException {
-      throw new SearchTokenizerException("Forbidden character in state " + getToken() + "->" + c,
+      throw new SearchTokenizerException("Forbidden character in state " + token + "->" + c,
           SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER, "" + c);
     }
 
     public State invalid() throws SearchTokenizerException {
-      throw new SearchTokenizerException("Token " + getToken() + " is in invalid state.",
+      throw new SearchTokenizerException("Token " + token + " is in invalid state.",
           SearchTokenizerException.MessageKeys.INVALID_TOKEN_STATE);
     }
 
@@ -243,7 +236,7 @@ public class SearchTokenizer {
 
     @Override
     public String toString() {
-      return getToken() + "=>{" + getLiteral() + "}";
+      return token + "=>{" + getLiteral() + "}";
     }
   }
 
@@ -597,16 +590,14 @@ public class SearchTokenizer {
   }
 
   /**
-   * Take the search query and split into according SearchQueryToken.
-   * Before split into tokens the given search query is 'trimmed'.
+   * Takes the search query and splits it into a list of corresponding {@link SearchQueryToken}s.
+   * Before splitting it into tokens, leading and trailing whitespace in the given search query string is removed.
    *
    * @param searchQuery search query to be tokenized
    * @return list of tokens
-   * @throws SearchTokenizerException if something in query is not valid
-   * (based on OData search query ABNF)
+   * @throws SearchTokenizerException if something in query is not valid (based on OData search query ABNF)
    */
-  public List<SearchQueryToken> tokenize(final String searchQuery)
-      throws SearchTokenizerException {
+  public List<SearchQueryToken> tokenize(final String searchQuery) throws SearchTokenizerException {
 
     char[] chars = searchQuery.trim().toCharArray();
 

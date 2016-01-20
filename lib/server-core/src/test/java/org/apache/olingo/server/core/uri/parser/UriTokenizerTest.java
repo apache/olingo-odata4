@@ -624,6 +624,21 @@ public class UriTokenizerTest {
         'x');
   }
 
+  @Test
+  public void geoCollection() {
+    assertTrue(new UriTokenizer("geography'SRID=4326;Collection(Point(1 2))'").next(TokenKind.GeographyCollection));
+    assertTrue(new UriTokenizer("geography'SRID=4326;Collection(Collection(Point(1 2),Point(3 4)))'")
+        .next(TokenKind.GeographyCollection));
+    assertTrue(new UriTokenizer("geography'SRID=4326;Collection(LineString(1 2,3 4))'")
+        .next(TokenKind.GeographyCollection));
+    assertTrue(new UriTokenizer("geography'SRID=4326;Collection(Polygon((0 0,1 0,0 1,0 0)))'")
+        .next(TokenKind.GeographyCollection));
+    assertTrue(new UriTokenizer("geography'SRID=4326;Collection(MultiPoint(),MultiLineString(),MultiPolygon())'")
+        .next(TokenKind.GeographyCollection));
+
+    wrongToken(TokenKind.GeometryCollection, "geometry'SRID=0;Collection(Point(1 2),Point(3 4))'", 'x');
+  }
+
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {
     assertFalse(new UriTokenizer(disturbCharacter + value).next(kind));
 

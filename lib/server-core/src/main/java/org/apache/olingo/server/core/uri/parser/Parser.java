@@ -18,13 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.ArrayDeque;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
@@ -77,7 +74,7 @@ public class Parser {
       throws UriParserException, UriValidationException {
 
     UriInfoImpl contextUriInfo = new UriInfoImpl();
-    Deque<EdmType> contextTypes = new ArrayDeque<EdmType>();
+    EdmType contextType = null;
     boolean contextIsCollection = false;
 
     List<String> pathSegmentsDecoded = UriDecoder.splitAndDecodePath(path);
@@ -107,10 +104,6 @@ public class Parser {
     } else if (firstSegment.equals("$all")) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.all);
-      // This loads nearly the whole schema, but sooner or later '$all' needs all entity sets anyway.
-      for (final EdmEntitySet entitySet : edm.getEntityContainer().getEntitySets()) {
-        contextTypes.push(entitySet.getEntityType());
-      }
       contextIsCollection = true;
 
     } else if (firstSegment.equals("$entity")) {
@@ -118,11 +111,9 @@ public class Parser {
         final String typeCastSegment = pathSegmentsDecoded.get(1);
         ensureLastSegment(typeCastSegment, 2, numberOfSegments);
         contextUriInfo = new ResourcePathParser(edm).parseDollarEntityTypeCast(typeCastSegment);
-        contextTypes.push(contextUriInfo.getEntityTypeCast());
+        contextType = contextUriInfo.getEntityTypeCast();
       } else {
         contextUriInfo.setKind(UriInfoKind.entityId);
-        // The type of the entity is not known until the $id query option has been parsed.
-        // TODO: Set the type (needed for the evaluation of system query options).
       }
       contextIsCollection = false;
 
@@ -166,10 +157,7 @@ public class Parser {
 
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
-        final EdmType type = ParserHelper.getTypeInformation(typed);
-        if (type != null) { // could be null for, e.g., actions without return type
-          contextTypes.push(type);
-        }
+        contextType = ParserHelper.getTypeInformation(typed);
         contextIsCollection = typed.isCollection();
       }
     }
@@ -186,7 +174,7 @@ public class Parser {
           UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
           // The referring type could be a primitive type or a structured type.
           systemOption = new FilterParser(edm, odata).parse(filterTokenizer,
-              contextTypes.peek(),
+              contextType,
               contextUriInfo.getEntitySetNames());
           checkOptionEOF(filterTokenizer, optionName, optionValue);
 
@@ -205,12 +193,12 @@ public class Parser {
           systemOption = formatOption;
 
         } else if (optionName.equals(SystemQueryOptionKind.EXPAND.toString())) {
-          if (contextTypes.peek() instanceof EdmStructuredType
+          if (contextType instanceof EdmStructuredType
               || !contextUriInfo.getEntitySetNames().isEmpty()
-              || contextUriInfo.getKind() == UriInfoKind.entityId) { // TODO: Remove once the type has been set above.
+              || contextUriInfo.getKind() == UriInfoKind.all) {
             UriTokenizer expandTokenizer = new UriTokenizer(optionValue);
             systemOption = new ExpandParser(edm, odata).parse(expandTokenizer,
-                contextTypes.peek() instanceof EdmStructuredType ? (EdmStructuredType) contextTypes.peek() : null);
+                contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null);
             checkOptionEOF(expandTokenizer, optionName, optionValue);
           } else {
             throw new UriValidationException("Expand is only allowed on structured types!",
@@ -235,7 +223,7 @@ public class Parser {
         } else if (optionName.equals(SystemQueryOptionKind.ORDERBY.toString())) {
           UriTokenizer orderByTokenizer = new UriTokenizer(optionValue);
           systemOption = new OrderByParser(edm, odata).parse(orderByTokenizer,
-              contextTypes.peek() instanceof EdmStructuredType ? (EdmStructuredType) contextTypes.peek() : null,
+              contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
               contextUriInfo.getEntitySetNames());
           checkOptionEOF(orderByTokenizer, optionName, optionValue);
 
@@ -245,7 +233,7 @@ public class Parser {
         } else if (optionName.equals(SystemQueryOptionKind.SELECT.toString())) {
           UriTokenizer selectTokenizer = new UriTokenizer(optionValue);
           systemOption = new SelectParser(edm).parse(selectTokenizer,
-              contextTypes.peek() instanceof EdmStructuredType ? (EdmStructuredType) contextTypes.peek() : null,
+              contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
               contextIsCollection);
           checkOptionEOF(selectTokenizer, optionName, optionValue);
 
@@ -297,7 +285,7 @@ public class Parser {
 
       } else if (optionName.startsWith(AT)) {
         if (contextUriInfo.getAlias(optionName) == null) {
-          // TODO: Create a proper alias-value parser that can parse also common expressions.
+          // TODO: Aliases can only be parsed in the context of their usage.
           Expression expression = null;
           UriTokenizer aliasTokenizer = new UriTokenizer(optionValue);
           if (aliasTokenizer.next(TokenKind.jsonArrayOrObject)) {

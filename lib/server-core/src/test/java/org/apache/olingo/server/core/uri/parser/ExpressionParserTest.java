@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -158,14 +159,9 @@ public class ExpressionParserTest {
 
   @Test
   public void noParameterMethods() throws Exception {
-    Expression expression = parseMethod(TokenKind.NowMethod);
-    assertEquals("{now []}", expression.toString());
-
-    expression = parseMethod(TokenKind.MaxdatetimeMethod);
-    assertEquals("{maxdatetime []}", expression.toString());
-
-    expression = parseMethod(TokenKind.MindatetimeMethod);
-    assertEquals("{mindatetime []}", expression.toString());
+    parseMethod(TokenKind.NowMethod);
+    parseMethod(TokenKind.MaxdatetimeMethod);
+    parseMethod(TokenKind.MindatetimeMethod);
 
     wrongExpression("now(1)");
   }
@@ -176,46 +172,21 @@ public class ExpressionParserTest {
     final String dateValue = "1234-12-25";
     final String dateTimeOffsetValue = "1234-12-25T11:12:13.456Z";
 
-    Expression expression = parseMethod(TokenKind.LengthMethod, stringValue);
-    assertEquals("{length [" + stringValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.TolowerMethod, stringValue);
-    assertEquals("{tolower [" + stringValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.ToupperMethod, stringValue);
-    assertEquals("{toupper [" + stringValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.TrimMethod, stringValue);
-    assertEquals("{trim [" + stringValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.YearMethod, dateValue);
-    assertEquals("{year [" + dateValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.MonthMethod, dateValue);
-    assertEquals("{month [" + dateValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.DayMethod, dateValue);
-    assertEquals("{day [" + dateValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.HourMethod, dateTimeOffsetValue);
-    assertEquals("{hour [" + dateTimeOffsetValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.MinuteMethod, dateTimeOffsetValue);
-    assertEquals("{minute [" + dateTimeOffsetValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.SecondMethod, dateTimeOffsetValue);
-    assertEquals("{second [" + dateTimeOffsetValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.DateMethod, dateTimeOffsetValue);
-    assertEquals("{date [" + dateTimeOffsetValue + "]}", expression.toString());
-
-    expression = parseMethod(TokenKind.TotalsecondsMethod, "duration'PT1H'");
-    assertEquals("{totalseconds [duration'PT1H']}", expression.toString());
-
-    expression = parseMethod(TokenKind.RoundMethod, "3.141592653589793");
-    assertEquals("{round [3.141592653589793]}", expression.toString());
-
-    assertEquals("{hour [null]}", parseMethod(TokenKind.HourMethod, new String[] { null }).toString());
+    parseMethod(TokenKind.LengthMethod, stringValue);
+    parseMethod(TokenKind.TolowerMethod, stringValue);
+    parseMethod(TokenKind.ToupperMethod, stringValue);
+    parseMethod(TokenKind.TrimMethod, stringValue);
+    parseMethod(TokenKind.YearMethod, dateValue);
+    parseMethod(TokenKind.MonthMethod, dateValue);
+    parseMethod(TokenKind.DayMethod, dateValue);
+    parseMethod(TokenKind.HourMethod, dateTimeOffsetValue);
+    parseMethod(TokenKind.MinuteMethod, dateTimeOffsetValue);
+    parseMethod(TokenKind.SecondMethod, dateTimeOffsetValue);
+    parseMethod(TokenKind.DateMethod, dateTimeOffsetValue);
+    parseMethod(TokenKind.TotalsecondsMethod, "duration'PT1H'");
+    parseMethod(TokenKind.RoundMethod, "3.141592653589793");
+    parseMethod(TokenKind.GeoLengthMethod, "geometry'SRID=0;LineString(0 0,4 0,4 4,0 4,0 0)'");
+    parseMethod(TokenKind.HourMethod, new String[] { null });
 
     wrongExpression("trim()");
     wrongExpression("trim(1)");
@@ -224,35 +195,17 @@ public class ExpressionParserTest {
 
   @Test
   public void twoParameterMethods() throws Exception {
-    Expression expression = parseMethod(TokenKind.ContainsMethod, "'a'", "'b'");
-    assertEquals("{contains ['a', 'b']}", expression.toString());
-
-    expression = parseMethod(TokenKind.EndswithMethod, "'a'", "'b'");
-    assertEquals("{endswith ['a', 'b']}", expression.toString());
-
-    expression = parseMethod(TokenKind.StartswithMethod, "'a'", "'b'");
-    assertEquals("{startswith ['a', 'b']}", expression.toString());
-
-    expression = parseMethod(TokenKind.IndexofMethod, "'a'", "'b'");
-    assertEquals("{indexof ['a', 'b']}", expression.toString());
-
-    expression = parseMethod(TokenKind.ConcatMethod, "'a'", "'b'");
-    assertEquals("{concat ['a', 'b']}", expression.toString());
-
-    expression = parseMethod(TokenKind.GeoDistanceMethod,
-        "geography'SRID=0;Point(1.2 3.4)'", "geography'SRID=0;Point(5.6 7.8)'");
-    assertEquals("{geo.distance [geography'SRID=0;Point(1.2 3.4)', geography'SRID=0;Point(5.6 7.8)']}",
-        expression.toString());
-
-    expression = parseMethod(TokenKind.GeoIntersectsMethod,
+    parseMethod(TokenKind.ContainsMethod, "'a'", "'b'");
+    parseMethod(TokenKind.EndswithMethod, "'a'", "'b'");
+    parseMethod(TokenKind.StartswithMethod, "'a'", "'b'");
+    parseMethod(TokenKind.IndexofMethod, "'a'", "'b'");
+    parseMethod(TokenKind.ConcatMethod, "'a'", "'b'");
+    parseMethod(TokenKind.GeoDistanceMethod, "geography'SRID=0;Point(1.2 3.4)'", "geography'SRID=0;Point(5.6 7.8)'");
+    parseMethod(TokenKind.GeoIntersectsMethod,
         "geometry'SRID=0;Point(1.2 3.4)'",
         "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))'");
-    assertEquals("{geo.intersects [geometry'SRID=0;Point(1.2 3.4)', "
-        + "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))']}",
-        expression.toString());
-
-    assertEquals("{startswith [null, 'b']}", parseMethod(TokenKind.StartswithMethod, null, "'b'").toString());
-    assertEquals("{indexof ['a', null]}", parseMethod(TokenKind.IndexofMethod, "'a'", null).toString());
+    parseMethod(TokenKind.StartswithMethod, null, "'b'");
+    parseMethod(TokenKind.IndexofMethod, "'a'", null);
 
     wrongExpression("concat('a')");
     wrongExpression("endswith('a',1)");
@@ -260,16 +213,14 @@ public class ExpressionParserTest {
 
   @Test
   public void variableParameterNumberMethods() throws Exception {
-    Expression expression = parseMethod(TokenKind.SubstringMethod, "'abc'", "1", "2");
-    assertEquals("{substring ['abc', 1, 2]}", expression.toString());
-    expression = parseMethod(TokenKind.SubstringMethod, "'abc'", "1");
-    assertEquals("{substring ['abc', 1]}", expression.toString());
+    parseMethod(TokenKind.SubstringMethod, "'abc'", "1", "2");
+    parseMethod(TokenKind.SubstringMethod, "'abc'", "1");
 
-    assertEquals("{cast [Edm.SByte]}", parseMethod(TokenKind.CastMethod, "Edm.SByte").toString());
-    assertEquals("{cast [42, Edm.SByte]}", parseMethod(TokenKind.CastMethod, "42", "Edm.SByte").toString());
+    parseMethod(TokenKind.CastMethod, "Edm.SByte");
+    parseMethod(TokenKind.CastMethod, "42", "Edm.SByte");
 
-    assertEquals("{isof [Edm.SByte]}", parseMethod(TokenKind.IsofMethod, "Edm.SByte").toString());
-    assertEquals("{isof [42, Edm.SByte]}", parseMethod(TokenKind.IsofMethod, "42", "Edm.SByte").toString());
+    parseMethod(TokenKind.IsofMethod, "Edm.SByte");
+    parseMethod(TokenKind.IsofMethod, "42", "Edm.SByte");
 
     wrongExpression("substring('abc')");
     wrongExpression("substring('abc',1,2,3)");
@@ -278,10 +229,10 @@ public class ExpressionParserTest {
     wrongExpression("isof(Edm.Int16,2)");
   }
 
-  private Expression parseMethod(TokenKind kind, String... parameters)
-      throws UriParserException, UriValidationException {
-    String expressionString = kind.name().substring(0, kind.name().indexOf("Method"))
-        .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(';
+  private void parseMethod(TokenKind kind, String... parameters) throws UriParserException, UriValidationException {
+    final String methodName = kind.name().substring(0, kind.name().indexOf("Method")).toLowerCase(Locale.ROOT)
+        .replace("geo", "geo.");
+    String expressionString = methodName + '(';
     boolean first = true;
     for (final String parameter : parameters) {
       if (first) {
@@ -293,7 +244,9 @@ public class ExpressionParserTest {
     }
     expressionString += ')';
 
-    return parseExpression(expressionString);
+    final Expression expression = parseExpression(expressionString);
+    assertEquals('{' + methodName + ' ' + Arrays.toString(parameters) + '}',
+        expression.toString());
   }
 
   private Expression parseExpression(final String expressionString)

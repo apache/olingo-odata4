@@ -225,74 +225,74 @@ public class TestUriParserImpl {
   @Test
   public void entityFailOnValidation() throws Exception {
     // simple entity set; with qualifiedentityTypeName; with filter
-    testUri.runEx("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllKey")
+    testUri.runEx("$entity/olingo.odata.test1.ETTwoPrim", "$filter=PropertyInt16 eq 123&$id=ESAllPrim(1)")
         .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
   }
 
   @Test
   public void entity() throws Exception {
     // simple entity set
-    testUri.run("$entity", "$id=ESAllPrim").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$id=ESAllPrim(1)").isKind(UriInfoKind.entityId)
     .isKind(UriInfoKind.entityId)
-    .isIdText("ESAllPrim");
+    .isIdText("ESAllPrim(1)");
 
     // simple entity set; $format before $id
-    testUri.run("$entity", "$format=xml&$id=ETAllPrim").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&$id=ESAllPrim(1)").isKind(UriInfoKind.entityId)
     .isFormatText("xml")
-    .isIdText("ETAllPrim");
+    .isIdText("ESAllPrim(1)");
 
-    testUri.run("$entity", "$format=xml&abc=123&$id=ESAllKey").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&abc=123&$id=ESAllPrim(1)").isKind(UriInfoKind.entityId)
     .isFormatText("xml")
     .isCustomParameter(0, "abc", "123")
-    .isIdText("ESAllKey");
+    .isIdText("ESAllPrim(1)");
 
     // simple entity set; $format after $id
-    testUri.run("$entity", "$id=ETAllPrim&$format=xml").isKind(UriInfoKind.entityId)
-    .isIdText("ETAllPrim")
+    testUri.run("$entity", "$id=ESAllPrim(1)&$format=xml").isKind(UriInfoKind.entityId)
+    .isIdText("ESAllPrim(1)")
     .isFormatText("xml");
 
     // simple entity set; $format and custom parameter after $id
-    testUri.run("$entity", "$id=ETAllPrim&$format=xml&abc=123").isKind(UriInfoKind.entityId)
-    .isIdText("ETAllPrim")
+    testUri.run("$entity", "$id=ESAllPrim(1)&$format=xml&abc=123").isKind(UriInfoKind.entityId)
+    .isIdText("ESAllPrim(1)")
     .isFormatText("xml")
     .isCustomParameter(0, "abc", "123");
 
     // simple entity set; $format before $id and custom parameter after $id
-    testUri.run("$entity", "$format=xml&$id=ETAllPrim&abc=123").isKind(UriInfoKind.entityId)
+    testUri.run("$entity", "$format=xml&$id=ESAllPrim(1)&abc=123").isKind(UriInfoKind.entityId)
     .isFormatText("xml")
-    .isIdText("ETAllPrim")
+    .isIdText("ESAllPrim(1)")
     .isCustomParameter(0, "abc", "123");
 
     // simple entity set; with qualifiedentityTypeName
-    testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$id=ESBase")
+    testUri.run("$entity/olingo.odata.test1.ETTwoPrim", "$id=ESBase(111)")
     .isEntityType(EntityTypeProvider.nameETTwoPrim)
-    .isIdText("ESBase");
+    .isIdText("ESBase(111)");
 
     // simple entity set; with qualifiedentityTypeName;
-    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim(1)")
     .isEntityType(EntityTypeProvider.nameETBase)
     .isKind(UriInfoKind.entityId)
-    .isIdText("ESTwoPrim");
+    .isIdText("ESTwoPrim(1)");
 
     // simple entity set; with qualifiedentityTypeName; with format
-    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$format=atom")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim(1)&$format=atom")
     .isKind(UriInfoKind.entityId)
     .isEntityType(EntityTypeProvider.nameETBase)
-    .isIdText("ESTwoPrim")
+    .isIdText("ESTwoPrim(1)")
     .isFormatText("atom");
 
     // simple entity set; with qualifiedentityTypeName; with select
-    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$select=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim(1)&$select=*")
     .isKind(UriInfoKind.entityId)
     .isEntityType(EntityTypeProvider.nameETBase)
-    .isIdText("ESTwoPrim")
+    .isIdText("ESTwoPrim(1)")
     .isSelectItemStar(0);
 
     // simple entity set; with qualifiedentityTypeName; with expand
-    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim&$expand=*")
+    testUri.run("$entity/olingo.odata.test1.ETBase", "$id=ESTwoPrim(1)&$expand=*")
     .isKind(UriInfoKind.entityId)
     .isEntityType(EntityTypeProvider.nameETBase)
-    .isIdText("ESTwoPrim")
+    .isIdText("ESTwoPrim(1)")
     .goExpand().first().isSegmentStar();
   }
 

@@ -58,7 +58,7 @@ public class ParserHelper {
     Map<TokenKind, EdmPrimitiveTypeKind> temp = new HashMap<TokenKind, EdmPrimitiveTypeKind>();
     temp.put(TokenKind.BooleanValue, EdmPrimitiveTypeKind.Boolean);
     temp.put(TokenKind.StringValue, EdmPrimitiveTypeKind.String);
-    // TODO: Check if int64 is correct here or if it has to be decimal or single or double instead.
+    // Very large integer values are of type Edm.Decimal but this is handled elsewhere.
     temp.put(TokenKind.IntegerValue, EdmPrimitiveTypeKind.Int64);
     temp.put(TokenKind.GuidValue, EdmPrimitiveTypeKind.Guid);
     temp.put(TokenKind.DateValue, EdmPrimitiveTypeKind.Date);
@@ -81,9 +81,8 @@ public class ParserHelper {
     temp.put(TokenKind.GeometryMultiLineString, EdmPrimitiveTypeKind.GeometryMultiLineString);
     temp.put(TokenKind.GeographyMultiPolygon, EdmPrimitiveTypeKind.GeographyMultiPolygon);
     temp.put(TokenKind.GeometryMultiPolygon, EdmPrimitiveTypeKind.GeometryMultiPolygon);
-    // TODO: Geo collections
-//    temp.put(TokenKind.GeographyCollection, EdmPrimitiveTypeKind.GeographyCollection);
-//    temp.put(TokenKind.GeometryCollection, EdmPrimitiveTypeKind.GeometryCollection);
+    temp.put(TokenKind.GeographyCollection, EdmPrimitiveTypeKind.GeographyCollection);
+    temp.put(TokenKind.GeometryCollection, EdmPrimitiveTypeKind.GeometryCollection);
 
     tokenToPrimitiveType = Collections.unmodifiableMap(temp);
   }
@@ -141,10 +140,9 @@ public class ParserHelper {
         TokenKind.GeographyMultiLineString,
         TokenKind.GeometryMultiLineString,
         TokenKind.GeographyMultiPolygon,
-        TokenKind.GeometryMultiPolygon);
-        // TODO: Geo collections
-//        TokenKind.GeographyCollection,
-//        TokenKind.GeometryCollection);
+        TokenKind.GeometryMultiPolygon,
+        TokenKind.GeographyCollection,
+        TokenKind.GeometryCollection);
   }
 
   protected static List<UriParameter> parseFunctionParameters(UriTokenizer tokenizer,

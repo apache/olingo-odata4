@@ -52,7 +52,7 @@ public class UriValidatorTest {
   private static final String URI_ALL = "$all";
   private static final String URI_BATCH = "$batch";
   private static final String URI_CROSSJOIN = "$crossjoin(ESAllPrim)";
-  private static final String URI_ENTITY_ID = "$entity";
+  private static final String URI_ENTITY_ID = "$entity/Namespace1_Alias.ETBase";
   private static final String URI_METADATA = "$metadata";
   private static final String URI_SERVICE = "";
   private static final String URI_ENTITY_SET = "ESAllPrim";
@@ -81,7 +81,7 @@ public class UriValidatorTest {
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla/bla";
   private static final String QO_EXPAND = "$expand=*";
-  private static final String QO_ID = "$id=Products(0)";
+  private static final String QO_ID = "$id=ESAllPrim(1)";
   private static final String QO_COUNT = "$count=true";
   private static final String QO_ORDERBY = "$orderby=true";
   private static final String QO_SEARCH = "$search=bla";
