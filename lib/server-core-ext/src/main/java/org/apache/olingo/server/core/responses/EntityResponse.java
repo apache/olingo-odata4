@@ -175,14 +175,9 @@ public class EntityResponse extends ServiceResponse {
   public static String buildLocation(String baseURL, Entity entity, String enitySetName, EdmEntityType type) 
       throws EdmPrimitiveTypeException {
     StringBuilder location = new StringBuilder();
-    location.append(baseURL).append("/").append(enitySetName);
-    location.append(buildKeySegmentsURI(entity, type));
-    return location.toString();
-  }
 
-  public static String buildKeySegmentsURI(Entity entity, EdmEntityType type)
-      throws EdmPrimitiveTypeException {
-    StringBuilder location = new StringBuilder();
+    location.append(baseURL).append("/").append(enitySetName);
+    
     int i = 0;
     boolean usename = type.getKeyPredicateNames().size() > 1;
     location.append("(");
