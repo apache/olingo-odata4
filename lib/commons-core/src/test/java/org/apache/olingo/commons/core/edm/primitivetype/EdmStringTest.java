@@ -33,11 +33,13 @@ public class EdmStringTest extends PrimitiveTypeBaseTest {
     assertEquals("'StringValue'", instance.toUriLiteral("StringValue"));
     assertEquals("'String''Value'", instance.toUriLiteral("String'Value"));
     assertEquals("'String''''''Value'", instance.toUriLiteral("String'''Value"));
+    assertEquals("'ab%20cd%20'", instance.toUriLiteral("ab cd "));
   }
 
   @Test
   public void fromUriLiteral() throws Exception {
     assertEquals("String''Value", instance.fromUriLiteral("'String''''Value'"));
+    assertEquals("ab cd ", instance.fromUriLiteral("'ab%20cd%20'"));
 
     expectErrorInFromUriLiteral(instance, "");
     expectErrorInFromUriLiteral(instance, "'");
