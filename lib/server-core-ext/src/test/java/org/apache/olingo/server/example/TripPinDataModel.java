@@ -625,8 +625,10 @@ public class TripPinDataModel {
     } catch (URISyntaxException e) {
       throw new ODataApplicationException("Failed to create ID for entity", 500,
           Locale.getDefault());
+    } catch (EdmPrimitiveTypeException e) {
+      throw new ODataApplicationException("Failed to create ID for entity", 500,
+          Locale.getDefault());
     }
-
     set.getEntities().add(copy);
     return copy;
   }

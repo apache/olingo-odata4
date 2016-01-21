@@ -24,13 +24,17 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
@@ -99,7 +103,12 @@ public class EntityResponse extends ServiceResponse {
     // exception
     assert (entity != null);
     
-    String locationHeader = buildLocation(this.baseURL, entity, entitySet.getName(), entitySet.getEntityType());
+    String locationHeader;
+    try {
+      locationHeader = buildLocation(this.baseURL, entity, entitySet.getName(), entitySet.getEntityType());
+    } catch (EdmPrimitiveTypeException e) {
+      throw new SerializerException(e.getMessage(), e, SerializerException.MessageKeys.WRONG_PRIMITIVE_VALUE);
+    }
 
     // Note that if media written just like Stream, but on entity URL
 
@@ -163,12 +172,20 @@ public class EntityResponse extends ServiceResponse {
     close();
   }  
   
-  public static String buildLocation(String baseURL, Entity entity, String enitySetName, EdmEntityType type) {
+  public static String buildLocation(String baseURL, Entity entity, String enitySetName, EdmEntityType type) 
+      throws EdmPrimitiveTypeException {
     StringBuilder location = new StringBuilder();
-    location.append(baseURL).append("/").append(enitySetName).append("(");
+    location.append(baseURL).append("/").append(enitySetName);
+    location.append(buildKeySegmentsURI(entity, type));
+    return location.toString();
+  }
+
+  public static String buildKeySegmentsURI(Entity entity, EdmEntityType type)
+      throws EdmPrimitiveTypeException {
+    StringBuilder location = new StringBuilder();
     int i = 0;
     boolean usename = type.getKeyPredicateNames().size() > 1;
-
+    location.append("(");
     for (String key : type.getKeyPredicateNames()) {
       if (i > 0) {
         location.append(",");
@@ -177,11 +194,19 @@ public class EntityResponse extends ServiceResponse {
       if (usename) {
         location.append(key).append("=");
       }
-      if (entity.getProperty(key).getType().equals("Edm.String")) {
-        location.append("'").append(entity.getProperty(key).getValue().toString()).append("'");
-      } else {
-        location.append(entity.getProperty(key).getValue().toString());
+      String propertyType = entity.getProperty(key).getType();
+      Object propertyValue = entity.getProperty(key).getValue();
+      
+      if(propertyType.startsWith("Edm.")) {
+        propertyType = propertyType.substring(4);
       }
+      EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOf(propertyType);
+      String value =  EdmPrimitiveTypeFactory.getInstance(kind).valueToString(
+          propertyValue, true, 4000, 0, 0, true);
+      if (kind == EdmPrimitiveTypeKind.String) {
+          value = EdmString.getInstance().toUriLiteral(value);
+      }
+      location.append(value);
     }
     location.append(")");
     return location.toString();
