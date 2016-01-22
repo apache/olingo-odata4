@@ -21,8 +21,6 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.core.Decoder;
-import org.apache.olingo.commons.core.Encoder;
 
 /**
  * Implementation of the EDM primitive type String.
@@ -97,11 +95,11 @@ public final class EdmString extends SingletonPrimitiveType {
       uriLiteral.append(c);
     }
     uriLiteral.append(uriSuffix);
-    return Encoder.encode(uriLiteral.toString());
+    return uriLiteral.toString();
   }
 
   @Override
   public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
-    return literal == null ? null : Decoder.decode(super.fromUriLiteral(literal).replace("''", "'"));
+    return literal == null ? null : super.fromUriLiteral(literal).replace("''", "'");
   }
 }
