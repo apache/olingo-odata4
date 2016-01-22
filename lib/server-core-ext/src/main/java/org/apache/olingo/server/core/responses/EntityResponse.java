@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -199,7 +200,7 @@ public class EntityResponse extends ServiceResponse {
       String value =  EdmPrimitiveTypeFactory.getInstance(kind).valueToString(
           propertyValue, true, 4000, 0, 0, true);
       if (kind == EdmPrimitiveTypeKind.String) {
-          value = EdmString.getInstance().toUriLiteral(value);
+          value = EdmString.getInstance().toUriLiteral(Encoder.encode(value));
       }
       location.append(value);
     }
