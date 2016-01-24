@@ -336,7 +336,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
-    for (final Entity entity : entitySet.getEntities()) {
+    for (final Entity entity : entitySet) {
       writeEntity(metadata, entityType, entity, null, expand, select, writer, false);
     }
   }
@@ -1060,7 +1060,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       if (entitySet.getNext() != null) {
         writeNextLink(entitySet, writer);
       }
-      for (final Entity entity : entitySet.getEntities()) {
+      for (final Entity entity : entitySet) {
         writeReference(entity, options == null ? null : options.getContextURL(), writer, false);
       }
       writer.writeEndElement();

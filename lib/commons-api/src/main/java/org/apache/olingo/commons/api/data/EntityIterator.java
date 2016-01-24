@@ -18,11 +18,26 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.Iterator;
+
 /**
  * Data representation for a collection of single entities.
  */
-public abstract class EntityStreamCollection extends EntityCollection {
+public abstract class EntityIterator extends EntityCollection implements Iterator<Entity> {
 
   public abstract boolean hasNext();
-  public abstract Entity nextEntity();
+  public abstract Entity next();
+
+  @Override
+  public void remove() {
+    //"Remove is not supported for iteration over Entities."
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public Iterator<Entity> iterator() {
+    return this;
+  }
 }

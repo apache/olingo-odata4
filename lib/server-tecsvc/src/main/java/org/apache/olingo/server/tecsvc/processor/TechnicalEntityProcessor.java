@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.EntityStreamCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -556,8 +556,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
       final CountOption countOption, final String id) throws ODataLibraryException {
 
-    EntityStreamCollection streamCollection = new EntityStreamCollection() {
-      Iterator<Entity> entityIterator = entityCollection.getEntities().iterator();
+    EntityIterator streamCollection = new EntityIterator() {
+      Iterator<Entity> entityIterator = entityCollection.iterator();
 
       @Override
       public boolean hasNext() {
@@ -565,7 +565,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       }
 
       @Override
-      public Entity nextEntity() {
+      public Entity next() {
         Entity next = entityIterator.next();
         replacePrimitiveProperty(next, "PropertyString", generateData(28192));
 //        next.getProperties().remove(1);
@@ -576,10 +576,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         return next;
       }
 
-      @Override
-      public List<Entity> getEntities() {
-        return entityCollection.getEntities();
-      }
+//      @Override
+//      public List<Entity> getEntities() {
+//        return entityCollection.getEntities();
+//      }
 
       private void replacePrimitiveProperty(Entity entity, String name, Object data) {
         List<Property> properties = entity.getProperties();
@@ -625,7 +625,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
       final CountOption countOption, final String id) throws ODataLibraryException {
 
-    EntityStreamCollection streamCollection = new EntityStreamCollection() {
+    EntityIterator streamCollection = new EntityIterator() {
       Iterator<Entity> test = entityCollection.getEntities().iterator();
       @Override
       public boolean hasNext() {
@@ -633,7 +633,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       }
 
       @Override
-      public Entity nextEntity() {
+      public Entity next() {
         try {
           TimeUnit.MILLISECONDS.sleep(1000);
         } catch (InterruptedException e) { }

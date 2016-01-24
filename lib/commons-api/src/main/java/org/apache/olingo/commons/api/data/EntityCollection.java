@@ -20,12 +20,13 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Data representation for a collection of single entities.
  */
-public class EntityCollection extends AbstractODataObject {
+public class EntityCollection extends AbstractODataObject implements Iterable<Entity> {
 
   private Integer count;
 
@@ -96,5 +97,10 @@ public class EntityCollection extends AbstractODataObject {
    */
   public void setDeltaLink(final URI deltaLink) {
     this.deltaLink = deltaLink;
+  }
+
+  @Override
+  public Iterator<Entity> iterator() {
+    return this.entities.iterator();
   }
 }

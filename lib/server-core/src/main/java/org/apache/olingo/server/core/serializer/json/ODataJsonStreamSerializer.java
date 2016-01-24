@@ -21,60 +21,24 @@ package org.apache.olingo.server.core.serializer.json;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
-import org.apache.olingo.commons.api.data.EntityStreamCollection;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
-import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
-import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
-import org.apache.olingo.server.api.uri.UriHelper;
-import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.serializer.ChannelSerializerResult;
-import org.apache.olingo.server.core.serializer.SerializerResultImpl;
-import org.apache.olingo.server.core.serializer.StreamSerializerResult;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
-import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
-import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
-import org.apache.olingo.server.core.uri.UriHelperImpl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ODataJsonStreamSerializer extends ODataJsonSerializer {
 
@@ -90,9 +54,9 @@ public class ODataJsonStreamSerializer extends ODataJsonSerializer {
       final EdmEntityType entityType, final EntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
 
-    EntityStreamCollection coll;
-    if(entitySet instanceof EntityStreamCollection) {
-      coll = (EntityStreamCollection) entitySet;
+    EntityIterator coll;
+    if(entitySet instanceof EntityIterator) {
+      coll = (EntityIterator) entitySet;
     } else {
       return serializer.entityCollection(metadata, entityType, entitySet, options);
     }

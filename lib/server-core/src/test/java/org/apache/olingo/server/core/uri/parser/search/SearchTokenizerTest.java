@@ -18,6 +18,13 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.AND;
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.CLOSE;
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.NOT;
@@ -25,14 +32,6 @@ import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.T
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.OR;
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.PHRASE;
 import static org.apache.olingo.server.core.uri.parser.search.SearchQueryToken.Token.WORD;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class SearchTokenizerTest {
 

@@ -18,12 +18,11 @@
  */
 package org.apache.olingo.server.core.serializer;
 
+import org.apache.olingo.server.api.serializer.SerializerResult;
+
 import java.io.InputStream;
-import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-
-import org.apache.olingo.server.api.serializer.SerializerResult;
 
 public class SerializerResultImpl implements SerializerResult {
   private InputStream content;

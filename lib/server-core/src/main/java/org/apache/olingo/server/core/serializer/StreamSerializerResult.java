@@ -21,7 +21,7 @@ package org.apache.olingo.server.core.serializer;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityStreamCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
@@ -34,9 +34,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.Channel;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
 public class StreamSerializerResult implements SerializerResult {
@@ -50,14 +48,14 @@ public class StreamSerializerResult implements SerializerResult {
     private int entityCount = 0;
     private InputStream inputStream = null;
     private ODataJsonStreamSerializer jsonSerializer;
-    private EntityStreamCollection coll;
+    private EntityIterator coll;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntitySerializerOptions options;
 
-    public StreamInputStream(EntityStreamCollection coll, EdmEntityType entityType, String head,
-        ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata,
-        EntitySerializerOptions options, String tail) {
+    public StreamInputStream(EntityIterator coll, EdmEntityType entityType, String head,
+                             ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata,
+                             EntitySerializerOptions options, String tail) {
       this.coll = coll;
       this.entityType = entityType;
       this.head = head;
@@ -74,7 +72,7 @@ public class StreamSerializerResult implements SerializerResult {
       }
       if (inputStream == null && coll.hasNext()) {
         try {
-          inputStream = serEntity(coll.nextEntity());
+          inputStream = serEntity(coll.next());
           entityCount++;
           if (entityCount > 1) {
             return (int) ',';
@@ -139,22 +137,24 @@ public class StreamSerializerResult implements SerializerResult {
     this.content = content;
   }
 
-  public static SerializerResultBuilder with(EntityStreamCollection coll, EdmEntityType entityType,
-      ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata, EntitySerializerOptions options) {
+  public static SerializerResultBuilder with(EntityIterator coll, EdmEntityType entityType,
+                                             ODataJsonStreamSerializer jsonSerializer,
+                                             ServiceMetadata metadata, EntitySerializerOptions options) {
     return new SerializerResultBuilder(coll, entityType, jsonSerializer, metadata, options);
   }
 
   public static class SerializerResultBuilder {
     private ODataJsonStreamSerializer jsonSerializer;
-    private EntityStreamCollection coll;
+    private EntityIterator coll;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntitySerializerOptions options;
     private String head;
     private String tail;
 
-    public SerializerResultBuilder(EntityStreamCollection coll, EdmEntityType entityType,
-        ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata, EntitySerializerOptions options) {
+    public SerializerResultBuilder(EntityIterator coll, EdmEntityType entityType,
+                                   ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata,
+                                   EntitySerializerOptions options) {
       this.coll = coll;
       this.entityType = entityType;
       this.jsonSerializer = jsonSerializer;

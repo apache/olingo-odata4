@@ -217,7 +217,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final boolean onlyReference, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();
-    for (final Entity entity : entitySet.getEntities()) {
+    for (final Entity entity : entitySet) {
       if (onlyReference) {
         json.writeStartObject();
         json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
