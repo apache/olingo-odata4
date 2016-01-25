@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,7 +40,7 @@ public class DebugTabResponse implements DebugTab {
   private final Map<String, List<String>> headers;
 
   public DebugTabResponse(final ODataResponse applicationResponse) {
-    this.response = applicationResponse;
+    response = applicationResponse;
     if (response != null) {
       status = HttpStatusCode.fromStatusCode(response.getStatusCode());
       headers = response.getAllHeaders();
@@ -82,7 +82,7 @@ public class DebugTabResponse implements DebugTab {
     gen.writeEndObject();
   }
 
-  private Map<String, String> map(Map<String, List<String>> headers) {
+  private Map<String, String> map(final Map<String, List<String>> headers) {
     Map<String, String> result = new HashMap<String, String>();
     for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
       if (entry.getValue().size() == 1) {
@@ -97,9 +97,9 @@ public class DebugTabResponse implements DebugTab {
   @Override
   public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Status Code</h2>\n")
-        .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
-        .append(status.getInfo()).append("</p>\n")
-        .append("<h2>Response Headers</h2>\n");
+    .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
+    .append(status.getInfo()).append("</p>\n")
+    .append("<h2>Response Headers</h2>\n");
     DebugResponseHelperImpl.appendHtmlTable(writer, map(headers));
     writer.append("<h2>Response Body</h2>\n");
     if (response != null && response.getContent() != null) {

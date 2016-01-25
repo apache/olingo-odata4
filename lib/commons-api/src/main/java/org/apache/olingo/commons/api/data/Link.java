@@ -193,4 +193,41 @@ public class Link extends Annotatable {
   public void setBindingLinks(final List<String> bindingLinks) {
     this.bindingLinks = bindingLinks;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final Link other = (Link) o;
+    return getAnnotations().equals(other.getAnnotations())
+        && (title == null ? other.title == null : title.equals(other.title))
+        && (rel == null ? other.rel == null : rel.equals(other.rel))
+        && (href == null ? other.href == null : href.equals(other.href))
+        && (type == null ? other.type == null : type.equals(other.type))
+        && (mediaETag == null ? other.mediaETag == null : mediaETag.equals(other.mediaETag))
+        && (entity == null ? other.entity == null : entity.equals(other.entity))
+        && (entitySet == null ? other.entitySet == null : entitySet.equals(other.entitySet))
+        && (bindingLink == null ? other.bindingLink == null : bindingLink.equals(other.bindingLink))
+        && bindingLinks.equals(other.bindingLinks);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getAnnotations().hashCode();
+    result = 31 * result + (title == null ? 0 : title.hashCode());
+    result = 31 * result + (rel == null ? 0 : rel.hashCode());
+    result = 31 * result + (href == null ? 0 : href.hashCode());
+    result = 31 * result + (type == null ? 0 : type.hashCode());
+    result = 31 * result + (mediaETag == null ? 0 : mediaETag.hashCode());
+    result = 31 * result + (entity == null ? 0 : entity.hashCode());
+    result = 31 * result + (entitySet == null ? 0 : entitySet.hashCode());
+    result = 31 * result + (bindingLink == null ? 0 : bindingLink.hashCode());
+    result = 31 * result + bindingLinks.hashCode();
+    return result;
+  }
 }

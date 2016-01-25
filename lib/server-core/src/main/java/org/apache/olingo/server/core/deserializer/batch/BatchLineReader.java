@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpHeader;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 
 public class BatchLineReader {
   private static final byte CR = '\r';
@@ -66,7 +66,7 @@ public class BatchLineReader {
   public List<String> toList() throws IOException {
     final List<String> result = new ArrayList<String>();
     String currentLine = readLine();
-    if(currentLine != null) {
+    if (currentLine != null) {
       currentBoundary = currentLine.trim();
       result.add(currentLine);
 
@@ -80,7 +80,7 @@ public class BatchLineReader {
   public List<Line> toLineList() throws IOException {
     final List<Line> result = new ArrayList<Line>();
     String currentLine = readLine();
-    if(currentLine != null) {
+    if (currentLine != null) {
       currentBoundary = currentLine.trim();
       int counter = 1;
       result.add(new Line(currentLine, counter++));
@@ -93,9 +93,9 @@ public class BatchLineReader {
     return result;
   }
 
-  private void updateCurrentCharset(String currentLine) {
-    if(currentLine != null) {
-      if(currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
+  private void updateCurrentCharset(final String currentLine) {
+    if (currentLine != null) {
+      if (currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
         String clValue = currentLine.substring(13, currentLine.length() - 2).trim();
         ContentType ct = ContentType.parse(clValue);
         if (ct != null) {
@@ -111,18 +111,18 @@ public class BatchLineReader {
             currentBoundary = DOUBLE_DASH + boundary;
           }
         }
-      } else if(CRLF.equals(currentLine)) {
+      } else if (CRLF.equals(currentLine)) {
         readState.foundLinebreak();
-      } else if(isBoundary(currentLine)) {
+      } else if (isBoundary(currentLine)) {
         readState.foundBoundary();
       }
     }
   }
 
-  private boolean isBoundary(String currentLine) {
-    if((currentBoundary + CRLF).equals(currentLine)) {
+  private boolean isBoundary(final String currentLine) {
+    if ((currentBoundary + CRLF).equals(currentLine)) {
       return true;
-    } else if((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
+    } else if ((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
       return true;
     }
     return false;
@@ -145,10 +145,10 @@ public class BatchLineReader {
       }
 
       if (!foundLineEnd) {
-        byte currentChar = this.buffer[offset++];
-        if(!innerBuffer.hasRemaining()) {
+        byte currentChar = buffer[offset++];
+        if (!innerBuffer.hasRemaining()) {
           innerBuffer.flip();
-          ByteBuffer tmp = ByteBuffer.allocate(innerBuffer.limit() *2);
+          ByteBuffer tmp = ByteBuffer.allocate(innerBuffer.limit() * 2);
           tmp.put(innerBuffer);
           innerBuffer = tmp;
         }
@@ -166,7 +166,7 @@ public class BatchLineReader {
           }
 
           // Check if there is at least one character
-          if (limit != EOF && this.buffer[offset] == LF) {
+          if (limit != EOF && buffer[offset] == LF) {
             innerBuffer.put(LF);
             offset++;
           }
@@ -174,11 +174,11 @@ public class BatchLineReader {
       }
     }
 
-    if(innerBuffer.position() == 0) {
+    if (innerBuffer.position() == 0) {
       return null;
     } else {
       String currentLine;
-      if(readState.isReadBody()) {
+      if (readState.isReadBody()) {
         currentLine = new String(innerBuffer.array(), 0, innerBuffer.position(), getCurrentCharset());
       } else {
         currentLine = new String(innerBuffer.array(), 0, innerBuffer.position(), CS_ISO_8859_1);
@@ -208,9 +208,11 @@ public class BatchLineReader {
     public void foundLinebreak() {
       state++;
     }
+
     public void foundBoundary() {
       state = 0;
     }
+
     public boolean isReadBody() {
       return state >= 2;
     }

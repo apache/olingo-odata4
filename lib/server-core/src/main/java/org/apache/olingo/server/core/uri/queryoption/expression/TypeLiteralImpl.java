@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -24,18 +24,17 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
 
-public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral {
+public class TypeLiteralImpl implements TypeLiteral {
 
-  private EdmType type;
+  private final EdmType type;
+
+  public TypeLiteralImpl(final EdmType type) {
+    this.type = type;
+  }
 
   @Override
   public EdmType getType() {
     return type;
-  }
-
-  public TypeLiteralImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
   }
 
   @Override
@@ -43,4 +42,8 @@ public class TypeLiteralImpl extends ExpressionImpl implements TypeLiteral {
     return visitor.visitTypeLiteral(type);
   }
 
+  @Override
+  public String toString() {
+    return type == null ? null : type.getFullQualifiedName().getFullQualifiedNameAsString();
+  }
 }

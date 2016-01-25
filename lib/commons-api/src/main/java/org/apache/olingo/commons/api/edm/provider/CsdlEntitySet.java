@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlEntitySet extends CsdlBindingTarget {
 
-  private static final long serialVersionUID = 5291570018480936643L;
-
   // Default for EntitySets is true
   private boolean includeInServiceDocument = true;
 
@@ -87,6 +85,12 @@ public class CsdlEntitySet extends CsdlBindingTarget {
   @Override
   public CsdlEntitySet setTitle(String title) {
     super.setTitle(title);
+    return this;
+  }
+  
+  @Override
+  public CsdlEntitySet setMapping(CsdlMapping mapping) {
+    this.mapping = mapping;
     return this;
   }
 }

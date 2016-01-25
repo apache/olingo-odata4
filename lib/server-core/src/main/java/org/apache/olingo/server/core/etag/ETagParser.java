@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,21 +31,21 @@ import java.util.regex.Pattern;
  * <p>See <a href="https://www.ietf.org/rfc/rfc7232.txt">RFC 7232</a> for details;
  * there the following grammar is defined:</p>
  * <pre>
- *     If-Match      = "*" / 1#entity-tag
- *     If-None-Match = "*" / 1#entity-tag
- *     entity-tag    = [ weak ] opaque-tag
- *     weak          = %x57.2F ; "W/", case-sensitive
- *     opaque-tag    = DQUOTE *etagc DQUOTE
- *     etagc         = %x21 / %x23-7E / %x80-FF
+ * If-Match = "*" / 1#entity-tag
+ * If-None-Match = "*" / 1#entity-tag
+ * entity-tag = [ weak ] opaque-tag
+ * weak = %x57.2F ; "W/", case-sensitive
+ * opaque-tag = DQUOTE *etagc DQUOTE
+ * etagc = %x21 / %x23-7E / %x80-FF
  * </pre>
  * <p>Values with illegal syntax do not contribute to the result but no exception is thrown.</p>
  */
 public class ETagParser {
 
   private static final Pattern ETAG = Pattern.compile("\\s*(,\\s*)+|((?:W/)?\"[!#-~\\x80-\\xFF]*\")");
-  
-  private ETagParser (){
-    //Private constructor for utility classes
+
+  private ETagParser() {
+    // Private constructor for utility classes
   }
 
   protected static Collection<String> parse(final Collection<String> values) {

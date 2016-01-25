@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.edm;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 /**
  * Entry point for access information about EDM metadata.
  */
-public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements XMLMetadata {
+public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serializable, XMLMetadata {
 
   private static final long serialVersionUID = 6025723060298454901L;
   protected final Edmx edmx;

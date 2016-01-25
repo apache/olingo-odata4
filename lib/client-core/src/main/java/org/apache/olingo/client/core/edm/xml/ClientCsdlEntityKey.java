@@ -19,19 +19,21 @@
 package org.apache.olingo.client.core.edm.xml;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmItem;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientCsdlEntityKey.EntityKeyDeserializer.class)
-class ClientCsdlEntityKey extends CsdlAbstractEdmItem {
+class ClientCsdlEntityKey extends CsdlAbstractEdmItem implements Serializable {
 
   private static final long serialVersionUID = 520227585458843347L;
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
@@ -25,18 +26,21 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor
 import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
-public class UnaryImpl extends ExpressionImpl implements Unary {
+public class UnaryImpl implements Unary {
 
-  private UnaryOperatorKind operator;
-  private ExpressionImpl expression;
+  private final UnaryOperatorKind operator;
+  private final Expression expression;
+  private final EdmType type;
+
+  public UnaryImpl(final UnaryOperatorKind operator, final Expression expression, final EdmType type) {
+    this.operator = operator;
+    this.expression = expression;
+    this.type = type;
+  }
 
   @Override
   public UnaryOperatorKind getOperator() {
     return operator;
-  }
-
-  public void setOperator(final UnaryOperatorKind operator) {
-    this.operator = operator;
   }
 
   @Override
@@ -44,8 +48,8 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
     return expression;
   }
 
-  public void setOperand(final ExpressionImpl expression) {
-    this.expression = expression;
+  public EdmType getType() {
+    return type;
   }
 
   @Override
@@ -54,4 +58,8 @@ public class UnaryImpl extends ExpressionImpl implements Unary {
     return visitor.visitUnaryOperator(operator, operand);
   }
 
+  @Override
+  public String toString() {
+    return "{" + operator.name() + " " + expression + '}';
+  }
 }

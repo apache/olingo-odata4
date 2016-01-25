@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -29,6 +29,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.core.Encoder;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -39,9 +40,9 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
+import org.apache.olingo.server.core.ODataImpl;
 import org.apache.olingo.server.core.serializer.utils.ContextURLHelper;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
 
 public class UriHelperImpl implements UriHelper {
 
@@ -97,7 +98,7 @@ public class UriHelperImpl implements UriHelper {
   }
 
   @Override
-  public UriResourceEntitySet parseEntityId(Edm edm, String entityId, String rawServiceRoot) 
+  public UriResourceEntitySet parseEntityId(final Edm edm, final String entityId, final String rawServiceRoot)
       throws DeserializerException {
 
     String oDataPath = entityId;
@@ -107,17 +108,17 @@ public class UriHelperImpl implements UriHelper {
     oDataPath = oDataPath.startsWith("/") ? oDataPath : "/" + oDataPath;
 
     try {
-      final List<UriResource> uriResourceParts = new Parser().parseUri(oDataPath, null, null, edm)
-          .getUriResourceParts();
+      final List<UriResource> uriResourceParts =
+          new Parser(edm, new ODataImpl()).parseUri(oDataPath, null, null).getUriResourceParts();
       if (uriResourceParts.size() == 1 && uriResourceParts.get(0).getKind() == UriResourceKind.entitySet) {
         final UriResourceEntitySet entityUriResource = (UriResourceEntitySet) uriResourceParts.get(0);
-        
+
         return entityUriResource;
       }
 
       throw new DeserializerException("Invalid entity binding link", MessageKeys.INVALID_ENTITY_BINDING_LINK,
           entityId);
-    } catch (UriParserException e) {
+    } catch (final ODataLibraryException e) {
       throw new DeserializerException("Invalid entity binding link", e, MessageKeys.INVALID_ENTITY_BINDING_LINK,
           entityId);
     }

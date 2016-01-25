@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -67,7 +67,7 @@ public class FixedFormatSerializerImpl implements FixedFormatSerializer {
   }
 
   @Override
-  public InputStream asyncResponse(ODataResponse odataResponse) throws SerializerException {
+  public InputStream asyncResponse(final ODataResponse odataResponse) throws SerializerException {
     AsyncResponseSerializer serializer = new AsyncResponseSerializer();
     return serializer.serialize(odataResponse);
   }

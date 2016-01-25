@@ -71,7 +71,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void multipleOrderBy() {
-    final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16");
+    final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16");
     assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
@@ -87,7 +87,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void multipleOrderByDescending() {
     final ODataRetrieveResponse<ClientEntitySet> response =
-        sendRequest(ES_ALL_PRIM, "PropertyByte, PropertyInt16 desc");
+        sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16 desc");
     assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);

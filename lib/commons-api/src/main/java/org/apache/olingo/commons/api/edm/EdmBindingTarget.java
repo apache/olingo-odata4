@@ -24,7 +24,7 @@ import java.util.List;
  * Entity Sets or Singletons can be bound to each other using a navigation property binding so an
  * {@link EdmBindingTarget} can either be an {@link EdmEntitySet} or an {@link EdmSingleton}.
  */
-public interface EdmBindingTarget extends EdmNamed, EdmAnnotatable {
+public interface EdmBindingTarget extends EdmNamed, EdmAnnotatable, EdmMappable {
 
   /**
    * Returns a human readable title or null if not set.

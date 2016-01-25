@@ -19,6 +19,7 @@
 package org.apache.olingo.client.core.edm.xml.annotation;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.olingo.client.core.edm.xml.AbstractClientCsdlEdmDeserializer;
 import org.apache.olingo.client.core.edm.xml.ClientCsdlAnnotation;
@@ -30,7 +31,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ClientCsdlLabeledElement.LabeledElementDeserializer.class)
-class ClientCsdlLabeledElement extends CsdlLabeledElement {
+class ClientCsdlLabeledElement extends CsdlLabeledElement implements Serializable {
 
   private static final long serialVersionUID = 4909387630253341824L;
 

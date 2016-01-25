@@ -20,10 +20,6 @@ package org.apache.olingo.commons.api.data;
 
 import java.util.List;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 
 /**
@@ -177,17 +173,32 @@ public abstract class Valuable extends Annotatable {
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final Valuable other = (Valuable) o;
+    return getAnnotations().equals(other.getAnnotations())
+        && (valueType == null ? other.valueType == null : valueType.equals(other.valueType))
+        && (value == null ? other.value == null : value.equals(other.value))
+        && (type == null ? other.type == null : type.equals(other.type));
   }
 
   @Override
   public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+    int result = getAnnotations().hashCode();
+    result = 31 * result + (valueType == null ? 0 : valueType.hashCode());
+    result = 31 * result + (value == null ? 0 : value.hashCode());
+    result = 31 * result + (type == null ? 0 : type.hashCode());
+    return result;
   }
 
   @Override
   public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
+    return value == null ? "null" : value.toString();
   }
 }

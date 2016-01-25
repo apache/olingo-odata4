@@ -96,7 +96,7 @@ public class EdmActionImportImplTest {
     String target = "nonExisting";
     CsdlActionImport providerActionImport = new CsdlActionImport().setName("actionImportName").setEntitySet(target);
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
-    when(edm.getEntityContainer(null)).thenReturn(container);
+    when(edm.getEntityContainer()).thenReturn(container);
     EdmActionImport actionImport = new EdmActionImportImpl(edm, container, providerActionImport);
     actionImport.getReturnedEntitySet();
   }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -25,20 +26,24 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class BinaryImpl extends ExpressionImpl implements Binary {
+public class BinaryImpl implements Binary {
 
-  private BinaryOperatorKind operator;
-  private ExpressionImpl left;
-  private ExpressionImpl right;
+  private final Expression left;
+  private final BinaryOperatorKind operator;
+  private final Expression right;
+  private final EdmType type;
+
+  public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final Expression right,
+      final EdmType type) {
+    this.left = left;
+    this.operator = operator;
+    this.right = right;
+    this.type = type;
+  }
 
   @Override
   public BinaryOperatorKind getOperator() {
     return operator;
-  }
-
-  public Binary setOperator(final BinaryOperatorKind operator) {
-    this.operator = operator;
-    return this;
   }
 
   @Override
@@ -46,18 +51,13 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
     return left;
   }
 
-  public void setLeftOperand(final ExpressionImpl operand) {
-    left = operand;
-  }
-
   @Override
   public Expression getRightOperand() {
     return right;
   }
 
-  public void setRightOperand(final ExpressionImpl operand) {
-    right = operand;
-
+  public EdmType getType() {
+    return type;
   }
 
   @Override
@@ -67,4 +67,8 @@ public class BinaryImpl extends ExpressionImpl implements Binary {
     return visitor.visitBinaryOperator(operator, left, right);
   }
 
+  @Override
+  public String toString() {
+    return "{" + left + " " + operator.name() + " " + right + '}';
+  }
 }

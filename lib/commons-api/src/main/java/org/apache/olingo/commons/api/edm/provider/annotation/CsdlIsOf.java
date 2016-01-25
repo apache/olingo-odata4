@@ -31,8 +31,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  */
 public class CsdlIsOf extends CsdlDynamicExpression implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = -893355856129761174L;
-
   private String type;
   private Integer maxLength;
   private Integer precision;

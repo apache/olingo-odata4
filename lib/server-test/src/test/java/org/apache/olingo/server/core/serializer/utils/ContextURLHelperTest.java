@@ -28,7 +28,6 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -45,8 +44,7 @@ public class ContextURLHelperTest {
 
   private static final Edm edm = OData.newInstance().createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
-  private static final EdmEntityContainer entityContainer = edm.getEntityContainer(
-      new FullQualifiedName("olingo.odata.test1", "Container"));
+  private static final EdmEntityContainer entityContainer = edm.getEntityContainer();
 
   @Test
   public void buildSelect() throws Exception {

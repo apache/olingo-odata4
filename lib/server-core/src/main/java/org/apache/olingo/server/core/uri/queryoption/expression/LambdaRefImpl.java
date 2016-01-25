@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,18 +23,17 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.LambdaRef;
 
-public class LambdaRefImpl extends ExpressionImpl implements LambdaRef {
+public class LambdaRefImpl implements LambdaRef {
 
-  private String variableText;
+  private final String variableText;
+
+  public LambdaRefImpl(final String text) {
+    variableText = text;
+  }
 
   @Override
   public String getVariableName() {
     return variableText;
-  }
-
-  public LambdaRefImpl setVariableText(final String text) {
-    variableText = text;
-    return this;
   }
 
   @Override
@@ -42,4 +41,8 @@ public class LambdaRefImpl extends ExpressionImpl implements LambdaRef {
     return visitor.visitLambdaReference(variableText);
   }
 
+  @Override
+  public String toString() {
+    return variableText;
+  }
 }

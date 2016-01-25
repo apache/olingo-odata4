@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -72,7 +72,7 @@ public class BatchBodyPart implements BatchPart {
     return isChangeSet ? consumeChangeSet(remainingMessage) : consumeQueryOperation(remainingMessage);
   }
 
-  private List<BatchQueryOperation> consumeChangeSet(List<Line> remainingMessage)
+  private List<BatchQueryOperation> consumeChangeSet(final List<Line> remainingMessage)
       throws BatchDeserializerException {
     final List<List<Line>> changeRequests = splitChangeSet(remainingMessage);
     final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
@@ -84,7 +84,7 @@ public class BatchBodyPart implements BatchPart {
     return requestList;
   }
 
-  private List<List<Line>> splitChangeSet(List<Line> remainingMessage) throws BatchDeserializerException {
+  private List<List<Line>> splitChangeSet(final List<Line> remainingMessage) throws BatchDeserializerException {
 
     final HeaderField contentTypeField = headers.getHeaderField(HttpHeader.CONTENT_TYPE);
     final String changeSetBoundary = BatchParserCommon.getBoundary(contentTypeField.getValue(),

@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 
 abstract class AbstractAtomDealer {
@@ -89,7 +88,7 @@ abstract class AbstractAtomDealer {
   }
 
   protected void namespaces(final XMLStreamWriter writer) throws XMLStreamException {
-    writer.writeNamespace(StringUtils.EMPTY, Constants.NS_ATOM);
+    writer.writeNamespace("", Constants.NS_ATOM);
     writer.writeNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
     writer.writeNamespace(Constants.PREFIX_METADATA, Constants.NS_METADATA);
     writer.writeNamespace(Constants.PREFIX_DATASERVICES, Constants.NS_DATASERVICES);

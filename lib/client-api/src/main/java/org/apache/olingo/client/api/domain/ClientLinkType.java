@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.api.domain;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.format.ContentType;
 
@@ -78,9 +77,8 @@ public enum ClientLinkType {
    * @return <code>ODataLinkType</code> object.
    */
   public static ClientLinkType fromString(final String rel, final String type) {
-    if (StringUtils.isNotBlank(rel) && rel.startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
-
-      return MEDIA_EDIT.setType(StringUtils.isBlank(type) ? "*/*" : type);
+    if (rel != null && rel.startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
+      return MEDIA_EDIT.setType(type == null || type.isEmpty() ? "*/*" : type);
     }
 
     if (ClientLinkType.ENTITY_NAVIGATION.type.equals(type)) {

@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class LineString extends ComposedGeospatial<Point> {
 
-  private static final long serialVersionUID = 3207958185407535907L;
-  
   /**
    * Creates a new LineString
    * @param dimension     Dimension of the LineString
@@ -42,8 +40,8 @@ public class LineString extends ComposedGeospatial<Point> {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyLineString
-            : EdmPrimitiveTypeKind.GeometryLineString;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyLineString :
+        EdmPrimitiveTypeKind.GeometryLineString;
   }
 }

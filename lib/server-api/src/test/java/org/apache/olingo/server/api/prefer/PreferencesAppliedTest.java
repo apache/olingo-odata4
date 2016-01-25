@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,27 +36,27 @@ public class PreferencesAppliedTest {
         + " odata.continue-on-error, odata.include-annotations=\"*\", odata.maxpagesize=42,"
         + " odata.track-changes, return=representation, respond-async, wait=12345",
         PreferencesApplied.with().allowEntityReferences().callback().continueOnError()
-            .preference("odata.include-annotations", "*").maxPageSize(42).trackChanges()
-            .returnRepresentation(Return.REPRESENTATION).respondAsync().waitPreference(12345)
-            .build().toValueString());
+        .preference("odata.include-annotations", "*").maxPageSize(42).trackChanges()
+        .returnRepresentation(Return.REPRESENTATION).respondAsync().waitPreference(12345)
+        .build().toValueString());
   }
 
   @Test
   public void caseSensitivity() {
     assertEquals("odata.include-annotations=\"*\", odata.maxpagesize=255",
         PreferencesApplied.with()
-            .preference("OData.Include-Annotations", "*").maxPageSize(0xFF)
-            .build().toValueString());
+        .preference("OData.Include-Annotations", "*").maxPageSize(0xFF)
+        .build().toValueString());
   }
 
   @Test
   public void multipleValues() {
     assertEquals("return=minimal, wait=1",
         PreferencesApplied.with()
-            .returnRepresentation(Return.MINIMAL).returnRepresentation(Return.REPRESENTATION)
-            .preference(null, null).preference(null, "nullValue")
-            .waitPreference(1).waitPreference(2).waitPreference(3)
-            .build().toValueString());
+        .returnRepresentation(Return.MINIMAL).returnRepresentation(Return.REPRESENTATION)
+        .preference(null, null).preference(null, "nullValue")
+        .waitPreference(1).waitPreference(2).waitPreference(3)
+        .build().toValueString());
   }
 
   @Test

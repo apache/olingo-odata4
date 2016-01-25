@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,17 +23,17 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 
-public class AliasImpl extends ExpressionImpl implements Alias {
+public class AliasImpl implements Alias {
 
-  private String parameterName;
+  private final String parameterName;
+
+  public AliasImpl(final String parameterName) {
+    this.parameterName = parameterName;
+  }
 
   @Override
   public String getParameterName() {
     return parameterName;
-  }
-
-  public void setParameter(final String ParameterName) {
-    parameterName = ParameterName;
   }
 
   @Override
@@ -41,4 +41,8 @@ public class AliasImpl extends ExpressionImpl implements Alias {
     return visitor.visitAlias(parameterName);
   }
 
+  @Override
+  public String toString() {
+    return parameterName;
+  }
 }

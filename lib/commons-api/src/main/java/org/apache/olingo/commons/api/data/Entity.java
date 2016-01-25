@@ -232,4 +232,44 @@ public class Entity extends Linked {
   public boolean isMediaEntity() {
     return mediaContentSource != null;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o)
+        && (eTag == null ? ((Entity) o).eTag == null : eTag.equals(((Entity) o).eTag))
+        && (type == null ? ((Entity) o).type == null : type.equals(((Entity) o).type))
+        && (readLink == null ? ((Entity) o).readLink == null : readLink.equals(((Entity) o).readLink))
+        && (editLink == null ? ((Entity) o).editLink == null : editLink.equals(((Entity) o).editLink))
+        && mediaEditLinks.equals(((Entity) o).mediaEditLinks)
+        && operations.equals(((Entity) o).operations)
+        && properties.equals(((Entity) o).properties)
+        && (mediaContentSource == null ?
+            ((Entity) o).mediaContentSource == null :
+            mediaContentSource.equals(((Entity) o).mediaContentSource))
+        && (mediaContentType == null ?
+            ((Entity) o).mediaContentType == null :
+            mediaContentType.equals(((Entity) o).mediaContentType))
+        && (mediaETag == null ? ((Entity) o).mediaETag == null : mediaETag.equals(((Entity) o).mediaETag));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (eTag == null ? 0 : eTag.hashCode());
+    result = 31 * result + (type == null ? 0 : type.hashCode());
+    result = 31 * result + (readLink == null ? 0 : readLink.hashCode());
+    result = 31 * result + (editLink == null ? 0 : editLink.hashCode());
+    result = 31 * result + mediaEditLinks.hashCode();
+    result = 31 * result + operations.hashCode();
+    result = 31 * result + properties.hashCode();
+    result = 31 * result + (mediaContentSource == null ? 0 : mediaContentSource.hashCode());
+    result = 31 * result + (mediaContentType == null ? 0 : mediaContentType.hashCode());
+    result = 31 * result + (mediaETag == null ? 0 : mediaETag.hashCode());
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return properties.toString();
+  }
 }

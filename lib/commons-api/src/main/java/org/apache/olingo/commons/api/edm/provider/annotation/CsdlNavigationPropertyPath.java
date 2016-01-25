@@ -23,7 +23,6 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  * built-in abstract type Edm.NavigationPropertyPath
  */
 public class CsdlNavigationPropertyPath extends CsdlDynamicExpression {
-  private static final long serialVersionUID = -8047231485537503181L;
   
   private String value;
 

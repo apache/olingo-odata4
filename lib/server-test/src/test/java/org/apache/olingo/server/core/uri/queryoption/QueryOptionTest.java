@@ -33,18 +33,18 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.parser.search.SearchTermImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.AliasImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
 import org.junit.Test;
 
-//TOOD add getKind check to all
 public class QueryOptionTest {
 
   @Test
   public void testAliasQueryOption() {
     AliasQueryOptionImpl option = new AliasQueryOptionImpl();
 
-    Expression expression = new LiteralImpl();
+    Expression expression = new LiteralImpl(null, null);
 
     option.setAliasValue(expression);
     assertEquals(expression, option.getValue());
@@ -132,7 +132,7 @@ public class QueryOptionTest {
     FilterOptionImpl option = new FilterOptionImpl();
     assertEquals(SystemQueryOptionKind.FILTER, option.getKind());
 
-    AliasImpl expression = new AliasImpl();
+    AliasImpl expression = new AliasImpl(null);
 
     option.setExpression(expression);
     assertEquals(expression, option.getExpression());
@@ -184,7 +184,7 @@ public class QueryOptionTest {
   public void testOrderByItemImpl() {
     OrderByItemImpl option = new OrderByItemImpl();
 
-    AliasImpl expression = new AliasImpl();
+    AliasImpl expression = new AliasImpl(null);
     option.setExpression(expression);
     assertEquals(expression, option.getExpression());
 
@@ -196,6 +196,7 @@ public class QueryOptionTest {
   @Test
   public void testOrderByOptionImpl() {
     OrderByOptionImpl option = new OrderByOptionImpl();
+    assertEquals(SystemQueryOptionKind.ORDERBY, option.getKind());
 
     OrderByItemImpl order0 = new OrderByItemImpl();
     OrderByItemImpl order1 = new OrderByItemImpl();
@@ -217,14 +218,17 @@ public class QueryOptionTest {
   }
 
   @Test
-  public void testSearchOptionImpl() {
+  public void searchOptionImpl() {
     SearchOptionImpl option = new SearchOptionImpl();
     assertEquals(SystemQueryOptionKind.SEARCH, option.getKind());
-    // $search is not supported yet
+
+    final SearchTermImpl searchExpression = new SearchTermImpl("A");
+    option.setSearchExpression(searchExpression);
+    assertEquals(searchExpression, option.getSearchExpression());
   }
 
   @Test
-  public void testSelectItemImpl() {
+  public void selectItemImpl() {
     SelectItemImpl option = new SelectItemImpl();
 
     // no typed collection else case ( e.g. if not path is added)
@@ -244,7 +248,7 @@ public class QueryOptionTest {
   }
 
   @Test
-  public void testSelectOptionImpl() {
+  public void selectOptionImpl() {
     SelectOptionImpl option = new SelectOptionImpl();
     assertEquals(SystemQueryOptionKind.SELECT, option.getKind());
 

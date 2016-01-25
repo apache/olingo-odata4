@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -76,7 +76,7 @@ public class ServiceDocumentXmlSerializerTest {
   @Test
   public void writeServiceDocument() throws Exception {
     CsdlEdmProvider provider = new MetadataDocumentXmlSerializerTest.LocalProvider();
-    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, 
+    ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider,
         Collections.<EdmxReference> emptyList(), null);
     InputStream metadataStream = serializer.serviceDocument(serviceMetadata, "http://host/svc").getContent();
     String metadata = IOUtils.toString(metadataStream);
@@ -87,15 +87,15 @@ public class ServiceDocumentXmlSerializerTest {
         + "metadata:context=\"http://host/svc/$metadata\">"
         + "<app:workspace>"
         + "<atom:title>org.olingo.container</atom:title>"
-        +   "<app:collection href=\"ESAllPrim\" metadata:name=\"ESAllPrim\">"
-        +     "<atom:title>ESAllPrim</atom:title>"
-        +   "</app:collection>"
-        +   "<metadata:function-import href=\"FINRTInt16\" metadata:name=\"FINRTInt16\">"
-        +     "<atom:title>FINRTInt16</atom:title>"
-        +   "</metadata:function-import>"
-        +   "<metadata:singleton href=\"SI\" metadata:name=\"SI\">"
-        +     "<atom:title>SI</atom:title>"
-        +   "</metadata:singleton>"
+        + "<app:collection href=\"ESAllPrim\" metadata:name=\"ESAllPrim\">"
+        + "<atom:title>ESAllPrim</atom:title>"
+        + "</app:collection>"
+        + "<metadata:function-import href=\"FINRTInt16\" metadata:name=\"FINRTInt16\">"
+        + "<atom:title>FINRTInt16</atom:title>"
+        + "</metadata:function-import>"
+        + "<metadata:singleton href=\"SI\" metadata:name=\"SI\">"
+        + "<atom:title>SI</atom:title>"
+        + "</metadata:singleton>"
         + "</app:workspace>"
         + "</app:service>",
         metadata);

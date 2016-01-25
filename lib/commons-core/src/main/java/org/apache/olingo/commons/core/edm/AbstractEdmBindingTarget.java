@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,6 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
+import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.CsdlBindingTarget;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
@@ -119,9 +120,14 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
 
     return bindingTarget;
   }
-  
+
   @Override
   public String getTitle() {
     return target.getTitle();
+  }
+
+  @Override
+  public EdmMapping getMapping() {
+    return target.getMapping();
   }
 }

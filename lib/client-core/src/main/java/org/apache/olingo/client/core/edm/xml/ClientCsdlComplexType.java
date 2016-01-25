@@ -21,15 +21,17 @@ package org.apache.olingo.client.core.edm.xml;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 @JsonDeserialize(using = ClientCsdlComplexType.ComplexTypeDeserializer.class)
-class ClientCsdlComplexType extends CsdlComplexType {
+class ClientCsdlComplexType extends CsdlComplexType implements Serializable {
 
   private static final long serialVersionUID = 4076944306925840115L;
 

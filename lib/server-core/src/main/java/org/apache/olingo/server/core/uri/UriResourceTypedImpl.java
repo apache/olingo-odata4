@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,15 +40,11 @@ public abstract class UriResourceTypedImpl extends UriResourceImpl implements Ur
     return this;
   }
 
+  @Override
   public String getSegmentValue(final boolean includeFilters) {
-    if (includeFilters) {
-      if (typeFilter != null) {
-        return getSegmentValue() + "/" + typeFilter.getFullQualifiedName().toString();
-      } else {
-        return getSegmentValue();
-      }
-    }
-    return getSegmentValue();
+    return includeFilters && typeFilter != null ?
+        getSegmentValue() + "/" + typeFilter.getFullQualifiedName().getFullQualifiedNameAsString() :
+        getSegmentValue();
   }
 
   @Override

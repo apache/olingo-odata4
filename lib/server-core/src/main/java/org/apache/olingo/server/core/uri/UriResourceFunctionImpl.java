@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,26 +33,23 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
  */
 public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements UriResourceFunction {
 
-  protected List<UriParameter> parameters;
-  protected EdmFunction function;
-  protected EdmFunctionImport functionImport;
-  private boolean isParameterListFilled = false;
+  private final EdmFunctionImport functionImport;
+  private final EdmFunction function;
+  private final List<UriParameter> parameters;
 
-  public UriResourceFunctionImpl() {
+  public UriResourceFunctionImpl(final EdmFunctionImport edmFunctionImport, final EdmFunction function,
+      final List<UriParameter> parameters) {
     super(UriResourceKind.function);
+    this.functionImport = edmFunctionImport;
+    this.function = function;
+    this.parameters = parameters;
   }
 
   @Override
   public List<UriParameter> getParameters() {
     return parameters == null ?
         Collections.<UriParameter> emptyList() :
-        Collections.unmodifiableList(parameters);
-  }
-
-  public UriResourceFunctionImpl setParameters(final List<UriParameter> parameters) {
-    isParameterListFilled = true;
-    this.parameters = parameters;
-    return this;
+          Collections.unmodifiableList(parameters);
   }
 
   @Override
@@ -60,21 +57,9 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
     return function;
   }
 
-  public UriResourceFunctionImpl setFunction(final EdmFunction function) {
-    this.function = function;
-    return this;
-  }
-
   @Override
   public EdmFunctionImport getFunctionImport() {
     return functionImport;
-  }
-
-  public UriResourceFunctionImpl setFunctionImport(final EdmFunctionImport edmFunctionImport,
-      final List<UriParameter> parameters) {
-    functionImport = edmFunctionImport;
-    setParameters(parameters);
-    return this;
   }
 
   @Override
@@ -89,21 +74,6 @@ public class UriResourceFunctionImpl extends UriResourceWithKeysImpl implements 
 
   @Override
   public String getSegmentValue() {
-    if (functionImport != null) {
-      return functionImport.getName();
-    } else if (function != null) {
-      return function.getName();
-    }
-    return "";
+    return functionImport == null ? (function == null ? "" : function.getName()) : functionImport.getName();
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
-  public boolean isParameterListFilled() {
-    return isParameterListFilled;
-  }
-
 }

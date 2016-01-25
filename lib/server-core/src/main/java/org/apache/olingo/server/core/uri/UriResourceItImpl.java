@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,11 +27,13 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
  */
 public class UriResourceItImpl extends UriResourceWithKeysImpl implements UriResourceIt {
 
-  private EdmType type;
-  private boolean isCollection;
+  private final EdmType type;
+  private final boolean isCollection;
 
-  public UriResourceItImpl() {
+  public UriResourceItImpl(final EdmType type, final boolean isCollection) {
     super(UriResourceKind.it);
+    this.type = type;
+    this.isCollection = isCollection;
   }
 
   @Override
@@ -39,32 +41,13 @@ public class UriResourceItImpl extends UriResourceWithKeysImpl implements UriRes
     return type;
   }
 
-  public UriResourceItImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return isCollection;
+    return keyPredicates == null && isCollection;
   }
 
-  public UriResourceItImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
-  }
-  
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return "$it";
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

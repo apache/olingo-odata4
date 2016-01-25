@@ -97,4 +97,21 @@ public abstract class Linked extends AbstractODataObject {
   public List<Link> getNavigationBindings() {
     return bindingLinks;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o)
+        && associationLinks.equals(((Linked) o).associationLinks)
+        && navigationLinks.equals(((Linked) o).navigationLinks)
+        && bindingLinks.equals(((Linked) o).bindingLinks);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + associationLinks.hashCode();
+    result = 31 * result + navigationLinks.hashCode();
+    result = 31 * result + bindingLinks.hashCode();
+    return result;
+  }
 }

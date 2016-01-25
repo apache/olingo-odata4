@@ -24,14 +24,20 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.apache.olingo.commons.core.edm.EdmEntitySetImpl;
 import org.apache.olingo.commons.core.edm.EdmParameterImpl;
 import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
+import org.apache.olingo.commons.core.edm.EdmSingletonImpl;
 import org.junit.Test;
 
 public class EdmMappingTest {
@@ -40,13 +46,45 @@ public class EdmMappingTest {
   public void initialMappingMustBeNull() {
     CsdlProperty property = new CsdlProperty().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmProperty edmProperty = new EdmPropertyImpl(null, property);
-
     assertNull(edmProperty.getMapping());
 
     CsdlParameter parameter = new CsdlParameter().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
     EdmParameter edmParameter = new EdmParameterImpl(null, parameter);
-
     assertNull(edmParameter.getMapping());
+
+    CsdlEntitySet es = new CsdlEntitySet().setName("test");
+    EdmEntitySet edmES = new EdmEntitySetImpl(null, null, es);
+    assertNull(edmES.getMapping());
+
+    CsdlSingleton si = new CsdlSingleton().setName("test");
+    EdmSingleton edmSi = new EdmSingletonImpl(null, null, si);
+    assertNull(edmSi.getMapping());
+  }
+
+  public void getInternalNameViaMapping() {
+    CsdlMapping mapping = new CsdlMapping().setInternalName("internalName");
+
+    CsdlProperty property =
+        new CsdlProperty().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName()).setMapping(mapping);
+    EdmProperty edmProperty = new EdmPropertyImpl(null, property);
+    assertNotNull(edmProperty.getMapping());
+    assertEquals("internalName", edmProperty.getMapping().getInternalName());
+
+    CsdlParameter parameter =
+        new CsdlParameter().setType(EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName()).setMapping(mapping);
+    EdmParameter edmParameter = new EdmParameterImpl(null, parameter);
+    assertNotNull(edmParameter.getMapping());
+    assertEquals("internalName", edmParameter.getMapping().getInternalName());
+
+    CsdlEntitySet es = new CsdlEntitySet().setName("test").setMapping(mapping);
+    EdmEntitySet edmES = new EdmEntitySetImpl(null, null, es);
+    assertNotNull(edmES.getMapping());
+    assertEquals("internalName", edmES.getMapping().getInternalName());
+
+    CsdlSingleton si = new CsdlSingleton().setName("test").setMapping(mapping);
+    EdmSingleton edmSi = new EdmSingletonImpl(null, null, si);
+    assertNotNull(edmSi.getMapping());
+    assertEquals("internalName", edmSi.getMapping().getInternalName());
   }
 
   @Test

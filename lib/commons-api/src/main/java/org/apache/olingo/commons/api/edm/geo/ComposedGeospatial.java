@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
- /**
+/**
  * Abstract base class for all Geometries that are composed out of other geospatial elements.
  *
  * @param <T> Type of the contained geospatial elements
  */
 public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatial implements Iterable<T> {
-
-  private static final long serialVersionUID = 8796254901098541307L;
 
   protected final List<T> geospatials;
 
@@ -55,5 +53,33 @@ public abstract class ComposedGeospatial<T extends Geospatial> extends Geospatia
    */
   public boolean isEmpty() {
     return geospatials.isEmpty();
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final ComposedGeospatial<?> other = (ComposedGeospatial<?>) o;
+    return dimension == other.dimension
+        && (srid == null ? other.srid == null : srid.equals(other.srid))
+        && geospatials.equals(other.geospatials);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = dimension == null ? 0 : dimension.hashCode();
+    result = 31 * result + (srid == null ? 0 : srid.hashCode());
+    result = 31 * result + geospatials.hashCode();
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return geospatials.toString();
   }
 }

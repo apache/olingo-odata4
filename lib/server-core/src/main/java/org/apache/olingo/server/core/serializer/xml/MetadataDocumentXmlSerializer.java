@@ -226,7 +226,7 @@ public class MetadataDocumentXmlSerializer {
     writer.writeEndElement();
   }
 
-  private void appendTerms(XMLStreamWriter writer, List<EdmTerm> terms) throws XMLStreamException {
+  private void appendTerms(final XMLStreamWriter writer, final List<EdmTerm> terms) throws XMLStreamException {
     for (EdmTerm term : terms) {
       writer.writeStartElement(XML_TERM_ATT);
 
@@ -238,15 +238,15 @@ public class MetadataDocumentXmlSerializer {
         writer.writeAttribute(XML_BASE_TERM, getAliasedFullQualifiedName(term.getBaseTerm().getFullQualifiedName(),
             false));
       }
-      
-      if(term.getAppliesTo() != null && !term.getAppliesTo().isEmpty()){
+
+      if (term.getAppliesTo() != null && !term.getAppliesTo().isEmpty()) {
         String appliesToString = "";
         boolean first = true;
-        for(TargetType target : term.getAppliesTo()){
-          if(first){
+        for (TargetType target : term.getAppliesTo()) {
+          if (first) {
             first = false;
             appliesToString = target.toString();
-          }else{
+          } else {
             appliesToString = appliesToString + " " + target.toString();
           }
         }
@@ -273,20 +273,20 @@ public class MetadataDocumentXmlSerializer {
       if (term.getScale() != null) {
         writer.writeAttribute(XML_SCALE, "" + term.getScale());
       }
-      
+
       appendAnnotations(writer, term);
       writer.writeEndElement();
     }
   }
 
-  private void appendAnnotationGroups(XMLStreamWriter writer, List<EdmAnnotations> annotationGroups)
+  private void appendAnnotationGroups(final XMLStreamWriter writer, final List<EdmAnnotations> annotationGroups)
       throws XMLStreamException {
     for (EdmAnnotations annotationGroup : annotationGroups) {
       appendAnnotationGroup(writer, annotationGroup);
     }
   }
 
-  private void appendAnnotationGroup(XMLStreamWriter writer, EdmAnnotations annotationGroup)
+  private void appendAnnotationGroup(final XMLStreamWriter writer, final EdmAnnotations annotationGroup)
       throws XMLStreamException {
     writer.writeStartElement(XML_ANNOTATIONS);
     writer.writeAttribute(XML_TARGET, annotationGroup.getTargetPath());
@@ -297,7 +297,8 @@ public class MetadataDocumentXmlSerializer {
     writer.writeEndElement();
   }
 
-  private void appendAnnotations(XMLStreamWriter writer, EdmAnnotatable annotatable) throws XMLStreamException {
+  private void appendAnnotations(final XMLStreamWriter writer, final EdmAnnotatable annotatable)
+      throws XMLStreamException {
     List<EdmAnnotation> annotations = annotatable.getAnnotations();
     if (annotations != null && !annotations.isEmpty()) {
       for (EdmAnnotation annotation : annotations) {
@@ -316,7 +317,8 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendExpression(XMLStreamWriter writer, EdmExpression expression) throws XMLStreamException {
+  private void appendExpression(final XMLStreamWriter writer,
+      final EdmExpression expression) throws XMLStreamException {
     if (expression == null) {
       return;
     }
@@ -329,7 +331,8 @@ public class MetadataDocumentXmlSerializer {
     }
   }
 
-  private void appendDynamicExpression(XMLStreamWriter writer, EdmDynamicExpression dynExp) throws XMLStreamException {
+  private void appendDynamicExpression(final XMLStreamWriter writer, final EdmDynamicExpression dynExp)
+      throws XMLStreamException {
     writer.writeStartElement(dynExp.getExpressionName());
     switch (dynExp.getExpressionType()) {
     // Logical
@@ -469,19 +472,20 @@ public class MetadataDocumentXmlSerializer {
     writer.writeEndElement();
   }
 
-  private void appendNotExpression(XMLStreamWriter writer, EdmNot exp) throws XMLStreamException {
+  private void appendNotExpression(final XMLStreamWriter writer, final EdmNot exp) throws XMLStreamException {
     appendExpression(writer, exp.getLeftExpression());
     appendAnnotations(writer, exp);
   }
 
-  private void appendLogicalOrComparisonExpression(XMLStreamWriter writer, EdmLogicalOrComparisonExpression exp)
+  private void appendLogicalOrComparisonExpression(final XMLStreamWriter writer,
+      final EdmLogicalOrComparisonExpression exp)
       throws XMLStreamException {
     appendExpression(writer, exp.getLeftExpression());
     appendExpression(writer, exp.getRightExpression());
     appendAnnotations(writer, exp);
   }
 
-  private void appendConstantExpression(XMLStreamWriter writer, EdmConstantExpression constExp)
+  private void appendConstantExpression(final XMLStreamWriter writer, final EdmConstantExpression constExp)
       throws XMLStreamException {
     writer.writeStartElement(constExp.getExpressionName());
     writer.writeCharacters(constExp.getValueAsString());
@@ -928,12 +932,12 @@ public class MetadataDocumentXmlSerializer {
       for (String memberName : enumType.getMemberNames()) {
         writer.writeEmptyElement(XML_MEMBER);
         writer.writeAttribute(XML_NAME, memberName);
-        
+
         EdmMember member = enumType.getMember(memberName);
         if (member.getValue() != null) {
           writer.writeAttribute(XML_VALUE, member.getValue());
         }
-        
+
         appendAnnotations(writer, member);
       }
 

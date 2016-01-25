@@ -81,4 +81,29 @@ public abstract class AbstractODataObject extends Annotatable {
       title = value;
     }
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final AbstractODataObject other = (AbstractODataObject) o;
+    return getAnnotations().equals(other.getAnnotations())
+        && (baseURI == null ? other.baseURI == null : baseURI.equals(other.baseURI))
+        && (id == null ? other.id == null : id.equals(other.id))
+        && (title == null ? other.title == null : title.equals(other.title));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getAnnotations().hashCode();
+    result = 31 * result + (baseURI == null ? 0 : baseURI.hashCode());
+    result = 31 * result + (id == null ? 0 : id.hashCode());
+    result = 31 * result + (title == null ? 0 : title.hashCode());
+    return result;
+  }
 }

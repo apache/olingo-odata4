@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -77,7 +77,7 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_MIN_UTF8_IEEE754, null,             ACCEPT_CASE_MIN_UTF8_IEEE754,   null                  },
       { ACCEPT_CASE_MIN_IEEE754,      ACCEPT_CASE_MIN_IEEE754, ACCEPT_CASE_MIN ,        null                  },
       { ACCEPT_CASE_XML,              "xml",            null,                           null                  },
-      { ACCEPT_CASE_XML,              null,             ACCEPT_CASE_XML,                null                  }      
+      { ACCEPT_CASE_XML,              null,             ACCEPT_CASE_XML,                null                  }
   };
 
   String[][] casesMetadata = {
@@ -191,7 +191,7 @@ public class ContentNegotiatorTest {
     }
 
     final CustomContentTypeSupport customContentTypeSupport = useCase[3] == null ? null :
-        createCustomContentTypeSupport(useCase[3]);
+      createCustomContentTypeSupport(useCase[3]);
 
     final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(
         formatOption, request, customContentTypeSupport, representationType);

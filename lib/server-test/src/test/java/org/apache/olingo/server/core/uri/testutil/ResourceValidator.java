@@ -30,6 +30,8 @@ import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
@@ -50,11 +52,12 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
 public class ResourceValidator implements TestValidator {
+  private final OData odata = OData.newInstance();
   private Edm edm;
   private TestValidator invokedBy;
   private UriInfo uriInfo = null;
@@ -83,13 +86,13 @@ public class ResourceValidator implements TestValidator {
   // --- Execution ---
 
   public ResourceValidator run(final String path) {
-    ParserWithLogging testParser = new ParserWithLogging();
+    Parser testParser = new Parser(edm, odata);
 
     UriInfo uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = testParser.parseUri(path, null, null, edm);
-    } catch (final UriParserException e) {
+      uriInfoTmp = testParser.parseUri(path, null, null);
+    } catch (final ODataLibraryException e) {
       fail("Exception occurred while parsing the URI: " + path + "\n"
           + " Message: " + e.getMessage());
     }
@@ -279,7 +282,8 @@ public class ResourceValidator implements TestValidator {
 
     // input parameter type may be null in order to assert that the collectionTypeFilter is not set
     EdmType actualType = uriPathInfoKeyPred.getTypeFilterOnCollection();
-    assertEquals(expectedType, expectedType == null ? actualType : actualType.getFullQualifiedName());
+    assertEquals(expectedType,
+        expectedType == null || actualType == null ? actualType : actualType.getFullQualifiedName());
 
     return this;
   }

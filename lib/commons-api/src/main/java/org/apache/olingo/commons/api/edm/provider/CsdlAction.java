@@ -25,8 +25,6 @@ import java.util.List;
  */
 public class CsdlAction extends CsdlOperation {
 
-  private static final long serialVersionUID = 211295197043448841L;
-
   @Override
   public CsdlAction setName(final String name) {
     this.name = name;

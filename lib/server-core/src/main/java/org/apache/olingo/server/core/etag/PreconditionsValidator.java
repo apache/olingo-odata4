@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,7 +42,7 @@ public class PreconditionsValidator {
     return affectedEntitySetOrSingleton != null
         && (isMediaValue ?
             customETagSupport.hasMediaETag(affectedEntitySetOrSingleton) :
-            customETagSupport.hasETag(affectedEntitySetOrSingleton));
+              customETagSupport.hasETag(affectedEntitySetOrSingleton));
   }
 
   private EdmBindingTarget extractInformation(final UriInfo uriInfo) throws PreconditionException {
@@ -87,7 +87,7 @@ public class PreconditionsValidator {
     return lastFoundEntitySetOrSingleton;
   }
 
-  private EdmBindingTarget getEntitySetFromFunctionImport(UriResourceFunction uriResourceFunction) {
+  private EdmBindingTarget getEntitySetFromFunctionImport(final UriResourceFunction uriResourceFunction) {
     EdmFunctionImport functionImport = uriResourceFunction.getFunctionImport();
     if (functionImport != null && functionImport.getReturnedEntitySet() != null
         && !uriResourceFunction.isCollection()) {
@@ -96,12 +96,12 @@ public class PreconditionsValidator {
     return null;
   }
 
-  private EdmBindingTarget getEntitySet(UriResourceEntitySet uriResourceEntitySet) {
+  private EdmBindingTarget getEntitySet(final UriResourceEntitySet uriResourceEntitySet) {
     return uriResourceEntitySet.isCollection() ? null : uriResourceEntitySet.getEntitySet();
   }
 
-  private EdmBindingTarget getEntitySetFromNavigation(EdmBindingTarget lastFoundEntitySetOrSingleton,
-      UriResourceNavigation uriResourceNavigation) {
+  private EdmBindingTarget getEntitySetFromNavigation(final EdmBindingTarget lastFoundEntitySetOrSingleton,
+      final UriResourceNavigation uriResourceNavigation) {
     if (lastFoundEntitySetOrSingleton != null && !uriResourceNavigation.isCollection()) {
       EdmNavigationProperty navProp = uriResourceNavigation.getProperty();
       return lastFoundEntitySetOrSingleton.getRelatedBindingTarget(navProp.getName());

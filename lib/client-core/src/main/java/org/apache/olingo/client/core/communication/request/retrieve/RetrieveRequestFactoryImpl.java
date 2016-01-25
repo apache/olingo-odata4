@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 
 import java.net.URI;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
@@ -34,11 +33,11 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceD
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.RetrieveRequestFactory;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientSingleton;
+import org.apache.olingo.client.core.uri.URIUtils;
 
 public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
 
@@ -82,9 +81,9 @@ public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
   @Override
   public ODataServiceDocumentRequest getServiceDocumentRequest(final String serviceRoot) {
     return new ODataServiceDocumentRequestImpl(client,
-        StringUtils.isNotBlank(serviceRoot) && serviceRoot.endsWith("/")
-            ? client.newURIBuilder(serviceRoot).build()
-            : client.newURIBuilder(serviceRoot + "/").build());
+        serviceRoot != null && !serviceRoot.isEmpty() && serviceRoot.endsWith("/") ?
+            client.newURIBuilder(serviceRoot).build() :
+            client.newURIBuilder(serviceRoot + '/').build());
   }
 
   @Override

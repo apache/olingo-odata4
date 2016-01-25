@@ -27,7 +27,6 @@ import java.util.List;
  * by each of the child expressions.
  */
 public class CsdlCollection extends CsdlDynamicExpression {
-  private static final long serialVersionUID = 3792880963089015493L;
 
   private List<CsdlExpression> items = new ArrayList<CsdlExpression>();
 

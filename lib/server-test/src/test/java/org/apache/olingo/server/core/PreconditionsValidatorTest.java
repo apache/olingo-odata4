@@ -41,7 +41,7 @@ import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.core.etag.PreconditionsValidator;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,7 +49,8 @@ import org.mockito.stubbing.Answer;
 
 public class PreconditionsValidatorTest {
 
-  private static final Edm edm = OData.newInstance().createServiceMetadata(
+  private static final OData odata = OData.newInstance();
+  private static final Edm edm = odata.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   // -------------- POSITIVE TESTS --------------------------------------------------------------------------------
@@ -140,7 +141,7 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void simpleEntityValueValidationNotActiveForMedia() throws Exception {
-    final UriInfo uriInfo = new Parser().parseUri("ESMedia(1)/$value", null, null, edm);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri("ESMedia(1)/$value", null, null);
 
     CustomETagSupport support = mock(CustomETagSupport.class);
     when(support.hasETag(any(EdmBindingTarget.class))).thenReturn(true);
@@ -185,21 +186,17 @@ public class PreconditionsValidatorTest {
     assertFalse(mustValidate("SINav/NavPropertyETKeyNavOne/$ref", "ESKeyNav"));
   }
 
-  @Test(expected = UriParserSemanticException.class)
-  public void resourceSegmentAfterActionMustLeadToUriParserException() throws Exception {
-    mustValidate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav/PropertyInt16", "ESKeyNav");
-  }
-
-  @Test(expected = UriParserSemanticException.class)
-  public void valueMustBeLastSegment() throws Exception {
-    mustValidate("ESMedia(1)/$value/PropertyInt16", "ESMedia");
+  @Test
+  public void nonResourceMustBeIgnored() throws Exception {
+    assertFalse(mustValidate("$all", null));
   }
 
   private boolean mustValidate(final String uri, final String entitySetName)
-      throws UriParserException, PreconditionException {
-    final UriInfo uriInfo = new Parser().parseUri(uri, null, null, edm);
+      throws UriParserException, UriValidationException, PreconditionException {
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(uri, null, null);
     final List<UriResource> parts = uriInfo.getUriResourceParts();
-    final boolean isMedia = parts.get(parts.size() - 1) instanceof UriResourceValue
+    final boolean isMedia = parts.size() >= 2
+        && parts.get(parts.size() - 1) instanceof UriResourceValue
         && parts.get(parts.size() - 2) instanceof UriResourceEntitySet;
 
     CustomETagSupport support = mock(CustomETagSupport.class);

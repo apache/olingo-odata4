@@ -19,9 +19,8 @@
 package org.apache.olingo.client.api.communication;
 
 import org.apache.http.StatusLine;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.ex.ODataError;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 /**
  * Represents a client error in OData.
@@ -55,9 +54,9 @@ public class ODataClientErrorException extends ODataRuntimeException {
    * @param error OData error to be wrapped.
    */
   public ODataClientErrorException(final StatusLine statusLine, final ODataError error) {
-    super(error == null
-            ? statusLine.toString()
-            : (StringUtils.isBlank(error.getCode()) ? StringUtils.EMPTY : "(" + error.getCode() + ") ")
+    super(error == null ?
+        statusLine.toString() :
+        (error.getCode() == null || error.getCode().isEmpty() ? "" : "(" + error.getCode() + ") ")
             + error.getMessage() + " [" + statusLine.toString() + "]");
 
     this.statusLine = statusLine;

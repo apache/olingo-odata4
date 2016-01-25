@@ -82,37 +82,20 @@ public class Metadata extends AbstractMetadataElement {
     for (Map.Entry<String, Schema> schemaEntry : schemas.entrySet()) {
       for (EntityType entityType : schemaEntry.getValue().getEntityTypes()) {
         for (NavigationProperty property : entityType.getNavigationProperties()) {
-          if (StringUtils.isNotBlank(property.getReleationship())) {
-            // V3 ...
-            final Association association = schemaEntry.getValue().getAssociation(
-                property.getReleationship().replaceAll(schemaEntry.getKey() + "\\.", ""));
-            final Association.Role role = association.getRole(property.getToRole());
-            property.setFeed(role.getMultiplicity().equals("*"));
-            property.setType(property.isEntitySet() ? "Collection(" + role.getType() + ")" : role.getType());
+          property.setFeed(property.getType().startsWith("Collection("));
 
-            // let me assume that it will be just a single container
-            final AssociationSet associationSet = schemaEntry.getValue().getContainers().iterator().next().
-                getAssociationSet(property.getReleationship());
+          final Collection<EntitySet> entitySets = schemaEntry.getValue().getContainers().iterator().next().
+              getEntitySets(schemaEntry.getKey(), entityType.getName());
 
-            final AssociationSet.Role associationSetRole = associationSet.getRole(property.getToRole());
-            property.setTarget(associationSetRole.getEntitySet());
-          } else {
-            // V4 ...
-            property.setFeed(property.getType().startsWith("Collection("));
+          final Iterator<EntitySet> iter = entitySets.iterator();
+          boolean found = false;
 
-            final Collection<EntitySet> entitySets = schemaEntry.getValue().getContainers().iterator().next().
-                getEntitySets(schemaEntry.getKey(), entityType.getName());
-
-            final Iterator<EntitySet> iter = entitySets.iterator();
-            boolean found = false;
-
-            while (!found && iter.hasNext()) {
-              final EntitySet entitySet = iter.next();
-              final String target = entitySet.getTarget(property.getName());
-              if (StringUtils.isNotBlank(target)) {
-                property.setTarget(entitySet.getTarget(property.getName()));
-                found = true;
-              }
+          while (!found && iter.hasNext()) {
+            final EntitySet entitySet = iter.next();
+            final String target = entitySet.getTarget(property.getName());
+            if (StringUtils.isNotBlank(target)) {
+              property.setTarget(entitySet.getTarget(property.getName()));
+              found = true;
             }
           }
         }
@@ -209,10 +192,6 @@ public class Metadata extends AbstractMetadataElement {
           && event.asStartElement().getName().equals(new QName(DEF_NS, "EntityContainer"))) {
         final org.apache.olingo.fit.metadata.Container container = getContainer(event.asStartElement(), reader);
         schema.addContainer(container.getName(), container);
-      } else if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "Association"))) {
-        // just for V3
-        final Association association = getAssociation(event.asStartElement(), reader);
-        schema.addAssociation(association.getName(), association);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
         completed = true;
       }
@@ -236,63 +215,12 @@ public class Metadata extends AbstractMetadataElement {
               || event.asStartElement().getName().equals(new QName(DEF_NS, "Singleton")))) {
         final EntitySet entitySet = getEntitySet(event.asStartElement(), reader);
         container.addEntitySet(entitySet.getName(), entitySet);
-      } else if (event.isStartElement()
-          && event.asStartElement().getName().equals(new QName(DEF_NS, "AssociationSet"))) {
-        // just for V3
-        final AssociationSet associationSet = getAssociationSet(event.asStartElement(), reader);
-        container.addAssociationSet(associationSet.getAssociation(), associationSet);
       } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
         completed = true;
       }
     }
 
     return container;
-  }
-
-  private Association getAssociation(
-      final StartElement start, final XMLEventReader reader) throws XMLStreamException {
-    final Association association = new Association(start.getAttributeByName(new QName("Name")).getValue());
-
-    boolean completed = false;
-
-    while (!completed && reader.hasNext()) {
-      XMLEvent event = reader.nextEvent();
-
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "End"))) {
-        final String role = event.asStartElement().getAttributeByName(new QName("Role")).getValue();
-        final String type = event.asStartElement().getAttributeByName(new QName("Type")).getValue();
-        final String multiplicity =
-            event.asStartElement().getAttributeByName(new QName("Multiplicity")).getValue();
-        association.addRole(role, type, multiplicity);
-      } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
-        completed = true;
-      }
-    }
-
-    return association;
-  }
-
-  private AssociationSet getAssociationSet(
-      final StartElement start, final XMLEventReader reader) throws XMLStreamException {
-    final AssociationSet associationSet = new AssociationSet(
-        start.getAttributeByName(new QName("Name")).getValue(),
-        start.getAttributeByName(new QName("Association")).getValue());
-
-    boolean completed = false;
-
-    while (!completed && reader.hasNext()) {
-      XMLEvent event = reader.nextEvent();
-
-      if (event.isStartElement() && event.asStartElement().getName().equals(new QName(DEF_NS, "End"))) {
-        final String role = event.asStartElement().getAttributeByName(new QName("Role")).getValue();
-        final String entitySet = event.asStartElement().getAttributeByName(new QName("EntitySet")).getValue();
-        associationSet.addRole(role, entitySet);
-      } else if (event.isEndElement() && event.asEndElement().getName().equals(start.getName())) {
-        completed = true;
-      }
-    }
-
-    return associationSet;
   }
 
   private EntityType getEntityType(final StartElement start, final XMLEventReader reader) throws XMLStreamException {
@@ -346,16 +274,6 @@ public class Metadata extends AbstractMetadataElement {
     final Attribute type = start.getAttributeByName(new QName("Type"));
     if (type != null) {
       property.setType(type.getValue());
-    }
-
-    final Attribute relationship = start.getAttributeByName(new QName("Relationship"));
-    if (relationship != null) {
-      property.setReleationship(relationship.getValue());
-    }
-
-    final Attribute toRole = start.getAttributeByName(new QName("ToRole"));
-    if (toRole != null) {
-      property.setToRole(toRole.getValue());
     }
 
     return property;

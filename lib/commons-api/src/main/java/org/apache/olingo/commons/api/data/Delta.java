@@ -53,4 +53,21 @@ public class Delta extends EntityCollection {
   public List<DeltaLink> getDeletedLinks() {
     return deletedLinks;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    return super.equals(o)
+        && deletedEntities.equals(((Delta) o).deletedEntities)
+        && addedLinks.equals(((Delta) o).addedLinks)
+        && deletedLinks.equals(((Delta) o).deletedLinks);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + deletedEntities.hashCode();
+    result = 31 * result + addedLinks.hashCode();
+    result = 31 * result + deletedLinks.hashCode();
+    return result;
+  }
 }

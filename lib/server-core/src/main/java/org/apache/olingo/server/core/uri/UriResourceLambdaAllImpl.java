@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,24 +19,21 @@
 package org.apache.olingo.server.core.uri;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.core.uri.queryoption.expression.ExpressionImpl;
 
 public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements UriResourceLambdaAll {
 
-  protected EdmProperty property;
+  private final String lambdaVariable;
+  private final Expression expression;
 
-  private String lambdaVariable;
-
-  private ExpressionImpl expression;
-
-  public UriResourceLambdaAllImpl() {
+  public UriResourceLambdaAllImpl(final String lambdaVariable, final Expression expression) {
     super(UriResourceKind.lambdaAll);
+    this.lambdaVariable = lambdaVariable;
+    this.expression = expression;
   }
 
   @Override
@@ -54,29 +51,13 @@ public class UriResourceLambdaAllImpl extends UriResourceTypedImpl implements Ur
     return lambdaVariable;
   }
 
-  public UriResourceLambdaAllImpl setLamdaVariable(final String lambdaVariable) {
-    this.lambdaVariable = lambdaVariable;
-    return this;
-  }
-
   @Override
   public Expression getExpression() {
     return expression;
   }
 
-  public UriResourceLambdaAllImpl setExpression(final ExpressionImpl expression) {
-    this.expression = expression;
-    return this;
-  }
-  
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return "all";
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

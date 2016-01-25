@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.api.uri;
 
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * URI Segment types.
@@ -46,8 +45,7 @@ public enum SegmentType {
   CROSS_JOIN("$crossjoin"),
   ALL("$all"),
   /**
-   * For query options like as $count that needs to stay in their own segment, right after service root.
-   *
+   * For query options like $count that need to stay in their own segment, right after service root.
    * @see QueryOption#COUNT
    */
   ROOT_QUERY_OPTION,
@@ -56,7 +54,7 @@ public enum SegmentType {
   private final String value;
 
   private SegmentType() {
-    this.value = StringUtils.EMPTY;
+    this.value = "";
   }
 
   private SegmentType(final String value) {

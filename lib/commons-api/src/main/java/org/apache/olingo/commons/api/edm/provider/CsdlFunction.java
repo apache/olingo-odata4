@@ -25,8 +25,6 @@ import java.util.List;
  */
 public class CsdlFunction extends CsdlOperation {
 
-  private static final long serialVersionUID = 673858921468578957L;
-
   private boolean isComposable = false;
 
   /**

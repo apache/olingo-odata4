@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
@@ -262,12 +261,10 @@ public class ClientEntitySetIterator<T extends ClientEntitySet, E extends Client
         os.write('>');
       }
 
-      res = attrsDeclaration == null
-              ? StringUtils.EMPTY
-              : new String(attrsDeclaration, Constants.UTF8).trim();
+      res = attrsDeclaration == null ? "" : new String(attrsDeclaration, Constants.UTF8).trim();
     } catch (Exception e) {
       LOG.error("Error retrieving entities from EntitySet", e);
-      res = StringUtils.EMPTY;
+      res = "";
     }
 
     return res.endsWith("/") ? res.substring(0, res.length() - 1) : res;

@@ -76,4 +76,29 @@ public class DeltaLink extends Annotatable {
   public void setTarget(final URI target) {
     this.target = target;
   }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final DeltaLink other = (DeltaLink) o;
+    return getAnnotations().equals(other.getAnnotations())
+        && (source == null ? other.source == null : source.equals(other.source))
+        && (relationship == null ? other.relationship == null : relationship.equals(other.relationship))
+        && (target == null ? other.target == null : target.equals(other.target));
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getAnnotations().hashCode();
+    result = 31 * result + (source == null ? 0 : source.hashCode());
+    result = 31 * result + (relationship == null ? 0 : relationship.hashCode());
+    result = 31 * result + (target == null ? 0 : target.hashCode());
+    return result;
+  }
 }

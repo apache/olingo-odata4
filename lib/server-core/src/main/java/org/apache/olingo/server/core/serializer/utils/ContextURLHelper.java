@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -38,7 +38,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
 public final class ContextURLHelper {
 
-  private ContextURLHelper() { /* private ctor for helper class */ }
+  private ContextURLHelper() { /* private ctor for helper class */}
 
   /**
    * Builds a list of selected Properties for the ContextURL,
@@ -123,12 +123,12 @@ public final class ContextURLHelper {
           }
         } else {
           final List<UriResource> resourceParts = expandItem.getResourcePath().getUriResourceParts();
-          if(resourceParts.size() > 1) {
+          if (resourceParts.size() > 1) {
             if (result.length() > 0) {
               result.append(',');
-            }            
+            }
             final List<String> path = getPropertyPath(resourceParts);
-            String propertyPath = buildPropertyPath(path);            
+            String propertyPath = buildPropertyPath(path);
             result.append(Encoder.encode(propertyName));
             result.append("/").append(propertyPath);
           }
@@ -152,8 +152,9 @@ public final class ContextURLHelper {
     for (final String segment : path) {
       result.append(result.length() == 0 ? "" : '/').append(Encoder.encode(segment)); //$NON-NLS-1$
     }
-    return result.length() == 0?null:result.toString();
-  }  
+    return result.length() == 0 ? null : result.toString();
+  }
+
   private static List<List<String>> getComplexSelectedPaths(final EdmProperty edmProperty,
       final Set<List<String>> selectedPaths) {
     List<List<String>> result = new ArrayList<List<String>>();

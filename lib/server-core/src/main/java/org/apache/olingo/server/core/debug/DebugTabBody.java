@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -70,7 +70,7 @@ public class DebugTabBody implements DebugTab {
     return "Body";
   }
 
-//
+  //
   @Override
   public void appendJson(final JsonGenerator gen) throws IOException {
     if (response == null || response.getContent() == null) {
@@ -118,8 +118,8 @@ public class DebugTabBody implements DebugTab {
       break;
     case IMAGE:
       writer.append("<img src=\"data:").append(response.getHeader(HttpHeader.CONTENT_TYPE)).append(";base64,")
-          .append(body)
-          .append("\" />\n");
+      .append(body)
+      .append("\" />\n");
       break;
     case TEXT:
     default:
@@ -130,7 +130,7 @@ public class DebugTabBody implements DebugTab {
     }
   }
 
-  private byte[] streamToBytes(InputStream input) {
+  private byte[] streamToBytes(final InputStream input) {
     if (input != null) {
       try {
         return new FixedFormatDeserializerImpl().binary(input);

@@ -27,8 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
  */
 public class CsdlComplexType extends CsdlStructuralType {
 
-  private static final long serialVersionUID = 1089771609327713928L;
-
   @Override
   public CsdlComplexType setName(final String name) {
     this.name = name;

@@ -52,7 +52,7 @@ public class UriValidatorTest {
   private static final String URI_ALL = "$all";
   private static final String URI_BATCH = "$batch";
   private static final String URI_CROSSJOIN = "$crossjoin(ESAllPrim)";
-  private static final String URI_ENTITY_ID = "$entity";
+  private static final String URI_ENTITY_ID = "$entity/Namespace1_Alias.ETBase";
   private static final String URI_METADATA = "$metadata";
   private static final String URI_SERVICE = "";
   private static final String URI_ENTITY_SET = "ESAllPrim";
@@ -81,7 +81,7 @@ public class UriValidatorTest {
   private static final String QO_FILTER = "$filter='1' eq '1'";
   private static final String QO_FORMAT = "$format=bla/bla";
   private static final String QO_EXPAND = "$expand=*";
-  private static final String QO_ID = "$id=Products(0)";
+  private static final String QO_ID = "$id=ESAllPrim(1)";
   private static final String QO_COUNT = "$count=true";
   private static final String QO_ORDERBY = "$orderby=true";
   private static final String QO_SEARCH = "$search=bla";
@@ -323,7 +323,8 @@ public class UriValidatorTest {
       { URI_ACTION_ES, QO_ID }
   };
 
-  private static final Edm edm = OData.newInstance().createServiceMetadata(
+  private static final OData odata = OData.newInstance();
+  private static final Edm edm = odata.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
@@ -419,24 +420,24 @@ public class UriValidatorTest {
   public void checkKeys() throws Exception {
     final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1, PropertyString='abc')");
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='abc')");
 
-    testUri.runEx("ESTwoKeyNav(xxx=1, yyy='abc')")
+    testUri.runEx("ESTwoKeyNav(xxx=1,yyy='abc')")
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESCollAllPrim(null)").isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(PropertyInt16='1')")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
     testUri.runEx("ESAllPrim(12345678901234567890)")
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString=1)")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyInt16=1)")
         .isExValidation(UriValidationException.MessageKeys.DOUBLE_KEY_PROPERTY);
 
     testUri.runEx("ESAllPrim(0)/NavPropertyETTwoPrimMany(xxx=42)")
         .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
     testUri.runEx("ESAllPrim(0)/NavPropertyETTwoPrimMany(PropertyInt16='1')")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+        .isExSemantic(UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE);
   }
 
   @Test
@@ -499,7 +500,7 @@ public class UriValidatorTest {
 
   private void validate(final String path, final String query, final HttpMethod method) {
     try {
-      new UriValidator().validate(new Parser().parseUri(path, query, null, edm), method);
+      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null), method);
     } catch (final UriParserException e) {
       fail("Failed for uri: " + path + '?' + query);
     } catch (final UriValidationException e) {
@@ -510,7 +511,7 @@ public class UriValidatorTest {
   private void validateWrong(final String path, final String query, final HttpMethod method,
       final UriValidationException.MessageKeys expectedMessageKey) {
     try {
-      new UriValidator().validate(new Parser().parseUri(path, query, null, edm), method);
+      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null), method);
       fail("Validation Exception not thrown: " + method + ' ' + path + '?' + query);
     } catch (final UriParserException e) {
       fail("Wrong Exception thrown: " + method + ' ' + path + '?' + query);

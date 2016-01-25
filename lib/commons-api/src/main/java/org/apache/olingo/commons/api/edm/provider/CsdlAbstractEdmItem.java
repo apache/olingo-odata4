@@ -18,22 +18,14 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
  * Super type of all CsdlEdmItems
  */
-public abstract class CsdlAbstractEdmItem implements Serializable {
-
-  private static final long serialVersionUID = 241190986363884784L;
+public abstract class CsdlAbstractEdmItem {
 
   /**
    * Gets one by name.
@@ -62,20 +54,5 @@ public abstract class CsdlAbstractEdmItem implements Serializable {
       }
     }
     return result;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
-
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 }

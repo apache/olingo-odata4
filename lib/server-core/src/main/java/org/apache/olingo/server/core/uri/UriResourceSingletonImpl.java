@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,21 +26,16 @@ import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class UriResourceSingletonImpl extends UriResourceTypedImpl implements UriResourceSingleton {
 
-  private EdmSingleton singleton;
+  private final EdmSingleton singleton;
 
-  public UriResourceSingletonImpl() {
+  public UriResourceSingletonImpl(final EdmSingleton singleton) {
     super(UriResourceKind.singleton);
+    this.singleton = singleton;
   }
 
   @Override
   public EdmSingleton getSingleton() {
     return singleton;
-  }
-
-  public UriResourceSingletonImpl setSingleton(final EdmSingleton singleton) {
-
-    this.singleton = singleton;
-    return this;
   }
 
   @Override
@@ -62,15 +57,9 @@ public class UriResourceSingletonImpl extends UriResourceTypedImpl implements Ur
   public boolean isCollection() {
     return false;
   }
-  
+
   @Override
-  public String getSegmentValue(){
+  public String getSegmentValue() {
     return singleton.getName();
   }
-
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

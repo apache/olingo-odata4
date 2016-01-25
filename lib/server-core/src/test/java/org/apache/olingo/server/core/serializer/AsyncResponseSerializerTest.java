@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,17 +18,17 @@
  */
 package org.apache.olingo.server.core.serializer;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.util.Random;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.util.Random;
-
-import static org.junit.Assert.assertEquals;
 
 public class AsyncResponseSerializerTest {
   private static final String CRLF = "\r\n";
@@ -70,11 +70,11 @@ public class AsyncResponseSerializerTest {
         + testData, result);
   }
 
-  private String testData(int amount) {
+  private String testData(final int amount) {
     StringBuilder result = new StringBuilder();
     Random r = new Random();
     for (int i = 0; i < amount; i++) {
-      result.append((char)(r.nextInt(26) + 'a'));
+      result.append((char) (r.nextInt(26) + 'a'));
     }
 
     return result.toString();

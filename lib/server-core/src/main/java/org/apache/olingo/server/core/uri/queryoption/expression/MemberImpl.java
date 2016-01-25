@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,19 +30,24 @@ import org.apache.olingo.server.core.uri.UriResourceImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 
-public class MemberImpl extends ExpressionImpl implements Member {
+public class MemberImpl implements Member {
 
-  private UriInfoResource path;
-  private EdmType startTypeFilter;
+  private final UriInfoResource path;
+  private final EdmType startTypeFilter;
+
+  public MemberImpl(final UriInfoResource path, final EdmType startTypeFilter) {
+    this.path = path;
+    this.startTypeFilter = startTypeFilter;
+  }
 
   @Override
   public UriInfoResource getResourcePath() {
     return path;
   }
 
-  public Member setResourcePath(final UriInfoResource pathSegments) {
-    path = pathSegments;
-    return this;
+  @Override
+  public EdmType getStartTypeFilter() {
+    return startTypeFilter;
   }
 
   @Override
@@ -91,13 +96,7 @@ public class MemberImpl extends ExpressionImpl implements Member {
   }
 
   @Override
-  public EdmType getStartTypeFilter() {
-    return startTypeFilter;
+  public String toString() {
+    return path.getUriResourceParts().toString() + (startTypeFilter == null ? "" : startTypeFilter);
   }
-
-  public MemberImpl setTypeFilter(final EdmType startTypeFilter) {
-    this.startTypeFilter = startTypeFilter;
-    return this;
-  }
-
 }

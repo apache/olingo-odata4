@@ -28,7 +28,9 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
@@ -44,15 +46,20 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.Method;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
+import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
+import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class FilterValidator implements TestValidator {
+  private final OData odata = OData.newInstance();
   private Edm edm;
 
   private TestValidator invokedByValidator;
@@ -62,7 +69,7 @@ public class FilterValidator implements TestValidator {
   private Expression curExpression;
   private Expression rootExpression;
 
-  private UriParserException exception;
+  private ODataLibraryException exception;
 
   // --- Setup ---
   public FilterValidator setUriResourcePathValidator(final ResourceValidator uriResourcePathValidator) {
@@ -107,31 +114,36 @@ public class FilterValidator implements TestValidator {
 
   // --- Execution ---
 
-  public FilterValidator runOrderByOnETAllPrim(final String orderBy) throws UriParserException {
+  public FilterValidator runOrderByOnETAllPrim(final String orderBy)
+      throws UriParserException, UriValidationException {
     return runUriOrderBy("ESAllPrim", "$orderby=" + orderBy.trim());
   }
 
-  public FilterValidator runOrderByOnETTwoKeyNav(final String orderBy) throws UriParserException {
+  public FilterValidator runOrderByOnETTwoKeyNav(final String orderBy)
+      throws UriParserException, UriValidationException {
     return runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
 
-  public FilterValidator runOrderByOnETMixEnumDefCollComp(final String orderBy) throws UriParserException {
+  public FilterValidator runOrderByOnETMixEnumDefCollComp(final String orderBy)
+      throws UriParserException, UriValidationException {
     return runUriOrderBy("ESMixEnumDefCollComp", "$orderby=" + orderBy.trim());
   }
 
   public FilterValidator runOrderByOnETTwoKeyNavEx(final String orderBy) throws UriParserException {
-    return runUriOrderByEx("ESTwoKeyNav", "$orderby=" + orderBy.trim());
+    return runUriEx("ESTwoKeyNav", "$orderby=" + orderBy.trim());
   }
 
-  public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException {
+  public FilterValidator runOnETTwoKeyNav(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESTwoKeyNav", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnETMixEnumDefCollComp(final String filter) throws UriParserException {
+  public FilterValidator runOnETMixEnumDefCollComp(final String filter)
+      throws UriParserException, UriValidationException {
     return runUri("ESMixEnumDefCollComp", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnETTwoKeyNavSingle(final String filter) throws UriParserException {
+  public FilterValidator runOnETTwoKeyNavSingle(final String filter)
+      throws UriParserException, UriValidationException {
     return runUri("SINav", "$filter=" + filter.trim());
   }
 
@@ -139,11 +151,11 @@ public class FilterValidator implements TestValidator {
     return runUriEx("ESTwoKeyNav", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnETAllPrim(final String filter) throws UriParserException {
+  public FilterValidator runOnETAllPrim(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESAllPrim(1)", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnETKeyNav(final String filter) throws UriParserException {
+  public FilterValidator runOnETKeyNav(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESKeyNav(1)", "$filter=" + filter.trim());
   }
 
@@ -151,35 +163,36 @@ public class FilterValidator implements TestValidator {
     return runUriEx("ESKeyNav(1)", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnCTTwoPrim(final String filter) throws UriParserException {
+  public FilterValidator runOnCTTwoPrim(final String filter) throws UriParserException, UriValidationException {
     return runUri("SINav/PropertyCompTwoPrim", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnString(final String filter) throws UriParserException {
+  public FilterValidator runOnString(final String filter) throws UriParserException, UriValidationException {
     return runUri("SINav/PropertyString", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnInt32(final String filter) throws UriParserException {
+  public FilterValidator runOnInt32(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESCollAllPrim(1)/CollPropertyInt32", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnDateTimeOffset(final String filter) throws UriParserException {
+  public FilterValidator runOnDateTimeOffset(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESCollAllPrim(1)/CollPropertyDateTimeOffset", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnDuration(final String filter) throws UriParserException {
+  public FilterValidator runOnDuration(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESCollAllPrim(1)/CollPropertyDuration", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runOnTimeOfDay(final String filter) throws UriParserException {
+  public FilterValidator runOnTimeOfDay(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESCollAllPrim(1)/CollPropertyTimeOfDay", "$filter=" + filter.trim());
   }
 
-  public FilterValidator runUri(final String path, final String query) throws UriParserException {
-    Parser parser = new Parser();
+  public FilterValidator runUri(final String path, final String query)
+      throws UriParserException, UriValidationException {
+    Parser parser = new Parser(edm, odata);
     UriInfo uriInfo = null;
 
-    uriInfo = parser.parseUri(path, query, null, edm);
+    uriInfo = parser.parseUri(path, query, null);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -193,36 +206,25 @@ public class FilterValidator implements TestValidator {
   public FilterValidator runUriEx(final String path, final String query) {
     exception = null;
     try {
-      new Parser().parseUri(path, query, null, edm);
+      new Parser(edm, odata).parseUri(path, query, null);
       fail("Expected exception not thrown.");
     } catch (final UriParserException e) {
+      exception = e;
+    } catch (final UriValidationException e) {
       exception = e;
     }
     return this;
   }
 
-  public FilterValidator runUriOrderBy(final String path, final String query) throws UriParserException {
-    Parser parser = new Parser();
-    UriInfo uriInfo = null;
-
-    uriInfo = parser.parseUri(path, query, null, edm);
+  public FilterValidator runUriOrderBy(final String path, final String query)
+      throws UriParserException, UriValidationException {
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
     }
 
     setOrderBy(uriInfo.getOrderByOption());
-    return this;
-  }
-
-  public FilterValidator runUriOrderByEx(final String path, final String query) {
-    exception = null;
-    try {
-      new Parser().parseUri(path, query, null, edm);
-      fail("Expected exception not thrown.");
-    } catch (final UriParserException e) {
-      exception = e;
-    }
     return this;
   }
 
@@ -262,8 +264,8 @@ public class FilterValidator implements TestValidator {
   // --- Validation ---
 
   /**
-   * Validates the serialized filterTree against a given filterString
-   * The given expected filterString is compressed before to allow better readable code in the unit tests
+   * Validates the serialized filterTree against a given filterString.
+   * The given expected filterString is compressed before to allow better readable code in the unit tests.
    * @param toBeCompr
    * @return {@link FilterValidator}
    */
@@ -298,14 +300,19 @@ public class FilterValidator implements TestValidator {
     EdmType actualType = null;
 
     if (curExpression instanceof Member) {
-      Member member = (Member) curExpression;
-      actualType = member.getType();
+      actualType = ((Member) curExpression).getType();
     } else if (curExpression instanceof TypeLiteral) {
-      TypeLiteral typeLiteral = (TypeLiteral) curExpression;
-      actualType = typeLiteral.getType();
+      actualType = ((TypeLiteral) curExpression).getType();
     } else if (curExpression instanceof Literal) {
-      Literal typeLiteral = (Literal) curExpression;
-      actualType = typeLiteral.getType();
+      actualType = ((Literal) curExpression).getType();
+    } else if (curExpression instanceof Enumeration) {
+      actualType = ((Enumeration) curExpression).getType();
+    } else if (curExpression instanceof Unary) {
+      actualType = ((UnaryImpl) curExpression).getType();
+    } else if (curExpression instanceof Binary) {
+      actualType = ((BinaryImpl) curExpression).getType();
+    } else if (curExpression instanceof Method) {
+      actualType = ((MethodImpl) curExpression).getType();
     }
 
     if (actualType == null) {
@@ -337,7 +344,6 @@ public class FilterValidator implements TestValidator {
 
     curExpression = ((Binary) curExpression).getRightOperand();
     return this;
-
   }
 
   public FilterValidator isLiteral(final String literalText) {
@@ -349,9 +355,9 @@ public class FilterValidator implements TestValidator {
     assertEquals(literalText, actualLiteralText);
     return this;
   }
-  
-  public FilterValidator isLiteralType(EdmType edmType) {
-    if(!(curExpression instanceof Literal)) {
+
+  public FilterValidator isLiteralType(final EdmType edmType) {
+    if (!(curExpression instanceof Literal)) {
       fail("Current expression is not a literal");
     }
     
@@ -362,7 +368,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator isNullLiteralType() {
-    if(!(curExpression instanceof Literal)) {
+    if (!(curExpression instanceof Literal)) {
       fail("Current expression is not a literal");
     }
 
@@ -482,13 +488,5 @@ public class FilterValidator implements TestValidator {
     assertEquals(UriParserSemanticException.class, exception.getClass());
     assertEquals(messageKey, exception.getMessageKey());
     return this;
-  }
-
-  public FilterValidator isNull() {
-    return isLiteral("null");
-  }
-
-  public FilterValidator isTrue() {
-    return isLiteral("true");
   }
 }

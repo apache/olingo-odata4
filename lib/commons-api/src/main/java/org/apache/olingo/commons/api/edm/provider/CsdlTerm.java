@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.geo.SRID;
  */
 public class CsdlTerm extends CsdlAbstractEdmItem implements CsdlNamed, CsdlAnnotatable {
 
-  private static final long serialVersionUID = 3843929000407818103L;
-
   private String name;
 
   private String type;

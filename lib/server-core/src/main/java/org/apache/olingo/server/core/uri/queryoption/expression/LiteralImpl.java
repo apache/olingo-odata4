@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -24,19 +24,19 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitEx
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 
-public class LiteralImpl extends ExpressionImpl implements Literal {
+public class LiteralImpl implements Literal {
 
-  private String text;
-  private EdmType type;
+  private final String text;
+  private final EdmType type;
+
+  public LiteralImpl(final String text, final EdmType type) {
+    this.text = text;
+    this.type = type;
+  }
 
   @Override
   public String getText() {
     return text;
-  }
-
-  public LiteralImpl setText(final String text) {
-    this.text = text;
-    return this;
   }
 
   @Override
@@ -44,14 +44,13 @@ public class LiteralImpl extends ExpressionImpl implements Literal {
     return type;
   }
 
-  public LiteralImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     return visitor.visitLiteral(this);
   }
 
+  @Override
+  public String toString() {
+    return text == null ? "" : text;
+  }
 }

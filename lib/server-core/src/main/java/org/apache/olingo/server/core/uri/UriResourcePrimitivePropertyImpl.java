@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,20 +25,16 @@ import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 
 public class UriResourcePrimitivePropertyImpl extends UriResourceTypedImpl implements UriResourcePrimitiveProperty {
 
-  EdmProperty property;
+  private final EdmProperty property;
 
-  public UriResourcePrimitivePropertyImpl() {
+  public UriResourcePrimitivePropertyImpl(final EdmProperty property) {
     super(UriResourceKind.primitiveProperty);
+    this.property = property;
   }
 
   @Override
   public EdmProperty getProperty() {
     return property;
-  }
-
-  public UriResourcePrimitivePropertyImpl setProperty(final EdmProperty property) {
-    this.property = property;
-    return this;
   }
 
   @Override
@@ -50,15 +46,9 @@ public class UriResourcePrimitivePropertyImpl extends UriResourceTypedImpl imple
   public boolean isCollection() {
     return property.isCollection();
   }
-  
-  @Override
-  public String getSegmentValue(){
-    return  property.getName();
-  }
 
   @Override
-  public String toString() {
-    return getSegmentValue();
+  public String getSegmentValue() {
+    return property.getName();
   }
-
 }

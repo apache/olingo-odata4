@@ -18,12 +18,18 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.Collections;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.junit.Test;
@@ -33,17 +39,57 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * All Tests which involves the <code>Parser</code> implementation
- * (and with that also the <code>UriParseTreeVisitor</code>).
+ * Tests of the <code>Parser</code> implementation that require mocking of the EDM.
  */
 public class ParserTest {
+
+  @Test
+  public void navPropertySameNameAsEntitySet() throws Exception {
+    final String namespace = "namespace";
+    final String entityTypeName = "ETNavProp";
+    final FullQualifiedName nameETNavProp = new FullQualifiedName(namespace, entityTypeName);
+    final String entitySetName = "ESNavProp";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = Mockito.mock(EdmProperty.class);
+    Mockito.when(keyProperty.getType())
+        .thenReturn(OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Byte));
+    EdmKeyPropertyRef keyPropertyRef = Mockito.mock(EdmKeyPropertyRef.class);
+    Mockito.when(keyPropertyRef.getName()).thenReturn(keyPropertyName);
+    Mockito.when(keyPropertyRef.getProperty()).thenReturn(keyProperty);
+    EdmNavigationProperty navProperty = Mockito.mock(EdmNavigationProperty.class);
+    Mockito.when(navProperty.getName()).thenReturn(entitySetName);
+    Mockito.when(navProperty.isCollection()).thenReturn(true);
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(nameETNavProp);
+    Mockito.when(entityType.getKeyPredicateNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getKeyPropertyRefs()).thenReturn(Collections.singletonList(keyPropertyRef));
+    Mockito.when(entityType.getNavigationProperty(entitySetName)).thenReturn(navProperty);
+    Mockito.when(navProperty.getType()).thenReturn(entityType);
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn(entitySetName);
+    Mockito.when(entitySet.getEntityType()).thenReturn(entityType);
+    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
+    Mockito.when(container.getEntitySet(entitySetName)).thenReturn(entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    new TestUriValidator().setEdm(mockedEdm)
+        .run("ESNavProp(1)/ESNavProp(2)/ESNavProp(3)/ESNavProp")
+        .goPath()
+        .at(0).isEntitySet(entitySetName)
+        .at(0).isKeyPredicate(0, keyPropertyName, "1")
+        .at(1).isNavProperty(entitySetName, nameETNavProp, false)
+        .at(1).isKeyPredicate(0, keyPropertyName, "2")
+        .at(2).isNavProperty(entitySetName, nameETNavProp, false)
+        .at(2).isKeyPredicate(0, keyPropertyName, "3")
+        .at(3).isNavProperty(entitySetName, nameETNavProp, true);
+  }
 
   /**
    * Test for EntitySet and NavigationProperty with same name defined in metadata.
    * (related to Olingo issue OLINGO-741)
    */
   @Test
-  public void parseEntitySetAndNavigationPropertyWithSameName() throws Exception {
+  public void expandNavigationPropertyWithSameNameAsEntitySet() throws Exception {
     TestUriValidator testUri = new TestUriValidator();
 
     Edm mockEdm = Mockito.mock(Edm.class);
@@ -55,12 +101,12 @@ public class ParserTest {
     EdmEntityType productsType = Mockito.mock(EdmEntityType.class);
 
     final FullQualifiedName nameProducts = new FullQualifiedName("NS", "Products");
-    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
+    Mockito.when(mockEdm.getEntityContainer()).thenReturn(container);
     Mockito.when(typeCategory.getName()).thenReturn("Category");
     Mockito.when(typeCategory.getNamespace()).thenReturn("NS");
     Mockito.when(esCategory.getEntityType()).thenReturn(typeCategory);
     Mockito.when(productsNavigation.getName()).thenReturn("Products");
-    Mockito.when(typeCategory.getProperty("Products")).thenReturn(productsNavigation);
+    Mockito.when(typeCategory.getNavigationProperty("Products")).thenReturn(productsNavigation);
     Mockito.when(container.getEntitySet("Category")).thenReturn(esCategory);
     Mockito.when(container.getEntitySet("Products")).thenReturn(esProduct);
     Mockito.when(productsType.getFullQualifiedName()).thenReturn(nameProducts);
@@ -97,7 +143,7 @@ public class ParserTest {
     EdmEntityType typeProduct = Mockito.mock(EdmEntityType.class);
     FullQualifiedName fqnProduct = new FullQualifiedName("NS", "Products");
 
-    Mockito.when(mockEdm.getEntityContainer(null)).thenReturn(container);
+    Mockito.when(mockEdm.getEntityContainer()).thenReturn(container);
     Mockito.when(typeCategory.getName()).thenReturn(fqnCategory.getName());
     Mockito.when(typeCategory.getNamespace()).thenReturn(fqnCategory.getNamespace());
     Mockito.when(typeCategory.getFullQualifiedName()).thenReturn(fqnCategory);
@@ -122,7 +168,7 @@ public class ParserTest {
           .isType(new FullQualifiedName("NS", "Category"), false);
       fail("Expected exception was not thrown.");
     } catch (final UriParserException e) {
-      assertEquals("NavigationProperty 'Category' not found in type 'NS.Products'", e.getMessage());
+      assertEquals("Navigation Property 'Category' not found in type 'NS.Products'.", e.getMessage());
     }
   }
 }

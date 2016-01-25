@@ -191,7 +191,7 @@ public class URIBuilderImpl implements URIBuilder {
         segments.size() == 1 ? SegmentType.UNBOUND_ACTION : SegmentType.BOUND_ACTION, action));
     return this;
   }
-  
+
   @Override
   public URIBuilder appendOperationCallSegment(final String operation) {
     segments.add(new Segment(
@@ -385,7 +385,7 @@ public class URIBuilderImpl implements URIBuilder {
   }
 
   protected char getBoundOperationSeparator() {
-    return '.';
+    return '/';
   }
 
   protected String getOperationInvokeMarker() {

@@ -183,11 +183,22 @@ public class URIBuilderTest extends AbstractTest {
   public void boundAction() throws URISyntaxException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Categories").appendKeySegment(1).
-        appendNavigationSegment("Products").appendNavigationSegment("Model").
-        appendActionCallSegment("AllOrders");
+        appendNavigationSegment("Products").
+        appendActionCallSegment("Model.AllOrders");
 
     assertEquals(new org.apache.http.client.utils.URIBuilder(
         SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders").build(), uriBuilder.build());
+  }
+  
+  @Test
+  public void boundOperation() throws URISyntaxException {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_ROOT).
+        appendEntitySetSegment("Categories").appendKeySegment(1).
+        appendNavigationSegment("Products").
+        appendOperationCallSegment("Model.AllOrders");
+
+    assertEquals(new org.apache.http.client.utils.URIBuilder(
+        SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders()").build(), uriBuilder.build());
   }
 
   @Test

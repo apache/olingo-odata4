@@ -22,7 +22,6 @@ package org.apache.olingo.commons.api.edm.provider.annotation;
  * Represents an annotation path
  */
 public class CsdlAnnotationPath extends CsdlDynamicExpression {
-  private static final long serialVersionUID = 1588336268773032932L;
 
   private String value;
 

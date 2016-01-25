@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
-import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
-
 import java.io.Serializable;
+
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 
 /**
  * A geometry or geography property MAY define a value for the SRID attribute. The value of this attribute identifies
@@ -29,23 +29,22 @@ import java.io.Serializable;
  * The value of the SRID attribute MUST be a non-negative integer or the special value <tt>variable</tt>. If no value is
  * specified, the attribute defaults to 0 for Geometry types or 4326 for Geography types.
  * <br/>
- * Standards Track Work Product Copyright © OASIS Open 2013. All Rights Reserved. 19 November 2013 Page 22 of 83The
- * valid values of the SRID attribute and their meanings are as defined by the European Petroleum Survey Group [EPSG].
+ * Standards Track Work Product Copyright © OASIS Open 2013. All Rights Reserved. 19 November 2013
+ * <br>
+ * The valid values of the SRID attribute and their meanings are as defined by the
+ * European Petroleum Survey Group [EPSG].
  */
 public final class SRID implements Serializable {
 
+  private static final long serialVersionUID = 8412685060902464629L;
   private static final String VARIABLE = "variable";
 
-  private static final long serialVersionUID = 8412685060902464629L;
-
   private Dimension dimension = Dimension.GEOGRAPHY;
-
   private Integer value;
-
   private Boolean variable;
   
   /**
-   * Creates a new SRID instance from a given 
+   * Creates a new SRID instance from a given value.
    * @param exp Either "variable" or a numeric non-negative SRID value
    * @return SRID instance
    */
@@ -70,15 +69,15 @@ public final class SRID implements Serializable {
   }
 
   /**
-   * Returns the dimension of the SRID instance
+   * Returns the dimension of the SRID instance.
    * @return dimension of the SRID instance
    */
   public Dimension getDimension() {
     return dimension;
   }
-  
+
   /**
-   * Sets the dimension of the SRID instance
+   * Sets the dimension of the SRID instance.
    * @param dimension dimension of the SRID instance
    */
   public void setDimension(final Dimension dimension) {
@@ -86,27 +85,13 @@ public final class SRID implements Serializable {
   }
 
   private String getValue() {
-    if (value == null) {
-      if (dimension == Dimension.GEOMETRY) {
-        return "0";
-      } else {
-        return "4326";
-      }
-    }
-
-    return value.toString();
-//    return value == null ? dimension == Dimension.GEOMETRY
-//        ? "0"
-//            : "4326"
-//        : value.getName();
+    return value == null ?
+        dimension == Dimension.GEOMETRY ? "0" : "4326" :
+        value.toString();
   }
 
-  private boolean isVariable() {
-    return variable != null && variable;
-  }
-  
   /**
-   * Returns true if the value of the instance is not equals to the default (uninitialized)
+   * Returns true if the value of the instance is not equals to the default (uninitialized).
    * @return true if the value of the instance is not equals to the default (uninitialized)
    */
   public boolean isNotDefault() {
@@ -144,8 +129,6 @@ public final class SRID implements Serializable {
 
   @Override
   public String toString() {
-    return isVariable()
-        ? VARIABLE
-        : getValue();
+    return variable != null && variable ? VARIABLE : getValue();
   }
 }

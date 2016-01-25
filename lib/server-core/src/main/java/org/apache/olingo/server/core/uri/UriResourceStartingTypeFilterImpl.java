@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,11 +23,13 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 
 public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
 
-  private EdmType type;
-  private boolean isCollection;
+  private final EdmType type;
+  private final boolean isCollection;
 
-  public UriResourceStartingTypeFilterImpl() {
+  public UriResourceStartingTypeFilterImpl(final EdmType type, final boolean isCollection) {
     super(null);
+    this.type = type;
+    this.isCollection = isCollection;
   }
 
   @Override
@@ -40,32 +42,13 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
     return type;
   }
 
-  public UriResourceStartingTypeFilterImpl setType(final EdmType type) {
-    this.type = type;
-    return this;
-  }
-
   @Override
   public boolean isCollection() {
-    if (keyPredicates != null) {
-      return false;
-    }
-    return isCollection;
-  }
-
-  public UriResourceStartingTypeFilterImpl setCollection(final boolean isCollection) {
-    this.isCollection = isCollection;
-    return this;
+    return keyPredicates == null && isCollection;
   }
 
   @Override
-  public String getSegmentValue(){
-    return type.getNamespace() + "." + type.getName();
+  public String getSegmentValue() {
+    return type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
-  
-  @Override
-  public String toString() {
-    return getSegmentValue();
-  }
-
 }

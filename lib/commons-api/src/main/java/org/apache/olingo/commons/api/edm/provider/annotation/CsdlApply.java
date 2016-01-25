@@ -24,8 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
-public class CsdlApply extends CsdlDynamicExpression implements CsdlAnnotatable{
-  private static final long serialVersionUID = 3555689860643577136L;
+public class CsdlApply extends CsdlDynamicExpression implements CsdlAnnotatable {
 
   private String function;
   private List<CsdlExpression> parameters = new ArrayList<CsdlExpression>();

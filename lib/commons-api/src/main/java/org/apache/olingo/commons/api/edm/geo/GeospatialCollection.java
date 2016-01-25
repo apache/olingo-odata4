@@ -27,10 +27,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
-  private static final long serialVersionUID = -9181547636133878977L;
-  
   /**
-   * Creates a new collection of geospatial types
+   * Creates a new collection of geospatial types.
    * @param dimension     Dimension of the collection
    * @param srid          SRID Value
    * @param geospatials   Members of the collection
@@ -41,8 +39,8 @@ public class GeospatialCollection extends ComposedGeospatial<Geospatial> {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyCollection
-            : EdmPrimitiveTypeKind.GeometryCollection;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyCollection :
+        EdmPrimitiveTypeKind.GeometryCollection;
   }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,14 +41,17 @@ public class PreferencesImpl implements Preferences {
     preferences = PreferParser.parse(preferHeaders);
   }
 
+  @Override
   public Preference getPreference(final String name) {
     return preferences.get(name.toLowerCase(Locale.ROOT));
   }
 
+  @Override
   public boolean hasAllowEntityReferences() {
     return preferences.containsKey(PreferenceName.ALLOW_ENTITY_REFERENCES.getName());
   }
 
+  @Override
   public URI getCallback() {
     if (preferences.containsKey(PreferenceName.CALLBACK.getName())
         && preferences.get(PreferenceName.CALLBACK.getName()).getParameters() != null
@@ -62,18 +65,22 @@ public class PreferencesImpl implements Preferences {
     return null;
   }
 
+  @Override
   public boolean hasContinueOnError() {
     return preferences.containsKey(PreferenceName.CONTINUE_ON_ERROR.getName());
   }
 
+  @Override
   public Integer getMaxPageSize() {
     return getNonNegativeIntegerPreference(PreferenceName.MAX_PAGE_SIZE.getName());
   }
 
+  @Override
   public boolean hasTrackChanges() {
     return preferences.containsKey(PreferenceName.TRACK_CHANGES.getName());
   }
 
+  @Override
   public Return getReturn() {
     if (preferences.containsKey(PreferenceName.RETURN.getName())) {
       final String value = preferences.get(PreferenceName.RETURN.getName()).getValue();
@@ -86,10 +93,12 @@ public class PreferencesImpl implements Preferences {
     return null;
   }
 
+  @Override
   public boolean hasRespondAsync() {
     return preferences.containsKey(PreferenceName.RESPOND_ASYNC.getName());
   }
 
+  @Override
   public Integer getWait() {
     return getNonNegativeIntegerPreference(PreferenceName.WAIT.getName());
   }

@@ -86,7 +86,7 @@ To install the required bundles, you can simply install the Karaf olingo-server 
 The following commands will install the olingo-server feature.
 
 ```
-feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
+feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.2.0-SNAPSHOT/xml/features
 feature:install olingo-server
 ```
 
@@ -95,16 +95,16 @@ feature:install olingo-server
 To install this sample bundle, run the karaf console command.
 
 ```
-bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.1.0-SNAPSHOT
+bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.2.0-SNAPSHOT
 ```
 
 Shown below is the output from running the above Karaf console commands.
 
 ```
-karaf@root()> feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
-Adding feature url mvn:org.apache.olingo/odata-karaf-features/4.1.0-SNAPSHOT/xml/features
+karaf@root()> feature:repo-add mvn:org.apache.olingo/odata-karaf-features/4.2.0-SNAPSHOT/xml/features
+Adding feature url mvn:org.apache.olingo/odata-karaf-features/4.2.0-SNAPSHOT/xml/features
 karaf@root()> feature:install olingo-server
-karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.1.0-SNAPSHOT
+karaf@root()> bundle:install -s mvn:org.apache.olingo/odata-server-osgi-sample/4.2.0-SNAPSHOT
 Bundle ID: 109
 ```
 

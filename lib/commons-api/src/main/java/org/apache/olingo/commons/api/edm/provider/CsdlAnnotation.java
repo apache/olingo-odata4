@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
  */
 public class CsdlAnnotation extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = -7137313445729486860L;
-
   private String term;
 
   private String qualifier;

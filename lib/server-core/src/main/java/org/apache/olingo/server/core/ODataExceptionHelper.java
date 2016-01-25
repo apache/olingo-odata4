@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,10 +21,10 @@ package org.apache.olingo.server.core;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -34,9 +34,9 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ODataExceptionHelper {
-  
+
   private ODataExceptionHelper() {
-    //Private Constructor
+    // Private Constructor
   }
 
   public static ODataServerError createServerErrorObject(final UriValidationException e,
@@ -52,7 +52,7 @@ public class ODataExceptionHelper {
     if (UriParserSemanticException.MessageKeys.RESOURCE_NOT_FOUND.equals(e.getMessageKey())
         || UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_FOUND.getStatusCode());
-    } else if(UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED.equals(e.getMessageKey())) {
+    } else if (UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode());
     } else {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
@@ -66,7 +66,7 @@ public class ODataExceptionHelper {
     serverError.setStatusCode(
         UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT.equals(e.getMessageKey()) ?
             HttpStatusCode.NOT_ACCEPTABLE.getStatusCode() :
-            HttpStatusCode.BAD_REQUEST.getStatusCode());
+              HttpStatusCode.BAD_REQUEST.getStatusCode());
     return serverError;
   }
 

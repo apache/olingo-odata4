@@ -28,8 +28,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
-  private static final long serialVersionUID = -160184788048512883L;
-  
   /**
    * Creates a collection of polygons
    * 
@@ -43,8 +41,8 @@ public class MultiPolygon extends ComposedGeospatial<Polygon> {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyMultiPolygon
-            : EdmPrimitiveTypeKind.GeometryMultiPolygon;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyMultiPolygon :
+        EdmPrimitiveTypeKind.GeometryMultiPolygon;
   }
 }

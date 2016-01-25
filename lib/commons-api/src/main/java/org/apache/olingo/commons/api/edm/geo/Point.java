@@ -21,14 +21,10 @@ package org.apache.olingo.commons.api.edm.geo;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 
 /**
- * Represents a point 
- * 
- * Either Edm.GeographyPoint or Edm.GeometryPoint
+ * Represents a point, either Edm.GeographyPoint or Edm.GeometryPoint.
  *
  */
 public class Point extends Geospatial {
-
-  private static final long serialVersionUID = 4917380107331557828L;
 
   /**
    * The X coordinate of the point. In most long/lat systems, this is the longitude.
@@ -47,41 +43,40 @@ public class Point extends Geospatial {
   private double z;
 
   /**
-   * Creates a new point
-   * 
+   * Creates a new point.
    * @param dimension   Dimension of the point
    * @param srid        SRID value
    */
   public Point(final Dimension dimension, final SRID srid) {
     super(dimension, Type.POINT, srid);
   }
-  
+
   /**
-   * Returns the x coordinate
+   * Returns the x coordinate.
    * @return x coordinate
    */
   public double getX() {
     return x;
   }
-  
+
   /**
-   * Sets the x coordinate
+   * Sets the x coordinate.
    * @param x x coordinate
    */
   public void setX(final double x) {
     this.x = x;
   }
-  
+
   /**
-   * Returns the y coordinate
+   * Returns the y coordinate.
    * @return y coordinate
    */
   public double getY() {
     return y;
   }
-  
+
   /**
-   * Sets the y coordinate
+   * Sets the y coordinate.
    * @param y y coordinate
    */
   public void setY(final double y) {
@@ -89,15 +84,15 @@ public class Point extends Geospatial {
   }
 
   /**
-   * Returns the z coordinate
+   * Returns the z coordinate.
    * @return z coordinate
    */
   public double getZ() {
     return z;
   }
-  
+
   /**
-   * Sets the z coordinate
+   * Sets the z coordinate.
    * @param z z coordinate
    */
   public void setZ(final double z) {
@@ -106,8 +101,43 @@ public class Point extends Geospatial {
 
   @Override
   public EdmPrimitiveTypeKind getEdmPrimitiveTypeKind() {
-    return dimension == Dimension.GEOGRAPHY
-        ? EdmPrimitiveTypeKind.GeographyPoint
-            : EdmPrimitiveTypeKind.GeometryPoint;
+    return dimension == Dimension.GEOGRAPHY ?
+        EdmPrimitiveTypeKind.GeographyPoint :
+        EdmPrimitiveTypeKind.GeometryPoint;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    final Point point = (Point) o;
+    return dimension == point.dimension
+        && (srid == null ? point.srid == null : srid.equals(point.srid))
+        && x == point.x
+        && y == point.y
+        && z == point.z;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = dimension == null ? 0 : dimension.hashCode();
+    result = 31 * result + (srid == null ? 0 : srid.hashCode());
+    result = 31 * result + Double.valueOf(x).hashCode();
+    result = 31 * result + Double.valueOf(y).hashCode();
+    result = 31 * result + Double.valueOf(z).hashCode();
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return (dimension == null ? "" : dimension.name())
+        + '\''
+        + (srid == null ? "" : "SRID=" + srid.toString() + ';')
+        + "Point(" + x + ' ' + y + ")'";
   }
 }

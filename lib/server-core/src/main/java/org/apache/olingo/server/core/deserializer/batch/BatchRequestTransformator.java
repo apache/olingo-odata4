@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,8 +30,8 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
-import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
+import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
 public class BatchRequestTransformator {
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
@@ -100,7 +100,7 @@ public class BatchRequestTransformator {
 
   private ODataRequest createRequest(final BatchQueryOperation operation, final String baseUri,
       final boolean isChangeSet)
-      throws BatchDeserializerException {
+          throws BatchDeserializerException {
     final HttpRequestStatusLine statusLine =
         new HttpRequestStatusLine(operation.getHttpStatusLine(), baseUri, rawServiceResolutionUri);
     statusLine.validateHttpMethod(isChangeSet);
@@ -127,13 +127,13 @@ public class BatchRequestTransformator {
     return request;
   }
 
-  private Charset getCharset(BatchQueryOperation operation) {
+  private Charset getCharset(final BatchQueryOperation operation) {
     String ct = operation.getHeaders().getHeader(HttpHeader.CONTENT_TYPE);
-    if(ct != null) {
+    if (ct != null) {
       ContentType contentType = ContentType.parse(ct);
-      if(contentType != null) {
+      if (contentType != null) {
         String charsetValue = contentType.getParameter(ContentType.PARAMETER_CHARSET);
-        if(charsetValue != null) {
+        if (charsetValue != null) {
           return Charset.forName(charsetValue);
         }
       }
@@ -153,8 +153,8 @@ public class BatchRequestTransformator {
   }
 
   private InputStream getBodyStream(final BatchQueryOperation operation, final HttpRequestStatusLine statusLine,
-                                    final Charset charset)
-      throws BatchDeserializerException {
+      final Charset charset)
+          throws BatchDeserializerException {
     if (statusLine.getMethod().equals(HttpMethod.GET)) {
       return new ByteArrayInputStream(new byte[0]);
     } else {

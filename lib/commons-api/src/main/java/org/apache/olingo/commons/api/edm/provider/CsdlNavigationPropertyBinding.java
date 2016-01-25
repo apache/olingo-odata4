@@ -23,8 +23,6 @@ package org.apache.olingo.commons.api.edm.provider;
  */
 public class CsdlNavigationPropertyBinding extends CsdlAbstractEdmItem {
 
-  private static final long serialVersionUID = 770380971233808502L;
-
   private String path;
 
   private String target;

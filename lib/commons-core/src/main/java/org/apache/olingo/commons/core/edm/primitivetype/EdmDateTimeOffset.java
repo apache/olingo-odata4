@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -140,6 +141,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
       timestamp.setNanos(nanoSeconds);
       return returnType.cast(timestamp);
+    } else if(returnType.isAssignableFrom(Time.class)) {
+      return returnType.cast(new Time(dateTimeValue.getTimeInMillis()));
     } else {
       throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
     }
@@ -202,7 +205,10 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    */
   protected static <T> Calendar createDateTime(final T value) throws EdmPrimitiveTypeException {
     Calendar dateTimeValue;
-    if (value instanceof Date) {
+    if(value instanceof Time) {
+      dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      dateTimeValue.setTimeInMillis(((Time) value).getTime());
+    } else if (value instanceof Date) {
       // Although java.util.Date, as stated in its documentation,
       // "is intended to reflect coordinated universal time (UTC)",
       // its getName() method uses the default time zone. And so do we.

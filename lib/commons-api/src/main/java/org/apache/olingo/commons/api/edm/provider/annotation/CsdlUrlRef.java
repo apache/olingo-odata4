@@ -28,9 +28,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
  * The edm:UrlRef expression enables a value to be obtained by sending a GET request to the value of
  * the UrlRef expression.
  */
-public class CsdlUrlRef extends CsdlDynamicExpression implements CsdlAnnotatable{
+public class CsdlUrlRef extends CsdlDynamicExpression implements CsdlAnnotatable {
 
-  private static final long serialVersionUID = 3781479172952387841L;
   private CsdlExpression value;
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
