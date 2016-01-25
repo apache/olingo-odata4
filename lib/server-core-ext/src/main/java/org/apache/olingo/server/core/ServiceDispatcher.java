@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -81,6 +83,13 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
 
     new UriValidator().validate(uriInfo, odRequest.getMethod());
 
+    // part1, 8.2.6
+    String isolation = odRequest.getHeader(HttpHeader.ODATA_ISOLATION);
+    if (isolation != null && isolation.equals("snapshot") && !this.handler.supportsDataIsolation()) {
+      odResponse.setStatusCode(HttpStatusCode.PRECONDITION_FAILED.getStatusCode());
+      return;
+    }
+    
     visit(uriInfo);
 
     // this should cover for any unsupported calls until they are implemented

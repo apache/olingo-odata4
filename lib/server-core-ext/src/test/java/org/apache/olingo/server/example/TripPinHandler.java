@@ -556,4 +556,9 @@ public class TripPinHandler implements ServiceHandler {
       updateEntity(request, entity, merge, entityETag, response);
     }
   }
+
+  @Override
+  public boolean supportsDataIsolation() {
+    return false;
+  }
 }

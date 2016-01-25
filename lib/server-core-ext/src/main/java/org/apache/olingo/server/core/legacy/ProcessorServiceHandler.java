@@ -437,4 +437,9 @@ public class ProcessorServiceHandler implements ServiceHandler {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
   }
+
+  @Override
+  public boolean supportsDataIsolation() {
+    return false;
+  }
 }

@@ -42,6 +42,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -732,4 +733,13 @@ public class TripPinServiceTest {
     HttpResponse response = httpGET(editUrl, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
+  
+  @Test
+  public void dataIsolation() throws Exception {
+    String url = baseURL + "/People";
+    HttpRequest request = new HttpGet(url);
+    request.setHeader(HttpHeader.ODATA_ISOLATION, "snapshot");
+    HttpResponse response = httpSend(request, 412);
+    EntityUtils.consumeQuietly(response.getEntity());
+  }  
 }

@@ -282,4 +282,18 @@ public interface ServiceHandler extends Processor {
    */
   void crossJoin(DataRequest dataRequest, List<String> entitySetNames, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException;
+  
+  /**
+   * Snapshot isolation guarantees that all data returned for a request, including multiple requests within 
+   * a batch or results retrieved across multiple pages, will be consistent as of a single point in time. 
+   * Only data modifications made within the request (for example, by a data modification request 
+   * within the same batch) are visible. The effect is as if the request generates a "snapshot" of 
+   * the committed data as it existed at the start of the request. for more info see OData V4, Part1 8.2.6
+   * 
+   * The contract for this interface is if it returns true, whenever the service deals with $skiptoken based
+   * results, they MUST be from same snapshot of the original request. false, the framework will automatically
+   * returns a 412.
+   * @return
+   */
+  boolean supportsDataIsolation();
 }
