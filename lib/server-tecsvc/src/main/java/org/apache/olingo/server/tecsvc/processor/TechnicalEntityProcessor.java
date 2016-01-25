@@ -567,12 +567,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       @Override
       public Entity next() {
         Entity next = entityIterator.next();
-        replacePrimitiveProperty(next, "PropertyString", generateData(28192));
-//        next.getProperties().remove(1);
+//        replacePrimitiveProperty(next, "PropertyString", generateData(28192));
+        replacePrimitiveProperty(next, "PropertyString", generateData(request));
 //        next.addProperty(new Property(null, "PropertyString", ValueType.PRIMITIVE, generateData(28192)));
-        try {
-          TimeUnit.MILLISECONDS.sleep(2500);
-        } catch (InterruptedException e) { }
+
+        sleep(request, 2500);
         return next;
       }
 
@@ -592,6 +591,29 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           }
           pos++;
         }
+      }
+
+      private void sleep(ODataRequest request, int defaultTimeMs) {
+        String sleepTimeMs = request.getHeader("StreamSleep");
+        if(sleepTimeMs != null) {
+          try {
+            defaultTimeMs = Integer.parseInt(sleepTimeMs);
+          } catch (NumberFormatException e) { }
+        }
+        try {
+          TimeUnit.MILLISECONDS.sleep(defaultTimeMs);
+        } catch (InterruptedException e) { }
+
+      }
+
+      private String generateData(ODataRequest request) {
+        String streamHeader = request.getHeader("StreamData");
+        if(streamHeader != null) {
+          try {
+            return generateData(Integer.parseInt(streamHeader));
+          } catch (NumberFormatException e) { }
+        }
+        return generateData(28192);
       }
 
       private String generateData(final int len) {
