@@ -71,6 +71,7 @@ public class ChannelSerializerResult implements SerializerResult {
         if(r <= dest.remaining()) {
           dest.put(buffer);
         } else {
+          r = dest.remaining();
           byte[] buf = new byte[dest.remaining()];
           buffer.get(buf);
           dest.put(buf);

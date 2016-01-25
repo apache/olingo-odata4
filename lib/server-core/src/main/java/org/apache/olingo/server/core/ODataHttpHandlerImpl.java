@@ -168,7 +168,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);
-        inBuffer.rewind();
+        inBuffer.clear();
       }
     } catch (IOException e) {
       throw new ODataRuntimeException("Error on reading request content", e);
