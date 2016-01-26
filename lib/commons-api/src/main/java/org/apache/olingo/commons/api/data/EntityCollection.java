@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Data representation for a collection of single entities.
  */
-public class EntityCollection extends AbstractODataObject implements Iterable<Entity> {
+public class EntityCollection extends AbstractEntityCollection {
 
   private final List<Entity> entities = new ArrayList<Entity>();
   private Integer count;
@@ -47,6 +47,7 @@ public class EntityCollection extends AbstractODataObject implements Iterable<En
    *
    * @return number of entries into the entity set.
    */
+  @Override
   public Integer getCount() {
     return count;
   }
@@ -74,6 +75,7 @@ public class EntityCollection extends AbstractODataObject implements Iterable<En
    *
    * @return next link if exists; null otherwise.
    */
+  @Override
   public URI getNext() {
     return next;
   }
@@ -83,6 +85,7 @@ public class EntityCollection extends AbstractODataObject implements Iterable<En
    *
    * @return delta link if exists; null otherwise.
    */
+  @Override
   public URI getDeltaLink() {
     return deltaLink;
   }

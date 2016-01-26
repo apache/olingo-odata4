@@ -19,7 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -61,7 +61,7 @@ public interface ODataSerializer {
    * @param options options for the serializer
    */
   SerializerResult entityCollection(ServiceMetadata metadata, EdmEntityType entityType,
-      EntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
+      AbstractEntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.
@@ -131,5 +131,5 @@ public interface ODataSerializer {
    * @param ReferenceCollectionSerializerOptions {@link ReferenceCollectionSerializerOptions}
    */
   SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet,
-      EntityCollection entityCollection, ReferenceCollectionSerializerOptions options) throws SerializerException;
+      AbstractEntityCollection entityCollection, ReferenceCollectionSerializerOptions options) throws SerializerException;
 }

@@ -29,7 +29,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -136,7 +136,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
-      final EdmEntityType entityType, final EntityCollection entitySet,
+      final EdmEntityType entityType, final AbstractEntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
@@ -213,7 +213,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
+      final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
       final boolean onlyReference, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();
@@ -724,7 +724,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
-      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
+      final AbstractEntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
           throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
@@ -743,7 +743,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       }
 
       json.writeArrayFieldStart(Constants.VALUE);
-      for (final Entity entity : entityCollection.getEntities()) {
+      for (final Entity entity : entityCollection) {
         json.writeStartObject();
         json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
         json.writeEndObject();
@@ -783,7 +783,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  void writeCount(final EntityCollection entityCollection, final JsonGenerator json) throws IOException {
+  void writeCount(final AbstractEntityCollection entityCollection, final JsonGenerator json) throws IOException {
     if (entityCollection.getCount() != null) {
       if (isIEEE754Compatible) {
         json.writeStringField(Constants.JSON_COUNT, entityCollection.getCount().toString());
@@ -793,7 +793,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  void writeNextLink(final EntityCollection entitySet, final JsonGenerator json) throws IOException {
+  void writeNextLink(final AbstractEntityCollection entitySet, final JsonGenerator json) throws IOException {
     if (entitySet.getNext() != null) {
       json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
     }

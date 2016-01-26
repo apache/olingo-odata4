@@ -18,14 +18,16 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.net.URI;
 import java.util.Iterator;
 
 /**
  * Data representation for a collection of single entities.
  */
-public abstract class EntityIterator extends EntityCollection implements Iterator<Entity> {
+public abstract class EntityIterator extends AbstractEntityCollection implements Iterator<Entity> {
 
   public abstract boolean hasNext();
   public abstract Entity next();
@@ -39,5 +41,18 @@ public abstract class EntityIterator extends EntityCollection implements Iterato
   @Override
   public Iterator<Entity> iterator() {
     return this;
+  }
+
+  public Integer getCount() {
+    throw new ODataRuntimeException("getCount() not supported for " + getClass().getSimpleName());
+  }
+
+  public URI getNext() {
+    throw new ODataRuntimeException("getNext() not supported for " + getClass().getSimpleName());
+
+  }
+
+  public URI getDeltaLink() {
+    throw new ODataRuntimeException("getDeltaLink() not supported for " + getClass().getSimpleName());
   }
 }

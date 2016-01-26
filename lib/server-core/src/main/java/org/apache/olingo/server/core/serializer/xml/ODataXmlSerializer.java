@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -209,7 +210,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
-      final EdmEntityType entityType, final EntityCollection entitySet,
+      final EdmEntityType entityType, final AbstractEntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
 
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
@@ -335,7 +336,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
+      final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     for (final Entity entity : entitySet) {
       writeEntity(metadata, entityType, entity, null, expand, select, writer, false);
@@ -555,7 +556,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
       link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
-      EntityCollection target = new EntityCollection();
+      AbstractEntityCollection target = new EntityCollection();
       link.setInlineEntitySet(target);
       if (linked.getId() != null) {
         link.setHref(linked.getId().toASCIIString() + "/" + navigationPropertyName);
@@ -1035,12 +1036,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
-      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
+      final AbstractEntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
       throws SerializerException {
     return entityReferenceCollection(entityCollection, options);
   }
 
-  protected SerializerResult entityReferenceCollection(final EntityCollection entitySet,
+  protected SerializerResult entityReferenceCollection(final AbstractEntityCollection entitySet,
       final ReferenceCollectionSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
@@ -1086,14 +1087,14 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeCount(final EntityCollection entitySet, final XMLStreamWriter writer)
+  private void writeCount(final AbstractEntityCollection entitySet, final XMLStreamWriter writer)
       throws XMLStreamException {
     writer.writeStartElement(METADATA, Constants.ATOM_ELEM_COUNT, NS_METADATA);
     writer.writeCharacters(String.valueOf(entitySet.getCount()));
     writer.writeEndElement();
   }
 
-  private void writeNextLink(final EntityCollection entitySet, final XMLStreamWriter writer)
+  private void writeNextLink(final AbstractEntityCollection entitySet, final XMLStreamWriter writer)
       throws XMLStreamException {
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_LINK, NS_ATOM);
     writer.writeAttribute(Constants.ATTR_REL, Constants.NEXT_LINK_REL);
