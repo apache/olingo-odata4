@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.serializer.json;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -51,7 +52,7 @@ public class ODataJsonStreamSerializer extends ODataJsonSerializer {
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
-      final EdmEntityType entityType, final EntityCollection entitySet,
+      final EdmEntityType entityType, final AbstractEntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
 
     EntityIterator coll;

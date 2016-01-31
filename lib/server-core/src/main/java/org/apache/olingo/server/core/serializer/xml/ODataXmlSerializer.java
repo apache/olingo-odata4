@@ -556,7 +556,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
       link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
       link.setTitle(navigationPropertyName);
-      AbstractEntityCollection target = new EntityCollection();
+      EntityCollection target = new EntityCollection();
       link.setInlineEntitySet(target);
       if (linked.getId() != null) {
         link.setHref(linked.getId().toASCIIString() + "/" + navigationPropertyName);

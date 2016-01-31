@@ -128,8 +128,9 @@ public interface ODataSerializer {
    * @param metadata metadata for the service
    * @param edmEntitySet {@link EdmEntitySet}
    * @param entityCollection data of the entity collection
-   * @param ReferenceCollectionSerializerOptions {@link ReferenceCollectionSerializerOptions}
+   * @param options {@link ReferenceCollectionSerializerOptions}
    */
   SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet,
-      AbstractEntityCollection entityCollection, ReferenceCollectionSerializerOptions options) throws SerializerException;
+      AbstractEntityCollection entityCollection, ReferenceCollectionSerializerOptions options)
+      throws SerializerException;
 }
