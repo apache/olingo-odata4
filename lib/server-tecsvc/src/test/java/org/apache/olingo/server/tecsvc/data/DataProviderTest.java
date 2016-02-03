@@ -21,6 +21,7 @@ package org.apache.olingo.server.tecsvc.data;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
@@ -33,7 +34,9 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -52,6 +55,16 @@ public class DataProviderTest {
   private final EdmEntitySet esMixPrimCollComp = entityContainer.getEntitySet("ESMixPrimCollComp");
   private final EdmEntitySet esMedia = entityContainer.getEntitySet("ESMedia");
 
+  @Before
+  public void setup() {
+    DataProvider.setDefaultTimeZone("GMT");
+  }
+  
+  @After
+  public void teardown() {
+    DataProvider.setDefaultTimeZone(TimeZone.getDefault().getID());
+  }
+  
   @Test
   public void esAllPrimEntity() throws Exception {
     final DataProvider dataProvider = new DataProvider(oData, edm);
@@ -82,6 +95,7 @@ public class DataProviderTest {
         mockParameter("PropertySByte", "127"),
         mockParameter("PropertyString", "'First'"),
         mockParameter("PropertyTimeOfDay", "02:48:21"))));
+    
   }
 
   @Test

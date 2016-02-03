@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +47,7 @@ public final class EdmDate extends SingletonPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    final Calendar dateTimeValue = Calendar.getInstance(EdmDateTimeOffset.getDefaultTimeZone());
     dateTimeValue.clear();
 
     final Matcher matcher = PATTERN.matcher(value);
@@ -75,7 +74,7 @@ public final class EdmDate extends SingletonPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value);
+    final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value, true);
 
     final StringBuilder result = new StringBuilder(10); // Ten characters are enough for "normal" dates.
     final int year = dateTimeValue.get(Calendar.YEAR);

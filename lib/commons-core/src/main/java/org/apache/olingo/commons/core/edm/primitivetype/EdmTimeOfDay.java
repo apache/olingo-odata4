@@ -20,7 +20,6 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +51,7 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
       throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
 
-    final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    final Calendar dateTimeValue = Calendar.getInstance(EdmDateTimeOffset.getDefaultTimeZone());
     dateTimeValue.clear();
     dateTimeValue.set(Calendar.HOUR_OF_DAY, Byte.parseByte(matcher.group(1)));
     dateTimeValue.set(Calendar.MINUTE, Byte.parseByte(matcher.group(2)));
@@ -92,18 +91,8 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
       final Boolean isNullable, final Integer maxLength, final Integer precision,
       final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue;
-    final int fractionalSecs;
-    if (value instanceof Timestamp) {
-      final Calendar tmp = Calendar.getInstance();
-      tmp.setTimeInMillis(((Timestamp) value).getTime());
-      dateTimeValue = EdmDateTimeOffset.createDateTime(tmp);
-      fractionalSecs = ((Timestamp) value).getNanos();
-    } else {
-      dateTimeValue = EdmDateTimeOffset.createDateTime(value);
-      fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
-    }
-
+    final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value, true);
+    
     final StringBuilder result = new StringBuilder();
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.HOUR_OF_DAY));
     result.append(':');
@@ -112,7 +101,8 @@ public final class EdmTimeOfDay extends SingletonPrimitiveType {
     EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
     try {
-      EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
+      EdmDateTimeOffset.appendFractionalSeconds(result,
+          dateTimeValue.get(Calendar.MILLISECOND), value instanceof Timestamp, precision);
     } catch (final IllegalArgumentException e) {
       throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
     }

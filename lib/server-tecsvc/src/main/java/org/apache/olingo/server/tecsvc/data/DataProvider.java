@@ -659,4 +659,10 @@ public class DataProvider {
       super(message, statusCode.getStatusCode(), Locale.ROOT, throwable);
     }
   }
+
+  //CHECKSTYLE:OFF
+  public static void setDefaultTimeZone(String tz) {
+    System.setProperty("defaultTimeZoneForEdmDateTypes", tz);
+  }
+  //CHECKSTYLE:ON
 }

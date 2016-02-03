@@ -63,10 +63,26 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
   }
   
   @Test
+  public void valueToStringWithGMT() throws Exception {
+    Calendar dateTime = Calendar.getInstance();
+    dateTime.clear();
+    dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:30"));
+    dateTime.set(1, 2, 3, 4, 5, 6);
+    assertEquals("04:05:06", instance.valueToString(dateTime, null, null, null, null, null));
+  }
+  
+  @Test
+  public void testRoundTripTime() throws Exception {
+      java.sql.Time time = instance.valueOfString("04:05:06.002", true,
+                4000, 3, 0, true, java.sql.Time.class);
+      String val = instance.valueToString(time, true, 4000, 3, 0, true);
+      assertEquals("04:05:06", val);  
+  } 
+  
+  @Test
   public void toTimeObject() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
     dateTime.set(Calendar.HOUR, 12);
     
     Time timeValue = instance.valueOfString("12:00:00", null, null, null, null, null, Time.class);
@@ -75,7 +91,7 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
   
   @Test
   public void fromTimeObject() throws Exception {
-    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
     dateTime.set(Calendar.HOUR, 5);
     dateTime.set(Calendar.MINUTE, 59);
@@ -84,12 +100,11 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
     Time time = new Time(dateTime.getTimeInMillis());
     assertEquals("05:59:23", instance.valueToString(time, null, null, null, null, null));
   }
-  
+
   @Test
   public void valueOfString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
 
     assertEquals(dateTime, instance.valueOfString("00:00", null, null, null, null, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("00:00:00", null, null, null, null, null, Calendar.class));
