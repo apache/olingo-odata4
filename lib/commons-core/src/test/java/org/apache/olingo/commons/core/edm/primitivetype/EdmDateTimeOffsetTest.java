@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
 
@@ -77,8 +76,7 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(-20L, null, null, 2, null, null));
 
     final Date date = new Date(millis);
-    final String time = date.toString().substring(11, 19);
-    assertTrue(instance.valueToString(date, null, null, 3, null, null).contains(time));
+    assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(date, null, null, 3, null, null));
 
     expectFacetsErrorInValueToString(instance, millis, null, null, null, null, null);
     expectFacetsErrorInValueToString(instance, 3L, null, null, 2, null, null);

@@ -20,6 +20,7 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -115,6 +116,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   /**
    * Converts a {@link Calendar} value into the requested return type if possible.
+   * <br>It is expected that the {@link Calendar} value will already be in the desired time zone.
    *
    * @param dateTimeValue the value
    * @param nanoSeconds nanoseconds part of the value; only used for the {@link Timestamp} return type
@@ -147,6 +149,20 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
       timestamp.setNanos(nanoSeconds);
       return returnType.cast(timestamp);
+    } else if (returnType.isAssignableFrom(Time.class)) {
+      //normalize the value	
+      dateTimeValue.set(Calendar.YEAR, 1970);
+      dateTimeValue.set(Calendar.MONTH, Calendar.JANUARY);
+      dateTimeValue.set(Calendar.DAY_OF_MONTH, 1);
+      dateTimeValue.set(Calendar.MILLISECOND, 0);
+      return returnType.cast(new Time(dateTimeValue.getTimeInMillis())); // may throw IllegalArgumentException
+    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+      //normalize the value
+      dateTimeValue.set(Calendar.HOUR_OF_DAY, 0);
+      dateTimeValue.set(Calendar.MINUTE, 0);
+      dateTimeValue.set(Calendar.SECOND, 0);
+      dateTimeValue.set(Calendar.MILLISECOND, 0);
+      return returnType.cast(new java.sql.Date(dateTimeValue.getTimeInMillis())); // may throw IllegalArgumentException
     } else {
       throw new ClassCastException("unsupported return type " + returnType.getSimpleName());
     }
@@ -157,18 +173,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
           final Boolean isNullable, final Integer maxLength, final Integer precision,
           final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
-    final Calendar dateTimeValue;
-    final int fractionalSecs;
-    if (value instanceof Timestamp) {
-      final Calendar tmp = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-      tmp.setTimeInMillis(((Timestamp) value).getTime());
-      dateTimeValue = createDateTime(tmp);
-      fractionalSecs = ((Timestamp) value).getNanos();
-    } else {
-      dateTimeValue = createDateTime(value);
-      fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
-    }
-
+    final Calendar dateTimeValue = createDateTime(value, false);
+    
     final StringBuilder result = new StringBuilder();
     final int year = dateTimeValue.get(Calendar.YEAR);
     appendTwoDigits(result, year / 100);
@@ -186,8 +192,10 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
     try {
       if (value instanceof Timestamp) {
+    	int fractionalSecs = ((Timestamp) value).getNanos();
         appendFractionalSeconds(result, fractionalSecs, precision);
       } else {
+        int fractionalSecs = dateTimeValue.get(Calendar.MILLISECOND);
         appendMilliseconds(result, fractionalSecs, precision);
       }
     } catch (final IllegalArgumentException e) {
@@ -211,18 +219,27 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @return the value as {@link Calendar}
    * @throws EdmPrimitiveTypeException if the type of the value is not supported
    */
-  protected static <T> Calendar createDateTime(final T value) throws EdmPrimitiveTypeException {
+  protected static <T> Calendar createDateTime(final T value, boolean isLocal) throws EdmPrimitiveTypeException {
     Calendar dateTimeValue;
     if (value instanceof Date) {
-      // Although java.util.Date, as stated in its documentation,
-      // "is intended to reflect coordinated universal time (UTC)",
-      // its toString() method uses the default time zone. And so do we.
-      dateTimeValue = Calendar.getInstance();
+      TimeZone tz;
+      if (isLocal) {
+        tz = getDefaultTimeZone();
+      } else {
+    	tz = TimeZone.getTimeZone("GMT");  
+      }
+      dateTimeValue = Calendar.getInstance(tz);
       dateTimeValue.setTime((Date) value);
     } else if (value instanceof Calendar) {
       dateTimeValue = (Calendar) ((Calendar) value).clone();
     } else if (value instanceof Long) {
-      dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      TimeZone tz;
+      if (isLocal) {
+        tz = getDefaultTimeZone();
+      } else {
+        tz = TimeZone.getTimeZone("GMT");  
+      }
+      dateTimeValue = Calendar.getInstance(tz);
       dateTimeValue.setTimeInMillis((Long) value);
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
@@ -300,4 +317,18 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       result.append('.').append(formatted.substring(0, actualLength));
     }
   }
+  
+  /**
+   * When the Timezone information is absent on the date time types, like EdmDate, EDMTimeOfDay, EdmDateTimeOffset
+   * this method defines the default timezone that should be used parse and output payload.
+   * User should set system property "defaultTimeZoneForEdmDateTypes" to control this. The default would be
+   * Java VM default if not defined.
+   *   
+   * @return Timezone
+   */
+  protected static TimeZone getDefaultTimeZone() {
+    String tz = System.getProperty("defaultTimeZoneForEdmDateTypes");
+	return (tz != null)?TimeZone.getTimeZone(tz):TimeZone.getDefault();
+  }
+    
 }
