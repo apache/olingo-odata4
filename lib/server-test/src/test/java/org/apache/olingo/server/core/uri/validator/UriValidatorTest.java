@@ -30,7 +30,6 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
-import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
@@ -118,7 +117,7 @@ public class UriValidatorTest {
 
       { URI_REFERENCES, QO_FILTER }, { URI_REFERENCES, QO_FORMAT }, { URI_REFERENCES, QO_ORDERBY },
       { URI_REFERENCES, QO_SEARCH }, { URI_REFERENCES, QO_SKIP }, { URI_REFERENCES, QO_SKIPTOKEN },
-      { URI_REFERENCES, QO_TOP }, { URI_REFERENCES, QO_ID }, { URI_REFERENCES, QO_COUNT },
+      { URI_REFERENCES, QO_TOP }, { URI_REFERENCES, QO_COUNT },
 
       { URI_REFERENCE, QO_FORMAT },
 
@@ -204,7 +203,7 @@ public class UriValidatorTest {
       { URI_MEDIA_STREAM, QO_SEARCH }, { URI_MEDIA_STREAM, QO_SELECT }, { URI_MEDIA_STREAM, QO_SKIP },
       { URI_MEDIA_STREAM, QO_SKIPTOKEN }, { URI_MEDIA_STREAM, QO_TOP },
 
-      { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_SELECT },
+      { URI_REFERENCES, QO_ID }, { URI_REFERENCES, QO_EXPAND }, { URI_REFERENCES, QO_SELECT },
 
       { URI_REFERENCE, QO_FILTER }, { URI_REFERENCE, QO_ID }, { URI_REFERENCE, QO_EXPAND },
       { URI_REFERENCE, QO_COUNT }, { URI_REFERENCE, QO_ORDERBY }, { URI_REFERENCE, QO_SEARCH },
@@ -328,22 +327,18 @@ public class UriValidatorTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
-  public void serviceDocumentMustNotFailForHttpPostPutPatchDelete() throws Exception {
-    // We must not fail with a nullpointer here as the HTTP method to resource validation happens in the dispatcher
-    validate(URI_SERVICE, null, HttpMethod.GET);
-    validate(URI_SERVICE, null, HttpMethod.POST);
-    validate(URI_SERVICE, null, HttpMethod.PUT);
-    validate(URI_SERVICE, null, HttpMethod.DELETE);
-    validate(URI_SERVICE, null, HttpMethod.PATCH);
+  public void serviceDocumentMustNotFailForAllHttpMethods() throws Exception {
+    // We must not fail with a nullpointer here as the HTTP method to resource validation happens in the dispatcher.
+    for (final HttpMethod method : HttpMethod.values()) {
+      validate(URI_SERVICE, null, method);
+    }
   }
 
   @Test
   public void validateForHttpMethods() throws Exception {
-    validate(URI_ENTITY, null, HttpMethod.GET);
-    validate(URI_ENTITY, null, HttpMethod.POST);
-    validate(URI_ENTITY, null, HttpMethod.PUT);
-    validate(URI_ENTITY, null, HttpMethod.DELETE);
-    validate(URI_ENTITY, null, HttpMethod.PATCH);
+    for (final HttpMethod method : HttpMethod.values()) {
+      validate(URI_ENTITY, null, method);
+    }
   }
 
   @Test
@@ -375,45 +370,6 @@ public class UriValidatorTest {
 
     validateWrong(URI_ENTITY, QO_ID, HttpMethod.DELETE,
         UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD);
-  }
-
-  @Test
-  public void validateSelect() throws Exception {
-    new TestUriValidator().setEdm(edm).run(URI_ENTITY, "$select=PropertyString");
-  }
-
-  @Test
-  public void validateOrderBy() throws Exception {
-    final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
-
-    testUri.run(URI_ENTITY_SET, "$orderby=PropertyString");
-
-    testUri.runEx(URI_ENTITY, "$orderby=XXXX")
-        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
-  }
-
-  @Test
-  public void validateCountInvalid() throws Exception {
-    new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$count=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-  }
-
-  @Test
-  public void validateTopInvalid() throws Exception {
-    new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$top=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-  }
-
-  @Test
-  public void validateSkipInvalid() throws Exception {
-    new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=foo")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
-  }
-
-  @Test
-  public void validateDoubleSystemOptions() throws Exception {
-    new TestUriValidator().setEdm(edm).runEx(URI_ENTITY_SET, "$skip=1&$skip=2")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -502,9 +458,9 @@ public class UriValidatorTest {
     try {
       new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null), method);
     } catch (final UriParserException e) {
-      fail("Failed for uri: " + path + '?' + query);
+      fail("Failed for " + method + " on URI: " + path + '?' + query);
     } catch (final UriValidationException e) {
-      fail("Failed for uri: " + path + '?' + query);
+      fail("Failed for " + method + " on URI: " + path + '?' + query);
     }
   }
 

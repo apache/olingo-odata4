@@ -206,7 +206,7 @@ public class ContainerProvider {
             .setAnnotations(Arrays.asList(
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains entities with two primitve types")),
+                        .setValue("Contains entities with two primitive types")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       } else if (name.equals("ESMixPrimCollComp")) {
@@ -217,7 +217,7 @@ public class ContainerProvider {
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                         .setValue("Contains entities with various properties of type primitive, collection "
-                            + "of primitve, complex and collection of complex")),
+                            + "of primitive, complex and collection of complex")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
@@ -609,7 +609,7 @@ public class ContainerProvider {
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                         .setValue("Contains entities with a complex type, "
-                            + "various nested primitve types and collections")),
+                            + "various nested primitive types and collections")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 

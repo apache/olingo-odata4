@@ -62,6 +62,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 
 public class DataProvider {
 
@@ -104,7 +105,12 @@ public class DataProvider {
           final EdmProperty property = (EdmProperty) edmEntityType.getProperty(key.getName());
           final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
           final Object value = entity.getProperty(key.getName()).getValue();
-          final Object keyValue = type.valueOfString(type.fromUriLiteral(key.getText()),
+          if (key.getExpression() != null && !(key.getExpression() instanceof Literal)) {
+            throw new DataProviderException("Expression in key value is not supported yet!",
+                HttpStatusCode.NOT_IMPLEMENTED);
+          }
+          final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
+          final Object keyValue = type.valueOfString(type.fromUriLiteral(text),
               property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
               property.isUnicode(),
               Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
@@ -540,6 +546,10 @@ public class DataProvider {
       final List<UriParameter> parameters, final UriInfoResource uriInfo) throws DataProviderException {
     Map<String, Parameter> values = new HashMap<String, Parameter>();
     for (final UriParameter parameter : parameters) {
+      if (parameter.getExpression() != null && !(parameter.getExpression() instanceof Literal)) {
+        throw new DataProviderException("Expression in function-parameter value is not supported yet!",
+            HttpStatusCode.NOT_IMPLEMENTED);
+      }
       final EdmParameter edmParameter = function.getParameter(parameter.getName());
       final String text = parameter.getAlias() == null ?
           parameter.getText() :

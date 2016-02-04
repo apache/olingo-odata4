@@ -20,8 +20,10 @@ package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
@@ -36,21 +38,30 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
-import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
+import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.IdOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
@@ -74,6 +85,32 @@ public class Parser {
       throws UriParserException, UriValidationException {
 
     UriInfoImpl contextUriInfo = new UriInfoImpl();
+
+    // Read the query options (system and custom options).
+    // This is done before parsing the resource path because the aliases have to be available there.
+    // System query options that can only be parsed with context from the resource path will be post-processed later.
+    final List<QueryOption> options =
+        query == null ? Collections.<QueryOption> emptyList() : UriDecoder.splitAndDecodeOptions(query);
+    for (final QueryOption option : options) {
+      final String optionName = option.getName();
+      // Parse the untyped option and retrieve a system-option or alias-option instance (or null for a custom option).
+      final QueryOption parsedOption = parseOption(optionName, option.getText());
+      try {
+        contextUriInfo.setQueryOption(parsedOption == null ? option : parsedOption);
+      } catch (final ODataRuntimeException e) {
+          throw new UriParserSyntaxException(
+              parsedOption instanceof SystemQueryOption ?
+                  "Double system query option!" :
+                  "Alias already specified! Name: " + optionName,
+              e,
+              parsedOption instanceof SystemQueryOption ?
+                  UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION :
+                  UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS,
+              optionName);
+      }
+    }
+
+    // Read the decoded path segments.
     EdmType contextType = null;
     boolean contextIsCollection = false;
 
@@ -85,7 +122,6 @@ public class Parser {
       numberOfSegments--;
     }
 
-    // first, read the decoded path segments
     final String firstSegment = pathSegmentsDecoded.get(0);
 
     if (firstSegment.isEmpty()) {
@@ -107,24 +143,29 @@ public class Parser {
       contextIsCollection = true;
 
     } else if (firstSegment.equals("$entity")) {
+      contextUriInfo.setKind(UriInfoKind.entityId);
       if (numberOfSegments > 1) {
         final String typeCastSegment = pathSegmentsDecoded.get(1);
         ensureLastSegment(typeCastSegment, 2, numberOfSegments);
-        contextUriInfo = new ResourcePathParser(edm).parseDollarEntityTypeCast(typeCastSegment);
-        contextType = contextUriInfo.getEntityTypeCast();
-      } else {
-        contextUriInfo.setKind(UriInfoKind.entityId);
+        contextType = new ResourcePathParser(edm, contextUriInfo.getAliasMap())
+            .parseDollarEntityTypeCast(typeCastSegment);
+        contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
       }
       contextIsCollection = false;
 
     } else if (firstSegment.startsWith("$crossjoin")) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
-      contextUriInfo = new ResourcePathParser(edm).parseCrossjoinSegment(firstSegment);
+      contextUriInfo.setKind(UriInfoKind.crossjoin);
+      final List<String> entitySetNames = new ResourcePathParser(edm, contextUriInfo.getAliasMap())
+          .parseCrossjoinSegment(firstSegment);
+      for (final String name : entitySetNames) {
+        contextUriInfo.addEntitySetName(name);
+      }
       contextIsCollection = true;
 
     } else {
       contextUriInfo.setKind(UriInfoKind.resource);
-      final ResourcePathParser resourcePathParser = new ResourcePathParser(edm);
+      final ResourcePathParser resourcePathParser = new ResourcePathParser(edm, contextUriInfo.getAliasMap());
       int count = 0;
       UriResource lastSegment = null;
       for (final String pathSegment : pathSegmentsDecoded) {
@@ -162,161 +203,168 @@ public class Parser {
       }
     }
 
-    // second, read the system query options and the custom query options
-    final List<QueryOption> options =
-        query == null ? Collections.<QueryOption> emptyList() : UriDecoder.splitAndDecodeOptions(query);
-    for (final QueryOption option : options) {
-      final String optionName = option.getName();
-      final String optionValue = option.getText();
-      if (optionName.startsWith(DOLLAR)) {
-        SystemQueryOption systemOption = null;
-        if (optionName.equals(SystemQueryOptionKind.FILTER.toString())) {
-          UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
-          // The referring type could be a primitive type or a structured type.
-          systemOption = new FilterParser(edm, odata).parse(filterTokenizer,
-              contextType,
-              contextUriInfo.getEntitySetNames());
-          checkOptionEOF(filterTokenizer, optionName, optionValue);
-
-        } else if (optionName.equals(SystemQueryOptionKind.FORMAT.toString())) {
-          FormatOptionImpl formatOption = new FormatOptionImpl();
-          formatOption.setText(optionValue);
-          if (optionValue.equalsIgnoreCase(JSON)
-              || optionValue.equalsIgnoreCase(XML)
-              || optionValue.equalsIgnoreCase(ATOM)
-              || isFormatSyntaxValid(optionValue)) {
-            formatOption.setFormat(optionValue);
-          } else {
-            throw new UriParserSyntaxException("Illegal value of $format option!",
-                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT, optionValue);
-          }
-          systemOption = formatOption;
-
-        } else if (optionName.equals(SystemQueryOptionKind.EXPAND.toString())) {
-          if (contextType instanceof EdmStructuredType
-              || !contextUriInfo.getEntitySetNames().isEmpty()
-              || contextUriInfo.getKind() == UriInfoKind.all) {
-            UriTokenizer expandTokenizer = new UriTokenizer(optionValue);
-            systemOption = new ExpandParser(edm, odata).parse(expandTokenizer,
-                contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null);
-            checkOptionEOF(expandTokenizer, optionName, optionValue);
-          } else {
-            throw new UriValidationException("Expand is only allowed on structured types!",
-                UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED, optionName);
-          }
-
-        } else if (optionName.equals(SystemQueryOptionKind.ID.toString())) {
-          IdOptionImpl idOption = new IdOptionImpl();
-          idOption.setText(optionValue);
-          if (optionValue == null || optionValue.isEmpty()) {
-            throw new UriParserSyntaxException("Illegal value of $id option!",
-                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                optionName, optionValue);
-          }
-          idOption.setValue(optionValue);
-          systemOption = idOption;
-
-        } else if (optionName.equals(SystemQueryOptionKind.LEVELS.toString())) {
-          throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
-              UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
-
-        } else if (optionName.equals(SystemQueryOptionKind.ORDERBY.toString())) {
-          UriTokenizer orderByTokenizer = new UriTokenizer(optionValue);
-          systemOption = new OrderByParser(edm, odata).parse(orderByTokenizer,
-              contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
-              contextUriInfo.getEntitySetNames());
-          checkOptionEOF(orderByTokenizer, optionName, optionValue);
-
-        } else if (optionName.equals(SystemQueryOptionKind.SEARCH.toString())) {
-          systemOption = new SearchParser().parse(optionValue);
-
-        } else if (optionName.equals(SystemQueryOptionKind.SELECT.toString())) {
-          UriTokenizer selectTokenizer = new UriTokenizer(optionValue);
-          systemOption = new SelectParser(edm).parse(selectTokenizer,
-              contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
-              contextIsCollection);
-          checkOptionEOF(selectTokenizer, optionName, optionValue);
-
-        } else if (optionName.equals(SystemQueryOptionKind.SKIP.toString())) {
-          SkipOptionImpl skipOption = new SkipOptionImpl();
-          skipOption.setText(optionValue);
-          skipOption.setValue(ParserHelper.parseNonNegativeInteger(optionName, optionValue, true));
-          systemOption = skipOption;
-
-        } else if (optionName.equals(SystemQueryOptionKind.SKIPTOKEN.toString())) {
-          SkipTokenOptionImpl skipTokenOption = new SkipTokenOptionImpl();
-          skipTokenOption.setText(optionValue);
-          if (optionValue == null || optionValue.isEmpty()) {
-            throw new UriParserSyntaxException("Illegal value of $skiptoken option!",
-                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                optionName, optionValue);
-          }
-          skipTokenOption.setValue(optionValue);
-          systemOption = skipTokenOption;
-
-        } else if (optionName.equals(SystemQueryOptionKind.TOP.toString())) {
-          TopOptionImpl topOption = new TopOptionImpl();
-          topOption.setText(optionValue);
-          topOption.setValue(ParserHelper.parseNonNegativeInteger(optionName, optionValue, true));
-          systemOption = topOption;
-
-        } else if (optionName.equals(SystemQueryOptionKind.COUNT.toString())) {
-          CountOptionImpl inlineCountOption = new CountOptionImpl();
-          inlineCountOption.setText(optionValue);
-          if (optionValue.equals("true") || optionValue.equals("false")) {
-            inlineCountOption.setValue(Boolean.parseBoolean(optionValue));
-          } else {
-            throw new UriParserSyntaxException("Illegal value of $count option!",
-                UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
-                optionName, optionValue);
-          }
-          systemOption = inlineCountOption;
-
-        } else {
-          throw new UriParserSyntaxException("Unknown system query option!",
-              UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
-        }
-        try {
-          contextUriInfo.setSystemQueryOption(systemOption);
-        } catch (final ODataRuntimeException e) {
-          throw new UriParserSyntaxException("Double system query option!", e,
-              UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION, optionName);
-        }
-
-      } else if (optionName.startsWith(AT)) {
-        if (contextUriInfo.getAlias(optionName) == null) {
-          // TODO: Aliases can only be parsed in the context of their usage.
-          Expression expression = null;
-          UriTokenizer aliasTokenizer = new UriTokenizer(optionValue);
-          if (aliasTokenizer.next(TokenKind.jsonArrayOrObject)) {
-            if (!aliasTokenizer.next(TokenKind.EOF)) {
-              throw new UriParserSyntaxException("Illegal value for alias '" + optionName + "'.",
-                  UriParserSyntaxException.MessageKeys.SYNTAX);
-            }
-          } else {
-            UriTokenizer aliasValueTokenizer = new UriTokenizer(optionValue);
-            expression = new ExpressionParser(edm, odata).parse(aliasValueTokenizer, null,
-                contextUriInfo.getEntitySetNames());
-            if (!aliasValueTokenizer.next(TokenKind.EOF)) {
-              throw new UriParserSyntaxException("Illegal value for alias '" + optionName + "'.",
-                  UriParserSyntaxException.MessageKeys.SYNTAX);
-            }
-          }
-          contextUriInfo.addAlias((AliasQueryOption) new AliasQueryOptionImpl()
-              .setAliasValue(expression)
-              .setName(optionName)
-              .setText(NULL.equals(optionValue) ? null : optionValue));
-        } else {
-          throw new UriParserSyntaxException("Alias already specified! Name: " + optionName,
-              UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS, optionName);
-        }
-
-      } else if (!optionName.isEmpty()) {
-        contextUriInfo.addCustomQueryOption((CustomQueryOption) option);
-      }
-    }
+    // Post-process system query options that need context information from the resource path.
+    parseFilterOption(contextUriInfo.getFilterOption(), contextType,
+        contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
+    parseOrderByOption(contextUriInfo.getOrderByOption(), contextType,
+        contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
+    parseExpandOption(contextUriInfo.getExpandOption(), contextType,
+        !contextUriInfo.getEntitySetNames().isEmpty() || contextUriInfo.getKind() == UriInfoKind.all,
+        contextUriInfo.getAliasMap());
+    parseSelectOption(contextUriInfo.getSelectOption(), contextType, contextIsCollection);
 
     return contextUriInfo;
+  }
+
+  private QueryOption parseOption(final String optionName, final String optionValue)
+      throws UriParserException, UriValidationException {
+    if (optionName.startsWith(DOLLAR)) {
+      final SystemQueryOptionKind kind = SystemQueryOptionKind.get(optionName);
+      if (kind == null) {
+        throw new UriParserSyntaxException("Unknown system query option!",
+            UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
+      }
+      SystemQueryOption systemOption = null;
+      switch (kind) {
+      case SEARCH:
+        systemOption = new SearchParser().parse(optionValue);
+        break;
+      case FILTER:
+        systemOption = new FilterOptionImpl();
+        break;
+      case COUNT:
+        if (optionValue.equals("true") || optionValue.equals("false")) {
+          systemOption = new CountOptionImpl().setValue(Boolean.parseBoolean(optionValue));
+        } else {
+          throw new UriParserSyntaxException("Illegal value of $count option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+              optionName, optionValue);
+        }
+        break;
+      case ORDERBY:
+        systemOption = new OrderByOptionImpl();
+        break;
+      case SKIP:
+        systemOption = new SkipOptionImpl()
+            .setValue(ParserHelper.parseNonNegativeInteger(optionName, optionValue, true));
+        break;
+      case SKIPTOKEN:
+        if (optionValue.isEmpty()) {
+          throw new UriParserSyntaxException("Illegal value of $skiptoken option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+              optionName, optionValue);
+        }
+        systemOption = new SkipTokenOptionImpl().setValue(optionValue);
+        break;
+      case TOP:
+        systemOption = new TopOptionImpl()
+            .setValue(ParserHelper.parseNonNegativeInteger(optionName, optionValue, true));
+        break;
+      case EXPAND:
+        systemOption = new ExpandOptionImpl();
+        break;
+      case SELECT:
+        systemOption = new SelectOptionImpl();
+        break;
+      case FORMAT:
+        if (optionValue.equalsIgnoreCase(JSON)
+            || optionValue.equalsIgnoreCase(XML)
+            || optionValue.equalsIgnoreCase(ATOM)
+            || isFormatSyntaxValid(optionValue)) {
+          systemOption = new FormatOptionImpl().setFormat(optionValue);
+        } else {
+          throw new UriParserSyntaxException("Illegal value of $format option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION_FORMAT, optionValue);
+        }
+        break;
+      case ID:
+        if (optionValue.isEmpty()) {
+          throw new UriParserSyntaxException("Illegal value of $id option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+              optionName, optionValue);
+        }
+        systemOption = new IdOptionImpl().setValue(optionValue);
+        break;
+      case LEVELS:
+        throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
+            UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
+      }
+      ((SystemQueryOptionImpl) systemOption).setText(optionValue);
+      return systemOption;
+
+    } else if (optionName.startsWith(AT)) {
+      // Aliases can only be parsed in the context of their usage, so the value is not checked here.
+      return new AliasQueryOptionImpl()
+          .setName(optionName)
+          .setText(NULL.equals(optionValue) ? null : optionValue);
+
+    } else {
+      // The option is a custom query option; the caller can re-use its query option.
+      return null;
+    }
+  }
+
+  private void parseFilterOption(FilterOption filterOption, final EdmType contextType,
+      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases)
+      throws UriParserException, UriValidationException {
+    if (filterOption != null) {
+      final String optionValue = filterOption.getText();
+      UriTokenizer filterTokenizer = new UriTokenizer(optionValue);
+      // The referring type could be a primitive type or a structured type.
+      ((FilterOptionImpl) filterOption).setExpression(
+          new FilterParser(edm, odata).parse(filterTokenizer, contextType, entitySetNames, aliases)
+              .getExpression());
+      checkOptionEOF(filterTokenizer, filterOption.getName(), optionValue);
+    }
+  }
+
+  private void parseOrderByOption(OrderByOption orderByOption, final EdmType contextType,
+      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases)
+      throws UriParserException, UriValidationException {
+    if (orderByOption != null) {
+      final String optionValue = orderByOption.getText();
+      UriTokenizer orderByTokenizer = new UriTokenizer(optionValue);
+      final OrderByOption option = new OrderByParser(edm, odata).parse(orderByTokenizer,
+          contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
+          entitySetNames,
+          aliases);
+      checkOptionEOF(orderByTokenizer, orderByOption.getName(), optionValue);
+      for (final OrderByItem item : option.getOrders()) {
+        ((OrderByOptionImpl) orderByOption).addOrder(item);
+      }
+    }
+  }
+
+  private void parseExpandOption(ExpandOption expandOption, final EdmType contextType, final boolean isCrossjoinOrAll,
+      final Map<String, AliasQueryOption> aliases) throws UriParserException, UriValidationException {
+    if (expandOption != null) {
+      if (!(contextType instanceof EdmStructuredType || isCrossjoinOrAll)) {
+        throw new UriValidationException("Expand is only allowed on structured types!",
+            UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED, expandOption.getName());
+      }
+      final String optionValue = expandOption.getText();
+      UriTokenizer expandTokenizer = new UriTokenizer(optionValue);
+      final ExpandOption option = new ExpandParser(edm, odata, aliases).parse(expandTokenizer,
+          contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null);
+      checkOptionEOF(expandTokenizer, expandOption.getName(), optionValue);
+      for (final ExpandItem item : option.getExpandItems()) {
+        ((ExpandOptionImpl) expandOption).addExpandItem(item);
+      }
+    }
+  }
+
+  private void parseSelectOption(SelectOption selectOption, final EdmType contextType,
+      final boolean contextIsCollection) throws UriParserException, UriValidationException {
+    if (selectOption != null) {
+      final String optionValue = selectOption.getText();
+      UriTokenizer selectTokenizer = new UriTokenizer(optionValue);
+      ((SelectOptionImpl) selectOption).setSelectItems(
+          new SelectParser(edm).parse(selectTokenizer,
+              contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
+              contextIsCollection)
+              .getSelectItems());
+      checkOptionEOF(selectTokenizer, selectOption.getName(), optionValue);
+    }
   }
 
   private void ensureLastSegment(final String segment, final int pos, final int size)

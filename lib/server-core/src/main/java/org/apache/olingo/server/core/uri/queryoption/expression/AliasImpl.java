@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
@@ -26,14 +27,20 @@ import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor
 public class AliasImpl implements Alias {
 
   private final String parameterName;
+  private final AliasQueryOption alias;
 
-  public AliasImpl(final String parameterName) {
+  public AliasImpl(final String parameterName, final AliasQueryOption alias) {
     this.parameterName = parameterName;
+    this.alias = alias;
   }
 
   @Override
   public String getParameterName() {
     return parameterName;
+  }
+
+  public AliasQueryOption getAlias() {
+    return alias;
   }
 
   @Override
