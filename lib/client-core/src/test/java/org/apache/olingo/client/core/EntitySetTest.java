@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
@@ -37,23 +36,18 @@ import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {
 
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
-
   private void read(final ContentType contentType) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(contentType));
-    final ClientEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-        getClient().getDeserializer(contentType).toEntitySet(input));
+    final ClientEntitySet entitySet = client.getBinder().getODataEntitySet(
+        client.getDeserializer(contentType).toEntitySet(input));
     assertNotNull(entitySet);
 
     assertEquals(2, entitySet.getEntities().size());
     assertNull(entitySet.getNext());
 
     final ClientEntitySet written =
-        getClient().getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
-            getClient().getBinder().getEntitySet(entitySet)));
+        client.getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
+            client.getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }
 
@@ -69,8 +63,8 @@ public class EntitySetTest extends AbstractTest {
 
   private void ref(final ContentType contentType) throws ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("collectionOfEntityReferences." + getSuffix(contentType));
-    final ClientEntitySet entitySet = getClient().getBinder().getODataEntitySet(
-        getClient().getDeserializer(contentType).toEntitySet(input));
+    final ClientEntitySet entitySet = client.getBinder().getODataEntitySet(
+        client.getDeserializer(contentType).toEntitySet(input));
     assertNotNull(entitySet);
 
     for (ClientEntity entity : entitySet.getEntities()) {
@@ -79,8 +73,8 @@ public class EntitySetTest extends AbstractTest {
     entitySet.setCount(entitySet.getEntities().size());
 
     final ClientEntitySet written =
-        getClient().getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
-            getClient().getBinder().getEntitySet(entitySet)));
+        client.getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
+            client.getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
   }
 

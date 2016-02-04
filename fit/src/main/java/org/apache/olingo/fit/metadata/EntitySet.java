@@ -24,17 +24,9 @@ import java.util.Map;
 public class EntitySet extends AbstractMetadataElement {
 
   private final String name;
-
   private String type;
-
   private final boolean singleton;
-
-  // --------------------------
-  // V4 only
-  // --------------------------
   private final Map<String, String> binding;
-
-  // --------------------------
 
   public EntitySet(final String name, final boolean singleton) {
     this.name = name;

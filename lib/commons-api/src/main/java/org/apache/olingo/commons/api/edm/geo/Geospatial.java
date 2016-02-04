@@ -72,7 +72,6 @@ public abstract class Geospatial {
      * The OGIS geometry type number for feature collections.
      */
     GEOSPATIALCOLLECTION
-
   }
 
   protected final Dimension dimension;
@@ -87,8 +86,8 @@ public abstract class Geospatial {
   /**
    * Constructor.
    *
-   * @param dimension dimension.
-   * @param type type.
+   * @param dimension dimension
+   * @param type type
    * @param srid SRID
    */
   protected Geospatial(final Dimension dimension, final Type type, final SRID srid) {
@@ -129,7 +128,7 @@ public abstract class Geospatial {
 
   /**
    * Returns the {@link EdmPrimitiveTypeKind}
-   * @return Edm primitve type kind
+   * @return EDM primitive type kind
    */
   public abstract EdmPrimitiveTypeKind getEdmPrimitiveTypeKind();
 }

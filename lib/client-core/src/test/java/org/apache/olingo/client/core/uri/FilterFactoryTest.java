@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.uri.FilterArgFactory;
 import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIFilter;
@@ -39,13 +38,8 @@ import org.junit.Test;
 
 public class FilterFactoryTest extends AbstractTest {
 
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
-
   private FilterFactory getFilterFactory() {
-    return getClient().getFilterFactory();
+    return client.getFilterFactory();
   }
 
   private FilterArgFactory getFilterArgFactory() {

@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.domain.ClientEnumValue;
 import org.apache.olingo.client.api.domain.ClientValue;
 
 public class ClientCollectionValueImpl<OV extends ClientValue> extends AbstractClientValue
-        implements ClientCollectionValue<OV>, ClientValue {
+        implements ClientCollectionValue<OV> {
 
   /**
    * Constructor.

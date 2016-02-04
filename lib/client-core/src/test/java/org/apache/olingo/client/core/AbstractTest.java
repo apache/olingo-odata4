@@ -25,9 +25,7 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
 
-  protected static ODataClient v4Client;
-
-  protected abstract ODataClient getClient();
+  protected static final ODataClient client = ODataClientFactory.getClient();
 
   @BeforeClass
   public static void setUp() {
@@ -36,11 +34,6 @@ public abstract class AbstractTest {
     XMLUnit.setIgnoreWhitespace(true);
     XMLUnit.setNormalizeWhitespace(true);
     XMLUnit.setCompareUnmatched(false);
-  }
-
-  @BeforeClass
-  public static void setClientInstances() {
-    v4Client = ODataClientFactory.getClient();
   }
 
   protected String getSuffix(final ContentType contentType) {

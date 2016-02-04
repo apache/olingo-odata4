@@ -63,11 +63,7 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     return new ImmutablePair<ClientComplexValue, Class<?>>(complex, complexTypeRef);
   }
 
-  public static ComplexInvocationHandler getInstance(
-          final String propertyName,
-          final EntityInvocationHandler handler,
-          final Class<?> typeRef) {
-
+  public static ComplexInvocationHandler getInstance(final EntityInvocationHandler handler, final Class<?> typeRef) {
     final Pair<ClientComplexValue, Class<?>> init = init(typeRef, handler.service);
     return new ComplexInvocationHandler(init.getLeft(), init.getRight(), handler);
   }

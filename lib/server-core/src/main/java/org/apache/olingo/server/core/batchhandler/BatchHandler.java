@@ -46,7 +46,7 @@ public class BatchHandler {
       throws ODataApplicationException, ODataLibraryException {
     validateRequest(request);
 
-    final BatchFacade operation = new BatchFacadeImpl(oDataHandler, request, batchProcessor, isStrict);
+    final BatchFacade operation = new BatchFacadeImpl(oDataHandler, batchProcessor, isStrict);
     batchProcessor.processBatch(operation, request, response);
   }
 

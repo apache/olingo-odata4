@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -553,11 +554,11 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
            .getReferenceSingleChangeRequest(new URI(SERVICE_URI), uri, reference)
            .execute();
       assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-      
+
       final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
-      Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+      Map<QueryOption, Object> expandOptions = new EnumMap<QueryOption, Object>(QueryOption.class);
       expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_KEY_NAV_ONE);
-      
+
       final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                                .appendEntitySetSegment(ES_TWO_KEY_NAV)
                                .appendKeySegment(esTwoKeyNavKey)
@@ -601,12 +602,12 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
            .getReferenceAddingRequest(new URI(SERVICE_URI), uri, reference)
            .execute();
       assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), response.getStatusCode());
-      
+
       final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
-      final Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+      final Map<QueryOption, Object> expandOptions = new EnumMap<QueryOption, Object>(QueryOption.class);
       expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_KEY_NAV_MANY);
       expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
-      
+
       final URI getURI = getClient().newURIBuilder(SERVICE_URI)
                                .appendEntitySetSegment(ES_TWO_KEY_NAV)
                                .appendKeySegment(esTwoKeyNavKey)

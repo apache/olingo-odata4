@@ -25,9 +25,9 @@ import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 
-public final class ClientValuableImpl implements ClientValuable {
+public class ClientValuableImpl implements ClientValuable {
 
-  private final ClientValue value;
+  protected final ClientValue value;
 
   public ClientValuableImpl(final ClientValue value) {
     this.value = value;
@@ -60,9 +60,7 @@ public final class ClientValuableImpl implements ClientValuable {
 
   @Override
   public ClientCollectionValue<ClientValue> getCollectionValue() {
-    return hasCollectionValue()
-        ? getValue().<ClientValue> asCollection()
-        : null;
+    return hasCollectionValue() ? getValue().<ClientValue> asCollection() : null;
   }
 
   @Override
@@ -72,9 +70,7 @@ public final class ClientValuableImpl implements ClientValuable {
 
   @Override
   public ClientComplexValue getComplexValue() {
-    return hasComplexValue()
-        ? getValue().asComplex()
-        : null;
+    return hasComplexValue() ? getValue().asComplex() : null;
   }
 
   @Override
@@ -84,9 +80,7 @@ public final class ClientValuableImpl implements ClientValuable {
 
   @Override
   public ClientEnumValue getEnumValue() {
-    return hasEnumValue()
-        ? getValue().asEnum()
-        : null;
+    return hasEnumValue() ? getValue().asEnum() : null;
   }
 
   @Override
@@ -99,9 +93,7 @@ public final class ClientValuableImpl implements ClientValuable {
     }
 
     ClientValuableImpl that = (ClientValuableImpl) o;
-
     return !(value != null ? !value.equals(that.value) : that.value != null);
-
   }
 
   @Override
@@ -111,8 +103,6 @@ public final class ClientValuableImpl implements ClientValuable {
 
   @Override
   public String toString() {
-    return "ClientValuableImpl{" +
-        "value=" + value +
-        '}';
+    return "ClientValuableImpl{" + "value=" + value + '}';
   }
 }

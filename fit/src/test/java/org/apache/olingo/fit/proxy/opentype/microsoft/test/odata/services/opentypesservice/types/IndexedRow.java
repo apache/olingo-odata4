@@ -18,11 +18,8 @@
  */
 package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
 import java.util.concurrent.Future;
-// CHECKSTYLE:ON (Maven checkstyle)
 
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
@@ -31,10 +28,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
     hasStream = false,
     isAbstract = false,
     baseType = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row")
-public interface IndexedRow
-    extends org.apache.olingo.ext.proxy.api.Annotatable,
-        Row,
-    AbstractOpenType {
+public interface IndexedRow extends Row {
 
   @Override
   IndexedRow load();

@@ -378,7 +378,6 @@ public final class CoreUtils {
   public static URIBuilder buildEditLink(
       final EdmEnabledODataClient client,
       final String entitySetURI,
-      final ClientEntity entity,
       final Object key) {
 
     if (key == null) {
@@ -506,7 +505,7 @@ public final class CoreUtils {
               final Object complex = Proxy.newProxyInstance(
                   Thread.currentThread().getContextClassLoader(),
                   new Class<?>[] { getter.getReturnType() },
-                  ComplexInvocationHandler.getInstance(property.getName(), typeHandler, getter.getReturnType()));
+                  ComplexInvocationHandler.getInstance(typeHandler, getter.getReturnType()));
 
               populate(client, typeHandler, complex, Property.class, property.getValue().asComplex().iterator());
               setPropertyValue(bean, getter, complex);
@@ -530,7 +529,7 @@ public final class CoreUtils {
                   final Object collItem = Proxy.newProxyInstance(
                       Thread.currentThread().getContextClassLoader(),
                       new Class<?>[] { collItemClass },
-                      ComplexInvocationHandler.getInstance(property.getName(), typeHandler, collItemClass));
+                      ComplexInvocationHandler.getInstance(typeHandler, collItemClass));
 
                   populate(client, typeHandler, collItem, Property.class, value.asComplex().iterator());
                   collection.add(collItem);

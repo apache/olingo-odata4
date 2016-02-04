@@ -40,7 +40,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
@@ -53,8 +52,8 @@ import org.springframework.stereotype.Service;
 public class OpenType extends Services {
 
   public OpenType() throws IOException {
-    super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
-        readRes("openType" + StringUtils.capitalize(Constants.get(ConstantKey.METADATA)), Accept.XML)));
+    super(new Metadata(FSManager.instance()
+        .readRes("openType" + StringUtils.capitalize(Constants.get(ConstantKey.METADATA)), Accept.XML)));
   }
 
   private Response replaceServiceName(final Response response) {

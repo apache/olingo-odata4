@@ -19,14 +19,13 @@
 package org.apache.olingo.fit.rest;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;
 
 @Provider
-public class OAuth2RequestFilter extends OAuthRequestFilter implements ContainerRequestFilter {
+public class OAuth2RequestFilter extends OAuthRequestFilter {
 
   @Override
   public void filter(final ContainerRequestContext context) {

@@ -191,7 +191,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
       this.uri = getClient().newURIBuilder(baseURI.toASCIIString());
     } else if (key != null) {
       final URIBuilder uriBuilder =
-          CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), entity, key);
+          CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), key);
 
       this.uri = uriBuilder;
       this.baseURI = this.uri.build();
@@ -219,7 +219,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (this.uri == null) {
       final URIBuilder uriBuilder =
           entity.getEditLink() == null
-              ? CoreUtils.buildEditLink(getClient(), getUUID().getEntitySetURI().toASCIIString(), entity, key)
+              ? CoreUtils.buildEditLink(getClient(), getUUID().getEntitySetURI().toASCIIString(), key)
               : getClient().newURIBuilder(entity.getEditLink().toASCIIString());
 
       this.uri = uriBuilder;
@@ -252,7 +252,7 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     if (this.uri == null) {
       final URIBuilder uriBuilder =
           getEntity().getEditLink() == null
-              ? CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), getEntity(), key)
+              ? CoreUtils.buildEditLink(getClient(), entitySetURI.toASCIIString(), key)
               : getClient().newURIBuilder(getEntity().getEditLink().toASCIIString());
 
       this.uri = uriBuilder;

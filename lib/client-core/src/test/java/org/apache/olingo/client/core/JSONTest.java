@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -49,11 +48,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class JSONTest extends AbstractTest {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
 
   protected ContentType getODataPubFormat() {
     return ContentType.JSON;
@@ -129,7 +123,7 @@ public class JSONTest extends AbstractTest {
 
   protected void entitySet(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).toEntitySet(
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
         getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
@@ -143,7 +137,7 @@ public class JSONTest extends AbstractTest {
 
   protected void entity(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).toEntity(
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntity(
         getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
     assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
   }
@@ -169,7 +163,7 @@ public class JSONTest extends AbstractTest {
 
   protected void property(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
-    getClient().getSerializer(contentType).write(writer, getClient().getDeserializer(contentType).
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).
         toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
     assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
@@ -185,12 +179,12 @@ public class JSONTest extends AbstractTest {
 
   @Test
   public void crossjoin() throws Exception {
-    assertNotNull(getClient().getDeserializer(ContentType.JSON_FULL_METADATA).toEntitySet(
+    assertNotNull(client.getDeserializer(ContentType.JSON_FULL_METADATA).toEntitySet(
         getClass().getResourceAsStream("crossjoin.json")));
   }
 
   protected void delta(final String filename, final ContentType contentType) throws Exception {
-    final Delta delta = getClient().getDeserializer(contentType).toDelta(
+    final Delta delta = client.getDeserializer(contentType).toDelta(
         getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload();
     assertNotNull(delta);
     assertNotNull(delta.getDeltaLink());
@@ -223,30 +217,30 @@ public class JSONTest extends AbstractTest {
 
   @Test
   public void issueOLINGO390() throws Exception {
-    final ClientEntity message = getClient().getObjectFactory().
+    final ClientEntity message = client.getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Exchange.Services.OData.Model.Message"));
 
-    final ClientComplexValue toRecipient = getClient().getObjectFactory().
+    final ClientComplexValue toRecipient = client.getObjectFactory().
         newComplexValue("Microsoft.Exchange.Services.OData.Model.Recipient");
-    toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Name",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
-    toRecipient.add(getClient().getObjectFactory().newPrimitiveProperty("Address",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
-    final ClientCollectionValue<ClientValue> toRecipients = getClient().getObjectFactory().
+    toRecipient.add(client.getObjectFactory().newPrimitiveProperty("Name",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("challen_olingo_client")));
+    toRecipient.add(client.getObjectFactory().newPrimitiveProperty("Address",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("challenh@microsoft.com")));
+    final ClientCollectionValue<ClientValue> toRecipients = client.getObjectFactory().
         newCollectionValue("Microsoft.Exchange.Services.OData.Model.Recipient");
     toRecipients.add(toRecipient);
-    message.getProperties().add(getClient().getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
+    message.getProperties().add(client.getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
 
     final ClientComplexValue body =
-        getClient().getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
-    body.add(getClient().getObjectFactory().newPrimitiveProperty("Content",
-        getClient().getObjectFactory().newPrimitiveValueBuilder().
+        client.getObjectFactory().newComplexValue("Microsoft.Exchange.Services.OData.Model.ItemBody");
+    body.add(client.getObjectFactory().newPrimitiveProperty("Content",
+        client.getObjectFactory().newPrimitiveValueBuilder().
             buildString("this is a simple email body content")));
-    body.add(getClient().getObjectFactory().newEnumProperty("ContentType",
-        getClient().getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
-    message.getProperties().add(getClient().getObjectFactory().newComplexProperty("Body", body));
+    body.add(client.getObjectFactory().newEnumProperty("ContentType",
+        client.getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
+    message.getProperties().add(client.getObjectFactory().newComplexProperty("Body", body));
 
-    final String actual = IOUtils.toString(getClient().getWriter().writeEntity(message, ContentType.JSON));
+    final String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
     final JsonNode expected =
         OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
             replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));

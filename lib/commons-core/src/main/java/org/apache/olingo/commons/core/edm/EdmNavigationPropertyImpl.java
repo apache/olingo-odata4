@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -32,7 +31,7 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
-public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmElement, EdmNavigationProperty {
+public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmNavigationProperty {
 
   private final CsdlNavigationProperty navigationProperty;
   private List<EdmReferentialConstraint> referentialConstraints;

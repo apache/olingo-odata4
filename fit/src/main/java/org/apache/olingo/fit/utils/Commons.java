@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +39,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,9 +56,6 @@ public abstract class Commons {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(Commons.class);
-
-  private static final EnumMap<ODataServiceVersion, Metadata> METADATA =
-      new EnumMap<ODataServiceVersion, Metadata>(ODataServiceVersion.class);
 
   protected static final Pattern MULTIKEY_PATTERN = Pattern.compile("(.*=.*,?)+");
 
@@ -99,14 +94,11 @@ public abstract class Commons {
         new ImmutablePair<String, EdmPrimitiveTypeKind>("ID", EdmPrimitiveTypeKind.Guid));
   }
 
-  public static Metadata getMetadata(final ODataServiceVersion version) {
-    if (!METADATA.containsKey(version)) {
-      final InputStream is = Commons.class.getResourceAsStream("/" + version.name() + "/metadata.xml");
+  private static final Metadata METADATA =
+      new Metadata(Commons.class.getResourceAsStream("/" + ODataServiceVersion.V40.name() + "/metadata.xml"));
 
-      METADATA.put(version, new Metadata(is));
-    }
-
-    return METADATA.get(version);
+  public static Metadata getMetadata() {
+    return METADATA;
   }
 
   public static Map<String, Pair<String, EdmPrimitiveTypeKind>> getMediaContent() {
@@ -115,13 +107,13 @@ public abstract class Commons {
 
   public static String getEntityURI(final String entitySetName, final String entityKey) {
     // expected singleton in case of null key
-    return entitySetName + (StringUtils.isNotBlank(entityKey) ? "(" + entityKey + ")" : "");
+    return entitySetName + (entityKey == null || entityKey.isEmpty() ? "" : "(" + entityKey + ")");
   }
 
   public static String getEntityBasePath(final String entitySetName, final String entityKey) {
     // expected singleton in case of null key
     return entitySetName + File.separatorChar
-        + (StringUtils.isNotBlank(entityKey) ? getEntityKey(entityKey) + File.separatorChar : "");
+        + (entityKey == null || entityKey.isEmpty() ? "" : getEntityKey(entityKey) + File.separatorChar);
   }
 
   public static String getLinksURI(final String entitySetName, final String entityId, final String linkName)
@@ -138,7 +130,7 @@ public abstract class Commons {
   public static String getLinksPath(final String basePath, final String linkName, final Accept accept)
       throws IOException {
     try {
-      return FSManager.instance(ODataServiceVersion.V40)
+      return FSManager.instance()
           .getAbsolutePath(basePath + Constants.get(ConstantKey.LINKS_FILE_PATH)
               + File.separatorChar + linkName, accept);
     } catch (Exception e) {
@@ -281,7 +273,7 @@ public abstract class Commons {
 
   public static String getETag(final String basePath) throws Exception {
     try {
-      final InputStream is = FSManager.instance(ODataServiceVersion.V40).readFile(basePath + "etag", Accept.TEXT);
+      final InputStream is = FSManager.instance().readFile(basePath + "etag", Accept.TEXT);
       if (is.available() <= 0) {
         return null;
       } else {

@@ -18,12 +18,9 @@
  */
 package org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
 import java.util.concurrent.Future;
-// CHECKSTYLE:ON (Maven checkstyle)
 
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.ODataWCFService")
@@ -32,10 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
     hasStream = false,
     isAbstract = false,
     baseType = "Microsoft.Test.OData.Services.ODataWCFService.Company")
-public interface PublicCompany
-    extends org.apache.olingo.ext.proxy.api.Annotatable,
-        Company,
-    AbstractOpenType {
+public interface PublicCompany extends Company {
 
   @Override
   PublicCompany load();
