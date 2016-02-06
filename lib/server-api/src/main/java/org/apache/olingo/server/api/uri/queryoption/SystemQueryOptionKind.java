@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.api.uri.queryoption;
 
+
 /**
  * Defines the supported system query options.
  */
-
 public enum SystemQueryOptionKind {
 
   /**
@@ -84,12 +84,30 @@ public enum SystemQueryOptionKind {
    */
   LEVELS("$levels");
 
-  private String syntax;
+  private final String syntax;
 
   SystemQueryOptionKind(final String syntax) {
     this.syntax = syntax;
   }
 
+  /**
+   * Converts the URI syntax to an enumeration value.
+   * @param option option in the syntax used in the URI
+   * @return system query option kind representing the given option
+   *         (or <code>null</code> if the option does not represent a system query option)
+   */
+  public static SystemQueryOptionKind get(final String option) {
+    for (final SystemQueryOptionKind kind : values()) {
+      if (kind.syntax.equals(option)) {
+        return kind;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @return URI syntax for this system query option
+   */
   @Override
   public String toString() {
     return syntax;

@@ -18,22 +18,16 @@
  */
 package org.apache.olingo.client.core;
 
-import org.apache.olingo.client.api.ODataClient;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Calendar;
+
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.junit.Test;
 
-import java.util.Calendar;
-
-import static org.junit.Assert.assertEquals;
-
 public class PrimitiveValueTest extends AbstractTest {
-
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
 
   @Test
   public void timeOfDay() throws EdmPrimitiveTypeException {
@@ -41,8 +35,8 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10, 21, 45, 17);
 
-    final ClientValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(expected).build();
+    final ClientValue value = client.getObjectFactory().newPrimitiveValueBuilder()
+        .setType(EdmPrimitiveTypeKind.TimeOfDay).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.TimeOfDay, value.asPrimitive().getTypeKind());
 
     final Calendar actual = value.asPrimitive().toCastValue(Calendar.class);
@@ -59,8 +53,8 @@ public class PrimitiveValueTest extends AbstractTest {
     expected.clear();
     expected.set(2013, 0, 10);
 
-    final ClientValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
-            setType(EdmPrimitiveTypeKind.Date).setValue(expected).build();
+    final ClientValue value = client.getObjectFactory().newPrimitiveValueBuilder()
+        .setType(EdmPrimitiveTypeKind.Date).setValue(expected).build();
     assertEquals(EdmPrimitiveTypeKind.Date, value.asPrimitive().getTypeKind());
 
     final Calendar actual = value.asPrimitive().toCastValue(Calendar.class);

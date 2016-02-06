@@ -70,12 +70,12 @@ public class ExpressionTest {
 
   @Test
   public void aliasExpression() throws Exception {
-    AliasImpl expression = new AliasImpl("Test");
+    AliasImpl expression = new AliasImpl("@Test", null);
 
-    assertEquals("Test", expression.getParameterName());
+    assertEquals("@Test", expression.getParameterName());
 
     String output = expression.accept(new FilterTreeToText());
-    assertEquals("<Test>", output);
+    assertEquals("<@Test>", output);
   }
 
   @Test

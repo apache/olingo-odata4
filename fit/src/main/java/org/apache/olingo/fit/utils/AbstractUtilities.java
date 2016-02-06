@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -70,38 +69,19 @@ public abstract class AbstractUtilities {
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractUtilities.class);
 
-  protected static final Pattern ENTITY_URI_PATTERN = Pattern.compile(".*\\/.*\\(.*\\)");
-
-  /**
-   * Batch/Changeset content type.
-   */
-  public static final String MULTIPART_CONTENT_TYPE = "multipart/mixed";
-
-  /**
-   * Batch item content type.
-   */
-  public static final String ITEM_CONTENT_TYPE = "application/http";
-
-  /**
-   * Boundary key.
-   */
-  public static final String BOUNDARY = "boundary";
-
   protected final Metadata metadata;
 
   protected final FSManager fsManager;
 
   protected final ODataDeserializer atomDeserializer;
-
   protected final ODataDeserializer jsonDeserializer;
 
   protected final ODataSerializer atomSerializer;
-
   protected final ODataSerializer jsonSerializer;
 
   public AbstractUtilities(final Metadata metadata) throws IOException {
     this.metadata = metadata;
-    fsManager = FSManager.instance(ODataServiceVersion.V40);
+    fsManager = FSManager.instance();
     atomDeserializer = new FITAtomDeserializer();
     jsonDeserializer = new JsonDeserializer(true);
     atomSerializer = new AtomSerializer(true);

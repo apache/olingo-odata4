@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
@@ -34,23 +33,14 @@ import org.junit.Test;
 
 public class ServiceDocumentTest extends AbstractTest {
 
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
-
-  private String getFileExtension(final ContentType contentType) {
-    return contentType.isCompatible(ContentType.APPLICATION_XML) ? "xml" : "json";
-  }
-
   private ClientServiceDocument parse(final ContentType contentType) throws ODataDeserializerException {
-    ResWrap<ServiceDocument> service = getClient().getDeserializer(contentType).toServiceDocument(
-        getClass().getResourceAsStream("serviceDocument." + getFileExtension(contentType)));
+    ResWrap<ServiceDocument> service = client.getDeserializer(contentType).toServiceDocument(
+        getClass().getResourceAsStream("serviceDocument." + getSuffix(contentType)));
 
     assertEquals(URI.create("http://host/service/$metadata"), service.getContextURL());
     assertEquals("W/\"MjAxMy0wNS0xM1QxNDo1NFo=\"", service.getMetadataETag());
 
-    final ClientServiceDocument serviceDocument = getClient().getBinder().getODataServiceDocument(service.getPayload());
+    final ClientServiceDocument serviceDocument = client.getBinder().getODataServiceDocument(service.getPayload());
     assertNotNull(serviceDocument);
 
     assertTrue(serviceDocument.getEntitySetNames().contains("Order Details"));

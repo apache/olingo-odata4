@@ -80,7 +80,7 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
 
       invokeSelfMethod(method, args);
       return proxy;
-    } else if (isSelfMethod(method, args)) {
+    } else if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       final Class<?> returnType = method.getReturnType();

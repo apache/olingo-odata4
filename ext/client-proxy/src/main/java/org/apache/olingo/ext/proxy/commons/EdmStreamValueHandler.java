@@ -59,7 +59,7 @@ public class EdmStreamValueHandler extends AbstractInvocationHandler {
       load();
       return proxy;
     } else {
-      if (isSelfMethod(method, args)) {
+      if (isSelfMethod(method)) {
         return invokeSelfMethod(method, args);
       } else {
         throw new NoSuchMethodException(method.getName());

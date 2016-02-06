@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -27,7 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 
-public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, EdmElement {
+public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty {
 
   private final CsdlProperty property;
   private EdmTypeInfo typeInfo;
@@ -59,7 +58,7 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty, Ed
     if (property.getType() == null) {
       throw new EdmException("Property " + property.getName() + " must hava a full qualified type.");
     }
-    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType().toString()).build();
+    typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(property.getType()).build();
   }
 
   @Override

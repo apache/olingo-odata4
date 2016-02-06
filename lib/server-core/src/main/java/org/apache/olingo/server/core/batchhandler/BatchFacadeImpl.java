@@ -33,20 +33,26 @@ import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 public class BatchFacadeImpl implements BatchFacade {
   private final BatchPartHandler partHandler;
 
-  public BatchFacadeImpl(final ODataHandler oDataHandler, final ODataRequest request,
-      final BatchProcessor batchProcessor, final boolean isStrict) {
+  /**
+   * Creates a new BatchFacade.
+   * @param oDataHandler   handler
+   * @param batchProcessor batch processor
+   * @param isStrict       mode switch (currently not used)
+   */
+  public BatchFacadeImpl(final ODataHandler oDataHandler, final BatchProcessor batchProcessor,
+      final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
   }
 
   @Override
-  public ODataResponse handleODataRequest(final ODataRequest request) throws ODataApplicationException,
-  ODataLibraryException {
+  public ODataResponse handleODataRequest(final ODataRequest request)
+      throws ODataApplicationException, ODataLibraryException {
     return partHandler.handleODataRequest(request);
   }
 
   @Override
-  public ODataResponsePart handleBatchRequest(final BatchRequestPart request) throws ODataApplicationException,
-  ODataLibraryException {
+  public ODataResponsePart handleBatchRequest(final BatchRequestPart request)
+      throws ODataApplicationException, ODataLibraryException {
     return partHandler.handleBatchRequest(request);
   }
 

@@ -210,7 +210,7 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
             || "refs".equals(method.getName())) {
       invokeSelfMethod(method, args);
       return proxy;
-    } else if (isSelfMethod(method, args)) {
+    } else if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else if ("load".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       load();

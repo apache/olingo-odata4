@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.fit.proxy.demo.odatademo.types;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
 import java.util.concurrent.Future;
-// CHECKSTYLE:ON (Maven checkstyle)
 
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 
@@ -30,9 +28,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
     hasStream = false,
     isAbstract = false,
     baseType = "ODataDemo.Product")
-public interface FeaturedProduct
-    extends org.apache.olingo.ext.proxy.api.Annotatable,
-        Product {
+public interface FeaturedProduct extends Product {
 
   @Override
   FeaturedProduct load();

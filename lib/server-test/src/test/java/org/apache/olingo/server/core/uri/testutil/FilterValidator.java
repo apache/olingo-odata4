@@ -36,6 +36,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Enumeration;
@@ -99,11 +100,6 @@ public class FilterValidator implements TestValidator {
       fail("FilterValidator: no filter found");
     }
     setExpression(filter.getExpression());
-    return this;
-  }
-
-  public FilterValidator setOrderBy(final OrderByOption orderBy) {
-    this.orderBy = orderBy;
     return this;
   }
 
@@ -189,10 +185,7 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator runUri(final String path, final String query)
       throws UriParserException, UriValidationException {
-    Parser parser = new Parser(edm, odata);
-    UriInfo uriInfo = null;
-
-    uriInfo = parser.parseUri(path, query, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null);
 
     if (uriInfo.getKind() != UriInfoKind.resource) {
       fail("Filtervalidator can only be used on resourcePaths");
@@ -224,7 +217,7 @@ public class FilterValidator implements TestValidator {
       fail("Filtervalidator can only be used on resourcePaths");
     }
 
-    setOrderBy(uriInfo.getOrderByOption());
+    orderBy = uriInfo.getOrderByOption();
     return this;
   }
 
@@ -323,17 +316,17 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
+  public FilterValidator root() {
+    curExpression = filter == null ? rootExpression : filter.getExpression();
+    return this;
+  }
+
   public FilterValidator left() {
     if (!(curExpression instanceof Binary)) {
       fail("Current expression not a binary operator");
     }
 
     curExpression = ((Binary) curExpression).getLeftOperand();
-    return this;
-  }
-
-  public FilterValidator root() {
-    curExpression = filter == null ? rootExpression : filter.getExpression();
     return this;
   }
 
@@ -360,7 +353,7 @@ public class FilterValidator implements TestValidator {
     if (!(curExpression instanceof Literal)) {
       fail("Current expression is not a literal");
     }
-    
+
     final EdmType type = ((Literal) curExpression).getType();
     assertNotNull(type);
     assertEquals(edmType, type);
@@ -448,7 +441,7 @@ public class FilterValidator implements TestValidator {
     return this;
   }
 
-  public FilterValidator isEnum(final FullQualifiedName nameenstring, final List<String> enumValues) {
+  public FilterValidator isEnum(final FullQualifiedName name, final List<String> enumValues) {
     if (!(curExpression instanceof Enumeration)) {
       fail("Current expression not a enumeration");
     }
@@ -456,15 +449,21 @@ public class FilterValidator implements TestValidator {
     Enumeration enumeration = (Enumeration) curExpression;
 
     // check name
-    assertEquals(nameenstring, enumeration.getType().getFullQualifiedName());
+    assertEquals(name, enumeration.getType().getFullQualifiedName());
 
     // check values
-    int i = 0;
-    for (String item : enumValues) {
-      assertEquals(item, enumeration.getValues().get(i));
-      i++;
-    }
+    assertEquals(enumValues, enumeration.getValues());
 
+    return this;
+  }
+
+  public FilterValidator isAlias(final String name) {
+    if (curExpression instanceof Alias) {
+      final Alias alias = (Alias) curExpression;
+      assertEquals(name, alias.getParameterName());
+    } else {
+      fail("Current expression is not an alias.");
+    }
     return this;
   }
 
@@ -486,6 +485,12 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator isExSemantic(final UriParserSemanticException.MessageKeys messageKey) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
+    assertEquals(messageKey, exception.getMessageKey());
+    return this;
+  }
+
+  public FilterValidator isExValidation(final UriValidationException.MessageKeys messageKey) {
+    assertEquals(UriValidationException.class, exception.getClass());
     assertEquals(messageKey, exception.getMessageKey());
     return this;
   }

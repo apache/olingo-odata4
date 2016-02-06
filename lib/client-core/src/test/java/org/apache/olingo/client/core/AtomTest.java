@@ -30,16 +30,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.custommonkey.xmlunit.Diff;
 
 public class AtomTest extends JSONTest {
-
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
 
   @Override
   protected ContentType getODataPubFormat() {

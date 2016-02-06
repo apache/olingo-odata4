@@ -23,8 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
@@ -122,31 +120,30 @@ public class UriInfoImplTest {
     final QueryOption top = new TopOptionImpl().setName("");
     final QueryOption levels = new LevelsOptionImpl().setName("");
 
-    final QueryOption customOption0 = new CustomQueryOptionImpl().setName("").setText("A");
-    final QueryOption customOption1 = new CustomQueryOptionImpl().setName("").setText("B");
+    final QueryOption customOption0 = new CustomQueryOptionImpl().setName("0").setText("A");
+    final QueryOption customOption1 = new CustomQueryOptionImpl().setName("1").setText("B");
 
     final QueryOption initialQueryOption = new CustomQueryOptionImpl();
 
     final QueryOption alias = new AliasQueryOptionImpl().setName("alias").setText("C");
 
     final UriInfo uriInfo = new UriInfoImpl()
-        .setQueryOptions(Arrays.asList(
-            expand,
-            filter,
-            format,
-            id,
-            inlinecount,
-            orderby,
-            search,
-            select,
-            skip,
-            skipToken,
-            top,
-            customOption0,
-            customOption1,
-            levels,
-            initialQueryOption,
-            alias));
+        .setQueryOption(expand)
+        .setQueryOption(filter)
+        .setQueryOption(format)
+        .setQueryOption(id)
+        .setQueryOption(inlinecount)
+        .setQueryOption(orderby)
+        .setQueryOption(search)
+        .setQueryOption(select)
+        .setQueryOption(skip)
+        .setQueryOption(skipToken)
+        .setQueryOption(top)
+        .setQueryOption(customOption0)
+        .setQueryOption(customOption1)
+        .setQueryOption(levels)
+        .setQueryOption(initialQueryOption)
+        .setQueryOption(alias);
 
     assertEquals(12, uriInfo.getSystemQueryOptions().size());
     assertEquals(expand, uriInfo.getExpandOption());
@@ -164,7 +161,7 @@ public class UriInfoImplTest {
     assertArrayEquals(new QueryOption[] { alias }, uriInfo.getAliases().toArray());
     assertEquals("C", uriInfo.getValueForAlias("alias"));
 
-    assertArrayEquals(new QueryOption[] { customOption0, customOption1, initialQueryOption },
+    assertArrayEquals(new QueryOption[] { customOption0, customOption1 },
         uriInfo.getCustomQueryOptions().toArray());
   }
 
@@ -185,7 +182,6 @@ public class UriInfoImplTest {
   @Test
   public void alias() {
     final UriInfo uriInfo = new UriInfoImpl()
-        .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("A").setText("notUsed"))
         .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("A").setText("X"))
         .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("B").setText("Y"))
         .addAlias((AliasQueryOption) new AliasQueryOptionImpl().setName("C").setText("Z"));
@@ -198,5 +194,13 @@ public class UriInfoImplTest {
 
     assertTrue(uriInfo.getSystemQueryOptions().isEmpty());
     assertTrue(uriInfo.getCustomQueryOptions().isEmpty());
+  }
+
+  @Test(expected = ODataRuntimeException.class)
+  public void doubleAlias() {
+    final AliasQueryOption alias = (AliasQueryOption) new AliasQueryOptionImpl().setName("A");
+    new UriInfoImpl()
+        .addAlias(alias)
+        .addAlias(alias);
   }
 }

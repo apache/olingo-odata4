@@ -371,6 +371,9 @@ public class UriTokenizerTest {
     assertTrue(new UriTokenizer("{\"name\":null}").next(TokenKind.jsonArrayOrObject));
     assertTrue(new UriTokenizer("{\"name\":\"value\"}").next(TokenKind.jsonArrayOrObject));
     assertTrue(new UriTokenizer("{\"name\":\"value\",\"name2\":null}").next(TokenKind.jsonArrayOrObject));
+    assertFalse(new UriTokenizer("{\"name\"}").next(TokenKind.jsonArrayOrObject));
+    assertFalse(new UriTokenizer("{\"name\":}").next(TokenKind.jsonArrayOrObject));
+    assertFalse(new UriTokenizer("{0}").next(TokenKind.jsonArrayOrObject));
 
     // array with values
     assertTrue(new UriTokenizer("[]").next(TokenKind.jsonArrayOrObject));

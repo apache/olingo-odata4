@@ -252,7 +252,7 @@ public class ExpressionParserTest {
   private Expression parseExpression(final String expressionString)
       throws UriParserException, UriValidationException {
     UriTokenizer tokenizer = new UriTokenizer(expressionString);
-    final Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null);
+    final Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null, null);
     assertNotNull(expression);
     assertTrue(tokenizer.next(TokenKind.EOF));
     return expression;

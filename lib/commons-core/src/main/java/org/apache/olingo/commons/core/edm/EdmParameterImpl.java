@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmMapping;
 import org.apache.olingo.commons.api.edm.EdmParameter;
@@ -27,7 +26,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 
-public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter, EdmElement {
+public class EdmParameterImpl extends AbstractEdmNamed implements EdmParameter {
 
   private final CsdlParameter parameter;
   private EdmType typeImpl;

@@ -39,7 +39,6 @@ import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -48,21 +47,10 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 public class JSONUtilities extends AbstractUtilities {
 
-  private final ObjectMapper mapper;
+  private final ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
   public JSONUtilities(final Metadata metadata) throws IOException {
     super(metadata);
-
-    mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.setInjectableValues(new InjectableValues.Std().
-        addValue(Boolean.class, Boolean.TRUE));
-    // addValue(ODataServiceVersion.class, version))
-
-    mapper.setSerializerProvider(new InjectableSerializerProvider(mapper.getSerializerProvider(),
-        mapper.getSerializationConfig().
-        // withAttribute(ODataServiceVersion.class, version).
-        withAttribute(Boolean.class, Boolean.TRUE),
-        mapper.getSerializerFactory()));
   }
 
   @Override

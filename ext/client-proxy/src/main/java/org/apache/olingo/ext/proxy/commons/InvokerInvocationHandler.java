@@ -276,7 +276,7 @@ public class InvokerInvocationHandler<T, O extends Operations> extends AbstractI
       return Proxy.newProxyInstance(
               Thread.currentThread().getContextClassLoader(),
               new Class<?>[] {operationRef}, handler);
-    } else if (isSelfMethod(method, args)) {
+    } else if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else {
       throw new NoSuchMethodException(method.getName());

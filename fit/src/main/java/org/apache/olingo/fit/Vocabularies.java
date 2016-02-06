@@ -27,7 +27,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.utils.Accept;
 import org.apache.olingo.fit.utils.ConstantKey;
@@ -43,8 +42,8 @@ public class Vocabularies {
   private final XMLUtilities xml;
 
   public Vocabularies() throws IOException {
-    Metadata metadata = new Metadata(FSManager.instance(ODataServiceVersion.V40).readRes(
-            "vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML));
+    Metadata metadata = new Metadata(FSManager.instance()
+        .readRes("vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML));
     xml = new XMLUtilities(metadata);
   }
 
@@ -55,8 +54,7 @@ public class Vocabularies {
     try {
       return xml.createResponse(
           null,
-          FSManager.instance(ODataServiceVersion.V40).readRes(
-              "vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML),
+          FSManager.instance().readRes("vocabularies-" + Constants.get(ConstantKey.METADATA), Accept.XML),
               null,
               Accept.XML);
     } catch (Exception e) {
@@ -71,7 +69,7 @@ public class Vocabularies {
     try {
       return xml.createResponse(
           null,
-          FSManager.instance(ODataServiceVersion.V40).readFile(vocabulary, null),
+          FSManager.instance().readFile(vocabulary, null),
           null,
           Accept.XML);
     } catch (Exception e) {

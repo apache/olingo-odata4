@@ -19,10 +19,12 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
@@ -41,12 +43,12 @@ public class OrderByParser {
   }
 
   public OrderByOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType,
-      final Collection<String> crossjoinEntitySetNames)
+      final Collection<String> crossjoinEntitySetNames, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     OrderByOptionImpl orderByOption = new OrderByOptionImpl();
     do {
       final Expression orderByExpression = new ExpressionParser(edm, odata)
-          .parse(tokenizer, referencedType, crossjoinEntitySetNames);
+          .parse(tokenizer, referencedType, crossjoinEntitySetNames, aliases);
       OrderByItemImpl item = new OrderByItemImpl();
       item.setExpression(orderByExpression);
       if (tokenizer.next(TokenKind.AscSuffix)) {

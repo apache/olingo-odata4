@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.Map;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
@@ -30,6 +32,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
@@ -53,10 +56,12 @@ public class ExpandParser {
 
   private final Edm edm;
   private final OData odata;
+  private final Map<String, AliasQueryOption> aliases;
 
-  public ExpandParser(final Edm edm, final OData odata) {
+  public ExpandParser(final Edm edm, final OData odata, final Map<String, AliasQueryOption> aliases) {
     this.edm = edm;
     this.odata = odata;
+    this.aliases = aliases;
   }
 
   public ExpandOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType)
@@ -92,7 +97,7 @@ public class ExpandParser {
         ParserHelper.requireNext(tokenizer, TokenKind.SLASH);
       }
 
-      UriInfoImpl resource = parseExpandPath(tokenizer, referencedType);
+      UriInfoImpl resource = parseExpandPath(tokenizer, referencedType, item);
 
       UriResourcePartTyped lastPart = (UriResourcePartTyped) resource.getLastResourcePart();
 
@@ -156,8 +161,8 @@ public class ExpandParser {
     return null;
   }
 
-  private UriInfoImpl parseExpandPath(UriTokenizer tokenizer, final EdmStructuredType referencedType)
-      throws UriParserException {
+  private UriInfoImpl parseExpandPath(UriTokenizer tokenizer, final EdmStructuredType referencedType,
+      ExpandItemImpl item) throws UriParserException {
     UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
 
     EdmStructuredType type = referencedType;
@@ -181,10 +186,13 @@ public class ExpandParser {
 
     final EdmNavigationProperty navigationProperty = type.getNavigationProperty(name);
     if (navigationProperty == null) {
-      // TODO: could also have been star after complex property (and maybe type cast)
-      throw new UriParserSemanticException(
-          "Navigation Property '" + name + "' not found in type '" + type.getFullQualifiedName() + "'.",
-          UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, type.getName(), name);
+      if (tokenizer.next(TokenKind.STAR)) {
+        item.setIsStar(true);
+      } else {
+        throw new UriParserSemanticException(
+            "Navigation Property '" + name + "' not found in type '" + type.getFullQualifiedName() + "'.",
+            UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE, type.getName(), name);
+      }
     } else {
       resource.addResourcePart(new UriResourceNavigationPropertyImpl(navigationProperty));
     }
@@ -209,11 +217,11 @@ public class ExpandParser {
 
         } else if (!forRef && !forCount && tokenizer.next(TokenKind.EXPAND)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
-          systemQueryOption = new ExpandParser(edm, odata).parse(tokenizer, referencedType);
+          systemQueryOption = new ExpandParser(edm, odata, aliases).parse(tokenizer, referencedType);
 
         } else if (tokenizer.next(TokenKind.FILTER)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
-          systemQueryOption = new FilterParser(edm, odata).parse(tokenizer, referencedType, null);
+          systemQueryOption = new FilterParser(edm, odata).parse(tokenizer, referencedType, null, aliases);
 
         } else if (!forRef && !forCount && tokenizer.next(TokenKind.LEVELS)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
@@ -221,7 +229,7 @@ public class ExpandParser {
 
         } else if (!forCount && tokenizer.next(TokenKind.ORDERBY)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
-          systemQueryOption = new OrderByParser(edm, odata).parse(tokenizer, referencedType, null);
+          systemQueryOption = new OrderByParser(edm, odata).parse(tokenizer, referencedType, null, aliases);
 
         } else if (tokenizer.next(TokenKind.SEARCH)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);

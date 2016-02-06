@@ -20,33 +20,31 @@ package org.apache.olingo.fit.utils;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.entity.ContentType;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.UnsupportedMediaTypeException;
 
 public enum Accept {
 
-  TEXT(ContentType.TEXT_PLAIN.getMimeType(), ".txt"),
-  XML(ContentType.APPLICATION_XML.getMimeType(), ".xml"),
-  ATOM(ContentType.APPLICATION_ATOM_XML.getMimeType(), ".xml"),
-  JSON(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=minimal", ".full.json"),
-  JSON_NOMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=none", ".full.json"),
-  JSON_FULLMETA(ContentType.APPLICATION_JSON.getMimeType() + ";odata.metadata=full", ".full.json");
-
-  private final String contentTypeV4;
-
-  private final String fileExtension;
+  TEXT(ContentType.TEXT_PLAIN, ".txt"),
+  XML(ContentType.APPLICATION_XML, ".xml"),
+  ATOM(ContentType.APPLICATION_ATOM_XML, ".xml"),
+  JSON(ContentType.JSON, ".full.json"),
+  JSON_NOMETA(ContentType.JSON_NO_METADATA, ".full.json"),
+  JSON_FULLMETA(ContentType.JSON_FULL_METADATA, ".full.json");
 
   private static Pattern allTypesPattern = Pattern.compile("(.*,)?\\*/\\*([,;].*)?");
 
-  Accept(final String contentTypeV4, final String fileExtension) {
-    this.contentTypeV4 = contentTypeV4;
+  private final ContentType contentType;
+  private final String fileExtension;
+
+  Accept(final ContentType contentType, final String fileExtension) {
+    this.contentType = contentType;
     this.fileExtension = fileExtension;
   }
 
   @Override
   public String toString() {
-    return contentTypeV4;
+    return contentType.toContentTypeString();
   }
 
   public String getExtension() {
@@ -58,15 +56,14 @@ public enum Accept {
   }
 
   public static Accept parse(final String contentType, final Accept def) {
-    if (StringUtils.isBlank(contentType) || allTypesPattern.matcher(contentType).matches()) {
+    if (contentType == null || contentType.isEmpty() || allTypesPattern.matcher(contentType).matches()) {
       return def;
     } else if (contentType.startsWith(JSON_NOMETA.toString())) {
       return JSON_NOMETA;
     } else if (contentType.startsWith(JSON_FULLMETA.toString())) {
       return JSON_FULLMETA;
     } else if (contentType.startsWith(JSON.toString())
-        || contentType.startsWith(ContentType.APPLICATION_JSON.getMimeType())) {
-
+        || contentType.startsWith(ContentType.APPLICATION_JSON.toContentTypeString())) {
       return JSON;
     } else if (contentType.startsWith(XML.toString())) {
       return XML;

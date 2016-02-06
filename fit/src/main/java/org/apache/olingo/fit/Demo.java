@@ -40,7 +40,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.methods.PATCH;
 import org.apache.olingo.fit.utils.Accept;
@@ -54,7 +53,7 @@ import org.springframework.stereotype.Service;
 public class Demo extends Services {
 
   public Demo() throws IOException {
-    super(new Metadata(FSManager.instance(ODataServiceVersion.V40).
+    super(new Metadata(FSManager.instance().
         readRes("demo" + StringUtils.capitalize(Constants.get(ConstantKey.METADATA)), Accept.XML)));
   }
 
@@ -166,9 +165,8 @@ public class Demo extends Services {
       @HeaderParam("Prefer") @DefaultValue(StringUtils.EMPTY) final String prefer,
       @PathParam("entitySetName") final String entitySetName,
       @PathParam("entityId") final String entityId,
-      @QueryParam("$format") @DefaultValue(StringUtils.EMPTY) final String format,
       final String value) {
 
-    return super.replaceMediaEntity(uriInfo, prefer, entitySetName, entityId, format, value);
+    return super.replaceMediaEntity(uriInfo, prefer, entitySetName, entityId, value);
   }
 }

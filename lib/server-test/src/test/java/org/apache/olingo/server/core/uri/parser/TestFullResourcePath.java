@@ -53,13 +53,9 @@ public class TestFullResourcePath {
   private static final OData oData = OData.newInstance();
   private static final Edm edm = oData.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
-  private final TestUriValidator testUri;
-  private final FilterValidator testFilter;
 
-  public TestFullResourcePath() {
-    testUri = new TestUriValidator().setEdm(edm);
-    testFilter = new FilterValidator().setEdm(edm);
-  }
+  private final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
+  private final FilterValidator testFilter = new FilterValidator().setEdm(edm);
 
   @Test
   public void enumAndTypeDefAsKey() throws Exception {
@@ -1229,7 +1225,6 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoPrim, false)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBase)
         .isKeyPredicate(0, "PropertyInt16", "-32768");
-
   }
 
   @Test
@@ -2062,15 +2057,6 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void runFunctionImpEsAlias() throws Exception {
-
-    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)", "@parameterAlias=1");
-    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)/$count", "@parameterAlias=1");
-    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
-  }
-
-  @Test
   public void runFunctionImpEsCast() throws Exception {
 
     testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=1)/olingo.odata.test1.ETBaseTwoKeyNav")
@@ -2650,6 +2636,13 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
+    testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav/*")
+        .isKind(UriInfoKind.resource).goPath().first()
+        .goExpand().first()
+        .isExpandStartType(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .isSegmentStar()
+        .goPath().last().isComplexProperty("PropertyCompNav", ComplexTypeProvider.nameCTBasePrimCompNav, false);
+
     testUri.run("ESTwoKeyNav", "$expand=olingo.odata.test1.ETBaseTwoKeyNav/PropertyCompNav"
         + "/olingo.odata.test1.CTTwoBasePrimCompNav/NavPropertyETTwoKeyNavOne")
         .isKind(UriInfoKind.resource).goPath().first()
@@ -2736,6 +2729,8 @@ public class TestFullResourcePath {
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
     testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/undefined")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESTwoKeyNav", "$expand=PropertyCompNav/*+")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -2874,6 +2869,7 @@ public class TestFullResourcePath {
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.1")
         .isExSemantic(MessageKeys.UNKNOWN_PART);
+    testUri.runEx("ESTwoKeyNav", "$select=unknown_namespace.*").isExSemantic(MessageKeys.UNKNOWN_PART);
     testUri.runEx("ESTwoKeyNav", "$select=olingo.odata.test1.ETKeyNav")
         .isExSemantic(MessageKeys.INCOMPATIBLE_TYPE_FILTER);
     testUri.runEx("ESTwoKeyNav", "$select=PropertyCompNav/olingo.odata.test1.CTTwoPrim")
@@ -3771,7 +3767,8 @@ public class TestFullResourcePath {
   @Test
   public void filterFunctions() throws Exception {
     testFilter.runOnETAllPrim(
-        "olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias) eq null")
+        "olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias) eq null"
+        + "&@ParamAlias={}")
         .is("<<UFCRTETTwoKeyNavParamCTTwoPrim> eq <null>>")
         .left().goPath()
         .first()
@@ -3803,14 +3800,14 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
     testFilter.runOnETTwoKeyNav("PropertyComp/olingo.odata.test1.BFCCTPrimCompRTETTwoKeyNavParam"
-        + "(ParameterString=null)/PropertyString eq 'SomeString'")
+        + "(ParameterString='1')/PropertyString eq 'SomeString'")
         .is("<<PropertyComp/BFCCTPrimCompRTETTwoKeyNavParam/PropertyString> eq <'SomeString'>>")
         .root().left().goPath()
         .first()
         .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n()
         .isFunction("BFCCTPrimCompRTETTwoKeyNavParam")
-        .isParameter(0, "ParameterString", null)
+        .isParameter(0, "ParameterString", "'1'")
         .n()
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
 
@@ -3880,7 +3877,8 @@ public class TestFullResourcePath {
         .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
 
     testFilter.runOnETTwoKeyNav("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=@Param1Alias)"
-        + "/PropertyInt16 eq 2")
+        + "/PropertyInt16 eq 2"
+        + "&@Param1Alias=1")
         .root().left().goPath()
         .first()
         .isFunction("UFCRTETTwoKeyNavParam")
@@ -3912,6 +3910,9 @@ public class TestFullResourcePath {
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    testFilter.runOnETTwoKeyNavEx("olingo.odata.test1.UFCRTETTwoKeyNavParam(ParameterInt16=@alias)")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
   }
 
   @Test
@@ -4629,12 +4630,12 @@ public class TestFullResourcePath {
         .goParameter(1).isTypedLiteral(EntityTypeProvider.nameETKeyPrimNav);
 
     testFilter.runOnETAllPrim(
-        "olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=null,ParameterString=null) ne null")
+        "olingo.odata.test1.UFCRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString='1') ne null")
         .left()
         .goPath()
         .isFunction("UFCRTCTTwoPrimTwoParam")
-        .isParameter(0, "ParameterInt16", null)
-        .isParameter(1, "ParameterString", null);
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'1'");
 
     testFilter.runOnETKeyNavEx("cast(NavPropertyETKeyPrimNavOne,olingo.odata.test1.ETKeyNav)")
         .isExSemantic(MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
@@ -5023,21 +5024,24 @@ public class TestFullResourcePath {
         .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
-        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString'")
+        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString'"
+        + "&@ParamStringAlias='1'&@ParamInt16Alias=1")
         .isSortOrder(0, false)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
         .goOrder(0).right().isLiteral("'SomeString'");
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
-        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' asc")
+        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' asc"
+        + "&@ParamStringAlias='1'&@ParamInt16Alias=1")
         .isSortOrder(0, false)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
         .goOrder(0).right().isLiteral("'SomeString'");
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
-        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc")
+        + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc"
+        + "&@ParamStringAlias='1'&@ParamInt16Alias=1")
         .isSortOrder(0, true)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
@@ -5045,7 +5049,8 @@ public class TestFullResourcePath {
 
     testFilter.runOrderByOnETTwoKeyNav("olingo.odata.test1.UFCRTETAllPrimTwoParam("
         + "ParameterString=@ParamStringAlias,ParameterInt16=@ParamInt16Alias)/PropertyString eq 'SomeString' desc,"
-        + "PropertyString eq '1'")
+        + "PropertyString eq '1'"
+        + "&@ParamStringAlias='1'&@ParamInt16Alias=1")
         .isSortOrder(0, true)
         .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
         .first().isFunction("UFCRTETAllPrimTwoParam").goUpFilterValidator()
@@ -5553,14 +5558,6 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void alias() throws Exception {
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)", "@A='2'").goPath()
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicateAlias(1, "PropertyString", "@A")
-        .isInAliasToValueMap("@A", "'2'");
-  }
-
-  @Test
   public void doublePercentDecoding() throws Exception {
     testUri.runEx("ESAllPrim%252832767%29").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
@@ -5775,13 +5772,42 @@ public class TestFullResourcePath {
   }
 
   @Test
-  public void parameterAliasLiteralValidation() throws Exception {
-    testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=1");
-    testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=-2");
-    testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe'")
-        .isExValidation(UriValidationException.MessageKeys.INVALID_KEY_PROPERTY);
+  public void alias() throws Exception {
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString=@A)", "@A='2'").goPath()
+        .isKeyPredicate(0, "PropertyInt16", "1")
+        .isKeyPredicateAlias(1, "PropertyString", "@A")
+        .isInAliasToValueMap("@A", "'2'");
+    testUri.run("ESAllPrim(PropertyInt16=@p1)", "@p1=1").goPath()
+        .isKeyPredicateAlias(0, "PropertyInt16", "@p1")
+        .isInAliasToValueMap("@p1", "1");
+    testUri.run("ESAllPrim(@p1)", "@p1=-2").goPath()
+        .isKeyPredicateAlias(0, "PropertyInt16", "@p1")
+        .isInAliasToValueMap("@p1", "-2");
+
+    testFilter.runOnETAllPrim("PropertyInt16 gt @alias&@alias=1")
+        .right().isAlias("@alias");
+    testFilter.runOnETAllPrim("@alias&@alias=@otherAlias&@otherAlias=true")
+        .isAlias("@alias");
+
+    testUri.runEx("ESAllPrim(@p1)")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+    testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe'").isExSemantic(MessageKeys.UNKNOWN_PART);
     testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+    testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias&@alias=@alias")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+    testFilter.runOnETKeyNavEx("@alias&@alias=@alias2&@alias2=true or @alias")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+  }
+
+  @Test
+  public void functionImportParameterAlias() throws Exception {
+    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)", "@parameterAlias=1");
+    testUri.run("FICRTCollESTwoKeyNavParam(ParameterInt16=@parameterAlias)/$count", "@parameterAlias=1");
+    testUri.runEx("FICRTCollESTwoKeyNavParam(ParameterInt16=@invalidAlias)", "@validAlias=1")
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
   }
 
   @Test
@@ -5854,10 +5880,10 @@ public class TestFullResourcePath {
         .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
 
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
 
     testUri.runEx("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test=null")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
 
     testUri.run("FICRTCTTwoPrimTwoParam(ParameterInt16=1,ParameterString=@test)", "@test='null'");
 
@@ -5881,7 +5907,7 @@ public class TestFullResourcePath {
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":1,\"PropertyString\":\"1\"}}")
-        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+        .isExSemantic(MessageKeys.UNKNOWN_PART);
 
     testUri.runEx("ESTwoKeyNav", "$filter=olingo.odata.test1.BFCESTwoKeyNavRTStringParam"
         + "(ParameterComp=@p1) eq '0'&@p1={\"PropertyInt16\":[1,2,3]],\"PropertyString\":\"1\"}")

@@ -84,7 +84,7 @@ public class EntitySetInvocationHandler<
 
       invokeSelfMethod(method, args);
       return proxy;
-    } else if (isSelfMethod(method, args)) {
+    } else if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else {
       throw new NoSuchMethodException(method.getName());

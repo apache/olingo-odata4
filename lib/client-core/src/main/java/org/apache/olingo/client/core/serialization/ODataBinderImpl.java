@@ -714,7 +714,7 @@ public class ODataBinderImpl implements ODataBinder {
       if (propertyType == null || propertyType.equals(EdmPrimitiveTypeKind.String.getFullQualifiedName().toString())) {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
       } else if(isPrimiteveType(typeName)) {
-        // Inheritance is not allowed for primitve types, so we use the type given by the EDM
+        // Inheritance is not allowed for primitive types, so we use the type given by the EDM.
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName.toString()).build();
       } else {
         typeInfo = new EdmTypeInfo.Builder().setTypeExpression(propertyType).build();

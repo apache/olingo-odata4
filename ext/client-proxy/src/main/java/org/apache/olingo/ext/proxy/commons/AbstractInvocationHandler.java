@@ -69,7 +69,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     return service.getContext();
   }
 
-  protected boolean isSelfMethod(final Method method, final Object[] args) {
+  protected boolean isSelfMethod(final Method method) {
     final Method[] selfMethods = getClass().getMethods();
 
     boolean result = false;
@@ -161,7 +161,7 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       CoreUtils.addProperties(getClient(), handler.getPropertyChanges(), template);
       final Object key = CoreUtils.getKey(getClient(), handler, handler.getUUID().getType(), template);
 
-      entityURI = CoreUtils.buildEditLink(getClient(), baseURI.toASCIIString(), template, key).build();
+      entityURI = CoreUtils.buildEditLink(getClient(), baseURI.toASCIIString(), key).build();
       template.setEditLink(entityURI);
     } else {
       entityURI = handler.getEntityURI();
@@ -182,32 +182,25 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
     }
   }
 
-  protected static URIBuilder buildEntitySetURI(
-      final Class<?> ref,
-      final AbstractService<?> service) {
+  protected static URIBuilder buildEntitySetURI(final Class<?> ref, final AbstractService<?> service) {
 
-    final String containerNS;
     final String entitySetName;
     Annotation ann = ref.getAnnotation(EntitySet.class);
     if (ann instanceof EntitySet) {
-      containerNS = EntitySet.class.cast(ann).container();
       entitySetName = EntitySet.class.cast(ann).name();
     } else {
       ann = ref.getAnnotation(Singleton.class);
       if (ann instanceof Singleton) {
-        containerNS = Singleton.class.cast(ann).container();
         entitySetName = Singleton.class.cast(ann).name();
       } else {
-        containerNS = null;
         entitySetName = null;
       }
     }
 
-    return buildEntitySetURI(containerNS, entitySetName, service);
+    return buildEntitySetURI(entitySetName, service);
   }
 
-  protected static URIBuilder buildEntitySetURI(
-      final String containerNS, final String entitySetName, final AbstractService<?> service) {
+  protected static URIBuilder buildEntitySetURI(final String entitySetName, final AbstractService<?> service) {
 
     final URIBuilder uriBuilder = service.getClient().newURIBuilder();
     final StringBuilder entitySetSegment = new StringBuilder();

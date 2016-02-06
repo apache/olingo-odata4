@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.NotFoundException;
 import javax.xml.namespace.QName;
@@ -60,6 +61,8 @@ import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 
 public class XMLUtilities extends AbstractUtilities {
+
+  private static final Pattern ENTITY_URI_PATTERN = Pattern.compile(".*\\/.*\\(.*\\)");
 
   protected static XMLInputFactory ifactory = null;
 

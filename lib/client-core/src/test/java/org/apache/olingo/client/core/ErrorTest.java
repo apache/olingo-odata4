@@ -21,7 +21,6 @@ package org.apache.olingo.client.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -29,13 +28,8 @@ import org.junit.Test;
 
 public class ErrorTest extends AbstractTest {
 
-  @Override
-  protected ODataClient getClient() {
-    return v4Client;
-  }
-
   private ODataError error(final String name, final ContentType contentType) throws ODataDeserializerException {
-    final ODataError error = getClient().getDeserializer(contentType).toError(
+    final ODataError error = client.getDeserializer(contentType).toError(
             getClass().getResourceAsStream(name + "." + getSuffix(contentType)));
     assertNotNull(error);
     return error;

@@ -22,11 +22,24 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.client.api.domain.AbstractClientPayload;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 
-public class ClientEntitySetImpl extends AbstractClientEntitySet implements ClientEntitySet {
+public class ClientEntitySetImpl extends AbstractClientPayload implements ClientEntitySet {
+
+  /**
+   * Link to the next page.
+   */
+  private final URI next;
+
+  /**
+   * Number of ODataEntities contained in this entity set.
+   * <br/>
+   * If <tt>$count</tt> was requested, this value comes from there.
+   */
+  private Integer count;
 
   private URI deltaLink;
 
@@ -35,11 +48,28 @@ public class ClientEntitySetImpl extends AbstractClientEntitySet implements Clie
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
 
   public ClientEntitySetImpl() {
-    super();
+    super(null);
+    next = null;
   }
 
   public ClientEntitySetImpl(final URI next) {
-    super(next);
+    super(null);
+    this.next = next;
+  }
+
+  @Override
+  public URI getNext() {
+    return next;
+  }
+
+  @Override
+  public Integer getCount() {
+    return count;
+  }
+
+  @Override
+  public void setCount(final int count) {
+    this.count = count;
   }
 
   @Override
@@ -66,6 +96,8 @@ public class ClientEntitySetImpl extends AbstractClientEntitySet implements Clie
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
+    result = prime * result + ((count == null) ? 0 : count.hashCode());
+    result = prime * result + ((next == null) ? 0 : next.hashCode());
     result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
     result = prime * result + ((deltaLink == null) ? 0 : deltaLink.hashCode());
     result = prime * result + ((entities == null) ? 0 : entities.hashCode());
@@ -77,40 +109,20 @@ public class ClientEntitySetImpl extends AbstractClientEntitySet implements Clie
     if (this == obj) {
       return true;
     }
-    if (!super.equals(obj)) {
+    if (obj == null || !(obj instanceof ClientEntitySetImpl)) {
       return false;
     }
-    if (!(obj instanceof ClientEntitySetImpl)) {
-      return false;
-    }
-    ClientEntitySetImpl other = (ClientEntitySetImpl) obj;
-    if (annotations == null) {
-      if (other.annotations != null) {
-        return false;
-      }
-    } else if (!annotations.equals(other.annotations)) {
-      return false;
-    }
-    if (deltaLink == null) {
-      if (other.deltaLink != null) {
-        return false;
-      }
-    } else if (!deltaLink.equals(other.deltaLink)) {
-      return false;
-    }
-    if (entities == null) {
-      if (other.entities != null) {
-        return false;
-      }
-    } else if (!entities.equals(other.entities)) {
-      return false;
-    }
-    return true;
+    final ClientEntitySetImpl other = (ClientEntitySetImpl) obj;
+    return (count == null ? other.count == null : count.equals(other.count))
+        && (next == null ? other.next == null : next.equals(other.next))
+        && annotations.equals(other.annotations)
+        && (deltaLink == null ? other.deltaLink == null : deltaLink.equals(other.deltaLink))
+        && entities.equals(other.entities);
   }
 
   @Override
   public String toString() {
     return "ClientEntitySetImpl [deltaLink=" + deltaLink + ", entities=" + entities + ", annotations=" + annotations
-        + "super[" + super.toString() + "]]";
+        + ", next=" + next + ", count=" + count + "super[" + super.toString() + "]]";
   }
 }
