@@ -19,9 +19,10 @@
 package org.apache.olingo.server.core;
 
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -36,6 +37,10 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
+import org.apache.olingo.commons.api.edm.provider.CsdlBindingTarget;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -59,13 +64,70 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlAnnotationPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCast;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIsOf;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElement;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLabeledElementReference;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNavigationPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlNull;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
+import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 
 /**
  * This class can convert a CSDL document into EDMProvider object
  */
 public class MetadataParser {
+  private boolean parseAnnotations = false;
 
-  public CsdlEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
+  public void setParseAnnotations(boolean f) {
+    this.parseAnnotations = true;
+  }
+  
+  public ServiceMetadata buildServiceMetadata(Reader csdl) throws XMLStreamException {
+    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
+
+    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider();
+    final ArrayList<EdmxReference> references = new ArrayList<EdmxReference>();
+    
+    new ElementReader<SchemaBasedEdmProvider>() {
+      @Override
+      void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
+          String name) throws XMLStreamException {
+        String version = attr(element, "Version");
+        if ("4.0".equals(version)) {
+          readDataServicesAndReference(reader, element, provider, references);
+        } else {
+          throw new XMLStreamException("Currently only V4 is supported.");
+        }
+      }
+    }.read(reader, null, provider, "Edmx");
+    if(reader.hasNext()) {
+      XMLEvent event = reader.peek();
+      throw new XMLStreamException(
+          "Failed to read complete metadata file. Failed at "
+              + (event.isStartElement() ? 
+                  event.asStartElement().getName().getLocalPart() : 
+                  event.asEndElement().getName().getLocalPart()));
+    }
+    return new ServiceMetadataImpl(provider, references, null);
+  }
+
+  CsdlEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
 
@@ -76,16 +138,17 @@ public class MetadataParser {
           String name) throws XMLStreamException {
         String version = attr(element, "Version");
         if ("4.0".equals(version)) {
-          readDataServicesAndReference(reader, element, provider);
+          readDataServicesAndReference(reader, element, provider, new ArrayList<EdmxReference>());
         }
       }
     }.read(reader, null, provider, "Edmx");
 
     return provider;
-  }
-
-  private void readDataServicesAndReference(XMLEventReader reader, StartElement element,
-      SchemaBasedEdmProvider provider) throws XMLStreamException {
+  }  
+  
+  private void readDataServicesAndReference(XMLEventReader reader,
+      StartElement element, SchemaBasedEdmProvider provider,
+      final ArrayList<EdmxReference> references) throws XMLStreamException {
     new ElementReader<SchemaBasedEdmProvider>() {
       @Override
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
@@ -93,45 +156,64 @@ public class MetadataParser {
         if (name.equals("DataServices")) {
           readSchema(reader, element, provider);
         } else if (name.equals("Reference")) {
-          readReference(reader, element, provider, "Reference");
+          readReference(reader, element, references, "Reference");
         }
       }
     }.read(reader, element, provider, "DataServices", "Reference");
   }
 
   private void readReference(XMLEventReader reader, StartElement element,
-      SchemaBasedEdmProvider provider, String name) throws XMLStreamException {
-    new ElementReader<SchemaBasedEdmProvider>() {
+      final ArrayList<EdmxReference> references, String name) throws XMLStreamException {
+    EdmxReference reference;
+    try {
+      String uri = attr(element, "Uri");
+      reference = new EdmxReference(new URI(uri));
+    } catch (URISyntaxException e) {
+      throw new XMLStreamException(e);
+    }
+    new ElementReader<EdmxReference>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider t, String name)
-          throws XMLStreamException {
-        // TODO:
+      void build(XMLEventReader reader, StartElement element,
+          EdmxReference reference, String name) throws XMLStreamException {
+        if (name.equals("Include")) {
+          EdmxReferenceInclude include = new EdmxReferenceInclude(attr(element, "Namespace"),
+              attr(element, "Alias"));
+          reference.addInclude(include);
+        } else if (name.equals("IncludeAnnotations")) {
+          EdmxReferenceIncludeAnnotation annotation = new EdmxReferenceIncludeAnnotation(
+              attr(element, "TermNamespace"));
+          annotation.setTargetNamespace(attr(element, "TargetNamespace"));
+          annotation.setQualifier(attr(element, "Qualifier"));
+          reference.addIncludeAnnotation(annotation);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, reference);
+        }
       }
-    }.read(reader, element, provider, name);
+    }.read(reader, element, reference, "Include", "IncludeAnnotations", "Annotation");
+    references.add(reference);
   }
-
+  
   private void readSchema(XMLEventReader reader, StartElement element,
       SchemaBasedEdmProvider provider) throws XMLStreamException {
 
-    CsdlSchema schema = new CsdlSchema();
-    schema.setComplexTypes(new ArrayList<CsdlComplexType>());
-    schema.setActions(new ArrayList<CsdlAction>());
-    schema.setEntityTypes(new ArrayList<CsdlEntityType>());
-    schema.setEnumTypes(new ArrayList<CsdlEnumType>());
-    schema.setFunctions(new ArrayList<CsdlFunction>());
-    schema.setTerms(new ArrayList<CsdlTerm>());
-    schema.setTypeDefinitions(new ArrayList<CsdlTypeDefinition>());
-
-    new ElementReader<CsdlSchema>() {
+    new ElementReader<SchemaBasedEdmProvider>() {
       @Override
-      void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
+      void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider, String name)
           throws XMLStreamException {
+        CsdlSchema schema = new CsdlSchema();
+        schema.setComplexTypes(new ArrayList<CsdlComplexType>());
+        schema.setActions(new ArrayList<CsdlAction>());
+        schema.setEntityTypes(new ArrayList<CsdlEntityType>());
+        schema.setEnumTypes(new ArrayList<CsdlEnumType>());
+        schema.setFunctions(new ArrayList<CsdlFunction>());
+        schema.setTerms(new ArrayList<CsdlTerm>());
+        schema.setTypeDefinitions(new ArrayList<CsdlTypeDefinition>());        
         schema.setNamespace(attr(element, "Namespace"));
         schema.setAlias(attr(element, "Alias"));
         readSchemaContents(reader, schema);
+        provider.addSchema(schema);
       }
-    }.read(reader, element, schema, "Schema");
-    provider.addSchema(schema);
+    }.read(reader, element, provider, "Schema");
   }
 
   private void readSchemaContents(XMLEventReader reader, CsdlSchema schema) throws XMLStreamException {
@@ -141,9 +223,10 @@ public class MetadataParser {
           throws XMLStreamException {
         if (name.equals("Action")) {
           readAction(reader, element, schema);
-//        } else if (name.equals("Annotations")) {
-//        } else if (name.equals("Annotation")) {
-          // TODO: Add support for annotations
+        } else if (name.equals("Annotations")) {
+          readAnnotationGroup(reader, element, schema);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, schema);
         } else if (name.equals("ComplexType")) {
           readComplexType(reader, element, schema);
         } else if (name.equals("EntityContainer")) {
@@ -155,9 +238,9 @@ public class MetadataParser {
         } else if (name.equals("Function")) {
           readFunction(reader, element, schema);
         } else if (name.equals("Term")) {
-          schema.getTerms().add(readTerm(element));
+          schema.getTerms().add(readTerm(reader, element));
         } else if (name.equals("TypeDefinition")) {
-          schema.getTypeDefinitions().add(readTypeDefinition(element));
+          schema.getTypeDefinitions().add(readTypeDefinition(reader, element));
         }
       }
     }.read(reader, null, schema, "Action", "Annotations", "Annotation", "ComplexType",
@@ -196,7 +279,8 @@ public class MetadataParser {
     return false;
   }
 
-  private void readReturnType(StartElement element, CsdlOperation operation) {
+  private void readReturnType(XMLEventReader reader, StartElement element,
+      CsdlOperation operation) throws XMLStreamException {
     CsdlReturnType returnType = new CsdlReturnType();
     returnType.setType(readType(element));
     returnType.setCollection(isCollectionType(element));
@@ -216,13 +300,14 @@ public class MetadataParser {
     }
     String srid = attr(element, "SRID");
     if (srid != null) {
-      // TODO: no olingo support yet.
       returnType.setSrid(SRID.valueOf(srid));
     }
+    peekAnnotations(reader, element.getName().getLocalPart(), returnType);
     operation.setReturnType(returnType);
   }
 
-  private void readParameter(StartElement element, CsdlOperation operation) {
+  private void readParameter(XMLEventReader reader, StartElement element,
+      CsdlOperation operation) throws XMLStreamException {
     CsdlParameter parameter = new CsdlParameter();
     parameter.setName(attr(element, "Name"));
     parameter.setType(readType(element));
@@ -243,13 +328,14 @@ public class MetadataParser {
     }
     String srid = attr(element, "SRID");
     if (srid != null) {
-      // TODO: no olingo support yet.
       parameter.setSrid(SRID.valueOf(srid));
     }
+    peekAnnotations(reader, element.getName().getLocalPart(), parameter);
     operation.getParameters().add(parameter);
   }
 
-  private CsdlTypeDefinition readTypeDefinition(StartElement element) {
+  private CsdlTypeDefinition readTypeDefinition(XMLEventReader reader,
+      StartElement element) throws XMLStreamException {
     CsdlTypeDefinition td = new CsdlTypeDefinition();
     td.setName(attr(element, "Name"));
     td.setUnderlyingType(new FullQualifiedName(attr(element, "UnderlyingType")));
@@ -269,16 +355,17 @@ public class MetadataParser {
     }
     String srid = attr(element, "SRID");
     if (srid != null) {
-      // TODO: no olingo support yet.
       td.setSrid(SRID.valueOf(srid));
     }
+    peekAnnotations(reader, element.getName().getLocalPart(), td);
     return td;
   }
 
-  private CsdlTerm readTerm(StartElement element) {
+  private CsdlTerm readTerm(XMLEventReader reader, StartElement element) throws XMLStreamException {
     CsdlTerm term = new CsdlTerm();
     term.setName(attr(element, "Name"));
     term.setType(attr(element, "Type"));
+    
     if (attr(element, "BaseTerm") != null) {
       term.setBaseTerm(attr(element, "BaseTerm"));
     }
@@ -286,7 +373,8 @@ public class MetadataParser {
       term.setDefaultValue(attr(element, "DefaultValue"));
     }
     if (attr(element, "AppliesTo") != null) {
-      term.setAppliesTo(Collections.singletonList(attr(element, "AppliesTo")));
+      String[] appliesTo = attr(element, "AppliesTo").split("\\s+");
+      term.setAppliesTo(Arrays.asList(appliesTo));
     }
     term.setNullable(Boolean.parseBoolean(attr(element, "Nullable")));
     String maxLength = attr(element, "MaxLength");
@@ -303,12 +391,231 @@ public class MetadataParser {
     }
     String srid = attr(element, "SRID");
     if (srid != null) {
-      // TODO: no olingo support yet.
       term.setSrid(SRID.valueOf(srid));
     }
+    peekAnnotations(reader, "Term", term);
     return term;
   }
 
+  private void readAnnotationGroup(XMLEventReader reader, StartElement element,
+      CsdlSchema schema) throws XMLStreamException {
+    final CsdlAnnotations annotations = new CsdlAnnotations();
+    annotations.setTarget(attr(element, "Target"));
+    annotations.setQualifier(attr(element, "Qualifier"));
+    readAnnotations(reader, element, annotations);
+    schema.getAnnotationGroups().add(annotations);
+  }
+
+  private void peekAnnotations(XMLEventReader reader, String endName,
+      CsdlAnnotatable edmObject) throws XMLStreamException {
+    if(!parseAnnotations) {
+      return;
+    }
+    while (reader.hasNext()) {
+      XMLEvent event = reader.peek();
+
+      if (!event.isStartElement() && !event.isEndElement()) {
+        reader.nextEvent();
+        continue;
+      }
+      
+      if (event.isStartElement()) {
+        StartElement element = event.asStartElement();
+        if (element.getName().getLocalPart().equals("Annotation")) {
+          reader.nextEvent();
+          readAnnotations(reader, element, edmObject);
+        }
+      }
+      
+      if (event.isEndElement()) {
+        EndElement element = event.asEndElement();
+        if (element.getName().getLocalPart().equals("Annotation")) {
+          reader.nextEvent();
+        }
+        
+        if (element.getName().getLocalPart().equals(endName)) {
+          return;
+        }
+      }
+    }
+  }
+  
+  private void readAnnotations(XMLEventReader reader, StartElement element,
+      CsdlAnnotatable edmObject) throws XMLStreamException {
+    if (!parseAnnotations) {
+      return;
+    }
+    final CsdlAnnotation annotation = new CsdlAnnotation();
+    annotation.setTerm(attr(element, "Term"));
+    for (ConstantExpressionType type:ConstantExpressionType.values()) {
+      if (attr(element, type.name()) != null) {
+        annotation.setExpression(new CsdlConstantExpression(
+            type, attr(element, type.name())));
+      }        
+    }
+    readExpressions(reader, element, annotation);
+    edmObject.getAnnotations().add(annotation);
+  } 
+
+  private <T> void write(T t, CsdlExpression expr) throws XMLStreamException {
+    if(t instanceof CsdlAnnotation) {
+      ((CsdlAnnotation)t).setExpression(expr);
+    } else if (t instanceof CsdlUrlRef) {
+      ((CsdlUrlRef)t).setValue(expr);
+    } else if (t instanceof CsdlCast) {
+      ((CsdlCast)t).setValue(expr);
+    } else if (t instanceof CsdlLabeledElement) {
+      ((CsdlLabeledElement)t).setValue(expr);
+    } else if (t instanceof CsdlIsOf) {
+      ((CsdlIsOf)t).setValue(expr);
+    } else if (t instanceof CsdlCollection) {
+      ((CsdlCollection)t).getItems().add(((CsdlCollection)t).getItems().size(), expr);
+    } else if (t instanceof CsdlApply) {
+      ((CsdlApply)t).getParameters().add(expr);
+    } else if (t instanceof CsdlIf) {
+      if (((CsdlIf)t).getGuard() == null) {
+        ((CsdlIf)t).setGuard(expr);
+      } else if (((CsdlIf)t).getThen() == null) {
+        ((CsdlIf)t).setThen(expr);
+      } else {
+        ((CsdlIf)t).setElse(expr);
+      }
+    } else if (t instanceof CsdlPropertyValue) {
+      ((CsdlPropertyValue)t).setValue(expr);
+    } else {
+      throw new XMLStreamException("Unknown expression parent in Annoatation");
+    }
+  }
+  
+  private <T> void readExpressions(XMLEventReader reader,
+      StartElement element, T target)
+      throws XMLStreamException {
+    new ElementReader<T>() {
+      @Override
+      void build(XMLEventReader reader, StartElement element, T target, String name)
+          throws XMLStreamException {
+        
+        // attribute based expressions        
+        if (attr(element,  "AnnotationPath") != null) {
+         write(target, new CsdlAnnotationPath().setValue(attr(element,  "AnnotationPath"))); 
+        }
+        if (attr(element,  "NavigationPropertyPath") != null) {
+          write(target, new CsdlNavigationPropertyPath()
+              .setValue(attr(element, "NavigationPropertyPath"))); 
+        }
+        if (attr(element,  "Path") != null) {
+          write(target, new CsdlPath().setValue(attr(element, "Path"))); 
+        }
+        if (attr(element,  "PropertyPath") != null) {
+          write(target, new CsdlPropertyPath().setValue(attr(element, "PropertyPath"))); 
+        }
+        if (attr(element,  "UrlRef") != null) {
+          write(target, new CsdlUrlRef().setValue(new CsdlConstantExpression(
+              ConstantExpressionType.String, attr(element, "UrlRef"))));
+        }        
+
+        // element based expressions
+        for (ConstantExpressionType type:ConstantExpressionType.values()) {
+          if (name.equals(type.name())) {
+            if (reader.peek().isCharacters()) {
+              CsdlExpression expr = new CsdlConstantExpression(type, elementValue(reader, element));
+              write(target, expr);
+            }
+          }        
+        }        
+        if (name.equals("Collection")) {
+          CsdlCollection expr = new CsdlCollection();
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("AnnotationPath")) {
+          write(target, new CsdlAnnotationPath().setValue(elementValue(reader, element)));
+        } else if (name.equals("NavigationPropertyPath")) {
+          write(target, new CsdlNavigationPropertyPath()
+              .setValue(elementValue(reader, element)));
+        } else if (name.equals("Path")) {
+          write(target, new CsdlPath().setValue(elementValue(reader, element)));
+        } else if (name.equals("PropertyPath")) {
+          write(target, new CsdlPropertyPath().setValue(elementValue(reader, element)));
+        } else if (name.equals("UrlRef")) {
+          CsdlUrlRef expr = new CsdlUrlRef();
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("Apply")) {
+          CsdlApply expr = new CsdlApply();
+          expr.setFunction(attr(element, "Function"));
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("Cast")) {
+          CsdlCast expr = new CsdlCast();
+          expr.setType(attr(element, "Type"));
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("If")) {
+          CsdlIf expr = new CsdlIf();
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("IsOf")) {
+          CsdlIsOf expr = new CsdlIsOf();
+          expr.setType(attr(element, "Type"));
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("LabeledElement")) {
+          CsdlLabeledElement expr = new CsdlLabeledElement();
+          expr.setName(attr(element, "Name"));
+          readExpressions(reader, element, expr);
+          write(target, expr);
+        } else if (name.equals("LabeledElementReference")) {
+          CsdlLabeledElementReference expr = new CsdlLabeledElementReference();
+          expr.setValue(elementValue(reader, element));
+          write(target, expr);
+        } else if (name.equals("Null")) {
+          write(target, new CsdlNull());
+        } else if (name.equals("Record")) {
+          CsdlRecord expr = new CsdlRecord();
+          expr.setType(attr(element, "Type"));          
+          readPropertyValues(reader, element, expr);
+          write(target, expr);          
+        }
+      }
+    }.read(reader, element, target, "Collection", "AnnotationPath",
+        "NavigationPropertyPath", "Path", "PropertyPath", "UrlRef",
+        "Apply", "Function", "Cast", "If", "IsOf", "LabeledElement",
+        "LabeledElementReference", "Null", "Record","Binary", "Bool", "Date",
+        "DateTimeOffset", "Decimal", "Duration", "EnumMember", "Float", "Guid",
+        "Int", "String", "TimeOfDay");
+  }
+  
+  private String elementValue(XMLEventReader reader, StartElement element) throws XMLStreamException {
+    while (reader.hasNext()) {
+      XMLEvent event = reader.peek();
+      if (event.isStartElement() || event.isEndElement()) {
+        return null;
+      } else if (event.isCharacters()){
+        reader.nextEvent();
+        String data = event.asCharacters().getData();
+        if (data.trim().length() > 0) {
+          return data.trim();
+        }
+      }
+    }    
+    return null;
+  }
+  
+  private void readPropertyValues(XMLEventReader reader,
+      StartElement element, CsdlRecord record) throws XMLStreamException {
+    
+    new ElementReader<CsdlRecord>() {
+      @Override
+      void build(XMLEventReader reader, StartElement element, CsdlRecord record, String name)
+          throws XMLStreamException {
+        CsdlPropertyValue value = new CsdlPropertyValue();
+        value.setProperty(attr(element, "Property"));
+        readExpressions(reader, element, value);
+        record.getPropertyValues().add(value);
+      }
+    }.read(reader, element, record, "PropertyValue");    
+  }  
+  
   private void readFunction(XMLEventReader reader, StartElement element, CsdlSchema schema)
       throws XMLStreamException {
     CsdlFunction function = new CsdlFunction();
@@ -332,12 +639,14 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, CsdlOperation operation, String name)
           throws XMLStreamException {
         if (name.equals("Parameter")) {
-          readParameter(element, operation);
+          readParameter(reader, element, operation);
         } else if (name.equals("ReturnType")) {
-          readReturnType(element, operation);
+          readReturnType(reader, element, operation);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, operation);
         }
       }
-    }.read(reader, null, operation, "Parameter", "ReturnType");
+    }.read(reader, null, operation, "Parameter", "ReturnType", "Annotation");
   }
 
   private void readEnumType(XMLEventReader reader, StartElement element, CsdlSchema schema)
@@ -356,16 +665,22 @@ public class MetadataParser {
 
   private void readEnumMembers(XMLEventReader reader, StartElement element, CsdlEnumType type)
       throws XMLStreamException {
+    
     new ElementReader<CsdlEnumType>() {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlEnumType type, String name)
           throws XMLStreamException {
-        CsdlEnumMember member = new CsdlEnumMember();
-        member.setName(attr(element, "Name"));
-        member.setValue(attr(element, "Value"));
-        type.getMembers().add(member);
+        if (name.equals("Member")) {
+          CsdlEnumMember member = new CsdlEnumMember();
+          member.setName(attr(element, "Name"));
+          member.setValue(attr(element, "Value"));
+          peekAnnotations(reader, name, member);
+          type.getMembers().add(member);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, type);
+        }
       }
-    }.read(reader, element, type, "Member");
+    }.read(reader, element, type, "Member", "Annotation");
   }
 
   private void readEntityType(XMLEventReader reader, StartElement element, CsdlSchema schema)
@@ -392,14 +707,16 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, CsdlEntityType entityType, String name)
           throws XMLStreamException {
         if (name.equals("Property")) {
-          entityType.getProperties().add(readProperty(element));
+          entityType.getProperties().add(readProperty(reader, element));
         } else if (name.equals("NavigationProperty")) {
           entityType.getNavigationProperties().add(readNavigationProperty(reader, element));
         } else if (name.equals("Key")) {
           readKey(reader, element, entityType);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, entityType);
         }
       }
-    }.read(reader, null, entityType, "Property", "NavigationProperty", "Key");
+    }.read(reader, null, entityType, "Property", "NavigationProperty", "Key", "Annotation");
   }
 
   private void readKey(XMLEventReader reader, StartElement element, CsdlEntityType entityType)
@@ -436,12 +753,18 @@ public class MetadataParser {
           CsdlReferentialConstraint constraint = new CsdlReferentialConstraint();
           constraint.setProperty(attr(element, "Property"));
           constraint.setReferencedProperty(attr(element, "ReferencedProperty"));
+          peekAnnotations(reader, name, constraint);
           property.getReferentialConstraints().add(constraint);
         } else if (name.equals("OnDelete")) {
-          property.setOnDelete(new CsdlOnDelete().setAction(CsdlOnDeleteAction.valueOf(attr(element, "Action"))));
+          CsdlOnDelete delete = new CsdlOnDelete();
+          delete.setAction(CsdlOnDeleteAction.valueOf(attr(element, "Action")));
+          property.setOnDelete(delete);
+          peekAnnotations(reader, name, delete);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, property);
         }
       }
-    }.read(reader, element, property, "ReferentialConstraint", "OnDelete");
+    }.read(reader, element, property, "ReferentialConstraint", "OnDelete", "Annotation");
     return property;
   }
 
@@ -453,7 +776,8 @@ public class MetadataParser {
     return null;
   }
 
-  private CsdlProperty readProperty(StartElement element) {
+  private CsdlProperty readProperty(XMLEventReader reader, StartElement element)
+      throws XMLStreamException {
     CsdlProperty property = new CsdlProperty();
     property.setName(attr(element, "Name"));
     property.setType(readType(element));
@@ -476,13 +800,13 @@ public class MetadataParser {
     }
     String srid = attr(element, "SRID");
     if (srid != null) {
-      // TODO: no olingo support yet.
       property.setSrid(SRID.valueOf(srid));
     }
     String defaultValue = attr(element, "DefaultValue");
     if (defaultValue != null) {
       property.setDefaultValue(defaultValue);
     }
+    peekAnnotations(reader, element.getName().getLocalPart(), property);
     return property;
   }
 
@@ -507,13 +831,17 @@ public class MetadataParser {
         } else if (name.equals("Singleton")) {
           readSingleton(reader, element, container);
         } else if (name.equals("ActionImport")) {
-          readActionImport(element, container);
+          readActionImport(reader, element, container);
         } else if (name.equals("FunctionImport")) {
-          readFunctionImport(element, container);
+          readFunctionImport(reader, element, container);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, container);
         }
       }
 
-      private void readFunctionImport(StartElement element, CsdlEntityContainer container) {
+      private void readFunctionImport(XMLEventReader reader,
+          StartElement element, CsdlEntityContainer container)
+          throws XMLStreamException {
         CsdlFunctionImport functionImport = new CsdlFunctionImport();
         functionImport.setName(attr(element, "Name"));
         functionImport.setFunction(new FullQualifiedName(attr(element, "Function")));
@@ -524,10 +852,13 @@ public class MetadataParser {
         if (entitySet != null) {
           functionImport.setEntitySet(entitySet);
         }
+        peekAnnotations(reader, "FunctionImport", functionImport);
         container.getFunctionImports().add(functionImport);
       }
 
-      private void readActionImport(StartElement element, CsdlEntityContainer container) {
+      private void readActionImport(XMLEventReader reader,
+          StartElement element, CsdlEntityContainer container)
+          throws XMLStreamException {
         CsdlActionImport actionImport = new CsdlActionImport();
         actionImport.setName(attr(element, "Name"));
         actionImport.setAction(new FullQualifiedName(attr(element, "Action")));
@@ -536,6 +867,7 @@ public class MetadataParser {
         if (entitySet != null) {
           actionImport.setEntitySet(entitySet);
         }
+        peekAnnotations(reader, "ActionImport", actionImport);
         container.getActionImports().add(actionImport);
       }
 
@@ -546,7 +878,7 @@ public class MetadataParser {
         singleton.setName(attr(element, "Name"));
         singleton.setType(new FullQualifiedName(attr(element, "Type")));
         singleton.setNavigationPropertyBindings(new ArrayList<CsdlNavigationPropertyBinding>());
-        readNavigationPropertyBindings(reader, element, singleton.getNavigationPropertyBindings());
+        readNavigationPropertyBindings(reader, element, singleton);
         container.getSingletons().add(singleton);
       }
 
@@ -558,25 +890,29 @@ public class MetadataParser {
         entitySet.setIncludeInServiceDocument(Boolean.parseBoolean(attr(element,
             "IncludeInServiceDocument")));
         entitySet.setNavigationPropertyBindings(new ArrayList<CsdlNavigationPropertyBinding>());
-        readNavigationPropertyBindings(reader, element, entitySet.getNavigationPropertyBindings());
+        readNavigationPropertyBindings(reader, element, entitySet);
         container.getEntitySets().add(entitySet);
       }
 
       private void readNavigationPropertyBindings(XMLEventReader reader, StartElement element,
-          List<CsdlNavigationPropertyBinding> bindings) throws XMLStreamException {
-        new ElementReader<List<CsdlNavigationPropertyBinding>>() {
+          CsdlBindingTarget entitySet) throws XMLStreamException {
+        new ElementReader<CsdlBindingTarget>() {
           @Override
           void build(XMLEventReader reader, StartElement element,
-              List<CsdlNavigationPropertyBinding> bindings, String name) throws XMLStreamException {
-            CsdlNavigationPropertyBinding binding = new CsdlNavigationPropertyBinding();
-            binding.setPath(attr(element, "Path"));
-            binding.setTarget(attr(element, "Target"));
-            bindings.add(binding);
+              CsdlBindingTarget entitySet, String name) throws XMLStreamException {
+            if (name.equals("NavigationPropertyBinding")) {
+              CsdlNavigationPropertyBinding binding = new CsdlNavigationPropertyBinding();
+              binding.setPath(attr(element, "Path"));
+              binding.setTarget(attr(element, "Target"));
+              entitySet.getNavigationPropertyBindings().add(binding);
+            } else if (name.equals("Annotation")) {
+              readAnnotations(reader, element, entitySet);
+            }
           }
 
-        }.read(reader, element, bindings, "NavigationPropertyBinding");
+        }.read(reader, element, entitySet, "NavigationPropertyBinding", "Annotation");
       }
-    }.read(reader, element, schema, "EntitySet", "Singleton", "ActionImport", "FunctionImport");
+    }.read(reader, element, schema, "EntitySet", "Singleton", "ActionImport", "FunctionImport", "Annotation");
     schema.setEntityContainer(container);
   }
 
@@ -603,12 +939,14 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, CsdlComplexType complexType, String name)
           throws XMLStreamException {
         if (name.equals("Property")) {
-          complexType.getProperties().add(readProperty(element));
+          complexType.getProperties().add(readProperty(reader, element));
         } else if (name.equals("NavigationProperty")) {
           complexType.getNavigationProperties().add(readNavigationProperty(reader, element));
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, complexType);
         }
       }
-    }.read(reader, null, complexType, "Property", "NavigationProperty");
+    }.read(reader, null, complexType, "Property", "NavigationProperty", "Annotation");
   }
 
   abstract class ElementReader<T> {
@@ -617,7 +955,9 @@ public class MetadataParser {
       while (reader.hasNext()) {
         XMLEvent event = reader.peek();
 
-        event = skipAnnotations(reader, event);
+        if (!parseAnnotations) {
+          event = skipAnnotations(reader, event);
+        }
 
         if (!event.isStartElement() && !event.isEndElement()) {
           reader.nextEvent();
@@ -629,17 +969,19 @@ public class MetadataParser {
         for (String name : names) {
           if (event.isStartElement()) {
             element = event.asStartElement();
-            if (element.getName().getLocalPart().equals(name)) {
-              reader.nextEvent(); // advance cursor
+            if (element.getName().getLocalPart().equals(name)) {              
+              reader.nextEvent(); // advance cursor start which is current
               build(reader, element, t, name);
               hit = true;
+              break;
             }
           }
           if (event.isEndElement()) {
             EndElement e = event.asEndElement();
             if (e.getName().getLocalPart().equals(name)) {
-              reader.nextEvent(); // advance cursor
+              reader.nextEvent(); // advance cursor to end which is current
               hit = true;
+              break;
             }
           }
         }

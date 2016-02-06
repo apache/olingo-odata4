@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +42,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.core.requests.ActionRequest;
 import org.apache.olingo.server.core.requests.DataRequest;
 import org.apache.olingo.server.core.requests.FunctionRequest;
@@ -73,20 +70,19 @@ public class ServiceDispatcherTest {
   public class SampleODataServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final ServiceHandler handler; // must be stateless
-    private final CsdlEdmProvider provider; // must be stateless
+    private final ServiceMetadata metadata; // must be stateless
 
-    public SampleODataServlet(ServiceHandler handler, CsdlEdmProvider provider) {
+    public SampleODataServlet(ServiceHandler handler, ServiceMetadata metadata) {
       this.handler = handler;
-      this.provider = provider;
+      this.metadata = metadata;
     }
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response)
         throws IOException {
       OData odata = OData4Impl.newInstance();
-      ServiceMetadata metadata = odata.createServiceMetadata(this.provider, Collections.<EdmxReference> emptyList());
 
-      ODataHttpHandler handler = odata.createHandler(metadata);
+      ODataHttpHandler handler = odata.createHandler(this.metadata);
 
       handler.register(this.handler);
       handler.process(request, response);
@@ -95,14 +91,13 @@ public class ServiceDispatcherTest {
   
   public void beforeTest(ServiceHandler serviceHandler) throws Exception {
     MetadataParser parser = new MetadataParser();
-    CsdlEdmProvider edmProvider = parser.buildEdmProvider(new FileReader(
-        "src/test/resources/trippin.xml"));
+    ServiceMetadata metadata = parser.buildServiceMetadata(new FileReader("src/test/resources/trippin.xml"));
 
     File baseDir = new File(System.getProperty("java.io.tmpdir"));
     tomcat.setBaseDir(baseDir.getAbsolutePath());
     tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
-    Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, edmProvider));
+    Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, metadata));
     cxt.addServletMapping("/*", "trippin");
     tomcat.setPort(TOMCAT_PORT);
     tomcat.start();

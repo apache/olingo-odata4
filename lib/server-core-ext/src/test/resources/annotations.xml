@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+  license agreements. See the NOTICE file distributed with this work for additional 
+  information regarding copyright ownership. The ASF licenses this file to 
+  you under the Apache License, Version 2.0 (the "License"); you may not use 
+  this file except in compliance with the License. You may obtain a copy of 
+  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+  by applicable law or agreed to in writing, software distributed under the 
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+  OF ANY KIND, either express or implied. See the License for the specific 
+  language governing permissions and limitations under the License. -->
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	Version="4.0">
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="Org.OData.Core.V1" Alias="Core">
+
+			<Annotation Term="Core.Description">
+				<String>Core terms needed to write vocabularies</String>
+			</Annotation>
+
+			<Annotation Term="org.example.display.Thumbnail">
+				<Binary>T0RhdGE</Binary>
+			</Annotation>
+
+			<Annotation Term="org.example.display.ReadOnly">
+				<Bool>true</Bool>
+			</Annotation>
+
+			<Annotation Term="org.example.display.LastUpdated"
+				DateTimeOffset="2000-01-01T16:00:00.000-09:00" />
+
+			<Annotation Term="UI.ReferenceFacet" AnnotationPath="Product/Supplier/@UI.LineItem" />
+
+			<Annotation Term="UI.CollectionFacet" Qualifier="Contacts">
+				<Collection>
+					<AnnotationPath>Supplier/@Communication.Contact</AnnotationPath>
+					<AnnotationPath>Customer/@Communication.Contact</AnnotationPath>
+				</Collection>
+			</Annotation>
+
+			<Annotation Term="org.example.display.DisplayNameApply">
+				<Apply Function="odata.concat">
+					<String>Product: </String>
+					<Path>ProductName</Path>
+					<String> (</String>
+					<Path>Available/Quantity</Path>
+					<String>
+					</String>
+					<Path>Available/Unit</Path>
+					<String> available)</String>
+				</Apply>
+			</Annotation>
+
+			<Annotation Term="org.example.display.Threshold">
+				<Cast Type="Edm.Decimal">
+					<Path>Average</Path>
+				</Cast>
+			</Annotation>
+			<Annotation Term="org.example.seo.SeoTerms">
+				<Collection>
+					<String>Product</String>
+					<String>Supplier</String>
+					<String>Customer</String>
+				</Collection>
+			</Annotation>
+
+			<Annotation Term="org.example.person.Gender">
+				<If>
+					<Path>IsFemale</Path>
+					<String>Female</String>
+					<String>Male</String>
+				</If>
+			</Annotation>
+
+			<Annotation Term="Self.IsPreferredCustomer">
+				<IsOf Type="Self.PreferredCustomer">
+					<Path>Customer</Path>
+				</IsOf>
+			</Annotation>
+
+			<Annotation Term="org.example.display.DisplayNameLabel">
+				<LabeledElement Name="CustomerFirstName">
+					<Path>FirstName</Path>
+				</LabeledElement>
+			</Annotation>
+
+			<Annotation Term="org.example.display.DisplayNameLabelReference">
+				<LabeledElementReference>Model.CustomerFirstName
+				</LabeledElementReference>
+			</Annotation>
+
+			<Annotation Term="org.example.display.DisplayNameNull">
+				<Null />
+			</Annotation>
+
+			<Annotation Term="Capabilities.UpdateRestrictions">
+				<Record>
+					<PropertyValue Property="NonUpdatableNavigationProperties">
+						<Collection>
+							<NavigationPropertyPath>Supplier</NavigationPropertyPath>
+							<NavigationPropertyPath>Category</NavigationPropertyPath>
+						</Collection>
+					</PropertyValue>
+				</Record>
+			</Annotation>
+
+			<Annotation Term="org.example.display.DisplayNamePath">
+				<Path>@vCard.Address#work/FullName</Path>
+			</Annotation>
+
+			<Term Name="IsURI" Type="Core.Tag" DefaultValue="true"
+				AppliesTo="Property PropertyPath">
+				<Annotation Term="Core.Description">
+					<String>
+						Properties and terms annotated with this term MUST contain a valid URI
+					</String>
+				</Annotation>
+				<Annotation Term="Core.RequiresType" String="Edm.String" />
+			</Term>
+			
+			<Annotation Term="org.example.person.Employee">
+				<Record>
+					<PropertyValue Property="GivenName" Path="FirstName" />
+					<PropertyValue Property="Surname" Path="LastName" />
+					<PropertyValue Property="Manager" Path="DirectSupervisor" />
+					<PropertyValue Property="CostCenter">
+						<UrlRef>
+							<Apply Function="odata.fillUriTemplate">
+								<String>http://host/anotherservice/CostCenters('{ccid}')
+								</String>
+								<LabeledElement Name="ccid" Path="CostCenterID" />
+							</Apply>
+						</UrlRef>
+					</PropertyValue>
+				</Record>
+			</Annotation>
+
+			<Annotation Term="Vocab.Supplier">
+				<UrlRef>
+					<Apply Function="odata.fillUriTemplate">
+						<String>http://host/service/Suppliers({suppID})</String>
+						<LabeledElement Name="suppID">
+							<Apply Function="odata.uriEncode">
+								<Path>SupplierId</Path>
+							</Apply>
+						</LabeledElement>
+					</Apply>
+				</UrlRef>
+			</Annotation>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
