@@ -23,13 +23,13 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
 public class ChannelSerializerResult implements SerializerResult {
-  private ReadableByteChannel channel;
+  private StreamChannel channel;
 
   private static class StreamChannel implements ReadableByteChannel {
     private static final Charset DEFAULT = Charset.forName("UTF-8");
@@ -63,6 +63,44 @@ public class ChannelSerializerResult implements SerializerResult {
       this.metadata = metadata;
       this.options = options;
       this.tail = ByteBuffer.wrap(tail.getBytes(DEFAULT));
+    }
+
+    public boolean write(OutputStream out) throws IOException {
+      if(head.hasRemaining()) {
+        out.write(head.array());
+        head.flip();
+        return true;
+      }
+      if (coll.hasNext()) {
+        try {
+          writeEntity(coll.next(), out);
+          if(coll.hasNext()) {
+            out.write(",".getBytes(DEFAULT));
+          }
+          return true;
+        } catch (SerializerException e) {
+        }
+      } else if(tail.hasRemaining()) {
+        out.write(tail.array());
+        tail.flip();
+        return true;
+      }
+      return false;
+    }
+
+
+    private void writeEntity(Entity entity, OutputStream outputStream) throws SerializerException {
+      try {
+        JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+        jsonSerializer.writeEntity(metadata, entityType, entity, null,
+            options == null ? null : options.getExpand(),
+            options == null ? null : options.getSelect(),
+            options != null && options.getWriteOnlyReferences(),
+            json);
+        json.flush();
+      } catch (final IOException e) {
+        throw new ODataRuntimeException("Failed entity serialization");
+      }
     }
 
     @Override
@@ -161,12 +199,17 @@ public class ChannelSerializerResult implements SerializerResult {
 
   @Override
   public void writeContent(WritableByteChannel writeChannel) {
-    // TODO: mibo: replace with passing 'writeChannel' to json serializer
-    ResultHelper.copy(this.channel, writeChannel);
+    try {
+      boolean contentAvailable = true;
+      while(contentAvailable) {
+        contentAvailable = this.channel.write(Channels.newOutputStream(writeChannel));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
-
-  private ChannelSerializerResult(ReadableByteChannel channel) {
+  private ChannelSerializerResult(StreamChannel channel) {
     this.channel = channel;
   }
 
@@ -206,7 +249,7 @@ public class ChannelSerializerResult implements SerializerResult {
     }
 
     public SerializerResult build() {
-      ReadableByteChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
+      StreamChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
       return new ChannelSerializerResult(input);
     }
   }
