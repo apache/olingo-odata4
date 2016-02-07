@@ -560,9 +560,38 @@ public class ODataJsonSerializerTest {
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
         + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
+        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
+  
+  @Test
+  public void selectExtendedComplexType() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    InputStream result = serializer
+        .entityCollection(metadata, entityType, entitySet,
+            EntityCollectionSerializerOptions.with()
+                .contextURL(ContextURL.with().entitySet(edmEntitySet)
+                    .selectList(helper.buildContextURLSelectList(entityType, null, null))
+                    .build())
+                .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    
+    String expected = "{" + 
+        "\"@odata.context\":\"$metadata#ESCompComp\"," + 
+        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+        "\"value\":[" + 
+        "{\"PropertyInt16\":1," +
+        "\"PropertyComp\":{\"PropertyComp\":{" + 
+        "\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}}," + 
+        "{\"PropertyInt16\":2," + 
+        "\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\"," + 
+        "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"},\"PropertyDate\":\"2012-12-03\"}}]}";
+    Assert.assertEquals(expected, resultString);
+
+  }  
 
   @Test
   public void selectComplexTwice() throws Exception {
@@ -585,7 +614,8 @@ public class ODataJsonSerializerTest {
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
         + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
+        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
 

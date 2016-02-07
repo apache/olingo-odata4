@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 
 public class DataCreator {
@@ -1003,10 +1004,12 @@ public class DataCreator {
 
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", (short) 2));
-    entity.addProperty(createComplex("PropertyComp",
-        createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp", 
+        ComplexTypeProvider.nameCTCompCompExtended.getFullQualifiedNameAsString(), 
+        createComplex("PropertyComp",  
             createPrimitive("PropertyInt16", (short) 987),
-            createPrimitive("PropertyString", "String 2"))));
+            createPrimitive("PropertyString", "String 2")),
+        createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0))));
     entityCollection.getEntities().add(entity);
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompComp));
@@ -1174,6 +1177,14 @@ public class DataCreator {
     }
     return new Property(null, name, ValueType.COMPLEX, complexValue);
   }
+  
+  protected static Property createComplex(final String name, final String type, final Property... properties) {
+    ComplexValue complexValue = new ComplexValue();
+    for (final Property property : properties) {
+      complexValue.getValue().add(property);
+    }
+    return new Property(type, name, ValueType.COMPLEX, complexValue);
+  }  
 
   protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
     List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
