@@ -29,6 +29,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
+import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
 public class ChannelSerializerResult implements SerializerResult {
@@ -156,6 +158,13 @@ public class ChannelSerializerResult implements SerializerResult {
   public boolean isNioSupported() {
     return true;
   }
+
+  @Override
+  public void writeContent(WritableByteChannel writeChannel) {
+    // TODO: mibo: replace with passing 'writeChannel' to json serializer
+    ResultHelper.copy(this.channel, writeChannel);
+  }
+
 
   private ChannelSerializerResult(ReadableByteChannel channel) {
     this.channel = channel;

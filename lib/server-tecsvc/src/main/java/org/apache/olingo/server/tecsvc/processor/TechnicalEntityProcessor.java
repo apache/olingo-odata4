@@ -536,11 +536,13 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         serializeEntityStreamCollectionFixed(request,
             entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
             expand, select, countOption, id);
-    if(serializerResult.isNioSupported()) {
-      response.setChannel(serializerResult.getChannel());
-    } else {
-      response.setContent(serializerResult.getContent());
-    }
+//    if(serializerResult.isNioSupported()) {
+//      response.setChannel(serializerResult.getChannel());
+//    } else {
+//      response.setContent(serializerResult.getContent());
+//    }
+    response.setResult(serializerResult);
+    //
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     if (pageSize != null) {

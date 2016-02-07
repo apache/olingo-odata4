@@ -29,6 +29,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
+import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public class StreamSerializerResult implements SerializerResult {
   private InputStream content;
@@ -126,6 +128,11 @@ public class StreamSerializerResult implements SerializerResult {
   @Override
   public ReadableByteChannel getChannel() {
     return Channels.newChannel(getContent());
+  }
+
+  @Override
+  public void writeContent(WritableByteChannel channel) {
+    ResultHelper.copy(getChannel(), channel);
   }
 
   @Override

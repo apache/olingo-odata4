@@ -18,12 +18,20 @@
  */
 package org.apache.olingo.server.api;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 
 /**
  * Response object to carry OData-relevant HTTP information (status code, response headers, and content).
@@ -133,15 +141,29 @@ public class ODataResponse {
     return content;
   }
 
-  public void setChannel(final ReadableByteChannel channel) {
-    this.channel = channel;
+//  public void setChannel(final ReadableByteChannel channel) {
+//    this.channel = channel;
+//  }
+//
+//  public ReadableByteChannel getChannel() {
+//    return channel;
+//  }
+//
+//  public boolean isChannelAvailable() {
+//    return channel != null;
+//  }
+
+  private SerializerResult serializerResult;
+
+  public void setResult(SerializerResult result) {
+    serializerResult = result;
   }
 
-  public ReadableByteChannel getChannel() {
-    return channel;
+  public boolean isResultAvailable() {
+    return serializerResult != null;
   }
 
-  public boolean isChannelAvailable() {
-    return channel != null;
+  public void write(WritableByteChannel output) {
+    serializerResult.writeContent(output);
   }
 }

@@ -19,10 +19,12 @@
 package org.apache.olingo.server.core.serializer;
 
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public class SerializerResultImpl implements SerializerResult {
   private InputStream content;
@@ -35,6 +37,11 @@ public class SerializerResultImpl implements SerializerResult {
   @Override
   public ReadableByteChannel getChannel() {
     return Channels.newChannel(getContent());
+  }
+
+  @Override
+  public void writeContent(WritableByteChannel channel) {
+    ResultHelper.copy(Channels.newChannel(content), channel);
   }
 
   @Override

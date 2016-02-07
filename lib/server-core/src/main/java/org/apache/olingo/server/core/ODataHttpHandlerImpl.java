@@ -149,8 +149,20 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    if (odResponse.getContent() != null || odResponse.isChannelAvailable()) {
+    if(odResponse.isResultAvailable()) {
+      writeContent(odResponse, response);
+    } else if (odResponse.getContent() != null ) {
       copyContent(odResponse, response);
+    }
+  }
+
+  static void writeContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
+    try {
+    if(odataResponse.isResultAvailable()) {
+      odataResponse.write(Channels.newChannel(servletResponse.getOutputStream()));
+    }
+    } catch (IOException e) {
+      throw new ODataRuntimeException("Error on reading request content", e);
     }
   }
 
@@ -160,11 +172,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     try {
       ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
       output = Channels.newChannel(servletResponse.getOutputStream());
-      if(odataResponse.isChannelAvailable()) {
-        input = odataResponse.getChannel();
-      } else {
-        input = Channels.newChannel(odataResponse.getContent());
-      }
+      input = Channels.newChannel(odataResponse.getContent());
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);
