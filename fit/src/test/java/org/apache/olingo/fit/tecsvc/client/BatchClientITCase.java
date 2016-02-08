@@ -358,7 +358,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     final BatchManager streamManager = request.payloadManager();
 
     final ODataChangeset changeset = streamManager.addChangeset();
-    final ClientEntity entityESAllPrim = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
+    final ClientEntity entityESAllPrim = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
 
     entityESAllPrim.getProperties().add(getFactory().newPrimitiveProperty("PropertyDouble",
         getFactory().newPrimitiveValueBuilder().buildDouble(3.1415)));
@@ -446,7 +446,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     URI editLink = targetURI.build();
 
     ClientObjectFactory factory = getFactory();
-    ClientEntity postEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
+    ClientEntity postEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
     postEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", getClient().newURIBuilder
             (SERVICE_URI)
             .appendEntitySetSegment("ESTwoPrim")
@@ -467,7 +467,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(0);
     editLink = targetURI.build();
 
-    ClientEntity patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
+    ClientEntity patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
     patchEntity.setEditLink(editLink);
 
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
@@ -483,7 +483,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(15);
     editLink = targetURI.build();
 
-    patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ESAllPrim"));
+    patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
     patchEntity.setEditLink(editLink);
 
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",

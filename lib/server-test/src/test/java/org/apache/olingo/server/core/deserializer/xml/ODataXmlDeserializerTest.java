@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
@@ -47,7 +48,7 @@ import org.junit.Test;
 public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
   private static final EdmEntityContainer entityContainer = edm.getEntityContainer();
-  private final ODataDeserializer deserializer = new ODataXmlDeserializer();
+  private final ODataDeserializer deserializer = new ODataXmlDeserializer(metadata);
 
   @BeforeClass
   public static void setup() {
@@ -534,6 +535,46 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertTrue(getCVProperty(cv, "PropertyString").isNull());    
   }
 
+  @Test
+  public void extendedComplexProperty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    
+    String payload = "<?xml version='1.0' encoding='UTF-8'?>"
+        + "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\" "
+        + "xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "metadata:etag=\"W/&quot;32767&quot;\">"
+          + "<atom:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+          + "term=\"#olingo.odata.test1.ETCompComp\"/>"
+          + "<atom:content type=\"application/xml\">"
+            + "<metadata:properties>"
+              + "<data:PropertyInt16>32767</data:PropertyInt16>"
+              + "<data:PropertyComp metadata:type=\"#olingo.odata.test1.CTCompCompExtended\">"
+                + "<data:PropertyComp metadata:type=\"#olingo.odata.test1.CTTwoPrim\">"
+                  + "<data:PropertyInt16>32767</data:PropertyInt16>"
+                  + "<data:PropertyString>First Resource - first</data:PropertyString>"
+                  + "</data:PropertyComp>"
+                  + "<data:PropertyDate>2012-10-03</data:PropertyDate>"
+              + "</data:PropertyComp>"
+            + "</metadata:properties>"
+          + "</atom:content>"
+        + "</atom:entry>";
+    
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertNotNull(result);
+    Property property = result.getProperty("PropertyComp");
+    Assert.assertEquals("PropertyComp", property.getName());    
+    Assert.assertTrue(property.isComplex());
+    final ComplexValue cv = property.asComplex();
+    Assert.assertEquals("olingo.odata.test1.CTCompCompExtended", property.getType());
+    Assert.assertEquals(
+        "2012-10-03",
+        EdmDate.getInstance().valueToString(getCVProperty(cv, "PropertyDate").asPrimitive(), false, 10, 3, 0,
+        false));
+  }
+  
   @Test
   public void complexCollectionProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");

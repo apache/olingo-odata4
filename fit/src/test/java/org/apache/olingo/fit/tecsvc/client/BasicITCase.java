@@ -391,7 +391,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getFactory().newPrimitiveValueBuilder().buildString("Test")));
     newEntity.getProperties().add(
         getFactory().newComplexProperty("PropertyCompTwoPrim",
-            getFactory().newComplexValue("CTTwoPrim")
+            getFactory().newComplexValue(SERVICE_NAMESPACE+".CTTwoPrim")
                 .add(getFactory().newPrimitiveProperty(
                     PROPERTY_INT16,
                     getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
@@ -537,19 +537,19 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
 
     entity.getProperties().add(
         getFactory().newCollectionProperty("CollPropertyComp",
-            getFactory().newCollectionValue("CTPrimComp")
-                .add(getFactory().newComplexValue("CTPrimComp")
+            getFactory().newCollectionValue(SERVICE_NAMESPACE+".CTPrimComp")
+                .add(getFactory().newComplexValue(SERVICE_NAMESPACE+".CTPrimComp")
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
                         getFactory().newPrimitiveValueBuilder().buildInt16((short) 42)))
                     .add(getFactory().newComplexProperty(PROPERTY_COMP,
-                        getFactory().newComplexValue("CTAllPrim")
+                        getFactory().newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
                             .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
                                 getFactory().newPrimitiveValueBuilder().buildString("42"))))))
-                .add(getFactory().newComplexValue("CTPrimComp")
+                .add(getFactory().newComplexValue(SERVICE_NAMESPACE+".CTPrimComp")
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
                         getFactory().newPrimitiveValueBuilder().buildInt16((short) 43)))
                     .add(getFactory().newComplexProperty(PROPERTY_COMP,
-                        getFactory().newComplexValue("CTAllPrim")
+                        getFactory().newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
                             .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
                                 getFactory().newPrimitiveValueBuilder().buildString("43"))))))));
 
@@ -597,22 +597,24 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getFactory().newPrimitiveProperty(PROPERTY_STRING,
             getFactory().newPrimitiveValueBuilder().buildString("Complex collection test")));
     entity.getProperties().add(getFactory().newComplexProperty("PropertyCompTwoPrim",
-        getFactory().newComplexValue("CTTwoPrim")
+        getFactory().newComplexValue(SERVICE_NAMESPACE+".CTTwoPrim")
             .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
                 getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
             .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
                 getFactory().newPrimitiveValueBuilder().buildString("1")))));
 
     entity.getProperties().add(getFactory().newCollectionProperty("CollPropertyComp",
-        getFactory().newCollectionValue("CTPrimComp")
-            .add(getFactory().newComplexValue("CTPrimComp")
+        getFactory().newCollectionValue(SERVICE_NAMESPACE+".CTPrimComp")
+            .add(getFactory().newComplexValue(SERVICE_NAMESPACE+".CTPrimComp")
                 .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
                     getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))
-                .add(getFactory().newComplexProperty(PROPERTY_COMP, getFactory().newComplexValue("CTAllPrim")
+                .add(getFactory().newComplexProperty(PROPERTY_COMP, 
+                    getFactory().newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
                     .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
                         getFactory().newPrimitiveValueBuilder().buildString("1"))))))
-            .add(getFactory().newComplexValue("CTPrimComp")
-                .add(getFactory().newComplexProperty(PROPERTY_COMP, getFactory().newComplexValue("CTAllPrim")
+            .add(getFactory().newComplexValue(SERVICE_NAMESPACE+".CTPrimComp")
+                .add(getFactory().newComplexProperty(PROPERTY_COMP, 
+                    getFactory().newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
                     .add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
                         getFactory().newPrimitiveValueBuilder().buildString("2")))
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
@@ -789,7 +791,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         factory.newCollectionValue("Edm.String").add(
             factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM,
-        factory.newComplexValue("CTAllPrim")
+        factory.newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
             .add(factory.newPrimitiveProperty(PROPERTY_STRING,
                 factory.newPrimitiveValueBuilder().buildString("Changed")))));
 
@@ -883,7 +885,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         .newPrimitiveValueBuilder()
         .buildString("Must not be null")));
     entity.getProperties().add(factory.newComplexProperty("PropertyCompTwoPrim", factory.newComplexValue
-        ("CTTwoPrim")
+        (SERVICE_NAMESPACE+".CTTwoPrim")
         .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
             .buildString("Must not be null")))
         .add(factory.newPrimitiveProperty(PROPERTY_INT16,
@@ -892,7 +894,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         factory.newCollectionValue("Edm.String")
             .add(factory.newPrimitiveValueBuilder().buildString("Single entry!"))));
     entity.getProperties().add(factory.newComplexProperty(PROPERTY_COMP_ALL_PRIM,
-        factory.newComplexValue("CTAllPrim").add(
+        factory.newComplexValue(SERVICE_NAMESPACE+".CTAllPrim").add(
             factory.newPrimitiveProperty(PROPERTY_STRING,
                 factory.newPrimitiveValueBuilder().buildString("Changed")))));
 
@@ -1165,7 +1167,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     final ODataPropertyUpdateRequest requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getPropertyComplexValueUpdateRequest(uri, UpdateType.PATCH,
             getFactory().newComplexProperty(PROPERTY_COMP_ALL_PRIM,
-                getFactory().newComplexValue("CTAllPrim")
+                getFactory().newComplexValue(SERVICE_NAMESPACE+".CTAllPrim")
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
                         getFactory().newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
                     .add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,

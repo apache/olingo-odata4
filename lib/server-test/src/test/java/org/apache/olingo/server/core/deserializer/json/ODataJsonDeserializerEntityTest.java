@@ -46,10 +46,12 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTest {
@@ -217,6 +219,46 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(16, complexProperties.size());
   }
 
+  @Test
+  public void extendedComplexProperty() throws Exception {
+    
+    final String payload = "{"
+        + "\"@odata.context\":\"$metadata#ESCompComp/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.etag\":\"W/\\\"32767\\\"\","
+        + "\"PropertyInt16\":32767,"
+        + "\"PropertyComp\":{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        +   "\"PropertyComp\":{"
+        +   "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        +   "\"PropertyInt16\":32767,"
+        +   "\"PropertyString\":\"First Resource - first\""
+        +   "},"
+        +   "\"PropertyDate\":\"2012-10-03\""
+        + "}}";
+    final Entity result = deserialize(payload, "ETCompComp");
+    
+    Assert.assertNotNull(result);
+    Property property = result.getProperty("PropertyComp");
+    Assert.assertEquals("PropertyComp", property.getName());    
+    Assert.assertTrue(property.isComplex());
+    final ComplexValue cv = property.asComplex();
+    Assert.assertEquals("olingo.odata.test1.CTCompCompExtended", property.getType());
+    Assert.assertEquals(
+        "2012-10-03",
+        EdmDate.getInstance().valueToString(getCVProperty(cv, "PropertyDate").asPrimitive(), false, 10, 3, 0,
+        false));
+  }  
+  
+  private Property getCVProperty(ComplexValue cv, String name) {
+    for (Property p : cv.getValue()) {
+      if (p.getName().equals(name)) {
+        return p;
+      }
+    }
+    return null;
+  }
+  
   @Test
   public void simpleEntityETCollAllPrim() throws Exception {
     final String entityString = "{"
@@ -606,7 +648,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         "{\"PropertyDate\":\"2012-12-03\","
             + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON);
+    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON, metadata);
     Entity entity = deserializer.entity(stream, entityType).getEntity();
     assertNotNull(entity);
     List<Property> properties = entity.getProperties();
@@ -1272,7 +1314,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   protected static Entity deserialize(final InputStream stream, final String entityTypeName,
       final ContentType contentType) throws DeserializerException {
-    return OData.newInstance().createDeserializer(contentType)
+    return OData.newInstance().createDeserializer(contentType, metadata)
         .entity(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)))
         .getEntity();
   }

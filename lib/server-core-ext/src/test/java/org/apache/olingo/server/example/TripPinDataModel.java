@@ -116,7 +116,7 @@ public class TripPinDataModel {
 
   private EntityCollection loadEnities(String entitySetName, EdmEntityType type) {
     try {
-      ODataJsonDeserializer deserializer = new ODataJsonDeserializer(ContentType.JSON);
+      ODataJsonDeserializer deserializer = new ODataJsonDeserializer(ContentType.JSON, this.metadata);
 
       EntityCollection set = deserializer.entityCollection(new FileInputStream(new File(
           "src/test/resources/" + entitySetName.toLowerCase() + ".json")), type).getEntityCollection();

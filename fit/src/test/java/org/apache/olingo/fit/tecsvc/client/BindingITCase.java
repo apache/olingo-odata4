@@ -50,10 +50,10 @@ public class BindingITCase extends AbstractParamTecSvcITCase {
   private static final String ES_TWO_KEY_NAV = "ESTwoKeyNav";
   private static final String ET_KEY_NAV_NAME = "ETKeyNav";
   private static final FullQualifiedName ET_KEY_NAV = new FullQualifiedName(SERVICE_NAMESPACE, ET_KEY_NAV_NAME);
-  private static final String CT_PRIM_COMP = "CTPrimComp";
-  private static final String CT_TWO_PRIM = "CTTwoPrim";
-  private static final String CT_ALL_PRIM = "CTAllPrim";
-  private static final String CT_NAV_FIVE_PROP = "CTNavFiveProp";
+  private static final String CT_COMP_NAV = SERVICE_NAMESPACE+"."+"CTCompNav";
+  private static final String CT_TWO_PRIM = SERVICE_NAMESPACE+"."+"CTTwoPrim";
+  private static final String CT_ALL_PRIM = SERVICE_NAMESPACE+"."+"CTAllPrim";
+  private static final String CT_NAV_FIVE_PROP = SERVICE_NAMESPACE+"."+"CTNavFiveProp";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
   private static final String PROPERTY_COMP_NAV = "PropertyCompNav";
@@ -92,7 +92,7 @@ public class BindingITCase extends AbstractParamTecSvcITCase {
                     42)))
             .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
-    .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_PRIM_COMP)
+    .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV, factory.newComplexValue(CT_COMP_NAV)
             .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder()
                     .buildString("42")))
             .add(factory.newComplexProperty(PROPERTY_COMP_NAV, factory.newComplexValue(CT_NAV_FIVE_PROP)

@@ -234,7 +234,7 @@ public class ODataXMLDeserializerActionParametersTest extends AbstractODataDeser
 
   private Map<String, Parameter> deserialize(final String input, final String actionName, final String bindingTypeName)
       throws DeserializerException {
-    return OData.newInstance().createDeserializer(ContentType.APPLICATION_XML)
+    return OData.newInstance().createDeserializer(ContentType.APPLICATION_XML, metadata)
         .actionParameters(new ByteArrayInputStream(input.getBytes()),
             bindingTypeName == null ?
                 edm.getUnboundAction(new FullQualifiedName(NAMESPACE, actionName)) :
