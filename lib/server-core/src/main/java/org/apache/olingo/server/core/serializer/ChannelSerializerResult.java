@@ -193,7 +193,7 @@ public class ChannelSerializerResult implements SerializerResult {
   }
 
   @Override
-  public boolean isNioSupported() {
+  public boolean isWriteSupported() {
     return true;
   }
 

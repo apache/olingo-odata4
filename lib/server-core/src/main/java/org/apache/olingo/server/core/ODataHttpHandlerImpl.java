@@ -19,6 +19,8 @@
 package org.apache.olingo.server.core;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Channels;
@@ -49,6 +51,7 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
+import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
@@ -149,30 +152,33 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    if(odResponse.isResultAvailable()) {
+    if (odResponse.getContent() != null ) {
+      copyContent(odResponse.getContent(), response);
+    } else if(odResponse.getSerializerResult() != null) {
       writeContent(odResponse, response);
-    } else if (odResponse.getContent() != null ) {
-      copyContent(odResponse, response);
     }
   }
 
   static void writeContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
     try {
-    if(odataResponse.isResultAvailable()) {
-      odataResponse.write(Channels.newChannel(servletResponse.getOutputStream()));
-    }
+      SerializerResult res = odataResponse.getSerializerResult();
+      if(res.isWriteSupported()) {
+        res.writeContent(Channels.newChannel(servletResponse.getOutputStream()));
+      } else {
+        copyContent(res.getContent(), servletResponse);
+      }
     } catch (IOException e) {
       throw new ODataRuntimeException("Error on reading request content", e);
     }
   }
 
-  static void copyContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
+  static void copyContent(final InputStream inputStream, final HttpServletResponse servletResponse) {
     ReadableByteChannel input = null;
     WritableByteChannel output = null;
     try {
       ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
       output = Channels.newChannel(servletResponse.getOutputStream());
-      input = Channels.newChannel(odataResponse.getContent());
+      input = Channels.newChannel(inputStream);
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);

@@ -45,7 +45,7 @@ public class SerializerResultImpl implements SerializerResult {
   }
 
   @Override
-  public boolean isNioSupported() {
+  public boolean isWriteSupported() {
     return false;
   }
 

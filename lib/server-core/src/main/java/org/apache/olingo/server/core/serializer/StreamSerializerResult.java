@@ -136,7 +136,7 @@ public class StreamSerializerResult implements SerializerResult {
   }
 
   @Override
-  public boolean isNioSupported() {
+  public boolean isWriteSupported() {
     return true;
   }
 

@@ -36,5 +36,5 @@ public interface SerializerResult {
 
   void writeContent(WritableByteChannel channel);
 
-  boolean isNioSupported();
+  boolean isWriteSupported();
 }
