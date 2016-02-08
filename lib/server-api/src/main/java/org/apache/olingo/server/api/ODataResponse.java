@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api;
 
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.apache.olingo.server.api.serializer.SerializerResult;
 
 import java.io.InputStream;
 import java.util.List;
@@ -132,13 +131,13 @@ public class ODataResponse {
     return content;
   }
 
-  private SerializerResult serializerResult;
+  private ODataContent odataContent;
 
-  public void setSerializerResult(SerializerResult result) {
-    serializerResult = result;
+  public void setODataContent(ODataContent result) {
+    odataContent = result;
   }
 
-  public SerializerResult getSerializerResult() {
-    return serializerResult;
+  public ODataContent getODataContent() {
+    return odataContent;
   }
 }

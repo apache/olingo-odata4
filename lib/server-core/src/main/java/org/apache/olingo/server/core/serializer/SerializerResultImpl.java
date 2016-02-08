@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer;
 
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
@@ -28,6 +29,7 @@ import java.nio.channels.WritableByteChannel;
 
 public class SerializerResultImpl implements SerializerResult {
   private InputStream content;
+  private ODataContent oDataContent;
 
   @Override
   public InputStream getContent() {
@@ -35,37 +37,43 @@ public class SerializerResultImpl implements SerializerResult {
   }
 
   @Override
-  public ReadableByteChannel getChannel() {
-    return Channels.newChannel(getContent());
+  public ODataContent getODataContent() {
+    return oDataContent;
   }
 
-  @Override
-  public void writeContent(WritableByteChannel channel) {
-    ResultHelper.copy(Channels.newChannel(content), channel);
-  }
-
-  @Override
-  public boolean isWriteSupported() {
-    return false;
-  }
+  //  @Override
+//  public ReadableByteChannel getChannel() {
+//    return Channels.newChannel(getContent());
+//  }
+//
+//  @Override
+//  public void write(WritableByteChannel channel) {
+//    ResultHelper.copy(Channels.newChannel(content), channel);
+//  }
+//
+//  @Override
+//  public boolean isWriteSupported() {
+//    return false;
+//  }
 
   public static SerializerResultBuilder with() {
     return new SerializerResultBuilder();
   }
 
   public static class SerializerResultBuilder {
-    private InputStream content;
+    private SerializerResultImpl result = new SerializerResultImpl();
 
     public SerializerResultBuilder content(final InputStream input) {
-      content = input;
+      result.content = input;
+      return this;
+    }
 
+    public SerializerResultBuilder content(final ODataContent input) {
+      result.oDataContent = input;
       return this;
     }
 
     public SerializerResult build() {
-      SerializerResultImpl result = new SerializerResultImpl();
-      result.content = content;
-
       return result;
     }
   }

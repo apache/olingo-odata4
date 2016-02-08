@@ -541,7 +541,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 //    } else {
 //      response.setContent(serializerResult.getContent());
 //    }
-    response.setSerializerResult(serializerResult);
+    response.setODataContent(serializerResult.getODataContent());
     //
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());

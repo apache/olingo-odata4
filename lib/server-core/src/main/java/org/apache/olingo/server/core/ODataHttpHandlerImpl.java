@@ -20,7 +20,6 @@ package org.apache.olingo.server.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Channels;
@@ -40,6 +39,7 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -51,7 +51,6 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
-import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
@@ -154,18 +153,18 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
     if (odResponse.getContent() != null ) {
       copyContent(odResponse.getContent(), response);
-    } else if(odResponse.getSerializerResult() != null) {
+    } else if(odResponse.getODataContent() != null) {
       writeContent(odResponse, response);
     }
   }
 
   static void writeContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
     try {
-      SerializerResult res = odataResponse.getSerializerResult();
+      ODataContent res = odataResponse.getODataContent();
       if(res.isWriteSupported()) {
-        res.writeContent(Channels.newChannel(servletResponse.getOutputStream()));
+        res.write(Channels.newChannel(servletResponse.getOutputStream()));
       } else {
-        copyContent(res.getContent(), servletResponse);
+        copyContent(res.getChannel(), servletResponse);
       }
     } catch (IOException e) {
       throw new ODataRuntimeException("Error on reading request content", e);
@@ -173,12 +172,14 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   static void copyContent(final InputStream inputStream, final HttpServletResponse servletResponse) {
-    ReadableByteChannel input = null;
+    copyContent(Channels.newChannel(inputStream), servletResponse);
+  }
+
+  static void copyContent(final ReadableByteChannel input, final HttpServletResponse servletResponse) {
     WritableByteChannel output = null;
     try {
       ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
       output = Channels.newChannel(servletResponse.getOutputStream());
-      input = Channels.newChannel(inputStream);
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);

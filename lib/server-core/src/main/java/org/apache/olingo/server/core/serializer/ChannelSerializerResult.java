@@ -24,7 +24,9 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
@@ -40,7 +42,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
-public class ChannelSerializerResult implements SerializerResult {
+public class ChannelSerializerResult implements ODataContent {
   private StreamChannel channel;
 
   private static class StreamChannel implements ReadableByteChannel {
@@ -182,10 +184,10 @@ public class ChannelSerializerResult implements SerializerResult {
     }
   }
 
-  @Override
-  public InputStream getContent() {
-    return Channels.newInputStream(this.channel);
-  }
+//  @Override
+//  public InputStream getContent() {
+//    return Channels.newInputStream(this.channel);
+//  }
 
   @Override
   public ReadableByteChannel getChannel() {
@@ -198,7 +200,7 @@ public class ChannelSerializerResult implements SerializerResult {
   }
 
   @Override
-  public void writeContent(WritableByteChannel writeChannel) {
+  public void write(WritableByteChannel writeChannel) {
     try {
       boolean contentAvailable = true;
       while(contentAvailable) {
@@ -207,6 +209,12 @@ public class ChannelSerializerResult implements SerializerResult {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  @Override
+  public void write(WritableByteChannel channel, WriteContentErrorCallback callback) {
+    // TODO: implement error handling
+    throw new ODataRuntimeException("error handling not yet supported");
   }
 
   private ChannelSerializerResult(StreamChannel channel) {
@@ -248,9 +256,13 @@ public class ChannelSerializerResult implements SerializerResult {
       return this;
     }
 
-    public SerializerResult build() {
+    public ODataContent buildContent() {
       StreamChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
       return new ChannelSerializerResult(input);
+    }
+    public SerializerResult build() {
+      StreamChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
+      return SerializerResultImpl.with().content(new ChannelSerializerResult(input)).build();
     }
   }
 }
