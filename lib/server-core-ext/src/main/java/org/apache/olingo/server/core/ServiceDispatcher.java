@@ -23,16 +23,18 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
+import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoBatch;
 import org.apache.olingo.server.api.uri.UriInfoCrossjoin;
@@ -75,11 +77,36 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     this.customContentSupport = customContentSupport;
   }
 
-  public void execute(ODataRequest odRequest, ODataResponse odResponse)
-      throws ODataLibraryException, ODataApplicationException {
-
-    UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
-        .parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null);
+  public void execute(ODataRequest odRequest, ODataResponse odResponse) {
+    ContentType contentType = ContentType.JSON;
+    try {
+      contentType = ContentNegotiator.doContentNegotiation(null,
+          odRequest, this.customContentSupport, RepresentationType.ERROR);
+      
+      UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
+      .parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null);
+      
+      contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+          odRequest, this.customContentSupport, RepresentationType.ERROR);      
+      
+      internalExecute(uriInfo, odRequest, odResponse);
+    } catch(ODataLibraryException e) {
+      handleException(e, contentType, odRequest, odResponse);
+    } catch(ODataApplicationException e) {
+      handleException(e, contentType, odRequest, odResponse);
+    }
+  }
+  
+  protected void handleException(ODataException e, ContentType contentType,
+      ODataRequest odRequest, ODataResponse odResponse) {
+    ErrorHandler handler = new ErrorHandler(this.odata, this.metadata,
+        this.handler, contentType);
+    handler.handleException(e, odRequest, odResponse);    
+  }
+  
+  private void internalExecute(UriInfo uriInfo, ODataRequest odRequest,
+      ODataResponse odResponse) throws ODataLibraryException,
+      ODataApplicationException {
 
     new UriValidator().validate(uriInfo, odRequest.getMethod());
 

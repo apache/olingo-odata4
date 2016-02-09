@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
@@ -148,6 +149,7 @@ public class PropertyResponse extends ServiceResponse {
   
   public void writeError(ODataServerError error) {
     try {
+      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.getType());
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
       writeServerError(true);

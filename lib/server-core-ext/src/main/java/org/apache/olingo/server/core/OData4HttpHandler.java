@@ -24,11 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -63,12 +64,13 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
       ServiceDispatcher dispatcher = new ServiceDispatcher(this.odata, this.serviceMetadata,
           handler, this.customContentTypeSupport);
       dispatcher.execute(request, response);
-
+      
     } catch (Exception e) {
+      // also handle any unchecked exception thrown by service handler for proper serialization
       ErrorHandler handler = new ErrorHandler(this.odata, this.serviceMetadata,
-          this.customContentTypeSupport);
+          this.handler, ContentType.JSON);
       handler.handleException(e, request, response);
-    }
+    }    
     convertToHttp(httpResponse, response);
   }
 

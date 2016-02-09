@@ -18,57 +18,41 @@
  */
 package org.apache.olingo.server.core.responses;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.core.ContentNegotiatorException;
-import org.apache.olingo.server.core.ServiceRequest;
 
-public class ServiceDocumentResponse extends ServiceResponse {
-  private final ODataSerializer serializer;
-  private final ContentType responseContentType;
-
-  public static ServiceDocumentResponse getInstace(ServiceRequest request, ODataResponse respose,
-      ContentType responseContentType) throws ContentNegotiatorException, SerializerException {
-    return new ServiceDocumentResponse(request.getServiceMetaData(), respose,
-        request.getSerializer(), responseContentType, request.getPreferences());
-  }
-
-  private ServiceDocumentResponse(ServiceMetadata metadata, ODataResponse respose,
-      ODataSerializer serializer, ContentType responseContentType, Map<String, String> preferences) {
-    super(metadata, respose, preferences);
+public class ErrorResponse extends ServiceResponse {
+  private ContentType contentType;
+  private ODataSerializer serializer;
+  
+  public ErrorResponse(ServiceMetadata metadata, ODataSerializer serializer,
+      ContentType contentType, ODataResponse response) {
+    super(metadata, response, new HashMap<String, String>());
+    this.contentType = contentType;
     this.serializer = serializer;
-    this.responseContentType = responseContentType;
-  }
-
-  public void writeServiceDocument(String serviceRoot)
-      throws ODataLibraryException {
-    assert (!isClosed());
-    this.response.setContent(this.serializer.serviceDocument(metadata, serviceRoot).getContent());
-    writeOK(responseContentType);
-    close();
   }
 
   @Override
-  public void accepts(ServiceResponseVisior visitor) throws ODataLibraryException,
-      ODataApplicationException {
+  public void accepts(ServiceResponseVisior visitor)
+      throws ODataLibraryException, ODataApplicationException {
     visitor.visit(this);
   }
-  
+
   public void writeError(ODataServerError error) {
     try {
-      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.getType());
+      writeHeader(HttpHeader.CONTENT_TYPE, this.contentType.getType());
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
       writeServerError(true);
     }
-  }  
+  } 
 }

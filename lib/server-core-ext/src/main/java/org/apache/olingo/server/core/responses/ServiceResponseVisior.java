@@ -67,4 +67,8 @@ public class ServiceResponseVisior {
       ODataApplicationException {
     response.writeServerError(true);
   }
+
+  public void visit(ErrorResponse response) {
+    response.writeServerError(true);
+  }
 }

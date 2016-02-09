@@ -24,18 +24,16 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
-import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
-import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.uri.UriInfo;
-import org.apache.olingo.server.core.uri.parser.Parser;
+import org.apache.olingo.server.core.responses.ErrorResponse;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
@@ -43,13 +41,16 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ErrorHandler {
   private final OData odata;
+  private final ServiceHandler handler;
+  private final ContentType contentType;
   private final ServiceMetadata metadata;
-  private final CustomContentTypeSupport customContent;
-
-  public ErrorHandler(OData odata, ServiceMetadata metadata, CustomContentTypeSupport customContent) {
+  
+  public ErrorHandler(OData odata, ServiceMetadata metadata,
+      ServiceHandler handler, ContentType contentType) {
     this.odata = odata;
+    this.handler = handler;
+    this.contentType = contentType;
     this.metadata = metadata;
-    this.customContent = customContent;
   }
 
   public void handleException(Exception e, ODataRequest request, ODataResponse response) {
@@ -80,7 +81,10 @@ public class ErrorHandler {
     } else if(e instanceof ODataHandlerException) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((ODataHandlerException)e, null);
       handleServerError(request, response, serverError);
-    } else {
+    } else if(e instanceof ODataApplicationException) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject((ODataApplicationException)e);
+      handleServerError(request, response, serverError);
+    }else {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e);
       handleServerError(request, response, serverError);
     }
@@ -88,29 +92,10 @@ public class ErrorHandler {
 
   void handleServerError(final ODataRequest request, final ODataResponse response,
       final ODataServerError serverError) {
-    ContentType requestedContentType;
     try {
-      final UriInfo uriInfo = new Parser(metadata.getEdm(), odata)
-          .parseUri(request.getRawODataPath(), request.getRawQueryPath(), null);
-      requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-          request, this.customContent, RepresentationType.ERROR);
-    } catch (final ContentNegotiatorException e) {
-      requestedContentType = ContentType.JSON;
-    } catch (final UriParserException e) {
-      requestedContentType = ContentType.JSON;
-    } catch (final UriValidationException e) {
-      requestedContentType = ContentType.JSON;
-    }
-    processError(response, serverError, requestedContentType);
-  }
-
-  void processError(ODataResponse response, ODataServerError serverError,
-      ContentType requestedContentType) {
-    try {
-      ODataSerializer serializer = this.odata.createSerializer(requestedContentType);
-      response.setContent(serializer.error(serverError).getContent());
-      response.setStatusCode(serverError.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      ODataSerializer serializer = this.odata.createSerializer(this.contentType);
+      ErrorResponse errorResponse = new ErrorResponse(this.metadata, serializer, this.contentType, response);
+      handler.processError(serverError, errorResponse);
     } catch (Exception e) {
       // This should never happen but to be sure we have this catch here
       // to prevent sending a stacktrace to a client.
