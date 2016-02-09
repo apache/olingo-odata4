@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
@@ -45,12 +48,9 @@ import org.apache.olingo.server.core.deserializer.xml.ODataXmlDeserializer;
 import org.apache.olingo.server.core.etag.ETagHelperImpl;
 import org.apache.olingo.server.core.prefer.PreferencesImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
-import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
+import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
-
-import java.util.Collection;
-import java.util.List;
 
 public class ODataImpl extends OData {
 
@@ -63,8 +63,7 @@ public class ODataImpl extends OData {
       if (metadata == null
           || ContentType.VALUE_ODATA_METADATA_MINIMAL.equals(metadata)
           || ContentType.VALUE_ODATA_METADATA_NONE.equals(metadata)) {
-//        serializer = new ODataJsonSerializer(contentType);
-        serializer = new ODataJsonStreamSerializer(contentType);
+        serializer = new ODataJsonSerializer(contentType);
       }
     } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
         || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {

@@ -18,31 +18,18 @@
  */
 package org.apache.olingo.server.core.serializer;
 
+import java.io.InputStream;
+
 import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
-import org.apache.olingo.server.core.ODataBasicContent;
-import org.apache.olingo.server.core.serializer.utils.ResultHelper;
 
-import java.io.InputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-
-public class SerializerResultImpl implements SerializerResult {
+public class SerializerStreamResultImpl implements SerializerStreamResult {
   private InputStream content;
   private ODataContent oDataContent;
 
   @Override
-  public InputStream getContent() {
-    return content;
-  }
-
-  @Override
   public ODataContent getODataContent() {
-    if(oDataContent == null && content != null) {
-      return new ODataBasicContent(content);
-    }
     return oDataContent;
   }
 
@@ -66,19 +53,14 @@ public class SerializerResultImpl implements SerializerResult {
   }
 
   public static class SerializerResultBuilder {
-    private SerializerResultImpl result = new SerializerResultImpl();
+    private SerializerStreamResultImpl result = new SerializerStreamResultImpl();
 
-    public SerializerResultBuilder content(final InputStream input) {
-      result.content = input;
+    public SerializerResultBuilder content(final ODataContent content) {
+      result.oDataContent = content;
       return this;
     }
 
-    public SerializerResultBuilder content(final ODataContent input) {
-      result.oDataContent = input;
-      return this;
-    }
-
-    public SerializerResult build() {
+    public SerializerStreamResult build() {
       return result;
     }
   }

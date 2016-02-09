@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core.serializer;
+package org.apache.olingo.server.core;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -29,12 +29,12 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.serializer.SerializerResult;
-import org.apache.olingo.server.core.serializer.json.ODataJsonStreamSerializer;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
+import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
+import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -42,21 +42,21 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 
-public class ChannelSerializerResult implements ODataContent {
+public class ODataWritableContent implements ODataContent {
   private StreamChannel channel;
 
   private static class StreamChannel implements ReadableByteChannel {
     private static final Charset DEFAULT = Charset.forName("UTF-8");
     private ByteBuffer head;
     private ByteBuffer tail;
-    private ODataJsonStreamSerializer jsonSerializer;
+    private ODataJsonSerializer jsonSerializer;
     private EntityIterator coll;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntitySerializerOptions options;
 
     public StreamChannel(EntityIterator coll, EdmEntityType entityType, String head,
-                         ODataJsonStreamSerializer jsonSerializer, ServiceMetadata metadata,
+                         ODataJsonSerializer jsonSerializer, ServiceMetadata metadata,
                          EntitySerializerOptions options, String tail) {
       this.coll = coll;
       this.entityType = entityType;
@@ -217,52 +217,51 @@ public class ChannelSerializerResult implements ODataContent {
     throw new ODataRuntimeException("error handling not yet supported");
   }
 
-  private ChannelSerializerResult(StreamChannel channel) {
+  private ODataWritableContent(StreamChannel channel) {
     this.channel = channel;
   }
 
-  public static SerializerResultBuilder with(EntityIterator coll, EdmEntityType entityType,
-                                             ODataJsonStreamSerializer jsonSerializer,
+  public static ODataWritableContentBuilder with(EntityIterator coll, EdmEntityType entityType,
+                                             ODataJsonSerializer jsonSerializer,
                                              ServiceMetadata metadata, EntitySerializerOptions options) {
-    return new SerializerResultBuilder(coll, entityType, jsonSerializer, metadata, options);
+    return new ODataWritableContentBuilder(coll, entityType, jsonSerializer, metadata, options);
   }
 
-  public static class SerializerResultBuilder {
-    private ODataJsonStreamSerializer jsonSerializer;
-    private EntityIterator coll;
+  public static class ODataWritableContentBuilder {
+    private ODataJsonSerializer jsonSerializer;
+    private EntityIterator entities;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntitySerializerOptions options;
     private String head;
     private String tail;
 
-    public SerializerResultBuilder(EntityIterator coll, EdmEntityType entityType,
-                                   ODataJsonStreamSerializer jsonSerializer,
+    public ODataWritableContentBuilder(EntityIterator entities, EdmEntityType entityType,
+                                   ODataJsonSerializer jsonSerializer,
                                    ServiceMetadata metadata, EntitySerializerOptions options) {
-      this.coll = coll;
+      this.entities = entities;
       this.entityType = entityType;
       this.jsonSerializer = jsonSerializer;
       this.metadata = metadata;
       this.options = options;
     }
 
-    public SerializerResultBuilder addHead(String head) {
+    public ODataWritableContentBuilder addHead(String head) {
       this.head = head;
       return this;
     }
 
-    public SerializerResultBuilder addTail(String tail) {
+    public ODataWritableContentBuilder addTail(String tail) {
       this.tail = tail;
       return this;
     }
 
     public ODataContent buildContent() {
-      StreamChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
-      return new ChannelSerializerResult(input);
+      StreamChannel input = new StreamChannel(entities, entityType, head, jsonSerializer, metadata, options, tail);
+      return new ODataWritableContent(input);
     }
-    public SerializerResult build() {
-      StreamChannel input = new StreamChannel(coll, entityType, head, jsonSerializer, metadata, options, tail);
-      return SerializerResultImpl.with().content(new ChannelSerializerResult(input)).build();
+    public SerializerStreamResult build() {
+      return SerializerStreamResultImpl.with().content(buildContent()).build();
     }
   }
 }

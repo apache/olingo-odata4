@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -58,6 +59,7 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -526,22 +528,18 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       id = request.getRawBaseUri() + edmEntitySet.getName();
     }
 
-    // Serialize
-//    final SerializerResult serializerResult = (isReference) ?
-//        serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
-//        serializeEntityCollection(request, entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
-//            expand, select, countOption, id);
-    final SerializerResult serializerResult = (isReference) ?
-        serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
-        serializeEntityStreamCollectionFixed(request,
-            entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
-            expand, select, countOption, id);
-//    if(serializerResult.isWriteSupported()) {
-//      response.setChannel(serializerResult.getChannel());
-//    } else {
-//      response.setContent(serializerResult.getContent());
-//    }
-    response.setODataContent(serializerResult.getODataContent());
+    if(isReference) {
+      final SerializerResult serializerResult =
+          serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption);
+      response.setODataContent(serializerResult.getODataContent());
+    } else {
+      final SerializerStreamResult serializerResult =
+          serializeEntityStreamCollectionFixed(request,
+              entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+              expand, select, countOption, id);
+
+      response.setODataContent(serializerResult.getODataContent());
+    }
     //
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
@@ -552,7 +550,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   }
 
   // just for demonstration
-  private SerializerResult serializeEntityStreamCollectionFixed(final ODataRequest request,
+  private SerializerStreamResult serializeEntityStreamCollectionFixed(final ODataRequest request,
       final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
       final EdmEntityType edmEntityType,
       final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
@@ -630,7 +628,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
     };
 
-    return odata.createSerializer(requestedFormat).entityCollection(
+    return odata.createSerializer(requestedFormat).entityCollectionStreamed(
         serviceMetadata,
         edmEntityType,
         streamCollection,
