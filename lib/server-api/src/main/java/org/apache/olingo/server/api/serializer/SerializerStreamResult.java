@@ -22,6 +22,7 @@ import org.apache.olingo.server.api.ODataContent;
 
 /**
  * Result type for {@link ODataSerializer} methods
+ * which supports stream/write in the future
  */
 public interface SerializerStreamResult {
   /**

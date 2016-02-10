@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -32,6 +33,7 @@ public class EntityCollectionSerializerOptions {
   private SelectOption select;
   private boolean writeOnlyReferences;
   private String id;
+  private WriteContentErrorCallback writeContentErrorCallback;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -61,6 +63,18 @@ public class EntityCollectionSerializerOptions {
   /** Gets the id of the entity collection */
   public String getId() {
     return id;
+  }
+
+  /**
+   * Gets the callback which is used in case of an exception during
+   * write of the content (in case the content will be written/streamed
+   * in the future)
+   * @return callback which is used in case of an exception during
+   * write of the content
+   *
+   */
+  public WriteContentErrorCallback getWriteContentErrorCallback() {
+    return writeContentErrorCallback;
   }
 
   /** Initializes the options builder. */
@@ -110,6 +124,18 @@ public class EntityCollectionSerializerOptions {
     /** Sets id of the collection */
     public Builder id(final String id) {
       options.id = id;
+      return this;
+    }
+
+    /**
+     * Set the callback which is used in case of an exception during
+     * write of the content.
+     *
+     * @param writeContentErrorCallback the callback
+     * @return the builder
+     */
+    public Builder writeContentErrorCallback(WriteContentErrorCallback writeContentErrorCallback) {
+      options.writeContentErrorCallback = writeContentErrorCallback;
       return this;
     }
 

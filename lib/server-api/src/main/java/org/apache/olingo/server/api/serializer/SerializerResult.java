@@ -18,11 +18,7 @@
  */
 package org.apache.olingo.server.api.serializer;
 
-import org.apache.olingo.server.api.ODataContent;
-
 import java.io.InputStream;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 
 /**
  * Result type for {@link ODataSerializer} methods
@@ -33,6 +29,4 @@ public interface SerializerResult {
    * @return serialized content
    */
   InputStream getContent();
-
-  ODataContent getODataContent();
 }

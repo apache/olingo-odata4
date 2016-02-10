@@ -18,15 +18,12 @@
  */
 package org.apache.olingo.server.api;
 
+import java.io.OutputStream;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 public interface ODataContent {
-  ReadableByteChannel getChannel();
-
   void write(WritableByteChannel channel);
 
-  void write(WritableByteChannel channel, WriteContentErrorCallback callback);
-
-  boolean isWriteSupported();
+  void write(OutputStream stream);
 }

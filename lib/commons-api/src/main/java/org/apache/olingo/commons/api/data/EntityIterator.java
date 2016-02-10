@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import org.apache.olingo.commons.api.ex.ODataNotSupportedException;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -35,7 +36,7 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
   @Override
   public void remove() {
     //"Remove is not supported for iteration over Entities."
-    throw new NotImplementedException();
+    throw new ODataNotSupportedException("Entity Iterator does not support remove()");
   }
 
   @Override
@@ -44,15 +45,14 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
   }
 
   public Integer getCount() {
-    throw new ODataRuntimeException("getCount() not supported for " + getClass().getSimpleName());
+    throw new ODataNotSupportedException("Entity Iterator does not support getCount()");
   }
 
   public URI getNext() {
-    throw new ODataRuntimeException("getNext() not supported for " + getClass().getSimpleName());
-
+    throw new ODataNotSupportedException("Entity Iterator does not support getNext()");
   }
 
   public URI getDeltaLink() {
-    throw new ODataRuntimeException("getDeltaLink() not supported for " + getClass().getSimpleName());
+    throw new ODataNotSupportedException("Entity Iterator does not support getDeltaLink()");
   }
 }

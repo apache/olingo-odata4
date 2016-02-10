@@ -161,11 +161,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   static void writeContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
     try {
       ODataContent res = odataResponse.getODataContent();
-      if(res.isWriteSupported()) {
-        res.write(Channels.newChannel(servletResponse.getOutputStream()));
-      } else {
-        copyContent(res.getChannel(), servletResponse);
-      }
+      res.write(Channels.newChannel(servletResponse.getOutputStream()));
     } catch (IOException e) {
       throw new ODataRuntimeException("Error on reading request content", e);
     }

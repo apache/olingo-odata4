@@ -18,22 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityIterator;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import org.apache.olingo.server.api.ODataContent;
-import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.WriteContentErrorCallback;
-import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
-import org.apache.olingo.server.api.serializer.SerializerException;
-import org.apache.olingo.server.api.serializer.SerializerStreamResult;
-import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
-import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -41,6 +25,22 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.server.api.ODataContent;
+import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
+import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
+import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
+import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
+import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataWritableContent implements ODataContent {
   private StreamChannel channel;
@@ -184,17 +184,10 @@ public class ODataWritableContent implements ODataContent {
     }
   }
 
-//  @Override
-//  public InputStream getContent() {
-//    return Channels.newInputStream(this.channel);
-//  }
-
-  @Override
   public ReadableByteChannel getChannel() {
     return this.channel;
   }
 
-  @Override
   public boolean isWriteSupported() {
     return true;
   }
@@ -212,9 +205,8 @@ public class ODataWritableContent implements ODataContent {
   }
 
   @Override
-  public void write(WritableByteChannel channel, WriteContentErrorCallback callback) {
-    // TODO: implement error handling
-    throw new ODataRuntimeException("error handling not yet supported");
+  public void write(OutputStream stream) {
+    write(Channels.newChannel(stream));
   }
 
   private ODataWritableContent(StreamChannel channel) {

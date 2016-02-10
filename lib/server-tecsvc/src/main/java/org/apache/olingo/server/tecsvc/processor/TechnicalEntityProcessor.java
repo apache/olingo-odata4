@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +49,7 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
@@ -531,7 +537,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     if(isReference) {
       final SerializerResult serializerResult =
           serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption);
-      response.setODataContent(serializerResult.getODataContent());
+      response.setContent(serializerResult.getContent());
     } else {
       final SerializerStreamResult serializerResult =
           serializeEntityStreamCollectionFixed(request,
@@ -540,6 +546,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
       response.setODataContent(serializerResult.getODataContent());
     }
+
     //
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
