@@ -18,9 +18,12 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,6 +36,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
@@ -42,7 +46,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlBindingTarget;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
-import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
@@ -92,16 +95,22 @@ import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
  */
 public class MetadataParser {
   private boolean parseAnnotations = false;
-
+  private final String XML_LINK_NS = "http://www.w3.org/1999/xlink";
+  private ReferenceResolver referenceResolver = new DefaultReferenceResolver();
+  
   public void setParseAnnotations(boolean f) {
     this.parseAnnotations = true;
+  }
+  
+  public void setReferenceResolver(ReferenceResolver resolver) {
+    this.referenceResolver = resolver;
   }
   
   public ServiceMetadata buildServiceMetadata(Reader csdl) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
 
-    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider();
+    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider(referenceResolver);
     final ArrayList<EdmxReference> references = new ArrayList<EdmxReference>();
     
     new ElementReader<SchemaBasedEdmProvider>() {
@@ -109,6 +118,8 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
           String name) throws XMLStreamException {
         String version = attr(element, "Version");
+        String xmlBase = attrNS(element, XML_LINK_NS, "base");
+        provider.setXMLBase(xmlBase);
         if ("4.0".equals(version)) {
           readDataServicesAndReference(reader, element, provider, references);
         } else {
@@ -124,14 +135,18 @@ public class MetadataParser {
                   event.asStartElement().getName().getLocalPart() : 
                   event.asEndElement().getName().getLocalPart()));
     }
+    provider.addReferences(references);
     return new ServiceMetadataImpl(provider, references, null);
   }
 
-  CsdlEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
+  SchemaBasedEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
-
-    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider();
+    return buildEdmProvider(reader);
+  } 
+  
+  SchemaBasedEdmProvider buildEdmProvider(XMLEventReader reader) throws XMLStreamException {
+    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider(this.referenceResolver);
     new ElementReader<SchemaBasedEdmProvider>() {
       @Override
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
@@ -141,8 +156,7 @@ public class MetadataParser {
           readDataServicesAndReference(reader, element, provider, new ArrayList<EdmxReference>());
         }
       }
-    }.read(reader, null, provider, "Edmx");
-
+    }.read(reader, null, provider, "Edmx");    
     return provider;
   }  
   
@@ -776,6 +790,14 @@ public class MetadataParser {
     return null;
   }
 
+  private String attrNS(StartElement element, String ns, String name) {
+    Attribute attr = element.getAttributeByName(new QName(ns, name));
+    if (attr != null) {
+      return attr.getValue();
+    }
+    return null;
+  }  
+  
   private CsdlProperty readProperty(XMLEventReader reader, StartElement element)
       throws XMLStreamException {
     CsdlProperty property = new CsdlProperty();
@@ -1019,5 +1041,33 @@ public class MetadataParser {
 
     abstract void build(XMLEventReader reader, StartElement element, T t, String name)
         throws XMLStreamException;
+  }
+  
+  class DefaultReferenceResolver implements ReferenceResolver{
+    @Override
+    public SchemaBasedEdmProvider resolveReference(URI referenceUri, String xmlBase) {
+      URL schemaURL = null;
+      try {
+        if (referenceUri.isAbsolute()) {
+          schemaURL = referenceUri.toURL();
+        } else {
+          if (xmlBase != null) {
+            schemaURL = new URL(xmlBase+referenceUri.toString());
+          } else {
+            throw new EdmException("No xml:base set to read the references from the metadata");
+          }        
+        }
+        
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        XMLEventReader reader = xmlInputFactory.createXMLEventReader(schemaURL.openStream());
+        return buildEdmProvider(reader);
+      } catch (MalformedURLException e) {
+        throw new EdmException(e);
+      } catch (XMLStreamException e) {
+        throw new EdmException(e);
+      } catch (IOException e) {
+        throw new EdmException(e);
+      }
+    }
   }
 }

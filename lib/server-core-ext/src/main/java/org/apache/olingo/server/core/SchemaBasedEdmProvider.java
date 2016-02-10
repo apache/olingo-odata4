@@ -19,8 +19,9 @@
 package org.apache.olingo.server.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
@@ -41,11 +42,22 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.api.ex.ODataException;
+import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 
 public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   private final List<CsdlSchema> edmSchemas = new ArrayList<CsdlSchema>();
+  private final Map<String, EdmxReference> references = new ConcurrentHashMap<String, EdmxReference>();
+  private final Map<String, SchemaBasedEdmProvider> referenceSchemas 
+    = new ConcurrentHashMap<String, SchemaBasedEdmProvider>();
+  private String xmlBase;
+  private ReferenceResolver referenceResolver;
+  
+  public SchemaBasedEdmProvider(ReferenceResolver referenceResolver) {
+    this.referenceResolver = referenceResolver;
+  }
 
-  public void addSchema(CsdlSchema schema) {
+  void addSchema(CsdlSchema schema) {
     this.edmSchemas.add(schema);
   }
 
@@ -53,6 +65,39 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
     for (CsdlSchema s : this.edmSchemas) {
       if (s.getNamespace().equals(ns)) {
         return s;
+      }
+    }
+    return getReferenceSchema(ns);
+  }
+
+  private CsdlSchema getReferenceSchema(String ns) {
+    if (ns == null) {
+      return null;
+    }
+    if (this.referenceSchemas.get(ns) == null) {
+      EdmxReference reference = this.references.get(ns);
+      if (reference != null) {
+        SchemaBasedEdmProvider provider = this.referenceResolver.resolveReference(reference.getUri(), xmlBase);
+        for (EdmxReferenceInclude include : reference.getIncludes()) {
+          this.referenceSchemas.put(include.getNamespace(), provider);
+          if (include.getAlias() != null) {
+            CsdlSchema schema = provider.getSchema(include.getNamespace());
+            schema.setAlias(include.getAlias());
+            this.referenceSchemas.put(include.getAlias(), provider);
+          }
+        }
+      }
+    }
+    
+    if (this.referenceSchemas.get(ns) != null) {
+      return this.referenceSchemas.get(ns).getSchema(ns);  
+    }
+    
+    // it is possible that we may be looking for Reference schema of Reference
+    for (SchemaBasedEdmProvider provider:this.referenceSchemas.values()) {
+      CsdlSchema schema = provider.getSchema(ns);
+      if (schema != null) {
+        return schema;
       }
     }
     return null;
@@ -220,22 +265,26 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-    CsdlSchema schema = null;
+    ArrayList<CsdlAliasInfo> list = new ArrayList<CsdlAliasInfo>();
     for (CsdlSchema s : this.edmSchemas) {
-      if (s.getEntityContainer() != null) {
-        schema = s;
-        break;
+      if (s.getAlias() != null) {
+        CsdlAliasInfo ai = new CsdlAliasInfo();
+        ai.setAlias(s.getAlias());
+        ai.setNamespace(s.getNamespace());
+        list.add(ai);
       }
     }
-
-    if (schema == null) {
-      schema = this.edmSchemas.get(0);
+    for(EdmxReference reference:this.references.values()) {
+      for(EdmxReferenceInclude include:reference.getIncludes()) {
+        if (include.getAlias() != null) {
+          CsdlAliasInfo ai = new CsdlAliasInfo();
+          ai.setAlias(include.getAlias());
+          ai.setNamespace(include.getNamespace());
+          list.add(ai);          
+        }
+      }
     }
-
-    CsdlAliasInfo ai = new CsdlAliasInfo();
-    ai.setAlias(schema.getAlias());
-    ai.setNamespace(schema.getNamespace());
-    return Arrays.asList(ai);
+    return list;
   }
 
   @Override
@@ -304,6 +353,33 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public CsdlAnnotations getAnnotationsGroup(FullQualifiedName targetName, String qualifier) throws ODataException {
+    CsdlSchema schema = getSchema(targetName.getNamespace());
+    if (schema != null) {
+      return schema.getAnnotationGroup(targetName.getName(), qualifier);
+    }
     return null;
+  }
+
+  void addReferences(ArrayList<EdmxReference> references) {
+    if (references != null && !references.isEmpty()) {
+      for (EdmxReference ref:references) {
+        for (EdmxReferenceInclude include : ref.getIncludes()) {
+          if (include.getAlias() != null) {
+            this.references.put(include.getAlias(), ref);
+          }
+          this.references.put(include.getNamespace(), ref);
+        }
+      }
+    }
+  }
+
+  public void setXMLBase(String base) {
+    if (base != null) {
+      if (base.endsWith("/")) {
+        this.xmlBase = base;
+      } else {
+        this.xmlBase = base+"/";
+      }
+    }
   }
 }
