@@ -60,7 +60,7 @@ public class MetadataParserAnnotationsTest {
   public void setUp() throws Exception {
     MetadataParser parser = new MetadataParser();
     parser.parseAnnotations(true);
-    parser.loadCoreVocabularies(true);
+    parser.useLocalCoreVocabularies(true);
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/annotations.xml"));
   }
 
