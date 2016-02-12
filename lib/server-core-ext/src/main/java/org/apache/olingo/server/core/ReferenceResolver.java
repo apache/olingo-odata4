@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.InputStream;
 import java.net.URI;
 
 public interface ReferenceResolver {
@@ -28,5 +29,5 @@ public interface ReferenceResolver {
    * @param xmlBase xml:base if provided by the metadata document; null otherwise
    * @return
    */
-  SchemaBasedEdmProvider resolveReference(URI referenceUri, String xmlBase);
+  InputStream resolveReference(URI referenceUri, String xmlBase);
 }

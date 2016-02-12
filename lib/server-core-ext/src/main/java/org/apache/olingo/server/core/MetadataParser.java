@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -95,38 +96,68 @@ import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
  */
 public class MetadataParser {
   private boolean parseAnnotations = false;
-  private final String XML_LINK_NS = "http://www.w3.org/1999/xlink";
-  private ReferenceResolver referenceResolver = new DefaultReferenceResolver();
+  private static final String XML_LINK_NS = "http://www.w3.org/1999/xlink";
+  private ReferenceResolver defaultReferenceResolver = new DefaultReferenceResolver();
+  private boolean loadCoreVocabularies = false;
   
-  public void setParseAnnotations(boolean f) {
-    this.parseAnnotations = true;
+  public MetadataParser parseAnnotations(boolean parse) {
+    this.parseAnnotations = parse;
+    return this;
   }
   
-  public void setReferenceResolver(ReferenceResolver resolver) {
-    this.referenceResolver = resolver;
+  public MetadataParser referenceResolver(ReferenceResolver resolver) {
+    this.defaultReferenceResolver = resolver;
+    return this;
+  }
+  
+  public MetadataParser loadCoreVocabularies(boolean load) {
+    this.loadCoreVocabularies = load;
+    return this;
   }
   
   public ServiceMetadata buildServiceMetadata(Reader csdl) throws XMLStreamException {
+    SchemaBasedEdmProvider provider = buildEdmProvider(csdl,
+        this.defaultReferenceResolver, this.loadCoreVocabularies);
+    return new ServiceMetadataImpl(provider, provider.getReferences(), null);
+  }
+
+  public SchemaBasedEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
+    return buildEdmProvider(csdl, this.defaultReferenceResolver, this.loadCoreVocabularies);
+  }
+    
+  protected SchemaBasedEdmProvider buildEdmProvider(Reader csdl,
+      ReferenceResolver referenceResolver, boolean loadCoreVocabularies) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
-
+    return buildEdmProvider(reader, referenceResolver, loadCoreVocabularies);
+  }
+  
+  protected SchemaBasedEdmProvider buildEdmProvider(InputStream csdl,
+      ReferenceResolver referenceResolver, boolean loadCoreVocabularies) throws XMLStreamException {
+    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
+    return buildEdmProvider(reader, referenceResolver, loadCoreVocabularies);
+  } 
+  
+  protected SchemaBasedEdmProvider buildEdmProvider(XMLEventReader reader,
+      ReferenceResolver referenceResolver, boolean loadCoreVocabularies) throws XMLStreamException {
     SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider(referenceResolver);
-    final ArrayList<EdmxReference> references = new ArrayList<EdmxReference>();
-    
     new ElementReader<SchemaBasedEdmProvider>() {
       @Override
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
           String name) throws XMLStreamException {
-        String version = attr(element, "Version");
         String xmlBase = attrNS(element, XML_LINK_NS, "base");
-        provider.setXMLBase(xmlBase);
+        provider.setXMLBase(xmlBase);        
+        String version = attr(element, "Version");
         if ("4.0".equals(version)) {
-          readDataServicesAndReference(reader, element, provider, references);
+          readDataServicesAndReference(reader, element, provider);
         } else {
           throw new XMLStreamException("Currently only V4 is supported.");
         }
       }
     }.read(reader, null, provider, "Edmx");
+    
+    // make sure there is nothing left to read, due to parser error
     if(reader.hasNext()) {
       XMLEvent event = reader.peek();
       throw new XMLStreamException(
@@ -135,34 +166,33 @@ public class MetadataParser {
                   event.asStartElement().getName().getLocalPart() : 
                   event.asEndElement().getName().getLocalPart()));
     }
-    provider.addReferences(references);
-    return new ServiceMetadataImpl(provider, references, null);
-  }
-
-  SchemaBasedEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-    XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
-    return buildEdmProvider(reader);
-  } 
-  
-  SchemaBasedEdmProvider buildEdmProvider(XMLEventReader reader) throws XMLStreamException {
-    SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider(this.referenceResolver);
-    new ElementReader<SchemaBasedEdmProvider>() {
-      @Override
-      void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
-          String name) throws XMLStreamException {
-        String version = attr(element, "Version");
-        if ("4.0".equals(version)) {
-          readDataServicesAndReference(reader, element, provider, new ArrayList<EdmxReference>());
-        }
-      }
-    }.read(reader, null, provider, "Edmx");    
+    
+    // load the core vocabularies
+    if (loadCoreVocabularies) {
+      loadVocabularySchema(provider, "Org.OData.Core.V1", "Org.OData.Core.V1.xml");
+      loadVocabularySchema(provider, "Org.OData.Capabilities.V1", "Org.OData.Capabilities.V1.xml");
+      loadVocabularySchema(provider, "Org.OData.Measures.V1", "Org.OData.Measures.V1.xml");
+    }    
     return provider;
   }  
   
+  private void loadVocabularySchema(SchemaBasedEdmProvider provider, String namespace,
+      String resource) throws XMLStreamException {
+    CsdlSchema schema = provider.getSchema(namespace, false);
+    if (schema == null) {
+      InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
+      if (is != null) {
+        SchemaBasedEdmProvider childProvider = buildEdmProvider(is, null, false);
+        provider.addSchema(childProvider.getSchema(namespace, false));
+      } else {
+        throw new XMLStreamException("failed to load "+resource+" core vocabulary");
+      }
+    }
+  }  
+  
   private void readDataServicesAndReference(XMLEventReader reader,
-      StartElement element, SchemaBasedEdmProvider provider,
-      final ArrayList<EdmxReference> references) throws XMLStreamException {
+      StartElement element, SchemaBasedEdmProvider provider) throws XMLStreamException {
+    final ArrayList<EdmxReference> references = new ArrayList<EdmxReference>();
     new ElementReader<SchemaBasedEdmProvider>() {
       @Override
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
@@ -174,6 +204,7 @@ public class MetadataParser {
         }
       }
     }.read(reader, element, provider, "DataServices", "Reference");
+    provider.addReferences(references);
   }
 
   private void readReference(XMLEventReader reader, StartElement element,
@@ -782,7 +813,7 @@ public class MetadataParser {
     return property;
   }
 
-  private String attr(StartElement element, String name) {
+  private static String attr(StartElement element, String name) {
     Attribute attr = element.getAttributeByName(new QName(name));
     if (attr != null) {
       return attr.getValue();
@@ -790,7 +821,7 @@ public class MetadataParser {
     return null;
   }
 
-  private String attrNS(StartElement element, String ns, String name) {
+  private static String attrNS(StartElement element, String ns, String name) {
     Attribute attr = element.getAttributeByName(new QName(ns, name));
     if (attr != null) {
       return attr.getValue();
@@ -1043,9 +1074,9 @@ public class MetadataParser {
         throws XMLStreamException;
   }
   
-  class DefaultReferenceResolver implements ReferenceResolver{
+  private static class DefaultReferenceResolver implements ReferenceResolver {
     @Override
-    public SchemaBasedEdmProvider resolveReference(URI referenceUri, String xmlBase) {
+    public InputStream resolveReference(URI referenceUri, String xmlBase) {
       URL schemaURL = null;
       try {
         if (referenceUri.isAbsolute()) {
@@ -1057,17 +1088,12 @@ public class MetadataParser {
             throw new EdmException("No xml:base set to read the references from the metadata");
           }        
         }
-        
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader reader = xmlInputFactory.createXMLEventReader(schemaURL.openStream());
-        return buildEdmProvider(reader);
+        return schemaURL.openStream();
       } catch (MalformedURLException e) {
-        throw new EdmException(e);
-      } catch (XMLStreamException e) {
         throw new EdmException(e);
       } catch (IOException e) {
         throw new EdmException(e);
       }
     }
-  }
+  }   
 }

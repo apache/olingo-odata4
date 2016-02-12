@@ -13,7 +13,7 @@
 	Version="4.0">
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
-			Namespace="Org.OData.Core.V1" Alias="Core">
+			Namespace="Org.OData.AnnoatationTest" Alias="test">
 
 			<Annotation Term="Core.Description">
 				<String>Core terms needed to write vocabularies</String>

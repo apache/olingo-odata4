@@ -18,11 +18,15 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
@@ -60,14 +64,25 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   void addSchema(CsdlSchema schema) {
     this.edmSchemas.add(schema);
   }
+  
+  List<EdmxReference> getReferences(){
+    return new ArrayList<EdmxReference>(references.values());
+  }
 
-  private CsdlSchema getSchema(String ns) {
+  CsdlSchema getSchema(String ns) {
+    return getSchema(ns, true);
+  }  
+  
+  CsdlSchema getSchema(String ns, boolean checkReferences) {
     for (CsdlSchema s : this.edmSchemas) {
       if (s.getNamespace().equals(ns)) {
         return s;
       }
     }
-    return getReferenceSchema(ns);
+    if (checkReferences) {
+      return getReferenceSchema(ns);
+    }
+    return null;
   }
 
   private CsdlSchema getReferenceSchema(String ns) {
@@ -77,7 +92,23 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
     if (this.referenceSchemas.get(ns) == null) {
       EdmxReference reference = this.references.get(ns);
       if (reference != null) {
-        SchemaBasedEdmProvider provider = this.referenceResolver.resolveReference(reference.getUri(), xmlBase);
+        SchemaBasedEdmProvider provider = null;
+        if (this.referenceResolver == null) {
+          throw new EdmException("Failed to load Reference "+reference.getUri());
+        } else {
+          InputStream is = this.referenceResolver.resolveReference(reference.getUri(), this.xmlBase);
+          if (is != null) {
+            try {
+              MetadataParser parser = new MetadataParser();
+              provider = parser.buildEdmProvider(is, this.referenceResolver, false);
+            } catch (XMLStreamException e) {
+              throw new EdmException("Failed to load Reference "+reference.getUri()+" parsing failed");
+            }
+          } else {
+            throw new EdmException("Failed to load Reference "+reference.getUri()+" loading failed");
+          }
+        }
+        // copy references
         for (EdmxReferenceInclude include : reference.getIncludes()) {
           this.referenceSchemas.put(include.getNamespace(), provider);
           if (include.getAlias() != null) {
@@ -381,5 +412,5 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
         this.xmlBase = base+"/";
       }
     }
-  }
+  } 
 }

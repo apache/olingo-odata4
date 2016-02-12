@@ -51,7 +51,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MetadataParserAnnotationsTest {
-  final String NS = "Org.OData.Core.V1";
+  final String NS = "Org.OData.AnnoatationTest";
   final FullQualifiedName NSF = new FullQualifiedName(NS);
 
   CsdlEdmProvider provider = null;
@@ -59,7 +59,8 @@ public class MetadataParserAnnotationsTest {
   @Before
   public void setUp() throws Exception {
     MetadataParser parser = new MetadataParser();
-    parser.setParseAnnotations(true);
+    parser.parseAnnotations(true);
+    parser.loadCoreVocabularies(true);
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/annotations.xml"));
   }
 
@@ -204,5 +205,11 @@ public class MetadataParserAnnotationsTest {
   public void testTermAppliesTo() throws ODataException {
     CsdlTerm term = this.provider.getTerm(new FullQualifiedName(NS, "IsURI"));
     assertEquals(Arrays.asList("Property", "PropertyPath"), term.getAppliesTo());
+  }
+  
+  @Test
+  public void checkCoreVocabularies() throws ODataException {
+    CsdlTerm term = this.provider.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description"));
+    assertEquals("Edm.String", term.getType());
   }  
 }
