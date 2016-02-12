@@ -28,7 +28,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.Constants;
@@ -1198,9 +1197,10 @@ public class DataCreator {
 
   protected static Calendar getDateTime(final int year, final int month, final int day,
       final int hour, final int minute, final int second) {
-    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
     dateTime.set(year, month - 1, day, hour, minute, second);
+    dateTime.set(Calendar.MILLISECOND, 0);
     return dateTime;
   }
 
@@ -1212,8 +1212,12 @@ public class DataCreator {
   }
 
   protected static Calendar getTime(final int hour, final int minute, final int second) {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar time = Calendar.getInstance();
     time.clear();
+    time.set(Calendar.YEAR, 1970);
+    time.set(Calendar.MONTH, Calendar.JANUARY);
+    time.set(Calendar.DAY_OF_MONTH, 1);
+    time.set(Calendar.MILLISECOND, 0);    
     time.set(Calendar.HOUR_OF_DAY, hour);
     time.set(Calendar.MINUTE, minute);
     time.set(Calendar.SECOND, second);

@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -82,8 +81,7 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(new Time(-20L), null, null, 2, null, null));
     
     final Date date = new Date(millis);
-    final String time = date.toString().substring(11, 19);
-    assertTrue(instance.valueToString(date, null, null, 3, null, null).contains(time));
+    assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(date, null, null, 3, null, null));
 
     Timestamp timestamp = new Timestamp(0);
     timestamp.setNanos(120);
@@ -136,9 +134,10 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     
     assertEquals(new Time(120000L), instance.valueOfString("1970-01-01T00:02", null, null, null, null, null,
         Time.class));
-    assertEquals(new Time(12L), instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null,
+    // 0L because java.sql.Time does not keep track of fraction of milliseconds
+    assertEquals(new Time(0L), instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null,
         Time.class));
-    assertEquals(new Time(120L), instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null,
+    assertEquals(new Time(0L), instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null,
         Time.class));
     
     expectFacetsErrorInValueOfString(instance, "2012-02-29T23:32:02.9Z", null, null, null, null, null);

@@ -67,7 +67,6 @@ public class EdmDateTest extends PrimitiveTypeBaseTest {
   public void valueOfString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
     dateTime.set(2012, 1, 29);
     assertEquals(dateTime, instance.valueOfString("2012-02-29", null, null, null, null, null, Calendar.class));
     assertEquals(Long.valueOf(dateTime.getTimeInMillis()), instance.valueOfString("2012-02-29", null, null, null, null,
