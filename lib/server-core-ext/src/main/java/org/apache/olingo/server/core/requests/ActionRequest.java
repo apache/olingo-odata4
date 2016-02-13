@@ -145,7 +145,7 @@ public class ActionRequest extends OperationRequest {
   }
   
   public List<Parameter> getParameters() throws DeserializerException {
-    ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType());
+    ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), this.serviceMetadata);
     return new ArrayList<Parameter>(deserializer.actionParameters(getPayload(), getAction()).getActionParameters()
         .values());
   }

@@ -176,4 +176,6 @@ public interface HttpHeader {
   String ODATA_MAX_VERSION = "OData-MaxVersion";
   /** Custom Header defined in the OData standard. */
   String ODATA_ENTITY_ID = "OData-EntityID";
+  /** Custom Header defined in the OData standard. */
+  String ODATA_ISOLATION= "OData-Isolation";
 }

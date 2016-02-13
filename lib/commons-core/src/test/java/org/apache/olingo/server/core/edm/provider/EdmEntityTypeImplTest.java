@@ -241,6 +241,25 @@ public class EdmEntityTypeImplTest {
   }
 
   @Test
+  public void hasStreamInherited() throws Exception {
+    CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
+    EdmProviderImpl edm = new EdmProviderImpl(provider);
+
+    FullQualifiedName baseName = new FullQualifiedName("namespace", "BaseTypeName");
+    CsdlEntityType baseType = new CsdlEntityType();
+    baseType.setHasStream(true);
+    when(provider.getEntityType(baseName)).thenReturn(baseType);
+
+    FullQualifiedName typeName = new FullQualifiedName("namespace", "typeName");
+    CsdlEntityType type = new CsdlEntityType();
+    type.setBaseType(baseName);
+    EdmEntityType typeWithBaseTypeWithStream = new EdmEntityTypeImpl(edm, typeName, type);
+    when(provider.getEntityType(typeName)).thenReturn(type);
+
+    assertTrue(typeWithBaseTypeWithStream.hasStream());
+  }
+
+  @Test
   public void complexKeyWithAlias() {
     List<String> keyPredicateNames = typeWithComplexKey.getKeyPredicateNames();
     assertEquals(2, keyPredicateNames.size());

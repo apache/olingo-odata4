@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.uri;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class UriInfoImpl implements UriInfo {
   private List<UriResource> pathParts = new ArrayList<UriResource>();
 
   private Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
-      new HashMap<SystemQueryOptionKind, SystemQueryOption>();
+      new EnumMap<SystemQueryOptionKind, SystemQueryOption>(SystemQueryOptionKind.class);
   private Map<String, AliasQueryOption> aliases = new HashMap<String, AliasQueryOption>();
   private List<CustomQueryOption> customQueryOptions = new ArrayList<CustomQueryOption>();
 
@@ -155,15 +156,13 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableList(pathParts);
   }
 
-  public UriInfoImpl setQueryOptions(final List<QueryOption> list) {
-    for (final QueryOption item : list) {
-      if (item instanceof SystemQueryOption) {
-        setSystemQueryOption((SystemQueryOption) item);
-      } else if (item instanceof AliasQueryOption) {
-        addAlias((AliasQueryOption) item);
-      } else if (item instanceof CustomQueryOption) {
-        addCustomQueryOption((CustomQueryOption) item);
-      }
+  public UriInfoImpl setQueryOption(final QueryOption option) {
+    if (option instanceof SystemQueryOption) {
+      setSystemQueryOption((SystemQueryOption) option);
+    } else if (option instanceof AliasQueryOption) {
+      addAlias((AliasQueryOption) option);
+    } else if (option instanceof CustomQueryOption) {
+      addCustomQueryOption((CustomQueryOption) option);
     }
     return this;
   }
@@ -263,18 +262,22 @@ public class UriInfoImpl implements UriInfo {
   }
 
   public UriInfoImpl addAlias(final AliasQueryOption alias) {
-    aliases.put(alias.getName(), alias);
+    if (aliases.containsKey(alias.getName())) {
+      throw new ODataRuntimeException("Alias " + alias.getName() + " is already there.");
+    } else {
+      aliases.put(alias.getName(), alias);
+    }
     return this;
   }
 
   @Override
   public String getValueForAlias(final String alias) {
-    final AliasQueryOption aliasQueryOption = getAlias(alias);
+    final AliasQueryOption aliasQueryOption = aliases.get(alias);
     return aliasQueryOption == null ? null : aliasQueryOption.getText();
   }
 
-  public AliasQueryOption getAlias(final String key) {
-    return aliases.get(key);
+  public Map<String, AliasQueryOption> getAliasMap() {
+    return Collections.unmodifiableMap(aliases);
   }
 
   @Override
@@ -282,8 +285,10 @@ public class UriInfoImpl implements UriInfo {
     return Collections.unmodifiableList(new ArrayList<AliasQueryOption>(aliases.values()));
   }
 
-  public UriInfoImpl addCustomQueryOption(final CustomQueryOption item) {
-    customQueryOptions.add(item);
+  public UriInfoImpl addCustomQueryOption(final CustomQueryOption option) {
+    if (option.getName() != null && !option.getName().isEmpty()) {
+      customQueryOptions.add(option);
+    }
     return this;
   }
 

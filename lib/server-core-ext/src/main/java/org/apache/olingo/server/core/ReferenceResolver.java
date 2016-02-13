@@ -16,27 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.utils;
+package org.apache.olingo.server.core;
 
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
-import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import java.io.InputStream;
+import java.net.URI;
 
-public class InjectableSerializerProvider extends DefaultSerializerProvider {
-
-  private static final long serialVersionUID = 3432260063063739646L;
-
-  public InjectableSerializerProvider(
-      final SerializerProvider src, final SerializationConfig config, final SerializerFactory factory) {
-
-    super(src, config, factory);
-  }
-
-  @Override
-  public InjectableSerializerProvider createInstance(
-      final SerializationConfig config, final SerializerFactory factory) {
-
-    return this;
-  }
+public interface ReferenceResolver {
+  /**
+   * Resolve the reference locally or from redirection from different source than defined in the
+   * metadata document.  
+   * @param referenceUri reference URI for the schema file 
+   * @param xmlBase xml:base if provided by the metadata document; null otherwise
+   * @return
+   */
+  InputStream resolveReference(URI referenceUri, String xmlBase);
 }

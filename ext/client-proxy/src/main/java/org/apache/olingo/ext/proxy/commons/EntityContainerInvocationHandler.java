@@ -80,7 +80,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
+    if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else if ("flush".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       service.getPersistenceManager().flush();
@@ -114,7 +114,7 @@ public final class EntityContainerInvocationHandler extends AbstractInvocationHa
     final Class<?> typeRef = method.getReturnType();
     final Singleton singleton = method.getAnnotation(Singleton.class);
 
-    final URI uri = buildEntitySetURI(singleton.container(), singleton.name(), service).build();
+    final URI uri = buildEntitySetURI(singleton.name(), service).build();
     final EntityUUID uuid = new EntityUUID(uri, typeRef);
     LOG.debug("Ask for singleton '{}'", typeRef.getSimpleName());
 

@@ -123,11 +123,17 @@ public class SelectParser {
   }
 
   private FullQualifiedName parseAllOperationsInSchema(UriTokenizer tokenizer) throws UriParserException {
-    final String name = tokenizer.getText();
+    final String namespace = tokenizer.getText();
     if (tokenizer.next(TokenKind.DOT)) {
       if (tokenizer.next(TokenKind.STAR)) {
-        // TODO: Validate the namespace without loading the whole schema.
-        return new FullQualifiedName(name, tokenizer.getText());
+        // Validate the namespace.  Currently a namespace from a non-default schema is not supported.
+        // There is no direct access to the namespace without loading the whole schema;
+        // however, the default entity container should always be there, so its access methods can be used.
+        if (edm.getEntityContainer(new FullQualifiedName(namespace, edm.getEntityContainer().getName())) == null) {
+          throw new UriParserSemanticException("Wrong namespace '" + namespace + "'.",
+              UriParserSemanticException.MessageKeys.UNKNOWN_PART, namespace);
+        }
+        return new FullQualifiedName(namespace, tokenizer.getText());
       } else {
         throw new UriParserSemanticException("Expected star after dot.",
             UriParserSemanticException.MessageKeys.UNKNOWN_PART, "");

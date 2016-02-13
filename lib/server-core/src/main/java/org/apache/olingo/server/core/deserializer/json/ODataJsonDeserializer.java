@@ -48,10 +48,13 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
@@ -76,9 +79,19 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
 
   private final boolean isIEEE754Compatible;
+  private ServiceMetadata serviceMetadata;
 
   public ODataJsonDeserializer(final ContentType contentType) {
     isIEEE754Compatible = isODataIEEE754Compatible(contentType);
+  }
+  
+  public ODataJsonDeserializer(final ContentType contentType, final ServiceMetadata serviceMetadata) {
+    isIEEE754Compatible = isODataIEEE754Compatible(contentType);
+    this.serviceMetadata = serviceMetadata;
+  }
+  
+  public void setMetadata(ServiceMetadata metadata) {
+    this.serviceMetadata = metadata;
   }
 
   @Override
@@ -124,7 +137,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           throw new DeserializerException("Nested Arrays and primitive values are not allowed for an entity value.",
               DeserializerException.MessageKeys.INVALID_ENTITY);
         }
-        entities.add(consumeEntityNode(edmEntityType, (ObjectNode) arrayElement, expandBuilder));
+        EdmEntityType derivedEdmEntityType = (EdmEntityType)getDerivedType(edmEntityType, arrayElement);
+        entities.add(consumeEntityNode(derivedEdmEntityType, (ObjectNode) arrayElement, expandBuilder));
       }
       return entities;
     } else {
@@ -140,7 +154,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       final ObjectNode tree = parseJsonTree(stream);
       final ExpandTreeBuilderImpl expandBuilder = new ExpandTreeBuilderImpl();
 
-      return DeserializerResultImpl.with().entity(consumeEntityNode(edmEntityType, tree, expandBuilder))
+      EdmEntityType derivedEdmEntityType = (EdmEntityType)getDerivedType(edmEntityType, tree);
+
+      return DeserializerResultImpl.with().entity(consumeEntityNode(derivedEdmEntityType, tree, expandBuilder))
           .expandOption(expandBuilder.build())
           .build();
     } catch (final IOException e) {
@@ -257,6 +273,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               edmParameter.isNullable(), edmParameter.getMaxLength(),
               edmParameter.getPrecision(), edmParameter.getScale(), true, edmParameter.getMapping(), node);
       parameter.setValue(property.getValueType(), property.getValue());
+      parameter.setType(property.getType());
     }
     return parameter;
   }
@@ -472,7 +489,12 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           value);
       break;
     case COMPLEX:
-      value = readComplexNode(name, type, isNullable, jsonNode);
+      EdmType derivedType = getDerivedType((EdmComplexType) type,
+          jsonNode);
+      property.setType(derivedType.getFullQualifiedName()
+          .getFullQualifiedNameAsString());
+
+      value = readComplexNode(name, derivedType, isNullable, jsonNode);
       property.setValue(ValueType.COMPLEX, value);
       break;
     default:
@@ -807,5 +829,54 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE)
         && Boolean.TRUE.toString().equalsIgnoreCase(
             contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE));
+  }
+
+  private EdmType getDerivedType(final EdmStructuredType edmType, final JsonNode jsonNode)
+      throws DeserializerException {
+    JsonNode odataTypeNode = jsonNode.get(Constants.JSON_TYPE);
+    if (odataTypeNode != null) {
+      String odataType = odataTypeNode.asText();
+      if (!odataType.isEmpty()) {
+        odataType = odataType.substring(1);
+        
+        if (odataType.equalsIgnoreCase(edmType.getFullQualifiedName().getFullQualifiedNameAsString())) {
+          return edmType;
+        } else if (this.serviceMetadata == null) {
+          throw new DeserializerException(
+              "Failed to resolve Odata type " + odataType + " due to metadata is not available",
+              DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+        }
+        
+        EdmStructuredType currentEdmType = null;
+        if(edmType instanceof EdmEntityType) {
+          currentEdmType = serviceMetadata.getEdm()
+              .getEntityType(new FullQualifiedName(odataType));          
+        } else {
+          currentEdmType = serviceMetadata.getEdm()
+              .getComplexType(new FullQualifiedName(odataType));          
+        }
+        if (!isAssignable(edmType, currentEdmType)) {
+          throw new DeserializerException(
+              "Odata type " + odataType + " not allowed here",
+              DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+        }
+
+        return currentEdmType;
+      }
+    }
+    return edmType;
+  }
+
+  private boolean isAssignable(final EdmStructuredType edmStructuredType,
+      final EdmStructuredType edmStructuredTypeToAssign) {
+    if (edmStructuredTypeToAssign == null) {
+      return false;
+    } else if (edmStructuredType.getFullQualifiedName()
+        .equals(edmStructuredTypeToAssign.getFullQualifiedName())) {
+      return true;
+    } else {
+      return isAssignable(edmStructuredType,
+          edmStructuredTypeToAssign.getBaseType());
+    }
   }
 }

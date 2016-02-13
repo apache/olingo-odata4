@@ -52,10 +52,13 @@ import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.AbstractGeospatialType;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
@@ -75,7 +78,21 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private static final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG);
   private static final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
   private static final QName parametersQName = new QName(Constants.NS_METADATA, "parameters");
+  private static final QName typeQName = new QName(Constants.NS_METADATA, Constants.ATTR_TYPE);
+  
+  private ServiceMetadata serviceMetadata;
 
+  public ODataXmlDeserializer() {
+  }
+
+  public ODataXmlDeserializer(final ServiceMetadata serviceMetadata) {
+    this.serviceMetadata = serviceMetadata;
+  }
+  
+  public void setMetadata(ServiceMetadata metadata) {
+    this.serviceMetadata = metadata;
+  }
+  
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     return FACTORY.createXMLEventReader(input);
   }
@@ -178,7 +195,17 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     } else {
       property.setName(start.getName().getLocalPart());
     }
-    valuable(property, reader, start, edmType, isNullable, maxLength, precision, scale, isUnicode, isCollection);
+    
+    EdmType resolvedType = edmType;
+    final Attribute attrType = start.getAttributeByName(typeQName);
+    if (attrType != null && (edmType instanceof EdmComplexType)) {
+      String type = new EdmTypeInfo.Builder().setTypeExpression(attrType.getValue()).build().internal();
+      if (type.startsWith("Collection(") && type.endsWith(")")) {
+        type = type.substring(11, type.length()-1);
+      }
+      resolvedType = getDerivedType((EdmComplexType)edmType, type);
+    }
+    valuable(property, reader, start, resolvedType, isNullable, maxLength, precision, scale, isUnicode, isCollection);
     return property;
   }
 
@@ -431,6 +458,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Entity entity(final XMLEventReader reader, final StartElement start, final EdmEntityType edmEntityType)
       throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
     Entity entity = null;
+    EdmEntityType resolvedType = edmEntityType;
     if (entryRefQName.equals(start.getName())) {
       entity = entityRef(start);
     } else if (Constants.QNAME_ATOM_ELEM_ENTRY.equals(start.getName())) {
@@ -455,7 +483,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
           } else if (Constants.QNAME_ATOM_ELEM_CATEGORY.equals(event.asStartElement().getName())) {
             final Attribute term = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM));
             if (term != null) {
-              entity.setType(new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal());
+              String type = new EdmTypeInfo.Builder().setTypeExpression(term.getValue()).build().internal();
+              entity.setType(type);
+              resolvedType = (EdmEntityType)getDerivedType(edmEntityType, type);
             }
           } else if (Constants.QNAME_ATOM_ELEM_LINK.equals(event.asStartElement().getName())) {
             final Link link = new Link();
@@ -485,7 +515,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
                 entity.setMediaETag(mediaETag.getValue());
               }
             } else if (link.getRel().startsWith(Constants.NS_NAVIGATION_LINK_REL)) {
-              inline(reader, event.asStartElement(), link, edmEntityType);
+              inline(reader, event.asStartElement(), link, resolvedType);
               if (link.getInlineEntity() == null && link.getInlineEntitySet() == null) {
                 entity.getNavigationBindings().add(link);
               } else {
@@ -525,7 +555,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
                 .getAttributeByName(QName.valueOf(Constants.ATTR_TYPE));
             if (contenttype == null || ContentType.APPLICATION_XML.toContentTypeString()
                 .equals(contenttype.getValue())) {
-              properties(reader, skipBeforeFirstStartElement(reader), entity, edmEntityType);
+              properties(reader, skipBeforeFirstStartElement(reader), entity, resolvedType);
             } else {
               entity.setMediaContentType(contenttype.getValue());
               final Attribute src = event.asStartElement().getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_SRC));
@@ -534,7 +564,7 @@ public class ODataXmlDeserializer implements ODataDeserializer {
               }
             }
           } else if (propertiesQName.equals(event.asStartElement().getName())) {
-            properties(reader, event.asStartElement(), entity, edmEntityType);
+            properties(reader, event.asStartElement(), entity, resolvedType);
           }
         }
 
@@ -799,4 +829,48 @@ public class ODataXmlDeserializer implements ODataDeserializer {
     }
     return parameter;
   }
+  
+  private EdmType getDerivedType(final EdmStructuredType edmType, String odataType)
+      throws DeserializerException {
+    if (odataType != null && !odataType.isEmpty()) {
+      
+      if (odataType.equalsIgnoreCase(edmType.getFullQualifiedName().getFullQualifiedNameAsString())) {
+        return edmType;
+      } else if (this.serviceMetadata == null) {
+        throw new DeserializerException(
+            "Failed to resolve Odata type " + odataType + " due to metadata is not available",
+            DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+      }
+      
+      EdmStructuredType currentEdmType = null;
+      if(edmType instanceof EdmEntityType) {
+        currentEdmType = serviceMetadata.getEdm()
+            .getEntityType(new FullQualifiedName(odataType));          
+      } else {
+        currentEdmType = serviceMetadata.getEdm()
+            .getComplexType(new FullQualifiedName(odataType));          
+      }
+      if (!isAssignable(edmType, currentEdmType)) {
+        throw new DeserializerException(
+            "Odata type " + odataType + " not allowed here",
+            DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+      }
+
+      return currentEdmType;
+    }
+    return edmType;
+  }
+
+  private boolean isAssignable(final EdmStructuredType edmStructuredType,
+      final EdmStructuredType edmStructuredTypeToAssign) {
+    if (edmStructuredTypeToAssign == null) {
+      return false;
+    } else if (edmStructuredType.getFullQualifiedName()
+        .equals(edmStructuredTypeToAssign.getFullQualifiedName())) {
+      return true;
+    } else {
+      return isAssignable(edmStructuredType,
+          edmStructuredTypeToAssign.getBaseType());
+    }
+  }  
 }

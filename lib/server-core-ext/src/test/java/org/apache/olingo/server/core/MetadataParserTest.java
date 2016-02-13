@@ -54,7 +54,8 @@ public class MetadataParserTest {
   @Before
   public void setUp() throws Exception {
     MetadataParser parser = new MetadataParser();
-    provider = parser.buildEdmProvider(new FileReader("src/test/resources/trippin.xml"));
+    parser.parseAnnotations(true);
+    provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/trippin.xml"));
   }
 
   @Test

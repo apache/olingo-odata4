@@ -19,11 +19,13 @@
 package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
@@ -40,10 +42,10 @@ public class FilterParser {
   }
 
   public FilterOption parse(UriTokenizer tokenizer, final EdmType referencedType,
-      final Collection<String> crossjoinEntitySetNames)
+      final Collection<String> crossjoinEntitySetNames, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     final Expression filterExpression = new ExpressionParser(edm, odata)
-        .parse(tokenizer, referencedType, crossjoinEntitySetNames);
+        .parse(tokenizer, referencedType, crossjoinEntitySetNames, aliases);
     final EdmType type = ExpressionParser.getType(filterExpression);
     if (type == null || type.equals(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean))) {
       return new FilterOptionImpl().setExpression(filterExpression);

@@ -645,8 +645,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   private String derivedComplexType(final EdmComplexType baseType,
       final String definedType) throws SerializerException {
-    String derived = baseType.getFullQualifiedName().getFullQualifiedNameAsString();
-    if (derived.equals(definedType)) {
+    String base = baseType.getFullQualifiedName().getFullQualifiedNameAsString();
+    if (base.equals(definedType)) {
       return null;
     }
     return definedType;
@@ -681,7 +681,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         } else {
           writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
               "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), property.getType()));
-          writeComplexValue(metadata, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
+          writeComplexValue(metadata, property, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
               selectedPaths, writer);
         }
       } else {
@@ -727,7 +727,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       }
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(metadata, type, ((ComplexValue) value).getValue(), selectedPaths, writer);
+        writeComplexValue(metadata, property, type, ((ComplexValue) value).getValue(), selectedPaths, writer);
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
@@ -777,13 +777,17 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
   }
 
-  protected void writeComplexValue(final ServiceMetadata metadata, final EdmComplexType type,
+  protected void writeComplexValue(final ServiceMetadata metadata, Property complexProperty, final EdmComplexType type,
       final List<Property> properties, final Set<List<String>> selectedPaths, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
-    for (final String propertyName : type.getPropertyNames()) {
+
+    final EdmComplexType resolvedType = resolveComplexType(metadata,
+        type, complexProperty.getType());
+    
+    for (final String propertyName : resolvedType.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
-        writeProperty(metadata, (EdmProperty) type.getProperty(propertyName), property,
+        writeProperty(metadata, (EdmProperty) resolvedType.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
             writer);
       }

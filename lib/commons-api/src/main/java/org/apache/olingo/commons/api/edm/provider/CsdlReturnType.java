@@ -18,13 +18,16 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 
 /**
  * The type Csdl return type.
  */
-public class CsdlReturnType extends CsdlAbstractEdmItem {
+public class CsdlReturnType extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private String type;
 
@@ -40,6 +43,8 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
   private Integer scale;
 
   private SRID srid;
+  
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
   /**
    * Gets type.
@@ -198,6 +203,22 @@ public class CsdlReturnType extends CsdlAbstractEdmItem {
    */
   public CsdlReturnType setSrid(final SRID srid) {
     this.srid = srid;
+    return this;
+  }
+
+  @Override
+  public List<CsdlAnnotation> getAnnotations() {
+    return annotations;
+  }
+
+  /**
+   * Sets annotations.
+   *
+   * @param annotations the annotations
+   * @return the annotations
+   */
+  public CsdlReturnType setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
     return this;
   }
 }

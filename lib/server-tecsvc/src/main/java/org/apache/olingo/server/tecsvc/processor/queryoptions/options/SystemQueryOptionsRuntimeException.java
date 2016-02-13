@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions.options;
 
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 public class SystemQueryOptionsRuntimeException extends ODataRuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  public SystemQueryOptionsRuntimeException(final Exception cause) {
+  public SystemQueryOptionsRuntimeException(final ODataException cause) {
     super(cause);
   }
 }

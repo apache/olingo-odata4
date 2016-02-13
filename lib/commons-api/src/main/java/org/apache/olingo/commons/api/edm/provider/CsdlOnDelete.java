@@ -18,13 +18,17 @@
  */
 package org.apache.olingo.commons.api.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The type Csdl on delete.
  */
-public class CsdlOnDelete extends CsdlAbstractEdmItem {
+public class CsdlOnDelete extends CsdlAbstractEdmItem implements CsdlAnnotatable {
 
   private CsdlOnDeleteAction action = CsdlOnDeleteAction.None;
-
+  
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
   /**
    * Gets action.
    *
@@ -45,4 +49,19 @@ public class CsdlOnDelete extends CsdlAbstractEdmItem {
     return this;
   }
 
+  @Override
+  public List<CsdlAnnotation> getAnnotations() {
+    return annotations;
+  }
+
+  /**
+   * Sets annotations.
+   *
+   * @param annotations the annotations
+   * @return the annotations
+   */
+  public CsdlOnDelete setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }
 }

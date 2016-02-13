@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
 import java.util.concurrent.Future;
-// CHECKSTYLE:ON (Maven checkstyle)
 
 import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
@@ -31,9 +29,7 @@ import org.apache.olingo.ext.proxy.api.annotations.Key;
     hasStream = false,
     isAbstract = false,
     baseType = "Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument")
-public interface CreditCardPI
-    extends org.apache.olingo.ext.proxy.api.Annotatable,
-        PaymentInstrument {
+public interface CreditCardPI extends PaymentInstrument {
 
   @Override
   CreditCardPI load();

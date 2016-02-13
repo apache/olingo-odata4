@@ -21,11 +21,10 @@ package org.apache.olingo.client.core.domain;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.client.api.domain.AbstractClientValue;
 import org.apache.olingo.client.api.domain.ClientEnumValue;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
-import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -33,7 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-public class ClientPrimitiveValueImpl extends AbstractClientValue implements ClientValue, ClientPrimitiveValue {
+public class ClientPrimitiveValueImpl extends AbstractClientValue implements ClientPrimitiveValue {
 
   public static class BuilderImpl implements Builder {
 

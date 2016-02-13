@@ -29,16 +29,15 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.core.ContentNegotiatorException;
-import org.apache.olingo.server.core.ErrorHandler;
 import org.apache.olingo.server.core.ServiceDispatcher;
 import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.ServiceRequest;
@@ -154,13 +153,7 @@ public class BatchRequest extends ServiceRequest {
     ServiceDispatcher dispatcher = new ServiceDispatcher(this.odata, this.serviceMetadata, handler,
         this.customContentType);
     ODataResponse res = new ODataResponse();
-    try {
-      dispatcher.execute(singleRequest, res);
-    } catch (Exception e) {
-      ErrorHandler ehandler = new ErrorHandler(this.odata, this.serviceMetadata,
-          getCustomContentTypeSupport());
-      ehandler.handleException(e, singleRequest, res);
-    }
+    dispatcher.execute(singleRequest, res);
     return res;
   }
 

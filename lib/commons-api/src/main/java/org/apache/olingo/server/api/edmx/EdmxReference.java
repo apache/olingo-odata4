@@ -23,15 +23,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
+
 /**
  * POJO for Edmx Reference.
  */
-public class EdmxReference {
+public class EdmxReference implements CsdlAnnotatable{
 
   private final URI uri;
   private final List<EdmxReferenceInclude> edmxIncludes;
   private final List<EdmxReferenceIncludeAnnotation> edmxIncludeAnnotations;
-
+  private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
   /**
    * Create reference with given uri
    *
@@ -90,4 +94,20 @@ public class EdmxReference {
     edmxIncludeAnnotations.add(includeAnnotation);
     return this;
   }
+  
+  @Override
+  public List<CsdlAnnotation> getAnnotations() {
+    return annotations;
+  }
+
+  /**
+   * Sets annotations.
+   *
+   * @param annotations the annotations
+   * @return the annotations
+   */
+  public EdmxReference setAnnotations(final List<CsdlAnnotation> annotations) {
+    this.annotations = annotations;
+    return this;
+  }  
 }

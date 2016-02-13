@@ -133,7 +133,7 @@ final class OperationInvocationHandler extends AbstractInvocationHandler {
   @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
+    if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else {
       final Operation operation = method.getAnnotation(Operation.class);

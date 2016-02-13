@@ -32,6 +32,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.processor.ComplexCollectionProcessor;
 import org.apache.olingo.server.api.processor.ComplexProcessor;
@@ -59,6 +60,7 @@ import org.apache.olingo.server.core.requests.ServiceDocumentRequest;
 import org.apache.olingo.server.core.responses.CountResponse;
 import org.apache.olingo.server.core.responses.EntityResponse;
 import org.apache.olingo.server.core.responses.EntitySetResponse;
+import org.apache.olingo.server.core.responses.ErrorResponse;
 import org.apache.olingo.server.core.responses.MetadataResponse;
 import org.apache.olingo.server.core.responses.NoContentResponse;
 import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
@@ -436,5 +438,15 @@ public class ProcessorServiceHandler implements ServiceHandler {
       EntityResponse response) throws ODataLibraryException, ODataApplicationException {
     throw new ODataHandlerException("not implemented",
         ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED);
+  }
+
+  @Override
+  public boolean supportsDataIsolation() {
+    return false;
+  }
+
+  @Override
+  public void processError(ODataServerError error, ErrorResponse response) {
+    response.writeError(error);
   }
 }

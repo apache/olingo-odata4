@@ -121,6 +121,19 @@ public class ODataImpl extends OData {
       throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
           DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
     }
+  }  
+  @Override
+  public ODataDeserializer createDeserializer(final ContentType contentType,
+      ServiceMetadata metadata) throws DeserializerException {
+    if (contentType.isCompatible(ContentType.JSON)) {
+      return new ODataJsonDeserializer(contentType, metadata);
+    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+      return new ODataXmlDeserializer(metadata);
+    } else {
+      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+    }
   }
 
   @Override

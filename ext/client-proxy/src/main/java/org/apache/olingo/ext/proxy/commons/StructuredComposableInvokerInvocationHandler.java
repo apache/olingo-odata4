@@ -75,7 +75,7 @@ public class StructuredComposableInvokerInvocationHandler<T, O extends Operation
       return super.invoke(proxy, method, args);
     } else if ("operations".equals(method.getName()) && ArrayUtils.isEmpty(args)) {
       return super.invoke(proxy, method, args);
-    } else if (isSelfMethod(method, args)) {
+    } else if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else {
       throw new NoSuchMethodException(method.getName());

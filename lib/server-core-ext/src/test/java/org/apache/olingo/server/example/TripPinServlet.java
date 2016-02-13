@@ -20,7 +20,6 @@ package org.apache.olingo.server.example;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,11 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.core.MetadataParser;
 import org.apache.olingo.server.core.OData4Impl;
 
@@ -50,15 +47,15 @@ public class TripPinServlet extends HttpServlet {
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
     OData odata = OData4Impl.newInstance();
     MetadataParser parser = new MetadataParser();
-    CsdlEdmProvider edmProvider = null;
+    ServiceMetadata metadata = null;
 
     try {
-      edmProvider = parser.buildEdmProvider(new FileReader("src/test/resources/trippin.xml"));
+      parser.parseAnnotations(true);
+      parser.loadCoreVocabularies(true);
+      metadata = parser.buildServiceMetadata(new FileReader("src/test/resources/trippin.xml"));
     } catch (XMLStreamException e) {
       throw new IOException(e);
     }
-
-    ServiceMetadata metadata = odata.createServiceMetadata(edmProvider, Collections.<EdmxReference>emptyList());
 
     ODataHttpHandler handler = odata.createHandler(metadata);
 

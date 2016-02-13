@@ -64,11 +64,12 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
   private static final String ET_TWO_KEY_NAV_NAME = "ETTwoKeyNav";
   private static final FullQualifiedName ET_KEY_NAV = new FullQualifiedName(SERVICE_NAMESPACE, ET_KEY_NAV_NAME);
   private static final FullQualifiedName ET_TWO_KEY_NAV = new FullQualifiedName(SERVICE_NAMESPACE, ET_TWO_KEY_NAV_NAME);
-  private static final String CT_PRIM_COMP = "CTPrimComp";
-  private static final String CT_TWO_PRIM = "CTTwoPrim";
-  private static final String CT_ALL_PRIM = "CTAllPrim";
-  private static final String CT_NAV_FIVE_PROP = "CTNavFiveProp";
-  private static final String CT_BASE_PRIM_COMP_NAV = "CTBasePrimCompNav";
+  private static final String CT_PRIM_COMP = SERVICE_NAMESPACE+"."+"CTPrimComp";
+  private static final String CT_COMP_NAV = SERVICE_NAMESPACE+"."+"CTCompNav";
+  private static final String CT_TWO_PRIM = SERVICE_NAMESPACE+"."+"CTTwoPrim";
+  private static final String CT_ALL_PRIM = SERVICE_NAMESPACE+"."+"CTAllPrim";
+  private static final String CT_NAV_FIVE_PROP = SERVICE_NAMESPACE+"."+"CTNavFiveProp";
+  private static final String CT_BASE_PRIM_COMP_NAV = SERVICE_NAMESPACE+"."+"CTBasePrimCompNav";
   private static final String PROPERTY_INT16 = "PropertyInt16";
   private static final String PROPERTY_STRING = "PropertyString";
   private static final String PROPERTY_COMP = "PropertyComp";
@@ -308,7 +309,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                     factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_STRING,
                     factory.newPrimitiveValueBuilder().buildString("42")))
                 .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
@@ -330,7 +331,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                     factory.newPrimitiveValueBuilder().buildInt16((short) 430)))));
     inlineEntitySingle.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
@@ -351,7 +352,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
         .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties()
@@ -374,7 +375,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
         .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties()
@@ -538,7 +539,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                     factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_STRING,
                     factory.newPrimitiveValueBuilder().buildString("42")))
                 .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
@@ -580,7 +581,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                     factory.newPrimitiveValueBuilder().buildString("431")))));
     innerEntity.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_STRING,
                     factory.newPrimitiveValueBuilder().buildString("431")))
                 .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
@@ -804,7 +805,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                     factory.newPrimitiveValueBuilder().buildString("42")))));
     entity.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_STRING,
                     factory.newPrimitiveValueBuilder().buildString("42")))
                 .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
@@ -825,7 +826,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
                 factory.newPrimitiveValueBuilder().buildInt16((short) 43)))));
     inlineEntitySingle.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 431)))));
     inlineEntitySingle.getProperties()
@@ -846,7 +847,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
         .add(factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("44")));
     inlineEntityCol1.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 441)))));
     inlineEntityCol1.getProperties()
@@ -871,7 +872,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
             factory.newPrimitiveValueBuilder().buildString("45")));
     inlineEntityCol2.getProperties()
         .add(factory.newComplexProperty(PROPERTY_COMP_NAV,
-            factory.newComplexValue(CT_PRIM_COMP)
+            factory.newComplexValue(CT_BASE_PRIM_COMP_NAV)
                 .add(factory.newPrimitiveProperty(PROPERTY_INT16,
                     factory.newPrimitiveValueBuilder().buildInt16((short) 451)))));
     inlineEntityCol2.getProperties()

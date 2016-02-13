@@ -56,7 +56,9 @@ public class UriValidationException extends ODataLibraryException {
     /** parameter: unallowed resource path */
     UNALLOWED_RESOURCE_PATH,
     /** parameter: missing parameter name */
-    MISSING_PARAMETER;
+    MISSING_PARAMETER,
+    /** parameter: missing alias name */
+    MISSING_ALIAS;
 
     @Override
     public String getKey() {

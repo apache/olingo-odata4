@@ -165,14 +165,14 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
 
   private EntityCollection deserialize(final InputStream stream, final String entityTypeName)
       throws DeserializerException {
-    return OData.newInstance().createDeserializer(ContentType.JSON)
+    return OData.newInstance().createDeserializer(ContentType.JSON, metadata)
         .entityCollection(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)))
         .getEntityCollection();
   }
 
   private EntityCollection deserialize(final String input, final String entityTypeName)
       throws DeserializerException {
-    return OData.newInstance().createDeserializer(ContentType.JSON)
+    return OData.newInstance().createDeserializer(ContentType.JSON, metadata)
         .entityCollection(new ByteArrayInputStream(input.getBytes()),
             edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)))
         .getEntityCollection();

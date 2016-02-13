@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +51,10 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void filter() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.FILTER, "PropertyString eq '2'");
-
     final ODataRetrieveResponse<ClientEntitySet> response =
-        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
+        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+            Collections.singletonMap(QueryOption.FILTER, (Object) "PropertyString eq '2'"));
+
     final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
@@ -87,11 +88,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void orderBy() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.ORDERBY, "PropertyString desc");
-
     final ODataRetrieveResponse<ClientEntitySet> response =
-        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
+        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+            Collections.<QueryOption, Object> singletonMap(QueryOption.ORDERBY, "PropertyString desc"));
     final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(4, entities.size());
 
@@ -117,11 +116,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void skip() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.SKIP, "1");
-
     final ODataRetrieveResponse<ClientEntitySet> response =
-        buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY, options);
+        buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY,
+            Collections.singletonMap(QueryOption.SKIP, (Object) "1"));
     final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(3, entities.size());
 
@@ -148,11 +145,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void top() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.TOP, "1");
-
     final ODataRetrieveResponse<ClientEntitySet> response =
-        buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY, options);
+        buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY,
+            Collections.<QueryOption, Object> singletonMap(QueryOption.TOP, "1"));
     final List<ClientEntity> entities = response.getBody().getEntities();
     assertEquals(3, entities.size());
 
@@ -179,7 +174,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void combinedSystemQueryOptions() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.SELECT, "PropertyInt16,PropertyString");
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1");
     options.put(QueryOption.SKIP, "1");
@@ -217,7 +212,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Ignore("Server do not support navigation property count annotations")
   public void count() {
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.SELECT, "PropertyInt16");
     options.put(QueryOption.COUNT, true);
 
@@ -255,14 +250,14 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   public void singleEntityWithExpand() {
     /* A single entity request will be dispatched to a different processor method than entity set request */
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.FILTER, "PropertyInt16 lt 2");
     Map<String, Object> keys = new HashMap<String, Object>();
     keys.put("PropertyInt16", 1);
     keys.put("PropertyString", "1");
 
     final URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).appendKeySegment(keys)
-        .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY, options).build();
+        .expandWithOptions(NAV_PROPERTY_ET_KEY_NAV_MANY,
+            Collections.singletonMap(QueryOption.FILTER, (Object) "PropertyInt16 lt 2"))
+        .build();
     final ODataRetrieveResponse<ClientEntity> response =
             client.getRetrieveRequestFactory().getEntityRequest(uri).execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -275,11 +270,12 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
 
   @Test
   public void URIEscaping() {
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
-    options.put(QueryOption.FILTER, "PropertyInt16 eq 1"
-        + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S' and length(PropertyString) gt 4");
     final ODataRetrieveResponse<ClientEntitySet> response =
-        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options);
+        buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+            Collections.<QueryOption, Object> singletonMap(QueryOption.FILTER,
+                "PropertyInt16 eq 1"
+                + " and PropertyComp/PropertyComp/PropertyDuration eq duration'PT1S'"
+                + " and length(PropertyString) gt 4"));
     final List<ClientEntity> entities = response.getBody().getEntities();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
@@ -296,7 +292,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     // Define filters to select explicit the entities at any level => Circle
 
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "))");
@@ -371,7 +367,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Test
   public void systemQueryOptionOnThirdLevel() {
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> options = new HashMap<QueryOption, Object>();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
         + "($expand=" + NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
@@ -444,7 +440,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Test
   public void expandWithSearchQuery() {
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
+    Map<QueryOption, Object> expandOptions = new EnumMap<QueryOption, Object>(QueryOption.class);
     expandOptions.put(QueryOption.SEARCH, "abc");
     expandOptions.put(QueryOption.FILTER, "PropertyInt16 eq 1");
     
@@ -464,12 +460,10 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   @Test
   public void expandWithLevels() {
     final ODataClient client = getEdmEnabledClient();
-    Map<QueryOption, Object> expandOptions = new HashMap<QueryOption, Object>();
-    expandOptions.put(QueryOption.LEVELS, 2);
 
     // expand=*($levels=2)
     URI uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
-            .expandWithOptions("*", expandOptions)
+            .expandWithOptions("*", Collections.<QueryOption, Object> singletonMap(QueryOption.LEVELS, 2))
             .build();
 
     try {
@@ -479,10 +473,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     }
 
     // expand=NavPropertyETTwoKeyNavMany($levels=2)
-    expandOptions.clear();
-    expandOptions.put(QueryOption.LEVELS, 2);
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
-            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+                Collections.<QueryOption, Object> singletonMap(QueryOption.LEVELS, 2))
             .build();
 
     try {
@@ -492,10 +485,10 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     }
 
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
-    expandOptions.clear();
-    expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
-            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+                Collections.<QueryOption, Object> singletonMap(QueryOption.EXPAND,
+                    NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)"))
             .build();
 
     try {
@@ -505,10 +498,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     }
 
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2);$levels=3)
-    expandOptions.clear();
-    expandOptions.put(QueryOption.LEVELS, 2);
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
-            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, expandOptions)
+            .expandWithOptions(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
+                Collections.<QueryOption, Object> singletonMap(QueryOption.LEVELS, 2))
             .build();
 
     try {
@@ -518,7 +510,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     }
 
     // expand=NavPropertyETTwoKeyNavMany($expand=NavPropertyETTwoKeyNavMany($levels=2))
-    expandOptions.clear();
+    Map<QueryOption, Object> expandOptions = new EnumMap<QueryOption, Object>(QueryOption.class);
     expandOptions.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY + "($levels=2)");
     expandOptions.put(QueryOption.LEVELS, 3);
     uri = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)

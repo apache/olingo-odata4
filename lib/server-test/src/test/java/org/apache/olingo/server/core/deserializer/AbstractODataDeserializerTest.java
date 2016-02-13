@@ -24,6 +24,7 @@ import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
@@ -33,7 +34,9 @@ public class AbstractODataDeserializerTest {
   protected static final Edm edm = OData.newInstance()
       .createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList())
       .getEdm();
-
+  protected static final ServiceMetadata metadata = OData.newInstance()
+      .createServiceMetadata(new EdmTechProvider(), Collections.<EdmxReference> emptyList());
+  
   protected InputStream getFileAsStream(final String filename) throws IOException {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
     if (in == null) {

@@ -55,7 +55,7 @@ public class AnnotatationsInvocationHandler extends AbstractInvocationHandler {
 
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-    if (isSelfMethod(method, args)) {
+    if (isSelfMethod(method)) {
       return invokeSelfMethod(method, args);
     } else if (method.getName().startsWith("get") && method.getName().endsWith("Annotations")) {
       final Method getter = proxy.getClass().getInterfaces()[0].getMethod(method.getName());

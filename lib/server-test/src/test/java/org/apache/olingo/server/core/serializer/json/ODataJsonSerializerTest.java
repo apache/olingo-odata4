@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.data.ComplexValue;
@@ -62,7 +63,9 @@ import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -78,6 +81,16 @@ public class ODataJsonSerializerTest {
       new ODataJsonSerializer(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"));
   private final UriHelper helper = odata.createUriHelper();
 
+  @Before
+  public void setup() {
+    TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+  }
+  
+  @After
+  public void teardown() {
+    TimeZone.setDefault(TimeZone.getDefault());
+  }
+  
   @Test
   public void entitySimple() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -560,9 +573,38 @@ public class ODataJsonSerializerTest {
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
         + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
+        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
+  
+  @Test
+  public void selectExtendedComplexType() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    InputStream result = serializer
+        .entityCollection(metadata, entityType, entitySet,
+            EntityCollectionSerializerOptions.with()
+                .contextURL(ContextURL.with().entitySet(edmEntitySet)
+                    .selectList(helper.buildContextURLSelectList(entityType, null, null))
+                    .build())
+                .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    
+    String expected = "{" + 
+        "\"@odata.context\":\"$metadata#ESCompComp\"," + 
+        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+        "\"value\":[" + 
+        "{\"PropertyInt16\":1," +
+        "\"PropertyComp\":{\"PropertyComp\":{" + 
+        "\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}}," + 
+        "{\"PropertyInt16\":2," + 
+        "\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\"," + 
+        "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"},\"PropertyDate\":\"2012-12-03\"}}]}";
+    Assert.assertEquals(expected, resultString);
+
+  }  
 
   @Test
   public void selectComplexTwice() throws Exception {
@@ -585,7 +627,8 @@ public class ODataJsonSerializerTest {
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
         + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
+        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
 

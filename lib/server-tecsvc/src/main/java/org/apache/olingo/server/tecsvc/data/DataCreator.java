@@ -28,7 +28,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.Constants;
@@ -44,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 
 public class DataCreator {
@@ -1003,10 +1003,12 @@ public class DataCreator {
 
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", (short) 2));
-    entity.addProperty(createComplex("PropertyComp",
-        createComplex("PropertyComp",
+    entity.addProperty(createComplex("PropertyComp", 
+        ComplexTypeProvider.nameCTCompCompExtended.getFullQualifiedNameAsString(), 
+        createComplex("PropertyComp",  
             createPrimitive("PropertyInt16", (short) 987),
-            createPrimitive("PropertyString", "String 2"))));
+            createPrimitive("PropertyString", "String 2")),
+        createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0))));
     entityCollection.getEntities().add(entity);
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompComp));
@@ -1174,6 +1176,14 @@ public class DataCreator {
     }
     return new Property(null, name, ValueType.COMPLEX, complexValue);
   }
+  
+  protected static Property createComplex(final String name, final String type, final Property... properties) {
+    ComplexValue complexValue = new ComplexValue();
+    for (final Property property : properties) {
+      complexValue.getValue().add(property);
+    }
+    return new Property(type, name, ValueType.COMPLEX, complexValue);
+  }  
 
   protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
     List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
@@ -1187,9 +1197,10 @@ public class DataCreator {
 
   protected static Calendar getDateTime(final int year, final int month, final int day,
       final int hour, final int minute, final int second) {
-    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
     dateTime.set(year, month - 1, day, hour, minute, second);
+    dateTime.set(Calendar.MILLISECOND, 0);
     return dateTime;
   }
 
@@ -1201,8 +1212,12 @@ public class DataCreator {
   }
 
   protected static Calendar getTime(final int hour, final int minute, final int second) {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar time = Calendar.getInstance();
     time.clear();
+    time.set(Calendar.YEAR, 1970);
+    time.set(Calendar.MONTH, Calendar.JANUARY);
+    time.set(Calendar.DAY_OF_MONTH, 1);
+    time.set(Calendar.MILLISECOND, 0);    
     time.set(Calendar.HOUR_OF_DAY, hour);
     time.set(Calendar.MINUTE, minute);
     time.set(Calendar.SECOND, second);

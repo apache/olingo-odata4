@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.EnumMap;
-import java.util.Map;
 
 import javax.ws.rs.NotFoundException;
 
@@ -61,37 +59,34 @@ public class FSManager {
 
   private final FileSystemManager fsManager;
 
-  private static Map<ODataServiceVersion, FSManager> instance =
-      new EnumMap<ODataServiceVersion, FSManager>(ODataServiceVersion.class);
+  private static FSManager instance = null;
 
-  private final ODataServiceVersion version;
-
-  public static FSManager instance(final ODataServiceVersion version) throws IOException {
-    if (!instance.containsKey(version)) {
-      instance.put(version, new FSManager(version));
+  public static FSManager instance() throws IOException {
+    if (instance == null) {
+      instance = new FSManager();
     }
-    return instance.get(version);
+    return instance;
   }
 
-  private FSManager(final ODataServiceVersion version) throws IOException {
-    this.version = version;
+  private FSManager() throws IOException {
     fsManager = VFS.getManager();
 
-    final FileObject basePath = fsManager.resolveFile(RES_PREFIX + File.separatorChar + version.name());
+    final FileObject basePath =
+        fsManager.resolveFile(RES_PREFIX + File.separatorChar + ODataServiceVersion.V40.name());
     final String absoluteBaseFolder = basePath.getURL().getPath();
 
     for (FileObject fo : find(basePath, null)) {
       if (fo.getType() == FileType.FILE
           && !fo.getName().getBaseName().contains("Metadata")
           && !fo.getName().getBaseName().contains("metadata")) {
-        final String path = fo.getURL().getPath().replace(absoluteBaseFolder, "//" + version.name());
+        final String path = fo.getURL().getPath().replace(absoluteBaseFolder, "//" + ODataServiceVersion.V40.name());
         putInMemory(fo.getContent().getInputStream(), path);
       }
     }
   }
 
   public String getAbsolutePath(final String relativePath, final Accept accept) {
-    return File.separatorChar + version.name() + File.separatorChar + relativePath
+    return File.separatorChar + ODataServiceVersion.V40.name() + File.separatorChar + relativePath
         + (accept == null ? "" : accept.getExtension());
   }
 

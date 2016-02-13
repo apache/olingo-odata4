@@ -160,6 +160,7 @@ public class ODataHandler {
 
   public void handleException(final ODataRequest request, final ODataResponse response,
       final ODataServerError serverError, final Exception exception) {
+    final int measurementHandle = debugger.startRuntimeMeasurement("ODataHandler", "handleException");
     lastThrownException = exception;
     ErrorProcessor exceptionProcessor;
     try {
@@ -176,8 +177,9 @@ public class ODataHandler {
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
-    final int measurementHandle = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
+    final int measurementError = debugger.startRuntimeMeasurement("ErrorProcessor", "processError");
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
+    debugger.stopRuntimeMeasurement(measurementError);
     debugger.stopRuntimeMeasurement(measurementHandle);
   }
 

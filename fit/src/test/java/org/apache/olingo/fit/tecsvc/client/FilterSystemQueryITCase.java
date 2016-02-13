@@ -911,14 +911,14 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
         getFactory().newPrimitiveValueBuilder().buildString("Test")));
     newEntity.getProperties().add(
         getFactory().newComplexProperty("PropertyCompAllPrim",
-            getFactory().newComplexValue("CTAllPrim")
+            getFactory().newComplexValue(SERVICE_NAMESPACE+"."+"CTAllPrim")
             .add(getFactory().newPrimitiveProperty(
                 "PropertyString",
                 getFactory().newPrimitiveValueBuilder().buildString("Test 3")))));
 
     newEntity.getProperties().add(
         getFactory().newComplexProperty("PropertyCompTwoPrim",
-            getFactory().newComplexValue("CTTwoPrim")
+            getFactory().newComplexValue(SERVICE_NAMESPACE+"."+"CTTwoPrim")
             .add(getFactory().newPrimitiveProperty(
                 "PropertyInt16",
                 getFactory().newPrimitiveValueBuilder().buildInt16((short) 1)))

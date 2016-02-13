@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -35,11 +37,10 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
-import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
 import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceCountImpl;
@@ -59,10 +60,12 @@ public class ResourcePathParser {
 
   private final Edm edm;
   private final EdmEntityContainer edmEntityContainer;
+  private final Map<String, AliasQueryOption> aliases;
   private UriTokenizer tokenizer;
 
-  public ResourcePathParser(final Edm edm) {
+  public ResourcePathParser(final Edm edm, final Map<String, AliasQueryOption> aliases) {
     this.edm = edm;
+    this.aliases = aliases;
     edmEntityContainer = edm.getEntityContainer();
   }
 
@@ -100,8 +103,7 @@ public class ResourcePathParser {
         UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
-  public UriInfoImpl parseDollarEntityTypeCast(final String pathSegment) throws UriParserException {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.entityId);
+  public EdmEntityType parseDollarEntityTypeCast(final String pathSegment) throws UriParserException {
     tokenizer = new UriTokenizer(pathSegment);
     ParserHelper.requireNext(tokenizer, TokenKind.QualifiedName);
     final String name = tokenizer.getText();
@@ -110,18 +112,16 @@ public class ResourcePathParser {
     if (type == null) {
       throw new UriParserSemanticException("Type '" + name + "' not found.",
           UriParserSemanticException.MessageKeys.UNKNOWN_TYPE, name);
-    } else {
-      uriInfo.setEntityTypeCast(type);
     }
-    return uriInfo;
+    return type;
   }
 
-  public UriInfoImpl parseCrossjoinSegment(final String pathSegment) throws UriParserException {
-    UriInfoImpl uriInfo = new UriInfoImpl().setKind(UriInfoKind.crossjoin);
+  public List<String> parseCrossjoinSegment(final String pathSegment) throws UriParserException {
     tokenizer = new UriTokenizer(pathSegment);
     ParserHelper.requireNext(tokenizer, TokenKind.CROSSJOIN);
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     // At least one entity-set name is mandatory.  Try to fetch all.
+    List<String> entitySetNames = new ArrayList<String>();
     do {
       ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       final String name = tokenizer.getText();
@@ -130,12 +130,12 @@ public class ResourcePathParser {
         throw new UriParserSemanticException("Expected Entity Set Name.",
             UriParserSemanticException.MessageKeys.UNKNOWN_PART, name);
       } else {
-        uriInfo.addEntitySetName(name);
+        entitySetNames.add(name);
       }
     } while (tokenizer.next(TokenKind.COMMA));
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     ParserHelper.requireTokenEnd(tokenizer);
-    return uriInfo;
+    return entitySetNames;
   }
 
   private UriResource ref(final UriResource previous) throws UriParserException {
@@ -180,7 +180,7 @@ public class ResourcePathParser {
 
       if (tokenizer.next(TokenKind.OPEN)) {
         final List<UriParameter> keyPredicates =
-            ParserHelper.parseKeyPredicate(tokenizer, entitySetResource.getEntityType(), null);
+            ParserHelper.parseKeyPredicate(tokenizer, entitySetResource.getEntityType(), null, edm, null, aliases);
         entitySetResource.setKeyPredicates(keyPredicates);
       }
 
@@ -251,7 +251,8 @@ public class ResourcePathParser {
           UriParserSemanticException.MessageKeys.PROPERTY_NOT_IN_TYPE,
           structType.getFullQualifiedName().getFullQualifiedNameAsString(), name);
     }
-    List<UriParameter> keyPredicate = ParserHelper.parseNavigationKeyPredicate(tokenizer, navigationProperty);
+    List<UriParameter> keyPredicate =
+        ParserHelper.parseNavigationKeyPredicate(tokenizer, navigationProperty, edm, null, aliases);
     ParserHelper.requireTokenEnd(tokenizer);
     return new UriResourceNavigationPropertyImpl(navigationProperty)
         .setKeyPredicates(keyPredicate);
@@ -320,7 +321,8 @@ public class ResourcePathParser {
           ((UriResourceWithKeysImpl) previousTyped).setEntryTypeFilter(type);
         }
         if (tokenizer.next(TokenKind.OPEN)) {
-          final List<UriParameter> keys = ParserHelper.parseKeyPredicate(tokenizer, (EdmEntityType) type, null);
+          final List<UriParameter> keys =
+              ParserHelper.parseKeyPredicate(tokenizer, (EdmEntityType) type, null, edm, null, aliases);
           if (previousTyped.isCollection()) {
             ((UriResourceWithKeysImpl) previousTyped).setKeyPredicates(keys);
           } else {
@@ -359,7 +361,7 @@ public class ResourcePathParser {
   private UriResource functionCall(final EdmFunctionImport edmFunctionImport,
       final FullQualifiedName boundFunctionName, final FullQualifiedName bindingParameterTypeName,
       final boolean isBindingParameterCollection) throws UriParserException, UriValidationException {
-    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, edm, null, false);
+    final List<UriParameter> parameters = ParserHelper.parseFunctionParameters(tokenizer, edm, null, false, aliases);
     final List<String> names = ParserHelper.getParameterNames(parameters);
     EdmFunction function = null;
     if (edmFunctionImport != null) {
@@ -379,13 +381,15 @@ public class ResourcePathParser {
             UriParserSemanticException.MessageKeys.UNKNOWN_PART, boundFunctionName.getFullQualifiedNameAsString());
       }
     }
+    ParserHelper.validateFunctionParameters(function, parameters, edm, null, aliases);
     UriResourceFunctionImpl resource = new UriResourceFunctionImpl(edmFunctionImport, function, parameters);
     if (tokenizer.next(TokenKind.OPEN)) {
       if (function.getReturnType() != null
           && function.getReturnType().getType().getKind() == EdmTypeKind.ENTITY
           && function.getReturnType().isCollection()) {
         resource.setKeyPredicates(
-            ParserHelper.parseKeyPredicate(tokenizer, (EdmEntityType) function.getReturnType().getType(), null));
+            ParserHelper.parseKeyPredicate(tokenizer,
+                (EdmEntityType) function.getReturnType().getType(), null, edm, null, aliases));
       } else {
         throw new UriParserSemanticException("A key is not allowed.",
             UriParserSemanticException.MessageKeys.KEY_NOT_ALLOWED);

@@ -1311,8 +1311,18 @@ public class UriTokenizer {
         || nextJsonArrayOrObject();
   }
 
+  /**
+   * Moves past a JSON object member if found; otherwise leaves the index unchanged.
+   * @return whether a JSON object member has been found at the current index
+   */
   private boolean nextJsonMember() {
-    return nextJsonString() && nextCharacter(':') && nextJsonValue();
+    final int lastGoodIndex = index;
+    if (nextJsonString() && nextCharacter(':') && nextJsonValue()) {
+      return true;
+    } else {
+      index = lastGoodIndex;
+      return false;
+    }
   }
 
   /**

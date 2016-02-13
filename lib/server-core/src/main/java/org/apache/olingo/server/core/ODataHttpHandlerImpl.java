@@ -25,7 +25,7 @@ import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -206,8 +206,12 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       odRequest.setBody(httpRequest.getInputStream());
       odRequest.setProtocol(httpRequest.getProtocol());
       odRequest.setMethod(extractMethod(httpRequest));
+      int innerHandle = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "copyHeaders");
       copyHeaders(odRequest, httpRequest);
+      debugger.stopRuntimeMeasurement(innerHandle);
+      innerHandle = debugger.startRuntimeMeasurement("ODataHttpHandlerImpl", "fillUriInformation");
       fillUriInformation(odRequest, httpRequest, split);
+      debugger.stopRuntimeMeasurement(innerHandle);
 
       return odRequest;
     } catch (final IOException e) {
@@ -288,14 +292,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     odRequest.setRawServiceResolutionUri(rawServiceResolutionUri);
   }
 
-  static void copyHeaders(final ODataRequest odRequest, final HttpServletRequest req) {
-    for (Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
-      String headerName = (String) headerNames.nextElement();
-      List<String> headerValues = new ArrayList<String>();
-      for (Enumeration<?> headers = req.getHeaders(headerName); headers.hasMoreElements();) {
-        String value = (String) headers.nextElement();
-        headerValues.add(value);
-      }
+  static void copyHeaders(ODataRequest odRequest, final HttpServletRequest req) {
+    for (final Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
+      final String headerName = (String) headerNames.nextElement();
+      @SuppressWarnings("unchecked") // getHeaders() says it returns an Enumeration of String.
+      final List<String> headerValues = Collections.list(req.getHeaders(headerName));
       odRequest.addHeader(headerName, headerValues);
     }
   }
