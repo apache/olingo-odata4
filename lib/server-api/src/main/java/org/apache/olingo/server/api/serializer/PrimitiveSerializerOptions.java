@@ -30,6 +30,7 @@ public final class PrimitiveSerializerOptions {
   private Integer precision;
   private Integer scale;
   private Boolean isUnicode;
+  private String xml10InvalidCharReplacement;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -60,6 +61,12 @@ public final class PrimitiveSerializerOptions {
   public Boolean isUnicode() {
     return isUnicode;
   }
+  
+  /** Gets the replacement string for unicode characters, that is not allowed in XML 1.0 */
+  public String xml10InvalidCharReplacement() {
+    return xml10InvalidCharReplacement;
+  }  
+  
 
   private PrimitiveSerializerOptions() {}
 
@@ -123,6 +130,12 @@ public final class PrimitiveSerializerOptions {
       return this;
     }
 
+    /** set the replacement string for xml 1.0 unicode controlled characters that are not allowed */
+    public Builder xml10InvalidCharReplacement(final String replacement) {
+      options.xml10InvalidCharReplacement = replacement;
+      return this;
+    } 
+    
     /** Builds the OData serializer options. */
     public PrimitiveSerializerOptions build() {
       return options;

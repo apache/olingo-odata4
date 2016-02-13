@@ -91,6 +91,9 @@ public class ServiceDispatcherTest {
   
   public void beforeTest(ServiceHandler serviceHandler) throws Exception {
     MetadataParser parser = new MetadataParser();
+    parser.parseAnnotations(true);
+    parser.useLocalCoreVocabularies(true);
+    parser.implicitlyLoadCoreVocabularies(true);
     ServiceMetadata metadata = parser.buildServiceMetadata(new FileReader("src/test/resources/trippin.xml"));
 
     File baseDir = new File(System.getProperty("java.io.tmpdir"));

@@ -10,7 +10,7 @@
       },
       {
          "AirlineCode":"FM",
-         "Name":"Shanghai Airline"
+         "Name":"Shanghai \u0000Airline\u0001"
       },
       {
          "AirlineCode":"MU",

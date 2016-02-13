@@ -27,6 +27,7 @@ import java.util.Arrays;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
@@ -60,7 +61,7 @@ public class MetadataParserAnnotationsTest {
   public void setUp() throws Exception {
     MetadataParser parser = new MetadataParser();
     parser.parseAnnotations(true);
-    parser.loadCoreVocabularies(true);
+    parser.useLocalCoreVocabularies(true);
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/annotations.xml"));
   }
 
@@ -211,5 +212,12 @@ public class MetadataParserAnnotationsTest {
   public void checkCoreVocabularies() throws ODataException {
     CsdlTerm term = this.provider.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description"));
     assertEquals("Edm.String", term.getType());
+  }
+  
+  @Test
+  public void testAnnotationGroup() throws ODataException {
+    CsdlAnnotations annotations = this.provider.getAnnotationsGroup(
+        new FullQualifiedName("Org.OData.AnnoatationTest.TagX"), null);
+    assertEquals(3, annotations.getAnnotations().size());
   }  
 }

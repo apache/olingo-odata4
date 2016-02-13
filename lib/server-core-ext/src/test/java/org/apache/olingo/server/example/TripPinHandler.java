@@ -566,6 +566,7 @@ public class TripPinHandler implements ServiceHandler {
   
   @Override
   public void processError(ODataServerError error, ErrorResponse response) {
+    error.getException().printStackTrace();
     response.writeError(error);
   }
 }

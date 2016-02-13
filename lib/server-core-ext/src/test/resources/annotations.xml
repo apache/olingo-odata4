@@ -11,6 +11,9 @@
   language governing permissions and limitations under the License. -->
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
 	Version="4.0">
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/os/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1" />
+  </edmx:Reference>	
 	<edmx:DataServices>
 		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
 			Namespace="Org.OData.AnnoatationTest" Alias="test">
@@ -148,6 +151,20 @@
 					</Apply>
 				</UrlRef>
 			</Annotation>
+      <TypeDefinition Name="TagX" UnderlyingType="Edm.Boolean">
+        <Annotation Term="Core.Description" String="This is the type to use for all tagging terms" />
+      </TypeDefinition>			
+      <Annotations
+        Target="Org.OData.AnnoatationTest.TagX">
+        <Annotation Term="Org.OData.Core.V1.DereferenceableIDs"
+          Bool="true" />
+        <Annotation Term="Org.OData.Core.V1.ConventionalIDs"
+          Bool="true" />
+        <Annotation Term="Org.OData.Capabilities.V1.ConformanceLevel">
+          <EnumMember>Org.OData.Capabilities.V1.ConformanceLevelType/Advanced
+          </EnumMember>
+        </Annotation>
+      </Annotations>			
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

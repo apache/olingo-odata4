@@ -63,12 +63,6 @@ public class EdmRecordImplTest extends AbstractAnnotationTest {
     assertSingleKindDynamicExpression(dynExp);
 
     EdmRecord asRecord = dynExp.asRecord();
-    try {
-      asRecord.getType();
-      fail("EdmException expected");
-    } catch (EdmException e) {
-      assertEquals("Must specify a type for a Record expression.", e.getMessage());
-    }
 
     assertNotNull(asRecord.getAnnotations());
     assertTrue(asRecord.getAnnotations().isEmpty());

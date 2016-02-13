@@ -114,20 +114,30 @@ public class TripPinServiceTest {
   }
 
   @Test
-  public void testEntitySet() throws Exception {
-    HttpRequest req = new HttpGet(baseURL+"/People");
-    req.setHeader("Content-Type", "application/json;odata.metadata=minimal");
+  public void testXMLInvalidChars() throws Exception {
+    HttpRequest req = new HttpGet(baseURL+"/Airlines('FM')");
+    req.setHeader("Accept", "application/xml");
 
     HttpResponse response = httpSend(req, 200);
-    JsonNode node = getJSONNode(response);
-
-    assertEquals("$metadata#People", node.get("@odata.context").asText());
-    assertEquals(baseURL+"/People?$skiptoken=8", node.get("@odata.nextLink").asText());
-
-    JsonNode person = ((ArrayNode)node.get("value")).get(0);
-    assertEquals("russellwhyte", person.get("UserName").asText());
+    String actual = IOUtils.toString(response.getEntity().getContent());
+    String expected = 
+        "<m:properties>"
+        +     "<d:AirlineCode>FM</d:AirlineCode>"
+        +     "<d:Name>Shanghai xxxAirlinexxx</d:Name>" 
+        +     "<d:Picture m:null=\"true\"/>" 
+        +  "</m:properties>"  
+        + "</a:content>"  
+        +"</a:entry>";
+    assertTrue(actual.endsWith(expected));
   }
 
+  @Test
+  public void testmetadata() throws Exception {
+    HttpRequest req = new HttpGet(baseURL+"/$metadata");
+    HttpResponse response = httpSend(req, 200);
+    IOUtils.toString(response.getEntity().getContent());
+  }
+  
   @Test
   public void testReadEntitySetWithPaging() throws Exception {
     String url = baseURL+"/People";

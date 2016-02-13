@@ -28,6 +28,7 @@ public class EntitySerializerOptions {
   private ExpandOption expand;
   private SelectOption select;
   private boolean writeOnlyReferences;
+  private String xml10InvalidCharReplacement;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -48,6 +49,11 @@ public class EntitySerializerOptions {
   public boolean getWriteOnlyReferences() {
     return writeOnlyReferences;
   }
+
+  /** Gets the replacement string for unicode characters, that is not allowed in XML 1.0 */
+  public String xml10InvalidCharReplacement() {
+    return xml10InvalidCharReplacement;
+  }  
 
   private EntitySerializerOptions() {}
 
@@ -88,7 +94,13 @@ public class EntitySerializerOptions {
       options.writeOnlyReferences = ref;
       return this;
     }
-
+    
+    /** set the replacement string for xml 1.0 unicode controlled characters that are not allowed */
+    public Builder xml10InvalidCharReplacement(final String replacement) {
+      options.xml10InvalidCharReplacement = replacement;
+      return this;
+    } 
+    
     /** Builds the OData serializer options. */
     public EntitySerializerOptions build() {
       return options;
