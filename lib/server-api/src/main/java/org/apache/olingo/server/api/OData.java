@@ -98,6 +98,13 @@ public abstract class OData {
   public abstract ODataHttpHandler createHandler(ServiceMetadata serviceMetadata);
 
   /**
+   * Creates a new ODataHandler for handling OData requests.
+   *
+   * @param serviceMetadata - metadata object required to handle an OData request
+   */
+  public abstract ODataHandler createBasicHandler(ServiceMetadata serviceMetadata);
+
+  /**
    * Creates a metadata object for this service.
    *
    * @param edmProvider a custom or default implementation for creating metadata

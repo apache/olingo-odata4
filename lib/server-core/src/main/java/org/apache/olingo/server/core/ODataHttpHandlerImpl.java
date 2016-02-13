@@ -55,14 +55,19 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   public static final int COPY_BUFFER_SIZE = 8192;
 
-  private final ODataHandler handler;
+  private final ODataHandlerImpl handler;
   private final ServerCoreDebugger debugger;
 
   private int split = 0;
 
   public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
     debugger = new ServerCoreDebugger(odata);
-    handler = new ODataHandler(odata, serviceMetadata, debugger);
+    handler = new ODataHandlerImpl(odata, serviceMetadata, debugger);
+  }
+
+  @Override
+  public ODataResponse process(ODataRequest request) {
+    return handler.process(request);
   }
 
   @Override
@@ -76,7 +81,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     try {
       fillODataRequest(odRequest, request, split);
 
-      odResponse = handler.process(odRequest);
+      odResponse = process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
       exception = e;

@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -50,7 +51,7 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
-public class ODataHandler {
+public class ODataHandlerImpl implements ODataHandler {
 
   private final OData odata;
   private final ServiceMetadata serviceMetadata;
@@ -63,8 +64,8 @@ public class ODataHandler {
   private UriInfo uriInfo;
   private Exception lastThrownException;
 
-  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
-    odata = server;
+  public ODataHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
+    this.odata = odata;
     this.serviceMetadata = serviceMetadata;
     this.debugger = debugger;
 

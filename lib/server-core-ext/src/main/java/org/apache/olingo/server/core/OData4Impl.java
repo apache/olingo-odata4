@@ -39,7 +39,7 @@ public class OData4Impl extends ODataImpl {
   }
 
   @Override
-  public ODataHttpHandler createHandler(final ServiceMetadata edm) {
-    return new OData4HttpHandler(this, edm);
+  public ODataHttpHandler createHandler(final ServiceMetadata serviceMetadata) {
+    return new OData4HttpHandler(this, serviceMetadata);
   }
 }

@@ -81,7 +81,7 @@ import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
 
-public class ODataHandlerTest {
+public class ODataHandlerImplTest {
 
   private static final String BASE_URI = "http://localhost/odata";
 
@@ -234,7 +234,7 @@ public class ODataHandlerTest {
     request.setRawODataPath("EdmException");
 
     final ODataResponse response =
-        new ODataHandler(odata, serviceMetadata, new ServerCoreDebugger(odata)).process(request);
+        new ODataHandlerImpl(odata, serviceMetadata, new ServerCoreDebugger(odata)).process(request);
     assertNotNull(response);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
@@ -738,7 +738,7 @@ public class ODataHandlerTest {
     final ServiceMetadata metadata = odata.createServiceMetadata(
         new EdmTechProvider(), Collections.<EdmxReference> emptyList());
 
-    ODataHandler handler = new ODataHandler(odata, metadata, new ServerCoreDebugger(odata));
+    ODataHandlerImpl handler = new ODataHandlerImpl(odata, metadata, new ServerCoreDebugger(odata));
 
     if (processor != null) {
       handler.register(processor);
