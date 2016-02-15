@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.server.api.debug.DebugSupport;
+import org.apache.olingo.server.api.etag.CustomETagSupport;
+import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 
 /**
  * Handles HTTP requests as OData requests.
@@ -50,4 +52,17 @@ public interface ODataHttpHandler extends ODataHandler {
    * @param debugSupport handler to register
    */
   void register(DebugSupport debugSupport);
+
+  /**
+   * Registers a service implementation for modifying the standard list of supported
+   * content types.
+   * @see CustomContentTypeSupport
+   */
+  void register(CustomContentTypeSupport customContentTypeSupport);
+
+  /**
+   * Registers support for concurrency control for certain entity sets.
+   * @param customETagSupport handler to register
+   */
+  void register(CustomETagSupport customETagSupport);
 }

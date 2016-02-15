@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.server.api;
 
-import org.apache.olingo.server.api.etag.CustomETagSupport;
 import org.apache.olingo.server.api.processor.Processor;
-import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 
 /**
  * <p>Handles requests as OData requests.</p>
@@ -49,15 +47,10 @@ public interface ODataHandler {
   void register(Processor processor);
 
   /**
-   * Registers a service implementation for modifying the standard list of supported
-   * content types.
-   * @see CustomContentTypeSupport
+   * <p>Registers additional extensions for handling OData requests.</p>
+   * <p>This method is used for registration of all possible extensions
+   * and provide the extensibility for further extensions and
+   * different ODataHandler implementations/extensions.</p>
    */
-  void register(CustomContentTypeSupport customContentTypeSupport);
-
-  /**
-   * Registers support for concurrency control for certain entity sets.
-   * @param customETagSupport handler to register
-   */
-  void register(CustomETagSupport customETagSupport);
+  void register(OlingoExtension extension);
 }

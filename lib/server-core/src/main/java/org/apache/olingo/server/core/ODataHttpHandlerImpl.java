@@ -43,6 +43,7 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.OlingoExtension;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -294,6 +295,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   @Override
   public void register(final Processor processor) {
     handler.register(processor);
+  }
+
+  @Override
+  public void register(OlingoExtension extension) {
+    handler.register(extension);
   }
 
   @Override

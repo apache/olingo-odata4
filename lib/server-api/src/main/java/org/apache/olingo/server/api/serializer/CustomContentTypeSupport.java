@@ -21,6 +21,7 @@ package org.apache.olingo.server.api.serializer;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.server.api.OlingoExtension;
 
 /**
  * <p>Processors that supports custom content types can implement this interface.</p>
@@ -33,7 +34,7 @@ import org.apache.olingo.commons.api.format.ContentType;
  * 406 (Not Acceptable); sending content of an unsupported type results in an
  * HTTP error 415 (Unsupported Media Type).</p>
  */
-public interface CustomContentTypeSupport {
+public interface CustomContentTypeSupport extends OlingoExtension {
 
   /**
    * Returns a list of supported content types.
@@ -41,6 +42,6 @@ public interface CustomContentTypeSupport {
    * @param type the current type of representation
    * @return modified list of supported content types
    */
-  public List<ContentType> modifySupportedContentTypes(
+  List<ContentType> modifySupportedContentTypes(
       List<ContentType> defaultContentTypes, RepresentationType type);
 }
