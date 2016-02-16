@@ -211,12 +211,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       outputStream.close();
       String tail = new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
 
-      EntitySerializerOptions.Builder opt = EntitySerializerOptions.with();
-      if(options != null) {
-        opt.expand(options.getExpand()).select(options
-            .getSelect()).writeOnlyReferences(options.getWriteOnlyReferences());
-      }
-      return ODataWritableContent.with(entities, entityType, this, metadata, opt.build())
+      return ODataWritableContent.with(entities, entityType, this, metadata, options)
           .addHead(head).addTail(tail).build();
     } catch (final IOException e) {
       cachedException =

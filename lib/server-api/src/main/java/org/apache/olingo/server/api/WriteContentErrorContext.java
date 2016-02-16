@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.server.api;
 
-import java.nio.channels.WritableByteChannel;
-
-public interface WriteContentErrorCallback {
-  void handleError(WriteContentErrorContext context, WritableByteChannel channel);
+public interface WriteContentErrorContext {
+  Exception getException();
+  ODataLibraryException getODataLibraryException();
+//  Object getParameter(String name);
 }

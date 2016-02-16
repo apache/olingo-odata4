@@ -18,18 +18,25 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
@@ -40,7 +47,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.WriteContentErrorCallback;
+import org.apache.olingo.server.api.WriteContentErrorContext;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -85,12 +95,12 @@ public class ODataJsonSerializerTest {
   public void setup() {
     TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
   }
-  
+
   @After
   public void teardown() {
     TimeZone.setDefault(TimeZone.getDefault());
   }
-  
+
   @Test
   public void entitySimple() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -206,6 +216,96 @@ public class ODataJsonSerializerTest {
     }
     Assert.assertEquals(8, count);
   }
+
+  @Test
+  public void entityCollectionStreamed() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityIterator entityIterator = new EntityIterator() {
+      Iterator<Entity> innerIterator = data.readAll(edmEntitySet).iterator();
+      @Override
+      public boolean hasNext() {
+        return innerIterator.hasNext();
+      }
+      @Override
+      public Entity next() {
+        return innerIterator.next();
+      }
+    };
+    CountOption countOption = Mockito.mock(CountOption.class);
+    Mockito.when(countOption.getValue()).thenReturn(true);
+
+    ODataContent result = serializer.entityCollectionStreamed(
+        metadata, edmEntitySet.getEntityType(), entityIterator,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .build()).getODataContent();
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    result.write(bout);
+    final String resultString = new String(bout.toByteArray(), "UTF-8");
+
+    Assert.assertThat(resultString, CoreMatchers.startsWith("{"
+        + "\"@odata.context\":\"$metadata#ESAllPrim\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{\"PropertyInt16\":32767,\"PropertyString\""));
+    Assert.assertThat(resultString, CoreMatchers.endsWith(
+        "\"PropertyTimeOfDay\":\"00:01:01\"}]}"));
+
+    int count = 0;
+    int index = -1;
+    while ((index = resultString.indexOf("PropertyInt16\":", ++index)) > 0) {
+      count++;
+    }
+    Assert.assertEquals(3, count);
+  }
+
+  @Test
+  public void entityCollectionStreamedWithError() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityIterator entityIterator = new EntityIterator() {
+      Iterator<Entity> innerIterator = data.readAll(edmEntitySet).iterator();
+      @Override
+      public boolean hasNext() {
+        return innerIterator.hasNext();
+      }
+      @Override
+      public Entity next() {
+        return new Entity();
+      }
+    };
+    CountOption countOption = Mockito.mock(CountOption.class);
+    Mockito.when(countOption.getValue()).thenReturn(true);
+
+    WriteContentErrorCallback errorCallback = new WriteContentErrorCallback() {
+      @Override
+      public void handleError(WriteContentErrorContext context, WritableByteChannel channel) {
+        try {
+          String msgKey = context.getODataLibraryException().getMessageKey().getKey();
+          String toChannel = "ERROR: " + msgKey;
+          channel.write(ByteBuffer.wrap(toChannel.getBytes("UTF-8")));
+        } catch (IOException e) {
+          throw new RuntimeException("Error in error.");
+        }
+      }
+    };
+
+    ODataContent result = serializer.entityCollectionStreamed(
+        metadata, edmEntitySet.getEntityType(), entityIterator,
+        EntityCollectionSerializerOptions.with()
+            .writeContentErrorCallback(errorCallback)
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .build()).getODataContent();
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    result.write(bout);
+    final String resultString = new String(bout.toByteArray(), "UTF-8");
+
+    Assert.assertThat(resultString, CoreMatchers.startsWith("{"
+        + "\"@odata.context\":\"$metadata#ESAllPrim\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":"));
+    Assert.assertThat(resultString, CoreMatchers.endsWith(
+        "[ERROR: MISSING_PROPERTY"));
+  }
+
 
   @Test
   public void entityCollAllPrim() throws Exception {

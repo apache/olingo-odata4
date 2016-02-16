@@ -19,7 +19,6 @@
 package org.apache.olingo.server.api;
 
 import java.io.OutputStream;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 public interface ODataContent {
