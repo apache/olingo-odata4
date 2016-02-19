@@ -248,10 +248,19 @@ public class DataRequest extends ServiceRequest {
   @SuppressWarnings("unchecked")
   @Override
   public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl, boolean references)
-      throws ContentNegotiatorException {
+      throws ContentNegotiatorException {   
     if (serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
+      
+      String xmlReplacement = null;
+      if (getResponseContentType().isCompatible(ContentType.APPLICATION_XML)
+          || getResponseContentType().isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+        xmlReplacement = xml10IncompatibleCharReplacement();
+      }      
+      
       return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
-          .facetsFrom(getUriResourceProperty().getProperty()).build();
+          .facetsFrom(getUriResourceProperty().getProperty())
+          .xml10InvalidCharReplacement(xmlReplacement)
+          .build();
     }
     return super.getSerializerOptions(serilizerOptions, contextUrl, references);
   }

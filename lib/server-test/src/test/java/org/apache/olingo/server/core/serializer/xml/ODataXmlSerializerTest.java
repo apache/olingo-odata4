@@ -1796,6 +1796,30 @@ public class ODataXmlSerializerTest {
   }
 
   @Test
+  public void testXML10ReplacementChar() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+    property.setValue(ValueType.PRIMITIVE, "ab\u0000cd\u0001");
+    final String resultString = IOUtils.toString(serializer
+        .primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
+            PrimitiveSerializerOptions.with()
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
+                    .build())
+                .xml10InvalidCharReplacement("XX")
+                .unicode(Boolean.TRUE)
+                .build()).getContent());
+
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>"
+        + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "m:context=\"$metadata#ESAllPrim(32767)/PropertyString\" "
+        + "m:metadata-etag=\"metadataETag\">"
+        + "abXXcdXX</m:value>";
+    Assert.assertEquals(expected, resultString);
+  }
+  
+  @Test
   public void primitivePropertyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
@@ -1966,8 +1990,7 @@ public class ODataXmlSerializerTest {
     XMLAssert.assertXMLEqual(diff, true);
   }
   
-  private static class CustomDifferenceListener implements DifferenceListener {
-
+  public static class CustomDifferenceListener implements DifferenceListener {
     @Override
     public int differenceFound(Difference difference) {
       final String xpath = "/updated[1]/text()[1]";

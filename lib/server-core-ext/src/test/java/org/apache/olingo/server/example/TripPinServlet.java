@@ -51,7 +51,8 @@ public class TripPinServlet extends HttpServlet {
 
     try {
       parser.parseAnnotations(true);
-      parser.loadCoreVocabularies(true);
+      parser.useLocalCoreVocabularies(true);
+      parser.implicitlyLoadCoreVocabularies(true);
       metadata = parser.buildServiceMetadata(new FileReader("src/test/resources/trippin.xml"));
     } catch (XMLStreamException e) {
       throw new IOException(e);

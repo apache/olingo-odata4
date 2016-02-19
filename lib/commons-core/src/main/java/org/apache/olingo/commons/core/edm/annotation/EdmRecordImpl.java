@@ -59,14 +59,14 @@ public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicExpression imple
   @Override
   public EdmStructuredType getType() {
     if (type == null) {
-      if (record.getType() == null) {
-        throw new EdmException("Must specify a type for a Record expression.");
-      }
-      final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(record.getType()).build();
-      if (typeInfo.isEntityType() || typeInfo.isComplexType()) {
-        type = typeInfo.isEntityType() ? typeInfo.getEntityType() : typeInfo.getComplexType();
-      } else {
-        throw new EdmException("Record expressions must specify a complex or entity type.");
+      // record MAY have a type information.
+      if (record.getType() != null) {
+        final EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setEdm(edm).setTypeExpression(record.getType()).build();
+        if (typeInfo.isEntityType() || typeInfo.isComplexType()) {
+          type = typeInfo.isEntityType() ? typeInfo.getEntityType() : typeInfo.getComplexType();
+        } else {
+          throw new EdmException("Record expressions must specify a complex or entity type.");
+        }
       }
     }
     return type;

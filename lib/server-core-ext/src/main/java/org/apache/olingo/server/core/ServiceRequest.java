@@ -27,14 +27,18 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmSchema;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
@@ -140,26 +144,60 @@ public abstract class ServiceRequest {
     return this.request.getMethod() == HttpMethod.POST;
   }
 
+  private static FullQualifiedName XML10_CHAR_REPLACE_FQN = new FullQualifiedName(
+      "org.apache.olingo.v1.xml10-incompatible-char-replacement");
+  /**
+   * Replacement character for the XML10 characters that are not supported.
+   * @return
+   */
+  protected String xml10IncompatibleCharReplacement() {
+    for (EdmSchema schema : getServiceMetaData().getEdm().getSchemas()) {
+      if (schema.getEntityContainer() != null) {
+        for (EdmAnnotation annotation:schema.getAnnotations()) {
+          if (annotation.getTerm() != null
+              && annotation.getTerm().getFullQualifiedName().equals(XML10_CHAR_REPLACE_FQN)) {
+            EdmConstantExpression expr = annotation.getExpression().asConstant();
+            return expr.getValueAsString();            
+          }
+        }
+      }
+    }
+    return null;
+  }
+  
   @SuppressWarnings("unchecked")
-  public <T> T getSerializerOptions(Class<T> serilizerOptions, ContextURL contextUrl,
-      boolean references) throws ContentNegotiatorException {
+  public <T> T getSerializerOptions(Class<T> serilizerOptions,
+      ContextURL contextUrl, boolean references) throws ContentNegotiatorException {
+    
+    String xmlReplacement = null;
+    if (getResponseContentType().isCompatible(ContentType.APPLICATION_XML)
+        || getResponseContentType().isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+      xmlReplacement = xml10IncompatibleCharReplacement();
+    }
     
     if (serilizerOptions.isAssignableFrom(EntitySerializerOptions.class)) {
       return (T) EntitySerializerOptions.with()
           .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .expand(uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
-          .writeOnlyReferences(references).build();
+          .writeOnlyReferences(references)
+          .xml10InvalidCharReplacement(xmlReplacement)
+          .build();
     } else if (serilizerOptions.isAssignableFrom(EntityCollectionSerializerOptions.class)) {
       return (T) EntityCollectionSerializerOptions.with()
           .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
           .select(uriInfo.getSelectOption()).writeOnlyReferences(references)
-          .id(getODataRequest().getRawBaseUri() + getODataRequest().getRawODataPath()).build();
+          .id(getODataRequest().getRawBaseUri() + getODataRequest().getRawODataPath())
+          .xml10InvalidCharReplacement(xmlReplacement)
+          .build();
     } else if (serilizerOptions.isAssignableFrom(ComplexSerializerOptions.class)) {
       return (T) ComplexSerializerOptions.with().contextURL(contextUrl)
-          .expand(this.uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption()).build();
+          .expand(this.uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
+          .xml10InvalidCharReplacement(xmlReplacement)
+          .build();
     } else if (serilizerOptions.isAssignableFrom(PrimitiveSerializerOptions.class)) {
       return (T) PrimitiveSerializerOptions.with().contextURL(contextUrl)
+          .xml10InvalidCharReplacement(xmlReplacement)
           .build();
     }
     return null;

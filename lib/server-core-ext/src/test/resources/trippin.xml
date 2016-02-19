@@ -10,6 +10,9 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="org.apache.olingo.v1.xml">
+    <edmx:Include Alias="olingo-extensions" Namespace="org.apache.olingo.v1" />
+  </edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="Microsoft.OData.SampleService.Models.TripPin"
 			xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -103,7 +106,7 @@
 						<EnumMember>Org.OData.Core.V1.Permission/Read</EnumMember>
 					</Annotation>
 				</Property>
-				<Property Name="Name" Type="Edm.String" Nullable="false" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
 				<Property Name="IataCode" Type="Edm.String" Nullable="false">
 					<Annotation Term="Org.OData.Core.V1.Immutable" Bool="true" />
 				</Property>
@@ -453,6 +456,7 @@
 				</Annotation>
 				<Annotation Term="Core.RequiresType" String="Edm.String" />
 			</Term>
+		 <Annotation Term="org.apache.olingo.v1.xml10-incompatible-char-replacement" String="xxx"/>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

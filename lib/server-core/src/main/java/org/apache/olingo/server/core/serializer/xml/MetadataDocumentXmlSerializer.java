@@ -450,7 +450,10 @@ public class MetadataDocumentXmlSerializer {
       break;
     case Record:
       EdmRecord asRecord = dynExp.asRecord();
-      writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(asRecord.getType(), false));
+      EdmStructuredType type = asRecord.getType();
+      if (type != null) {
+        writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(type, false));
+      }
       for (EdmPropertyValue propValue : asRecord.getPropertyValues()) {
         writer.writeStartElement(XML_PROPERTY_Value);
         writer.writeAttribute(XML_PROPERTY, propValue.getProperty());

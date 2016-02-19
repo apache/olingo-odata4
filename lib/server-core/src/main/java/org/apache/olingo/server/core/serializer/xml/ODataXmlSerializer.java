@@ -55,6 +55,7 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
@@ -254,10 +255,10 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       }
 
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, writer);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), writer);
+            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer);
       }
 
       writer.writeEndElement();
@@ -306,7 +307,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
-          options == null ? null : options.getSelect(), writer, true);
+          options == null ? null : options.getSelect(),
+          options == null ? null : options.xml10InvalidCharReplacement(),
+          writer, true);
       writer.writeEndDocument();
 
       writer.flush();
@@ -346,15 +349,17 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
-      final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
+      final String xml10InvalidCharReplacement,final XMLStreamWriter writer) 
+          throws XMLStreamException, SerializerException {
     for (final Entity entity : entitySet) {
-      writeEntity(metadata, entityType, entity, null, expand, select, writer, false);
+      writeEntity(metadata, entityType, entity, null, expand, select, xml10InvalidCharReplacement, writer, false);
     }
   }
 
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand,
-      final SelectOption select, final XMLStreamWriter writer, final boolean top)
+      final SelectOption select, final String xml10InvalidCharReplacement,
+      final XMLStreamWriter writer, final boolean top)
       throws XMLStreamException, SerializerException {
 
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
@@ -407,7 +412,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
 
     EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-    writeNavigationProperties(metadata, resolvedType, entity, expand, writer);
+    writeNavigationProperties(metadata, resolvedType, entity, expand, xml10InvalidCharReplacement, writer);
 
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
     writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
@@ -422,7 +427,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
 
     writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
-    writeProperties(metadata, resolvedType, entity.getProperties(), select, writer);
+    writeProperties(metadata, resolvedType, entity.getProperties(), select, xml10InvalidCharReplacement, writer);
     writer.writeEndElement(); // properties
 
     if (!entityType.hasStream()) { // content
@@ -500,8 +505,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   protected void writeProperties(final ServiceMetadata metadata, final EdmStructuredType type,
-      final List<Property> properties, final SelectOption select, final XMLStreamWriter writer)
-      throws XMLStreamException, SerializerException {
+      final List<Property> properties, final SelectOption select, final String xml10InvalidCharReplacement, 
+      final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? new HashSet<String>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
@@ -511,14 +516,15 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         final Property property = findProperty(propertyName, properties);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
             ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
-        writeProperty(metadata, edmProperty, property, selectedPaths, writer);
+        writeProperty(metadata, edmProperty, property, selectedPaths, xml10InvalidCharReplacement, writer);
       }
     }
   }
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand,
-      final XMLStreamWriter writer) throws SerializerException, XMLStreamException {
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer) 
+          throws SerializerException, XMLStreamException {
     if (ExpandSelectHelper.hasExpand(expand)) {
       final boolean expandAll = ExpandSelectHelper.isExpandAll(expand);
       final Set<String> expanded = expandAll ? new HashSet<String>() :
@@ -539,7 +545,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             writeExpandedNavigationProperty(metadata, property, navigationLink,
                 innerOptions == null ? null : innerOptions.getExpandOption(),
                 innerOptions == null ? null : innerOptions.getSelectOption(),
-                writer);
+                    xml10InvalidCharReplacement, writer);
             writer.writeEndElement();
             writer.writeEndElement();
           }
@@ -598,27 +604,28 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeExpandedNavigationProperty(final ServiceMetadata metadata,
       final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandOption innerExpand, final SelectOption innerSelect, final XMLStreamWriter writer)
-      throws XMLStreamException, SerializerException {
+      final ExpandOption innerExpand, final SelectOption innerSelect, final String xml10InvalidCharReplacement,
+      final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
       if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
         writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, writer);
+            innerSelect, xml10InvalidCharReplacement, writer);
         writer.writeEndElement();
       }
     } else {
       if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, writer, false);
+            innerExpand, innerSelect, xml10InvalidCharReplacement, writer, false);
       }
     }
   }
 
-  protected void writeProperty(final ServiceMetadata metadata, final EdmProperty edmProperty,
-      final Property property,
-      final Set<List<String>> selectedPaths, final XMLStreamWriter writer) throws XMLStreamException,
-      SerializerException {
+  protected void writeProperty(final ServiceMetadata metadata,
+      final EdmProperty edmProperty, final Property property,
+      final Set<List<String>> selectedPaths,
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
+      throws XMLStreamException, SerializerException {
     writer.writeStartElement(DATA, edmProperty.getName(), NS_DATA);
     if (property == null || property.isNull()) {
       if (edmProperty.isNullable()) {
@@ -628,7 +635,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             SerializerException.MessageKeys.MISSING_PROPERTY, edmProperty.getName());
       }
     } else {
-      writePropertyValue(metadata, edmProperty, property, selectedPaths, writer);
+      writePropertyValue(metadata, edmProperty, property, selectedPaths, xml10InvalidCharReplacement, writer);
     }
     writer.writeEndElement();
   }
@@ -652,9 +659,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     return definedType;
   }
 
-  private void writePropertyValue(final ServiceMetadata metadata, final EdmProperty edmProperty,
-      final Property property, final Set<List<String>> selectedPaths,
-      final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
+  private void writePropertyValue(final ServiceMetadata metadata,
+      final EdmProperty edmProperty, final Property property,
+      final Set<List<String>> selectedPaths,
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
+      throws XMLStreamException, SerializerException {
     try {
       if (edmProperty.isPrimitive()
           || edmProperty.getType().getKind() == EdmTypeKind.ENUM
@@ -667,22 +676,23 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           writePrimitiveCollection((EdmPrimitiveType) edmProperty.getType(), property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
-              writer);
+              xml10InvalidCharReplacement,writer);
         } else {
           writePrimitive((EdmPrimitiveType) edmProperty.getType(), property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(),
-              writer);
+              xml10InvalidCharReplacement, writer);
         }
       } else if (property.isComplex()) {
         if (edmProperty.isCollection()) {
           writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, collectionType(edmProperty.getType()));
-          writeComplexCollection(metadata, (EdmComplexType) edmProperty.getType(), property, selectedPaths, writer);
+          writeComplexCollection(metadata, (EdmComplexType) edmProperty.getType(), property, selectedPaths, 
+              xml10InvalidCharReplacement, writer);
         } else {
           writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
               "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), property.getType()));
           writeComplexValue(metadata, property, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
-              selectedPaths, writer);
+              selectedPaths, xml10InvalidCharReplacement, writer);
         }
       } else {
         throw new SerializerException("Property type not yet supported!",
@@ -697,14 +707,15 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode,
+      final Boolean isUnicode, final String xml10InvalidCharReplacement,
       final XMLStreamWriter writer) throws XMLStreamException, EdmPrimitiveTypeException, SerializerException {
     for (Object value : property.asCollection()) {
       writer.writeStartElement(METADATA, Constants.ELEM_ELEMENT, NS_METADATA);
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
       case COLLECTION_ENUM:
-        writePrimitiveValue(type, value, isNullable, maxLength, precision, scale, isUnicode, writer);
+        writePrimitiveValue(type, value, isNullable, maxLength, precision,
+            scale, isUnicode, xml10InvalidCharReplacement, writer);
         break;
       case COLLECTION_GEOSPATIAL:
         throw new SerializerException("Property type not yet supported!",
@@ -717,8 +728,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeComplexCollection(final ServiceMetadata metadata, final EdmComplexType type,
-      final Property property, final Set<List<String>> selectedPaths, final XMLStreamWriter writer)
+  private void writeComplexCollection(final ServiceMetadata metadata,
+      final EdmComplexType type, final Property property, final Set<List<String>> selectedPaths,
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
     for (Object value : property.asCollection()) {
       writer.writeStartElement(METADATA, Constants.ELEM_ELEMENT, NS_METADATA);
@@ -727,7 +739,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       }
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(metadata, property, type, ((ComplexValue) value).getValue(), selectedPaths, writer);
+        writeComplexValue(metadata, property, type,
+            ((ComplexValue) value).getValue(), selectedPaths,
+            xml10InvalidCharReplacement, writer);
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
@@ -739,7 +753,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   private void writePrimitive(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode, final XMLStreamWriter writer)
+      final Boolean isUnicode, final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
       throws EdmPrimitiveTypeException, XMLStreamException, SerializerException {
     if (property.isPrimitive()) {
       if (type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String)) {
@@ -749,7 +763,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
                 type.getName());
       }
       writePrimitiveValue(type, property.asPrimitive(),
-          isNullable, maxLength, precision, scale, isUnicode, writer);
+          isNullable, maxLength, precision, scale, isUnicode, xml10InvalidCharReplacement, writer);
     } else if (property.isGeospatial()) {
       throw new SerializerException("Property type not yet supported!",
           SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
@@ -757,7 +771,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
           "#" + type.getFullQualifiedName().getFullQualifiedNameAsString());
       writePrimitiveValue(type, property.asEnum(),
-          isNullable, maxLength, precision, scale, isUnicode, writer);
+          isNullable, maxLength, precision, scale, isUnicode, xml10InvalidCharReplacement, writer);
     } else {
       throw new SerializerException("Inconsistent property type!",
           SerializerException.MessageKeys.INCONSISTENT_PROPERTY_TYPE, property.getName());
@@ -766,19 +780,23 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writePrimitiveValue(final EdmPrimitiveType type, final Object primitiveValue,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
-      final Boolean isUnicode,
+      final Boolean isUnicode, final String xml10InvalidCharReplacement,
       final XMLStreamWriter writer) throws EdmPrimitiveTypeException, XMLStreamException {
     final String value = type.valueToString(primitiveValue,
         isNullable, maxLength, precision, scale, isUnicode);
     if (value == null) {
       writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
     } else {
-      writer.writeCharacters(value);
+      // XML 1.0 does not handle certain unicode characters, they need to be replaced
+      writer.writeCharacters(replaceInvalidCharacters(type, value,
+          isUnicode, xml10InvalidCharReplacement));
     }
   }
 
-  protected void writeComplexValue(final ServiceMetadata metadata, Property complexProperty, final EdmComplexType type,
-      final List<Property> properties, final Set<List<String>> selectedPaths, final XMLStreamWriter writer)
+  protected void writeComplexValue(final ServiceMetadata metadata,
+      Property complexProperty, final EdmComplexType type,
+      final List<Property> properties, final Set<List<String>> selectedPaths,
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
 
     final EdmComplexType resolvedType = resolveComplexType(metadata,
@@ -789,7 +807,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
         writeProperty(metadata, (EdmProperty) resolvedType.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
-            writer);
+            xml10InvalidCharReplacement, writer);
       }
     }
   }
@@ -832,6 +850,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             options == null ? null : options.getPrecision(),
             options == null ? null : options.getScale(),
             options == null ? null : options.isUnicode(),
+            options == null ? null : options.xml10InvalidCharReplacement(),
             writer);
       }
       writer.writeEndElement();
@@ -884,7 +903,10 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_NULL, "true");
       } else {
         final List<Property> values = property.asComplex().getValue();
-        writeProperties(metadata, resolvedType, values, options == null ? null : options.getSelect(), writer);
+        writeProperties(metadata, resolvedType, values, 
+            options == null ? null : options.getSelect(),
+            options == null ? null : options.xml10InvalidCharReplacement(),
+            writer);
       }
       writer.writeEndDocument();
       writer.flush();
@@ -932,6 +954,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           options == null ? null : options.getPrecision(),
           options == null ? null : options.getScale(),
           options == null ? null : options.isUnicode(),
+          options == null ? null : options.xml10InvalidCharReplacement(),
           writer);
       writer.writeEndElement();
       writer.writeEndDocument();
@@ -977,7 +1000,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
-      writeComplexCollection(metadata, type, property, null, writer);
+      writeComplexCollection(metadata, type, property, null, 
+          options == null ? null:options.xml10InvalidCharReplacement(), writer);
       writer.writeEndElement();
       writer.writeEndDocument();
       writer.flush();
@@ -1114,4 +1138,30 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     writer.writeAttribute(Constants.ATTR_HREF, entitySet.getNext().toASCIIString());
     writer.writeEndElement();
   }
+  
+  static String replaceInvalidCharacters(EdmPrimitiveType expectedType,
+      String value, Boolean isUniCode, String invalidCharacterReplacement) {
+    if (!(expectedType instanceof EdmString)
+        || invalidCharacterReplacement == null || isUniCode == null || !isUniCode) {
+      return value;
+    }
+    String s = (String) value;
+    StringBuilder result = null;
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (c <= 0x0020 && c != ' ' && c != '\n' && c != '\t' && c != '\r') {
+        if (result == null) {
+          result = new StringBuilder();
+          result.append(s.substring(0, i));
+        }
+        result.append(invalidCharacterReplacement);
+      } else if (result != null) {
+        result.append(c);
+      }
+    }
+    if (result == null) {
+      return value;
+    }
+    return result.toString();
+  }  
 }
