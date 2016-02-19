@@ -27,7 +27,4 @@ public abstract class AbstractEntityCollection extends AbstractODataObject imple
   public abstract URI getNext();
 
   public abstract URI getDeltaLink();
-//
-//  @Override
-//  Iterator<Entity> iterator();
 }

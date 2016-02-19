@@ -297,13 +297,7 @@ public class ODataJsonSerializerTest {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     result.write(bout);
     final String resultString = new String(bout.toByteArray(), "UTF-8");
-
-    Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"value\":"));
-    Assert.assertThat(resultString, CoreMatchers.endsWith(
-        "[ERROR: MISSING_PROPERTY"));
+    Assert.assertEquals(resultString, "ERROR: MISSING_PROPERTY");
   }
 
 

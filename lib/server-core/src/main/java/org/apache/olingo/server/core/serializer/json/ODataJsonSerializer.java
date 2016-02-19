@@ -18,10 +18,8 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -184,8 +182,16 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   public SerializerStreamResult entityCollectionStreamed(ServiceMetadata metadata, EdmEntityType entityType,
       EntityIterator entities, EntityCollectionSerializerOptions options) throws SerializerException {
 
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    SerializerException cachedException = null;
+    return ODataWritableContent.with(entities, entityType, this, metadata, options).build();
+  }
+
+
+  public void entityCollectionIntoStream(final ServiceMetadata metadata,
+      final EdmEntityType entityType, final EntityIterator entitySet,
+      final EntityCollectionSerializerOptions options, final OutputStream outputStream)
+        throws SerializerException {
+
+    SerializerException cachedException;
     try {
       JsonGenerator json = new JsonFactory().createGenerator(outputStream);
       json.writeStartObject();
@@ -196,29 +202,23 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeMetadataETag(metadata, json);
 
       if (options != null && options.getCount() != null && options.getCount().getValue()) {
-        writeCount(entities, json);
+        writeCount(entitySet, json);
       }
       json.writeFieldName(Constants.VALUE);
-      json.writeStartArray();
+      if (options == null) {
+        writeEntitySet(metadata, entityType, entitySet, null, null, false, json);
+      } else {
+        writeEntitySet(metadata, entityType, entitySet,
+            options.getExpand(), options.getSelect(), options.getWriteOnlyReferences(), json);
+      }
+      // next link not supported by default for streaming results
+//      writeNextLink(entitySet, json);
+
       json.close();
-      outputStream.close();
-      String temp = new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
-      String head = temp.substring(0, temp.length()-2);
-
-      outputStream = new ByteArrayOutputStream();
-      outputStream.write(']');
-      outputStream.write('}');
-      outputStream.close();
-      String tail = new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
-
-      return ODataWritableContent.with(entities, entityType, this, metadata, options)
-          .addHead(head).addTail(tail).build();
     } catch (final IOException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
-    } finally {
-      closeCircleStreamBufferOutput(outputStream, cachedException);
     }
   }
 

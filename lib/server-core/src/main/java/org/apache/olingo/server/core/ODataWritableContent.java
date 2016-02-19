@@ -65,51 +65,58 @@ public class ODataWritableContent implements ODataContent {
                          EntityCollectionSerializerOptions options, String tail) {
       this.coll = coll;
       this.entityType = entityType;
-      this.head = ByteBuffer.wrap(head.getBytes(DEFAULT));
+      this.head = head == null ? ByteBuffer.allocate(0) : ByteBuffer.wrap(head.getBytes(DEFAULT));
       this.jsonSerializer = jsonSerializer;
       this.metadata = metadata;
       this.options = options;
-      this.tail = ByteBuffer.wrap(tail.getBytes(DEFAULT));
+      this.tail = tail == null ? ByteBuffer.allocate(0) : ByteBuffer.wrap(tail.getBytes(DEFAULT));
     }
 
-    public boolean write(OutputStream out) throws IOException {
-      if(head.hasRemaining()) {
-        out.write(head.array());
-        head.flip();
-        return true;
-      }
-      if (coll.hasNext()) {
-        try {
-          writeEntity(coll.next(), out);
-          if(coll.hasNext()) {
-            out.write(",".getBytes(DEFAULT));
-          }
-          return true;
-        } catch (SerializerException e) {
-          final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
-          if(errorCallback != null) {
-            final ErrorContext errorContext = new ErrorContext(e).setParameter("Sample", "Some exception happened.");
-            errorCallback.handleError(errorContext, Channels.newChannel(out));
-          }
-        }
-      } else if(tail.hasRemaining()) {
-        out.write(tail.array());
-        tail.flip();
-        return true;
-      }
-      return false;
-    }
+//    public boolean write(OutputStream out) throws IOException {
+//      if(head.hasRemaining()) {
+//        out.write(head.array());
+//        head.flip();
+//        return true;
+//      }
+//      if (coll.hasNext()) {
+//        try {
+//          writeEntity(coll.next(), out);
+//          if(coll.hasNext()) {
+//            out.write(",".getBytes(DEFAULT));
+//          }
+//          return true;
+//        } catch (SerializerException e) {
+//          final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
+//          if(errorCallback != null) {
+//            final ErrorContext errorContext = new ErrorContext(e).setParameter("Sample", "Some exception happened.");
+//            errorCallback.handleError(errorContext, Channels.newChannel(out));
+//          }
+//        }
+//      } else if(tail.hasRemaining()) {
+//        out.write(tail.array());
+//        tail.flip();
+//        return true;
+//      }
+//      return false;
+//    }
 
-
-    private void writeEntity(Entity entity, OutputStream outputStream) throws SerializerException {
+    public void write(OutputStream out) {
       try {
-        JsonGenerator json = new JsonFactory().createGenerator(outputStream);
-        jsonSerializer.writeEntity(metadata, entityType, entity, null,
-            options == null ? null : options.getExpand(),
-            options == null ? null : options.getSelect(),
-            options != null && options.getWriteOnlyReferences(),
-            json);
-        json.flush();
+        writeEntity(coll, out);
+      } catch (SerializerException e) {
+        final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
+        if(errorCallback != null) {
+          final ErrorContext errorContext = new ErrorContext(e).setParameter("Sample", "Some exception happened.");
+          errorCallback.handleError(errorContext, Channels.newChannel(out));
+        }
+      }
+    }
+
+
+    private void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException {
+      try {
+        jsonSerializer.entityCollectionIntoStream(metadata, entityType, entity, options, outputStream);
+        outputStream.flush();
       } catch (final IOException e) {
         throw new ODataRuntimeException("Failed entity serialization");
       }
@@ -204,14 +211,7 @@ public class ODataWritableContent implements ODataContent {
 
   @Override
   public void write(WritableByteChannel writeChannel) {
-    try {
-      boolean contentAvailable = true;
-      while(contentAvailable) {
-        contentAvailable = this.channel.write(Channels.newOutputStream(writeChannel));
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    this.channel.write(Channels.newOutputStream(writeChannel));
   }
 
   @Override

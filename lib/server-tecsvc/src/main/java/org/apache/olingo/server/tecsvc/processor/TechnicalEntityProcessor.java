@@ -18,16 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
@@ -35,8 +27,6 @@ import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
-import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -44,12 +34,10 @@ import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.prefer.Preferences.Return;
@@ -540,7 +528,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       response.setContent(serializerResult.getContent());
     } else {
       final SerializerStreamResult serializerResult =
-          serializeEntityStreamCollectionFixed(request,
+          serializeEntityCollectionStreamed(request,
               entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
               expand, select, countOption, id);
 
@@ -556,8 +544,8 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
   }
 
-  // just for demonstration
-  private SerializerStreamResult serializeEntityStreamCollectionFixed(final ODataRequest request,
+  // serialise as streamed collection
+  private SerializerStreamResult serializeEntityCollectionStreamed(final ODataRequest request,
       final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
       final EdmEntityType edmEntityType,
       final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
@@ -573,125 +561,14 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
       @Override
       public Entity next() {
-        Entity next = entityIterator.next();
-//        replacePrimitiveProperty(next, "PropertyString", generateData(28192));
-        replacePrimitiveProperty(next, "PropertyString", generateData(request));
-//        next.addProperty(new Property(null, "PropertyString", ValueType.PRIMITIVE, generateData(28192)));
-
-        sleep(request, 2500);
-        return next;
+        return entityIterator.next();
       }
-
-//      @Override
-//      public List<Entity> getEntities() {
-//        return entityCollection.getEntities();
-//      }
-
-      private void replacePrimitiveProperty(Entity entity, String name, Object data) {
-        List<Property> properties = entity.getProperties();
-        int pos = 0;
-        for (Property property : properties) {
-          if(name.equals(property.getName())) {
-            properties.remove(pos);
-            entity.addProperty(new Property(null, name, ValueType.PRIMITIVE, data));
-            break;
-          }
-          pos++;
-        }
-      }
-
-      private void sleep(ODataRequest request, int defaultTimeMs) {
-        String sleepTimeMs = request.getHeader("StreamSleep");
-        if(sleepTimeMs != null) {
-          try {
-            defaultTimeMs = Integer.parseInt(sleepTimeMs);
-          } catch (NumberFormatException e) { }
-        }
-        try {
-          TimeUnit.MILLISECONDS.sleep(defaultTimeMs);
-        } catch (InterruptedException e) { }
-
-      }
-
-      private String generateData(ODataRequest request) {
-        String streamHeader = request.getHeader("StreamData");
-        if(streamHeader != null) {
-          try {
-            return generateData(Integer.parseInt(streamHeader));
-          } catch (NumberFormatException e) { }
-        }
-        return generateData(28192);
-      }
-
-      private String generateData(final int len) {
-        Random random = new Random();
-        StringBuilder b = new StringBuilder(len);
-        for (int j = 0; j < len; j++) {
-          final char c = (char) ('A' + random.nextInt('Z' - 'A' + 1));
-          b.append(c);
-        }
-        return b.toString();
-      }
-
     };
 
     return odata.createSerializer(requestedFormat).entityCollectionStreamed(
         serviceMetadata,
         edmEntityType,
         streamCollection,
-        EntityCollectionSerializerOptions.with()
-            .contextURL(isODataMetadataNone(requestedFormat) ? null :
-                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
-            .count(countOption)
-            .expand(expand).select(select)
-            .id(id)
-            .build());
-  }
-
-  private SerializerResult serializeEntityStreamCollection(final ODataRequest request,
-      final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
-      final EdmEntityType edmEntityType,
-      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
-      final CountOption countOption, final String id) throws ODataLibraryException {
-
-    EntityIterator streamCollection = new EntityIterator() {
-      Iterator<Entity> test = entityCollection.getEntities().iterator();
-      @Override
-      public boolean hasNext() {
-        return test.hasNext();
-      }
-
-      @Override
-      public Entity next() {
-        try {
-          TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (InterruptedException e) { }
-        return test.next();
-      }
-    };
-    return odata.createSerializer(requestedFormat).entityCollection(
-        serviceMetadata,
-        edmEntityType,
-        streamCollection,
-        EntityCollectionSerializerOptions.with()
-            .contextURL(isODataMetadataNone(requestedFormat) ? null :
-                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
-            .count(countOption)
-            .expand(expand).select(select)
-            .id(id)
-            .build());
-  }
-
-
-  private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
-      entityCollection, final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType,
-      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
-      final CountOption countOption, String id) throws ODataLibraryException {
-
-    return odata.createSerializer(requestedFormat).entityCollection(
-        serviceMetadata,
-        edmEntityType,
-        entityCollection,
         EntityCollectionSerializerOptions.with()
             .contextURL(isODataMetadataNone(requestedFormat) ? null :
                 getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
