@@ -1140,7 +1140,12 @@ public class MetadataParser {
         XMLEvent event = reader.peek();
 
         if (!parseAnnotations) {
+          XMLEvent eventBefore = event;
           event = skipAnnotations(reader, event);
+          // if annotation is stripped start again
+          if (eventBefore != event) {            
+            continue;
+          }
         }
 
         if (!event.isStartElement() && !event.isEndElement()) {

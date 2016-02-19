@@ -180,6 +180,11 @@ public class MetadataParserTest {
     assertEquals(6, bindings.size());
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Flight/From", bindings.get(2).getPath());
     assertEquals("Airports", bindings.get(2).getTarget());
-
   }
+  
+  @Test
+  public void testParsingWithNoFormat() throws Exception {
+    MetadataParser parser = new MetadataParser();
+    provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/skip-annotation.xml"));
+  }  
 }
