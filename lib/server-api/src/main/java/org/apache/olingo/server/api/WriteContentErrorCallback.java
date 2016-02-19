@@ -18,8 +18,13 @@
  */
 package org.apache.olingo.server.api;
 
+import java.io.OutputStream;
 import java.nio.channels.WritableByteChannel;
 
+/**
+ * The WriteContentErrorCallback is called when during the {@link ODataContent#write(OutputStream)}
+ * or the {@link ODataContent#write(WritableByteChannel)} an error occurs.
+ */
 public interface WriteContentErrorCallback {
   void handleError(WriteContentErrorContext context, WritableByteChannel channel);
 }

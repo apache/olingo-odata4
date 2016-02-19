@@ -18,8 +18,10 @@
  */
 package org.apache.olingo.server.api;
 
+/**
+ * The WriteContentErrorErrorContext is the parameter for the WriteContentErrorCallback.
+ */
 public interface WriteContentErrorContext {
   Exception getException();
   ODataLibraryException getODataLibraryException();
-//  Object getParameter(String name);
 }

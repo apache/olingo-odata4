@@ -20,15 +20,9 @@ package org.apache.olingo.server.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
@@ -38,82 +32,60 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.WriteContentErrorContext;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
-import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 
 public class ODataWritableContent implements ODataContent {
-  private StreamChannel channel;
+  private StreamContent streamContent;
 
-  private static class StreamChannel implements ReadableByteChannel {
-    private static final Charset DEFAULT = Charset.forName("UTF-8");
-    private ByteBuffer head;
-    private ByteBuffer tail;
-    private ODataJsonSerializer jsonSerializer;
-    private EntityIterator coll;
-    private ServiceMetadata metadata;
-    private EdmEntityType entityType;
-    private EntityCollectionSerializerOptions options;
+  private static abstract class StreamContent {
+    protected ODataSerializer serializer;
+    protected EntityIterator iterator;
+    protected ServiceMetadata metadata;
+    protected EdmEntityType entityType;
+    protected EntityCollectionSerializerOptions options;
 
-    public StreamChannel(EntityIterator coll, EdmEntityType entityType, String head,
-                         ODataJsonSerializer jsonSerializer, ServiceMetadata metadata,
-                         EntityCollectionSerializerOptions options, String tail) {
-      this.coll = coll;
+    public StreamContent(EntityIterator iterator, EdmEntityType entityType,
+                         ODataSerializer serializer, ServiceMetadata metadata,
+                         EntityCollectionSerializerOptions options) {
+      this.iterator = iterator;
       this.entityType = entityType;
-      this.head = head == null ? ByteBuffer.allocate(0) : ByteBuffer.wrap(head.getBytes(DEFAULT));
-      this.jsonSerializer = jsonSerializer;
+      this.serializer = serializer;
       this.metadata = metadata;
       this.options = options;
-      this.tail = tail == null ? ByteBuffer.allocate(0) : ByteBuffer.wrap(tail.getBytes(DEFAULT));
     }
 
-//    public boolean write(OutputStream out) throws IOException {
-//      if(head.hasRemaining()) {
-//        out.write(head.array());
-//        head.flip();
-//        return true;
-//      }
-//      if (coll.hasNext()) {
-//        try {
-//          writeEntity(coll.next(), out);
-//          if(coll.hasNext()) {
-//            out.write(",".getBytes(DEFAULT));
-//          }
-//          return true;
-//        } catch (SerializerException e) {
-//          final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
-//          if(errorCallback != null) {
-//            final ErrorContext errorContext = new ErrorContext(e).setParameter("Sample", "Some exception happened.");
-//            errorCallback.handleError(errorContext, Channels.newChannel(out));
-//          }
-//        }
-//      } else if(tail.hasRemaining()) {
-//        out.write(tail.array());
-//        tail.flip();
-//        return true;
-//      }
-//      return false;
-//    }
+    protected abstract void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException;
 
     public void write(OutputStream out) {
       try {
-        writeEntity(coll, out);
+        writeEntity(iterator, out);
       } catch (SerializerException e) {
         final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
         if(errorCallback != null) {
-          final ErrorContext errorContext = new ErrorContext(e).setParameter("Sample", "Some exception happened.");
+          final ErrorContext errorContext = new ErrorContext(e);
           errorCallback.handleError(errorContext, Channels.newChannel(out));
         }
       }
     }
+  }
 
+  private static class StreamContentForJson extends StreamContent {
+    private ODataJsonSerializer jsonSerializer;
 
-    private void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException {
+    public StreamContentForJson(EntityIterator iterator, EdmEntityType entityType,
+        ODataJsonSerializer jsonSerializer, ServiceMetadata metadata,
+        EntityCollectionSerializerOptions options) {
+      super(iterator, entityType, jsonSerializer, metadata, options);
+
+      this.jsonSerializer = jsonSerializer;
+    }
+
+    protected void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException {
       try {
         jsonSerializer.entityCollectionIntoStream(metadata, entityType, entity, options, outputStream);
         outputStream.flush();
@@ -121,97 +93,32 @@ public class ODataWritableContent implements ODataContent {
         throw new ODataRuntimeException("Failed entity serialization");
       }
     }
+  }
 
-    @Override
-    public int read(ByteBuffer dest) throws IOException {
-      ByteBuffer buffer = getCurrentBuffer();
-      if (buffer != null && buffer.hasRemaining()) {
-        int r = buffer.remaining();
-        if(r <= dest.remaining()) {
-          dest.put(buffer);
-        } else {
-          r = dest.remaining();
-          byte[] buf = new byte[dest.remaining()];
-          buffer.get(buf);
-          dest.put(buf);
-        }
-        return r;
-      }
-      return -1;
+  private static class StreamContentForXml extends StreamContent {
+    private ODataXmlSerializer xmlSerializer;
+
+    public StreamContentForXml(EntityIterator iterator, EdmEntityType entityType,
+        ODataXmlSerializer xmlSerializer, ServiceMetadata metadata,
+        EntityCollectionSerializerOptions options) {
+      super(iterator, entityType, xmlSerializer, metadata, options);
+
+      this.xmlSerializer = xmlSerializer;
     }
 
-    ByteBuffer currentBuffer;
-
-    private ByteBuffer getCurrentBuffer() {
-      if(currentBuffer == null) {
-        currentBuffer = head;
-      }
-      if(!currentBuffer.hasRemaining()) {
-        if (coll.hasNext()) {
-          try {
-            // FIXME: mibo_160108: Inefficient buffer handling, replace
-            currentBuffer = serEntity(coll.next());
-            if(coll.hasNext()) {
-              ByteBuffer b = ByteBuffer.allocate(currentBuffer.position() + 1);
-              currentBuffer.flip();
-              b.put(currentBuffer).put(",".getBytes(DEFAULT));
-              currentBuffer = b;
-            }
-            currentBuffer.flip();
-          } catch (SerializerException e) {
-            return getCurrentBuffer();
-          }
-        } else if(tail.hasRemaining()) {
-          currentBuffer = tail;
-        } else {
-          return null;
-        }
-      }
-      return currentBuffer;
-    }
-
-    private ByteBuffer serEntity(Entity entity) throws SerializerException {
+    protected void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException {
       try {
-        CircleStreamBuffer buffer = new CircleStreamBuffer();
-        OutputStream outputStream = buffer.getOutputStream();
-        JsonGenerator json = new JsonFactory().createGenerator(outputStream);
-        jsonSerializer.writeEntity(metadata, entityType, entity, null,
-            options == null ? null : options.getExpand(),
-            options == null ? null : options.getSelect(),
-            options != null && options.getWriteOnlyReferences(),
-            json);
-
-        json.close();
-        outputStream.close();
-        return buffer.getBuffer();
+        xmlSerializer.entityCollectionIntoStream(metadata, entityType, entity, options, outputStream);
+        outputStream.flush();
       } catch (final IOException e) {
-        return ByteBuffer.wrap(("ERROR" + e.getMessage()).getBytes());
+        throw new ODataRuntimeException("Failed entity serialization");
       }
     }
-
-
-    @Override
-    public boolean isOpen() {
-      return false;
-    }
-
-    @Override
-    public void close() throws IOException {
-
-    }
-  }
-
-  public ReadableByteChannel getChannel() {
-    return this.channel;
-  }
-
-  public boolean isWriteSupported() {
-    return true;
   }
 
   @Override
   public void write(WritableByteChannel writeChannel) {
-    this.channel.write(Channels.newOutputStream(writeChannel));
+    this.streamContent.write(Channels.newOutputStream(writeChannel));
   }
 
   @Override
@@ -219,20 +126,18 @@ public class ODataWritableContent implements ODataContent {
     write(Channels.newChannel(stream));
   }
 
-  private ODataWritableContent(StreamChannel channel) {
-    this.channel = channel;
+  private ODataWritableContent(StreamContent streamContent) {
+    this.streamContent = streamContent;
   }
 
-  public static ODataWritableContentBuilder with(EntityIterator coll, EdmEntityType entityType,
-                                             ODataJsonSerializer jsonSerializer,
-                                             ServiceMetadata metadata, EntityCollectionSerializerOptions options) {
-    return new ODataWritableContentBuilder(coll, entityType, jsonSerializer, metadata, options);
+  public static ODataWritableContentBuilder with(EntityIterator iterator, EdmEntityType entityType,
+                                             ODataSerializer serializer, ServiceMetadata metadata,
+      EntityCollectionSerializerOptions options) {
+    return new ODataWritableContentBuilder(iterator, entityType, serializer, metadata, options);
   }
 
   public static class ErrorContext implements WriteContentErrorContext {
     private ODataLibraryException exception;
-    final private Map<String, Object> parameters = new HashMap<String, Object>();
-
     public ErrorContext(ODataLibraryException exception) {
       this.exception = exception;
     }
@@ -245,50 +150,36 @@ public class ODataWritableContent implements ODataContent {
     public ODataLibraryException getODataLibraryException() {
       return exception;
     }
-
-    public ErrorContext setParameter(String name, Object value) {
-      parameters.put(name, value);
-      return this;
-    }
-
-//    @Override
-    public Object getParameter(String name) {
-      return parameters.get(name);
-    }
   }
 
   public static class ODataWritableContentBuilder {
-    private ODataJsonSerializer jsonSerializer;
+    private ODataSerializer serializer;
     private EntityIterator entities;
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntityCollectionSerializerOptions options;
-    private String head;
-    private String tail;
 
     public ODataWritableContentBuilder(EntityIterator entities, EdmEntityType entityType,
-                                   ODataJsonSerializer jsonSerializer,
+                                    ODataSerializer serializer,
                                    ServiceMetadata metadata, EntityCollectionSerializerOptions options) {
       this.entities = entities;
       this.entityType = entityType;
-      this.jsonSerializer = jsonSerializer;
+      this.serializer = serializer;
       this.metadata = metadata;
       this.options = options;
     }
 
-    public ODataWritableContentBuilder addHead(String head) {
-      this.head = head;
-      return this;
-    }
-
-    public ODataWritableContentBuilder addTail(String tail) {
-      this.tail = tail;
-      return this;
-    }
-
     public ODataContent buildContent() {
-      StreamChannel input = new StreamChannel(entities, entityType, head, jsonSerializer, metadata, options, tail);
-      return new ODataWritableContent(input);
+      if(serializer instanceof ODataJsonSerializer) {
+        StreamContent input = new StreamContentForJson(entities, entityType,
+            (ODataJsonSerializer) serializer, metadata, options);
+        return new ODataWritableContent(input);
+      } else if(serializer instanceof ODataXmlSerializer) {
+        StreamContentForXml input = new StreamContentForXml(entities, entityType,
+            (ODataXmlSerializer) serializer, metadata, options);
+        return new ODataWritableContent(input);
+      }
+      throw new ODataRuntimeException("No suitable serializer found");
     }
     public SerializerStreamResult build() {
       return SerializerStreamResultImpl.with().content(buildContent()).build();
