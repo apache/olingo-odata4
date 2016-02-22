@@ -20,7 +20,6 @@ package org.apache.olingo.server.core.serializer;
 
 import java.io.InputStream;
 
-import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 
 public class SerializerResultImpl implements SerializerResult {
@@ -30,21 +29,6 @@ public class SerializerResultImpl implements SerializerResult {
   public InputStream getContent() {
     return content;
   }
-
-  //  @Override
-//  public ReadableByteChannel getChannel() {
-//    return Channels.newChannel(getContent());
-//  }
-//
-//  @Override
-//  public void write(WritableByteChannel channel) {
-//    ResultHelper.copy(Channels.newChannel(content), channel);
-//  }
-//
-//  @Override
-//  public boolean isWriteSupported() {
-//    return false;
-//  }
 
   public static SerializerResultBuilder with() {
     return new SerializerResultBuilder();

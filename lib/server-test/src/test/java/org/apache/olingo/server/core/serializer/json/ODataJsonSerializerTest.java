@@ -26,7 +26,6 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
@@ -49,8 +48,8 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.WriteContentErrorCallback;
-import org.apache.olingo.server.api.WriteContentErrorContext;
+import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
+import org.apache.olingo.server.api.ODataContentWriteErrorContext;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -275,9 +274,9 @@ public class ODataJsonSerializerTest {
     CountOption countOption = Mockito.mock(CountOption.class);
     Mockito.when(countOption.getValue()).thenReturn(true);
 
-    WriteContentErrorCallback errorCallback = new WriteContentErrorCallback() {
+    ODataContentWriteErrorCallback errorCallback = new ODataContentWriteErrorCallback() {
       @Override
-      public void handleError(WriteContentErrorContext context, WritableByteChannel channel) {
+      public void handleError(ODataContentWriteErrorContext context, WritableByteChannel channel) {
         try {
           String msgKey = context.getODataLibraryException().getMessageKey().getKey();
           String toChannel = "ERROR: " + msgKey;

@@ -29,8 +29,8 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.WriteContentErrorCallback;
-import org.apache.olingo.server.api.WriteContentErrorContext;
+import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
+import org.apache.olingo.server.api.ODataContentWriteErrorContext;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -39,6 +39,14 @@ import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 
+/**
+ * Stream supporting implementation of the ODataContent
+ * and contains the response content for the OData request.
+ * <p/>
+ * If an error occur during a <code>write</code> method <b>NO</b> exception
+ * will be thrown but if registered the
+ * org.apache.olingo.server.api.ODataContentWriteErrorCallback is called.
+ */
 public class ODataWritableContent implements ODataContent {
   private StreamContent streamContent;
 
@@ -65,9 +73,9 @@ public class ODataWritableContent implements ODataContent {
       try {
         writeEntity(iterator, out);
       } catch (SerializerException e) {
-        final WriteContentErrorCallback errorCallback = options.getWriteContentErrorCallback();
+        final ODataContentWriteErrorCallback errorCallback = options.getODataContentWriteErrorCallback();
         if(errorCallback != null) {
-          final ErrorContext errorContext = new ErrorContext(e);
+          final WriteErrorContext errorContext = new WriteErrorContext(e);
           errorCallback.handleError(errorContext, Channels.newChannel(out));
         }
       }
@@ -136,9 +144,9 @@ public class ODataWritableContent implements ODataContent {
     return new ODataWritableContentBuilder(iterator, entityType, serializer, metadata, options);
   }
 
-  public static class ErrorContext implements WriteContentErrorContext {
+  public static class WriteErrorContext implements ODataContentWriteErrorContext {
     private ODataLibraryException exception;
-    public ErrorContext(ODataLibraryException exception) {
+    public WriteErrorContext(ODataLibraryException exception) {
       this.exception = exception;
     }
 
