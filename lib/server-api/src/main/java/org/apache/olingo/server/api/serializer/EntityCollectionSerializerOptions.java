@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.server.api.WriteContentErrorCallback;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -32,6 +33,7 @@ public class EntityCollectionSerializerOptions {
   private SelectOption select;
   private boolean writeOnlyReferences;
   private String id;
+  private WriteContentErrorCallback writeContentErrorCallback;
   private String xml10InvalidCharReplacement;
 
   /** Gets the {@link ContextURL}. */
@@ -64,6 +66,17 @@ public class EntityCollectionSerializerOptions {
     return id;
   }
 
+  /**
+   * Gets the callback which is used in case of an exception during
+   * write of the content (in case the content will be written/streamed
+   * in the future)
+   * @return callback which is used in case of an exception during
+   * write of the content
+   *
+   */
+  public WriteContentErrorCallback getWriteContentErrorCallback() {
+    return writeContentErrorCallback;
+  }
   /** Gets the replacement string for unicode characters, that is not allowed in XML 1.0 */
   public String xml10InvalidCharReplacement() {
     return xml10InvalidCharReplacement;
@@ -118,7 +131,19 @@ public class EntityCollectionSerializerOptions {
       options.id = id;
       return this;
     }
-    
+
+    /**
+     * Set the callback which is used in case of an exception during
+     * write of the content.
+     *
+     * @param writeContentErrorCallback the callback
+     * @return the builder
+     */
+    public Builder writeContentErrorCallback(WriteContentErrorCallback writeContentErrorCallback) {
+      options.writeContentErrorCallback = writeContentErrorCallback;
+      return this;
+    }
+
     /** set the replacement String for xml 1.0 unicode controlled characters that are not allowed */
     public Builder xml10InvalidCharReplacement(final String replacement) {
       options.xml10InvalidCharReplacement = replacement;

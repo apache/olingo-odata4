@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Channels;
@@ -38,6 +39,7 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
@@ -149,22 +151,35 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    if (odResponse.getContent() != null) {
-      copyContent(odResponse, response);
+    if (odResponse.getContent() != null ) {
+      copyContent(odResponse.getContent(), response);
+    } else if(odResponse.getODataContent() != null) {
+      writeContent(odResponse, response);
     }
   }
 
-  static void copyContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
-    ReadableByteChannel input = null;
+  static void writeContent(final ODataResponse odataResponse, final HttpServletResponse servletResponse) {
+    try {
+      ODataContent res = odataResponse.getODataContent();
+      res.write(Channels.newChannel(servletResponse.getOutputStream()));
+    } catch (IOException e) {
+      throw new ODataRuntimeException("Error on reading request content", e);
+    }
+  }
+
+  static void copyContent(final InputStream inputStream, final HttpServletResponse servletResponse) {
+    copyContent(Channels.newChannel(inputStream), servletResponse);
+  }
+
+  static void copyContent(final ReadableByteChannel input, final HttpServletResponse servletResponse) {
     WritableByteChannel output = null;
     try {
       ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
       output = Channels.newChannel(servletResponse.getOutputStream());
-      input = Channels.newChannel(odataResponse.getContent());
       while (input.read(inBuffer) > 0) {
         inBuffer.flip();
         output.write(inBuffer);
-        inBuffer.rewind();
+        inBuffer.clear();
       }
     } catch (IOException e) {
       throw new ODataRuntimeException("Error on reading request content", e);

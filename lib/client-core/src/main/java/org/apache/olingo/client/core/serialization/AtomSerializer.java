@@ -525,7 +525,7 @@ public class AtomSerializer extends AbstractAtomDealer implements ODataSerialize
 
     common(writer, entitySet);
 
-    for (Entity entity : entitySet.getEntities()) {
+    for (Entity entity : entitySet) {
       if (entity.getType() == null && entity.getProperties().isEmpty()) {
         entityRef(writer, entity);
       } else {

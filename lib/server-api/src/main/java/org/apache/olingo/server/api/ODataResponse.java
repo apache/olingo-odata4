@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.api;
 
+import org.apache.olingo.commons.api.http.HttpStatusCode;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 /**
  * Response object to carry OData-relevant HTTP information (status code, response headers, and content).
@@ -131,4 +131,13 @@ public class ODataResponse {
     return content;
   }
 
+  private ODataContent odataContent;
+
+  public void setODataContent(ODataContent result) {
+    odataContent = result;
+  }
+
+  public ODataContent getODataContent() {
+    return odataContent;
+  }
 }

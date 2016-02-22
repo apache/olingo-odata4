@@ -18,47 +18,30 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import java.io.InputStream;
-
 import org.apache.olingo.server.api.ODataContent;
-import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 
-public class SerializerResultImpl implements SerializerResult {
-  private InputStream content;
+public class SerializerStreamResultImpl implements SerializerStreamResult {
+  private ODataContent oDataContent;
 
   @Override
-  public InputStream getContent() {
-    return content;
+  public ODataContent getODataContent() {
+    return oDataContent;
   }
-
-  //  @Override
-//  public ReadableByteChannel getChannel() {
-//    return Channels.newChannel(getContent());
-//  }
-//
-//  @Override
-//  public void write(WritableByteChannel channel) {
-//    ResultHelper.copy(Channels.newChannel(content), channel);
-//  }
-//
-//  @Override
-//  public boolean isWriteSupported() {
-//    return false;
-//  }
 
   public static SerializerResultBuilder with() {
     return new SerializerResultBuilder();
   }
 
   public static class SerializerResultBuilder {
-    private SerializerResultImpl result = new SerializerResultImpl();
+    private SerializerStreamResultImpl result = new SerializerStreamResultImpl();
 
-    public SerializerResultBuilder content(final InputStream input) {
-      result.content = input;
+    public SerializerResultBuilder content(final ODataContent content) {
+      result.oDataContent = content;
       return this;
     }
 
-    public SerializerResult build() {
+    public SerializerStreamResult build() {
       return result;
     }
   }

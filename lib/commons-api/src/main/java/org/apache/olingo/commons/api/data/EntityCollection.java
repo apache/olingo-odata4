@@ -20,12 +20,13 @@ package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Data representation for a collection of single entities.
  */
-public class EntityCollection extends AbstractODataObject {
+public class EntityCollection extends AbstractEntityCollection {
 
   private final List<Entity> entities = new ArrayList<Entity>();
   private Integer count;
@@ -46,6 +47,7 @@ public class EntityCollection extends AbstractODataObject {
    *
    * @return number of entries into the entity set.
    */
+  @Override
   public Integer getCount() {
     return count;
   }
@@ -73,6 +75,7 @@ public class EntityCollection extends AbstractODataObject {
    *
    * @return next link if exists; null otherwise.
    */
+  @Override
   public URI getNext() {
     return next;
   }
@@ -82,6 +85,7 @@ public class EntityCollection extends AbstractODataObject {
    *
    * @return delta link if exists; null otherwise.
    */
+  @Override
   public URI getDeltaLink() {
     return deltaLink;
   }
@@ -93,6 +97,11 @@ public class EntityCollection extends AbstractODataObject {
    */
   public void setDeltaLink(final URI deltaLink) {
     this.deltaLink = deltaLink;
+  }
+
+  @Override
+  public Iterator<Entity> iterator() {
+    return this.entities.iterator();
   }
 
   @Override

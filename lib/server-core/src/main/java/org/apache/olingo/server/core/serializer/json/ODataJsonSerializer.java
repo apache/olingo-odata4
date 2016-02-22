@@ -29,7 +29,8 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
@@ -57,11 +58,13 @@ import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOpti
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
+import org.apache.olingo.server.core.ODataWritableContent;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
@@ -136,7 +139,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata,
-      final EdmEntityType entityType, final EntityCollection entitySet,
+      final EdmEntityType entityType, final AbstractEntityCollection entitySet,
       final EntityCollectionSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
@@ -176,6 +179,50 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   }
 
   @Override
+  public SerializerStreamResult entityCollectionStreamed(ServiceMetadata metadata, EdmEntityType entityType,
+      EntityIterator entities, EntityCollectionSerializerOptions options) throws SerializerException {
+
+    return ODataWritableContent.with(entities, entityType, this, metadata, options).build();
+  }
+
+
+  public void entityCollectionIntoStream(final ServiceMetadata metadata,
+      final EdmEntityType entityType, final EntityIterator entitySet,
+      final EntityCollectionSerializerOptions options, final OutputStream outputStream)
+        throws SerializerException {
+
+    SerializerException cachedException;
+    try {
+      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+      json.writeStartObject();
+
+      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+      writeContextURL(contextURL, json);
+
+      writeMetadataETag(metadata, json);
+
+      if (options != null && options.getCount() != null && options.getCount().getValue()) {
+        writeCount(entitySet, json);
+      }
+      json.writeFieldName(Constants.VALUE);
+      if (options == null) {
+        writeEntitySet(metadata, entityType, entitySet, null, null, false, json);
+      } else {
+        writeEntitySet(metadata, entityType, entitySet,
+            options.getExpand(), options.getSelect(), options.getWriteOnlyReferences(), json);
+      }
+      // next link not supported by default for streaming results
+//      writeNextLink(entitySet, json);
+
+      json.close();
+    } catch (final IOException e) {
+      cachedException =
+          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
+      throw cachedException;
+    }
+  }
+
+  @Override
   public SerializerResult entity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final EntitySerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
@@ -203,7 +250,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
+  ContextURL checkContextURL(final ContextURL contextURL) throws SerializerException {
     if (isODataMetadataNone) {
       return null;
     } else if (contextURL == null) {
@@ -213,11 +260,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final EntityCollection entitySet, final ExpandOption expand, final SelectOption select,
+      final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
       final boolean onlyReference, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();
-    for (final Entity entity : entitySet.getEntities()) {
+    for (final Entity entity : entitySet) {
       if (onlyReference) {
         json.writeStartObject();
         json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
@@ -229,9 +276,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     json.writeEndArray();
   }
 
-  protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final Entity entity, final ContextURL contextURL, final ExpandOption expand,
-      final SelectOption select, final boolean onlyReference, final JsonGenerator json)
+  public void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType, final Entity entity,
+      final ContextURL contextURL, final ExpandOption expand, final SelectOption select, final boolean onlyReference,
+      final JsonGenerator json)
           throws IOException, SerializerException {
     json.writeStartObject();
     if (!isODataMetadataNone) {
@@ -736,7 +783,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult referenceCollection(final ServiceMetadata metadata, final EdmEntitySet edmEntitySet,
-      final EntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
+      final AbstractEntityCollection entityCollection, final ReferenceCollectionSerializerOptions options)
           throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
@@ -755,7 +802,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       }
 
       json.writeArrayFieldStart(Constants.VALUE);
-      for (final Entity entity : entityCollection.getEntities()) {
+      for (final Entity entity : entityCollection) {
         json.writeStartObject();
         json.writeStringField(Constants.JSON_ID, uriHelper.buildCanonicalURL(edmEntitySet, entity));
         json.writeEndObject();
@@ -779,13 +826,13 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   }
 
-  private void writeContextURL(final ContextURL contextURL, final JsonGenerator json) throws IOException {
+  void writeContextURL(final ContextURL contextURL, final JsonGenerator json) throws IOException {
     if (!isODataMetadataNone && contextURL != null) {
       json.writeStringField(Constants.JSON_CONTEXT, ContextURLBuilder.create(contextURL).toASCIIString());
     }
   }
 
-  private void writeMetadataETag(final ServiceMetadata metadata, final JsonGenerator json) throws IOException {
+  void writeMetadataETag(final ServiceMetadata metadata, final JsonGenerator json) throws IOException {
     if (!isODataMetadataNone
         && metadata != null
         && metadata.getServiceMetadataETagSupport() != null
@@ -795,7 +842,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeCount(final EntityCollection entityCollection, final JsonGenerator json) throws IOException {
+  void writeCount(final AbstractEntityCollection entityCollection, final JsonGenerator json) throws IOException {
     if (entityCollection.getCount() != null) {
       if (isIEEE754Compatible) {
         json.writeStringField(Constants.JSON_COUNT, entityCollection.getCount().toString());
@@ -805,7 +852,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  private void writeNextLink(final EntityCollection entitySet, final JsonGenerator json) throws IOException {
+  void writeNextLink(final AbstractEntityCollection entitySet, final JsonGenerator json) throws IOException {
     if (entitySet.getNext() != null) {
       json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
     }

@@ -19,7 +19,8 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -61,7 +62,17 @@ public interface ODataSerializer {
    * @param options options for the serializer
    */
   SerializerResult entityCollection(ServiceMetadata metadata, EdmEntityType entityType,
-      EntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
+      AbstractEntityCollection entitySet, EntityCollectionSerializerOptions options) throws SerializerException;
+
+  /**
+   * Writes entity-collection data into an InputStream.
+   * @param metadata metadata for the service
+   * @param entityType the {@link EdmEntityType}
+   * @param entities the data of the entity set
+   * @param options options for the serializer
+   */
+  SerializerStreamResult entityCollectionStreamed(ServiceMetadata metadata, EdmEntityType entityType,
+      EntityIterator entities, EntityCollectionSerializerOptions options) throws SerializerException;
 
   /**
    * Writes entity data into an InputStream.
@@ -128,8 +139,9 @@ public interface ODataSerializer {
    * @param metadata metadata for the service
    * @param edmEntitySet {@link EdmEntitySet}
    * @param entityCollection data of the entity collection
-   * @param ReferenceCollectionSerializerOptions {@link ReferenceCollectionSerializerOptions}
+   * @param options {@link ReferenceCollectionSerializerOptions}
    */
   SerializerResult referenceCollection(ServiceMetadata metadata, EdmEntitySet edmEntitySet,
-      EntityCollection entityCollection, ReferenceCollectionSerializerOptions options) throws SerializerException;
+      AbstractEntityCollection entityCollection, ReferenceCollectionSerializerOptions options)
+      throws SerializerException;
 }

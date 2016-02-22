@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.ContextURL;
@@ -25,6 +27,9 @@ import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -51,6 +56,7 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -519,18 +525,37 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       id = request.getRawBaseUri() + edmEntitySet.getName();
     }
 
-    // Serialize
-    final SerializerResult serializerResult = (isReference) ?
-        serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption) :
-        serializeEntityCollection(request, entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
-            expand, select, countOption, id);
-    response.setContent(serializerResult.getContent());
+    if(isReference) {
+      final SerializerResult serializerResult =
+          serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption);
+      response.setContent(serializerResult.getContent());
+    } else if(isOdataStreaming(request)) {
+      final SerializerStreamResult serializerResult =
+          serializeEntityCollectionStreamed(request,
+              entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+              expand, select, countOption, id);
+
+      response.setODataContent(serializerResult.getODataContent());
+    } else {
+      final SerializerResult serializerResult =
+          serializeEntityCollection(request,
+              entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
+              expand, select, countOption, id);
+      response.setContent(serializerResult.getContent());
+    }
+
+    //
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
     if (pageSize != null) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().maxPageSize(serverPageSize).build().toValueString());
     }
+  }
+
+  private boolean isOdataStreaming(ODataRequest request) {
+    String odataStreaming = request.getHeader("odata.streaming");
+    return Boolean.parseBoolean(odataStreaming);
   }
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
@@ -542,6 +567,56 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
         serviceMetadata,
         edmEntityType,
         entityCollection,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(isODataMetadataNone(requestedFormat) ? null :
+                getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
+            .count(countOption)
+            .expand(expand).select(select)
+            .id(id)
+            .build());
+  }
+
+  // serialise as streamed collection
+  private SerializerStreamResult serializeEntityCollectionStreamed(final ODataRequest request,
+      final EntityCollection entityCollection, final EdmEntitySet edmEntitySet,
+      final EdmEntityType edmEntityType,
+      final ContentType requestedFormat, final ExpandOption expand, final SelectOption select,
+      final CountOption countOption, final String id) throws ODataLibraryException {
+
+    EntityIterator streamCollection = new EntityIterator() {
+      Iterator<Entity> entityIterator = entityCollection.iterator();
+
+      @Override
+      public boolean hasNext() {
+        return entityIterator.hasNext();
+      }
+
+      @Override
+      public Entity next() {
+        return addToPrimitiveProperty(entityIterator.next(), "PropertyString", "->streamed");
+      }
+
+      private Entity addToPrimitiveProperty(Entity entity, String name, Object data) {
+        List<Property> properties = entity.getProperties();
+        int pos = 0;
+        for (Property property : properties) {
+          if(name.equals(property.getName())) {
+            properties.remove(pos);
+            final String old = property.getValue().toString();
+            String newValue = (old == null ? "": old) + data.toString();
+            entity.addProperty(new Property(null, name, ValueType.PRIMITIVE, newValue));
+            break;
+          }
+          pos++;
+        }
+        return entity;
+      }
+    };
+
+    return odata.createSerializer(requestedFormat).entityCollectionStreamed(
+        serviceMetadata,
+        edmEntityType,
+        streamCollection,
         EntityCollectionSerializerOptions.with()
             .contextURL(isODataMetadataNone(requestedFormat) ? null :
                 getContextUrl(request.getRawODataPath(), edmEntitySet, edmEntityType, false, expand, select))
