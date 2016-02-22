@@ -21,28 +21,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.ext.proxy.AbstractService;
+import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
+import org.apache.olingo.ext.proxy.api.AbstractSingleton;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntitySetInvocationHandler;
+import org.apache.olingo.ext.proxy.commons.InlineEntitySetInvocationHandler;
 
 public class ProxyUtils {
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public static Object getEntityCollectionProxy(
-          final AbstractService<?> service,
-          final Class<?> typeRef,
-          final Class<?> typeCollectionRef,
-          final URI targetEntitySetURI,
-          final ClientEntitySet entitySet,
-          final URI uri,
-          final boolean checkInTheContext) {
+      final AbstractService<?> service,
+      final Class<?> typeRef,
+      final Class<?> typeCollectionRef,
+      final URI targetEntitySetURI,
+      final ClientEntitySet entitySet,
+      final URI uri,
+      final boolean checkInTheContext) {
 
+    final List<Object> items = extractItems(service, typeRef, entitySet, uri, checkInTheContext);
+
+    return Proxy.newProxyInstance(
+        Thread.currentThread().getContextClassLoader(),
+        new Class<?>[] { typeCollectionRef },
+        new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
+            uri == null ? null : service.getClient().newURIBuilder(uri.toASCIIString())));
+  }
+
+  private static List<Object> extractItems(final AbstractService<?> service, final Class<?> typeRef,
+      final ClientEntitySet entitySet, final URI uri, final boolean checkInTheContext) {
     final List<Object> items = new ArrayList<Object>();
 
     if (entitySet != null) {
@@ -50,12 +64,25 @@ public class ProxyUtils {
         items.add(getEntityProxy(service, entityFromSet, uri, typeRef, null, checkInTheContext));
       }
     }
+    return items;
+  }
+
+  public static Object getEntitySetProxy(
+      final AbstractService<?> service,
+      final Class<?> typeRef,
+      final ClientEntitySet entitySet,
+      final URI uri,
+      final boolean checkInTheContext) {
+
+    final Class<?> entityTypeRef = ClassUtils.extractTypeArg(typeRef, AbstractEntitySet.class,
+        AbstractSingleton.class);
+
+    final List<Object> items = extractItems(service, entityTypeRef, entitySet, uri, checkInTheContext);
 
     return Proxy.newProxyInstance(
-            Thread.currentThread().getContextClassLoader(),
-            new Class<?>[] {typeCollectionRef},
-            new EntityCollectionInvocationHandler(service, items, typeCollectionRef, targetEntitySetURI,
-                    uri == null ? null : service.getClient().newURIBuilder(uri.toASCIIString())));
+        Thread.currentThread().getContextClassLoader(),
+        new Class<?>[] { typeRef },
+        InlineEntitySetInvocationHandler.getInstance(typeRef, service, uri, items));
   }
 
   public static Object getEntitySetProxy(

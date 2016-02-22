@@ -44,28 +44,31 @@ import org.apache.olingo.ext.proxy.commons.AbstractCollectionInvocationHandler;
 import org.apache.olingo.fit.proxy.demo.Service;
 import org.apache.olingo.fit.proxy.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.demo.odatademo.types.PersonDetail;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account.MyPaymentInstruments;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.AddressCollection;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonComposableInvoker;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Product;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
         .ProductCollectionComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
-        .ProductDetailCollectionComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetail;
 import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductDetailCollection;
-
+import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
+        .ProductDetailCollectionComposableInvoker;
 // CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 
@@ -95,6 +98,31 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
       assertNotNull(customer.getFirstName());
       assertNotNull(customer.getLastName());
     }
+  }
+  
+  @Test
+  public void expandToContainedEntitySet() {
+    Account account = container.getAccounts().getByKey(103).expand("MyPaymentInstruments").load();
+    assertNotNull(account);
+    assertNotNull(account.getAccountID());
+    MyPaymentInstruments myPaymentInstruments = account.getMyPaymentInstruments();
+    assertNotNull(myPaymentInstruments);
+    PaymentInstrument paymentInstrument = myPaymentInstruments.iterator().next();
+    assertNotNull(paymentInstrument);
+    assertNotNull(paymentInstrument.getFriendlyName());
+
+    PaymentInstrumentCollection myPaymentInstrumentCol = myPaymentInstruments.execute();
+    assertNotNull(myPaymentInstrumentCol);
+    assertFalse(myPaymentInstrumentCol.isEmpty());
+    paymentInstrument = myPaymentInstrumentCol.iterator().next();
+    assertNotNull(paymentInstrument);
+    assertNotNull(paymentInstrument.getFriendlyName());
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void expandToContainedEntitySetWithUnsupportedOperation() {
+    Account account = container.getAccounts().getByKey(103).expand("MyPaymentInstruments").load();
+    account.getMyPaymentInstruments().delete(101901);
   }
 
   @Test

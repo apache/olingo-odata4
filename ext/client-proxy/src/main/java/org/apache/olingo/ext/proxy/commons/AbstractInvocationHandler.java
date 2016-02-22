@@ -20,6 +20,7 @@ package org.apache.olingo.ext.proxy.commons;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -31,9 +32,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ComplexType;
@@ -89,6 +90,8 @@ abstract class AbstractInvocationHandler implements InvocationHandler {
       return getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(this, args);
     } catch (UndeclaredThrowableException e) {
       throw e.getCause();
+    } catch(InvocationTargetException e) {
+      throw e.getTargetException();
     }
   }
 

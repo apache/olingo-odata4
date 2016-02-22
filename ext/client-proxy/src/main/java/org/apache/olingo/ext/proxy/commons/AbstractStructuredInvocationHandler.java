@@ -38,9 +38,6 @@ import java.util.concurrent.Callable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.olingo.client.api.uri.QueryOption;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.domain.ClientInlineEntitySet;
@@ -48,6 +45,9 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientLinked;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.QueryOption;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -457,15 +457,21 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
               null,
               false);
     } else if (link instanceof ClientInlineEntitySet) {
-      // return entity set
-      navPropValue = ProxyUtils.getEntityCollectionProxy(
-              service,
-              collItemType,
-              type,
-              targetEntitySetURI,
-              ((ClientInlineEntitySet) link).getEntitySet(),
-              targetEntitySetURI,
-              false);
+      if (AbstractEntitySet.class.isAssignableFrom(type)) {
+        navPropValue =
+            ProxyUtils.getEntitySetProxy(service, type, ((ClientInlineEntitySet) link).getEntitySet(),
+                targetEntitySetURI, false);
+      } else {
+        // return entity set
+        navPropValue = ProxyUtils.getEntityCollectionProxy(
+                service,
+                collItemType,
+                type,
+                targetEntitySetURI,
+                ((ClientInlineEntitySet) link).getEntitySet(),
+                targetEntitySetURI,
+                false);
+      }
     } else {
       // navigate
       final URI targetURI = URIUtils.getURI(getEntityHandler().getEntityURI(), property.name());
