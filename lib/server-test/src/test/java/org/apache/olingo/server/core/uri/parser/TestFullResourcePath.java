@@ -58,6 +58,20 @@ public class TestFullResourcePath {
   private final FilterValidator testFilter = new FilterValidator().setEdm(edm);
 
   @Test
+  public void valueOnNonMediaEntity() throws Exception {
+    testUri.runEx("ESAllPrim/$value").isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("ESAllPrim(1)/NavPropertyETTwoPrimMany/$value").isExSemantic(
+        UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
+    testUri.runEx("FICRTCollESMedia()/$value")
+        .isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
+
+    testUri.runEx("ESAllPrim(1)/$value").isExSemantic(UriParserSemanticException.MessageKeys.NOT_A_MEDIA_RESOURCE);
+    testUri.runEx("ESAllPrim(1)/NavPropertyETTwoPrimOne/$value").isExSemantic(
+        UriParserSemanticException.MessageKeys.NOT_A_MEDIA_RESOURCE);
+    testUri.runEx("FICRTETKeyNav()/$value").isExSemantic(UriParserSemanticException.MessageKeys.NOT_A_MEDIA_RESOURCE);
+  }
+
+  @Test
   public void enumAndTypeDefAsKey() throws Exception {
     testUri
         .run("ESMixEnumDefCollComp(PropertyEnumString=olingo.odata.test1.ENString'String1',PropertyDefString='abc')")
@@ -3205,15 +3219,6 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isRef();
-
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav/$value")
-        .goPath().first()
-        .isEntitySet("ESTwoKeyNav")
-        .isKeyPredicate(0, "PropertyInt16", "1")
-        .isKeyPredicate(1, "PropertyString", "'2'")
-        .isType(EntityTypeProvider.nameETTwoKeyNav)
-        .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
-        .n().isValue();
   }
 
   @Test
@@ -3768,7 +3773,7 @@ public class TestFullResourcePath {
   public void filterFunctions() throws Exception {
     testFilter.runOnETAllPrim(
         "olingo.odata.test1.UFCRTETTwoKeyNavParamCTTwoPrim(ParameterCTTwoPrim=@ParamAlias) eq null"
-        + "&@ParamAlias={}")
+            + "&@ParamAlias={}")
         .is("<<UFCRTETTwoKeyNavParamCTTwoPrim> eq <null>>")
         .left().goPath()
         .first()
@@ -4687,7 +4692,7 @@ public class TestFullResourcePath {
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyInt16 eq 1 or "
         + "d/CollPropertyString/any(e:e eq 'SomeString'))")
-        .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>>" 
+        .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyInt16> eq <1>>"
             + " or <d/CollPropertyString/<ANY;<<e> eq <'SomeString'>>>>>>>")
         .root().goPath()
         .first().isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
@@ -4708,7 +4713,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .n().isUriPathInfoKind(UriResourceKind.primitiveProperty)
         .isPrimitiveProperty("CollPropertyString", PropertyProvider.nameString, true)
-        .at(2).isUriPathInfoKind(UriResourceKind.lambdaAny)        
+        .at(2).isUriPathInfoKind(UriResourceKind.lambdaAny)
         .goLambdaExpression()
         .root().left().goPath()
         .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
@@ -4743,7 +4748,7 @@ public class TestFullResourcePath {
         .isType(PropertyProvider.nameString, false);
 
     testFilter.runOnETKeyNav("NavPropertyETTwoKeyNavMany/any(d:d/PropertyString eq 'SomeString' and "
-            + "d/CollPropertyString/any(e:e eq d/PropertyString))")
+        + "d/CollPropertyString/any(e:e eq d/PropertyString))")
         .is("<NavPropertyETTwoKeyNavMany/<ANY;<<<d/PropertyString> eq <'SomeString'>> and "
             + "<d/CollPropertyString/<ANY;<<e> eq <d/PropertyString>>>>>>>")
         .root().goPath()
@@ -5415,82 +5420,82 @@ public class TestFullResourcePath {
    */
   @Test
   public void searchQueryPhraseAbnfTestcases() throws Exception {
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    // <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
     testUri.run("ESTwoKeyNav", "$search=\"blue%20green\"");
-    //    <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
+    // <TestCase Name="5.1.7 Search - simple phrase" Rule="queryOptions">
     testUri.run("ESTwoKeyNav", "$search=\"blue%20green%22");
-    //    <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
-    //    <Input>$search="blue\"green"</Input>
+    // <TestCase Name="5.1.7 Search - phrase with escaped double-quote" Rule="queryOptions">
+    // <Input>$search="blue\"green"</Input>
     testUri.run("ESTwoKeyNav", "$search=\"blue\\\"green\"");
 
-    //    <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
-    //    <Input>$search="blue\\green"</Input>
+    // <TestCase Name="5.1.7 Search - phrase with escaped backslash" Rule="queryOptions">
+    // <Input>$search="blue\\green"</Input>
     testUri.run("ESTwoKeyNav", "$search=\"blue\\\\green\"");
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
+    // <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="14">
     testUri.runEx("ESTwoKeyNav", "$search=\"blue\"green\"")
-            .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
-    //    <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
+        .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+    // <TestCase Name="5.1.7 Search - phrase with unescaped double-quote" Rule="queryOptions" FailAt="16">
     testUri.runEx("ESTwoKeyNav", "$search=\"blue%22green\"")
-            .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
+        .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
 
-    //    <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
-    //    <Input>$search=blue green</Input>
-    //    SearchassertQuery("\"blue%20green\"").resultsIn();
+    // <TestCase Name="5.1.7 Search - implicit AND" Rule="queryOptions">
+    // <Input>$search=blue green</Input>
+    // SearchassertQuery("\"blue%20green\"").resultsIn();
     testUri.run("ESTwoKeyNav", "$search=blue green");
-    //    <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
-    //    SearchassertQuery("blue%20green").resultsIn();
+    // <TestCase Name="5.1.7 Search - implicit AND, encoced" Rule="queryOptions">
+    // SearchassertQuery("blue%20green").resultsIn();
     testUri.run("ESTwoKeyNav", "$search=blue%20green");
 
-    //    <TestCase Name="5.1.7 Search - AND" Rule="queryOptions">
-    //    <Input>$search=blue AND green</Input>
+    // <TestCase Name="5.1.7 Search - AND" Rule="queryOptions">
+    // <Input>$search=blue AND green</Input>
     testUri.run("ESTwoKeyNav", "$search=blue AND green");
 
-    //    <TestCase Name="5.1.7 Search - OR" Rule="queryOptions">
-    //    <Input>$search=blue OR green</Input>
+    // <TestCase Name="5.1.7 Search - OR" Rule="queryOptions">
+    // <Input>$search=blue OR green</Input>
     testUri.run("ESTwoKeyNav", "$search=blue OR green");
 
-    //    <TestCase Name="5.1.7 Search - NOT" Rule="queryOptions">
-    //    <Input>$search=blue NOT green</Input>
+    // <TestCase Name="5.1.7 Search - NOT" Rule="queryOptions">
+    // <Input>$search=blue NOT green</Input>
     testUri.run("ESTwoKeyNav", "$search=blue NOT green");
 
-    //    <TestCase Name="5.1.7 Search - only NOT" Rule="queryOptions">
-    //    <Input>$search=NOT blue</Input>
+    // <TestCase Name="5.1.7 Search - only NOT" Rule="queryOptions">
+    // <Input>$search=NOT blue</Input>
     testUri.run("ESTwoKeyNav", "$search=NOT blue");
 
-    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
-    //    <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
+    // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    // <Input>$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz</Input>
     testUri.run("ESTwoKeyNav", "$search=foo AND bar OR foo AND baz OR that AND bar OR that AND baz");
 
-    //    <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
-    //    <Input>$search=(foo OR that) AND (bar OR baz)</Input>
+    // <TestCase Name="5.1.7 Search - multiple" Rule="queryOptions">
+    // <Input>$search=(foo OR that) AND (bar OR baz)</Input>
     testUri.run("ESTwoKeyNav", "$search=(foo OR that) AND (bar OR baz)");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=foo AND (bar OR baz)</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=foo AND (bar OR baz)</Input>
     testUri.run("ESTwoKeyNav", "$search=foo AND (bar OR baz)");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(foo AND bar) OR baz</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(foo AND bar) OR baz</Input>
     testUri.run("ESTwoKeyNav", "$search=(foo AND bar) OR baz");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(NOT foo) OR baz</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(NOT foo) OR baz</Input>
     testUri.run("ESTwoKeyNav", "$search=(NOT foo) OR baz");
 
-    //    <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
-    //    <Input>$search=(NOT foo)</Input>
+    // <TestCase Name="5.1.7 Search - grouping" Rule="queryOptions">
+    // <Input>$search=(NOT foo)</Input>
     testUri.run("ESTwoKeyNav", "$search=(NOT foo)");
 
-    //    <TestCase Name="5.1.7 Search - on entity set" Rule="odataUri">
-    //    <Input>http://serviceRoot/Products?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on entity set" Rule="odataUri">
+    // <Input>http://serviceRoot/Products?$search=blue</Input>
     testUri.run("ESTwoKeyNav", "$search=blue");
 
-    //    <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
-    //    <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on entity container" Rule="odataUri">
+    // <Input>http://serviceRoot/Model.Container/$all?$search=blue</Input>
     testUri.run("$all", "$search=blue");
 
-    //    <TestCase Name="5.1.7 Search - on service" Rule="odataUri">
-    //    <Input>http://serviceRoot/$all?$search=blue</Input>
+    // <TestCase Name="5.1.7 Search - on service" Rule="odataUri">
+    // <Input>http://serviceRoot/$all?$search=blue</Input>
     testUri.run("$all", "$search=blue");
   }
 

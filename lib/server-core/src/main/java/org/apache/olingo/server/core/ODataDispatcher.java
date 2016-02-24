@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -83,26 +83,26 @@ public class ODataDispatcher {
   }
 
   public void dispatch(final ODataRequest request, final ODataResponse response) throws ODataApplicationException,
-  ODataLibraryException {
+      ODataLibraryException {
     switch (uriInfo.getKind()) {
     case metadata:
       checkMethod(request.getMethod(), HttpMethod.GET);
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.METADATA);
       handler.selectProcessor(MetadataProcessor.class)
-      .readMetadata(request, response, uriInfo, requestedContentType);
+          .readMetadata(request, response, uriInfo, requestedContentType);
       break;
 
     case service:
       checkMethod(request.getMethod(), HttpMethod.GET);
       if ("".equals(request.getRawODataPath())) {
         handler.selectProcessor(RedirectProcessor.class)
-        .redirect(request, response);
+            .redirect(request, response);
       } else {
         final ContentType serviceContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.SERVICE);
         handler.selectProcessor(ServiceDocumentProcessor.class)
-        .readServiceDocument(request, response, uriInfo, serviceContentType);
+            .readServiceDocument(request, response, uriInfo, serviceContentType);
       }
       break;
 
@@ -113,7 +113,7 @@ public class ODataDispatcher {
     case batch:
       checkMethod(request.getMethod(), HttpMethod.POST);
       new BatchHandler(handler, handler.selectProcessor(BatchProcessor.class))
-      .process(request, response, true);
+          .process(request, response, true);
       break;
 
     default:
@@ -142,7 +142,7 @@ public class ODataDispatcher {
     case entitySet:
     case navigationProperty:
       handleEntityDispatching(request, response,
-          ((UriResourcePartTyped) lastPathSegment).isCollection(), isMedia(lastPathSegment));
+          ((UriResourcePartTyped) lastPathSegment).isCollection(), isEntityOrNavigationMedia(lastPathSegment));
       break;
 
     case count:
@@ -211,7 +211,7 @@ public class ODataDispatcher {
     final EdmReturnType returnType = action.getReturnType();
     if (returnType == null) {
       handler.selectProcessor(ActionVoidProcessor.class)
-      .processActionVoid(request, response, uriInfo, requestFormat);
+          .processActionVoid(request, response, uriInfo, requestFormat);
     } else {
       final boolean isCollection = returnType.isCollection();
       ContentType responseFormat;
@@ -222,10 +222,10 @@ public class ODataDispatcher {
             isCollection ? RepresentationType.COLLECTION_ENTITY : RepresentationType.ENTITY);
         if (isCollection) {
           handler.selectProcessor(ActionEntityCollectionProcessor.class)
-          .processActionEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionEntityCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
           handler.selectProcessor(ActionEntityProcessor.class)
-          .processActionEntity(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionEntity(request, response, uriInfo, requestFormat, responseFormat);
         }
         break;
 
@@ -235,10 +235,10 @@ public class ODataDispatcher {
             isCollection ? RepresentationType.COLLECTION_PRIMITIVE : RepresentationType.PRIMITIVE);
         if (isCollection) {
           handler.selectProcessor(ActionPrimitiveCollectionProcessor.class)
-          .processActionPrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionPrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
           handler.selectProcessor(ActionPrimitiveProcessor.class)
-          .processActionPrimitive(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionPrimitive(request, response, uriInfo, requestFormat, responseFormat);
         }
         break;
 
@@ -248,10 +248,10 @@ public class ODataDispatcher {
             isCollection ? RepresentationType.COLLECTION_COMPLEX : RepresentationType.COMPLEX);
         if (isCollection) {
           handler.selectProcessor(ActionComplexCollectionProcessor.class)
-          .processActionComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
         } else {
           handler.selectProcessor(ActionComplexProcessor.class)
-          .processActionComplex(request, response, uriInfo, requestFormat, responseFormat);
+              .processActionComplex(request, response, uriInfo, requestFormat, responseFormat);
         }
         break;
 
@@ -273,13 +273,13 @@ public class ODataDispatcher {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_REFERENCE);
       handler.selectProcessor(ReferenceCollectionProcessor.class)
-      .readReferenceCollection(request, response, uriInfo, responseFormat);
+          .readReferenceCollection(request, response, uriInfo, responseFormat);
 
     } else if (isCollection && httpMethod == HttpMethod.POST) {
       final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
           RepresentationType.REFERENCE, true);
       handler.selectProcessor(ReferenceProcessor.class)
-      .createReference(request, response, uriInfo, requestFormat);
+          .createReference(request, response, uriInfo, requestFormat);
 
     } else if (!isCollection && httpMethod == HttpMethod.GET) {
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
@@ -290,11 +290,11 @@ public class ODataDispatcher {
       final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
           RepresentationType.REFERENCE, true);
       handler.selectProcessor(ReferenceProcessor.class)
-      .updateReference(request, response, uriInfo, requestFormat);
+          .updateReference(request, response, uriInfo, requestFormat);
 
     } else if (httpMethod == HttpMethod.DELETE) {
       handler.selectProcessor(ReferenceProcessor.class)
-      .deleteReference(request, response, uriInfo);
+          .deleteReference(request, response, uriInfo);
 
     } else {
       throwMethodNotAllowed(httpMethod);
@@ -303,6 +303,7 @@ public class ODataDispatcher {
 
   private void handleValueDispatching(final ODataRequest request, final ODataResponse response,
       final int lastPathSegmentIndex) throws ODataApplicationException, ODataLibraryException {
+    //The URI Parser already checked if $value is allowed here so we only have to dispatch to the correct processor
     final HttpMethod method = request.getMethod();
     final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
     if (resource instanceof UriResourceProperty
@@ -336,18 +337,20 @@ public class ODataDispatcher {
           }
     } else {
       if (method == HttpMethod.GET) {
+        //This can be a GET on an EntitySet, Navigation or Function
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.MEDIA);
         handler.selectProcessor(MediaEntityProcessor.class)
         .readMediaEntity(request, response, uriInfo, requestedContentType);
-      } else if (method == HttpMethod.PUT && resource instanceof UriResourceEntitySet) {
+        //PUT and DELETE can only be called on EntitySets or Navigation properties which are media resources
+      } else if (method == HttpMethod.PUT && isEntityOrNavigationMedia(resource)) {
         validatePreconditions(request, true);
         final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
         handler.selectProcessor(MediaEntityProcessor.class)
         .updateMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
-      } else if (method == HttpMethod.DELETE && resource instanceof UriResourceEntitySet) {
+      } else if (method == HttpMethod.DELETE && isEntityOrNavigationMedia(resource)) {
         validatePreconditions(request, true);
         handler.selectProcessor(MediaEntityProcessor.class)
         .deleteMediaEntity(request, response, uriInfo);
@@ -367,10 +370,10 @@ public class ODataDispatcher {
           request, handler.getCustomContentTypeSupport(), complexRepresentationType);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
-        .readComplexCollection(request, response, uriInfo, requestedContentType);
+            .readComplexCollection(request, response, uriInfo, requestedContentType);
       } else {
         handler.selectProcessor(ComplexProcessor.class)
-        .readComplex(request, response, uriInfo, requestedContentType);
+            .readComplex(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
       validatePreconditions(request, false);
@@ -380,19 +383,19 @@ public class ODataDispatcher {
           request, handler.getCustomContentTypeSupport(), complexRepresentationType);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
-        .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
+            .updateComplexCollection(request, response, uriInfo, requestFormat, responseFormat);
       } else {
         handler.selectProcessor(ComplexProcessor.class)
-        .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
+            .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
       validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
-        .deleteComplexCollection(request, response, uriInfo);
+            .deleteComplexCollection(request, response, uriInfo);
       } else {
         handler.selectProcessor(ComplexProcessor.class)
-        .deleteComplex(request, response, uriInfo);
+            .deleteComplex(request, response, uriInfo);
       }
     } else {
       throwMethodNotAllowed(method);
@@ -409,10 +412,10 @@ public class ODataDispatcher {
           request, handler.getCustomContentTypeSupport(), representationType);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
-        .readPrimitiveCollection(request, response, uriInfo, requestedContentType);
+            .readPrimitiveCollection(request, response, uriInfo, requestedContentType);
       } else {
         handler.selectProcessor(PrimitiveProcessor.class)
-        .readPrimitive(request, response, uriInfo, requestedContentType);
+            .readPrimitive(request, response, uriInfo, requestedContentType);
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
       validatePreconditions(request, false);
@@ -422,19 +425,19 @@ public class ODataDispatcher {
           request, handler.getCustomContentTypeSupport(), representationType);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
-        .updatePrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
+            .updatePrimitiveCollection(request, response, uriInfo, requestFormat, responseFormat);
       } else {
         handler.selectProcessor(PrimitiveProcessor.class)
-        .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
+            .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
       validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
-        .deletePrimitiveCollection(request, response, uriInfo);
+            .deletePrimitiveCollection(request, response, uriInfo);
       } else {
         handler.selectProcessor(PrimitiveProcessor.class)
-        .deletePrimitive(request, response, uriInfo);
+            .deletePrimitive(request, response, uriInfo);
       }
     } else {
       throwMethodNotAllowed(method);
@@ -449,15 +452,15 @@ public class ODataDispatcher {
         || resource instanceof UriResourceFunction
         && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.ENTITY) {
       handler.selectProcessor(CountEntityCollectionProcessor.class)
-      .countEntityCollection(request, response, uriInfo);
+          .countEntityCollection(request, response, uriInfo);
     } else if (resource instanceof UriResourcePrimitiveProperty
         || resource instanceof UriResourceFunction
         && ((UriResourceFunction) resource).getType().getKind() == EdmTypeKind.PRIMITIVE) {
       handler.selectProcessor(CountPrimitiveCollectionProcessor.class)
-      .countPrimitiveCollection(request, response, uriInfo);
+          .countPrimitiveCollection(request, response, uriInfo);
     } else {
       handler.selectProcessor(CountComplexCollectionProcessor.class)
-      .countComplexCollection(request, response, uriInfo);
+          .countComplexCollection(request, response, uriInfo);
     }
   }
 
@@ -469,19 +472,19 @@ public class ODataDispatcher {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_ENTITY);
         handler.selectProcessor(EntityCollectionProcessor.class)
-        .readEntityCollection(request, response, uriInfo, requestedContentType);
+            .readEntityCollection(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.POST) {
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
         if (isMedia) {
           final ContentType requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
           handler.selectProcessor(MediaEntityProcessor.class)
-          .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
+              .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
         } else {
           final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
               RepresentationType.ENTITY, true);
           handler.selectProcessor(EntityProcessor.class)
-          .createEntity(request, response, uriInfo, requestFormat, responseFormat);
+              .createEntity(request, response, uriInfo, requestFormat, responseFormat);
         }
       } else {
         throwMethodNotAllowed(method);
@@ -491,7 +494,7 @@ public class ODataDispatcher {
         final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
         handler.selectProcessor(EntityProcessor.class)
-        .readEntity(request, response, uriInfo, requestedContentType);
+            .readEntity(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
         validatePreconditions(request, false);
         final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
@@ -499,11 +502,11 @@ public class ODataDispatcher {
         final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
         handler.selectProcessor(EntityProcessor.class)
-        .updateEntity(request, response, uriInfo, requestFormat, responseFormat);
+            .updateEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else if (method == HttpMethod.DELETE) {
         validatePreconditions(request, false);
         handler.selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
-        .deleteEntity(request, response, uriInfo);
+            .deleteEntity(request, response, uriInfo);
       } else {
         throwMethodNotAllowed(method);
       }
@@ -537,7 +540,7 @@ public class ODataDispatcher {
 
   private ContentType getSupportedContentType(final String contentTypeHeader,
       final RepresentationType representationType, final boolean mustNotBeNull)
-          throws ODataHandlerException, ContentNegotiatorException {
+      throws ODataHandlerException, ContentNegotiatorException {
     if (contentTypeHeader == null) {
       if (mustNotBeNull) {
         throw new ODataHandlerException(contentTypeHeader, ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE);
@@ -555,7 +558,8 @@ public class ODataDispatcher {
     return contentType;
   }
 
-  private boolean isMedia(final UriResource pathSegment) {
+  private boolean isEntityOrNavigationMedia(final UriResource pathSegment) {
+    //This method MUST NOT check if the resource is of type function since these are handled differently
     return pathSegment instanceof UriResourceEntitySet
         && ((UriResourceEntitySet) pathSegment).getEntityType().hasStream()
         || pathSegment instanceof UriResourceNavigation

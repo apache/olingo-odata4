@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,6 +39,9 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.core.uri.UriResourceActionImpl;
@@ -120,7 +123,7 @@ public class ResourcePathParser {
     tokenizer = new UriTokenizer(pathSegment);
     ParserHelper.requireNext(tokenizer, TokenKind.CROSSJOIN);
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
-    // At least one entity-set name is mandatory.  Try to fetch all.
+    // At least one entity-set name is mandatory. Try to fetch all.
     List<String> entitySetNames = new ArrayList<String>();
     do {
       ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
@@ -153,10 +156,31 @@ public class ResourcePathParser {
     ParserHelper.requireTokenEnd(tokenizer);
     requireTyped(previous, "$value");
     if (!((UriResourcePartTyped) previous).isCollection()) {
+      requireMediaResourceInCaseOfEntity(previous);
       return new UriResourceValueImpl();
     } else {
       throw new UriParserSemanticException("$value is only allowed on typed path segments.",
           UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS, "$value");
+    }
+  }
+
+  private void requireMediaResourceInCaseOfEntity(UriResource resource) throws UriParserSemanticException {
+    // If the resource is an entity or navigatio
+    if (resource instanceof UriResourceEntitySet && !((UriResourceEntitySet) resource).getEntityType().hasStream()
+        || resource instanceof UriResourceNavigation
+        && !((EdmEntityType) ((UriResourceNavigation) resource).getType()).hasStream()) {
+      throw new UriParserSemanticException("$value on entity is only allowed on media resources.",
+          UriParserSemanticException.MessageKeys.NOT_A_MEDIA_RESOURCE, resource.getSegmentValue());
+    }
+
+    // Functions can also deliver an entity. In this case we have to check if the returned entity is a media resource
+    if (resource instanceof UriResourceFunction) {
+      EdmType returnType = ((UriResourceFunction) resource).getFunction().getReturnType().getType();
+      //Collection check is above so not needed here
+      if (returnType instanceof EdmEntityType && !((EdmEntityType) returnType).hasStream()) {
+        throw new UriParserSemanticException("$value on returned entity is only allowed on media resources.",
+            UriParserSemanticException.MessageKeys.NOT_A_MEDIA_RESOURCE, resource.getSegmentValue());
+      }
     }
   }
 

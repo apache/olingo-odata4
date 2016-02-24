@@ -318,7 +318,7 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
     verify(primitiveProcessor).readPrimitive(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-    
+
     // FINRTInt16 is not composable so /$value is not allowed
     final String valueUri = "FINRTInt16()/$value";
     final PrimitiveValueProcessor primitiveValueProcessor = mock(PrimitiveValueProcessor.class);
@@ -327,7 +327,7 @@ public class ODataHandlerTest {
     dispatchMethodWithError(HttpMethod.PATCH, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
     dispatchMethodWithError(HttpMethod.PUT, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
     dispatchMethodWithError(HttpMethod.DELETE, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
-    
+
     final String primitiveCollectionUri = "FICRTCollString()";
     PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.GET, primitiveCollectionUri, primitiveCollectionProcessor);
@@ -484,6 +484,52 @@ public class ODataHandlerTest {
     dispatch(HttpMethod.POST, "ESMedia", processor);
     verify(processor).createMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
         any(ContentType.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class), any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deleteMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+  }
+  
+  @Test
+  public void dispatchValueOnNoMedia() throws Exception {
+    final String uri = "ESAllPrim(1)/$value";
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verifyZeroInteractions(processor);
+
+    dispatch(HttpMethod.POST, uri, processor);
+    verifyZeroInteractions(processor);
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verifyZeroInteractions(processor);
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verifyZeroInteractions(processor);
+  }
+
+  @Test
+  public void dispatchMediaWithNavigation() throws Exception {
+    /*
+     * In Java we decided that any kind of navigation will be accepted. This means that a $value on a media resource
+     * must be dispatched as well
+     */
+    final String uri = "ESKeyNav(1)/NavPropertyETMediaOne/$value";
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
+
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, "ESKeyNav(1)/NavPropertyETMediaOne", processor);
+    
+    dispatchMethodNotAllowed(HttpMethod.POST, "ESKeyNav(1)/NavPropertyETMediaOne/$value", processor);
 
     dispatch(HttpMethod.PUT, uri, processor);
     verify(processor).updateMediaEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
@@ -758,8 +804,8 @@ public class ODataHandlerTest {
     assertEquals(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getContent());
   }
-  
-  private void dispatchMethodWithError(final HttpMethod method, final String path, final Processor processor, 
+
+  private void dispatchMethodWithError(final HttpMethod method, final String path, final Processor processor,
       final HttpStatusCode statusCode) {
     final ODataResponse response = dispatch(method, path, processor);
     assertEquals(statusCode.getStatusCode(), response.getStatusCode());
