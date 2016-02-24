@@ -90,7 +90,6 @@ public class TestUriValidator implements TestValidator {
       exception = e;
     } catch (UriValidationException e) {
       exception = e;
-      e.printStackTrace();
     }
     return this;
   }
