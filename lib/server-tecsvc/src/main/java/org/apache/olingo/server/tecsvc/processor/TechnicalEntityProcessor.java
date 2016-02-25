@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.server.tecsvc.processor;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
@@ -77,6 +79,7 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SearchHand
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.ServerSidePagingHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.SkipHandler;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.options.TopHandler;
+import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 
 /**
  * Technical Processor for entity-related functionality.
@@ -529,7 +532,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final SerializerResult serializerResult =
           serializeReferenceCollection(entitySetSerialization, edmEntitySet, requestedContentType, countOption);
       response.setContent(serializerResult.getContent());
-    } else if(isOdataStreaming(request)) {
+    } else if(isStreaming(edmEntitySet, requestedContentType)) {
       final SerializerStreamResult serializerResult =
           serializeEntityCollectionStreamed(request,
               entitySetSerialization, edmEntitySet, edmEntityType, requestedContentType,
@@ -553,9 +556,19 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     }
   }
 
-  private boolean isOdataStreaming(ODataRequest request) {
-    String odataStreaming = request.getHeader("odata.streaming");
-    return Boolean.parseBoolean(odataStreaming);
+  /**
+   * Check is streaming is enabled for this entity set in combination with the given content type.
+   * <code>TRUE</code> if the technical scenario supports streaming for this combination,
+   * otherwise <code>FALSE</code>.
+   *
+   * @param edmEntitySet entity set of the request
+   * @param contentType requested content type of the request
+   * @return <code>TRUE</code> if the technical scenario supports streaming for this combination,
+   *          otherwise <code>FALSE</code>.
+   */
+  private boolean isStreaming(EdmEntitySet edmEntitySet, ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON)
+            && ContainerProvider.ES_STREAM.equalsIgnoreCase(edmEntitySet.getName());
   }
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
@@ -598,18 +611,37 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
 
       private Entity addToPrimitiveProperty(Entity entity, String name, Object data) {
         List<Property> properties = entity.getProperties();
+        addTo(name, data, properties);
+        return entity;
+      }
+
+      private void addTo(String name, Object data, List<Property> properties) {
         int pos = 0;
         for (Property property : properties) {
+          if(property.isComplex()) {
+            final List<ComplexValue> cvs;
+            if(property.isCollection()) {
+              cvs = (List<ComplexValue>) property.asCollection();
+            } else {
+              cvs = Collections.singletonList(property.asComplex());
+            }
+            for (ComplexValue cv : cvs) {
+              final List<Property> value = cv.getValue();
+              if(value != null) {
+                addTo(name, data, value);
+              }
+            }
+          }
+
           if(name.equals(property.getName())) {
             properties.remove(pos);
             final String old = property.getValue().toString();
             String newValue = (old == null ? "": old) + data.toString();
-            entity.addProperty(new Property(null, name, ValueType.PRIMITIVE, newValue));
+            properties.add(pos, new Property(null, name, ValueType.PRIMITIVE, newValue));
             break;
           }
           pos++;
         }
-        return entity;
       }
     };
 

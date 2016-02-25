@@ -278,6 +278,8 @@ public class ODataJsonSerializerTest {
       @Override
       public void handleError(ODataContentWriteErrorContext context, WritableByteChannel channel) {
         try {
+          Exception ex = context.getException();
+          Assert.assertEquals(ex, context.getODataLibraryException());
           String msgKey = context.getODataLibraryException().getMessageKey().getKey();
           String toChannel = "ERROR: " + msgKey;
           channel.write(ByteBuffer.wrap(toChannel.getBytes("UTF-8")));

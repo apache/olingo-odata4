@@ -75,6 +75,7 @@ public class DataCreator {
     data.put("ESBase", createESBase(edm, odata));
     data.put("ESCompMixPrimCollComp", createESCompMixPrimCollComp(edm, odata));
     data.put("ESMixEnumDefCollComp", createESMixEnumDefCollComp(edm, odata));
+    data.put("ESStream", createESStream(edm, odata));
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -933,6 +934,48 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
     createEntityId(edm, odata, "ESMixPrimCollComp", entityCollection);
+
+    return entityCollection;
+  }
+
+  private EntityCollection createESStream(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+            .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+            .addProperty(createPrimitiveCollection("CollPropertyString",
+                    "Streamed-Employee1@company.example",
+                    "Streamed-Employee2@company.example",
+                    "Streamed-Employee3@company.example"))
+            .addProperty(createComplex("PropertyComp",
+                    createPrimitive("PropertyInt16", (short) 111),
+                    createPrimitive("PropertyString", "TEST A")))
+            .addProperty(createColPropertyComp()));
+
+    entityCollection.getEntities().add(new Entity()
+            .addProperty(createPrimitive("PropertyInt16", (short) 7))
+            .addProperty(createPrimitiveCollection("CollPropertyString",
+                    "Streamed-Employee1@company.example",
+                    "Streamed-Employee2@company.example",
+                    "Streamed-Employee3@company.example"))
+            .addProperty(createComplex("PropertyComp",
+                    createPrimitive("PropertyInt16", (short) 222),
+                    createPrimitive("PropertyString", "TEST B")))
+            .addProperty(createColPropertyComp()));
+
+    entityCollection.getEntities().add(new Entity()
+            .addProperty(createPrimitive("PropertyInt16", (short) 0))
+            .addProperty(createPrimitiveCollection("CollPropertyString",
+                    "Streamed-Employee1@company.example",
+                    "Streamed-Employee2@company.example",
+                    "Streamed-Employee3@company.example"))
+            .addProperty(createComplex("PropertyComp",
+                    createPrimitive("PropertyInt16", (short) 333),
+                    createPrimitive("PropertyString", "TEST C")))
+            .addProperty(createColPropertyComp()));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
+    createEntityId(edm, odata, "ESStream", entityCollection);
 
     return entityCollection;
   }

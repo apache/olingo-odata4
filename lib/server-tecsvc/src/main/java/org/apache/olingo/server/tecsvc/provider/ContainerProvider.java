@@ -51,6 +51,7 @@ public class ContainerProvider {
   public static final String AIRT_PARAM = "AIRTParam";
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
   public static final String AIRT_BYTE_NINE_PARAM = "AIRTByteNineParam";
+  public static final String ES_STREAM = "ESStream";
 
   private final CsdlEdmProvider prov;
 
@@ -101,6 +102,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNavCont"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNavCont"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM));
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -294,7 +296,7 @@ public class ContainerProvider {
             .setAnnotations(Arrays.asList(
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains entities with a complext type containing all primitive types")),
+                        .setValue("Contains entities with a complex type containing all primitive types")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
@@ -305,7 +307,7 @@ public class ContainerProvider {
             .setAnnotations(Arrays.asList(
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains entities with a complext type containing all collection primitive types")),
+                        .setValue("Contains entities with a complex type containing all collection primitive types")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
@@ -632,6 +634,17 @@ public class ContainerProvider {
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                         .setValue("Contains entities with properties of enum type, collection of enum type, type "
                             + "definition, collection of type definition, complex and collection of complex")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
+      } else if (name.equals(ES_STREAM)) {
+        return new CsdlEntitySet()
+            .setName(ES_STREAM)
+            .setType(EntityTypeProvider.nameETMixPrimCollComp)
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Entity set will be streamed and it contains entities with various properties of " +
+                                "type primitive, collection of primitive, complex and collection of complex")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       }

@@ -39,12 +39,11 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
 
   @Test
-  public void streamAllPrim() throws Exception {
-    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+  public void streamESStreamJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStream?$format=json");
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod(HttpMethod.GET.name());
-    connection.setRequestProperty("odata.streaming", "true");
     connection.connect();
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
@@ -52,9 +51,32 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
 
     final String content = IOUtils.toString(connection.getInputStream());
 
-    assertTrue(content.contains("\"PropertyString\":\"First Resource - positive values->streamed\""));
-    assertTrue(content.contains("\"PropertyString\":\"Second Resource - negative values->streamed\""));
-    assertTrue(content.contains("\"PropertyString\":\"->streamed\""));
+    assertTrue(content.contains("Streamed-Employee1@company.example\"," +
+            "\"Streamed-Employee2@company.example\"," +
+            "\"Streamed-Employee3@company.example\""));
+    assertTrue(content.contains("\"PropertyString\":\"TEST 1->streamed\""));
+    assertTrue(content.contains("\"PropertyString\":\"TEST 2->streamed\""));
+  }
+
+  @Test
+  public void streamESStreamXml() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStream?$format=xml");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+    System.out.println(content);
+
+    assertTrue(content.contains("<m:element>Streamed-Employee1@company.example</m:element>" +
+            "<m:element>Streamed-Employee2@company.example</m:element>" +
+            "<m:element>Streamed-Employee3@company.example</m:element>"));
+    assertTrue(content.contains("<d:PropertyString>TEST 1</d:PropertyString>"));
+    assertTrue(content.contains("<d:PropertyString>TEST 2</d:PropertyString>"));
   }
 
 
