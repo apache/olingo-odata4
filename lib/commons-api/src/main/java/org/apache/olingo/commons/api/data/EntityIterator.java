@@ -19,39 +19,68 @@
 package org.apache.olingo.commons.api.data;
 
 import org.apache.olingo.commons.api.ex.ODataNotSupportedException;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.net.URI;
 import java.util.Iterator;
 
 /**
- * Data representation for a collection of single entities.
+ * Data representation as an Iterator for a collection of single entities.
  */
 public abstract class EntityIterator extends AbstractEntityCollection implements Iterator<Entity> {
 
+  /**
+   * {@inheritDoc}
+   */
   public abstract boolean hasNext();
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * Which is an Entity for this type of iterator.
+   */
   public abstract Entity next();
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * <b>ATTENTION:</b> <code>remove</code> is not supported by default.
+   */
   @Override
   public void remove() {
     //"Remove is not supported for iteration over Entities."
     throw new ODataNotSupportedException("Entity Iterator does not support remove()");
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Iterator<Entity> iterator() {
     return this;
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * <b>ATTENTION:</b> <code>getCount</code> is not supported by default.
+   */
   public Integer getCount() {
     throw new ODataNotSupportedException("Entity Iterator does not support getCount()");
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * <b>ATTENTION:</b> <code>getNext</code> is not supported by default.
+   */
   public URI getNext() {
     throw new ODataNotSupportedException("Entity Iterator does not support getNext()");
   }
 
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * <b>ATTENTION:</b> <code>getDeltaLink</code> is not supported by default.
+   */
   public URI getDeltaLink() {
     throw new ODataNotSupportedException("Entity Iterator does not support getDeltaLink()");
   }

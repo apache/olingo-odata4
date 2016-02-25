@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotatable;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
-import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 
 /**
  * POJO for Edmx Reference.

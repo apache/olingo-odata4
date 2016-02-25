@@ -19,7 +19,6 @@
 package org.apache.olingo.commons.api.data;
 
 import java.net.URI;
-import java.util.Iterator;
 
 public abstract class AbstractEntityCollection extends AbstractODataObject implements Iterable<Entity> {
   public abstract Integer getCount();
