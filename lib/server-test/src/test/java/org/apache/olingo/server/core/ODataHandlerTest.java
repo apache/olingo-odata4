@@ -471,6 +471,48 @@ public class ODataHandlerTest {
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
   }
+  
+  @Test
+  public void dispatchSingleton() throws Exception {
+    final String uri = "SI";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor, times(2)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
+  
+  @Test
+  public void dispatchSingletonMedia() throws Exception {
+    final String uri = "SIMedia/$value";
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
+    
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
 
   @Test
   public void dispatchMedia() throws Exception {
