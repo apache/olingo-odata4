@@ -286,16 +286,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       EntityCollectionSerializerOptions options, OutputStream outputStream) throws SerializerException {
 
     final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-//    if (options != null && options.getWriteOnlyReferences()) {
-//      ReferenceCollectionSerializerOptions rso = ReferenceCollectionSerializerOptions.with()
-//          .contextURL(contextURL).build();
-//      return entityReferenceCollection(entitySet, rso);
-//    }
-
-    SerializerException cachedException = null;
+    SerializerException cachedException;
     try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
@@ -316,9 +308,6 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       if (options != null && options.getCount() != null && options.getCount().getValue()
           && entitySet.getCount() != null) {
         writeCount(entitySet, writer);
-      }
-      if (entitySet.getNext() != null) {
-        writeNextLink(entitySet, writer);
       }
 
       if (options == null) {

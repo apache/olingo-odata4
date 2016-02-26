@@ -74,10 +74,9 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("<m:element>Streamed-Employee1@company.example</m:element>" +
             "<m:element>Streamed-Employee2@company.example</m:element>" +
             "<m:element>Streamed-Employee3@company.example</m:element>"));
-    assertTrue(content.contains("<d:PropertyString>TEST 1</d:PropertyString>"));
-    assertTrue(content.contains("<d:PropertyString>TEST 2</d:PropertyString>"));
+    assertTrue(content.contains("<d:PropertyString>TEST 1->streamed</d:PropertyString>"));
+    assertTrue(content.contains("<d:PropertyString>TEST 2->streamed</d:PropertyString>"));
   }
-
 
   @Override
   protected ODataClient getClient() {

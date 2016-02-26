@@ -567,8 +567,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
    *          otherwise <code>FALSE</code>.
    */
   private boolean isStreaming(EdmEntitySet edmEntitySet, ContentType contentType) {
-    return contentType.isCompatible(ContentType.APPLICATION_JSON)
-            && ContainerProvider.ES_STREAM.equalsIgnoreCase(edmEntitySet.getName());
+    return ContainerProvider.ES_STREAM.equalsIgnoreCase(edmEntitySet.getName());
   }
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection
