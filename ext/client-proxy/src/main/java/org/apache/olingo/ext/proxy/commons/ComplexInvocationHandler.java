@@ -27,10 +27,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientLinked;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.annotations.ComplexType;
@@ -142,11 +142,6 @@ public class ComplexInvocationHandler extends AbstractStructuredInvocationHandle
     }
 
     return retrieveNavigationProperty(property, getter);
-  }
-
-  @Override
-  public boolean isChanged() {
-    return getEntityHandler() == null ? false : getEntityHandler().isChanged();
   }
 
   @Override

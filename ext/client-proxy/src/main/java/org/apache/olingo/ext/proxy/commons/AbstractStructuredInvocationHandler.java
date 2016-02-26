@@ -93,10 +93,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
 
   protected final Map<NavigationProperty, Object> linkCache = new HashMap<NavigationProperty, Object>();
 
-  protected int propertiesTag = 0;
-
-  protected int linksTag = 0;
-
   protected final Map<String, EdmStreamValue> streamedPropertyChanges = new HashMap<String, EdmStreamValue>();
 
   protected final Map<String, EdmStreamValue> streamedPropertyCache = new HashMap<String, EdmStreamValue>();
@@ -386,7 +382,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
         }
 
         if (res != null) {
-          addPropertyChanges(name, res);
           propertyCache.put(name, res);
         }
 
@@ -526,7 +521,79 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   public Map<String, Object> getPropertyChanges() {
-    return propertyChanges;
+    Map<String, Object> changedProperties = new HashMap<String, Object>();
+    changedProperties.putAll(propertyChanges);
+
+    for (Map.Entry<String, Object> propertyCacheEntry : propertyCache.entrySet()) {
+      if (hasCachedPropertyChanged(propertyCacheEntry.getValue())) {
+        changedProperties.put(propertyCacheEntry.getKey(), propertyCacheEntry.getValue());
+      }
+    }
+
+    return changedProperties;
+  }
+
+  protected boolean hasCachedPropertyChanged(final Object cachedValue) {
+    AbstractStructuredInvocationHandler structuredInvocationHandler = getStructuredInvocationHandler(cachedValue);
+    if (structuredInvocationHandler != null) {
+      return structuredInvocationHandler.isChanged();
+    }
+
+    return false;
+  }
+
+  public boolean isChanged() {
+    return !linkChanges.isEmpty()
+        || hasPropertyChanges();
+  }
+
+  protected boolean hasPropertyChanges() {
+    return !propertyChanges.isEmpty() || hasDeepPropertyChanges();
+  }
+
+  protected boolean hasDeepPropertyChanges() {
+    for (Object propertyValue : propertyCache.values()) {
+      if (hasCachedPropertyChanged(propertyValue)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+  
+  public void applyChanges() {
+    streamedPropertyCache.putAll(streamedPropertyChanges);
+    streamedPropertyChanges.clear();
+    propertyCache.putAll(propertyChanges);
+    propertyChanges.clear();
+    linkCache.putAll(linkChanges);
+    linkChanges.clear();
+    
+    applyChangesOnChildren();
+  }
+
+  protected void applyChangesOnChildren() {
+    for (Object propertyValue : propertyCache.values()) {
+      applyChanges(propertyValue);
+    }
+  }
+
+  protected void applyChanges(final Object cachedValue) {
+    AbstractStructuredInvocationHandler structuredInvocationHandler = getStructuredInvocationHandler(cachedValue);
+    if (structuredInvocationHandler != null) {
+      structuredInvocationHandler.applyChanges();
+    }
+  }
+  
+  protected AbstractStructuredInvocationHandler getStructuredInvocationHandler(final Object value) {
+    if (value != null && Proxy.isProxyClass(value.getClass())) {
+      InvocationHandler invocationHandler = Proxy.getInvocationHandler(value);
+      if (invocationHandler instanceof AbstractStructuredInvocationHandler) {
+        return (AbstractStructuredInvocationHandler) invocationHandler;
+      }
+    }
+
+    return null;
   }
 
   public Collection<String> readAdditionalPropertyNames() {
@@ -567,30 +634,15 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected void addPropertyChanges(final String name, final Object value) {
-    final int checkpoint = propertyChanges.hashCode();
-    updatePropertiesTag(checkpoint);
+    propertyCache.remove(name);
     propertyChanges.put(name, value);
   }
 
   protected void addLinkChanges(final NavigationProperty navProp, final Object value) {
-    final int checkpoint = linkChanges.hashCode();
-    updateLinksTag(checkpoint);
     linkChanges.put(navProp, value);
 
     if (linkCache.containsKey(navProp)) {
       linkCache.remove(navProp);
-    }
-  }
-
-  protected void updatePropertiesTag(final int checkpoint) {
-    if (propertiesTag == 0 || checkpoint == propertiesTag) {
-      propertiesTag = propertyChanges.hashCode();
-    }
-  }
-
-  protected void updateLinksTag(final int checkpoint) {
-    if (linksTag == 0 || checkpoint == linksTag) {
-      linksTag = linkChanges.hashCode();
     }
   }
 
@@ -641,8 +693,6 @@ public abstract class AbstractStructuredInvocationHandler extends AbstractInvoca
   }
 
   protected abstract void load();
-
-  public abstract boolean isChanged();
 
   protected abstract <T extends ClientProperty> List<T> getInternalProperties();
 

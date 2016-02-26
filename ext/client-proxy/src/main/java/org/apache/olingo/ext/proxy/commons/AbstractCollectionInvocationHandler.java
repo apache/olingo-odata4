@@ -64,8 +64,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   private final Map<Class<? extends AbstractTerm>, Object> annotationsByTerm =
           new HashMap<Class<? extends AbstractTerm>, Object>();
 
-  private boolean changed = false;
-
   public AbstractCollectionInvocationHandler(
           final AbstractService<?> service,
           final Collection<T> items,
@@ -174,7 +172,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
         service.getContext().entityContext().attachNew(handler);
       }
     }
-    changed = true;
     return items.add(element);
   }
 
@@ -186,7 +183,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
         return false;
       }
 
-      changed = true;
       return referenceItems.add(id.toASCIIString());
     }
 
@@ -243,7 +239,6 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
 
   @Override
   public boolean addAll(final Collection<? extends T> collection) {
-    changed = true;
     return items.addAll(collection);
   }
 
@@ -323,9 +318,5 @@ public abstract class AbstractCollectionInvocationHandler<T extends Serializable
   public void clearQueryOptions() {
     this.uri = this.baseURI == null ? null : getClient().newURIBuilder(baseURI.toASCIIString());
     this.nextPageURI = null;
-  }
-
-  public boolean isChanged() {
-    return changed;
   }
 }

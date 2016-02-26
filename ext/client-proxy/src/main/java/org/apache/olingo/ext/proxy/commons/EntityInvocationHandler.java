@@ -229,13 +229,12 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     this.streamedPropertyChanges.clear();
     this.streamedPropertyCache.clear();
     this.propertyChanges.clear();
+    this.propertyCache.clear();
     this.linkChanges.clear();
     this.linkCache.clear();
-    this.propertiesTag = 0;
-    this.linksTag = 0;
     this.annotations.clear();
   }
-
+  
   public EntityUUID getUUID() {
     return uuid;
   }
@@ -301,11 +300,10 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
     return isChanged(true);
   }
 
-  public boolean isChanged(final boolean deep) {
-    return this.linkChanges.hashCode() != this.linksTag
-        || this.propertyChanges.hashCode() != this.propertiesTag
-        || (deep && (this.stream != null
-        || !this.streamedPropertyChanges.isEmpty()));
+  public boolean isChanged(final boolean considerStreamProperties) {
+    return super.isChanged()
+        || (considerStreamProperties && (stream != null
+            || !streamedPropertyChanges.isEmpty()));
   }
 
   public void uploadStream(final EdmStreamValue stream) {

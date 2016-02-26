@@ -74,15 +74,27 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
         }
 
         if (entry.getValue() != null
-                && response instanceof ODataEntityCreateResponse && response.getStatusCode() == 201) {
-          entry.getValue().setEntity(((ODataEntityCreateResponse<?>) response).getBody());
-          responses.put(index, entry.getValue().getEntityURI());
-          LOG.debug("Upgrade created object '{}'", entry.getValue());
+            && response instanceof ODataEntityCreateResponse && (response.getStatusCode() == 201 || response
+                .getStatusCode() == 204)) {
+          if (response.getStatusCode() == 201) {
+            entry.getValue().setEntity(((ODataEntityCreateResponse<?>) response).getBody());
+            responses.put(index, entry.getValue().getEntityURI());
+            LOG.debug("Upgrade created object '{}'", entry.getValue());
+          } else {
+            entry.getValue().applyChanges();
+            responses.put(index, null);
+          }
         } else if (entry.getValue() != null
-                && response instanceof ODataEntityUpdateResponse && response.getStatusCode() == 200) {
-          entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
-          responses.put(index, entry.getValue().getEntityURI());
-          LOG.debug("Upgrade updated object '{}'", entry.getValue());
+            && response instanceof ODataEntityUpdateResponse && (response.getStatusCode() == 200 || response
+                .getStatusCode() == 204)) {
+          if (response.getStatusCode() == 200) {
+            entry.getValue().setEntity(((ODataEntityUpdateResponse<?>) response).getBody());
+            responses.put(index, entry.getValue().getEntityURI());
+            LOG.debug("Upgrade updated object '{}'", entry.getValue());
+          } else {
+            entry.getValue().applyChanges();
+            responses.put(index, null);
+          }
         } else {
           responses.put(index, null);
         }

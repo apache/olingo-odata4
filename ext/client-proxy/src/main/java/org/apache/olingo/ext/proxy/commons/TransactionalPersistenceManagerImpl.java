@@ -116,12 +116,22 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
         final EntityInvocationHandler handler = items.get(changesetItemId);
 
         if (handler != null) {
-          if (res instanceof ODataEntityCreateResponse && res.getStatusCode() == 201) {
-            handler.setEntity(((ODataEntityCreateResponse<?>) res).getBody());
-            LOG.debug("Upgrade created object '{}'", handler);
-          } else if (res instanceof ODataEntityUpdateResponse && res.getStatusCode() == 200) {
-            handler.setEntity(((ODataEntityUpdateResponse<?>) res).getBody());
-            LOG.debug("Upgrade updated object '{}'", handler);
+          if (res instanceof ODataEntityCreateResponse && (res.getStatusCode() == 201 || res
+              .getStatusCode() == 204)) {
+            if (res.getStatusCode() == 201) {
+              handler.setEntity(((ODataEntityCreateResponse<?>) res).getBody());
+              LOG.debug("Upgrade created object '{}'", handler);
+            } else {
+              handler.applyChanges();
+            }
+          } else if (res instanceof ODataEntityUpdateResponse && (res.getStatusCode() == 200 || res
+              .getStatusCode() == 204)) {
+            if (res.getStatusCode() == 201) {
+              handler.setEntity(((ODataEntityUpdateResponse<?>) res).getBody());
+              LOG.debug("Upgrade updated object '{}'", handler);
+            } else {
+              handler.applyChanges();
+            }
           }
         }
       }
