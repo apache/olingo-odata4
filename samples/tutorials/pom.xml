@@ -50,6 +50,7 @@
     <module>p11_batch</module>
     <module>p12_deep_insert</module>
     <module>p12_deep_insert_preparation</module>
+    <module>pe_streaming</module>
   </modules>
 
   <build>
