@@ -1984,12 +1984,12 @@ public class ODataXmlSerializerTest {
     checkXMLEqual(expected, resultString);
   }
 
-  private void checkXMLEqual(String resultString, String expected) throws SAXException, IOException {
+  private void checkXMLEqual(final String expected, final String resultString) throws SAXException, IOException {
     Diff diff = XMLUnit.compareXML(expected, resultString);
     diff.overrideDifferenceListener(DIFFERENCE_LISTENER);
     XMLAssert.assertXMLEqual(diff, true);
   }
-  
+
   public static class CustomDifferenceListener implements DifferenceListener {
     @Override
     public int differenceFound(Difference difference) {

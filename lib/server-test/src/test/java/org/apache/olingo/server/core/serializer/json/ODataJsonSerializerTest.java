@@ -26,7 +26,6 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -47,9 +46,9 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataContent;
-import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
 import org.apache.olingo.server.api.ODataContentWriteErrorContext;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -72,9 +71,7 @@ import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -89,16 +86,6 @@ public class ODataJsonSerializerTest {
   private final ODataSerializer serializerIEEECompatible =
       new ODataJsonSerializer(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"));
   private final UriHelper helper = odata.createUriHelper();
-
-  @Before
-  public void setup() {
-    TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-  }
-
-  @After
-  public void teardown() {
-    TimeZone.setDefault(TimeZone.getDefault());
-  }
 
   @Test
   public void entitySimple() throws Exception {

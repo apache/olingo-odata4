@@ -113,6 +113,6 @@ abstract class AbstractPrimitiveType implements EdmPrimitiveType {
 
   @Override
   public String toString() {
-    return new FullQualifiedName(getNamespace(), getName()).getFullQualifiedNameAsString();
+    return getFullQualifiedName().getFullQualifiedNameAsString();
   }
 }

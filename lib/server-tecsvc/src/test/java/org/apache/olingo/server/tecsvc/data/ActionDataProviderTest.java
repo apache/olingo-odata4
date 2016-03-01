@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -238,7 +237,7 @@ public class ActionDataProviderTest {
   }
 
   private Calendar getTime(final int hour, final int minute, final int second) {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar time = Calendar.getInstance();
     time.clear();
     time.set(Calendar.HOUR_OF_DAY, hour);
     time.set(Calendar.MINUTE, minute);

@@ -26,23 +26,11 @@ import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class EdmDateTest extends PrimitiveTypeBaseTest {
 
   private final EdmPrimitiveType instance = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Date);
-
-  @Before
-  public void setup() {
-    TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-  }
-
-  @After
-  public void teardown() {
-    TimeZone.setDefault(null);
-  }
 
   @Test
   public void toUriLiteral() throws Exception {
@@ -64,7 +52,8 @@ public class EdmDateTest extends PrimitiveTypeBaseTest {
     dateTime.set(2012, 1, 29, 13, 0, 0);
     assertEquals("2012-02-29", instance.valueToString(dateTime, null, null, null, null, null));
 
-    final Long millis = 1330558323007L;
+    Long millis = 1330558323007L;
+    millis -= TimeZone.getDefault().getOffset(millis);
     assertEquals("2012-02-29", instance.valueToString(millis, null, null, null, null, null));
 
     assertEquals("1969-12-31", instance.valueToString(new Date(-43200000), null, null, null, null, null));

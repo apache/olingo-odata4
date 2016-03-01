@@ -32,8 +32,10 @@ package org.apache.olingo.commons.api.edm;
  * <tr><td>Boolean</td><td>{@link Boolean}</td></tr>
  * <tr><td>Byte</td><td>{@link Short}, {@link Byte}, {@link Integer}, {@link Long}, {@link java.math.BigInteger}
  * </td></tr>
- * <tr><td>Date</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link Long}</td></tr>
- * <tr><td>DateTimeOffset</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link Long}</td></tr>
+ * <tr><td>Date</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link java.sql.Timestamp},
+ * {@link java.sql.Time}, {@link Long}</td></tr>
+ * <tr><td>DateTimeOffset</td><td>{@link java.sql.Timestamp}, {@link java.util.Calendar}, {@link java.util.Date},
+ * {@link java.sql.Time}, {@link Long}</td></tr>
  * <tr><td>Decimal</td><td>{@link java.math.BigDecimal}, {@link java.math.BigInteger}, {@link Double}, {@link Float},
  * {@link Byte}, {@link Short}, {@link Integer}, {@link Long}</td></tr>
  * <tr><td>Double</td><td>{@link Double}, {@link Float}, {@link java.math.BigDecimal}, {@link Byte}, {@link Short},
@@ -52,7 +54,8 @@ package org.apache.olingo.commons.api.edm;
  * <tr><td>Single</td><td>{@link Float}, {@link Double}, {@link java.math.BigDecimal}, {@link Byte}, {@link Short},
  * {@link Integer}, {@link Long}</td></tr>
  * <tr><td>String</td><td>{@link String}</td></tr>
- * <tr><td>TimeOfDay</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link Long}</td></tr>
+ * <tr><td>TimeOfDay</td><td>{@link java.util.Calendar}, {@link java.util.Date}, {@link java.sql.Timestamp},
+ * {@link java.sql.Time}, {@link Long}</td></tr>
  * </tbody>
  * </table>
  * <p>

@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
@@ -205,7 +204,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void entityCollectionActionETAllPrim() throws Exception {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar time = Calendar.getInstance();
     time.clear();
     time.set(Calendar.HOUR_OF_DAY, 3);
     time.set(Calendar.MINUTE, 0);
@@ -228,7 +227,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void entityActionETAllPrim() throws Exception {
-    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
     dateTime.set(1012, 2, 0, 0, 0, 0);
     final Map<String, ClientValue> parameters = Collections.singletonMap(

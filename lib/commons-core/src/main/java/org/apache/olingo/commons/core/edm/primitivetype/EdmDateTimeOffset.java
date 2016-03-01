@@ -18,8 +18,6 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -28,6 +26,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
  * Implementation of the EDM primitive type DateTimeOffset.
@@ -61,10 +60,9 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
     }
 
     final String timeZoneOffset = matcher.group(9) == null || matcher.group(10) == null
-        || matcher.group(10).matches("[-+]0+:0+") ? null : matcher.group(10);
-    final TimeZone tz = TimeZone.getTimeZone("GMT" + ((timeZoneOffset == null) ? "" : timeZoneOffset));
-    final Calendar dateTimeValue = Calendar.getInstance(tz);
-    if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
+        || matcher.group(10).matches("[-+]0+:0+") ? "" : matcher.group(10);
+    final Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
+    if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && !timeZoneOffset.isEmpty()) {
       throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
     }
     dateTimeValue.clear();
@@ -87,16 +85,20 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
       }
       if (returnType.isAssignableFrom(Timestamp.class)) {
-        if (!decimals.isEmpty()) {
-          nanoSeconds = Integer.parseInt(decimals.length() > 9 ?
-              decimals.substring(0, 9) :
-              decimals + "000000000".substring(decimals.length()));
+        if (decimals.length() <= 9) {
+          nanoSeconds = Integer.parseInt(decimals + "000000000".substring(decimals.length()));
+        } else {
+          throw new EdmPrimitiveTypeException("The literal '" + value
+              + "' cannot be converted to value type " + returnType + ".");
         }
       } else {
-        final String milliSeconds = decimals.length() > 3 ?
-            decimals.substring(0, 3) :
-            decimals + "000".substring(decimals.length());
-        dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+        if (decimals.length() <= 3) {
+          final String milliSeconds = decimals + "000".substring(decimals.length());
+          dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+        } else {
+          throw new EdmPrimitiveTypeException("The literal '" + value
+              + "' cannot be converted to value type " + returnType + ".");
+        }
       }
     }
 
@@ -110,13 +112,13 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   }
 
   /**
-   * Converts a {@link Calendar} value into the requested return type if possible.
-   * <br>It is expected that the {@link Calendar} value will already be in the desired time zone.
-   *
+   * <p>Converts a {@link Calendar} value into the requested return type if possible.</p>
+   * <p>It is expected that the {@link Calendar} value will already be in the desired time zone.</p>
    * @param dateTimeValue the value
    * @param nanoSeconds nanoseconds part of the value; only used for the {@link Timestamp} return type
-   * @param returnType the class of the returned value; it must be one of {@link Calendar}, {@link Long}, {@link Date},
-   * or {@link Timestamp}
+   * @param returnType the class of the returned value;
+   *                   it must be one of {@link Calendar}, {@link Long}, {@link Date},
+   *                   {@link Time}, or {@link Timestamp}
    * @return the converted value
    * @throws IllegalArgumentException if the Calendar value is not valid
    * @throws ClassCastException if the return type is not allowed
@@ -145,14 +147,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       timestamp.setNanos(nanoSeconds);
       return returnType.cast(timestamp);
     } else if (returnType.isAssignableFrom(Time.class)) {
-      //normalize the value	
+      // Normalize the value.
       dateTimeValue.set(Calendar.YEAR, 1970);
       dateTimeValue.set(Calendar.MONTH, Calendar.JANUARY);
       dateTimeValue.set(Calendar.DAY_OF_MONTH, 1);
       dateTimeValue.set(Calendar.MILLISECOND, 0);
       return returnType.cast(new Time(dateTimeValue.getTimeInMillis())); // may throw IllegalArgumentException
     } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-      //normalize the value
+      // Normalize the value.
       dateTimeValue.set(Calendar.HOUR_OF_DAY, 0);
       dateTimeValue.set(Calendar.MINUTE, 0);
       dateTimeValue.set(Calendar.SECOND, 0);
@@ -169,8 +171,8 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
       final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
 
     final Calendar dateTimeValue = createDateTime(value, false);
-    
-    final StringBuilder result = new StringBuilder();
+
+    StringBuilder result = new StringBuilder();
     final int year = dateTimeValue.get(Calendar.YEAR);
     appendTwoDigits(result, year / 100);
     appendTwoDigits(result, year % 100);
@@ -207,31 +209,20 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   /**
    * Creates a date/time value from the given value.
    *
-   * @param value the value as {@link Calendar}, {@link Date}, or {@link Long}
-   * @return the value as {@link Calendar}
+   * @param value   the value as {@link Calendar}, {@link Date}, or {@link Long}
+   * @param isLocal whether the value is to be in the default time zone (or in GMT)
+   * @return the value as {@link Calendar} in the desired time zone
    * @throws EdmPrimitiveTypeException if the type of the value is not supported
    */
-  protected static <T> Calendar createDateTime(final T value, boolean isLocal) throws EdmPrimitiveTypeException {
+  protected static <T> Calendar createDateTime(final T value, final boolean isLocal) throws EdmPrimitiveTypeException {
     Calendar dateTimeValue;
     if (value instanceof Date) {
-      TimeZone tz;
-      if (isLocal) {
-        tz = TimeZone.getDefault();
-      } else {
-    	tz = TimeZone.getTimeZone("GMT");  
-      }
-      dateTimeValue = Calendar.getInstance(tz);
+      dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
       dateTimeValue.setTime((Date) value);
     } else if (value instanceof Calendar) {
       dateTimeValue = (Calendar) ((Calendar) value).clone();
     } else if (value instanceof Long) {
-      TimeZone tz;
-      if (isLocal) {
-        tz = TimeZone.getDefault();
-      } else {
-        tz = TimeZone.getTimeZone("GMT");  
-      }
-      dateTimeValue = Calendar.getInstance(tz);
+      dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
       dateTimeValue.setTimeInMillis((Long) value);
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");

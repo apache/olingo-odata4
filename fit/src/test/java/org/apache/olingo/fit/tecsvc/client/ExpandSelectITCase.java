@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -115,7 +116,10 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
     final ClientEntity inlineEntity = entities.get(0);
     assertEquals(2, inlineEntity.getProperties().size());
     assertShortOrInt(-128, inlineEntity.getProperty("PropertySByte").getPrimitiveValue().toValue());
-    assertEquals(new java.sql.Timestamp(85754000),
+    Calendar time = Calendar.getInstance();
+    time.clear();
+    time.set(1970, Calendar.JANUARY, 1, 23, 49, 14);
+    assertEquals(new java.sql.Timestamp(time.getTimeInMillis()),
         inlineEntity.getProperty("PropertyTimeOfDay").getPrimitiveValue().toValue());
   }
 

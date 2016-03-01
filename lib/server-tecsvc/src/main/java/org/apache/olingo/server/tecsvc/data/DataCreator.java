@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.Constants;
@@ -257,9 +258,9 @@ public class DataCreator {
                 new byte[] { 84, 103, -119 }
             ),
             createPrimitiveCollection("CollPropertyDate",
-                getDateTime(1958, 12, 3, 0, 0, 0),
-                getDateTime(1999, 8, 5, 0, 0, 0),
-                getDateTime(2013, 6, 25, 0, 0, 0)
+                getDate(1958, 12, 3),
+                getDate(1999, 8, 5),
+                getDate(2013, 6, 25)
             ),
             createPrimitiveCollection("CollPropertyDateTimeOffset",
                 getDateTime(2015, 8, 12, 3, 8, 34),
@@ -288,19 +289,19 @@ public class DataCreator {
     final EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 1, "1")
-            .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+            .addProperty(createPrimitive("PropertyDate", getDate(2013, 12, 12))));
 
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 1, "2")
-            .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+            .addProperty(createPrimitive("PropertyDate", getDate(2013, 12, 12))));
 
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 2, "1")
-            .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+            .addProperty(createPrimitive("PropertyDate", getDate(2013, 12, 12))));
 
     entityCollection.getEntities().add(
         createESTwoKeyNavEntity((short) 3, "1")
-            .addProperty(createPrimitive("PropertyDate", getDateTime(2013, 12, 12, 0, 0, 0))));
+            .addProperty(createPrimitive("PropertyDate", getDate(2013, 12, 12))));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav));
     createEntityId(edm, odata, "ESBaseTwoKeyNav", entityCollection);
@@ -400,9 +401,9 @@ public class DataCreator {
                 null,
                 new byte[] { 84, 103, -119 }))
             .addProperty(createPrimitiveCollection("CollPropertyDate",
-                getDateTime(1958, 12, 3, 0, 0, 0),
+                getDate(1958, 12, 3),
                 null,
-                getDateTime(2013, 6, 25, 0, 0, 0)))
+                getDate(2013, 6, 25)))
             .addProperty(createPrimitiveCollection("CollPropertyDateTimeOffset",
                 getDateTime(2015, 8, 12, 3, 8, 34),
                 null,
@@ -418,8 +419,7 @@ public class DataCreator {
             .addProperty(createPrimitiveCollection("CollPropertyTimeOfDay",
                 getTime(4, 14, 13),
                 null,
-                getTime(0, 37, 13))
-            ));
+                getTime(0, 37, 13))));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllNullable));
     createEntityId(edm, odata, "ESAllNullable", entityCollection);
@@ -537,7 +537,7 @@ public class DataCreator {
                 createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
                 createPrimitive("PropertyBoolean", true),
                 createPrimitive("PropertyByte", (short) 255),
-                createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 7, 16, 23)),
+                createPrimitive("PropertyDate", getDate(2012, 12, 3)),
                 createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)),
                 createPrimitive("PropertySingle", (float) 179000000000000000000D),
                 createPrimitive("PropertyDouble", -179000000000000000000D),
@@ -569,7 +569,7 @@ public class DataCreator {
         createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
         createPrimitive("PropertyBoolean", true),
         createPrimitive("PropertyByte", (short) 255),
-        createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 7, 16, 23)),
+        createPrimitive("PropertyDate", getDate(2012, 12, 3)),
         createPrimitive("PropertyDateTimeOffset", getTimestamp(2012, 12, 3, 7, 16, 23, 0)),
         createPrimitive("PropertyDecimal", 34),
         createPrimitive("PropertySingle", (float) 179000000000000000000D),
@@ -665,7 +665,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
         .addProperty(createPrimitive("PropertyBinary",
             new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
-        .addProperty(createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
         .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
         .addProperty(createPrimitive("PropertyGuid", GUID))
@@ -684,7 +684,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(-34)))
         .addProperty(createPrimitive("PropertyBinary",
             new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
-        .addProperty(createPrimitive("PropertyDate", getDateTime(2015, 11, 5, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDate", getDate(2015, 11, 5)))
         .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 7, 17, 8)))
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(9)))
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
@@ -702,7 +702,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDouble", 0D))
         .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
         .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
-        .addProperty(createPrimitive("PropertyDate", getDateTime(1970, 1, 1, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
         .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
@@ -725,7 +725,7 @@ public class DataCreator {
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
             createPrimitive("PropertyBoolean", true),
             createPrimitive("PropertyByte", (short) 255),
-            createPrimitive("PropertyDate", getDateTime(2012, 10, 3, 0, 0, 0)),
+            createPrimitive("PropertyDate", getDate(2012, 10, 3)),
             createPrimitive("PropertyDateTimeOffset", getTimestamp(2012, 10, 3, 7, 16, 23, 123456700)),
             createPrimitive("PropertyDecimal", BigDecimal.valueOf(34.27)),
             createPrimitive("PropertySingle", (float) 1.79000000E+20),
@@ -748,7 +748,7 @@ public class DataCreator {
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
             createPrimitive("PropertyBoolean", true),
             createPrimitive("PropertyByte", (short) 255),
-            createPrimitive("PropertyDate", getDateTime(2013, 11, 4, 0, 0, 0)),
+            createPrimitive("PropertyDate", getDate(2013, 11, 4)),
             createPrimitive("PropertyDateTimeOffset", getDateTime(2013, 11, 4, 7, 16, 23)),
             createPrimitive("PropertyDecimal", BigDecimal.valueOf(34.27)),
             createPrimitive("PropertySingle", (float) 1.79000000E+20),
@@ -759,7 +759,7 @@ public class DataCreator {
             createPrimitive("PropertyInt32", Integer.MAX_VALUE),
             createPrimitive("PropertyInt64", Long.MAX_VALUE),
             createPrimitive("PropertySByte", Byte.MAX_VALUE),
-            createPrimitive("PropertyTimeOfDay", getTimestamp(1, 1, 1, 7, 45, 12, 765432100))));
+            createPrimitive("PropertyTimeOfDay", getTimestamp(1970, 1, 1, 7, 45, 12, 765432100))));
     entity.setETag("W/\"7\"");
     entityCollection.getEntities().add(entity);
 
@@ -771,7 +771,7 @@ public class DataCreator {
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
             createPrimitive("PropertyBoolean", true),
             createPrimitive("PropertyByte", (short) 255),
-            createPrimitive("PropertyDate", getDateTime(2014, 12, 5, 0, 0, 0)),
+            createPrimitive("PropertyDate", getDate(2014, 12, 5)),
             createPrimitive("PropertyDateTimeOffset", getTimestamp(2014, 12, 5, 8, 17, 45, 123456700)),
             createPrimitive("PropertyDecimal", BigDecimal.valueOf(17.98)),
             createPrimitive("PropertySingle", 1.79000000E+20),
@@ -875,9 +875,9 @@ public class DataCreator {
             new byte[] { 0x01, 0x23, 0x45 },
             new byte[] { 0x54, 0x67, (byte) 0x89 }))
         .addProperty(createPrimitiveCollection("CollPropertyDate",
-            getDateTime(1958, 12, 3, 0, 0, 0),
-            getDateTime(1999, 8, 5, 0, 0, 0),
-            getDateTime(2013, 6, 25, 0, 0, 0)))
+            getDate(1958, 12, 3),
+            getDate(1999, 8, 5),
+            getDate(2013, 6, 25)))
         .addProperty(createPrimitiveCollection("CollPropertyDateTimeOffset",
             getDateTime(2015, 8, 12, 3, 8, 34),
             getDateTime(1970, 3, 28, 12, 11, 10),
@@ -908,7 +908,7 @@ public class DataCreator {
         .addProperty(createComplex("PropertyComp",
             createPrimitive("PropertyInt16", (short) 111),
             createPrimitive("PropertyString", "TEST A")))
-        .addProperty(createColPropertyComp()));
+        .addProperty(createCollPropertyComp()));
 
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) 7))
@@ -919,7 +919,7 @@ public class DataCreator {
         .addProperty(createComplex("PropertyComp",
             createPrimitive("PropertyInt16", (short) 222),
             createPrimitive("PropertyString", "TEST B")))
-        .addProperty(createColPropertyComp()));
+        .addProperty(createCollPropertyComp()));
 
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) 0))
@@ -930,7 +930,7 @@ public class DataCreator {
         .addProperty(createComplex("PropertyComp",
             createPrimitive("PropertyInt16", (short) 333),
             createPrimitive("PropertyString", "TEST C")))
-        .addProperty(createColPropertyComp()));
+        .addProperty(createCollPropertyComp()));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
     createEntityId(edm, odata, "ESMixPrimCollComp", entityCollection);
@@ -942,37 +942,37 @@ public class DataCreator {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
-            .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
-            .addProperty(createPrimitiveCollection("CollPropertyString",
-                    "Streamed-Employee1@company.example",
-                    "Streamed-Employee2@company.example",
-                    "Streamed-Employee3@company.example"))
-            .addProperty(createComplex("PropertyComp",
-                    createPrimitive("PropertyInt16", (short) 111),
-                    createPrimitive("PropertyString", "TEST A")))
-            .addProperty(createColPropertyComp()));
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitiveCollection("CollPropertyString",
+            "Streamed-Employee1@company.example",
+            "Streamed-Employee2@company.example",
+            "Streamed-Employee3@company.example"))
+        .addProperty(createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", (short) 111),
+            createPrimitive("PropertyString", "TEST A")))
+        .addProperty(createCollPropertyComp()));
 
     entityCollection.getEntities().add(new Entity()
-            .addProperty(createPrimitive("PropertyInt16", (short) 7))
-            .addProperty(createPrimitiveCollection("CollPropertyString",
-                    "Streamed-Employee1@company.example",
-                    "Streamed-Employee2@company.example",
-                    "Streamed-Employee3@company.example"))
-            .addProperty(createComplex("PropertyComp",
-                    createPrimitive("PropertyInt16", (short) 222),
-                    createPrimitive("PropertyString", "TEST B")))
-            .addProperty(createColPropertyComp()));
+        .addProperty(createPrimitive("PropertyInt16", (short) 7))
+        .addProperty(createPrimitiveCollection("CollPropertyString",
+            "Streamed-Employee1@company.example",
+            "Streamed-Employee2@company.example",
+            "Streamed-Employee3@company.example"))
+        .addProperty(createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", (short) 222),
+            createPrimitive("PropertyString", "TEST B")))
+        .addProperty(createCollPropertyComp()));
 
     entityCollection.getEntities().add(new Entity()
-            .addProperty(createPrimitive("PropertyInt16", (short) 0))
-            .addProperty(createPrimitiveCollection("CollPropertyString",
-                    "Streamed-Employee1@company.example",
-                    "Streamed-Employee2@company.example",
-                    "Streamed-Employee3@company.example"))
-            .addProperty(createComplex("PropertyComp",
-                    createPrimitive("PropertyInt16", (short) 333),
-                    createPrimitive("PropertyString", "TEST C")))
-            .addProperty(createColPropertyComp()));
+        .addProperty(createPrimitive("PropertyInt16", (short) 0))
+        .addProperty(createPrimitiveCollection("CollPropertyString",
+            "Streamed-Employee1@company.example",
+            "Streamed-Employee2@company.example",
+            "Streamed-Employee3@company.example"))
+        .addProperty(createComplex("PropertyComp",
+            createPrimitive("PropertyInt16", (short) 333),
+            createPrimitive("PropertyString", "TEST C")))
+        .addProperty(createCollPropertyComp()));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
     createEntityId(edm, odata, "ESStream", entityCollection);
@@ -981,7 +981,7 @@ public class DataCreator {
   }
 
   @SuppressWarnings("unchecked")
-  private Property createColPropertyComp() {
+  private Property createCollPropertyComp() {
     return createComplexCollection("CollPropertyComp",
         Arrays.asList(
             createPrimitive("PropertyInt16", (short) 123),
@@ -1006,7 +1006,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
         .addProperty(createPrimitive("PropertyInt64", Long.MAX_VALUE))
         .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
-        .addProperty(createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
         .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
         .addProperty(createPrimitive("PropertyGuid", GUID))
@@ -1021,7 +1021,7 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt32", 2147483644))
         .addProperty(createPrimitive("PropertyInt64", 9223372036854775804L))
         .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
-        .addProperty(createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
         .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
         .addProperty(createPrimitive("PropertyGuid", GUID))
@@ -1051,7 +1051,7 @@ public class DataCreator {
         createComplex("PropertyComp",  
             createPrimitive("PropertyInt16", (short) 987),
             createPrimitive("PropertyString", "String 2")),
-        createPrimitive("PropertyDate", getDateTime(2012, 12, 3, 0, 0, 0))));
+        createPrimitive("PropertyDate", getDate(2012, 12, 3))));
     entityCollection.getEntities().add(entity);
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompComp));
@@ -1238,32 +1238,38 @@ public class DataCreator {
     return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
   }
 
-  protected static Calendar getDateTime(final int year, final int month, final int day,
+  private static Calendar getDateTime(final int year, final int month, final int day,
       final int hour, final int minute, final int second) {
-    Calendar dateTime = Calendar.getInstance();
+    // Date/Time values are serialized with a timezone offset, so we choose a predictable timezone.
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTime.clear();
     dateTime.set(year, month - 1, day, hour, minute, second);
     dateTime.set(Calendar.MILLISECOND, 0);
     return dateTime;
   }
 
-  protected static int getDuration(final int days, final int hours, final int minutes, final int seconds) {
+  private static int getDuration(final int days, final int hours, final int minutes, final int seconds) {
     return days * 24 * 60 * 60
         + hours * 60 * 60
         + minutes * 60
         + seconds;
   }
 
-  protected static Calendar getTime(final int hour, final int minute, final int second) {
+  private static Calendar getDate(final int year, final int month, final int day) {
+    // Date values are always in the local timezone.
+    Calendar date = Calendar.getInstance();
+    date.clear();
+    date.set(year, month - 1, day, 0, 0, 0);
+    date.set(Calendar.MILLISECOND, 0);
+    return date;
+  }
+
+  private static Calendar getTime(final int hour, final int minute, final int second) {
+    // Time values are always in the local timezone.
     Calendar time = Calendar.getInstance();
     time.clear();
-    time.set(Calendar.YEAR, 1970);
-    time.set(Calendar.MONTH, Calendar.JANUARY);
-    time.set(Calendar.DAY_OF_MONTH, 1);
-    time.set(Calendar.MILLISECOND, 0);    
-    time.set(Calendar.HOUR_OF_DAY, hour);
-    time.set(Calendar.MINUTE, minute);
-    time.set(Calendar.SECOND, second);
+    time.set(1970, Calendar.JANUARY, 1, hour, minute, second);
+    time.set(Calendar.MILLISECOND, 0);
     return time;
   }
 

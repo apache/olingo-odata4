@@ -806,7 +806,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void dateAddDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
-        sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-02 add duration'P1DT7H16M23S'");
+        sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset ge 2012-12-01 add duration'P1DT7H16M23S'");
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
@@ -836,7 +836,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void dateSubDuration() {
     ODataRetrieveResponse<ClientEntitySet> response =
-        sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-04 sub duration'P0DT16H43M37S'");
+        sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset ge 2012-12-03 sub duration'P0DT16H43M37S'");
     assertEquals(1, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);

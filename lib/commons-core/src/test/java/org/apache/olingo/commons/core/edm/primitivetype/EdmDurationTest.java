@@ -98,7 +98,7 @@ public class EdmDurationTest extends PrimitiveTypeBaseTest {
     expectUnconvertibleErrorInValueOfString(instance, "PT10H", Short.class);
     expectUnconvertibleErrorInValueOfString(instance, "P25000D", Integer.class);
     expectUnconvertibleErrorInValueOfString(instance, "P123456789012345D", Long.class);
-    // expectUnconvertibleErrorInValueOfString(instance, "PT1.1S", BigInteger.class);
+    expectUnconvertibleErrorInValueOfString(instance, "PT1.1S", BigInteger.class);
 
     expectTypeErrorInValueOfString(instance, "PT0S");
   }

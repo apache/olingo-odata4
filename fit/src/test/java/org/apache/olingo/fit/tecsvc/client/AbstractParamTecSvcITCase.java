@@ -25,11 +25,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -66,14 +63,4 @@ public abstract class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
     assertTrue(n instanceof Number);
     assertEquals(value, ((Number) n).intValue());
   }
-  
-  @Before
-  public void setup() {
-    TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-  }
-  
-  @After
-  public void teardown() {
-    TimeZone.setDefault(TimeZone.getDefault());
-  }  
 }

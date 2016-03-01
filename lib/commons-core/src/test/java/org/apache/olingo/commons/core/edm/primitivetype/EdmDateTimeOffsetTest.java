@@ -75,11 +75,11 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, 3, null, null));
     assertEquals("1969-12-31T23:59:59.9Z", instance.valueToString(-100L, null, null, 1, null, null));
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(-20L, null, null, 2, null, null));
-    
+
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(new Time(millis), null, null, 3, null, null));
     assertEquals("1969-12-31T23:59:59.9Z", instance.valueToString(new Time(-100L), null, null, 1, null, null));
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(new Time(-20L), null, null, 2, null, null));
-    
+
     final Date date = new Date(millis);
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(date, null, null, 3, null, null));
 
@@ -131,15 +131,14 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
         Long.class));
     assertEquals(Long.valueOf(120L), instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null,
         Long.class));
-    
+
     assertEquals(new Time(120000L), instance.valueOfString("1970-01-01T00:02", null, null, null, null, null,
         Time.class));
-    // 0L because java.sql.Time does not keep track of fraction of milliseconds
-    assertEquals(new Time(0L), instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null,
+    // java.sql.Time does not keep track of milliseconds.
+    assertEquals(new Time(0), instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null,
         Time.class));
-    assertEquals(new Time(0L), instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null,
-        Time.class));
-    
+    assertEquals(new Time(0), instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null, Time.class));
+
     expectFacetsErrorInValueOfString(instance, "2012-02-29T23:32:02.9Z", null, null, null, null, null);
     expectFacetsErrorInValueOfString(instance, "2012-02-29T23:32:02.9Z", null, null, 0, null, null);
     expectContentErrorInValueOfString(instance, "2012-02-29T23:32:02X");
@@ -147,6 +146,9 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     expectContentErrorInValueOfString(instance, "2012-02-30T01:02:03");
     expectContentErrorInValueOfString(instance, "2012-02-29T23:32:02.");
     expectContentErrorInValueOfString(instance, "2012-02-29T23:32:02.0000000000000");
+
+    expectUnconvertibleErrorInValueOfString(instance, "2012-02-29T23:32:02.1234", Calendar.class);
+    expectUnconvertibleErrorInValueOfString(instance, "2012-02-29T23:32:02.0123456789", Timestamp.class);
 
     expectTypeErrorInValueOfString(instance, "2012-02-29T01:02:03Z");
   }
