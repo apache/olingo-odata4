@@ -597,8 +597,8 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_ACTION_IMPORT);
       writer.writeAttribute(XML_NAME, actionImport.getName());
       writer.writeAttribute(XML_ACTION, getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
-      writer.writeEndElement();
       appendAnnotations(writer, actionImport);
+      writer.writeEndElement();
     }
   }
 

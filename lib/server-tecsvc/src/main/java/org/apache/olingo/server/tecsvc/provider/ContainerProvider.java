@@ -644,7 +644,7 @@ public class ContainerProvider {
                 new CsdlAnnotation().setTerm("Core.Description")
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                         .setValue("Entity set will be streamed and it contains entities with various properties of " +
-                                "type primitive, collection of primitive, complex and collection of complex")),
+                            "type primitive, collection of primitive, complex and collection of complex")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       }
@@ -659,7 +659,13 @@ public class ContainerProvider {
       if (name.equals(AIRT_STRING)) {
         return new CsdlActionImport()
             .setName(AIRT_STRING)
-            .setAction(ActionProvider.nameUARTString);
+            .setAction(ActionProvider.nameUARTString)
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                    "Action Import returns a simple String")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
+                ));
 
       } else if (name.equals(AIRT_COLL_STRING_TWO_PARAM)) {
         return new CsdlActionImport()

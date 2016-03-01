@@ -69,6 +69,7 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -157,6 +158,15 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     // Just one is necessary to not make the test too strict
     assertTrue(annotations.size() > 1);
     EdmAnnotation annotation =
+        entitySet.getAnnotation(edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")), null);
+    assertNotNull(annotation);
+    
+    EdmActionImport actionImport = edm.getEntityContainer().getActionImport("AIRTString");
+    annotations = actionImport.getAnnotations();
+    assertNotNull(annotations);
+    // Just one is necessary to not make the test too strict
+    assertTrue(annotations.size() > 1);
+    annotation =
         entitySet.getAnnotation(edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")), null);
     assertNotNull(annotation);
   }
