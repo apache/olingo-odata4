@@ -22,15 +22,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.OlingoExtension;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
@@ -50,7 +53,7 @@ import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
-public class ODataHandler {
+public class ODataHandlerImpl implements ODataHandler {
 
   private final OData odata;
   private final ServiceMetadata serviceMetadata;
@@ -63,8 +66,8 @@ public class ODataHandler {
   private UriInfo uriInfo;
   private Exception lastThrownException;
 
-  public ODataHandler(final OData server, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
-    odata = server;
+  public ODataHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata, final ServerCoreDebugger debugger) {
+    this.odata = odata;
     this.serviceMetadata = serviceMetadata;
     this.debugger = debugger;
 
@@ -206,16 +209,20 @@ public class ODataHandler {
     processors.add(0, processor);
   }
 
-  public void register(final CustomContentTypeSupport customContentTypeSupport) {
-    this.customContentTypeSupport = customContentTypeSupport;
+  @Override
+  public void register(OlingoExtension extension) {
+    if(extension instanceof CustomContentTypeSupport) {
+      this.customContentTypeSupport = (CustomContentTypeSupport) extension;
+    } else if(extension instanceof CustomETagSupport) {
+      this.customETagSupport = (CustomETagSupport) extension;
+    } else {
+      throw new ODataRuntimeException("Got not supported exception with class name " +
+          extension.getClass().getSimpleName());
+    }
   }
 
   public CustomContentTypeSupport getCustomContentTypeSupport() {
     return customContentTypeSupport;
-  }
-
-  public void register(final CustomETagSupport customETagSupport) {
-    this.customETagSupport = customETagSupport;
   }
 
   public CustomETagSupport getCustomETagSupport() {
