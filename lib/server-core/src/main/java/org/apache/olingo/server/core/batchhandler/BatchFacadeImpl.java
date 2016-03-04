@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -39,7 +40,7 @@ public class BatchFacadeImpl implements BatchFacade {
    * @param batchProcessor batch processor
    * @param isStrict       mode switch (currently not used)
    */
-  public BatchFacadeImpl(final ODataHandlerImpl oDataHandler, final BatchProcessor batchProcessor,
+  public BatchFacadeImpl(final ODataHandler oDataHandler, final BatchProcessor batchProcessor,
                          final boolean isStrict) {
     partHandler = new BatchPartHandler(oDataHandler, batchProcessor, this);
   }
