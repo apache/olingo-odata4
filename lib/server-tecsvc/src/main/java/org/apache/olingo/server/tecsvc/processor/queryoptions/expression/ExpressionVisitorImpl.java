@@ -38,13 +38,7 @@ import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.UntypedOperand;
@@ -184,10 +178,10 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   }
 
   @Override
-  public VisitorOperand visitMember(final UriInfoResource member) throws ExpressionVisitException,
+  public VisitorOperand visitMember(final Member member) throws ExpressionVisitException,
       ODataApplicationException {
 
-    final List<UriResource> uriResourceParts = member.getUriResourceParts();
+    final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
 
     // UriResourceParts contains at least one UriResource.
     final UriResource initialPart = uriResourceParts.get(0);

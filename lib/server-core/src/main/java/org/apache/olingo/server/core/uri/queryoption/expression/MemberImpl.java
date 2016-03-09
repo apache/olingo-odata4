@@ -52,7 +52,7 @@ public class MemberImpl implements Member {
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
-    return visitor.visitMember(path);
+    return visitor.visitMember(this);
   }
 
   @Override

@@ -18,28 +18,20 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import java.util.List;
-
-import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.server.api.ODataApplicationException;
-import org.apache.olingo.server.api.uri.UriInfoResource;
-import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
-import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
-import org.apache.olingo.server.api.uri.UriResourcePartTyped;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
+import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
+import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
+
+import java.util.List;
 
 /**
  * A custom expression visitor which converts the tree into a {@link JsonNode} tree.
@@ -134,9 +126,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   }
 
   @Override
-  public JsonNode visitMember(final UriInfoResource member)
+  public JsonNode visitMember(final Member member)
       throws ExpressionVisitException, ODataApplicationException {
-    final List<UriResource> uriResourceParts = member.getUriResourceParts();
+    final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
     ObjectNode result = nodeFactory.objectNode()
         .put(NODE_TYPE_NAME, MEMBER_NAME)
         .put(TYPE_NAME, getType(uriResourceParts));

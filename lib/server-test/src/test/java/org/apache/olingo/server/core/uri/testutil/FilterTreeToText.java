@@ -29,13 +29,7 @@ import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
 
@@ -88,10 +82,10 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
   }
 
   @Override
-  public String visitMember(final UriInfoResource resource) throws ExpressionVisitException, ODataApplicationException {
+  public String visitMember(final Member member) throws ExpressionVisitException, ODataApplicationException {
     String ret = "";
 
-    for (UriResource item : resource.getUriResourceParts()) {
+    for (UriResource item : member.getResourcePath().getUriResourceParts()) {
       String tmp = "";
       if (item instanceof UriResourceLambdaAll) {
         UriResourceLambdaAll all = (UriResourceLambdaAll) item;
