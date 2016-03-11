@@ -1201,12 +1201,10 @@ public class ExpressionParser {
       }
     }
     if ((isType(leftType, EdmPrimitiveTypeKind.DateTimeOffset)
+        || isType(leftType, EdmPrimitiveTypeKind.Date)
         || isType(leftType, EdmPrimitiveTypeKind.Duration))
         && isType(rightType, EdmPrimitiveTypeKind.Duration)) {
       return leftType;
-    }
-    if (isType(leftType, EdmPrimitiveTypeKind.Date) && isType(rightType, EdmPrimitiveTypeKind.Duration)) {
-      return odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset);
     }
     if (isSub
         && (isType(leftType, EdmPrimitiveTypeKind.DateTimeOffset)
