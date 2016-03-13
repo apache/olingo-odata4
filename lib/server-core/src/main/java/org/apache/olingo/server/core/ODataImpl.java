@@ -91,7 +91,7 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataHandler createBasicHandler(ServiceMetadata serviceMetadata) {
+  public ODataHandler createRawHandler(ServiceMetadata serviceMetadata) {
     return new ODataHandlerImpl(this, serviceMetadata, new ServerCoreDebugger(this));
   }
 

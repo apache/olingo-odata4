@@ -102,7 +102,7 @@ public abstract class OData {
    *
    * @param serviceMetadata - metadata object required to handle an OData request
    */
-  public abstract ODataHandler createBasicHandler(ServiceMetadata serviceMetadata);
+  public abstract ODataHandler createRawHandler(ServiceMetadata serviceMetadata);
 
   /**
    * Creates a metadata object for this service.
