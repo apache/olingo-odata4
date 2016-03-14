@@ -163,7 +163,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       writer.writeStartElement("error");
       writer.writeDefaultNamespace(NS_METADATA);
-      writeErrorDetails(String.valueOf(error.getStatusCode()), error.getMessage(), error.getTarget(), writer);
+      writeErrorDetails(String.valueOf(error.getCode()), error.getMessage(), error.getTarget(), writer);
       if (error.getDetails() != null && !error.getDetails().isEmpty()) {
         writer.writeStartElement(Constants.ERROR_DETAILS);
         for (ODataErrorDetail inner : error.getDetails()) {

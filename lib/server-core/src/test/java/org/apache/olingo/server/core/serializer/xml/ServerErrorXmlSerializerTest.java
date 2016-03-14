@@ -48,7 +48,7 @@ public class ServerErrorXmlSerializerTest {
     String jsonString = IOUtils.toString(stream);
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
         + "<error xmlns=\"http://docs.oasis-open.org/odata/ns/metadata\">"
-        + "<code>0</code>"
+        + "<code>Code</code>"
         + "<message>ErrorMessage</message>"
         + "</error>",
         jsonString);
@@ -74,7 +74,7 @@ public class ServerErrorXmlSerializerTest {
     String jsonString = IOUtils.toString(stream);
     assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
         + "<error xmlns=\"http://docs.oasis-open.org/odata/ns/metadata\">"
-        + "<code>0</code>"
+        + "<code>code</code>"
         + "<message>err message</message>"
         + "<target>target</target>"
         + "<details>"
