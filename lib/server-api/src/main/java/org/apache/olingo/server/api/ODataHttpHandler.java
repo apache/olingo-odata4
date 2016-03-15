@@ -23,16 +23,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.etag.CustomETagSupport;
-import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 
 /**
  * Handles HTTP requests as OData requests.
  */
-public interface ODataHttpHandler {
+public interface ODataHttpHandler extends ODataHandler {
 
   /**
-   * <p>Processes an OData request.</p>
+   * <p>Processes a HttpServletRequest as an OData request.</p>
    * <p>This includes URI parsing, content negotiation, dispatching the request
    * to a specific custom processor implementation for handling data and
    * creating the serialized content for the response object.</p>
@@ -42,11 +41,17 @@ public interface ODataHttpHandler {
   void process(HttpServletRequest request, HttpServletResponse response);
 
   /**
-   * <p>Registers additional custom processor implementations for handling OData requests.</p>
-   * <p>If request processing requires a processor that is not registered then a
-   * "not implemented" exception will happen.</p>
+   * Sets the split parameter which is used for service resolution.
+   * @param split the number of path segments reserved for service resolution; default is 0
    */
-  void register(Processor processor);
+  void setSplit(int split);
+
+
+  /**
+   * Registers the debug support handler.
+   * @param debugSupport handler to register
+   */
+  void register(DebugSupport debugSupport);
 
   /**
    * Registers a service implementation for modifying the standard list of supported
@@ -56,21 +61,8 @@ public interface ODataHttpHandler {
   void register(CustomContentTypeSupport customContentTypeSupport);
 
   /**
-   * Sets the split parameter which is used for service resolution.
-   * @param split the number of path segments reserved for service resolution; default is 0
-   */
-  void setSplit(int split);
-
-  /**
    * Registers support for concurrency control for certain entity sets.
-   * @param customETagSupport
+   * @param customETagSupport handler to register
    */
-  void register(CustomETagSupport customConcurrencyControlSupport);
-
-  /**
-   * Registers the debug support handler.
-   * @param debugSupport
-   */
-  void register(DebugSupport debugSupport);
-
+  void register(CustomETagSupport customETagSupport);
 }

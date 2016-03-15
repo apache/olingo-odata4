@@ -36,6 +36,7 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.primitive.EdmNull;
 
 public class BinaryOperator {
+  private static final int MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
   private static final int FACTOR_SECOND_INT = 1000;
   private static final BigDecimal FACTOR_SECOND = BigDecimal.valueOf(FACTOR_SECOND_INT);
   private static final BigInteger EDM_SBYTE_MIN = BigInteger.valueOf(Byte.MIN_VALUE);
@@ -260,15 +261,19 @@ public class BinaryOperator {
 
         result = new TypedOperand(new BigDecimal(millis).divide(FACTOR_SECOND), primDuration);
       } else if (right.is(primDuration) && operator == BinaryOperatorKind.ADD) {
+        // Add only whole days.
         long millis = left.getTypedValue(Calendar.class).getTimeInMillis()
-            + (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
+            + ((right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT)
+                / MILLISECONDS_PER_DAY) * MILLISECONDS_PER_DAY;
 
-        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
+        result = new TypedOperand(new Timestamp(millis), primDate);
       } else if (right.is(primDuration) && operator == BinaryOperatorKind.SUB) {
+        // Subtract only whole days.
         long millis = left.getTypedValue(Calendar.class).getTimeInMillis()
-            - (right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT);
+            - ((right.getTypedValue(BigDecimal.class).longValue() * FACTOR_SECOND_INT)
+                / MILLISECONDS_PER_DAY) * MILLISECONDS_PER_DAY;
 
-        result = new TypedOperand(new Timestamp(millis), primDateTimeOffset);
+        result = new TypedOperand(new Timestamp(millis), primDate);
       }
     } else if (left.is(primDuration)) {
       if (right.is(primDuration) && operator == BinaryOperatorKind.ADD) {

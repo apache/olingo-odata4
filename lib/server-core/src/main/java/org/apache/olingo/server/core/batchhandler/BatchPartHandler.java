@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.batchhandler;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
@@ -28,7 +29,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.core.ODataHandler;
+import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.batchhandler.referenceRewriting.BatchReferenceRewriter;
 
 public class BatchPartHandler {
@@ -38,7 +39,7 @@ public class BatchPartHandler {
   private final BatchReferenceRewriter rewriter;
 
   public BatchPartHandler(final ODataHandler oDataHandler, final BatchProcessor processor,
-      final BatchFacade batchFacade) {
+                          final BatchFacade batchFacade) {
     this.oDataHandler = oDataHandler;
     batchProcessor = processor;
     this.batchFacade = batchFacade;

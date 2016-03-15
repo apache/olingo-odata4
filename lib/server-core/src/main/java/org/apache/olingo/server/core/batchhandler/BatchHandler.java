@@ -29,14 +29,14 @@ import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.core.ODataHandler;
+import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchHandler {
   private final BatchProcessor batchProcessor;
-  private final ODataHandler oDataHandler;
+  private final ODataHandlerImpl oDataHandler;
 
-  public BatchHandler(final ODataHandler oDataHandler, final BatchProcessor batchProcessor) {
+  public BatchHandler(final ODataHandlerImpl oDataHandler, final BatchProcessor batchProcessor) {
 
     this.batchProcessor = batchProcessor;
     this.oDataHandler = oDataHandler;

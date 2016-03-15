@@ -75,9 +75,9 @@ public class ODataDispatcher {
 
   private static final String NOT_IMPLEMENTED_MESSAGE = "not implemented";
   private final UriInfo uriInfo;
-  private final ODataHandler handler;
+  private final ODataHandlerImpl handler;
 
-  public ODataDispatcher(final UriInfo uriInfo, final ODataHandler handler) {
+  public ODataDispatcher(final UriInfo uriInfo, final ODataHandlerImpl handler) {
     this.uriInfo = uriInfo;
     this.handler = handler;
   }

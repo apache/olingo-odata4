@@ -16,30 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.core;
+package org.apache.olingo.server.api;
 
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.ODataHttpHandler;
-import org.apache.olingo.server.api.ServiceMetadata;
-
-public class OData4Impl extends ODataImpl {
-
-  public static OData newInstance() {
-    try {
-      final Class<?> clazz = Class.forName(OData4Impl.class.getName());
-      final Object object = clazz.newInstance();
-      return (OData) object;
-    } catch (final Exception e) {
-      throw new ODataRuntimeException(e);
-    }
-  }
-
-  private OData4Impl() {
-  }
-
-  @Override
-  public ODataHttpHandler createHandler(final ServiceMetadata serviceMetadata) {
-    return new OData4HttpHandler(this, serviceMetadata);
-  }
+/**
+ * Marker interface for all possible Olingo extensions.
+ */
+public interface OlingoExtension {
 }

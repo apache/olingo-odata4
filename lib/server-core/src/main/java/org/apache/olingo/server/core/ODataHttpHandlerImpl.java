@@ -45,6 +45,7 @@ import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
+import org.apache.olingo.server.api.OlingoExtension;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugSupport;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -57,14 +58,19 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   public static final int COPY_BUFFER_SIZE = 8192;
 
-  private final ODataHandler handler;
+  private final ODataHandlerImpl handler;
   private final ServerCoreDebugger debugger;
 
   private int split = 0;
 
   public ODataHttpHandlerImpl(final OData odata, final ServiceMetadata serviceMetadata) {
     debugger = new ServerCoreDebugger(odata);
-    handler = new ODataHandler(odata, serviceMetadata, debugger);
+    handler = new ODataHandlerImpl(odata, serviceMetadata, debugger);
+  }
+
+  @Override
+  public ODataResponse process(ODataRequest request) {
+    return handler.process(request);
   }
 
   @Override
@@ -78,7 +84,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     try {
       fillODataRequest(odRequest, request, split);
 
-      odResponse = handler.process(odRequest);
+      odResponse = process(odRequest);
       // ALL future methods after process must not throw exceptions!
     } catch (Exception e) {
       exception = e;
@@ -304,6 +310,11 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   @Override
   public void register(final Processor processor) {
     handler.register(processor);
+  }
+
+  @Override
+  public void register(OlingoExtension extension) {
+    handler.register(extension);
   }
 
   @Override

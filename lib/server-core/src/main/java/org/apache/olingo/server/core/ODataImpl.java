@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataHandler;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.debug.DebugResponseHelper;
@@ -42,6 +43,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.core.debug.DebugResponseHelperImpl;
+import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.core.deserializer.FixedFormatDeserializerImpl;
 import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 import org.apache.olingo.server.core.deserializer.xml.ODataXmlDeserializer;
@@ -84,8 +86,13 @@ public class ODataImpl extends OData {
   }
 
   @Override
-  public ODataHttpHandler createHandler(final ServiceMetadata edm) {
-    return new ODataHttpHandlerImpl(this, edm);
+  public ODataHttpHandler createHandler(final ServiceMetadata serviceMetadata) {
+    return new ODataHttpHandlerImpl(this, serviceMetadata);
+  }
+
+  @Override
+  public ODataHandler createRawHandler(ServiceMetadata serviceMetadata) {
+    return new ODataHandlerImpl(this, serviceMetadata, new ServerCoreDebugger(this));
   }
 
   @Override

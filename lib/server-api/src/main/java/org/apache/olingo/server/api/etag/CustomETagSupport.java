@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.etag;
 
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.server.api.OlingoExtension;
 
 /**
  * <p>Processors that would like to support etags for certain entity sets can implement this
@@ -27,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmBindingTarget;
  * require an if-match/if-none-match or an if-modified-since/if-unmodified-since header. Otherwise the request will
  * result in a "Precondition Required" response</p>
  */
-public interface CustomETagSupport {
+public interface CustomETagSupport extends OlingoExtension {
 
   /**
    * This method will be called for update requests which target an entity or a property of an entity.

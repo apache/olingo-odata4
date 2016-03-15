@@ -52,7 +52,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
 import org.apache.olingo.server.api.serializer.BatchSerializerException;
-import org.apache.olingo.server.core.ODataHandler;
+import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 import org.junit.Before;
@@ -67,7 +67,7 @@ public class MockedBatchHandlerTest {
   private static final String BATCH_REQUEST_URI = "http://localhost:8080/odata/$batch";
   private static final String BASE_URI = "http://localhost:8080/odata";
   private static final String CRLF = "\r\n";
-  private ODataHandler oDataHandler;
+  private ODataHandlerImpl oDataHandler;
   private BatchHandler batchHandler;
   private int entityCounter = 1;
 
@@ -77,7 +77,7 @@ public class MockedBatchHandlerTest {
     batchProcessor.init(OData.newInstance(), null);
 
     entityCounter = 1;
-    oDataHandler = mock(ODataHandler.class);
+    oDataHandler = mock(ODataHandlerImpl.class);
     batchHandler = new BatchHandler(oDataHandler, batchProcessor);
   }
 

@@ -20,21 +20,22 @@ package org.apache.olingo.server.api.debug;
 
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.OlingoExtension;
 
 /**
  * Register this interface to add debug support to your service.
  */
 public interface DebugSupport {
 
-  public static final String ODATA_DEBUG_QUERY_PARAMETER = "odata-debug";
-  public static final String ODATA_DEBUG_JSON = "json";
-  public static final String ODATA_DEBUG_HTML = "html";
-  public static final String ODATA_DEBUG_DOWNLOAD = "download";
+  String ODATA_DEBUG_QUERY_PARAMETER = "odata-debug";
+  String ODATA_DEBUG_JSON = "json";
+  String ODATA_DEBUG_HTML = "html";
+  String ODATA_DEBUG_DOWNLOAD = "download";
 
   /**
    * Initializes the debug support implementation.
    * Is called before {@link #isUserAuthorized()} and {@link #createDebugResponse(String, DebugInformation)}.
-   * @param odata
+   * @param odata related OData/Olingo service factory
    */
   void init(OData odata);
 
@@ -52,5 +53,4 @@ public interface DebugSupport {
    * @return a new debug response which will be sent to the client
    */
   ODataResponse createDebugResponse(String debugFormat, DebugInformation debugInfo);
-
 }
