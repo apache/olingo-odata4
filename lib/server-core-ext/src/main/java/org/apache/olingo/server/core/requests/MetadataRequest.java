@@ -52,9 +52,8 @@ public class MetadataRequest extends ServiceRequest {
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
 
-    if (!allowedMethod()) {
-      methodNotAllowed();
-    }
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
 
     handler.readMetadata(this, MetadataResponse.getInstance(this, response));
   }

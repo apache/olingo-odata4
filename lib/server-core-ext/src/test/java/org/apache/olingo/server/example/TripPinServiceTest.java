@@ -320,6 +320,14 @@ public class TripPinServiceTest {
     HttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
+  
+  @Test
+  public void testAllowHeader() throws Exception {
+    HttpResponse response = httpGET(baseURL + "/ResetDataSource", 405);
+    Header[] headers = response.getHeaders("Allow");
+    assertEquals("POST", headers[0].getValue());
+    EntityUtils.consumeQuietly(response.getEntity());
+  }  
 
   @Test @Ignore
   public void testFunctionImport() throws Exception {

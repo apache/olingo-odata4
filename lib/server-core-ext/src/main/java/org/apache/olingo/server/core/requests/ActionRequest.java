@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
@@ -54,9 +55,9 @@ public class ActionRequest extends OperationRequest {
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
 
-    if (!allowedMethod()) {
-      methodNotAllowed();
-    }
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
+    
     // Actions MAY return data but MUST NOT be further composed with additional
     // path segments.
     // On success, the response is 201 Created for actions that create entities,
@@ -85,9 +86,9 @@ public class ActionRequest extends OperationRequest {
   }
 
   @Override
-  public boolean allowedMethod() {
+  public HttpMethod[] allowedMethods() {
     // 11.5.4.1 Invoking an Action - only allows POST
-    return (isPOST());
+    return new HttpMethod[] {HttpMethod.POST};
   }
   
   @SuppressWarnings("unchecked")

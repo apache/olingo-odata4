@@ -81,10 +81,38 @@ public abstract class ServiceRequest {
     this.uriInfo = uriInfo;
   }
 
-  public boolean allowedMethod() {
-    return isGET();
+  public static boolean  assertHttpMethod(HttpMethod issued, HttpMethod[] allowedMethods,
+      ODataResponse response) throws ODataHandlerException {
+    boolean allowed = false; 
+    for (HttpMethod method :allowedMethods) {
+      if (issued.equals(method)) {
+        allowed = true;
+      }
+    }
+    if (!allowed) {
+      return methodNotAllowed(response, issued, null, allowedMethods); 
+    }
+    return true;
   }
+  
+  public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
+    boolean allowed = false; 
+    HttpMethod issued = this.request.getMethod();
+    for (HttpMethod method :allowedMethods()) {
+      if (issued.equals(method)) {
+        allowed = true;
+      }
+    }
+    if (!allowed) {
+      return methodNotAllowed(response, issued, null, allowedMethods()); 
+    }
+    return true;
+  }  
 
+  public HttpMethod[] allowedMethods() {
+    return new HttpMethod[] {HttpMethod.GET};
+  }
+  
   public CustomContentTypeSupport getCustomContentTypeSupport() {
     return this.customContentType;
   }
@@ -113,10 +141,22 @@ public abstract class ServiceRequest {
 
   public abstract ContentType getResponseContentType() throws ContentNegotiatorException;
 
-  public void methodNotAllowed() throws ODataHandlerException {
-    throw new ODataHandlerException("HTTP method " + this.request.getMethod() + " is not allowed.",
-        ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, this.request.getMethod()
-            .toString());
+  public static boolean methodNotAllowed(ODataResponse response, HttpMethod issued, String reason,
+      HttpMethod... allowed) throws ODataHandlerException {
+    
+    StringBuilder sb = new StringBuilder();
+    for (HttpMethod method:allowed) {
+      if (sb.length() > 0) {
+        sb.append(",");
+      }
+      sb.append(method.name());
+    }
+    response.setHeader("Allow", sb.toString());
+    if (reason == null) {
+      reason = "HTTP method " + issued + " is not allowed.";
+    }
+    throw new ODataHandlerException(reason,
+        ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, issued.name());
   }
 
   public void notImplemented() throws ODataHandlerException {
@@ -143,6 +183,10 @@ public abstract class ServiceRequest {
   protected boolean isPOST() {
     return this.request.getMethod() == HttpMethod.POST;
   }
+  
+  protected HttpMethod httpMethod() {
+    return this.request.getMethod();
+  }  
 
   private static FullQualifiedName XML10_CHAR_REPLACE_FQN = new FullQualifiedName(
       "org.apache.olingo.v1.xml10-incompatible-char-replacement");

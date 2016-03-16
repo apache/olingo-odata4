@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
@@ -33,7 +34,9 @@ import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.core.ContentNegotiatorException;
+import org.apache.olingo.server.core.ODataHandlerException;
 import org.apache.olingo.server.core.ServiceHandler;
+import org.apache.olingo.server.core.ServiceRequest;
 import org.apache.olingo.server.core.responses.EntityResponse;
 import org.apache.olingo.server.core.responses.EntitySetResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
@@ -49,9 +52,8 @@ public class FunctionRequest extends OperationRequest {
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
 
-    if (!allowedMethod()) {
-      methodNotAllowed();
-    }
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
 
     // Functions always have return per 11.5.3
     if (isReturnTypePrimitive() || isReturnTypeComplex()) {
@@ -71,14 +73,25 @@ public class FunctionRequest extends OperationRequest {
   }
 
   @Override
-  public boolean allowedMethod() {
+  public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
     // look for discussion about composable functions in odata-discussion
     // group with thread "Clarification on "Function" invocations"
     if (getFunction().isComposable()) {
-      return (isGET() || isPATCH() || isDELETE() || isPOST() || isPUT());
+      boolean allowed =  (isGET() || isPATCH() || isDELETE() || isPOST() || isPUT());
+      if (!allowed) {
+        return methodNotAllowed(response,httpMethod(),
+            "Only composable functions are allowed PATCH, DELETE, POST and PUT methods",
+            allowedMethods());
+      }
     }
-    return isGET();
+    return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
   }
+  
+  @Override
+  public HttpMethod[] allowedMethods() {
+    return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
+        HttpMethod.PATCH, HttpMethod.DELETE };
+  }  
 
   @SuppressWarnings("unchecked")
   @Override

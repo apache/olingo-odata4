@@ -46,6 +46,7 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
@@ -71,6 +72,7 @@ import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.core.ContentNegotiator;
 import org.apache.olingo.server.core.ContentNegotiatorException;
+import org.apache.olingo.server.core.ODataHandlerException;
 import org.apache.olingo.server.core.ReturnRepresentation;
 import org.apache.olingo.server.core.ServiceHandler;
 import org.apache.olingo.server.core.ServiceRequest;
@@ -99,8 +101,10 @@ public class DataRequest extends ServiceRequest {
    * This sub-categorizes the request so that code can be simplified
    */
   interface RequestType {
-    public boolean allowedMethod();
-
+    public HttpMethod[] allowedMethods();
+    
+    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException;
+    
     public ContentType getResponseContentType() throws ContentNegotiatorException;
 
     public ContextURL getContextURL(OData odata) throws SerializerException;
@@ -212,6 +216,7 @@ public class DataRequest extends ServiceRequest {
     return valueRequest;
   }
 
+  /*
   private boolean hasMediaStream() {
     return this.uriResourceEntitySet != null && this.uriResourceEntitySet.getEntityType().hasStream();
   }
@@ -219,15 +224,21 @@ public class DataRequest extends ServiceRequest {
   private InputStream getMediaStream() {
     return this.request.getBody();
   }
-
+  */
+  
   public void setValueRequest(boolean valueRequest) {
     this.valueRequest = valueRequest;
     this.type = new ValueRequest();
   }
 
+  public boolean assertHttpMethod(ODataResponse response)
+      throws ODataHandlerException {
+    return this.type.assertHttpMethod(response);
+  }
+  
   @Override
-  public boolean allowedMethod() {
-    return this.type.allowedMethod();
+  public HttpMethod[] allowedMethods() {
+    return this.type.allowedMethods();
   }
 
   public ContextURL getContextURL(OData odata) throws SerializerException {
@@ -238,9 +249,8 @@ public class DataRequest extends ServiceRequest {
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
 
-    if (!this.type.allowedMethod()) {
-      methodNotAllowed();
-    }
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
 
     this.type.execute(handler, response);
   }
@@ -273,25 +283,36 @@ public class DataRequest extends ServiceRequest {
   class EntityRequest implements RequestType {
 
     @Override
-    public boolean allowedMethod() {
+    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       // the create/update/delete to navigation property is done through references
       // see # 11.4.6
       if (!getNavigations().isEmpty() && !isGET()) {
-        return false;
+        return methodNotAllowed(response, httpMethod(), 
+            "create/update/delete to navigation property is done through references", 
+            allowedMethods());
       }
       
       if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return false;
+        return methodNotAllowed(response, httpMethod(), 
+            "Invalid prefer header used", 
+            allowedMethods());
       }
       
       // in update, delete entity cases, predicate must be there
       if ((isPATCH() || isPUT() || isDELETE()) 
           && (getKeyPredicates() == null || getKeyPredicates().isEmpty())) {
-        return false;
+        return methodNotAllowed(response, httpMethod(),
+            "No key predicates provided",allowedMethods());
       }
-      return true;
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
+          HttpMethod.PATCH, HttpMethod.DELETE };
+    }     
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
@@ -359,14 +380,19 @@ public class DataRequest extends ServiceRequest {
   class CountRequest implements RequestType {
 
     @Override
-    public boolean allowedMethod() {
+    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if (getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return false;
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
+            allowedMethods());
       }
-
-      return isGET();
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET};
+    }     
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       return ContentType.TEXT_PLAIN;
@@ -390,34 +416,41 @@ public class DataRequest extends ServiceRequest {
   class ReferenceRequest implements RequestType {
 
     @Override
-    public boolean allowedMethod() {
+    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return false;
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
+            allowedMethods());
       }
       
       // references are only allowed on the navigation properties
       if (getNavigations().isEmpty()) {
-        return false;
+        return methodNotAllowed(response, httpMethod(),
+            "References can be only used on navigation properties",
+            allowedMethods());
       }
 
       // 11.4.6.1 - post allowed on only collection valued navigation
       if (isPOST() && !getNavigations().getLast().isCollection()) {
-        return false;
+        return methodNotAllowed(response, httpMethod(),
+            "POST only allowed on collection valued navigation",
+            allowedMethods());
       }
 
       // 11.4.6.3 - PUT allowed on single valued navigation
       if (isPUT() && getNavigations().getLast().isCollection()) {
-        return false;
+        return methodNotAllowed(response, httpMethod(),
+            "PUT only allowed on single valued navigation", allowedMethods());
       }
-
-      // No defined behavior in spec
-      if (isPATCH()) {
-        return false;
-      }
-
-      return true;
+      //PATCH is not defined in spec
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
+          HttpMethod.DELETE };
+    }
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
@@ -486,25 +519,33 @@ public class DataRequest extends ServiceRequest {
   class PropertyRequest implements RequestType {
 
     @Override
-    public boolean allowedMethod() {
-      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return false;
+    public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
+      if ((isGET() || isDELETE() || isPropertyStream())
+          && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
+            allowedMethods());
       }
       
       // create of properties is not allowed,
       // only read, update, delete. Note that delete is
       // same as update with null
-      if (isPOST()) {
-        return false;
-      }
 
       // 11.4.9.4, collection properties are not supported with merge
       if (isPATCH() && (isCollection() || isPropertyStream())) {
-        return false;
+        return methodNotAllowed(response, httpMethod(),
+            "collection properties are not supported for merge",
+            allowedMethods());
       }
-      return true;
+      
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT,
+          HttpMethod.PATCH, HttpMethod.DELETE };
+    }
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       if (isPropertyComplex()) {
@@ -591,21 +632,30 @@ public class DataRequest extends ServiceRequest {
   class ValueRequest extends PropertyRequest {
 
     @Override
-    public boolean allowedMethod() {
+    public boolean assertHttpMethod(ODataResponse response)
+        throws ODataHandlerException {
       //part2-url-conventions # 4.7
       // Properties of type Edm.Stream already return the raw value of 
       // the media stream and do not support appending the $value segment.
       if (isPropertyStream() && isGET()) {
-        return false;
+        return methodNotAllowed(response, httpMethod(), "Edm.Stream properties do not support $value", 
+            allowedMethods());
       }
 
-      if ((isGET() || isDELETE() || isPropertyStream()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
-        return false;
+      if ((isGET() || isDELETE() || isPropertyStream())
+          && getReturnRepresentation() != ReturnRepresentation.NONE) {
+        return methodNotAllowed(response, httpMethod(), "Invalid Prefer header used", 
+            allowedMethods());
       }
 
-      return isGET() || isDELETE() || isPUT();
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
 
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE };
+    }
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       RepresentationType valueRepresentationType =
@@ -651,10 +701,16 @@ public class DataRequest extends ServiceRequest {
   class SingletonRequest implements RequestType {
 
     @Override
-    public boolean allowedMethod() {
-      return isGET();
+    public boolean assertHttpMethod(ODataResponse response)
+        throws ODataHandlerException {
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
     }
-
+    
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] {HttpMethod.GET};
+    }
+    
     @Override
     public ContentType getResponseContentType() throws ContentNegotiatorException {
       return ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(), getODataRequest(),
@@ -685,8 +741,14 @@ public class DataRequest extends ServiceRequest {
     }
 
     @Override
-    public boolean allowedMethod() {
-      return isGET();
+    public boolean assertHttpMethod(ODataResponse response)
+        throws ODataHandlerException {
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
+    }
+    
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] {HttpMethod.GET};
     }
 
     @Override

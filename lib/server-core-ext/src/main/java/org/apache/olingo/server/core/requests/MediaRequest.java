@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
@@ -47,9 +48,10 @@ public class MediaRequest extends ServiceRequest {
   @Override
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
-    if (!allowedMethod()) {
-      methodNotAllowed();
-    }
+    
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
+    
     // POST will not be here, because the media is created as part of media
     // entity creation
     if (isGET()) {
@@ -91,9 +93,9 @@ public class MediaRequest extends ServiceRequest {
   private InputStream getMediaStream() {
     return this.request.getBody();
   }
-
+  
   @Override
-  public boolean allowedMethod() {
-    return isGET() || isPUT() || isDELETE();
-  }
+  public HttpMethod[] allowedMethods() {
+    return new HttpMethod[] { HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE };
+  }   
 }

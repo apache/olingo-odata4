@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -57,9 +58,8 @@ public class BatchRequest extends ServiceRequest {
   public void execute(ServiceHandler handler, ODataResponse response)
       throws ODataLibraryException, ODataApplicationException {
 
-    if (!allowedMethod()) {
-      methodNotAllowed();
-    }
+    // check for valid HTTP Verb
+    assertHttpMethod(response);
 
     validateContentType();
     boolean continueOnError = isContinueOnError();
@@ -165,8 +165,8 @@ public class BatchRequest extends ServiceRequest {
   }
 
   @Override
-  public boolean allowedMethod() {
-    return isPOST();
+  public HttpMethod[] allowedMethods() {
+    return new HttpMethod[] {HttpMethod.POST};
   }
 
   private void validateContentType() throws ODataApplicationException {
