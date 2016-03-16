@@ -53,7 +53,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   private final Map<String, SchemaBasedEdmProvider> coreVocabularySchemas = 
       new ConcurrentHashMap<String, SchemaBasedEdmProvider>();
   
-  void addSchema(CsdlSchema schema) {
+  protected void addSchema(CsdlSchema schema) {
     this.edmSchemas.add(schema);
   }
   
@@ -61,15 +61,15 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
     return new ArrayList<EdmxReference>(references.values());
   }
   
-  void addReferenceSchema(String ns, SchemaBasedEdmProvider provider) {
+  protected void addReferenceSchema(String ns, SchemaBasedEdmProvider provider) {
     this.referenceSchemas.put(ns, provider);
   }  
   
-  void addVocabularySchema(String ns, SchemaBasedEdmProvider provider) {
+  protected void addVocabularySchema(String ns, SchemaBasedEdmProvider provider) {
     this.coreVocabularySchemas.put(ns, provider);
   }
   
-  void addReference(EdmxReference reference) {
+  protected void addReference(EdmxReference reference) {
     for (EdmxReferenceInclude include : reference.getIncludes()) {
       this.references.put(include.getNamespace(), reference);
     }
