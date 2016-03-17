@@ -275,6 +275,11 @@ public abstract class ServiceRequest {
       SerializerException {
     return this.odata.createSerializer(getResponseContentType());
   }
+  
+  public ODataSerializer getSerializer(ContentType type) throws ContentNegotiatorException,
+      SerializerException {
+    return this.odata.createSerializer(type);
+  }  
 
   public Map<String, String> getPreferences(){
     HashMap<String, String> map = new HashMap<String, String>();

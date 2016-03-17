@@ -203,7 +203,18 @@ public class TripPinServiceTest {
     HttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name/$value", 200);
     assertEquals("American Airlines", IOUtils.toString(response.getEntity().getContent()));
   }
-
+  
+  @Test
+  public void testUpdateRawValue() throws Exception {
+    // Note that in-real services must convert raw value (byte[]) to 
+    // the data type it needs to save in in updateProperty method
+    String editUrl = baseURL + "/Airlines('AF')/Name/$value";
+    HttpPut request = new HttpPut(editUrl);
+    request.setEntity(new StringEntity("Safari"));
+    HttpResponse response = httpSend(request, 204);
+    EntityUtils.consumeQuietly(response.getEntity());
+  }
+  
   @Test @Ignore
   // TODO: Support geometry types to make this run
   public void testReadComplexProperty() throws Exception {

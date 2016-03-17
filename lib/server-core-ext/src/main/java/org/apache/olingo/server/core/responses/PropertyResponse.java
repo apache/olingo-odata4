@@ -51,17 +51,24 @@ public class PropertyResponse extends ServiceResponse {
   public static PropertyResponse getInstance(ServiceRequest request, ODataResponse response,
       EdmType edmType, ContextURL contextURL, boolean collection) throws ContentNegotiatorException,
       SerializerException {
+    
+    ContentType type = request.getResponseContentType();
+    ODataSerializer serializer = null;
+    if (type.equals(ContentType.TEXT_PLAIN)) {
+      serializer = request.getSerializer(ContentType.APPLICATION_JSON);
+    } else {
+      serializer = request.getSerializer();
+    }
+    
     if (edmType.getKind() == EdmTypeKind.PRIMITIVE) {
       PrimitiveSerializerOptions options = request.getSerializerOptions(
-          PrimitiveSerializerOptions.class, contextURL, false);
-      ContentType type = request.getResponseContentType();
-      return new PropertyResponse(request.getServiceMetaData(), request.getSerializer(), response,
+          PrimitiveSerializerOptions.class, contextURL, false);      
+      return new PropertyResponse(request.getServiceMetaData(), serializer, response,
           options, type, collection, request.getPreferences());
     }
     ComplexSerializerOptions options = request.getSerializerOptions(ComplexSerializerOptions.class,
-        contextURL, false);
-    ContentType type = request.getResponseContentType();
-    return new PropertyResponse(request.getServiceMetaData(), request.getSerializer(), response,
+        contextURL, false);    
+    return new PropertyResponse(request.getServiceMetaData(), serializer, response,
         options, type, collection, request.getPreferences());
   }
 
