@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.commons.api.edm.provider.CsdlAbstractEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.ex.ODataException;
+import org.apache.olingo.commons.api.format.AcceptType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -205,6 +206,66 @@ public class ODataHandlerImplTest {
   public void uriParserExceptionResultsInRightResponseBadRequest() throws Exception {
     final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrim('122')", null);
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
+  }
+
+
+  @Test
+  public void uriParserExceptionWithFormatQueryJson() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=json", "", "", null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void uriParserExceptionWithFormatQueryJsonAndMore() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=json&$top=3", "", "", null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+
+  @Test
+  public void uriParserExceptionWithFormatJsonAcceptAtom() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=json",
+        HttpHeader.ACCEPT, ContentType.APPLICATION_ATOM_XML.toContentTypeString(), null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void uriParserExceptionWithFormatQueryAtom() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=atom", "", "", null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void uriParserExceptionWithFormatQueryAtomAndTop() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=atom&$top=19", "", "", null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void uriParserExceptionWithFormatAtomAcceptJson() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=atom",
+        HttpHeader.ACCEPT, ContentType.APPLICATION_JSON.toContentTypeString(), null);
+    assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void uriParserExceptionWithFormatQueryInvali() throws Exception {
+    final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=somenotvalid", "", "", null);
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json;odata.metadata=minimal",
+        response.getHeader(HttpHeader.CONTENT_TYPE));
   }
 
   @Test

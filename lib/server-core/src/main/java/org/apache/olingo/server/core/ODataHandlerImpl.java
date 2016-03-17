@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,11 +46,17 @@ import org.apache.olingo.server.api.serializer.CustomContentTypeSupport;
 import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.queryoption.FormatOption;
+import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.core.uri.parser.Parser;
+import org.apache.olingo.server.core.uri.parser.UriDecoder;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
+import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
@@ -174,9 +181,9 @@ public class ODataHandlerImpl implements ODataHandler {
     }
     ContentType requestedContentType;
     try {
-      requestedContentType = ContentNegotiator.doContentNegotiation(
-          uriInfo == null ? null : uriInfo.getFormatOption(), request, getCustomContentTypeSupport(),
-              RepresentationType.ERROR);
+      final FormatOption formatOption = getFormatOption(request, uriInfo);
+      requestedContentType = ContentNegotiator.doContentNegotiation(formatOption, request,
+          getCustomContentTypeSupport(), RepresentationType.ERROR);
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
@@ -184,6 +191,34 @@ public class ODataHandlerImpl implements ODataHandler {
     exceptionProcessor.processError(request, response, serverError, requestedContentType);
     debugger.stopRuntimeMeasurement(measurementError);
     debugger.stopRuntimeMeasurement(measurementHandle);
+  }
+
+  /**
+   * Extract format option from either <code>uriInfo</code> (if not <code>NULL</code>)
+   * or query from <code>request</code> (if not <code>NULL</code>).
+   * If both options are <code>NULL</code>, <code>NULL</code> is returned.
+   *
+   * @param request request which is checked
+   * @param uriInfo uriInfo which is checked
+   * @return the evaluated format option or <code>NULL</code>.
+   */
+  private FormatOption getFormatOption(final ODataRequest request, final UriInfo uriInfo) {
+    if(uriInfo == null) {
+      String query = request.getRawQueryPath();
+      if(query == null) {
+        return null;
+      }
+
+      final String formatOption = SystemQueryOptionKind.FORMAT.toString();
+      int index = query.indexOf(formatOption);
+      int endIndex = query.indexOf("&", index);
+      if(endIndex == -1) {
+        endIndex = query.length();
+      }
+      final String format = query.substring(index + formatOption.length(), endIndex);
+      return new FormatOptionImpl().setFormat(format);
+    }
+    return uriInfo.getFormatOption();
   }
 
   private void validateODataVersion(final ODataRequest request) throws ODataHandlerException {
