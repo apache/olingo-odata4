@@ -58,6 +58,17 @@ public class TestFullResourcePath {
   private final FilterValidator testFilter = new FilterValidator().setEdm(edm);
 
   @Test
+  public void trimQueryOptionsValue() throws Exception {
+    // OLINGO-846 trim query option value
+    testUri.run("ESAllPrim", "$filter= PropertyInt16 eq 12 ")
+        .isKind(UriInfoKind.resource).goPath()
+        .first().isEntitySet("ESAllPrim");
+    // OLINGO-846 trim query option value
+    testUri.run("ESAllPrim", "$filter= PropertyInt16 eq 12 ")
+        .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.EQ).is("<<PropertyInt16> eq <12>>");
+  }
+
+  @Test
   public void valueOnNonMediaEntity() throws Exception {
     testUri.runEx("ESAllPrim/$value").isExSemantic(UriParserSemanticException.MessageKeys.ONLY_FOR_TYPED_PARTS);
     testUri.runEx("ESAllPrim(1)/NavPropertyETTwoPrimMany/$value").isExSemantic(
@@ -952,14 +963,14 @@ public class TestFullResourcePath {
         "$expand=ESTwoPrim")
         .goExpand()
         .first().goPath().first().isEntitySet("ESTwoPrim");
-    
+
     testUri.run("$crossjoin(ESTwoPrim,ESAllPrim)",
         "$expand=ESTwoPrim,ESAllPrim")
         .goExpand()
         .first().goPath().first().isEntitySet("ESTwoPrim")
         .goUpExpandValidator().next().goPath().first().isEntitySet("ESAllPrim");
 
-    //TODO: Once crossjoin is implemented these tests should no longer result in errors
+    // TODO: Once crossjoin is implemented these tests should no longer result in errors
 //    testUri.run("$crossjoin(ESTwoPrim,ESAllPrim)",
 //        "$expand=ESAllPrim/NavPropertyETTwoPrimOne")
 //        .goExpand()
