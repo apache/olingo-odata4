@@ -947,6 +947,27 @@ public class TestFullResourcePath {
   }
 
   @Test
+  public void crossjoinExpand() throws Exception {
+    testUri.run("$crossjoin(ESTwoPrim,ESAllPrim)",
+        "$expand=ESTwoPrim")
+        .goExpand()
+        .first().goPath().first().isEntitySet("ESTwoPrim");
+    
+    testUri.run("$crossjoin(ESTwoPrim,ESAllPrim)",
+        "$expand=ESTwoPrim,ESAllPrim")
+        .goExpand()
+        .first().goPath().first().isEntitySet("ESTwoPrim")
+        .goUpExpandValidator().next().goPath().first().isEntitySet("ESAllPrim");
+
+    //TODO: Once crossjoin is implemented these tests should no longer result in errors
+//    testUri.run("$crossjoin(ESTwoPrim,ESAllPrim)",
+//        "$expand=ESAllPrim/NavPropertyETTwoPrimOne")
+//        .goExpand()
+//        .first().goPath().at(0).isEntitySet("ESAllPrim")
+//        .at(1).isNavProperty("NavPropertyETTwoPrimOne", new FullQualifiedName("Namespace1_Alias.ETTwoPrim"), false);
+  }
+
+  @Test
   public void crossjoinError() throws Exception {
     testUri.runEx("$crossjoin").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("$crossjoin/error").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);

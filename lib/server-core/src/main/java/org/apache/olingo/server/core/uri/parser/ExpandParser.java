@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -41,6 +42,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceCountImpl;
+import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceRefImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
@@ -57,22 +59,56 @@ public class ExpandParser {
   private final Edm edm;
   private final OData odata;
   private final Map<String, AliasQueryOption> aliases;
+  private final Collection<String> crossjoinEntitySetNames;
 
-  public ExpandParser(final Edm edm, final OData odata, final Map<String, AliasQueryOption> aliases) {
+  public ExpandParser(final Edm edm, final OData odata, final Map<String, AliasQueryOption> aliases,
+      final Collection<String> crossjoinEntitySetNames) {
     this.edm = edm;
     this.odata = odata;
     this.aliases = aliases;
+    this.crossjoinEntitySetNames = crossjoinEntitySetNames;
   }
 
   public ExpandOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     ExpandOptionImpl expandOption = new ExpandOptionImpl();
     do {
-      final ExpandItem item = parseItem(tokenizer, referencedType);
-      expandOption.addExpandItem(item);
+      // In the crossjoin case the start has to be an EntitySet name which will dictate the reference type
+      if (crossjoinEntitySetNames != null && !crossjoinEntitySetNames.isEmpty()) {
+        final ExpandItem item = parseCrossJoinItem(tokenizer);
+        expandOption.addExpandItem(item);
+      } else {
+        final ExpandItem item = parseItem(tokenizer, referencedType);
+        expandOption.addExpandItem(item);
+      }
     } while (tokenizer.next(TokenKind.COMMA));
 
     return expandOption;
+  }
+
+  private ExpandItem parseCrossJoinItem(UriTokenizer tokenizer) throws UriParserSemanticException {
+    ExpandItemImpl item = new ExpandItemImpl();
+    if (tokenizer.next(TokenKind.STAR)) {
+      item.setIsStar(true);
+    } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
+      String entitySetName = tokenizer.getText();
+      if (crossjoinEntitySetNames.contains(entitySetName)) {
+        UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
+        final UriResourceEntitySetImpl entitySetResourceSegment =
+            new UriResourceEntitySetImpl(edm.getEntityContainer().getEntitySet(entitySetName));
+        resource.addResourcePart(entitySetResourceSegment);
+
+        item.setResourcePath(resource);
+      } else {
+        throw new UriParserSemanticException("Unknown crossjoin entity set.",
+            UriParserSemanticException.MessageKeys.UNKNOWN_PART, entitySetName);
+      }
+    } else {
+      throw new UriParserSemanticException("If the target resource is a crossjoin an entity set is "
+          + "needed as the starting point.",
+          UriParserSemanticException.MessageKeys.UNKNOWN_PART);
+    }
+    return item;
   }
 
   private ExpandItem parseItem(UriTokenizer tokenizer, final EdmStructuredType referencedType)
@@ -167,6 +203,7 @@ public class ExpandParser {
 
     EdmStructuredType type = referencedType;
     String name = null;
+
     while (tokenizer.next(TokenKind.ODataIdentifier)) {
       name = tokenizer.getText();
       final EdmProperty property = referencedType.getStructuralProperty(name);
@@ -217,7 +254,7 @@ public class ExpandParser {
 
         } else if (!forRef && !forCount && tokenizer.next(TokenKind.EXPAND)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
-          systemQueryOption = new ExpandParser(edm, odata, aliases).parse(tokenizer, referencedType);
+          systemQueryOption = new ExpandParser(edm, odata, aliases, null).parse(tokenizer, referencedType);
 
         } else if (tokenizer.next(TokenKind.FILTER)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);

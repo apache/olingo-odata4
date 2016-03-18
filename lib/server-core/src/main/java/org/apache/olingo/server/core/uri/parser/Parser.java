@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -98,15 +98,15 @@ public class Parser {
       try {
         contextUriInfo.setQueryOption(parsedOption == null ? option : parsedOption);
       } catch (final ODataRuntimeException e) {
-          throw new UriParserSyntaxException(
-              parsedOption instanceof SystemQueryOption ?
-                  "Double system query option!" :
-                  "Alias already specified! Name: " + optionName,
-              e,
-              parsedOption instanceof SystemQueryOption ?
-                  UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION :
-                  UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS,
-              optionName);
+        throw new UriParserSyntaxException(
+            parsedOption instanceof SystemQueryOption ?
+                "Double system query option!" :
+                "Alias already specified! Name: " + optionName,
+            e,
+            parsedOption instanceof SystemQueryOption ?
+                UriParserSyntaxException.MessageKeys.DOUBLE_SYSTEM_QUERY_OPTION :
+                UriParserSyntaxException.MessageKeys.DUPLICATED_ALIAS,
+            optionName);
       }
     }
 
@@ -209,7 +209,7 @@ public class Parser {
     parseOrderByOption(contextUriInfo.getOrderByOption(), contextType,
         contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
     parseExpandOption(contextUriInfo.getExpandOption(), contextType,
-        !contextUriInfo.getEntitySetNames().isEmpty() || contextUriInfo.getKind() == UriInfoKind.all,
+        contextUriInfo.getKind() == UriInfoKind.all, contextUriInfo.getEntitySetNames(),
         contextUriInfo.getAliasMap());
     parseSelectOption(contextUriInfo.getSelectOption(), contextType, contextIsCollection);
 
@@ -335,16 +335,18 @@ public class Parser {
     }
   }
 
-  private void parseExpandOption(ExpandOption expandOption, final EdmType contextType, final boolean isCrossjoinOrAll,
-      final Map<String, AliasQueryOption> aliases) throws UriParserException, UriValidationException {
+  private void parseExpandOption(ExpandOption expandOption, final EdmType contextType, final boolean isAll,
+      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases) throws UriParserException,
+      UriValidationException {
     if (expandOption != null) {
-      if (!(contextType instanceof EdmStructuredType || isCrossjoinOrAll)) {
+      if (!(contextType instanceof EdmStructuredType || isAll
+      || (entitySetNames != null && !entitySetNames.isEmpty()))) {
         throw new UriValidationException("Expand is only allowed on structured types!",
             UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED, expandOption.getName());
       }
       final String optionValue = expandOption.getText();
       UriTokenizer expandTokenizer = new UriTokenizer(optionValue);
-      final ExpandOption option = new ExpandParser(edm, odata, aliases).parse(expandTokenizer,
+      final ExpandOption option = new ExpandParser(edm, odata, aliases, entitySetNames).parse(expandTokenizer,
           contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null);
       checkOptionEOF(expandTokenizer, expandOption.getName(), optionValue);
       for (final ExpandItem item : option.getExpandItems()) {
