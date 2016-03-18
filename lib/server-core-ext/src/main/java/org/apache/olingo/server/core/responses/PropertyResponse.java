@@ -53,11 +53,15 @@ public class PropertyResponse extends ServiceResponse {
       SerializerException {
     
     ContentType type = request.getResponseContentType();
+    
+    // this is special case to allow $value based PUT/DELETE, which do not really 
+    // need a serializer but request comes in with text/plain content type and there 
+    // is no serializer for that.
     ODataSerializer serializer = null;
-    if (type.equals(ContentType.TEXT_PLAIN)) {
-      serializer = request.getSerializer(ContentType.APPLICATION_JSON);
-    } else {
+    try {
       serializer = request.getSerializer();
+    } catch (SerializerException e) {
+      serializer = request.getSerializer(ContentType.APPLICATION_JSON);
     }
     
     if (edmType.getKind() == EdmTypeKind.PRIMITIVE) {

@@ -228,7 +228,7 @@ public class ProcessorServiceHandler implements ServiceHandler {
   }
 
   @Override
-  public void updateProperty(DataRequest request, Property property, boolean merge,
+  public void updateProperty(DataRequest request, Property property, boolean rawValue, boolean merge,
       String entityETag, PropertyResponse response) throws ODataLibraryException,
       ODataApplicationException {
     if (property.isPrimitive()) {

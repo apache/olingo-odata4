@@ -209,10 +209,13 @@ public class TripPinServiceTest {
     // Note that in-real services must convert raw value (byte[]) to 
     // the data type it needs to save in in updateProperty method
     String editUrl = baseURL + "/Airlines('AF')/Name/$value";
-    HttpPut request = new HttpPut(editUrl);
-    request.setEntity(new StringEntity("Safari"));
-    HttpResponse response = httpSend(request, 204);
+    HttpPut put = new HttpPut(editUrl);
+    put.setEntity(new StringEntity("Safari"));
+    HttpResponse response = httpSend(put, 204);
     EntityUtils.consumeQuietly(response.getEntity());
+    
+    response = httpGET(baseURL + "/Airlines('AF')/Name/$value", 200);
+    assertEquals("Safari", IOUtils.toString(response.getEntity().getContent()));
   }
   
   @Test @Ignore

@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -318,10 +319,16 @@ public class TripPinHandler implements ServiceHandler {
   }
 
   @Override
-  public void updateProperty(DataRequest request, final Property property, boolean merge,
+  public void updateProperty(DataRequest request, final Property property, boolean rawValue, boolean merge,
       String entityETag, PropertyResponse response) throws ODataLibraryException,
       ODataApplicationException {
 
+    if (rawValue && property.getValue() != null) {
+      // this is more generic, stricter conversion rules must taken in a real service
+      byte[] value = (byte[])property.getValue();
+      property.setValue(ValueType.PRIMITIVE, new String(value));
+    }
+    
     EdmEntitySet edmEntitySet = request.getEntitySet();
     Entity entity = this.dataModel.getEntity(edmEntitySet.getName(), request.getKeyPredicates());
     if (entity == null) {

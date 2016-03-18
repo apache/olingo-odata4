@@ -574,14 +574,14 @@ public class DataRequest extends ServiceRequest {
           handler.read(DataRequest.this, buildResponse(response, edmProperty));
         }
       } else if (isPATCH()) {
-        handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), true,
+        handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, true,
             getETag(), buildResponse(response, edmProperty));
       } else if (isPUT()) {
         if (isPropertyStream()) {
           handler.upsertStreamProperty(DataRequest.this, getETag(), request.getBody(),
               new NoContentResponse(getServiceMetaData(), response));
         } else {
-          handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false,
+          handler.updateProperty(DataRequest.this, getPropertyValueFromClient(edmProperty), false, false,
               getETag(), buildResponse(response, edmProperty));
         }
       } else if (isDELETE()) {
@@ -591,7 +591,7 @@ public class DataRequest extends ServiceRequest {
         } else {
           Property property = new Property(edmProperty.getType().getFullQualifiedName()
               .getFullQualifiedNameAsString(), edmProperty.getName());
-          handler.updateProperty(DataRequest.this, property, false, getETag(),
+          handler.updateProperty(DataRequest.this, property, false, false, getETag(),
               buildResponse(response, edmProperty));
         }
       }
@@ -679,7 +679,7 @@ public class DataRequest extends ServiceRequest {
             edmProperty.getName());
         PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
             edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
-        handler.updateProperty(DataRequest.this, property, false, getETag(), propertyResponse);
+        handler.updateProperty(DataRequest.this, property, true, false, getETag(), propertyResponse);
       } else if (isPUT()) {
         PropertyResponse propertyResponse = PropertyResponse.getInstance(DataRequest.this, response,
             edmProperty.getType(), getContextURL(odata), edmProperty.isCollection());
@@ -687,7 +687,7 @@ public class DataRequest extends ServiceRequest {
             edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
             edmProperty.getName());
         property.setValue(ValueType.PRIMITIVE, getRawValueFromClient());
-        handler.updateProperty(DataRequest.this, property, false,
+        handler.updateProperty(DataRequest.this, property, true, false,
             getETag(), propertyResponse);
       }
     }

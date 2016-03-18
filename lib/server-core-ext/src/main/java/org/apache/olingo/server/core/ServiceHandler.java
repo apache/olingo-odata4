@@ -134,14 +134,18 @@ public interface ServiceHandler extends Processor {
    * DeleteProperty 11.4.9.2
    * @param request
    * @param property - Updated property.
+   * @param rawValue - $value based call, where property value provided is in byte[] format. 
+   *                   user must convert the value to correct datatype format before update. 
+   *                   The semantics of conversion are not defined. 
    * @param merge - if the property is complex, true here means merge, false is replace
    * @param entityETag - entity tag to match before update operation, "*" allows all.
    * @param response
    * @throws ODataLibraryException
    * @throws ODataApplicationException
    */
-  void updateProperty(DataRequest request, Property property, boolean merge, String entityETag,
-      PropertyResponse response) throws ODataLibraryException, ODataApplicationException;
+  void updateProperty(DataRequest request, Property property, boolean rawValue,
+      boolean merge, String entityETag, PropertyResponse response)
+      throws ODataLibraryException, ODataApplicationException;
 
   /**
    * Update Stream property, if StreamContent is null, it should treated as delete request
