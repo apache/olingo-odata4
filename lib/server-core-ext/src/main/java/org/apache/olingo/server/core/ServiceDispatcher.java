@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.server.core;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.StringTokenizer;
 
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.Decoder;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
@@ -83,8 +84,35 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
       contentType = ContentNegotiator.doContentNegotiation(null,
           odRequest, this.customContentSupport, RepresentationType.ERROR);
       
+      String path = odRequest.getRawODataPath();      
+      String query = odRequest.getRawQueryPath();      
+      if(path.indexOf("$entity") != -1) {
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(query, "&");
+        while(st.hasMoreTokens()) {
+          String token = st.nextToken();
+          if (token.startsWith("$id=")) {
+            try {
+              path = new URL(Decoder.decode(token.substring(4))).getPath();
+              int index = path.indexOf('/', 1);
+              if (index != -1) {
+                path = path.substring(index);
+              }
+            } catch (Exception e) {
+              path = Decoder.decode(token.substring(4));
+            }
+          } else {
+            if (sb.length() > 0) {
+              sb.append("&");
+            }
+            sb.append(token);
+          }
+        }
+        query = sb.toString();
+      }
+      
       UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
-      .parseUri(odRequest.getRawODataPath(), odRequest.getRawQueryPath(), null);
+        .parseUri(path, query, null);
       
       contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           odRequest, this.customContentSupport, RepresentationType.ERROR);      
@@ -244,6 +272,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     this.request = dataRequest;
 
+    /*
     // this can relative or absolute form
     String id = info.getIdOption().getValue();
     try {
@@ -252,6 +281,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     } catch (MalformedURLException e) {
       this.idOption = id;
     }
+    */
     super.visit(info);
   }
 

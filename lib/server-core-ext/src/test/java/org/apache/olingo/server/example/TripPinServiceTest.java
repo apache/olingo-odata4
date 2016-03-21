@@ -396,16 +396,17 @@ public class TripPinServiceTest {
 
   @Test
   public void testEntityId() throws Exception {
-    HttpResponse response = httpGET(baseURL+"/$entity?$id="+baseURL + "/People('kristakemp')", 200);
+    HttpResponse response = httpGET(baseURL+"/$entity?$id="+baseURL 
+        + "/People('kristakemp')&$select=FirstName", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People/$entity", node.get("@odata.context").asText());
-    assertEquals("kristakemp", node.get("UserName").asText());
+    assertEquals("$metadata#People(FirstName)/$entity", node.get("@odata.context").asText());
+    assertEquals("Krista", node.get("FirstName").asText());
 
     // using relative URL
-    response = httpGET(baseURL+"/$entity?$id="+"People('kristakemp')", 200);
+    response = httpGET(baseURL+"/$entity?$id="+"People('kristakemp')&$select=FirstName", 200);
     node = getJSONNode(response);
-    assertEquals("$metadata#People/$entity", node.get("@odata.context").asText());
-    assertEquals("kristakemp", node.get("UserName").asText());
+    assertEquals("$metadata#People(FirstName)/$entity", node.get("@odata.context").asText());
+    assertEquals("Krista", node.get("FirstName").asText());
   }
 
   @Test

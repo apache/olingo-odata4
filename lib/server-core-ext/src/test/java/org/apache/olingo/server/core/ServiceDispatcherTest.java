@@ -43,6 +43,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.olingo.commons.api.http.HttpMethod;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
@@ -444,4 +445,22 @@ public class ServiceDispatcherTest {
           }
         });
   }
+  
+  @Test
+  public void test$id() throws Exception {
+    final ServiceHandler handler = Mockito.mock(ServiceHandler.class);
+    helpGETTest(handler, "trippin/$entity?$id="+Encoder.encode("http://localhost:" + TOMCAT_PORT
+        + "/trippin/People('russelwhyte')")+"&"+Encoder.encode("$")+"select=FirstName", new TestResult() {
+      @Override
+      public void validate() throws Exception {
+        ArgumentCaptor<DataRequest> arg1 = ArgumentCaptor.forClass(DataRequest.class);
+        ArgumentCaptor<EntityResponse> arg2 = ArgumentCaptor.forClass(EntityResponse.class);
+        Mockito.verify(handler).read(arg1.capture(), arg2.capture());
+
+        DataRequest request = arg1.getValue();
+        assertEquals("application/json;odata.metadata=minimal", request.getResponseContentType()
+            .toContentTypeString());
+      }
+    });
+  }  
 }
