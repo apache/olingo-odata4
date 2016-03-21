@@ -37,6 +37,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -249,6 +250,35 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         EdmDate.getInstance().valueToString(getCVProperty(cv, "PropertyDate").asPrimitive(), false, 10, 3, 0,
         false));
   }  
+  
+  @Test
+  public void extendedEntityProperty() throws Exception {
+    final String payload = "{\n" + 
+        "   \"@odata.context\":\"$metadata#ETKeyPrimNav/$entity\",\n" + 
+        "   \"@odata.metadataEtag\":\"W/metadataETag\",\n" + 
+        "   \"@odata.etag\":\"W/32767\",\n" + 
+        "   \"PropertyInt16\":32767,\n" + 
+        "   \"PropertyString\":\"string\",\n" + 
+        "   \"NavPropertyETKeyPrimNavOne\":\n" + 
+        "      {\n" + 
+        "         \"@odata.type\":\"#olingo.odata.test1.ETKeyPrimNavDerived\",\n" + 
+        "         \"PropertyInt16\":32767,\n" + 
+        "         \"PropertyString\":\"First Resource - first\",\n" + 
+        "         \"PropertyBoolean\":true\n" + 
+        "      }\n" + 
+        "   \n" + 
+        "}";
+    final Entity result = deserialize(payload, "ETKeyPrimNav");
+    Assert.assertNotNull(result);
+    Link navProperty = result.getNavigationLink("NavPropertyETKeyPrimNavOne");
+    Assert.assertNotNull(navProperty);
+    Entity e = navProperty.getInlineEntity();
+    Assert.assertNotNull(e);
+    Assert.assertEquals("olingo.odata.test1.ETKeyPrimNavDerived", e.getType());
+    Assert.assertEquals(new Short((short)32767), e.getProperty("PropertyInt16").getValue());
+    Assert.assertEquals("First Resource - first", e.getProperty("PropertyString").getValue());
+    Assert.assertEquals(true, e.getProperty("PropertyBoolean").getValue());
+  }
   
   private Property getCVProperty(ComplexValue cv, String name) {
     for (Property p : cv.getValue()) {

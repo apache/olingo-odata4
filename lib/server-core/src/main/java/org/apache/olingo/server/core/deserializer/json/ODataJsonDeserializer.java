@@ -389,17 +389,19 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     link.setTitle(navigationPropertyName);
     final ExpandTreeBuilder childExpandBuilder = (expandBuilder != null) ?
         expandBuilder.expand(edmNavigationProperty) : null;
+        EdmEntityType derivedEdmEntityType = (EdmEntityType)getDerivedType(
+            edmNavigationProperty.getType(), jsonNode);
         if (jsonNode.isArray() && edmNavigationProperty.isCollection()) {
           link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
           EntityCollection inlineEntitySet = new EntityCollection();
           inlineEntitySet.getEntities().addAll(
-              consumeEntitySetArray(edmNavigationProperty.getType(), jsonNode, childExpandBuilder));
+              consumeEntitySetArray(derivedEdmEntityType, jsonNode, childExpandBuilder));
           link.setInlineEntitySet(inlineEntitySet);
         } else if (!jsonNode.isArray() && (!jsonNode.isValueNode() || jsonNode.isNull())
             && !edmNavigationProperty.isCollection()) {
           link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
           if (!jsonNode.isNull()) {
-            Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), (ObjectNode) jsonNode,
+            Entity inlineEntity = consumeEntityNode(derivedEdmEntityType, (ObjectNode) jsonNode,
                 childExpandBuilder);
             link.setInlineEntity(inlineEntity);
           }

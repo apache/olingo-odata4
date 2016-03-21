@@ -55,6 +55,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyNav");
   public static final FullQualifiedName nameETKeyPrimNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyPrimNav");
+  public static final FullQualifiedName nameETKeyPrimNavDerived = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETKeyPrimNavDerived");
   public static final FullQualifiedName nameETKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETKeyNavCont");
   public static final FullQualifiedName nameETTwoKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
@@ -333,6 +335,11 @@ public class EntityTypeProvider {
           .setNavigationProperties(
               Arrays.asList(
                   PropertyProvider.navPropertyETKeyPrimNavOne_ETKeyPrimNav));
+    } else if (entityTypeName.equals(nameETKeyPrimNavDerived)) {
+      return new CsdlEntityType()
+      .setName("ETKeyPrimNavDerived")
+      .setBaseType(nameETKeyPrimNav)
+      .setProperties(Arrays.asList(PropertyProvider.propertyBoolean_NotNullable));
     } else if (entityTypeName.equals(nameETKeyNavCont)) {
       return new CsdlEntityType()
           .setName("ETKeyNavCont")
