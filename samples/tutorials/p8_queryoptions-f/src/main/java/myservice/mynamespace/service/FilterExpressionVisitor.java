@@ -35,6 +35,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
@@ -47,11 +48,11 @@ public class FilterExpressionVisitor implements ExpressionVisitor<Object> {
 	}
 
   @Override
-  public Object visitMember(UriInfoResource member) throws ExpressionVisitException, ODataApplicationException {
+  public Object visitMember(final Member member) throws ExpressionVisitException, ODataApplicationException {
     // To keeps things simple, this tutorial allows only primitive properties.
     // We have faith that the java type of Edm.Int32 is Integer
     
-    final List<UriResource> uriResourceParts = member.getUriResourceParts();
+    final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
     
     // Make sure that the resource path of the property contains only a single segment and a primitive property
     // has been addressed. We can be sure, that the property exists because the UriParser checks if the
