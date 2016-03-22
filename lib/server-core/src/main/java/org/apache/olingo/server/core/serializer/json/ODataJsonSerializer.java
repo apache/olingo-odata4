@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
@@ -60,11 +60,12 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.ODataWritableContent;
+import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
@@ -402,30 +403,54 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           }
           writeExpandedNavigationProperty(metadata, property, navigationLink,
               innerOptions == null ? null : innerOptions.getExpandOption(),
-                  innerOptions == null ? null : innerOptions.getSelectOption(), json);
+              innerOptions == null ? null : innerOptions.getSelectOption(), 
+              innerOptions == null ? null : innerOptions.getCountOption(), 
+              innerOptions == null ? false : innerOptions.hasCountPath(),
+              innerOptions == null ? false : innerOptions.isRef(),                
+              json);
         }
       }
     }
   }
-
-  protected void writeExpandedNavigationProperty(final ServiceMetadata metadata, final EdmNavigationProperty property,
-      final Link navigationLink, final ExpandOption innerExpand, final SelectOption innerSelect,
+  
+  protected void writeExpandedNavigationProperty(
+      final ServiceMetadata metadata, final EdmNavigationProperty property,
+      final Link navigationLink, final ExpandOption innerExpand,
+      final SelectOption innerSelect, final CountOption innerCount,
+      final boolean writeOnlyCount, final boolean writeOnlyRef,
       final JsonGenerator json) throws IOException, SerializerException {
-    json.writeFieldName(property.getName());
+        
     if (property.isCollection()) {
-      if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
-        json.writeStartArray();
-        json.writeEndArray();
-      } else {
-        writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, false, json);
+      if (writeOnlyCount) {
+        if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
+          writeInlineCount(property.getName(), 0, json);
+        } else {
+          writeInlineCount(property.getName(), navigationLink.getInlineEntitySet().getCount(), json);
+        }
+      } else {        
+        if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
+          if (innerCount != null && innerCount.getValue()) {
+            writeInlineCount(property.getName(), 0, json);
+          }          
+          json.writeFieldName(property.getName());
+          json.writeStartArray();
+          json.writeEndArray();
+        } else {
+          if (innerCount != null && innerCount.getValue()) {
+            writeInlineCount(property.getName(), navigationLink.getInlineEntitySet().getCount(), json);
+          }
+          json.writeFieldName(property.getName());
+          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
+              innerSelect, writeOnlyRef, json);
+        }
       }
     } else {
+      json.writeFieldName(property.getName());
       if (navigationLink == null || navigationLink.getInlineEntity() == null) {
         json.writeNull();
       } else {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, false, json);
+            innerExpand, innerSelect, writeOnlyRef, json);
       }
     }
   }
@@ -852,6 +877,18 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
+  void writeInlineCount(final String propertyName,
+      final Integer count, final JsonGenerator json)
+      throws IOException {
+    if (count != null) {
+      if (isIEEE754Compatible) {
+        json.writeStringField(propertyName+Constants.JSON_COUNT, String.valueOf(count));
+      } else {
+        json.writeNumberField(propertyName+Constants.JSON_COUNT, count);
+      }
+    }
+  }  
+  
   void writeNextLink(final AbstractEntityCollection entitySet, final JsonGenerator json) throws IOException {
     if (entitySet.getNext() != null) {
       json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());

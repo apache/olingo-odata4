@@ -446,13 +446,20 @@ public class URIBuilderImpl implements URIBuilder {
 
   @Override
   public URIBuilder expandWithOptions(final String expandItem, final Map<QueryOption, Object> options) {
+    return expandWithOptions(expandItem, false, false, options);
+  }
+
+  @Override
+  public URIBuilder expandWithOptions(String expandItem, boolean pathRef,
+      boolean pathCount, Map<QueryOption, Object> options) {
     final Map<String, Object> _options = new LinkedHashMap<String, Object>();
     for (Map.Entry<QueryOption, Object> entry : options.entrySet()) {
       _options.put("$" + entry.getKey().toString(), entry.getValue());
     }
-    return expand(expandItem + buildMultiKeySegment(_options, false, ';'));
+    String path = pathRef?"/$ref":pathCount?"/$count":StringUtils.EMPTY;
+    return expand(expandItem + buildMultiKeySegment(_options, false, ';')+path);    
   }
-
+  
   @Override
   public URIBuilder expandWithSelect(final String expandItem, final String... selectItems) {
     return expand(expandItem + "($select=" + StringUtils.join(selectItems, ",") + ")");

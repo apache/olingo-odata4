@@ -87,6 +87,21 @@ public class URIBuilderTest extends AbstractTest {
     assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
         addParameter("$expand", "ProductDetails($expand=ProductInfo;$select=Price),Orders,Customers").build(), uri);
   }
+  
+  @Test
+  public void expandWithOptionsCount() throws URISyntaxException {
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
+        expandWithOptions("ProductDetails", false, true, new LinkedHashMap<QueryOption, Object>() {
+          private static final long serialVersionUID = 3109256773218160485L;
+          {
+            put(QueryOption.EXPAND, "ProductInfo");
+            put(QueryOption.SELECT, "Price");
+          }
+        }).expand("Orders", "Customers").build();
+    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+        addParameter("$expand", "ProductDetails($expand=ProductInfo;$select=Price)/$count,Orders,Customers")
+        .build(), uri);
+  }  
 
   public void expandWithLevels() throws URISyntaxException {
     final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(1).

@@ -37,7 +37,6 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCase {
@@ -209,8 +208,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  @Ignore("Server do not support navigation property count annotations")
-  public void count() {
+  public void count() throws Exception{
     final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.SELECT, "PropertyInt16");
@@ -219,6 +217,42 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
     final URI uri =
         client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).expandWithOptions(
             NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, options).addQueryOption(QueryOption.SELECT,
+                "PropertyInt16,PropertyString").build();
+       
+    final ODataRetrieveResponse<ClientEntitySet> response =
+        client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+
+    final List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(4, entities.size());
+
+    for (final ClientEntity entity : entities) {
+      final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
+      final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+      final ClientEntitySet entitySet =
+          entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+
+      if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(2), entitySet.getCount());
+      } else if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("2")) {
+        assertEquals(Integer.valueOf(1), entitySet.getCount());
+      } else if ((propInt16.equals(2) ||propInt16.equals((short)2)) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(1), entitySet.getCount());
+      } else if ((propInt16.equals(3) ||propInt16.equals((short)3)) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(0), entitySet.getCount());
+      } else {
+        fail();
+      }
+    }
+  }
+
+  @Test
+  public void countOnly() throws Exception {
+    final ODataClient client = getEdmEnabledClient();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
+
+    final URI uri =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).expandWithOptions(
+            NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, false, true, options).addQueryOption(QueryOption.SELECT,
                 "PropertyInt16,PropertyString").build();
     final ODataRetrieveResponse<ClientEntitySet> response =
         client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
@@ -232,20 +266,63 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
       final ClientEntitySet entitySet =
           entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
 
-      if (propInt16.equals(1) && propString.equals("1")) {
+      if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("1")) {
         assertEquals(Integer.valueOf(2), entitySet.getCount());
-      } else if (propInt16.equals(1) && propString.equals("2")) {
-        assertEquals(Integer.valueOf(2), entitySet.getCount());
-      } else if (propInt16.equals(2) && propString.equals("1")) {
-        assertEquals(Integer.valueOf(2), entitySet.getCount());
-      } else if (propInt16.equals(3) && propString.equals("1")) {
+      } else if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("2")) {
+        assertEquals(Integer.valueOf(1), entitySet.getCount());
+      } else if ((propInt16.equals(2) ||propInt16.equals((short)2)) && propString.equals("1")) {
+        assertEquals(Integer.valueOf(1), entitySet.getCount());
+      } else if ((propInt16.equals(3) ||propInt16.equals((short)3)) && propString.equals("1")) {
         assertEquals(Integer.valueOf(0), entitySet.getCount());
       } else {
         fail();
       }
     }
-  }
+  }  
+  
+  @Test
+  public void reference() throws Exception {
+    final ODataClient client = getEdmEnabledClient();
+    Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
 
+    final URI uri =
+        client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_TWO_KEY_NAV).expandWithOptions(
+            NAV_PROPERTY_ET_TWO_KEY_NAV_MANY, true, false, options).addQueryOption(QueryOption.SELECT,
+                "PropertyInt16,PropertyString").build();
+    final ODataRetrieveResponse<ClientEntitySet> response =
+        client.getRetrieveRequestFactory().getEntitySetRequest(uri).execute();
+
+    final List<ClientEntity> entities = response.getBody().getEntities();
+    assertEquals(4, entities.size());
+
+    for (final ClientEntity entity : entities) {
+      final Object propInt16 = entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue();
+      final Object propString = entity.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue();
+      final ClientEntitySet entitySet =
+          entity.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY).asInlineEntitySet().getEntitySet();
+
+      if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("1")) {
+        assertEquals(2, entitySet.getEntities().size());
+        assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')", 
+            entitySet.getEntities().get(0).getId().toString());
+        assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')", 
+            entitySet.getEntities().get(1).getId().toString());        
+      } else if ((propInt16.equals(1) ||propInt16.equals((short)1)) && propString.equals("2")) {
+        assertEquals(1, entitySet.getEntities().size());
+        assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')", 
+            entitySet.getEntities().get(0).getId().toString());
+      } else if ((propInt16.equals(2) ||propInt16.equals((short)2)) && propString.equals("1")) {
+        assertEquals(1, entitySet.getEntities().size());
+        assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')", 
+            entitySet.getEntities().get(0).getId().toString());
+      } else if ((propInt16.equals(3) ||propInt16.equals((short)3)) && propString.equals("1")) {
+        assertEquals(0, entitySet.getEntities().size());
+      } else {
+        fail();
+      }
+    }
+  }  
+  
   @Test
   public void singleEntityWithExpand() {
     /* A single entity request will be dispatched to a different processor method than entity set request */

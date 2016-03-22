@@ -94,6 +94,12 @@ public class JsonDeserializer implements ODataDeserializer {
       final ObjectCodec codec, final Link link) throws IOException {
 
     final String entityNamePrefix = name.substring(0, name.indexOf(suffix));
+
+    Integer count = null;
+    if (tree.hasNonNull(entityNamePrefix+Constants.JSON_COUNT)) {
+      count = tree.get(entityNamePrefix+Constants.JSON_COUNT).asInt();
+    }        
+    
     if (tree.has(entityNamePrefix)) {
       final JsonNode inline = tree.path(entityNamePrefix);
       JsonEntityDeserializer entityDeserializer = new JsonEntityDeserializer(serverMode);
@@ -106,6 +112,9 @@ public class JsonDeserializer implements ODataDeserializer {
         link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
 
         final EntityCollection entitySet = new EntityCollection();
+        if (count != null) {
+          entitySet.setCount(count);
+        }
         for (final Iterator<JsonNode> entries = inline.elements(); entries.hasNext();) {
           entitySet.getEntities().add(entityDeserializer.doDeserialize(entries.next().traverse(codec)).getPayload());
         }
@@ -247,6 +256,11 @@ public class JsonDeserializer implements ODataDeserializer {
         }
       } else if (type == null && field.getKey().endsWith(getJSONAnnotation(Constants.JSON_TYPE))) {
         type = field.getValue().asText();
+      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_COUNT))) {
+        final Property property = new Property();
+        property.setName(field.getKey());
+        property.setValue(ValueType.PRIMITIVE, Integer.parseInt(field.getValue().asText()));
+        properties.add(property);
       } else if (annotation == null && customAnnotation.matches() && !"odata".equals(customAnnotation.group(2))) {
         annotation = new Annotation();
         annotation.setTerm(customAnnotation.group(2) + "." + customAnnotation.group(3));

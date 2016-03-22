@@ -96,11 +96,8 @@ public class ExpandSystemQueryOptionHandler {
         }
       } else {
         final List<UriResource> uriResourceParts = item.getResourcePath().getUriResourceParts();
-        if (uriResourceParts.size() == 1 && uriResourceParts.get(0) instanceof UriResourceNavigation) {
+        if (uriResourceParts.get(0) instanceof UriResourceNavigation) {
           navigationProperties.add(((UriResourceNavigation) uriResourceParts.get(0)).getProperty());
-        } else {
-          throw new ODataApplicationException("Not supported resource part in expand system query option",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
         }
       }
 
@@ -146,19 +143,22 @@ public class ExpandSystemQueryOptionHandler {
   }
 
   public EntityCollection transformEntitySetGraphToTree(final EntityCollection entitySet,
-      final EdmBindingTarget edmBindingTarget, final ExpandOption expand) throws ODataApplicationException {
+      final EdmBindingTarget edmBindingTarget, final ExpandOption expand, 
+      final ExpandItem expandItem) throws ODataApplicationException {
 
     final EntityCollection newEntitySet = newEntitySet(entitySet);
 
     for (final Entity entity : entitySet.getEntities()) {
-      newEntitySet.getEntities().add(transformEntityGraphToTree(entity, edmBindingTarget, expand));
+      newEntitySet.getEntities().add(transformEntityGraphToTree(entity, edmBindingTarget, expand, expandItem));
     }
-
+    if (expandItem != null && expandItem.hasCountPath()) {
+      newEntitySet.setCount(entitySet.getEntities().size());
+    }
     return newEntitySet;
   }
 
   public Entity transformEntityGraphToTree(final Entity entity, final EdmBindingTarget edmEntitySet,
-      final ExpandOption expand) throws ODataApplicationException {
+      final ExpandOption expand, final ExpandItem parentExpandItem) throws ODataApplicationException {
     final Entity newEntity = newEntity(entity);
     if (hasExpandItems(expand)) {
       final boolean expandAll = expandAll(expand);
@@ -173,16 +173,14 @@ public class ExpandSystemQueryOptionHandler {
           final EdmBindingTarget edmBindingTarget = edmEntitySet.getRelatedBindingTarget(propertyName);
           final Link newLink = newLink(link);
           newEntity.getNavigationLinks().add(newLink);
-          final ExpandOption innerExpandOption = getInnerExpandOption(expand, propertyName);
+          final ExpandItem expandItem = getInnerExpandItem(expand, propertyName);
 
           if (edmNavigationProperty.isCollection()) {
             newLink.setInlineEntitySet(transformEntitySetGraphToTree(link.getInlineEntitySet(),
-                edmBindingTarget,
-                innerExpandOption));
+                edmBindingTarget, expandItem.getExpandOption(), expandItem));
           } else {
             newLink.setInlineEntity(transformEntityGraphToTree(link.getInlineEntity(),
-                edmBindingTarget,
-                innerExpandOption));
+                edmBindingTarget,expandItem.getExpandOption(), expandItem));
           }
         }
       }
@@ -250,29 +248,24 @@ public class ExpandSystemQueryOptionHandler {
     Set<String> expanded = new HashSet<String>();
     for (final ExpandItem item : expandItems) {
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
-      if (resourceParts.size() == 1) {
-        final UriResource resource = resourceParts.get(0);
-        if (resource instanceof UriResourceNavigation) {
-          expanded.add(((UriResourceNavigation) resource).getProperty().getName());
-        }
-      } else {
-        throw new ODataApplicationException("Expand is not supported within complex properties.",
-            HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+      final UriResource resource = resourceParts.get(0);
+      if (resource instanceof UriResourceNavigation) {
+        expanded.add(((UriResourceNavigation) resource).getProperty().getName());
       }
     }
     return expanded;
   }
 
-  private ExpandOption getInnerExpandOption(final ExpandOption expand, final String propertyName) {
+  private ExpandItem getInnerExpandItem(final ExpandOption expand, final String propertyName) {
     for (final ExpandItem item : expand.getExpandItems()) {
       if(item.isStar()) {
-        return item.getExpandOption();
+        return item;
       }
 
       final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
       if (resource instanceof UriResourceNavigation
           && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) {
-        return item.getExpandOption();
+        return item;
       }
     }
 

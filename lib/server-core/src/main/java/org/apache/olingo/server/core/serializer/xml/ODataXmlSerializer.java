@@ -66,6 +66,7 @@ import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
+import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
@@ -254,11 +255,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         writeNextLink(entitySet, writer);
       }
 
+      boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer, writeOnlyRef);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer);
+            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
       }
 
       writer.writeEndElement();
@@ -310,11 +312,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         writeCount(entitySet, writer);
       }
 
+      boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer, writeOnlyRef);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer);
+            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
       }
 
       writer.writeEndElement();
@@ -355,7 +358,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           options == null ? null : options.getExpand(),
           options == null ? null : options.getSelect(),
           options == null ? null : options.xml10InvalidCharReplacement(),
-          writer, true);
+          writer, true, false);
       writer.writeEndDocument();
 
       writer.flush();
@@ -395,19 +398,24 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
-      final String xml10InvalidCharReplacement,final XMLStreamWriter writer) 
+      final String xml10InvalidCharReplacement,final XMLStreamWriter writer, final boolean writeOnlyRef) 
           throws XMLStreamException, SerializerException {
     for (final Entity entity : entitySet) {
-      writeEntity(metadata, entityType, entity, null, expand, select, xml10InvalidCharReplacement, writer, false);
+      writeEntity(metadata, entityType, entity, null, expand, select, 
+          xml10InvalidCharReplacement, writer, false, writeOnlyRef);
     }
   }
 
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand,
       final SelectOption select, final String xml10InvalidCharReplacement,
-      final XMLStreamWriter writer, final boolean top)
+      final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef)
       throws XMLStreamException, SerializerException {
 
+    if (writeOnlyRef) {
+      writeReference(entity, contextURL, writer, top);
+      return;
+    }
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
     if (top) {
       writer.writeNamespace(ATOM, NS_ATOM);
@@ -591,7 +599,10 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             writeExpandedNavigationProperty(metadata, property, navigationLink,
                 innerOptions == null ? null : innerOptions.getExpandOption(),
                 innerOptions == null ? null : innerOptions.getSelectOption(),
-                    xml10InvalidCharReplacement, writer);
+                innerOptions == null ? null : innerOptions.getCountOption(),
+                innerOptions == null ? false : innerOptions.hasCountPath(),
+                innerOptions == null ? false : innerOptions.isRef(),                                    
+                xml10InvalidCharReplacement, writer);
             writer.writeEndElement();
             writer.writeEndElement();
           }
@@ -650,19 +661,27 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeExpandedNavigationProperty(final ServiceMetadata metadata,
       final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandOption innerExpand, final SelectOption innerSelect, final String xml10InvalidCharReplacement,
+      final ExpandOption innerExpand, final SelectOption innerSelect, final CountOption coutOption, 
+      final boolean writeNavigationCount, final boolean writeOnlyRef,final String xml10InvalidCharReplacement,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
       if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
         writer.writeStartElement(ATOM, Constants.ATOM_ELEM_FEED, NS_ATOM);
-        writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, xml10InvalidCharReplacement, writer);
+        if (writeNavigationCount) {
+          writeCount(navigationLink.getInlineEntitySet(), writer);
+        } else {
+          if (coutOption != null && coutOption.getValue()) {
+            writeCount(navigationLink.getInlineEntitySet(), writer);
+          }
+          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
+              innerSelect, xml10InvalidCharReplacement, writer, writeOnlyRef);
+        }
         writer.writeEndElement();
       }
     } else {
       if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, xml10InvalidCharReplacement, writer, false);
+            innerExpand, innerSelect, xml10InvalidCharReplacement, writer, false, writeOnlyRef);
       }
     }
   }
@@ -1173,7 +1192,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   private void writeCount(final AbstractEntityCollection entitySet, final XMLStreamWriter writer)
       throws XMLStreamException {
     writer.writeStartElement(METADATA, Constants.ATOM_ELEM_COUNT, NS_METADATA);
-    writer.writeCharacters(String.valueOf(entitySet.getCount()));
+    writer.writeCharacters(String.valueOf(entitySet.getCount()==null?0:entitySet.getCount()));
     writer.writeEndElement();
   }
 

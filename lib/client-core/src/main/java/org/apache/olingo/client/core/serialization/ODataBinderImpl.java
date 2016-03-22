@@ -23,7 +23,9 @@ import java.net.URI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -565,22 +567,49 @@ public class ODataBinderImpl implements ODataBinder {
     return type;
   }
 
-  private ClientLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName) {
+  private ClientLink createLinkFromNavigationProperty(final Property property, final String propertyTypeName, 
+      final Integer count) {
     if (property.isCollection()) {
       EntityCollection inlineEntitySet = new EntityCollection();
       for (final Object inlined : property.asCollection()) {
         Entity inlineEntity = new Entity();
         inlineEntity.setType(propertyTypeName);
         inlineEntity.getProperties().addAll(((ComplexValue) inlined).getValue());
+        copyAnnotations(inlineEntity, (ComplexValue) inlined);
         inlineEntitySet.getEntities().add(inlineEntity);
+      }
+      if (count != null) {
+        inlineEntitySet.setCount(count);
       }
       return createODataInlineEntitySet(inlineEntitySet, null, property.getName(), null);
     } else {
       Entity inlineEntity = new Entity();
       inlineEntity.setType(propertyTypeName);
       inlineEntity.getProperties().addAll(property.asComplex().getValue());
+      copyAnnotations(inlineEntity, property.asComplex());
       return createODataInlineEntity(inlineEntity, null, property.getName(), null);
     }
+  }
+  
+  private void copyAnnotations(Entity inlineEntity, ComplexValue complex) {
+    for (Annotation annotation:complex.getAnnotations()) {
+      if (annotation.getTerm().equals(Constants.JSON_TYPE.substring(1))){
+        inlineEntity.setType((String)annotation.asPrimitive());
+      } else if (annotation.getTerm().equals(Constants.JSON_ID.substring(1))){
+        inlineEntity.setId(URI.create((String)annotation.asPrimitive()));
+      } else if (annotation.getTerm().equals(Constants.JSON_ETAG.substring(1))){
+        inlineEntity.setETag((String)annotation.asPrimitive());
+      }
+    }
+  }
+
+  private ClientLink createLinkFromEmptyNavigationProperty(final String propertyName, 
+      final Integer count) {
+      EntityCollection inlineEntitySet = new EntityCollection();
+      if (count != null) {
+        inlineEntitySet.setCount(count);
+      }
+      return createODataInlineEntitySet(inlineEntitySet, null, propertyName, null);
   }
 
   @Override
@@ -650,20 +679,44 @@ public class ODataBinderImpl implements ODataBinder {
       entity.setMediaETag(resource.getPayload().getMediaETag());
     }
 
+    Map<String, Integer> countMap = new HashMap<String, Integer>();
     for (final Property property : resource.getPayload().getProperties()) {
       EdmType propertyType = null;
       if (edmType instanceof EdmEntityType) {
-        final EdmElement edmProperty = ((EdmEntityType) edmType).getProperty(property.getName());
+        EdmElement edmProperty = ((EdmEntityType) edmType).getProperty(property.getName());
         if (edmProperty != null) {
           propertyType = edmProperty.getType();
           if (edmProperty instanceof EdmNavigationProperty && !property.isNull()) {
             final String propertyTypeName = propertyType.getFullQualifiedName().getFullQualifiedNameAsString();
-            entity.addLink(createLinkFromNavigationProperty(property, propertyTypeName));
+            entity.addLink(createLinkFromNavigationProperty(property, propertyTypeName, 
+                countMap.remove(property.getName())));
             continue;
+          }
+        } else {
+          int idx =  property.getName().indexOf(Constants.JSON_COUNT);
+          if (idx != -1) {
+            String navigationName = property.getName().substring(0, idx);
+            edmProperty = ((EdmEntityType) edmType).getProperty(navigationName);
+            if (edmProperty != null) {
+              if (edmProperty instanceof EdmNavigationProperty) {
+                ClientLink link = entity.getNavigationLink(navigationName);
+                if (link == null) {
+                  countMap.put(navigationName, (Integer)property.getValue());
+                } else {
+                  link.asInlineEntitySet().getEntitySet().setCount((Integer)property.getValue());
+                }
+              }
+            }            
           }
         }
       }
       add(entity, getODataProperty(propertyType, property));
+    }
+    
+    if (!countMap.isEmpty()) {
+      for (String name:countMap.keySet()) {
+        entity.addLink(createLinkFromEmptyNavigationProperty(name, countMap.get(name)));
+      }
     }
 
     entity.setId(resource.getPayload().getId());

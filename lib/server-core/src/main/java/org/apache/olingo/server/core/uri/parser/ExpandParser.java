@@ -160,10 +160,12 @@ public class ExpandParser {
       if (hasSlash || tokenizer.next(TokenKind.SLASH)) {
         if (tokenizer.next(TokenKind.REF)) {
           resource.addResourcePart(new UriResourceRefImpl());
+          item.setIsRef(true);
           parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, true, false);
         } else {
           ParserHelper.requireNext(tokenizer, TokenKind.COUNT);
           resource.addResourcePart(new UriResourceCountImpl());
+          item.setCountPath(true);
           parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, false, true);
         }
       } else {

@@ -439,7 +439,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final SelectOption select = uriInfo.getSelectOption();
 
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
-    final Entity entitySerialization = expandHandler.transformEntityGraphToTree(entity, edmEntitySet, expand);
+    final Entity entitySerialization = expandHandler.transformEntityGraphToTree(entity, edmEntitySet, expand, null);
     expandHandler.applyExpandQueryOptions(entitySerialization, edmEntitySet, expand, uriInfo,
         serviceMetadata.getEdm());
 
@@ -515,7 +515,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     final ExpandSystemQueryOptionHandler expandHandler = new ExpandSystemQueryOptionHandler();
     final EntityCollection entitySetSerialization = expandHandler.transformEntitySetGraphToTree(entitySet,
         edmEntitySet,
-        expand);
+        expand, null);
     expandHandler.applyExpandQueryOptions(entitySetSerialization, edmEntitySet, expand, uriInfo,
         serviceMetadata.getEdm());
     final CountOption countOption = uriInfo.getCountOption();

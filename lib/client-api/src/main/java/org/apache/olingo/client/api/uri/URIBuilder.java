@@ -351,6 +351,21 @@ public interface URIBuilder {
   URIBuilder expandWithOptions(String expandItem, Map<QueryOption, Object> options);
   
   /**
+   * The set of expanded entities can be refined through the application of expand options, expressed as a
+   * semicolon-separated list of system query options, enclosed in parentheses, see [OData-URL].
+   *
+   * @param expandItem item to be expanded.
+   * @param pathRef include the /$ref at the end of the $expand item's path;if true pathCount MUST be false
+   * @param pathCount include /$count at the end of the $expand item's path;if true pathRef MUST be false
+   * @param options System query options. Allowed query options are: $filter, $select, $orderby, $skip, $top, $count,
+   * $search, $expand, and $levels.
+   * @return current URIBuilder instance.
+   * @see org.apache.olingo.client.api.uri.QueryOption#EXPAND
+   */
+  URIBuilder expandWithOptions(String expandItem, boolean pathRef,
+      boolean pathCount, Map<QueryOption, Object> options);  
+  
+  /**
    * Properties of related entities can be specified by including the $select query option within the $expand.
    * <br />
    * <tt>http://host/service/Products?$expand=Category($select=Name)</tt>

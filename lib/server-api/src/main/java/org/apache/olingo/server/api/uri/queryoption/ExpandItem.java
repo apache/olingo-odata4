@@ -85,10 +85,16 @@ public interface ExpandItem {
 
   /**
    * @return A $ref is used within $expand.
-   * For example: ...?$expand=$ref
+   * For example: ...?$expand=navigation/$ref
    */
   boolean isRef();
 
+  /**
+   * @return A $count is used within $expand.
+   * For example: ...?$expand=navigation/$count
+   */  
+  boolean hasCountPath();
+  
   /**
    * @return Before resource path segments which should be expanded a type filter may be used.
    * For example: ...persons?$expand=namespace.managertype/team

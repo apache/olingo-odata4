@@ -51,6 +51,7 @@ public class ExpandItemImpl implements ExpandItem {
   private boolean isStar;
 
   private boolean isRef;
+  private boolean hasCountPath;
   private EdmType startTypeFilter;
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOption sysItem) {
@@ -186,5 +187,14 @@ public class ExpandItemImpl implements ExpandItem {
   public ExpandItemImpl setTypeFilter(final EdmType startTypeFilter) {
     this.startTypeFilter = startTypeFilter;
     return this;
+  }
+
+  @Override
+  public boolean hasCountPath() {
+    return this.hasCountPath;
+  }
+  
+  public void setCountPath(boolean value) {
+    this.hasCountPath = value;
   }
 }
