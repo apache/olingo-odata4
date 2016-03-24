@@ -189,7 +189,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public CsdlEntitySet getEntitySet(FullQualifiedName fqn, String entitySetName) throws ODataException {
-    CsdlSchema schema = getSchema(fqn.getFullQualifiedNameAsString());
+    CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       CsdlEntityContainer ec = schema.getEntityContainer();
       if (ec != null && ec.getEntitySets() != null) {
@@ -205,7 +205,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public CsdlSingleton getSingleton(FullQualifiedName fqn, String singletonName) throws ODataException {
-    CsdlSchema schema = getSchema(fqn.getFullQualifiedNameAsString());
+    CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       CsdlEntityContainer ec = schema.getEntityContainer();
       if (ec != null && ec.getSingletons() != null) {
@@ -222,7 +222,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   @Override
   public CsdlActionImport getActionImport(FullQualifiedName fqn, String actionImportName)
       throws ODataException {
-    CsdlSchema schema = getSchema(fqn.getFullQualifiedNameAsString());
+    CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       CsdlEntityContainer ec = schema.getEntityContainer();
       if (ec != null && ec.getActionImports() != null) {
@@ -239,7 +239,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   @Override
   public CsdlFunctionImport getFunctionImport(FullQualifiedName fqn, String functionImportName)
       throws ODataException {
-    CsdlSchema schema = getSchema(fqn.getFullQualifiedNameAsString());
+    CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       CsdlEntityContainer ec = schema.getEntityContainer();
       if (ec != null && ec.getFunctionImports() != null) {
@@ -265,14 +265,14 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
         }
       }
     } else {
-      schema = getSchema(fqn.getFullQualifiedNameAsString());
+      schema = getSchema(fqn.getNamespace());
     }
 
     if (schema != null) {
       CsdlEntityContainer ec = schema.getEntityContainer();
       if (ec != null) {
         CsdlEntityContainerInfo info = new CsdlEntityContainerInfo();
-        info.setContainerName(new FullQualifiedName(schema.getNamespace()));
+        info.setContainerName(new FullQualifiedName(schema.getNamespace(), ec.getName()));
         if (schema.getEntityContainer().getExtendsContainer() != null) {
           info.setExtendsContainer(new FullQualifiedName(schema.getEntityContainer().getExtendsContainer()));
         }

@@ -48,6 +48,7 @@ import org.junit.Test;
 public class MetadataParserTest {
   final String NS = "Microsoft.OData.SampleService.Models.TripPin";
   final FullQualifiedName NSF = new FullQualifiedName(NS);
+  final FullQualifiedName EC = new FullQualifiedName(NS, "DefaultContainer");
 
   CsdlEdmProvider provider = null;
 
@@ -139,7 +140,7 @@ public class MetadataParserTest {
 
   @Test
   public void testEntitySet() throws Exception {
-    CsdlEntitySet es = provider.getEntitySet(NSF, "People");
+    CsdlEntitySet es = provider.getEntitySet(EC, "People");
     assertNotNull(es);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Person",es.getType());
 
@@ -153,7 +154,7 @@ public class MetadataParserTest {
 
   @Test
   public void testFunctionImport() throws Exception {
-    CsdlFunctionImport fi = provider.getFunctionImport(NSF, "GetNearestAirport");
+    CsdlFunctionImport fi = provider.getFunctionImport(EC, "GetNearestAirport");
     assertNotNull(fi);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.GetNearestAirport", fi.getFunction());
     assertEquals("Airports", fi.getEntitySet());
@@ -162,7 +163,7 @@ public class MetadataParserTest {
 
   @Test
   public void testActionImport() throws Exception {
-    CsdlActionImport ai = provider.getActionImport(NSF, "ResetDataSource");
+    CsdlActionImport ai = provider.getActionImport(EC, "ResetDataSource");
     assertNotNull(ai);
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.ResetDataSource", ai.getAction());
     assertNull(ai.getEntitySet());
@@ -170,7 +171,7 @@ public class MetadataParserTest {
 
   @Test
   public void testSingleton() throws Exception {
-    CsdlSingleton single = this.provider.getSingleton(NSF, "Me");
+    CsdlSingleton single = this.provider.getSingleton(EC, "Me");
     assertNotNull(single);
 
     assertEquals("Microsoft.OData.SampleService.Models.TripPin.Person",single.getType());
