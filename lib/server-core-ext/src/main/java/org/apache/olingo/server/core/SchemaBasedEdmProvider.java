@@ -57,7 +57,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
     this.edmSchemas.add(schema);
   }
   
-  List<EdmxReference> getReferences(){
+  public List<EdmxReference> getReferences(){
     return new ArrayList<EdmxReference>(references.values());
   }
   

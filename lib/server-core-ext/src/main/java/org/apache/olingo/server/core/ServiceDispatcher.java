@@ -20,7 +20,6 @@ package org.apache.olingo.server.core;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.StringTokenizer;
 
 import org.apache.olingo.commons.api.ex.ODataException;
@@ -87,37 +86,16 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
       String path = odRequest.getRawODataPath();      
       String query = odRequest.getRawQueryPath();      
       if(path.indexOf("$entity") != -1) {
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer st = new StringTokenizer(query, "&");
-        while(st.hasMoreTokens()) {
-          String token = st.nextToken();
-          if (token.startsWith("$id=")) {
-            try {
-              path = new URL(Decoder.decode(token.substring(4))).getPath();
-              int index = path.indexOf('/', 1);
-              if (index != -1) {
-                path = path.substring(index);
-              }
-            } catch (Exception e) {
-              path = Decoder.decode(token.substring(4));
-            }
-          } else {
-            if (sb.length() > 0) {
-              sb.append("&");
-            }
-            sb.append(token);
-          }
-        }
-        query = sb.toString();
+        executeIdOption(query, odRequest, odResponse);
+      } else {
+        UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
+          .parseUri(path, query, null);
+        
+        contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
+            odRequest, this.customContentSupport, RepresentationType.ERROR);      
+        
+        internalExecute(uriInfo, odRequest, odResponse);
       }
-      
-      UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
-        .parseUri(path, query, null);
-      
-      contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-          odRequest, this.customContentSupport, RepresentationType.ERROR);      
-      
-      internalExecute(uriInfo, odRequest, odResponse);
     } catch(ODataLibraryException e) {
       handleException(e, contentType, odRequest, odResponse);
     } catch(ODataApplicationException e) {
@@ -290,5 +268,36 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     dataRequest.setCrossJoin(info);
     this.request = dataRequest;
+  }
+  
+  private void executeIdOption(String query, ODataRequest odRequest,
+      ODataResponse odResponse) throws ODataLibraryException,
+      ODataApplicationException {
+    StringBuilder sb = new StringBuilder();
+    StringTokenizer st = new StringTokenizer(query, "&");
+    boolean first = true;
+    while(st.hasMoreTokens()) {
+      String token = st.nextToken();
+      if (token.startsWith("$id=")) {
+        URI id = URI.create(Decoder.decode(token.substring(4)));
+        sb.append(id.getPath());
+      } else {
+        if (first) {
+          sb.append("?");
+        } else {
+          sb.append("&");
+        }
+        sb.append(token);
+      }
+    }    
+    DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
+    this.request = dataRequest;
+    
+    this.request.setODataRequest(odRequest);
+    this.request = this.request.parseLink(URI.create(sb.toString()));
+
+    this.request.setODataRequest(odRequest);
+    this.request.setCustomContentTypeSupport(this.customContentSupport);
+    this.request.execute(this.handler, odResponse);    
   }
 }

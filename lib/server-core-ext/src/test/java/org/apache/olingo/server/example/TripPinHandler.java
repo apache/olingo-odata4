@@ -464,14 +464,10 @@ public class TripPinHandler implements ServiceHandler {
 
     final EntityDetails details = process(request);
 
-    try {
-        DataRequest bindingRequest = request.parseLink(referenceId);
-        Entity linkEntity = this.dataModel.getEntity(bindingRequest.getEntitySet().getName(),
-            bindingRequest.getKeyPredicates());
-        this.dataModel.addNavigationLink(details.navigationProperty, details.entity, linkEntity);
-    } catch (URISyntaxException e) {
-      throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault(), e);
-    }
+    DataRequest bindingRequest = request.parseLink(referenceId);
+    Entity linkEntity = this.dataModel.getEntity(bindingRequest.getEntitySet().getName(),
+        bindingRequest.getKeyPredicates());
+    this.dataModel.addNavigationLink(details.navigationProperty, details.entity, linkEntity);
     response.writeNoContent();
   }
 
@@ -480,17 +476,13 @@ public class TripPinHandler implements ServiceHandler {
       NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     // this single valued navigation.
     boolean updated = false;
-    try {
-      final EntityDetails details = process(request);
-      DataRequest updateRequest = request.parseLink(updateId);
-      Entity updateEntity = this.dataModel.getEntity(updateRequest.getEntitySet().getName(),
-          updateRequest.getKeyPredicates());
-      if (updateEntity != null) {
-        updated = this.dataModel.updateNavigationLink(details.navigationProperty,
-          details.parentEntity, updateEntity);
-      }
-    } catch (URISyntaxException e) {
-      throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault(), e);
+    final EntityDetails details = process(request);
+    DataRequest updateRequest = request.parseLink(updateId);
+    Entity updateEntity = this.dataModel.getEntity(updateRequest.getEntitySet().getName(),
+        updateRequest.getKeyPredicates());
+    if (updateEntity != null) {
+      updated = this.dataModel.updateNavigationLink(details.navigationProperty,
+        details.parentEntity, updateEntity);
     }
 
     if (updated) {
@@ -505,17 +497,13 @@ public class TripPinHandler implements ServiceHandler {
       NoContentResponse response) throws ODataLibraryException, ODataApplicationException {
     boolean removed = false;
     if (deleteId != null) {
-      try {
-        final EntityDetails details = process(request);
-        DataRequest deleteRequest = request.parseLink(deleteId);
-        Entity deleteEntity = this.dataModel.getEntity(deleteRequest.getEntitySet().getName(),
-            deleteRequest.getKeyPredicates());
-        if (deleteEntity != null) {
-          removed = this.dataModel.removeNavigationLink(details.navigationProperty, details.entity,
-              deleteEntity);
-        }
-      } catch (URISyntaxException e) {
-        throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault(), e);
+      final EntityDetails details = process(request);
+      DataRequest deleteRequest = request.parseLink(deleteId);
+      Entity deleteEntity = this.dataModel.getEntity(deleteRequest.getEntitySet().getName(),
+          deleteRequest.getKeyPredicates());
+      if (deleteEntity != null) {
+        removed = this.dataModel.removeNavigationLink(details.navigationProperty, details.entity,
+            deleteEntity);
       }
     } else {
       // this single valued navigation.

@@ -20,7 +20,6 @@
 package org.apache.olingo.server.core;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -328,9 +327,9 @@ public abstract class ServiceRequest {
     return null;
   }
 
-  public DataRequest parseLink(URI uri) throws UriParserException, UriValidationException, URISyntaxException {
+  public DataRequest parseLink(URI uri) throws UriParserException, UriValidationException  {
     String path = "/";
-    URI servicePath = new URI(getODataRequest().getRawBaseUri());
+    URI servicePath = URI.create(getODataRequest().getRawBaseUri());
     path = servicePath.getPath();
     
     String rawPath = uri.getPath();
@@ -344,6 +343,7 @@ public abstract class ServiceRequest {
     UriInfo uriInfo = new Parser(serviceMetadata.getEdm(), odata).parseUri(rawPath, uri.getQuery(), null);
     ServiceDispatcher dispatcher = new ServiceDispatcher(odata, serviceMetadata, null, customContentType);
     dispatcher.visit(uriInfo);
+    dispatcher.request.setUriInfo(uriInfo);
     return (DataRequest)dispatcher.request;
   }
   
