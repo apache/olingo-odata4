@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -27,12 +29,13 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.server.api.uri.UriInfoAll;
+import org.apache.olingo.server.api.uri.UriInfoCrossjoin;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
-import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -56,6 +59,35 @@ public class TestFullResourcePath {
 
   private final TestUriValidator testUri = new TestUriValidator().setEdm(edm);
   private final FilterValidator testFilter = new FilterValidator().setEdm(edm);
+
+  @Test
+  public void allowedSystemQueryOptionsOnAll() throws Exception {
+    UriInfoAll uriInfoAll = testUri.run("$all", "$count=true&$format=json&$search=abc&$skip=5&$top=5&$skiptoken=abc")
+        .getUriInfoRoot().asUriInfoAll();
+    assertNotNull(uriInfoAll.getCountOption());
+    assertNotNull(uriInfoAll.getFormatOption());
+    assertNotNull(uriInfoAll.getSearchOption());
+    assertNotNull(uriInfoAll.getSkipOption());
+    assertNotNull(uriInfoAll.getTopOption());
+    assertNotNull(uriInfoAll.getSkipTokenOption());
+  }
+
+  @Test
+  public void allowedSystemQueryOptionsOnCrossjoin() throws Exception {
+    UriInfoCrossjoin uriInfoCrossjoin =
+        testUri.run("$crossjoin(ESAllPrim,ESTwoPrim)", "$count=true&$expand=ESAllPrim"
+            + "&$filter=ESAllPrim/PropertyInt16 eq 2&$format=json&$orderby=ESAllPrim/PropertyInt16"
+            + "&$search=abc&$skip=5&$top=5&$skiptoken=abc").getUriInfoRoot().asUriInfoCrossjoin();
+    assertNotNull(uriInfoCrossjoin.getCountOption());
+    assertNotNull(uriInfoCrossjoin.getExpandOption());
+    assertNotNull(uriInfoCrossjoin.getFilterOption());
+    assertNotNull(uriInfoCrossjoin.getFormatOption());
+    assertNotNull(uriInfoCrossjoin.getOrderByOption());
+    assertNotNull(uriInfoCrossjoin.getSearchOption());
+    assertNotNull(uriInfoCrossjoin.getSkipOption());
+    assertNotNull(uriInfoCrossjoin.getTopOption());
+    assertNotNull(uriInfoCrossjoin.getSkipTokenOption());
+  }
 
   @Test
   public void trimQueryOptionsValue() throws Exception {

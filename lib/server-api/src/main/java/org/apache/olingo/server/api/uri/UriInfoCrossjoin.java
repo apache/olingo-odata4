@@ -25,6 +25,7 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
+import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipTokenOption;
@@ -65,6 +66,11 @@ public interface UriInfoCrossjoin {
    * @return Object containing information of the $orderby option
    */
   OrderByOption getOrderByOption();
+  
+  /**
+   * @return Object containing information of the $search option
+   */
+  SearchOption getSearchOption();
 
   /**
    * @return Object containing information of the $select option

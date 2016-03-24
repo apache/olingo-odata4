@@ -238,4 +238,8 @@ public class TestUriValidator implements TestValidator {
     assertEquals(fullName, uriInfo.getEntityTypeCast().getFullQualifiedName());
     return this;
   }
+  
+  public UriInfo getUriInfoRoot() {
+    return uriInfo;
+  }
 }
