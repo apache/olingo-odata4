@@ -610,6 +610,7 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.id\":\"ESAllPrim(32767)\","
         + "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -654,8 +655,10 @@ public class ODataJsonSerializerTest {
         + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "{\"@odata.id\":\"ESCompComp(1)\",\"PropertyComp\":"
+        + "{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
+        + "{\"@odata.id\":\"ESCompComp(2)\",\"PropertyComp\":"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
         + "\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
@@ -708,8 +711,10 @@ public class ODataJsonSerializerTest {
         + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp)\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
-        + "{\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}},"
-        + "{\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
+        + "{\"@odata.id\":\"ESCompComp(1)\",\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,"
+        + "\"PropertyString\":\"String 1\"}}},"
+        + "{\"@odata.id\":\"ESCompComp(2)\",\"PropertyComp\":"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
         + "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
         resultString);
   }
@@ -771,7 +776,7 @@ public class ODataJsonSerializerTest {
         + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
-        + "\"NavPropertyETAllPrimOne\":{\"PropertyDate\":\"2012-12-03\"}}",
+        + "\"NavPropertyETAllPrimOne\":{\"@odata.id\":\"ESAllPrim(32767)\",\"PropertyDate\":\"2012-12-03\"}}",
         resultString);
   }
 
@@ -799,6 +804,7 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.id\":\"ESAllPrim(32767)\","
         + "\"PropertySByte\":127,"
         + "\"NavPropertyETTwoPrimOne\":{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
         + "\"NavPropertyETTwoPrimMany\":[{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"}]}",
@@ -827,6 +833,7 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals("{"
         + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.id\":\"ESAllPrim(-32768)\","
         + "\"PropertyTimeOfDay\":\"23:49:14\","
         + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]}",
         resultString);
@@ -860,8 +867,9 @@ public class ODataJsonSerializerTest {
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimMany\":["
-        + "{\"PropertyInt32\":-2147483648,\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
-        + "{\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":null,"
+        + "{\"@odata.id\":\"ESAllPrim(-32768)\",\"PropertyInt32\":-2147483648,"
+        + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
+        + "{\"@odata.id\":\"ESAllPrim(0)\",\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":null,"
         + "\"NavPropertyETTwoPrimMany\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
         + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"

@@ -277,6 +277,19 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     json.writeEndArray();
   }
 
+  private boolean areKeyPredicateNamesSelected(SelectOption select, EdmEntityType type) {    
+    if (select == null || ExpandSelectHelper.isAll(select)) {
+      return true;
+    }
+    final Set<String> selected = ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
+    for (String key: type.getKeyPredicateNames()) {
+      if (!selected.contains(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
   public void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType, final Entity entity,
       final ContextURL contextURL, final ExpandOption expand, final SelectOption select, final boolean onlyReference,
       final JsonGenerator json)
@@ -311,6 +324,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
       if (!isODataMetadataNone && !resolvedType.equals(entityType)) {
         json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
+      }
+      if (!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) {
+        json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
       }
       writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
       writeNavigationProperties(metadata, resolvedType, entity, expand, json);
