@@ -276,24 +276,22 @@ public class DebugTabUri implements DebugTab {
   }
 
   private String getSelectString(final SelectItem selectItem) {
-    String selectedProperty = "";
     if (selectItem.isStar()) {
       if (selectItem.getAllOperationsInSchemaNameSpace() == null) {
-        selectedProperty = "*";
+        return "*";
       } else {
-        selectedProperty = selectItem.getAllOperationsInSchemaNameSpace().getFullQualifiedNameAsString() + ".*";
+        return selectItem.getAllOperationsInSchemaNameSpace().getFullQualifiedNameAsString() + ".*";
       }
     } else {
-      boolean first = true;
+      final StringBuilder tmp = new StringBuilder();
       for (UriResource resourcePart : selectItem.getResourcePath().getUriResourceParts()) {
-        if (!first) {
-          selectedProperty += '/';
+        if (tmp.length() > 0) {
+          tmp.append('/');
         }
-        selectedProperty += resourcePart.toString();
-        first = false;
+        tmp.append(resourcePart.toString());
       }
+      return tmp.toString();
     }
-    return selectedProperty;
   }
 
   private void appendSearchJson(final JsonGenerator json, final SearchExpression searchExpression) throws IOException {

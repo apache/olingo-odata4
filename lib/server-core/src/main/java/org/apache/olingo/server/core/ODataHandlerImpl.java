@@ -211,7 +211,7 @@ public class ODataHandlerImpl implements ODataHandler {
 
       final String formatOption = SystemQueryOptionKind.FORMAT.toString();
       int index = query.indexOf(formatOption);
-      int endIndex = query.indexOf("&", index);
+      int endIndex = query.indexOf('&', index);
       if(endIndex == -1) {
         endIndex = query.length();
       }

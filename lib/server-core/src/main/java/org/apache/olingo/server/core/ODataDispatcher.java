@@ -543,7 +543,8 @@ public class ODataDispatcher {
       throws ODataHandlerException, ContentNegotiatorException {
     if (contentTypeHeader == null) {
       if (mustNotBeNull) {
-        throw new ODataHandlerException(contentTypeHeader, ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE);
+        throw new ODataHandlerException("ContentTypeHeader parameter is null",
+            ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE);
       }
       return null;
     }
