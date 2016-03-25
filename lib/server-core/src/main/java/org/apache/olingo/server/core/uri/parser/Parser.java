@@ -44,6 +44,7 @@ import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
+import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
@@ -58,6 +59,7 @@ import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.IdOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.OrderByOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
@@ -224,10 +226,13 @@ public class Parser {
         throw new UriParserSyntaxException("Unknown system query option!",
             UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
       }
-      SystemQueryOption systemOption = null;
+      final SystemQueryOptionImpl systemOption;
       switch (kind) {
       case SEARCH:
-        systemOption = new SearchParser().parse(optionValue);
+        SearchOption searchOption = new SearchParser().parse(optionValue);
+        SearchOptionImpl tmp = new SearchOptionImpl();
+        tmp.setSearchExpression(searchOption.getSearchExpression());
+        systemOption = tmp;
         break;
       case FILTER:
         systemOption = new FilterOptionImpl();
@@ -288,8 +293,11 @@ public class Parser {
       case LEVELS:
         throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
             UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
+      default:
+          throw new UriParserSyntaxException("System query option '" + kind + "' is not known!",
+              UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
       }
-      ((SystemQueryOptionImpl) systemOption).setText(optionValue);
+      systemOption.setText(optionValue);
       return systemOption;
 
     } else if (optionName.startsWith(AT)) {

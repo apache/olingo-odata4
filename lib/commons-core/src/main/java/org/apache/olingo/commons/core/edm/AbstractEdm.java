@@ -106,9 +106,6 @@ public abstract class AbstractEdm implements Edm {
     Map<String, EdmSchema> localSchemas = createSchemas();
     schemas = Collections.synchronizedMap(localSchemas);
 
-    if (schemas == null) {
-      schemas = Collections.emptyMap();
-    }
     schemaList = Collections.unmodifiableList(new ArrayList<EdmSchema>(schemas.values()));
   }
 

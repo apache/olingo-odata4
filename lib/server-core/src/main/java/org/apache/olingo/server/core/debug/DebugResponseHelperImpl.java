@@ -68,24 +68,21 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       final List<DebugTab> parts = createParts(debugInfo);
 
       ODataResponse response = new ODataResponse();
-      String contentTypeString;
-      InputStream body;
-      switch (requestedFormat) {
-      case DOWNLOAD:
-        response.setHeader("Content-Disposition", "attachment; filename=OData-Response."
-            + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
-        // Download is the same as html except for the above header
-      case HTML:
+      final String contentTypeString;
+      final InputStream body;
+      if(requestedFormat == DebugFormat.DOWNLOAD || requestedFormat == DebugFormat.HTML) {
         String title = debugInfo.getRequest() == null ?
             "V4 Service" : "V4 Service: " + debugInfo.getRequest().getRawODataPath();
         body = wrapInHtml(parts, title);
         contentTypeString = ContentType.TEXT_HTML.toContentTypeString();
-        break;
-      case JSON:
-      default:
+      } else { // for JSON and also default response handling
         body = wrapInJson(parts);
         contentTypeString = ContentType.APPLICATION_JSON.toContentTypeString();
-        break;
+      }
+      // for download add additional Content-Disposition header
+      if(requestedFormat == DebugFormat.DOWNLOAD) {
+        response.setHeader("Content-Disposition", "attachment; filename=OData-Response."
+            + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
       }
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, contentTypeString);
@@ -133,7 +130,6 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
   }
 
   private InputStream wrapInJson(final List<DebugTab> parts) throws IOException {
-    IOException cachedException = null;
     OutputStream outputStream = null;
 
     try {
@@ -170,11 +166,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
         try {
           outputStream.close();
         } catch (IOException e) {
-          if (cachedException != null) {
-            throw cachedException;
-          } else {
-            throw e;
-          }
+          throw e;
         }
       }
     }
@@ -265,12 +257,12 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       gen.writeNull();
     } else {
       gen.writeStartObject();
-      for (final String name : entries.keySet()) {
-        gen.writeFieldName(name);
-        if (entries.get(name) == null) {
+      for (final Map.Entry<String, String> entry : entries.entrySet()) {
+        gen.writeFieldName(entry.getKey());
+        if (entry.getValue() == null) {
           gen.writeNull();
         } else {
-          gen.writeString(entries.get(name));
+          gen.writeString(entry.getValue());
         }
       }
       gen.writeEndObject();
@@ -282,10 +274,10 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
     .append("</thead>\n<tbody>\n");
     if (entries != null && !entries.isEmpty()) {
-      for (final String name : entries.keySet()) {
-        writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+      for (final Map.Entry<String, String> entry : entries.entrySet()) {
+        writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
         .append("<td class=\"value\">")
-        .append(escapeHtml(entries.get(name)))
+        .append(escapeHtml(entry.getValue()))
         .append("</td></tr>\n");
       }
     }

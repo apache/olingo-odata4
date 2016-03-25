@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -156,6 +158,7 @@ public class ParserHelper {
       final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     List<UriParameter> parameters = new ArrayList<UriParameter>();
+    Set<String> parameterNames = new HashSet<String>();
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     if (tokenizer.next(TokenKind.CLOSE)) {
       return parameters;
@@ -163,10 +166,11 @@ public class ParserHelper {
     do {
       ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       final String name = tokenizer.getText();
-      if (parameters.contains(name)) {
+      if (parameterNames.contains(name)) {
         throw new UriParserSemanticException("Duplicated function parameter " + name,
             UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, name);
       }
+      parameterNames.add(name);
       ParserHelper.requireNext(tokenizer, TokenKind.EQ);
       if (tokenizer.next(TokenKind.COMMA) || tokenizer.next(TokenKind.CLOSE) || tokenizer.next(TokenKind.EOF)) {
         throw new UriParserSyntaxException("Parameter value expected.", UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -349,15 +353,17 @@ public class ParserHelper {
       final Edm edm, final EdmType referringType, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     final EdmProperty edmProperty = edmKeyPropertyRef == null ? null : edmKeyPropertyRef.getProperty();
-    if (nextPrimitiveTypeValue(tokenizer,
-        edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType(),
-        edmProperty == null ? false : edmProperty.isNullable())) {
+    final EdmPrimitiveType primitiveType = edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType();
+    final boolean nullable = edmProperty != null && edmProperty.isNullable();
+
+    if (nextPrimitiveTypeValue(tokenizer, primitiveType, nullable)) {
       final String literalValue = tokenizer.getText();
       ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
       return createUriParameter(edmProperty, edmKeyPropertyRef.getName(), literalValue, edm, referringType, aliases);
     } else {
+      String keyPropertyRefName = edmKeyPropertyRef == null ? "NULL EdmKeyPropertyRef" : edmKeyPropertyRef.getName();
       throw new UriParserSemanticException("The key value is not valid.",
-          UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, edmKeyPropertyRef.getName());
+          UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, keyPropertyRefName);
     }
   }
 

@@ -56,7 +56,7 @@ public class EnumerationImpl implements Enumeration {
 
   @Override
   public String toString() {
-    return type == null ? null :
+    return type == null ? "NULL" :
       type.getFullQualifiedName().getFullQualifiedNameAsString() + getValues();
   }
 }

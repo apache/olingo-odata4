@@ -227,10 +227,10 @@ public class BatchResponseSerializer {
   /**
    * Body part which is read and stored as bytes (no charset conversion).
    */
-  private class Body {
+  private static class Body {
     private final byte[] content;
 
-    public Body(final ODataResponse response) {
+    Body(final ODataResponse response) {
       content = getBody(response);
     }
 
