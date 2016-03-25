@@ -57,6 +57,7 @@ import org.apache.olingo.server.core.requests.DataRequest;
 import org.apache.olingo.server.core.requests.FunctionRequest;
 import org.apache.olingo.server.core.requests.MediaRequest;
 import org.apache.olingo.server.core.requests.MetadataRequest;
+import org.apache.olingo.server.core.requests.OperationRequest;
 import org.apache.olingo.server.core.requests.ServiceDocumentRequest;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
@@ -178,8 +179,13 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
 
   @Override
   public void visit(UriResourceCount option) {
-    DataRequest dataRequest = (DataRequest) this.request;
-    dataRequest.setCountRequest(option != null);
+    if (this.request instanceof DataRequest) {
+      DataRequest dataRequest = (DataRequest) this.request;
+      dataRequest.setCountRequest(option != null);
+    } else if (this.request instanceof OperationRequest) {
+      OperationRequest opRequest = (OperationRequest) this.request;
+      opRequest.setCountRequest(option != null);      
+    }
   }
 
   @Override

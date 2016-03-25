@@ -33,6 +33,8 @@ import org.apache.olingo.server.core.ServiceRequest;
 
 public abstract class OperationRequest extends ServiceRequest {
 
+  private boolean countRequest;
+
   public OperationRequest(OData odata, ServiceMetadata serviceMetadata) {
     super(odata, serviceMetadata);
   }
@@ -114,4 +116,12 @@ public abstract class OperationRequest extends ServiceRequest {
   public boolean isReturnTypeComplex() {
     return getReturnType().getType().getKind() == EdmTypeKind.COMPLEX;
   }
+  
+  public boolean isCountRequest() {
+    return countRequest;
+  }
+
+  public void setCountRequest(boolean countRequest) {
+    this.countRequest = countRequest;
+  }  
 }
