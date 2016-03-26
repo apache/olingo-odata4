@@ -44,6 +44,33 @@ import static org.junit.Assert.fail;
 public class ParserTest {
 
   @Test
+  public void keyPropertyGuid() throws Exception {
+    final String entitySetName = "ESGuid";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = Mockito.mock(EdmProperty.class);
+    Mockito.when(keyProperty.getType())
+        .thenReturn(OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Guid));
+    EdmKeyPropertyRef keyPropertyRef = Mockito.mock(EdmKeyPropertyRef.class);
+    Mockito.when(keyPropertyRef.getName()).thenReturn(keyPropertyName);
+    Mockito.when(keyPropertyRef.getProperty()).thenReturn(keyProperty);
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getKeyPredicateNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getKeyPropertyRefs()).thenReturn(Collections.singletonList(keyPropertyRef));
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn(entitySetName);
+    Mockito.when(entitySet.getEntityType()).thenReturn(entityType);
+    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
+    Mockito.when(container.getEntitySet(entitySetName)).thenReturn(entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    new TestUriValidator().setEdm(mockedEdm)
+        .run("ESGuid(f89dee73-af9f-4cd4-b330-db93c25ff3c7)")
+        .goPath()
+        .at(0).isEntitySet(entitySetName)
+        .at(0).isKeyPredicate(0, keyPropertyName, "f89dee73-af9f-4cd4-b330-db93c25ff3c7");
+  }
+
+  @Test
   public void navPropertySameNameAsEntitySet() throws Exception {
     final String namespace = "namespace";
     final String entityTypeName = "ETNavProp";
