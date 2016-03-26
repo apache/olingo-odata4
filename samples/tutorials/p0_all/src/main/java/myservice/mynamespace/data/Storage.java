@@ -566,23 +566,27 @@ public class Storage {
   
 private void initAdvertisementSampleData() {
     final List<Entity> advertisements = manager.getEntityCollection(DemoEdmProvider.ES_ADVERTISEMENTS_NAME);
-  
+
     Entity entity = new Entity();
-    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 
+    entity.setType(DemoEdmProvider.ET_ADVERTISEMENT_FQN.getFullQualifiedNameAsString());
+    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE,
         UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")));
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Old School Lemonade Store, Retro Style"));
     entity.addProperty(new Property(null, "AirDate", ValueType.PRIMITIVE, Timestamp.valueOf("2012-11-07 00:00:00")));
     entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, "Super content".getBytes()));
     entity.setMediaContentType(ContentType.parse("text/plain").toContentTypeString());
+    entity.setId(createId(entity, "ID"));
     advertisements.add(entity);
-    
+
     entity = new Entity();
-    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE, 
+    entity.setType(DemoEdmProvider.ET_ADVERTISEMENT_FQN.getFullQualifiedNameAsString());
+    entity.addProperty(new Property(null, "ID", ValueType.PRIMITIVE,
         UUID.fromString("db2d2186-1c29-4d1e-88ef-a127f521b9c67")));
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Early morning start, need coffee"));
     entity.addProperty(new Property(null, "AirDate", ValueType.PRIMITIVE, Timestamp.valueOf("2000-02-29 00:00:00")));
     entity.addProperty(new Property(null, MEDIA_PROPERTY_NAME, ValueType.PRIMITIVE, "Super content2".getBytes()));
     entity.setMediaContentType(ContentType.parse("text/plain").toContentTypeString());
+    entity.setId(createId(entity, "ID"));
     advertisements.add(entity);
   }
   
@@ -646,6 +650,8 @@ private void initAdvertisementSampleData() {
       return DemoEdmProvider.ES_CATEGORIES_NAME;
     } else if (DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString().equals(entity.getType())) {
       return DemoEdmProvider.ES_PRODUCTS_NAME;
+    } else if (DemoEdmProvider.ET_ADVERTISEMENT_FQN.getFullQualifiedNameAsString().equals(entity.getType())) {
+      return DemoEdmProvider.ES_ADVERTISEMENTS_NAME;
     }
     return entity.getType();
   }
