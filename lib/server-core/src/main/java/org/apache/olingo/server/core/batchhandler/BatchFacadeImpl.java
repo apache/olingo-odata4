@@ -28,7 +28,6 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchFacadeImpl implements BatchFacade {

@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,12 +46,9 @@ import org.apache.olingo.server.api.serializer.RepresentationType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
-import org.apache.olingo.server.api.uri.queryoption.QueryOption;
-import org.apache.olingo.server.api.uri.queryoption.SystemQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.UriDecoder;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;

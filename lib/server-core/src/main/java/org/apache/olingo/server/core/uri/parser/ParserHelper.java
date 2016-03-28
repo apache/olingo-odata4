@@ -306,15 +306,12 @@ public class ParserHelper {
       }
     }
 
-    if (tokenizer.next(TokenKind.ODataIdentifier)) {
+    if(tokenizer.next(TokenKind.GuidValue)) {
+      keys.add(parseSimpleKey(tokenizer, edm, referringType, aliases, keyPropertyRefs, referencedNames, true));
+    } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
       keys.addAll(compoundKey(tokenizer, edmEntityType, edm, referringType, aliases));
     } else if (keyPropertyRefs.size() - referencedNames.size() == 1) {
-      for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
-        if (referencedNames.get(candidate.getName()) == null) {
-          keys.add(simpleKey(tokenizer, candidate, edm, referringType, aliases));
-          break;
-        }
-      }
+      keys.add(parseSimpleKey(tokenizer, edm, referringType, aliases, keyPropertyRefs, referencedNames, false));
     } else {
       throw new UriParserSemanticException(
           "Expected " + (keyPropertyRefs.size() -referencedNames.size()) + " key predicates but found one.",
@@ -349,14 +346,35 @@ public class ParserHelper {
     }
   }
 
+  private static UriParameter parseSimpleKey(final UriTokenizer tokenizer, final Edm edm, final EdmType referringType,
+                                             final Map<String, AliasQueryOption> aliases,
+                                             final List<EdmKeyPropertyRef> keyPropertyRefs,
+                                             final Map<String, String> referencedNames, final boolean tokenConsumed)
+      throws UriParserException, UriValidationException {
+
+    for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
+      if (referencedNames.get(candidate.getName()) == null) {
+        return simpleKey(tokenizer, candidate, edm, referringType, aliases, tokenConsumed);
+      }
+    }
+    throw new UriParserSemanticException("No suitable key found.",
+        UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
+        "0", String.valueOf(keyPropertyRefs.size()));
+  }
+
   private static UriParameter simpleKey(UriTokenizer tokenizer, final EdmKeyPropertyRef edmKeyPropertyRef,
-      final Edm edm, final EdmType referringType, final Map<String, AliasQueryOption> aliases)
+                                        final Edm edm, final EdmType referringType,
+                                        final Map<String, AliasQueryOption> aliases, final boolean tokenConsumed)
       throws UriParserException, UriValidationException {
     final EdmProperty edmProperty = edmKeyPropertyRef == null ? null : edmKeyPropertyRef.getProperty();
     final EdmPrimitiveType primitiveType = edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType();
     final boolean nullable = edmProperty != null && edmProperty.isNullable();
 
-    if (nextPrimitiveTypeValue(tokenizer, primitiveType, nullable)) {
+    boolean primitiveTypeAvailable = tokenConsumed;
+    if(!tokenConsumed) {
+      primitiveTypeAvailable = nextPrimitiveTypeValue(tokenizer, primitiveType, nullable);
+    }
+    if (primitiveTypeAvailable) {
       final String literalValue = tokenizer.getText();
       ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
       return createUriParameter(edmProperty, edmKeyPropertyRef.getName(), literalValue, edm, referringType, aliases);

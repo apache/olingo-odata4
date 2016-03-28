@@ -29,7 +29,6 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.processor.BatchProcessor;
-import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.batchhandler.referenceRewriting.BatchReferenceRewriter;
 
 public class BatchPartHandler {
