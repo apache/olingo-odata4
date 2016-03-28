@@ -1236,27 +1236,14 @@ public class TestFullResourcePath {
     testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)/PropertyInt16")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
 
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$top=1")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')",
-        "$filter=PropertyInt16 eq 1")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$count=true")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skiptoken=5")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$search=test")
-        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$top=1");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')",
+        "$filter=PropertyInt16 eq 1");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$count=true");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skiptoken=5");
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$search=test");
 
     testUri.run("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()")
         .isKind(UriInfoKind.resource)

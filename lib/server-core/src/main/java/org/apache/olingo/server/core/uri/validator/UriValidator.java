@@ -255,9 +255,6 @@ public class UriValidator {
 
   private UriType getUriTypeForFunction(final UriResource lastPathSegment) throws UriValidationException {
     final UriResourceFunction uriFunction = (UriResourceFunction) lastPathSegment;
-    if (!uriFunction.getFunction().isComposable()) {
-      return UriType.none;
-    }
 
     final boolean isCollection = uriFunction.isCollection();
     final EdmTypeKind typeKind = uriFunction.getFunction().getReturnType().getType().getKind();
