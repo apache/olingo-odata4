@@ -38,8 +38,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriParameter;
@@ -306,17 +308,24 @@ public class ParserHelper {
       }
     }
 
-    if(tokenizer.next(TokenKind.GuidValue)) {
-      keys.add(parseSimpleKey(tokenizer, edm, referringType, aliases, keyPropertyRefs, referencedNames, true));
-    } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
-      keys.addAll(compoundKey(tokenizer, edmEntityType, edm, referringType, aliases));
-    } else if (keyPropertyRefs.size() - referencedNames.size() == 1) {
-      keys.add(parseSimpleKey(tokenizer, edm, referringType, aliases, keyPropertyRefs, referencedNames, false));
-    } else {
-      throw new UriParserSemanticException(
-          "Expected " + (keyPropertyRefs.size() -referencedNames.size()) + " key predicates but found one.",
-          UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-          Integer.toString(keyPropertyRefs.size() - referencedNames.size()), "1");
+    if (keyPropertyRefs.size() - referencedNames.size() == 1) {
+      for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
+        if (referencedNames.get(candidate.getName()) == null) {
+          final UriParameter simpleKey = simpleKey(tokenizer, candidate, edm, referringType, aliases);
+          if (simpleKey != null) {
+            keys.add(simpleKey);
+          }
+          break;
+        }
+      }
+    }
+    if (keys.isEmpty()) {
+      if (tokenizer.next(TokenKind.ODataIdentifier)) {
+        keys.addAll(compoundKey(tokenizer, edmEntityType, edm, referringType, aliases));
+      } else {
+        throw new UriParserSemanticException("The key value is not valid.",
+            UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, "");
+      }
     }
 
     if (keys.size() < keyPropertyRefs.size() && partner != null) {
@@ -346,42 +355,18 @@ public class ParserHelper {
     }
   }
 
-  private static UriParameter parseSimpleKey(final UriTokenizer tokenizer, final Edm edm, final EdmType referringType,
-                                             final Map<String, AliasQueryOption> aliases,
-                                             final List<EdmKeyPropertyRef> keyPropertyRefs,
-                                             final Map<String, String> referencedNames, final boolean tokenConsumed)
-      throws UriParserException, UriValidationException {
-
-    for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
-      if (referencedNames.get(candidate.getName()) == null) {
-        return simpleKey(tokenizer, candidate, edm, referringType, aliases, tokenConsumed);
-      }
-    }
-    throw new UriParserSemanticException("No suitable key found.",
-        UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
-        "0", String.valueOf(keyPropertyRefs.size()));
-  }
-
   private static UriParameter simpleKey(UriTokenizer tokenizer, final EdmKeyPropertyRef edmKeyPropertyRef,
-                                        final Edm edm, final EdmType referringType,
-                                        final Map<String, AliasQueryOption> aliases, final boolean tokenConsumed)
+      final Edm edm, final EdmType referringType, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     final EdmProperty edmProperty = edmKeyPropertyRef == null ? null : edmKeyPropertyRef.getProperty();
-    final EdmPrimitiveType primitiveType = edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType();
-    final boolean nullable = edmProperty != null && edmProperty.isNullable();
-
-    boolean primitiveTypeAvailable = tokenConsumed;
-    if(!tokenConsumed) {
-      primitiveTypeAvailable = nextPrimitiveTypeValue(tokenizer, primitiveType, nullable);
-    }
-    if (primitiveTypeAvailable) {
+    if (nextPrimitiveTypeValue(tokenizer,
+        edmProperty == null ? null : (EdmPrimitiveType) edmProperty.getType(),
+        edmProperty == null ? false : edmProperty.isNullable())) {
       final String literalValue = tokenizer.getText();
       ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
       return createUriParameter(edmProperty, edmKeyPropertyRef.getName(), literalValue, edm, referringType, aliases);
     } else {
-      String keyPropertyRefName = edmKeyPropertyRef == null ? "NULL EdmKeyPropertyRef" : edmKeyPropertyRef.getName();
-      throw new UriParserSemanticException("The key value is not valid.",
-          UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, keyPropertyRefName);
+      return null;
     }
   }
 
@@ -546,6 +531,27 @@ public class ParserHelper {
       names.add(parameter.getName());
     }
     return names;
+  }
+
+  protected static EdmStructuredType parseTypeCast(UriTokenizer tokenizer, final Edm edm,
+      final EdmStructuredType referencedType) throws UriParserException {
+    if (tokenizer.next(TokenKind.QualifiedName)) {
+      final FullQualifiedName qualifiedName = new FullQualifiedName(tokenizer.getText());
+      final EdmStructuredType type = referencedType instanceof EdmEntityType ?
+          edm.getEntityType(qualifiedName) :
+          edm.getComplexType(qualifiedName);
+      if (type == null) {
+        throw new UriParserSemanticException("Type '" + qualifiedName + "' not found.",
+            UriParserSemanticException.MessageKeys.UNKNOWN_PART, qualifiedName.getFullQualifiedNameAsString());
+      } else {
+        if (!type.compatibleTo(referencedType)) {
+          throw new UriParserSemanticException("The type cast '" + qualifiedName + "' is not compatible.",
+              UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, type.getName());
+        }
+      }
+      return type;
+    }
+    return null;
   }
 
   protected static EdmType getTypeInformation(final UriResourcePartTyped resourcePart) {

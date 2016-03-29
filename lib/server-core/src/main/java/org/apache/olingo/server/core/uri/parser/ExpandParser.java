@@ -22,11 +22,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.OData;
@@ -127,13 +125,13 @@ public class ExpandParser {
       }
 
     } else {
-      final EdmStructuredType typeCast = parseTypeCast(tokenizer, referencedType);
+      final EdmStructuredType typeCast = ParserHelper.parseTypeCast(tokenizer, edm, referencedType);
       if (typeCast != null) {
         item.setTypeFilter(typeCast);
         ParserHelper.requireNext(tokenizer, TokenKind.SLASH);
       }
 
-      UriInfoImpl resource = parseExpandPath(tokenizer, referencedType, item);
+      UriInfoImpl resource = parseExpandPath(tokenizer, edm, referencedType, item);
 
       UriResourcePartTyped lastPart = (UriResourcePartTyped) resource.getLastResourcePart();
 
@@ -143,7 +141,8 @@ public class ExpandParser {
         if (lastPart instanceof UriResourceNavigation) {
           UriResourceNavigationPropertyImpl navigationResource = (UriResourceNavigationPropertyImpl) lastPart;
           final EdmNavigationProperty navigationProperty = navigationResource.getProperty();
-          final EdmStructuredType typeCastSuffix = parseTypeCast(tokenizer, navigationProperty.getType());
+          final EdmStructuredType typeCastSuffix = ParserHelper.parseTypeCast(tokenizer, edm,
+              navigationProperty.getType());
           if (typeCastSuffix != null) {
             if (navigationProperty.isCollection()) {
               navigationResource.setCollectionTypeFilter(typeCastSuffix);
@@ -178,34 +177,12 @@ public class ExpandParser {
     return item;
   }
 
-  private EdmStructuredType parseTypeCast(UriTokenizer tokenizer, final EdmStructuredType referencedType)
-      throws UriParserException {
-    if (tokenizer.next(TokenKind.QualifiedName)) {
-      final FullQualifiedName qualifiedName = new FullQualifiedName(tokenizer.getText());
-      final EdmStructuredType type = referencedType instanceof EdmEntityType ?
-          edm.getEntityType(qualifiedName) :
-          edm.getComplexType(qualifiedName);
-      if (type == null) {
-        throw new UriParserSemanticException("Type '" + qualifiedName + "' not found.",
-            UriParserSemanticException.MessageKeys.UNKNOWN_PART, qualifiedName.getFullQualifiedNameAsString());
-      } else {
-        if (!type.compatibleTo(referencedType)) {
-          throw new UriParserSemanticException("The type cast '" + qualifiedName + "' is not compatible.",
-              UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER, type.getName());
-        }
-      }
-      return type;
-    }
-    return null;
-  }
-
-  private UriInfoImpl parseExpandPath(UriTokenizer tokenizer, final EdmStructuredType referencedType,
-      ExpandItemImpl item) throws UriParserException {
+  protected static UriInfoImpl parseExpandPath(UriTokenizer tokenizer, final Edm edm,
+      final EdmStructuredType referencedType, ExpandItemImpl item) throws UriParserException {
     UriInfoImpl resource = new UriInfoImpl().setKind(UriInfoKind.resource);
 
     EdmStructuredType type = referencedType;
     String name = null;
-
     while (tokenizer.next(TokenKind.ODataIdentifier)) {
       name = tokenizer.getText();
       final EdmProperty property = referencedType.getStructuralProperty(name);
@@ -213,7 +190,7 @@ public class ExpandParser {
         type = (EdmStructuredType) property.getType();
         UriResourceComplexPropertyImpl complexResource = new UriResourceComplexPropertyImpl(property);
         ParserHelper.requireNext(tokenizer, TokenKind.SLASH);
-        final EdmStructuredType typeCast = parseTypeCast(tokenizer, type);
+        final EdmStructuredType typeCast = ParserHelper.parseTypeCast(tokenizer, edm, type);
         if (typeCast != null) {
           complexResource.setTypeFilter(typeCast);
           ParserHelper.requireNext(tokenizer, TokenKind.SLASH);

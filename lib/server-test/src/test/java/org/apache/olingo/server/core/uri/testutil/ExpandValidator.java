@@ -109,12 +109,8 @@ public class ExpandValidator implements TestValidator {
 
   public ExpandValidator next() {
     expandItemIndex++;
-
-    try {
-      expandItem = expandOption.getExpandItems().get(expandItemIndex);
-    } catch (IndexOutOfBoundsException ex) {
-      fail("not enough segments");
-    }
+    assertTrue("not enough segments", expandItemIndex < expandOption.getExpandItems().size());
+    expandItem = expandOption.getExpandItems().get(expandItemIndex);
     return this;
   }
 

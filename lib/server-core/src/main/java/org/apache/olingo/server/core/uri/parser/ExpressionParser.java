@@ -286,14 +286,8 @@ public class ExpressionParser {
     // Null for everything other than MUL or DIV or MOD
     while (operatorTokenKind != null) {
       final Expression right = parseExprUnary();
-      checkType(left,
-          EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
-          EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
-          EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double);
-      checkType(right,
-          EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
-          EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
-          EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double);
+      checkNumericType(left);
+      checkNumericType(right);
       left = new BinaryImpl(left, tokenToBinaryOperator.get(operatorTokenKind), right,
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
       operatorTokenKind = ParserHelper.next(tokenizer,
@@ -305,11 +299,9 @@ public class ExpressionParser {
   private Expression parseExprUnary() throws UriParserException, UriValidationException {
     if (tokenizer.next(TokenKind.MinusOperator)) {
       final Expression expression = parseExprPrimary();
-      checkType(expression,
-          EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
-          EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
-          EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double,
-          EdmPrimitiveTypeKind.Duration);
+      if (!isType(getType(expression), EdmPrimitiveTypeKind.Duration)) {
+        checkNumericType(expression);
+      }
       return new UnaryImpl(UnaryOperatorKind.MINUS, expression, getType(expression));
     } else if (tokenizer.next(TokenKind.NotOperator)) {
       final Expression expression = parseExprPrimary();
@@ -538,15 +530,11 @@ public class ExpressionParser {
       parameters.add(parameterFirst);
       ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       final Expression parameterSecond = parseExpression();
-      checkType(parameterSecond,
-          EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
-          EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte);
+      checkIntegerType(parameterSecond);
       parameters.add(parameterSecond);
       if (tokenizer.next(TokenKind.COMMA)) {
         final Expression parameterThird = parseExpression();
-        checkType(parameterThird,
-            EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
-            EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte);
+        checkIntegerType(parameterThird);
         parameters.add(parameterThird);
       }
       break;
@@ -1082,6 +1070,19 @@ public class ExpressionParser {
           type == null ? "" : type.getFullQualifiedName().getFullQualifiedNameAsString(),
           Arrays.deepToString(kinds));
     }
+  }
+
+  protected void checkIntegerType(final Expression expression) throws UriParserException {
+    checkType(expression,
+        EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
+        EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte);
+  }
+
+  protected void checkNumericType(final Expression expression) throws UriParserException {
+    checkType(expression,
+        EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
+        EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
+        EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double);
   }
 
   private void checkEqualityTypes(final Expression left, final Expression right) throws UriParserException {
