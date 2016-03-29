@@ -62,9 +62,9 @@ public class BinaryImpl implements Binary {
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
-    T left = this.left.accept(visitor);
-    T right = this.right.accept(visitor);
-    return visitor.visitBinaryOperator(operator, left, right);
+    T localLeft = this.left.accept(visitor);
+    T localRight = this.right.accept(visitor);
+    return visitor.visitBinaryOperator(operator, localLeft, localRight);
   }
 
   @Override

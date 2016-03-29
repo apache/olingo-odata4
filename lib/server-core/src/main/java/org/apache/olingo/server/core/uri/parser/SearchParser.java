@@ -60,7 +60,8 @@ public class SearchParser {
   private SearchExpression processExprAnd(UriTokenizer tokenizer) throws SearchParserException {
     SearchExpression left = processTerm(tokenizer);
 
-    while (tokenizer.next(TokenKind.AndOperatorSearch)) { // Could be whitespace or whitespace-surrounded 'AND'.
+    while (tokenizer.next(TokenKind.AndOperatorSearch)) { 
+      // Could be whitespace or whitespace-surrounded 'AND'.
       final SearchExpression right = processTerm(tokenizer);
       left = new SearchBinaryImpl(left, SearchBinaryOperatorKind.AND, right);
     }

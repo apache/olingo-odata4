@@ -44,10 +44,12 @@ import org.apache.olingo.server.core.deserializer.json.ODataJsonDeserializer;
 
 public class FixedFormatDeserializerImpl implements FixedFormatDeserializer {
 
+  private static final int DEFAULT_BUFFER_SIZE = 128;
+
   @Override
   public byte[] binary(final InputStream content) throws DeserializerException {
     ByteArrayOutputStream result = new ByteArrayOutputStream();
-    byte[] buffer = new byte[128];
+    byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
     int count;
     try {
       while ((count = content.read(buffer)) > -1) {

@@ -19,7 +19,6 @@
 package org.apache.olingo.server.core.uri;
 
 import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.server.api.uri.UriResourceKind;
 
 public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
 
@@ -30,11 +29,6 @@ public class UriResourceStartingTypeFilterImpl extends UriResourceWithKeysImpl {
     super(null);
     this.type = type;
     this.isCollection = isCollection;
-  }
-
-  @Override
-  public UriResourceKind getKind() {
-    return kind;
   }
 
   @Override

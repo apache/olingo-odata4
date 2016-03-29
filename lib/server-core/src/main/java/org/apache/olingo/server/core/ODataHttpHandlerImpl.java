@@ -301,7 +301,8 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   static void copyHeaders(ODataRequest odRequest, final HttpServletRequest req) {
     for (final Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       final String headerName = (String) headerNames.nextElement();
-      @SuppressWarnings("unchecked") // getHeaders() says it returns an Enumeration of String.
+      @SuppressWarnings("unchecked") 
+      // getHeaders() says it returns an Enumeration of String.
       final List<String> headerValues = Collections.list(req.getHeaders(headerName));
       odRequest.addHeader(headerName, headerValues);
     }

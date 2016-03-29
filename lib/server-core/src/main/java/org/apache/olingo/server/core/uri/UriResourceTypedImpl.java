@@ -25,7 +25,7 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 
 public abstract class UriResourceTypedImpl extends UriResourceImpl implements UriResourcePartTyped {
 
-  protected EdmType typeFilter = null;
+  private EdmType typeFilter = null;
 
   public UriResourceTypedImpl(final UriResourceKind kind) {
     super(kind);

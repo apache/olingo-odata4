@@ -40,7 +40,7 @@ public class UriResourceSingletonImpl extends UriResourceTypedImpl implements Ur
 
   @Override
   public EdmEntityType getEntityTypeFilter() {
-    return (EdmEntityType) typeFilter;
+    return (EdmEntityType) getTypeFilter();
   }
 
   @Override

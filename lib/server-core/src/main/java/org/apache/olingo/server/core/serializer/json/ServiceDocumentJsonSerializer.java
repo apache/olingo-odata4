@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -58,8 +58,8 @@ public class ServiceDocumentJsonSerializer {
     if (!isODataMetadataNone) {
       final String metadataUri =
           (serviceRoot == null ? "" :
-            serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
-            + Constants.METADATA;
+              serviceRoot.endsWith("/") ? serviceRoot : (serviceRoot + "/"))
+              + Constants.METADATA;
       gen.writeObjectField(Constants.JSON_CONTEXT, metadataUri);
 
       if (metadata != null
@@ -73,9 +73,11 @@ public class ServiceDocumentJsonSerializer {
     gen.writeArrayFieldStart(Constants.VALUE);
 
     final EdmEntityContainer container = metadata.getEdm().getEntityContainer();
-    writeEntitySets(gen, container);
-    writeFunctionImports(gen, container);
-    writeSingletons(gen, container);
+    if (container != null) {
+      writeEntitySets(gen, container);
+      writeFunctionImports(gen, container);
+      writeSingletons(gen, container);
+    }
   }
 
   private void writeEntitySets(final JsonGenerator gen, final EdmEntityContainer container) throws IOException {
@@ -102,7 +104,7 @@ public class ServiceDocumentJsonSerializer {
 
   private void writeElement(final JsonGenerator gen, final String kind, final String reference, final String name,
       final String title)
-          throws IOException {
+      throws IOException {
     gen.writeStartObject();
     gen.writeObjectField(Constants.JSON_NAME, name);
     if (title != null) {

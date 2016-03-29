@@ -20,7 +20,6 @@ package org.apache.olingo.server.api.debug;
 
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataResponse;
-import org.apache.olingo.server.api.OlingoExtension;
 
 /**
  * Register this interface to add debug support to your service.

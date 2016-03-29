@@ -316,7 +316,7 @@ public class ResourcePathParser {
   }
 
   private void requireTyped(final UriResource previous, final String forWhat) throws UriParserException {
-    if (previous == null || !(previous instanceof UriResourcePartTyped)) {
+    if (!(previous instanceof UriResourcePartTyped)) {
       throw new UriParserSemanticException("Path segment before '" + forWhat + "' is not typed.",
           UriParserSemanticException.MessageKeys.PREVIOUS_PART_NOT_TYPED, forWhat);
     }

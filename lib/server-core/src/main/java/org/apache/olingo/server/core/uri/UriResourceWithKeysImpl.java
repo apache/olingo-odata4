@@ -28,9 +28,9 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 
 public abstract class UriResourceWithKeysImpl extends UriResourceImpl implements UriResourcePartTyped {
 
-  protected EdmType collectionTypeFilter = null;
+  private EdmType collectionTypeFilter = null;
   protected List<UriParameter> keyPredicates = null;
-  protected EdmType entryTypeFilter = null;
+  private EdmType entryTypeFilter = null;
 
   public UriResourceWithKeysImpl(final UriResourceKind kind) {
     super(kind);

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -58,8 +58,10 @@ public class UriInfoImpl implements UriInfo {
 
   private UriInfoKind kind;
 
-  private List<String> entitySetNames = new ArrayList<String>(); // for $entity
-  private EdmEntityType entityTypeCast; // for $entity
+  // for $entity
+  private List<String> entitySetNames = new ArrayList<String>();
+  // for $entity
+  private EdmEntityType entityTypeCast;
 
   private UriResource lastResourcePart;
   private List<UriResource> pathParts = new ArrayList<UriResource>();
@@ -175,12 +177,12 @@ public class UriInfoImpl implements UriInfo {
    * or an option of this kind has been added before
    */
   public UriInfoImpl setSystemQueryOption(final SystemQueryOption systemOption) {
-    final SystemQueryOptionKind kind = systemOption.getKind();
-    if (systemQueryOptions.containsKey(kind)) {
+    final SystemQueryOptionKind systemQueryOptionKind = systemOption.getKind();
+    if (systemQueryOptions.containsKey(systemQueryOptionKind)) {
       throw new ODataRuntimeException("Double System Query Option: " + systemOption.getName());
     }
 
-    switch (kind) {
+    switch (systemQueryOptionKind) {
     case EXPAND:
     case FILTER:
     case FORMAT:
@@ -193,7 +195,7 @@ public class UriInfoImpl implements UriInfo {
     case SKIPTOKEN:
     case TOP:
     case LEVELS:
-      systemQueryOptions.put(kind, systemOption);
+      systemQueryOptions.put(systemQueryOptionKind, systemOption);
       break;
     default:
       throw new ODataRuntimeException("Unsupported System Query Option: " + systemOption.getName());

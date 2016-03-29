@@ -51,18 +51,15 @@ public class ODataWritableContent implements ODataContent {
   private StreamContent streamContent;
 
   private static abstract class StreamContent {
-    protected ODataSerializer serializer;
     protected EntityIterator iterator;
     protected ServiceMetadata metadata;
     protected EdmEntityType entityType;
     protected EntityCollectionSerializerOptions options;
 
-    public StreamContent(EntityIterator iterator, EdmEntityType entityType,
-                         ODataSerializer serializer, ServiceMetadata metadata,
-                         EntityCollectionSerializerOptions options) {
+    public StreamContent(EntityIterator iterator, EdmEntityType entityType, ServiceMetadata metadata,
+        EntityCollectionSerializerOptions options) {
       this.iterator = iterator;
       this.entityType = entityType;
-      this.serializer = serializer;
       this.metadata = metadata;
       this.options = options;
     }
@@ -74,7 +71,7 @@ public class ODataWritableContent implements ODataContent {
         writeEntity(iterator, out);
       } catch (SerializerException e) {
         final ODataContentWriteErrorCallback errorCallback = options.getODataContentWriteErrorCallback();
-        if(errorCallback != null) {
+        if (errorCallback != null) {
           final WriteErrorContext errorContext = new WriteErrorContext(e);
           errorCallback.handleError(errorContext, Channels.newChannel(out));
         }
@@ -88,7 +85,7 @@ public class ODataWritableContent implements ODataContent {
     public StreamContentForJson(EntityIterator iterator, EdmEntityType entityType,
         ODataJsonSerializer jsonSerializer, ServiceMetadata metadata,
         EntityCollectionSerializerOptions options) {
-      super(iterator, entityType, jsonSerializer, metadata, options);
+      super(iterator, entityType, metadata, options);
 
       this.jsonSerializer = jsonSerializer;
     }
@@ -98,7 +95,7 @@ public class ODataWritableContent implements ODataContent {
         jsonSerializer.entityCollectionIntoStream(metadata, entityType, entity, options, outputStream);
         outputStream.flush();
       } catch (final IOException e) {
-        throw new ODataRuntimeException("Failed entity serialization");
+        throw new ODataRuntimeException("Failed entity serialization", e);
       }
     }
   }
@@ -109,7 +106,7 @@ public class ODataWritableContent implements ODataContent {
     public StreamContentForXml(EntityIterator iterator, EdmEntityType entityType,
         ODataXmlSerializer xmlSerializer, ServiceMetadata metadata,
         EntityCollectionSerializerOptions options) {
-      super(iterator, entityType, xmlSerializer, metadata, options);
+      super(iterator, entityType, metadata, options);
 
       this.xmlSerializer = xmlSerializer;
     }
@@ -119,7 +116,7 @@ public class ODataWritableContent implements ODataContent {
         xmlSerializer.entityCollectionIntoStream(metadata, entityType, entity, options, outputStream);
         outputStream.flush();
       } catch (final IOException e) {
-        throw new ODataRuntimeException("Failed entity serialization");
+        throw new ODataRuntimeException("Failed entity serialization", e);
       }
     }
   }
@@ -139,13 +136,14 @@ public class ODataWritableContent implements ODataContent {
   }
 
   public static ODataWritableContentBuilder with(EntityIterator iterator, EdmEntityType entityType,
-                                             ODataSerializer serializer, ServiceMetadata metadata,
+      ODataSerializer serializer, ServiceMetadata metadata,
       EntityCollectionSerializerOptions options) {
     return new ODataWritableContentBuilder(iterator, entityType, serializer, metadata, options);
   }
 
   public static class WriteErrorContext implements ODataContentWriteErrorContext {
     private ODataLibraryException exception;
+
     public WriteErrorContext(ODataLibraryException exception) {
       this.exception = exception;
     }
@@ -154,6 +152,7 @@ public class ODataWritableContent implements ODataContent {
     public Exception getException() {
       return exception;
     }
+
     @Override
     public ODataLibraryException getODataLibraryException() {
       return exception;
@@ -168,8 +167,8 @@ public class ODataWritableContent implements ODataContent {
     private EntityCollectionSerializerOptions options;
 
     public ODataWritableContentBuilder(EntityIterator entities, EdmEntityType entityType,
-                                    ODataSerializer serializer,
-                                   ServiceMetadata metadata, EntityCollectionSerializerOptions options) {
+        ODataSerializer serializer,
+        ServiceMetadata metadata, EntityCollectionSerializerOptions options) {
       this.entities = entities;
       this.entityType = entityType;
       this.serializer = serializer;
@@ -178,17 +177,18 @@ public class ODataWritableContent implements ODataContent {
     }
 
     public ODataContent buildContent() {
-      if(serializer instanceof ODataJsonSerializer) {
+      if (serializer instanceof ODataJsonSerializer) {
         StreamContent input = new StreamContentForJson(entities, entityType,
             (ODataJsonSerializer) serializer, metadata, options);
         return new ODataWritableContent(input);
-      } else if(serializer instanceof ODataXmlSerializer) {
+      } else if (serializer instanceof ODataXmlSerializer) {
         StreamContentForXml input = new StreamContentForXml(entities, entityType,
             (ODataXmlSerializer) serializer, metadata, options);
         return new ODataWritableContent(input);
       }
       throw new ODataRuntimeException("No suitable serializer found");
     }
+
     public SerializerStreamResult build() {
       return SerializerStreamResultImpl.with().content(buildContent()).build();
     }

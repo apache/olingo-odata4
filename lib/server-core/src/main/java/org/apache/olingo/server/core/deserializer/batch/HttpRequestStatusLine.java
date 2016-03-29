@@ -38,7 +38,7 @@ public class HttpRequestStatusLine {
   private static final String HTTP_VERSION = "HTTP/1.1";
 
   final private Line statusLine;
-  final String requestBaseUri;
+  final private String requestBaseUri;
 
   private HttpMethod method;
   private String httpVersion;
@@ -60,9 +60,9 @@ public class HttpRequestStatusLine {
   private void parse() throws BatchDeserializerException {
     final String[] parts = statusLine.toString().split(" ");
 
+    //Status line consists of 3 parts: Method, URI and HTTP Version
     if (parts.length == 3) {
       method = parseMethod(parts[0]);
-      // uri = new ODataURI(parts[1], requestBaseUri, statusLine.getLineNumber(), header.getHeaders(HttpHeader.HOST));
       parseUri(parts[1], requestBaseUri);
       httpVersion = parseHttpVersion(parts[2]);
     } else {

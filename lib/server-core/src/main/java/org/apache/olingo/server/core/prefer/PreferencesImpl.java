@@ -33,7 +33,8 @@ import org.apache.olingo.server.api.prefer.Preferences;
  */
 public class PreferencesImpl implements Preferences {
 
-  private static final String URL = "url"; // parameter name for odata.callback
+  //parameter name for odata.callback
+  private static final String URL = "url";
 
   private final Map<String, Preference> preferences;
 

@@ -45,7 +45,7 @@ public class UriResourceComplexPropertyImpl extends UriResourceTypedImpl impleme
 
   @Override
   public EdmComplexType getComplexTypeFilter() {
-    return (EdmComplexType) typeFilter;
+    return (EdmComplexType) getTypeFilter();
   }
 
   @Override

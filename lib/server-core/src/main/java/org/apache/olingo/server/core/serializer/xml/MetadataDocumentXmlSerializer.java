@@ -148,7 +148,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_CONTAINS_TARGET = "ContainsTarget";
   private static final String XML_TERM_ATT = "Term";
   private static final String XML_QUALIFIER_ATT = "Qualifier";
-  private static final String XML_PROPERTY_Value = "PropertyValue";
+  private static final String XML_PROPERTY_VALUE = "PropertyValue";
   private static final String XML_BASE_TERM = "BaseTerm";
   private static final String XML_APPLIES_TO = "AppliesTo";
 
@@ -455,7 +455,7 @@ public class MetadataDocumentXmlSerializer {
         writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(type, false));
       }
       for (EdmPropertyValue propValue : asRecord.getPropertyValues()) {
-        writer.writeStartElement(XML_PROPERTY_Value);
+        writer.writeStartElement(XML_PROPERTY_VALUE);
         writer.writeAttribute(XML_PROPERTY, propValue.getProperty());
         appendExpression(writer, propValue.getValue());
         appendAnnotations(writer, propValue);

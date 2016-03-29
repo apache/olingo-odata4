@@ -50,14 +50,14 @@ import org.apache.olingo.server.api.prefer.Preferences.Preference;
  */
 public class PreferParser {
 
-  private static final String token = "(?:[-!#$%&'*+.^_`|~]|\\w)+";
-  private static final String quotedString = "(?:\"(?:[\\t !#-\\[\\]-~\\x80-\\xFF]|"
+  private static final String TOKEN = "(?:[-!#$%&'*+.^_`|~]|\\w)+";
+  private static final String QUOTED_STRING = "(?:\"(?:[\\t !#-\\[\\]-~\\x80-\\xFF]|"
       + "(?:\\\\[\\t !-~\\x80-\\xFF]))*\")";
-  private static final String namedValue =
-      "(" + token + ")(?:\\s*=\\s*(" + token + "|" + quotedString + "))?";
+  private static final String NAMED_VALUE =
+      "(" + TOKEN + ")(?:\\s*=\\s*(" + TOKEN + "|" + QUOTED_STRING + "))?";
   private static final Pattern PREFERENCE = Pattern.compile("\\s*(,\\s*)+|"
-      + "(?:" + namedValue + "((?:\\s*;\\s*(?:" + namedValue + ")?)*))");
-  private static final Pattern PARAMETER = Pattern.compile("\\s*(;\\s*)+|(?:" + namedValue + ")");
+      + "(?:" + NAMED_VALUE + "((?:\\s*;\\s*(?:" + NAMED_VALUE + ")?)*))");
+  private static final Pattern PARAMETER = Pattern.compile("\\s*(;\\s*)+|(?:" + NAMED_VALUE + ")");
 
   private PreferParser() {
     // Private constructor for utility classes

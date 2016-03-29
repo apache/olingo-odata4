@@ -96,6 +96,7 @@ public class BatchLineReader {
   private void updateCurrentCharset(final String currentLine) {
     if (currentLine != null) {
       if (currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
+        //13 is content-type.length() + 1 for header value
         String clValue = currentLine.substring(13, currentLine.length() - 2).trim();
         ContentType ct = ContentType.parse(clValue);
         if (ct != null) {
@@ -134,14 +135,13 @@ public class BatchLineReader {
     }
 
     ByteBuffer innerBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-    boolean foundLineEnd = false; // EOF will be considered as line ending
+    // EOF will be considered as line ending
+    boolean foundLineEnd = false;
 
     while (!foundLineEnd) {
       // Is buffer refill required?
-      if (limit == offset) {
-        if (fillBuffer() == EOF) {
-          foundLineEnd = true;
-        }
+      if (limit == offset && fillBuffer() == EOF) {
+        foundLineEnd = true;
       }
 
       if (!foundLineEnd) {

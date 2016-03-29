@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class DebugTabRuntime implements DebugTab {
 
+  private static final int TO_MILLIS_DIVISOR = 1000;
   private final RuntimeNode rootNode;
 
   public DebugTabRuntime(final List<RuntimeMeasurement> runtimeInformation) {
@@ -69,7 +70,7 @@ public class DebugTabRuntime implements DebugTab {
     if (node.timeStopped == 0) {
       gen.writeNullField("duration");
     } else {
-      gen.writeStringField("duration", Long.toString((node.timeStopped - node.timeStarted) / 1000));
+      gen.writeStringField("duration", Long.toString((node.timeStopped - node.timeStarted) / TO_MILLIS_DIVISOR));
       gen.writeStringField("unit", "µs");
     }
 
@@ -96,7 +97,7 @@ public class DebugTabRuntime implements DebugTab {
       .append("<span class=\"class\">").append(node.className).append("</span>.")
       .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
       .append("</span></span>");
-      long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / 1000;
+      long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / TO_MILLIS_DIVISOR;
       writer.append("<span class=\"").append(time == 0 ? "null" : "numeric")
       .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
       .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")

@@ -55,11 +55,7 @@ public class SelectItemImpl implements SelectItem {
 
   @Override
   public boolean isAllOperationsInSchema() {
-    if (addOperationsInSchemaNameSpace == null) {
-      return false;
-    } else {
-      return true;
-    }
+    return addOperationsInSchemaNameSpace != null;
   }
 
   @Override

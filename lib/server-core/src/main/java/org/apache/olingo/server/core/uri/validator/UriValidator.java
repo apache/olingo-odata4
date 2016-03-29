@@ -103,7 +103,7 @@ public class UriValidator {
     }
   }
 
-  private static Map<SystemQueryOptionKind, Integer> OPTION_INDEX;
+  private static final Map<SystemQueryOptionKind, Integer> OPTION_INDEX;
   static {
     Map<SystemQueryOptionKind, Integer> temp =
         new EnumMap<SystemQueryOptionKind, Integer>(SystemQueryOptionKind.class);

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -70,17 +70,18 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       ODataResponse response = new ODataResponse();
       final String contentTypeString;
       final InputStream body;
-      if(requestedFormat == DebugFormat.DOWNLOAD || requestedFormat == DebugFormat.HTML) {
+      if (requestedFormat == DebugFormat.DOWNLOAD || requestedFormat == DebugFormat.HTML) {
         String title = debugInfo.getRequest() == null ?
             "V4 Service" : "V4 Service: " + debugInfo.getRequest().getRawODataPath();
         body = wrapInHtml(parts, title);
         contentTypeString = ContentType.TEXT_HTML.toContentTypeString();
-      } else { // for JSON and also default response handling
+      } else {
+        // for JSON and also default response handling
         body = wrapInJson(parts);
         contentTypeString = ContentType.APPLICATION_JSON.toContentTypeString();
       }
       // for download add additional Content-Disposition header
-      if(requestedFormat == DebugFormat.DOWNLOAD) {
+      if (requestedFormat == DebugFormat.DOWNLOAD) {
         response.setHeader("Content-Disposition", "attachment; filename=OData-Response."
             + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
       }
@@ -163,11 +164,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
       return csb.getInputStream();
     } finally {
       if (outputStream != null) {
-        try {
-          outputStream.close();
-        } catch (IOException e) {
-          throw e;
-        }
+        outputStream.close();
       }
     }
   }
@@ -188,61 +185,61 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
     StringWriter writer = new StringWriter();
 
     writer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n")
-    .append("  \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n")
-    .append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n")
-    .append("<head>\n")
-    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n")
-    .append("<title>")
-    .append(escapeHtml(title))
-    .append("</title>\n")
-    .append("<style type=\"text/css\">\n")
-    .append("body { font-family: Arial, sans-serif; font-size: 13px;\n")
-    .append("       line-height: 16px; margin: 0;\n")
-    .append("       background-color: #eeeeee; color: #333333; }\n")
-    .append(".header { float: left; }\n")
-    .append(".header a { line-height: 22px; padding: 10px 18px;\n")
-    .append("            text-decoration: none; color: #333333; }\n")
-    .append(":target, .header:nth-last-child(2) { background-color: #cccccc; }\n")
-    .append(":target ~ .header:nth-last-child(2) { background-color: inherit; }\n")
-    .append(".header:focus, .header:hover,\n")
-    .append("  .header:nth-last-child(2):focus, .header:nth-last-child(2):hover\n")
-    .append("    { background-color: #999999; }\n")
-    .append(".section { position: absolute; top: 42px; min-width: 100%;\n")
-    .append("           padding-top: 18px; border-top: 1px solid #dddddd; }\n")
-    .append(".section > * { margin-left: 18px; }\n")
-    .append(":target + .section, .section:last-child { display: block; }\n")
-    .append(".section, :target + .section ~ .section { display: none; }\n")
-    .append("h1 { font-size: 18px; font-weight: normal; margin: 10px 0; }\n")
-    .append("h2 { font-size: 15px; }\n")
-    .append("h2:not(:first-child) { margin-top: 2em; }\n")
-    .append("table { border-collapse: collapse; border-spacing: 0;\n")
-    .append("        margin-top: 1.5em; }\n")
-    .append("table, thead { border-width: 1px 0; border-style: solid;\n")
-    .append("               border-color: #dddddd; text-align: left; }\n")
-    .append("th.name, td.name { padding: 1ex 2em 1ex 0; }\n")
-    .append("tbody > tr:hover { background-color: #cccccc; }\n")
-    .append(".code { font-family: \"Courier New\", monospace; }\n")
-    .append(".code, .tree li { line-height: 15px; }\n")
-    .append("ul, .tree { padding-left: 0; list-style-type: none; }\n")
-    .append(".null, .numeric { padding-left: 1.5em; }\n")
-    .append(".json { white-space: pre-wrap; }\n")
-    .append("</style>\n")
-    .append("</head>\n")
-    .append("<body>\n");
+        .append("  \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n")
+        .append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n")
+        .append("<head>\n")
+        .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n")
+        .append("<title>")
+        .append(escapeHtml(title))
+        .append("</title>\n")
+        .append("<style type=\"text/css\">\n")
+        .append("body { font-family: Arial, sans-serif; font-size: 13px;\n")
+        .append("       line-height: 16px; margin: 0;\n")
+        .append("       background-color: #eeeeee; color: #333333; }\n")
+        .append(".header { float: left; }\n")
+        .append(".header a { line-height: 22px; padding: 10px 18px;\n")
+        .append("            text-decoration: none; color: #333333; }\n")
+        .append(":target, .header:nth-last-child(2) { background-color: #cccccc; }\n")
+        .append(":target ~ .header:nth-last-child(2) { background-color: inherit; }\n")
+        .append(".header:focus, .header:hover,\n")
+        .append("  .header:nth-last-child(2):focus, .header:nth-last-child(2):hover\n")
+        .append("    { background-color: #999999; }\n")
+        .append(".section { position: absolute; top: 42px; min-width: 100%;\n")
+        .append("           padding-top: 18px; border-top: 1px solid #dddddd; }\n")
+        .append(".section > * { margin-left: 18px; }\n")
+        .append(":target + .section, .section:last-child { display: block; }\n")
+        .append(".section, :target + .section ~ .section { display: none; }\n")
+        .append("h1 { font-size: 18px; font-weight: normal; margin: 10px 0; }\n")
+        .append("h2 { font-size: 15px; }\n")
+        .append("h2:not(:first-child) { margin-top: 2em; }\n")
+        .append("table { border-collapse: collapse; border-spacing: 0;\n")
+        .append("        margin-top: 1.5em; }\n")
+        .append("table, thead { border-width: 1px 0; border-style: solid;\n")
+        .append("               border-color: #dddddd; text-align: left; }\n")
+        .append("th.name, td.name { padding: 1ex 2em 1ex 0; }\n")
+        .append("tbody > tr:hover { background-color: #cccccc; }\n")
+        .append(".code { font-family: \"Courier New\", monospace; }\n")
+        .append(".code, .tree li { line-height: 15px; }\n")
+        .append("ul, .tree { padding-left: 0; list-style-type: none; }\n")
+        .append(".null, .numeric { padding-left: 1.5em; }\n")
+        .append(".json { white-space: pre-wrap; }\n")
+        .append("</style>\n")
+        .append("</head>\n")
+        .append("<body>\n");
     char count = '0';
     for (final DebugTab part : parts) {
       writer.append("<div class=\"header\" id=\"sec").append(++count).append("\">\n")
-      .append("<h1><a href=\"#sec").append(count).append("\">")
-      .append(part.getName())
-      .append("</a></h1>\n")
-      .append("</div>\n")
-      .append("<div class=\"section\">\n");
+          .append("<h1><a href=\"#sec").append(count).append("\">")
+          .append(part.getName())
+          .append("</a></h1>\n")
+          .append("</div>\n")
+          .append("<div class=\"section\">\n");
       part.appendHtml(writer);
       writer.append("</div>\n");
     }
     writer.append("</body>\n")
-    .append("</html>\n")
-    .close();
+        .append("</html>\n")
+        .close();
     byte[] bytes = writer.toString().getBytes("UTF-8");
     return new ByteArrayInputStream(bytes);
   }
@@ -271,14 +268,14 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
   protected static void appendHtmlTable(final Writer writer, final Map<String, String> entries) throws IOException {
     writer.append("<table>\n<thead>\n")
-    .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
-    .append("</thead>\n<tbody>\n");
+        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
+        .append("</thead>\n<tbody>\n");
     if (entries != null && !entries.isEmpty()) {
       for (final Map.Entry<String, String> entry : entries.entrySet()) {
         writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
-        .append("<td class=\"value\">")
-        .append(escapeHtml(entry.getValue()))
-        .append("</td></tr>\n");
+            .append("<td class=\"value\">")
+            .append(escapeHtml(entry.getValue()))
+            .append("</td></tr>\n");
       }
     }
     writer.append("</tbody>\n</table>\n");
