@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.constants.EdmOnDelete;
-import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
 
 public enum TargetType {
 

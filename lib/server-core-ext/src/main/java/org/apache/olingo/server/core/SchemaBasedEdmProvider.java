@@ -41,9 +41,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.commons.api.ex.ODataException;
-import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
 
 public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   private final List<CsdlSchema> edmSchemas = new ArrayList<CsdlSchema>();

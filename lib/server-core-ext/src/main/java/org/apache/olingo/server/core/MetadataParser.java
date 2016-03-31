@@ -86,10 +86,10 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.edmx.EdmxReferenceInclude;
+import org.apache.olingo.commons.api.edmx.EdmxReferenceIncludeAnnotation;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
-import org.apache.olingo.server.api.edmx.EdmxReferenceInclude;
-import org.apache.olingo.server.api.edmx.EdmxReferenceIncludeAnnotation;
 
 /**
  * This class can convert a CSDL document into EDMProvider object

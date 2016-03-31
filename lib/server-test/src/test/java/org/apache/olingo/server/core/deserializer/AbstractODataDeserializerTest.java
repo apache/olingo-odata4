@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 
 public class AbstractODataDeserializerTest {

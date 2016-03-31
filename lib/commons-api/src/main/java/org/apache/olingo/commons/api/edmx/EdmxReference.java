@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.server.api.edmx;
+package org.apache.olingo.commons.api.edmx;
 
 import java.net.URI;
 import java.util.ArrayList;
