@@ -25,7 +25,7 @@
 	<groupId>my.group.id</groupId>
 	<artifactId>DemoService-Batch</artifactId>
 	<packaging>war</packaging>
-	<version>4.2.0-SNAPSHOT</version>
+	<version>4.2.0-RC01</version>
 
 	<name>${project.artifactId}-Webapp</name>
 
@@ -35,7 +35,7 @@
 
 	<properties>
 		<javax.version>2.5</javax.version>
-		<odata.version>4.2.0-SNAPSHOT</odata.version>
+		<odata.version>4.2.0-RC01</odata.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 
