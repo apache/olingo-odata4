@@ -605,7 +605,7 @@
                 </goals>
                 <configuration>
                   <excludePackageNames>
-                    org.apache.olingo.commons.core:org.apache.olingo.commons.core.*:org.apache.olingo.client.core:org.apache.olingo.client.core.*:org.apache.olingo.server.core:org.apache.olingo.server.core.*:org.apache.olingo.fit:org.apache.olingo.fit.*
+                    org.apache.olingo.commons.core:org.apache.olingo.commons.core.*:org.apache.olingo.client.core:org.apache.olingo.client.core.*:org.apache.olingo.server.core:org.apache.olingo.server.core.*:org.apache.olingo.fit:org.apache.olingo.fit.*:org.apache.olingo.server.sample:org.apache.olingo.server.sample.*:org.apache.olingo.server.tecsvc:org.apache.olingo.server.tecsvc.*
                   </excludePackageNames>
                   <additionalJOptions>
                     <additionalJOption>-quiet</additionalJOption>
@@ -616,6 +616,10 @@
                       <packages>org.apache.olingo.client.api:org.apache.olingo.client.api.*</packages>
                     </group>
                     <group>
+                      <title>OData Client Proxy</title>
+                      <packages>org.apache.olingo.ext.proxy:org.apache.olingo.ext.proxy.*</packages>
+                    </group>
+					<group>
                       <title>OData Server</title>
                       <packages>org.apache.olingo.server.api:org.apache.olingo.server.api.*</packages>
                     </group>
