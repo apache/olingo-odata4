@@ -41,6 +41,8 @@ public class SerializerException extends ODataLibraryException {
     INCONSISTENT_PROPERTY_TYPE,
     /** parameter: property name */
     MISSING_PROPERTY,
+    /** parameter: - */
+    MISSING_ID,
     /** parameters: property name, property value */
     WRONG_PROPERTY_VALUE,
     /** parameters: primitive-type name, value */

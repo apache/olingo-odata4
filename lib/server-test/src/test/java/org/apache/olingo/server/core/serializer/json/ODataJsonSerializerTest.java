@@ -719,6 +719,33 @@ public class ODataJsonSerializerTest {
         resultString);
   }
 
+
+  @Test(expected = SerializerException.class)
+  public void selectMissingId() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    entity.setId(null);
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyDate");
+    final SelectItem selectItem2 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyBoolean");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem1, selectItem2, selectItem2));
+
+    try {
+    serializer.entity(metadata, entityType, entity,
+            EntitySerializerOptions.with()
+                .contextURL(ContextURL.with().entitySet(edmEntitySet)
+                    .selectList(helper.buildContextURLSelectList(entityType, null, select))
+                    .suffix(Suffix.ENTITY).build())
+                .select(select)
+                .build()).getContent();
+      Assert.fail("Expected exception not thrown!");
+    } catch (final SerializerException e) {
+      Assert.assertEquals(SerializerException.MessageKeys.MISSING_ID, e.getMessageKey());
+      throw e;
+    }
+  }
+
   @Test
   public void expand() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");

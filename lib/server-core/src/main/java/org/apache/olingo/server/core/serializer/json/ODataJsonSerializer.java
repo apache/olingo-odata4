@@ -267,13 +267,27 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     for (final Entity entity : entitySet) {
       if (onlyReference) {
         json.writeStartObject();
-        json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
+        json.writeStringField(Constants.JSON_ID, getEntityId(entity));
         json.writeEndObject();
       } else {
         writeEntity(metadata, entityType, entity, null, expand, select, false, json);
       }
     }
     json.writeEndArray();
+  }
+
+  /**
+   * Get the ascii representation of the entity id
+   * or thrown an {@link SerializerException} if id is <code>null</code>.
+   *
+   * @param entity the entity
+   * @return ascii representation of the entity id
+   */
+  private String getEntityId(Entity entity) throws SerializerException {
+    if(entity.getId() == null) {
+      throw new SerializerException("Entity id is null.", SerializerException.MessageKeys.MISSING_ID);
+    }
+    return entity.getId().toASCIIString();
   }
 
   private boolean areKeyPredicateNamesSelected(SelectOption select, EdmEntityType type) {
@@ -319,14 +333,14 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       }
     }
     if (onlyReference) {
-      json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
+      json.writeStringField(Constants.JSON_ID, getEntityId(entity));
     } else {
       final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
       if (!isODataMetadataNone && !resolvedType.equals(entityType)) {
         json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
       }
       if (!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) {
-        json.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
+        json.writeStringField(Constants.JSON_ID, getEntityId(entity));
       }
       writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
       writeNavigationProperties(metadata, resolvedType, entity, expand, json);
