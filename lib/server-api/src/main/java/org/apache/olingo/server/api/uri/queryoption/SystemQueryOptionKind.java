@@ -82,7 +82,12 @@ public enum SystemQueryOptionKind {
   /**
    * @see LevelsExpandOption
    */
-  LEVELS("$levels");
+  LEVELS("$levels"),
+
+  /**
+   * @see ApplyOption
+   */
+  APPLY("$apply");
 
   private final String syntax;
 

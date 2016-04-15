@@ -34,6 +34,8 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -46,6 +48,18 @@ import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
 import org.apache.olingo.server.api.uri.queryoption.TopOption;
+import org.apache.olingo.server.api.uri.queryoption.apply.Aggregate;
+import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
+import org.apache.olingo.server.api.uri.queryoption.apply.BottomTop;
+import org.apache.olingo.server.api.uri.queryoption.apply.Compute;
+import org.apache.olingo.server.api.uri.queryoption.apply.ComputeExpression;
+import org.apache.olingo.server.api.uri.queryoption.apply.Concat;
+import org.apache.olingo.server.api.uri.queryoption.apply.CustomFunction;
+import org.apache.olingo.server.api.uri.queryoption.apply.Expand;
+import org.apache.olingo.server.api.uri.queryoption.apply.Filter;
+import org.apache.olingo.server.api.uri.queryoption.apply.GroupBy;
+import org.apache.olingo.server.api.uri.queryoption.apply.GroupByItem;
+import org.apache.olingo.server.api.uri.queryoption.apply.Search;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
 
@@ -94,7 +108,7 @@ public class DebugTabUri implements DebugTab {
 
     appendCommonJsonObjects(gen, uriInfo.getCountOption(), uriInfo.getSkipOption(), uriInfo.getTopOption(),
         uriInfo.getFilterOption(), uriInfo.getOrderByOption(), uriInfo.getSelectOption(), uriInfo.getExpandOption(),
-        uriInfo.getSearchOption());
+        uriInfo.getSearchOption(), uriInfo.getApplyOption());
 
     if (!uriInfo.getAliases().isEmpty()) {
       gen.writeFieldName("aliases");
@@ -109,12 +123,12 @@ public class DebugTabUri implements DebugTab {
     gen.writeEndObject();
   }
 
-  private void appendCommonJsonObjects(final JsonGenerator gen, final CountOption countOption,
-      final SkipOption skipOption,
-      final TopOption topOption, final FilterOption filterOption, final OrderByOption orderByOption,
-      final SelectOption selectOption,
-      final ExpandOption expandOption, final SearchOption searchOption)
-          throws IOException {
+  private void appendCommonJsonObjects(JsonGenerator gen,
+      final CountOption countOption, final SkipOption skipOption, final TopOption topOption,
+      final FilterOption filterOption, final OrderByOption orderByOption,
+      final SelectOption selectOption, final ExpandOption expandOption, final SearchOption searchOption,
+      final ApplyOption applyOption)
+      throws IOException {
     if (countOption != null) {
       gen.writeBooleanField("isCount", countOption.getValue());
     }
@@ -154,6 +168,11 @@ public class DebugTabUri implements DebugTab {
     if (searchOption != null) {
       gen.writeFieldName("search");
       appendSearchJson(gen, searchOption.getSearchExpression());
+    }
+
+    if (applyOption != null) {
+      gen.writeFieldName("apply");
+      appendApplyItemsJson(gen, applyOption.getApplyItems());
     }
   }
 
@@ -223,14 +242,7 @@ public class DebugTabUri implements DebugTab {
       gen.writeBooleanField("star", item.isStar());
     } else if (item.getResourcePath() != null && !item.getResourcePath().getUriResourceParts().isEmpty()) {
       gen.writeFieldName("expandPath");
-      gen.writeStartArray();
-      for (UriResource resource : item.getResourcePath().getUriResourceParts()) {
-        gen.writeStartObject();
-        gen.writeStringField("propertyKind", resource.getKind().toString());
-        gen.writeStringField("propertyName", resource.toString());
-        gen.writeEndObject();
-      }
-      gen.writeEndArray();
+      appendURIResourceParts(gen, item.getResourcePath().getUriResourceParts());
     }
 
     if (item.isRef()) {
@@ -240,7 +252,7 @@ public class DebugTabUri implements DebugTab {
     if (item.getLevelsOption() != null) {
       gen.writeFieldName("levels");
       if (item.getLevelsOption().isMax()) {
-          gen.writeString("max");
+        gen.writeString("max");
       } else {
         gen.writeNumber(item.getLevelsOption().getValue());
       }
@@ -248,7 +260,7 @@ public class DebugTabUri implements DebugTab {
 
     appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(),
         item.getFilterOption(), item.getOrderByOption(), item.getSelectOption(), item.getExpandOption(),
-        item.getSearchOption());
+        item.getSearchOption(), null); // TODO: item.getApplyOption()
 
     gen.writeEndObject();
   }
@@ -315,6 +327,142 @@ public class DebugTabUri implements DebugTab {
     json.writeEndObject();
   }
 
+  private void appendApplyItemsJson(JsonGenerator json, final List<ApplyItem> applyItems) throws IOException {
+    json.writeStartArray();
+    for (final ApplyItem item : applyItems) {
+      appendApplyItemJson(json, item);
+    }
+    json.writeEndArray();
+  }
+
+  private void appendApplyItemJson(JsonGenerator json, final ApplyItem item) throws IOException {
+    json.writeStartObject();
+
+    json.writeStringField("kind", item.getKind().name());
+    switch (item.getKind()) {
+    case AGGREGATE:
+      appendAggregateJson(json, (Aggregate) item);
+      break;
+    case BOTTOM_TOP:
+      json.writeStringField("method", ((BottomTop) item).getMethod().name());
+      json.writeFieldName("number");
+      appendExpressionJson(json, ((BottomTop) item).getNumber());
+      json.writeFieldName("value");
+      appendExpressionJson(json, ((BottomTop) item).getValue());
+      break;
+    case COMPUTE:
+      json.writeFieldName("compute");
+      json.writeStartArray();
+      for (final ComputeExpression computeExpression : ((Compute) item).getExpressions()) {
+        json.writeStartObject();
+        json.writeFieldName("expression");
+        appendExpressionJson(json, computeExpression.getExpression());
+        json.writeStringField("as", computeExpression.getAlias());
+        json.writeEndObject();
+      }
+      json.writeEndArray();
+      break;
+    case CONCAT:
+      json.writeFieldName("concat");
+      json.writeStartArray();
+      for (final ApplyOption option : ((Concat) item).getApplyOptions()) {
+        appendApplyItemsJson(json, option.getApplyItems());
+      }
+      json.writeEndArray();
+      break;
+    case CUSTOM_FUNCTION:
+      json.writeStringField("name",
+          ((CustomFunction) item).getFunction().getFullQualifiedName().getFullQualifiedNameAsString());
+      appendParameters(json, "parameters", ((CustomFunction) item).getParameters());
+      break;
+    case EXPAND:
+      appendCommonJsonObjects(json, null, null, null, null, null, null, ((Expand) item).getExpandOption(), null, null);
+      break;
+    case FILTER:
+      appendCommonJsonObjects(json, null, null, null, ((Filter) item).getFilterOption(), null, null, null, null, null);
+      break;
+    case GROUP_BY:
+      json.writeFieldName("groupBy");
+      appendGroupByItemsJson(json, ((GroupBy) item).getGroupByItems());
+      appendCommonJsonObjects(json, null, null, null, null, null, null, null, null, ((GroupBy) item).getApplyOption());
+      break;
+    case IDENTITY:
+      break;
+    case SEARCH:
+      appendCommonJsonObjects(json, null, null, null, null, null, null, null, ((Search) item).getSearchOption(), null);
+      break;
+    }
+
+    json.writeEndObject();
+  }
+
+  private void appendGroupByItemsJson(JsonGenerator json, final List<GroupByItem> groupByItems) throws IOException {
+    json.writeStartArray();
+    for (final GroupByItem groupByItem : groupByItems) {
+      json.writeStartObject();
+      if (!groupByItem.getPath().isEmpty()) {
+        json.writeFieldName("path");
+        appendURIResourceParts(json, groupByItem.getPath());
+      }
+      json.writeBooleanField("isRollupAll", groupByItem.isRollupAll());
+      if (!groupByItem.getRollup().isEmpty()) {
+        json.writeFieldName("rollup");
+        appendGroupByItemsJson(json, groupByItem.getRollup());
+      }
+      json.writeEndObject();
+    }
+    json.writeEndArray();
+  }
+
+  private void appendAggregateJson(JsonGenerator json, final Aggregate aggregate) throws IOException {
+    json.writeFieldName("aggregate");
+    appendAggregateExpressionsJson(json, aggregate.getExpressions());
+  }
+
+  private void appendAggregateExpressionsJson(JsonGenerator json, final List<AggregateExpression> aggregateExpressions)
+      throws IOException {
+    json.writeStartArray();
+    for (final AggregateExpression aggregateExpression : aggregateExpressions) {
+      appendAggregateExpressionJson(json, aggregateExpression);
+    }
+    json.writeEndArray();
+  }
+
+  private void appendAggregateExpressionJson(JsonGenerator json, final AggregateExpression aggregateExpression)
+      throws IOException {
+    if (aggregateExpression == null) {
+      json.writeNull();
+    } else {
+      json.writeStartObject();
+      if (!aggregateExpression.getPath().isEmpty()) {
+        json.writeFieldName("path");
+        appendURIResourceParts(json, aggregateExpression.getPath());
+      }
+      if (aggregateExpression.getExpression() != null) {
+        json.writeFieldName("expression");
+        appendExpressionJson(json, aggregateExpression.getExpression());
+      }
+      if (aggregateExpression.getStandardMethod() != null) {
+        json.writeStringField("standardMethod", aggregateExpression.getStandardMethod().name());
+      }
+      if (aggregateExpression.getCustomMethod() != null) {
+        json.writeStringField("customMethod", aggregateExpression.getCustomMethod().getFullQualifiedNameAsString());
+      }
+      if (aggregateExpression.getAlias() != null) {
+        json.writeStringField("as", aggregateExpression.getAlias());
+      }
+      if (aggregateExpression.getInlineAggregateExpression() != null) {
+        json.writeFieldName("inlineAggregateExpression");
+        appendAggregateExpressionJson(json, aggregateExpression.getInlineAggregateExpression());
+      }
+      if (!aggregateExpression.getFrom().isEmpty()) {
+        json.writeFieldName("from");
+        appendAggregateExpressionsJson(json, aggregateExpression.getFrom());
+      }
+      json.writeEndObject();
+    }
+  }
+
   @Override
   public void appendHtml(final Writer writer) throws IOException {
     // factory for JSON generators (the object mapper is necessary to write expression trees)
@@ -375,6 +523,15 @@ public class DebugTabUri implements DebugTab {
         writer.append("<li>").append(getSelectString(selectItem)).append("</li>\n");
       }
       writer.append("</ul>\n");
+    }
+
+    if (uriInfo.getApplyOption() != null) {
+      writer.append("<h2>Apply Option</h2>\n")
+          .append("<ul>\n<li class=\"json\">");
+      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
+      appendApplyItemsJson(json, uriInfo.getApplyOption().getApplyItems());
+      json.close();
+      writer.append("\n</li>\n</ul>\n");
     }
 
     if (uriInfo.getCountOption() != null

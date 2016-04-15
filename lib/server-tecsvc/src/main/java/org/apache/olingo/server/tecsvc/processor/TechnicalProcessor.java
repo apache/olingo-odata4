@@ -233,7 +233,7 @@ public abstract class TechnicalProcessor implements Processor {
   }
 
   protected void validateOptions(final UriInfoResource uriInfo) throws ODataApplicationException {
-    if (uriInfo.getIdOption() != null) {
+    if (uriInfo.getIdOption() != null || uriInfo.getApplyOption() != null) {
       throw new ODataApplicationException("Not all of the specified options are supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }

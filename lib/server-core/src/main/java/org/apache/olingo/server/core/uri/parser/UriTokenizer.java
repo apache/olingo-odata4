@@ -23,7 +23,8 @@ package org.apache.olingo.server.core.uri.parser;
  * <p>As far as feasible, it tries to work on character basis, assuming this to be faster than string operations.
  * Since only the index is "moved", backing out while parsing a token is easy and used throughout.
  * There is intentionally no method to push back tokens (although it would be easy to add such a method)
- * because this tokenizer should behave like a classical token-consuming tokenizer.</p>
+ * because this tokenizer should behave like a classical token-consuming tokenizer.
+ * There is, however, the possibility to save the current state and return to it later.</p>
  * <p>Whitespace is not an extra token but consumed with the tokens that require whitespace.
  * Optional whitespace is not supported.</p>
  */
@@ -40,6 +41,7 @@ public class UriTokenizer {
     ROOT,
     IT,
 
+    APPLY, // for the aggregation extension
     EXPAND,
     FILTER,
     LEVELS,
@@ -65,6 +67,13 @@ public class UriTokenizer {
 
     NULL,
     MAX,
+
+    AVERAGE, // for the aggregation extension
+    COUNTDISTINCT, // for the aggregation extension
+    IDENTITY, // for the aggregation extension
+    MIN, // for the aggregation extension
+    SUM, // for the aggregation extension
+    ROLLUP_ALL, // for the aggregation extension
 
     // variable-value tokens (convention: mixed case)
     ODataIdentifier,
@@ -125,6 +134,10 @@ public class UriTokenizer {
     MinusOperator,
     NotOperator,
 
+    AsOperator, // for the aggregation extension
+    FromOperator, // for the aggregation extension
+    WithOperator, // for the aggregation extension
+
     CastMethod,
     CeilingMethod,
     ConcatMethod,
@@ -158,6 +171,23 @@ public class UriTokenizer {
     TrimMethod,
     YearMethod,
 
+    IsDefinedMethod, // for the aggregation extension
+
+    AggregateTrafo, // for the aggregation extension
+    BottomCountTrafo, // for the aggregation extension
+    BottomPercentTrafo, // for the aggregation extension
+    BottomSumTrafo, // for the aggregation extension
+    ComputeTrafo, // for the aggregation extension
+    ExpandTrafo, // for the aggregation extension
+    FilterTrafo, // for the aggregation extension
+    GroupByTrafo, // for the aggregation extension
+    SearchTrafo, // for the aggregation extension
+    TopCountTrafo, // for the aggregation extension
+    TopPercentTrafo, // for the aggregation extension
+    TopSumTrafo, // for the aggregation extension
+
+    RollUpSpec, // for the aggregation extension
+
     AscSuffix,
     DescSuffix
   }
@@ -167,8 +197,29 @@ public class UriTokenizer {
   private int startIndex = 0;
   private int index = 0;
 
+  private int savedStartIndex;
+  private int savedIndex;
+
   public UriTokenizer(final String parseString) {
     this.parseString = parseString == null ? "" : parseString;
+  }
+
+  /**
+   * Save the current state.
+   * @see #returnToSavedState()
+   */
+  public void saveState() {
+    savedStartIndex = startIndex;
+    savedIndex = index;
+  }
+
+  /**
+   * Return to the previously saved state.
+   * @see #saveState()
+   */
+  public void returnToSavedState() {
+    startIndex = savedStartIndex;
+    index = savedIndex;
   }
 
   /** Returns the string value corresponding to the last successful {@link #next(TokenKind)} call. */
@@ -218,6 +269,9 @@ public class UriTokenizer {
       found = nextConstant("$it");
       break;
 
+    case APPLY:
+      found = nextConstant("$apply");
+      break;
     case EXPAND:
       found = nextConstant("$expand");
       break;
@@ -286,6 +340,26 @@ public class UriTokenizer {
       break;
     case MAX:
       found = nextConstant("max");
+      break;
+
+    case AVERAGE:
+      found = nextConstant("average");
+      break;
+    case COUNTDISTINCT:
+      found = nextConstant("countdistinct");
+      break;
+    case IDENTITY:
+      found = nextConstant("identity");
+      break;
+    case MIN:
+      found = nextConstant("min");
+      break;
+    case SUM:
+      found = nextConstant("sum");
+      break;
+
+    case ROLLUP_ALL:
+      found = nextConstant("$all");
       break;
 
     // Identifiers
@@ -456,6 +530,17 @@ public class UriTokenizer {
       found = nextUnaryOperator("not");
       break;
 
+    // Operators for the aggregation extension
+    case AsOperator:
+      found = nextBinaryOperator("as");
+      break;
+    case FromOperator:
+      found = nextBinaryOperator("from");
+      break;
+    case WithOperator:
+      found = nextBinaryOperator("with");
+      break;
+
     // Methods
     case CastMethod:
       found = nextMethod("cast");
@@ -552,6 +637,54 @@ public class UriTokenizer {
       break;
     case YearMethod:
       found = nextMethod("year");
+      break;
+
+    // Method for the aggregation extension
+    case IsDefinedMethod:
+      found = nextMethod("isdefined");
+      break;
+
+    // Transformations for the aggregation extension
+    case AggregateTrafo:
+      found = nextMethod("aggregate");
+      break;
+    case BottomCountTrafo:
+      found = nextMethod("bottomcount");
+      break;
+    case BottomPercentTrafo:
+      found = nextMethod("bottompercent");
+      break;
+    case BottomSumTrafo:
+      found = nextMethod("bottomsum");
+      break;
+    case ComputeTrafo:
+      found = nextMethod("compute");
+      break;
+    case ExpandTrafo:
+      found = nextMethod("expand");
+      break;
+    case FilterTrafo:
+      found = nextMethod("filter");
+      break;
+    case GroupByTrafo:
+      found = nextMethod("groupby");
+      break;
+    case SearchTrafo:
+      found = nextMethod("search");
+      break;
+    case TopCountTrafo:
+      found = nextMethod("topcount");
+      break;
+    case TopPercentTrafo:
+      found = nextMethod("toppercent");
+      break;
+    case TopSumTrafo:
+      found = nextMethod("topsum");
+      break;
+
+    // Roll-up specification for the aggregation extension
+    case RollUpSpec:
+      found = nextMethod("rollup");
       break;
 
     // Suffixes

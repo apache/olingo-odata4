@@ -20,6 +20,7 @@ package org.apache.olingo.server.api.uri;
 
 import java.util.List;
 
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -98,6 +99,11 @@ public interface UriInfoResource {
    * @return Object containing information of the $top option
    */
   TopOption getTopOption();
+
+  /**
+   * @return information about the $apply option
+   */
+  ApplyOption getApplyOption();
 
   /**
    * The path segments behind the service root define which resources are

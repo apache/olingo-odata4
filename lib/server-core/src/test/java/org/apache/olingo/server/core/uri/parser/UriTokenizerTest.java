@@ -97,6 +97,18 @@ public class UriTokenizerTest {
   }
 
   @Test
+  public void saveState() {
+    UriTokenizer tokenizer = new UriTokenizer("a*");
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    tokenizer.saveState();
+    assertTrue(tokenizer.next(TokenKind.STAR));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+    tokenizer.returnToSavedState();
+    assertTrue(tokenizer.next(TokenKind.STAR));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+  }
+
+  @Test
   public void systemQueryOptions() {
     UriTokenizer tokenizer = new UriTokenizer("$expand=*;$filter=true;$levels=max;$orderby=false");
     assertTrue(tokenizer.next(TokenKind.EXPAND));
@@ -640,6 +652,64 @@ public class UriTokenizerTest {
         .next(TokenKind.GeographyCollection));
 
     wrongToken(TokenKind.GeometryCollection, "geometry'SRID=0;Collection(Point(1 2),Point(3 4))'", 'x');
+  }
+
+  @Test
+  public void aggregation() {
+    UriTokenizer tokenizer = new UriTokenizer("$apply=aggregate(a with sum as s from x with average)");
+    assertTrue(tokenizer.next(TokenKind.APPLY));
+    assertTrue(tokenizer.next(TokenKind.EQ));
+    assertTrue(tokenizer.next(TokenKind.AggregateTrafo));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.WithOperator));
+    assertTrue(tokenizer.next(TokenKind.SUM));
+    assertTrue(tokenizer.next(TokenKind.AsOperator));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.FromOperator));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.WithOperator));
+    assertTrue(tokenizer.next(TokenKind.AVERAGE));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    tokenizer = new UriTokenizer("a with min as m");
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.WithOperator));
+    assertTrue(tokenizer.next(TokenKind.MIN));
+
+    tokenizer = new UriTokenizer("a with countdistinct as c");
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.WithOperator));
+    assertTrue(tokenizer.next(TokenKind.COUNTDISTINCT));
+
+    assertTrue(new UriTokenizer("identity").next(TokenKind.IDENTITY));
+    assertTrue(new UriTokenizer("bottomcount(1,x)").next(TokenKind.BottomCountTrafo));
+    assertTrue(new UriTokenizer("bottompercent(1,x)").next(TokenKind.BottomPercentTrafo));
+    assertTrue(new UriTokenizer("bottomsum(1,x)").next(TokenKind.BottomSumTrafo));
+    assertTrue(new UriTokenizer("topcount(1,x)").next(TokenKind.TopCountTrafo));
+    assertTrue(new UriTokenizer("toppercent(1,x)").next(TokenKind.TopPercentTrafo));
+    assertTrue(new UriTokenizer("topsum(1,x)").next(TokenKind.TopSumTrafo));
+    assertTrue(new UriTokenizer("compute(a mul b as m)").next(TokenKind.ComputeTrafo));
+
+    assertTrue(new UriTokenizer("search(a)").next(TokenKind.SearchTrafo));
+    assertTrue(new UriTokenizer("expand(a)").next(TokenKind.ExpandTrafo));
+    assertTrue(new UriTokenizer("filter(true)").next(TokenKind.FilterTrafo));
+
+    tokenizer = new UriTokenizer("groupby((rollup($all,x,y)))");
+    assertTrue(tokenizer.next(TokenKind.GroupByTrafo));
+    assertTrue(tokenizer.next(TokenKind.OPEN));
+    assertTrue(tokenizer.next(TokenKind.RollUpSpec));
+    assertTrue(tokenizer.next(TokenKind.ROLLUP_ALL));
+    assertTrue(tokenizer.next(TokenKind.COMMA));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.COMMA));
+    assertTrue(tokenizer.next(TokenKind.ODataIdentifier));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.CLOSE));
+    assertTrue(tokenizer.next(TokenKind.EOF));
+
+    assertTrue(new UriTokenizer("isdefined(x)").next(TokenKind.IsDefinedMethod));
   }
 
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {

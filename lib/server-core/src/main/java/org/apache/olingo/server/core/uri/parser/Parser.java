@@ -38,6 +38,8 @@ import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
@@ -53,6 +55,7 @@ import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.ApplyOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
@@ -206,6 +209,8 @@ public class Parser {
     }
 
     // Post-process system query options that need context information from the resource path.
+    parseApplyOption(contextUriInfo.getApplyOption(), contextType,
+        contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
     parseFilterOption(contextUriInfo.getFilterOption(), contextType,
         contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
     parseOrderByOption(contextUriInfo.getOrderByOption(), contextType,
@@ -226,7 +231,7 @@ public class Parser {
         throw new UriParserSyntaxException("Unknown system query option!",
             UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
       }
-      final SystemQueryOptionImpl systemOption;
+      SystemQueryOptionImpl systemOption;
       switch (kind) {
       case SEARCH:
         SearchOption searchOption = new SearchParser().parse(optionValue);
@@ -293,6 +298,9 @@ public class Parser {
       case LEVELS:
         throw new UriParserSyntaxException("System query option '$levels' is allowed only inside '$expand'!",
             UriParserSyntaxException.MessageKeys.SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE);
+      case APPLY:
+        systemOption = new ApplyOptionImpl();
+        break;
       default:
           throw new UriParserSyntaxException("System query option '" + kind + "' is not known!",
               UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION, optionName);
@@ -344,8 +352,8 @@ public class Parser {
   }
 
   private void parseExpandOption(ExpandOption expandOption, final EdmType contextType, final boolean isAll,
-      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases) throws UriParserException,
-      UriValidationException {
+      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases)
+      throws UriParserException, UriValidationException {
     if (expandOption != null) {
       if (!(contextType instanceof EdmStructuredType || isAll
       || (entitySetNames != null && !entitySetNames.isEmpty()))) {
@@ -374,6 +382,23 @@ public class Parser {
               contextIsCollection)
               .getSelectItems());
       checkOptionEOF(selectTokenizer, selectOption.getName(), optionValue);
+    }
+  }
+
+  private void parseApplyOption(ApplyOption applyOption, final EdmType contextType,
+      final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases)
+      throws UriParserException, UriValidationException {
+    if (applyOption != null) {
+      final String optionValue = applyOption.getText();
+      UriTokenizer applyTokenizer = new UriTokenizer(optionValue);
+      final ApplyOption option = new ApplyParser(edm, odata).parse(applyTokenizer,
+          contextType instanceof EdmStructuredType ? (EdmStructuredType) contextType : null,
+          entitySetNames,
+          aliases);
+      checkOptionEOF(applyTokenizer, applyOption.getName(), optionValue);
+      for (final ApplyItem item : option.getApplyItems()) {
+        ((ApplyOptionImpl) applyOption).add(item);
+      }
     }
   }
 

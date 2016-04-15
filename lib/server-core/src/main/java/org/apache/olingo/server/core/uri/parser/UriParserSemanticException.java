@@ -67,9 +67,15 @@ public class UriParserSemanticException extends UriParserException {
     COMPLEX_PARAMETER_IN_RESOURCE_PATH,
     /** parameters: left type, right type */
     TYPES_NOT_COMPATIBLE,
-    /** parameter: addressed resource name*/
-    NOT_A_MEDIA_RESOURCE;
-    
+    /** parameter: addressed resource name */
+    NOT_A_MEDIA_RESOURCE,
+    /** parameters: property name */
+    IS_PROPERTY,
+    /** parameter: expression */
+    ONLY_FOR_PRIMITIVE_TYPES,
+    /** parameter: function name */
+    FUNCTION_MUST_USE_COLLECTIONS;
+
     @Override
     public String getKey() {
       return name();

@@ -129,31 +129,28 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   public JsonNode visitMember(final Member member)
       throws ExpressionVisitException, ODataApplicationException {
     final List<UriResource> uriResourceParts = member.getResourcePath().getUriResourceParts();
+    final UriResource lastSegment = uriResourceParts.get(uriResourceParts.size() - 1);
     ObjectNode result = nodeFactory.objectNode()
         .put(NODE_TYPE_NAME, MEMBER_NAME)
-        .put(TYPE_NAME, getType(uriResourceParts));
+        .put(TYPE_NAME, getType(lastSegment));
     ArrayNode segments = result.putArray(RESOURCE_SEGMENTS_NAME);
-    if (uriResourceParts != null) {
-      for (final UriResource segment : uriResourceParts) {
-        if (segment instanceof UriResourceLambdaAll) {
-          final UriResourceLambdaAll all = (UriResourceLambdaAll) segment;
-          segments.add(visitLambdaExpression(ALL_NAME, all.getLambdaVariable(), all.getExpression()));
-        } else if (segment instanceof UriResourceLambdaAny) {
-          final UriResourceLambdaAny any = (UriResourceLambdaAny) segment;
-          segments.add(visitLambdaExpression(ANY_NAME, any.getLambdaVariable(), any.getExpression()));
-        } else if (segment instanceof UriResourcePartTyped) {
-          final String typeName = ((UriResourcePartTyped) segment).getType()
-              .getFullQualifiedName().getFullQualifiedNameAsString();
-          segments.add(nodeFactory.objectNode()
-              .put(NODE_TYPE_NAME, segment.getKind().toString())
-              .put(NAME_NAME, segment.toString())
-              .put(TYPE_NAME, typeName));
-        } else {
-          segments.add(nodeFactory.objectNode()
-              .put(NODE_TYPE_NAME, segment.getKind().toString())
-              .put(NAME_NAME, segment.toString())
-              .putNull(TYPE_NAME));
-        }
+    for (final UriResource segment : uriResourceParts) {
+      if (segment instanceof UriResourceLambdaAll) {
+        final UriResourceLambdaAll all = (UriResourceLambdaAll) segment;
+        segments.add(visitLambdaExpression(ALL_NAME, all.getLambdaVariable(), all.getExpression()));
+      } else if (segment instanceof UriResourceLambdaAny) {
+        final UriResourceLambdaAny any = (UriResourceLambdaAny) segment;
+        segments.add(visitLambdaExpression(ANY_NAME, any.getLambdaVariable(), any.getExpression()));
+      } else if (segment instanceof UriResourcePartTyped) {
+        segments.add(nodeFactory.objectNode()
+            .put(NODE_TYPE_NAME, segment.getKind().toString())
+            .put(NAME_NAME, segment.toString())
+            .put(TYPE_NAME, getType(segment)));
+      } else {
+        segments.add(nodeFactory.objectNode()
+            .put(NODE_TYPE_NAME, segment.getKind().toString())
+            .put(NAME_NAME, segment.toString())
+            .putNull(TYPE_NAME));
       }
     }
     return result;
@@ -287,15 +284,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     return type == null ? null : type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
 
-  private String getType(final List<UriResource> uriResourceParts) {
-    if (uriResourceParts == null || uriResourceParts.isEmpty()) {
-      return null;
-    }
-    final UriResource lastSegment = uriResourceParts.get(uriResourceParts.size() - 1);
-    final EdmType type = lastSegment instanceof UriResourcePartTyped ?
-        ((UriResourcePartTyped) lastSegment).getType() :
-          null;
-        return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
+  private String getType(final UriResource segment) {
+    final EdmType type = segment instanceof UriResourcePartTyped ? ((UriResourcePartTyped) segment).getType() : null;
+    return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
   }
-
 }

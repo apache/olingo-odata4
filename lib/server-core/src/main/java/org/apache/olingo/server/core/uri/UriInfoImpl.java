@@ -38,6 +38,7 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriInfoService;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -144,11 +145,6 @@ public class UriInfoImpl implements UriInfo {
     return this;
   }
 
-  public UriInfoImpl removeResourcePart(final int index) {
-    pathParts.remove(index);
-    return this;
-  }
-
   public UriResource getLastResourcePart() {
     return lastResourcePart;
   }
@@ -195,6 +191,7 @@ public class UriInfoImpl implements UriInfo {
     case SKIPTOKEN:
     case TOP:
     case LEVELS:
+    case APPLY:
       systemQueryOptions.put(systemQueryOptionKind, systemOption);
       break;
     default:
@@ -256,6 +253,11 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public TopOption getTopOption() {
     return (TopOption) systemQueryOptions.get(SystemQueryOptionKind.TOP);
+  }
+
+  @Override
+  public ApplyOption getApplyOption() {
+    return (ApplyOption) systemQueryOptions.get(SystemQueryOptionKind.APPLY);
   }
 
   @Override
