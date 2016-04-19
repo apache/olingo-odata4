@@ -36,6 +36,7 @@
 
   <properties>
     <cobertura.skip>true</cobertura.skip>
+    <sonar.skip>true</sonar.skip>
     <!-- exclude proxy tests by default -->
     <exclude.regex>.*proxy.*</exclude.regex>
   </properties>
