@@ -32,7 +32,7 @@ import myservice.mynamespace.service.DemoEntityCollectionProcessor;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
 import org.apache.olingo.server.api.ServiceMetadata;
-import org.apache.olingo.server.api.edmx.EdmxReference;
+import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
