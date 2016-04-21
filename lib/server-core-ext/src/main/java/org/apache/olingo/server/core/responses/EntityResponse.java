@@ -129,7 +129,9 @@ public class EntityResponse extends ServiceResponse {
         .getContent());
     writeCreated(false);
     writeHeader(HttpHeader.LOCATION, locationHeader);
-    writeHeader("Preference-Applied", "return=representation"); //$NON-NLS-1$ //$NON-NLS-2$
+    if (this.returnRepresentation != ReturnRepresentation.NONE) {
+      writeHeader("Preference-Applied", "return=representation"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
     writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.toContentTypeString());
     close();
   }
