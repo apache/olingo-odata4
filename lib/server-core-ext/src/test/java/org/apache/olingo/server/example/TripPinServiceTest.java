@@ -163,6 +163,15 @@ public class TripPinServiceTest {
   }
 
   @Test
+  public void testErrorResponse() throws Exception {
+    HttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
+    Header[] headers = response.getHeaders("Content-Type");
+    assertEquals("application/json; odata.metadata=minimal", headers[0].getValue());
+    assertEquals("{\"error\":{\"code\":null,\"message\":\"The key value '' is invalid.\"}}", 
+        IOUtils.toString(response.getEntity().getContent()));
+  }
+  
+  @Test
   public void testReadEntityWithNonExistingKey() throws Exception {
     HttpResponse response = httpGET(baseURL + "/Airlines('OO')", 404);
     EntityUtils.consumeQuietly(response.getEntity());

@@ -49,7 +49,7 @@ public class ErrorResponse extends ServiceResponse {
 
   public void writeError(ODataServerError error) {
     try {
-      writeHeader(HttpHeader.CONTENT_TYPE, this.contentType.getType());
+      writeHeader(HttpHeader.CONTENT_TYPE, this.contentType.toContentTypeString());
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
       writeServerError(true);
