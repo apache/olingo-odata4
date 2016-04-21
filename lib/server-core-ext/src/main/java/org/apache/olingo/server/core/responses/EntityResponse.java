@@ -114,13 +114,10 @@ public class EntityResponse extends ServiceResponse {
     // Note that if media written just like Stream, but on entity URL
 
     // 8.2.8.7
-    if (this.returnRepresentation == ReturnRepresentation.MINIMAL || 
-        this.returnRepresentation == ReturnRepresentation.NONE) {
+    if (this.returnRepresentation == ReturnRepresentation.MINIMAL) {
       writeNoContent(false);
       writeHeader(HttpHeader.LOCATION, locationHeader);
-      if (this.returnRepresentation == ReturnRepresentation.MINIMAL) {
-        writeHeader("Preference-Applied", "return=minimal"); //$NON-NLS-1$ //$NON-NLS-2$
-      }
+      writeHeader("Preference-Applied", "return=minimal"); //$NON-NLS-1$ //$NON-NLS-2$
       // 8.3.3
       writeHeader("OData-EntityId", entity.getId().toASCIIString()); //$NON-NLS-1$
       close();
@@ -162,7 +159,7 @@ public class EntityResponse extends ServiceResponse {
   
   public void writeError(ODataServerError error) {
     try {
-      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.getType());
+      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.toContentTypeString());
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
       writeServerError(true);

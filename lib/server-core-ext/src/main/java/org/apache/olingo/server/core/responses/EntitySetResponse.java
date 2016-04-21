@@ -85,7 +85,7 @@ public class EntitySetResponse extends ServiceResponse {
   
   public void writeError(ODataServerError error) {
     try {
-      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.getType());
+      writeHeader(HttpHeader.CONTENT_TYPE, this.responseContentType.toContentTypeString());
       writeContent(this.serializer.error(error).getContent(), error.getStatusCode(), true);
     } catch (SerializerException e) {
       writeServerError(true);
