@@ -57,6 +57,11 @@ public class XMLMetadataRequestImpl
     if (getIfNoneMatch() != null) {
       rootReq.setIfNoneMatch(getIfNoneMatch());
     }
+    if (getHeader() != null) {
+      for (String key : getHeaderNames()) {
+        rootReq.addCustomHeader(key, odataHeaders.getHeader(key));
+      }
+    }
     final ODataRetrieveResponse<XMLMetadata> rootRes = rootReq.execute();
 
     if (rootRes.getStatusCode() != HttpStatusCode.OK.getStatusCode()) {
@@ -98,9 +103,9 @@ public class XMLMetadataRequestImpl
             // (Qualifier was either not provided or matches)
             if ((StringUtils.isBlank(include.getTargetNamespace())
                 || include.getTargetNamespace().equals(
-                StringUtils.substringBeforeLast(annotationGroup.getTarget(), ".")))
+                    StringUtils.substringBeforeLast(annotationGroup.getTarget(), ".")))
                 && (StringUtils.isBlank(include.getQualifier())
-                || include.getQualifier().equals(annotationGroup.getQualifier()))) {
+                    || include.getQualifier().equals(annotationGroup.getQualifier()))) {
 
               final CsdlAnnotations toBeIncluded = new CsdlAnnotations();
               toBeIncluded.setTarget(annotationGroup.getTarget());
