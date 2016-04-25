@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
@@ -54,6 +55,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 public abstract class AbstractODataRequest extends AbstractRequest implements ODataRequest {
 
   protected final ODataClient odataClient;
+  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
   /**
    * OData request method.
@@ -220,7 +222,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       final StringBuilder requestBuilder = new StringBuilder();
       requestBuilder.append(getMethod().toString()).append(' ').append(uri.toString()).append(' ').append("HTTP/1.1");
 
-      baos.write(requestBuilder.toString().getBytes());
+      baos.write(requestBuilder.toString().getBytes(DEFAULT_CHARSET));
 
       baos.write(ODataStreamer.CRLF);
 

@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.communication.request.streamed;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
@@ -54,6 +55,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * OData payload stream manager.
    */
   protected ODataPayloadManager<V> payloadManager;
+  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
   /**
    * Wrapper for actual streamed request's future. This holds information about the HTTP request / response currently
@@ -150,7 +152,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
 
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {
-        req.rawAppend((ODataBatchConstants.CHANGESET_CONTENT_ID_NAME + ": " + contentId).getBytes());
+        req.rawAppend((ODataBatchConstants.CHANGESET_CONTENT_ID_NAME + ": " + contentId).getBytes(DEFAULT_CHARSET));
         req.rawAppend(ODataStreamer.CRLF);
       }
       req.rawAppend(ODataStreamer.CRLF);
