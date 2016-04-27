@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -33,6 +33,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
@@ -173,9 +174,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getAccept() {
     final String acceptHead = odataHeaders.getHeader(HttpHeader.ACCEPT);
-    return StringUtils.isBlank(acceptHead) ?
-        getDefaultFormat().toContentTypeString() :
-        acceptHead;
+    return StringUtils.isBlank(acceptHead) ? getDefaultFormat().toContentTypeString() : acceptHead;
   }
 
   @Override
@@ -196,9 +195,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public String getContentType() {
     final String contentTypeHead = odataHeaders.getHeader(HttpHeader.CONTENT_TYPE);
-    return StringUtils.isBlank(contentTypeHead) ?
-        getDefaultFormat().toContentTypeString() :
-        contentTypeHead;
+    return StringUtils.isBlank(contentTypeHead) ? getDefaultFormat().toContentTypeString() : contentTypeHead;
   }
 
   @Override
@@ -257,9 +254,11 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       final HttpEntity httpEntity = doExecute().getEntity();
       return httpEntity == null ? null : httpEntity.getContent();
     } catch (IOException e) {
+      HttpClientUtils.closeQuietly(httpClient);
       throw new HttpClientException(e);
     } catch (RuntimeException e) {
       this.request.abort();
+      HttpClientUtils.closeQuietly(httpClient);
       throw new HttpClientException(e);
     }
   }
@@ -330,7 +329,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       if (ODataResponse.class.isAssignableFrom(clazz)) {
         try {
           final Constructor<?> constructor = clazz.getDeclaredConstructor(
-                  this.getClass(), ODataClient.class, HttpClient.class, HttpResponse.class);
+              this.getClass(), ODataClient.class, HttpClient.class, HttpResponse.class);
           constructor.setAccessible(true);
           return (V) constructor.newInstance(this, odataClient, httpClient, null);
         } catch (Exception e) {

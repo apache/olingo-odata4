@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -34,6 +34,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -74,7 +75,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Response headers.
    */
   protected final Map<String, Collection<String>> headers =
-          new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+      new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
 
   /**
    * Response code.
@@ -102,7 +103,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   protected ODataBatchController batchInfo = null;
 
   public AbstractODataResponse(
-          final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
+      final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
 
     this.odataClient = odataClient;
     this.httpClient = httpclient;
@@ -149,13 +150,14 @@ public abstract class AbstractODataResponse implements ODataResponse {
     try {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
     } catch (final IllegalStateException e) {
+      HttpClientUtils.closeQuietly(res);
       LOG.error("Error retrieving payload", e);
       throw new ODataRuntimeException(e);
     } catch (final IOException e) {
+      HttpClientUtils.closeQuietly(res);
       LOG.error("Error retrieving payload", e);
       throw new ODataRuntimeException(e);
     }
-
     for (Header header : res.getAllHeaders()) {
       final Collection<String> headerValues;
       if (headers.containsKey(header.getName())) {
@@ -177,10 +179,10 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   @Override
   public ODataResponse initFromBatch(
-          final Map.Entry<Integer, String> responseLine,
-          final Map<String, Collection<String>> headers,
-          final ODataBatchLineIterator batchLineIterator,
-          final String boundary) {
+      final Map.Entry<Integer, String> responseLine,
+      final Map<String, Collection<String>> headers,
+      final ODataBatchLineIterator batchLineIterator,
+      final String boundary) {
 
     if (hasBeenInitialized) {
       throw new IllegalStateException("Request already initialized");
@@ -204,7 +206,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
       }
 
       final ODataBatchLineIteratorImpl batchLineIterator =
-              new ODataBatchLineIteratorImpl(IOUtils.lineIterator(part, Constants.UTF8));
+          new ODataBatchLineIteratorImpl(IOUtils.lineIterator(part, Constants.UTF8));
 
       final Map.Entry<Integer, String> partResponseLine = ODataBatchUtilities.readResponseLine(batchLineIterator);
       LOG.debug("Retrieved async item response {}", partResponseLine);

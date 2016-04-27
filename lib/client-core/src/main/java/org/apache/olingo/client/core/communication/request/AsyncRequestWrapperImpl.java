@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -29,6 +29,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -47,7 +48,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 
 public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRequest
-        implements AsyncRequestWrapper<R> {
+    implements AsyncRequestWrapper<R> {
 
   protected static final int MAX_RETRY = 5;
 
@@ -94,8 +95,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(method, this.uri);
 
-    if(request instanceof HttpEntityEnclosingRequestBase) {
-      if(odataRequest instanceof AbstractODataBasicRequest) {
+    if (request instanceof HttpEntityEnclosingRequestBase) {
+      if (odataRequest instanceof AbstractODataBasicRequest) {
         AbstractODataBasicRequest<?> br = (AbstractODataBasicRequest<?>) odataRequest;
         HttpEntityEnclosingRequestBase httpRequest = ((HttpEntityEnclosingRequestBase) request);
         httpRequest.setEntity(new InputStreamEntity(br.getPayload(), -1));
@@ -150,8 +151,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     protected boolean preferenceApplied = false;
 
-    public AsyncResponseWrapperImpl() {
-    }
+    public AsyncResponseWrapperImpl() {}
 
     /**
      * Constructor.
@@ -229,8 +229,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     @Override
     public AsyncResponseWrapper<ODataDeleteResponse> asyncDelete() {
-      return odataClient.getAsyncRequestFactory().<ODataDeleteResponse>getAsyncRequestWrapper(
-              odataClient.getCUDRequestFactory().getDeleteRequest(location)).execute();
+      return odataClient.getAsyncRequestFactory().<ODataDeleteResponse> getAsyncRequestWrapper(
+          odataClient.getCUDRequestFactory().getDeleteRequest(location)).execute();
     }
 
     @Override
@@ -244,10 +244,11 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     private R instantiateResponse(final HttpResponse res) {
       R odataResponse;
       try {
-        odataResponse = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().
-                initFromEnclosedPart(res.getEntity().getContent());
+        odataResponse = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().initFromEnclosedPart(res
+            .getEntity().getContent());
 
       } catch (Exception e) {
+        HttpClientUtils.closeQuietly(res);
         LOG.error("Error instantiating odata response", e);
         odataResponse = null;
       }
@@ -261,7 +262,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
         this.location = URI.create(headers[0].getValue());
       } else {
         throw new AsyncRequestException(
-                "Invalid async request response. Monitor URL '" + headers[0].getValue() + "'");
+            "Invalid async request response. Monitor URL '" + headers[0].getValue() + "'");
       }
 
       headers = res.getHeaders(HttpHeader.RETRY_AFTER);
@@ -290,8 +291,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       throw new AsyncRequestException("Invalid async request response. Missing monitor URL");
     }
 
-    final HttpUriRequest monitor = odataClient.getConfiguration().getHttpUriRequestFactory().
-            create(HttpMethod.GET, location);
+    final HttpUriRequest monitor = odataClient.getConfiguration().getHttpUriRequestFactory().create(HttpMethod.GET,
+        location);
 
     return executeHttpRequest(httpClient, monitor);
   }
