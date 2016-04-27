@@ -94,6 +94,8 @@ public class AtomDeserializer implements ODataDeserializer {
   private final AtomGeoValueDeserializer geoDeserializer;
 
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
+    FACTORY.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
+    FACTORY.setProperty("javax.xml.stream.isReplacingEntityReferences", false);
     return FACTORY.createXMLEventReader(input);
   }
 
