@@ -110,7 +110,7 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
           bindingTarget = entityContainer.getSingleton(edmTarget.getTargetName());
 
           if (bindingTarget == null) {
-            throw new EdmException("Cannot find Singleton " + edmTarget.getTargetName());
+            throw new EdmException("Cannot find Singleton " + edmTarget.getTargetName(), e);
           }
         } finally {
           found = bindingTarget != null;
