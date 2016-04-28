@@ -33,8 +33,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.DecompressingHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -250,15 +250,16 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
   @Override
   public InputStream rawExecute() {
+     HttpEntity httpEntity = null;
     try {
-      final HttpEntity httpEntity = doExecute().getEntity();
+       httpEntity = doExecute().getEntity();
       return httpEntity == null ? null : httpEntity.getContent();
     } catch (IOException e) {
-      HttpClientUtils.closeQuietly(httpClient);
+      EntityUtils.consumeQuietly(httpEntity);
       throw new HttpClientException(e);
     } catch (RuntimeException e) {
       this.request.abort();
-      HttpClientUtils.closeQuietly(httpClient);
+      EntityUtils.consumeQuietly(httpEntity);
       throw new HttpClientException(e);
     }
   }

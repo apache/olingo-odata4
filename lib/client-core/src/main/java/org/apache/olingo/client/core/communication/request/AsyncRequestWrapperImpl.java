@@ -246,13 +246,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       try {
         odataResponse = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().initFromEnclosedPart(res
             .getEntity().getContent());
-
       } catch (Exception e) {
-        HttpClientUtils.closeQuietly(res);
         LOG.error("Error instantiating odata response", e);
         odataResponse = null;
+      } finally {
+        HttpClientUtils.closeQuietly(res);
       }
-
       return odataResponse;
     }
 
