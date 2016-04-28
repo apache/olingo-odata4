@@ -116,7 +116,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     newLine();
 
     // stream batch-boundary
-    stream(("--" + boundary).getBytes());
+    stream(("--" + boundary).getBytes(DEFAULT_CHARSET));
     newLine();
 
     // stream the request

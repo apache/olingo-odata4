@@ -235,7 +235,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
         final String value = getHeader(name);
 
         if (StringUtils.isNotBlank(value)) {
-          baos.write((name + ": " + value).getBytes());
+          baos.write((name + ": " + value).getBytes(DEFAULT_CHARSET));
           baos.write(ODataStreamer.CRLF);
         }
       }

@@ -87,7 +87,7 @@ public abstract class AbstractODataBatchRequestItem extends AbstractODataStreame
     // stream batch content type
     stream(ODataBatchConstants.ITEM_CONTENT_TYPE_LINE.getBytes(DEFAULT_CHARSET));
     newLine();
-    stream(ODataBatchConstants.ITEM_TRANSFER_ENCODING_LINE.getBytes());
+    stream(ODataBatchConstants.ITEM_TRANSFER_ENCODING_LINE.getBytes(DEFAULT_CHARSET));
     newLine();
     stream((ODataBatchConstants.CHANGESET_CONTENT_ID_NAME + ":" + contentId).getBytes());
     newLine();
@@ -103,7 +103,7 @@ public abstract class AbstractODataBatchRequestItem extends AbstractODataStreame
     // stream batch content type
     stream(ODataBatchConstants.ITEM_CONTENT_TYPE_LINE.getBytes(DEFAULT_CHARSET));
     newLine();
-    stream(ODataBatchConstants.ITEM_TRANSFER_ENCODING_LINE.getBytes());
+    stream(ODataBatchConstants.ITEM_TRANSFER_ENCODING_LINE.getBytes(DEFAULT_CHARSET));
     newLine();
     newLine();
 
