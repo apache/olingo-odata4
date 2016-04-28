@@ -44,17 +44,11 @@ public class BatchParser {
 
   private List<BatchRequestPart> parse(final InputStream in, final String boundary,
       final BatchRequestTransformator transformator)
-          throws BatchDeserializerException {
+      throws BatchDeserializerException {
     try {
       return parseBatch(in, boundary, transformator);
     } catch (IOException e) {
       throw new ODataRuntimeException(e);
-    } finally {
-      try {
-        in.close();
-      } catch (IOException e) {
-        throw new ODataRuntimeException(e);
-      }
     }
   }
 
@@ -72,7 +66,7 @@ public class BatchParser {
   }
 
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary) throws IOException,
-  BatchDeserializerException {
+      BatchDeserializerException {
     final BatchLineReader reader = new BatchLineReader(in);
     final List<Line> message = reader.toLineList();
     reader.close();

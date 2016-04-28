@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class HeaderTest {
   }
 
   @Test
-  public void deepCopy() {
+  public void deepCopy() throws Exception {
     Header header = new Header(1);
     header.addHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=123", 1);
 
@@ -97,6 +98,21 @@ public class HeaderTest {
 
     assertTrue(header.getHeaders(HttpHeader.CONTENT_TYPE) != copy.getHeaders(HttpHeader.CONTENT_TYPE));
     assertTrue(header.getHeaderField(HttpHeader.CONTENT_TYPE) != copy.getHeaderField(HttpHeader.CONTENT_TYPE));
+  }
+
+  @Test
+  public void deepCopyHeaderField() throws Exception {
+    List<String> values = new ArrayList<String>();
+    values.add("abc");
+    values.add("def");
+    HeaderField field = new HeaderField("name", values, 17);
+
+    HeaderField clone = field.clone();
+    assertEquals(field.getFieldName(), clone.getFieldName());
+    assertEquals(field.getLineNumber(), clone.getLineNumber());
+    assertEquals(field.getValues(), clone.getValues());
+
+    assertTrue(field.getValues() != clone.getValues());
   }
 
   @Test

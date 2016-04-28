@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.debug;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 
 public class ServerCoreDebugger {
 
+  private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
   private final List<RuntimeMeasurement> runtimeInformation = new ArrayList<RuntimeMeasurement>();
   private final OData odata;
 
@@ -82,7 +84,8 @@ public class ServerCoreDebugger {
     ODataResponse odResponse = new ODataResponse();
     odResponse.setStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode());
     odResponse.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
-    InputStream content = new ByteArrayInputStream("ODataLibrary: Could not assemble debug response.".getBytes());
+    InputStream content = new ByteArrayInputStream("ODataLibrary: Could not assemble debug response."
+        .getBytes(DEFAULT_ENCODING));
     odResponse.setContent(content);
     return odResponse;
   }

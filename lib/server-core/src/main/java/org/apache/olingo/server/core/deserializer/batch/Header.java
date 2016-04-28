@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Header implements Iterable<HeaderField>, Cloneable {
-  private final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
+  private Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
   private int lineNumber;
 
   public Header(final int lineNumer) {
@@ -111,7 +111,6 @@ public class Header implements Iterable<HeaderField>, Cloneable {
 
   private HeaderField getHeaderFieldOrDefault(final String name, final int lineNumber) {
     HeaderField headerField = headers.get(name.toLowerCase(Locale.ENGLISH));
-
     if (headerField == null) {
       headerField = new HeaderField(name, lineNumber);
       headers.put(name.toLowerCase(Locale.ENGLISH), headerField);
@@ -121,14 +120,15 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   }
 
   @Override
-  public Header clone() {
-    final Header newInstance = new Header(lineNumber);
-
+  public Header clone() throws CloneNotSupportedException{
+    Header clone = (Header) super.clone();
+    clone.lineNumber = lineNumber;
+    clone.headers = new HashMap<String, HeaderField>();
     for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
-      newInstance.headers.put(entries.getKey(), entries.getValue().clone());
+      clone.headers.put(entries.getKey(), entries.getValue().clone());
     }
 
-    return newInstance;
+    return clone;
   }
 
   @Override

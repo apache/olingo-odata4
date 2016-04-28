@@ -23,8 +23,8 @@ import java.util.List;
 
 public class HeaderField implements Cloneable {
   private final String fieldName;
-  private final List<String> values;
   private final int lineNumber;
+  private List<String> values;
 
   public HeaderField(final String fieldName, final int lineNumber) {
     this(fieldName, new ArrayList<String>(), lineNumber);
@@ -60,11 +60,11 @@ public class HeaderField implements Cloneable {
   }
 
   @Override
-  public HeaderField clone() {
-    List<String> newValues = new ArrayList<String>(values.size());
-    newValues.addAll(values);
-
-    return new HeaderField(fieldName, newValues, lineNumber);
+  public HeaderField clone() throws CloneNotSupportedException{
+    HeaderField clone = (HeaderField) super.clone();
+    clone.values = new ArrayList<String>(values.size());
+    clone.values.addAll(values);
+    return clone;
   }
 
   public int getLineNumber() {

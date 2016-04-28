@@ -110,19 +110,19 @@ public class BatchResponseSerializer {
 
   private void appendHeader(final String name, final String value, final BodyBuilder builder) {
     builder.append(name)
-    .append(COLON)
-    .append(SP)
-    .append(value)
-    .append(CRLF);
+        .append(COLON)
+        .append(SP)
+        .append(value)
+        .append(CRLF);
   }
 
   private void appendStatusLine(final ODataResponse response, final BodyBuilder builder) {
     builder.append("HTTP/1.1")
-    .append(SP)
-    .append(response.getStatusCode())
-    .append(SP)
-    .append(getStatusCodeInfo(response))
-    .append(CRLF);
+        .append(SP)
+        .append(response.getStatusCode())
+        .append(SP)
+        .append(getStatusCodeInfo(response))
+        .append(CRLF);
   }
 
   private String getStatusCodeInfo(final ODataResponse response) {
@@ -234,11 +234,11 @@ public class BatchResponseSerializer {
       content = getBody(response);
     }
 
-    public int getLength() {
+    private int getLength() {
       return content.length;
     }
 
-    public byte[] getContent() {
+    private byte[] getContent() {
       return content;
     }
 
