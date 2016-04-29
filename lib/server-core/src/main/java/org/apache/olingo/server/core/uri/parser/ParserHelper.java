@@ -537,7 +537,7 @@ public class ParserHelper {
       final EdmStructuredType referencedType) throws UriParserException {
     if (tokenizer.next(TokenKind.QualifiedName)) {
       final FullQualifiedName qualifiedName = new FullQualifiedName(tokenizer.getText());
-      final EdmStructuredType type = referencedType instanceof EdmEntityType ?
+      final EdmStructuredType type = referencedType.getKind() == EdmTypeKind.ENTITY ?
           edm.getEntityType(qualifiedName) :
           edm.getComplexType(qualifiedName);
       if (type == null) {

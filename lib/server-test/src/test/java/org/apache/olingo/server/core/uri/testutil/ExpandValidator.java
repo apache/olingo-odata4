@@ -21,19 +21,15 @@ package org.apache.olingo.server.core.uri.testutil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 
 public class ExpandValidator implements TestValidator {
   private Edm edm;
@@ -67,8 +63,8 @@ public class ExpandValidator implements TestValidator {
     return (ExpandValidator) invokedByValidator;
   }
 
-  public ResourceValidator goUpToUriResourceValidator() {
-    return (ResourceValidator) invokedByValidator;
+  public TestUriValidator goUpToUriValidator() {
+    return (TestUriValidator) invokedByValidator;
   }
 
   public ResourceValidator goPath() {
@@ -93,6 +89,13 @@ public class ExpandValidator implements TestValidator {
         .setUpValidator(this)
         .setEdm(edm)
         .setUriInfoPath(item.getResourcePath());
+  }
+
+  public FilterValidator goFilter() {
+    return new FilterValidator()
+        .setEdm(edm)
+        .setFilter(expandItem.getFilterOption())
+        .setValidator(this);
   }
 
   public ExpandValidator goExpand() {
@@ -159,23 +162,6 @@ public class ExpandValidator implements TestValidator {
     SelectOption select = expandItem.getSelectOption();
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
-    return this;
-  }
-
-  public ExpandValidator isFilterSerialized(final String serialized) {
-    FilterOption filter = expandItem.getFilterOption();
-
-    try {
-      String tmp = FilterTreeToText.Serialize(filter);
-      assertEquals(serialized, tmp);
-    } catch (ExpressionVisitException e) {
-      fail("Exception occurred while converting the filterTree into text" + "\n"
-          + " Exception: " + e.getMessage());
-    } catch (ODataApplicationException e) {
-      fail("Exception occurred while converting the filterTree into text" + "\n"
-          + " Exception: " + e.getMessage());
-    }
-
     return this;
   }
 

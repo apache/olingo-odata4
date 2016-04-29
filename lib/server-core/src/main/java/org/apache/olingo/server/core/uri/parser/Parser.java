@@ -68,6 +68,7 @@ import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SystemQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.apply.DynamicStructuredType;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class Parser {
@@ -209,6 +210,10 @@ public class Parser {
     }
 
     // Post-process system query options that need context information from the resource path.
+    if (contextType instanceof EdmStructuredType && contextUriInfo.getApplyOption() != null) {
+      // Data aggregation may change the structure of the result.
+      contextType = new DynamicStructuredType((EdmStructuredType) contextType);
+    }
     parseApplyOption(contextUriInfo.getApplyOption(), contextType,
         contextUriInfo.getEntitySetNames(), contextUriInfo.getAliasMap());
     parseFilterOption(contextUriInfo.getFilterOption(), contextType,
@@ -385,7 +390,7 @@ public class Parser {
     }
   }
 
-  private void parseApplyOption(ApplyOption applyOption, final EdmType contextType,
+  private void parseApplyOption(ApplyOption applyOption, EdmType contextType,
       final List<String> entitySetNames, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     if (applyOption != null) {

@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.uri.testutil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -59,14 +60,12 @@ public class TestUriValidator implements TestValidator {
 
   // Execution
   public TestUriValidator run(final String path) throws UriParserException, UriValidationException {
-    return run(path, null);
+    return run(path, null, null);
   }
 
   public TestUriValidator run(final String path, final String query)
       throws UriParserException, UriValidationException {
-    uriInfo = new Parser(edm, odata).parseUri(path, query, null);
-    new UriValidator().validate(uriInfo, HttpMethod.GET);
-    return this;
+    return run(path, query, null);
   }
 
   public TestUriValidator run(final String path, final String query, final String fragment)
@@ -83,8 +82,7 @@ public class TestUriValidator implements TestValidator {
   public TestUriValidator runEx(final String path, final String query) {
     uriInfo = null;
     try {
-      uriInfo = new Parser(edm, odata).parseUri(path, query, null);
-      new UriValidator().validate(uriInfo, HttpMethod.GET);
+      run(path, query, null);
       fail("Exception expected");
     } catch (UriParserException e) {
       exception = e;
@@ -96,10 +94,12 @@ public class TestUriValidator implements TestValidator {
 
   // Navigation
   public ResourceValidator goPath() {
-    if (uriInfo.getKind() != UriInfoKind.resource) {
-      fail("invalid resource kind: " + uriInfo.getKind().toString());
-    }
-
+    assertNotNull(uriInfo);
+    assertNotNull(uriInfo.getKind());
+    assertTrue("invalid resource kind: " + uriInfo.getKind().toString(),
+        uriInfo.getKind() == UriInfoKind.resource
+        || uriInfo.getKind() == UriInfoKind.all
+        || uriInfo.getKind() == UriInfoKind.crossjoin);
     return new ResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
@@ -108,23 +108,19 @@ public class TestUriValidator implements TestValidator {
 
   public FilterValidator goFilter() {
     final FilterOption filter = uriInfo.getFilterOption();
-    if (filter == null) {
-      fail("no filter found");
-    }
-    return new FilterValidator().setUriValidator(this).setFilter(filter);
+    assertNotNull("no filter found", filter);
+    return new FilterValidator().setValidator(this).setFilter(filter);
   }
 
   public ExpandValidator goExpand() {
     final ExpandOption expand = uriInfo.getExpandOption();
-    if (expand == null) {
-      fail("invalid resource kind: " + uriInfo.getKind().toString());
-    }
-
+    assertNotNull("no expand found", expand);
     return new ExpandValidator().setUpValidator(this).setExpand(expand);
   }
 
   public ResourceValidator goSelectItemPath(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
+    assertNotNull("no select found", select);
     SelectItem item = select.getSelectItems().get(index);
     return new ResourceValidator()
         .setUpValidator(this)
@@ -134,6 +130,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectStartType(final int index, final FullQualifiedName fullName) {
     final SelectOption select = uriInfo.getSelectOption();
+    assertNotNull("no select found", select);
     SelectItem item = select.getSelectItems().get(index);
     EdmType actualType = item.getStartTypeFilter();
     assertEquals(fullName, actualType.getFullQualifiedName());
@@ -142,6 +139,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectItemStar(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
+    assertNotNull("no select found", select);
     SelectItem item = select.getSelectItems().get(index);
     assertTrue(item.isStar());
     return this;
@@ -149,6 +147,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     final SelectOption select = uriInfo.getSelectOption();
+    assertNotNull("no select found", select);
     SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
     return this;
@@ -156,19 +155,53 @@ public class TestUriValidator implements TestValidator {
 
   // Validation
   public TestUriValidator isKind(final UriInfoKind kind) {
-    assertEquals(kind, uriInfo.getKind());
+    assertNotNull(uriInfo);
+    assertNotNull(uriInfo.getKind());
+    assertEquals("invalid resource kind: " + uriInfo.getKind().toString(), kind, uriInfo.getKind());
+    return this;
+  }
+
+  public TestUriValidator isFormatText(final String text) {
+    assertEquals(text, uriInfo.getFormatOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isTopText(final String topText) {
+    assertEquals(topText, uriInfo.getTopOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isInlineCountText(final String inlineCountText) {
+    assertEquals(inlineCountText, uriInfo.getCountOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isSkipText(final String skipText) {
+    assertEquals(skipText, uriInfo.getSkipOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isSkipTokenText(final String skipTokenText) {
+    assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isSearchSerialized(final String serialized) {
+    assertNotNull("no search found", uriInfo.getSearchOption());
+    assertEquals(serialized, uriInfo.getSearchOption().getSearchExpression().toString());
+    return this;
+  }
+
+  public TestUriValidator isInAliasToValueMap(final String alias, final String value) {
+    assertEquals(value, uriInfo.getValueForAlias(alias));
     return this;
   }
 
   public TestUriValidator isCustomParameter(final int index, final String name, final String value) {
-    if (uriInfo == null) {
-      fail("hasQueryParameter: uriInfo == null");
-    }
+    assertNotNull(uriInfo);
 
-    List<CustomQueryOption> list = uriInfo.getCustomQueryOptions();
-    if (list.size() <= index) {
-      fail("not enough queryParameters");
-    }
+    final List<CustomQueryOption> list = uriInfo.getCustomQueryOptions();
+    assertTrue("not enough queryParameters", list.size() > index);
 
     CustomQueryOption option = list.get(index);
     assertEquals(name, option.getName());
@@ -176,16 +209,27 @@ public class TestUriValidator implements TestValidator {
     return this;
   }
 
-  public void isCrossJoinEntityList(final List<String> entitySets) {
-    if (uriInfo.getKind() != UriInfoKind.crossjoin) {
-      fail("invalid resource kind: " + uriInfo.getKind().toString());
-    }
+  public TestUriValidator isCrossJoinEntityList(final List<String> entitySets) {
+    isKind(UriInfoKind.crossjoin);
+    assertEquals(entitySets, uriInfo.getEntitySetNames());
+    return this;
+  }
 
-    int i = 0;
-    for (String entitySet : entitySets) {
-      assertEquals(entitySet, uriInfo.getEntitySetNames().get(i));
-      i++;
-    }
+  public TestUriValidator isEntityType(final FullQualifiedName fullName) {
+    isKind(UriInfoKind.entityId);
+    assertEquals(fullName, uriInfo.getEntityTypeCast().getFullQualifiedName());
+    return this;
+  }
+
+  public TestUriValidator isIdText(final String text) {
+    assertEquals(text, uriInfo.getIdOption().getText());
+    return this;
+  }
+
+  public TestUriValidator isFragmentText(final String text) {
+    isKind(UriInfoKind.metadata);
+    assertEquals(text, uriInfo.getFragment());
+    return this;
   }
 
   public TestUriValidator isExceptionMessage(final ODataLibraryException.MessageKey messageKey) {
@@ -195,51 +239,16 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isExSyntax(final UriParserSyntaxException.MessageKeys messageKey) {
     assertEquals(UriParserSyntaxException.class, exception.getClass());
-    assertEquals(messageKey, exception.getMessageKey());
-    return this;
+    return isExceptionMessage(messageKey);
   }
 
   public TestUriValidator isExSemantic(final UriParserSemanticException.MessageKeys messageKey) {
     assertEquals(UriParserSemanticException.class, exception.getClass());
-    assertEquals(messageKey, exception.getMessageKey());
-    return this;
+    return isExceptionMessage(messageKey);
   }
 
   public TestUriValidator isExValidation(final UriValidationException.MessageKeys messageKey) {
     assertEquals(UriValidationException.class, exception.getClass());
-    assertEquals(messageKey, exception.getMessageKey());
-    return this;
-  }
-
-  public TestUriValidator isIdText(final String text) {
-    assertEquals(text, uriInfo.getIdOption().getText());
-    return this;
-  }
-
-  public TestUriValidator isFormatText(final String text) {
-    assertEquals(text, uriInfo.getFormatOption().getText());
-    return this;
-  }
-
-  public TestUriValidator isFragmentText(final String text) {
-    if (uriInfo.getKind() != UriInfoKind.metadata) {
-      fail("invalid resource kind: " + uriInfo.getKind().toString());
-    }
-
-    assertEquals(text, uriInfo.getFragment());
-    return this;
-  }
-
-  public TestUriValidator isEntityType(final FullQualifiedName fullName) {
-    if (uriInfo.getKind() != UriInfoKind.entityId) {
-      fail("invalid resource kind: " + uriInfo.getKind().toString());
-    }
-
-    assertEquals(fullName, uriInfo.getEntityTypeCast().getFullQualifiedName());
-    return this;
-  }
-  
-  public UriInfo getUriInfoRoot() {
-    return uriInfo;
+    return isExceptionMessage(messageKey);
   }
 }

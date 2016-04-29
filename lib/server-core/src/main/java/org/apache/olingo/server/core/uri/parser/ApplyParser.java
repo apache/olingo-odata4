@@ -40,7 +40,6 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
-import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
@@ -63,6 +62,7 @@ import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceCountImpl;
 import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
+import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.queryoption.ApplyOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
@@ -122,16 +122,14 @@ public class ApplyParser {
     this.odata = odata;
   }
 
-  public ApplyOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType,
+  public ApplyOption parse(UriTokenizer tokenizer, EdmStructuredType referencedType,
       final Collection<String> crossjoinEntitySetNames, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
     this.tokenizer = tokenizer;
     this.crossjoinEntitySetNames = crossjoinEntitySetNames;
     this.aliases = aliases;
 
-    // TODO: Check when to create a new dynamic type and how it can be returned.
-    DynamicStructuredType type = new DynamicStructuredType(referencedType);
-    return parseApply(type);
+    return parseApply(referencedType);
   }
 
   private ApplyOption parseApply(EdmStructuredType referencedType)
@@ -325,21 +323,19 @@ public class ApplyParser {
     return name == null ? null : new DynamicProperty(name, type);
   }
 
-  private Compute parseComputeTrafo(final EdmStructuredType referencedType)
+  private Compute parseComputeTrafo(EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     ComputeImpl compute = new ComputeImpl();
-    // TODO: Check when to create a new dynamic type and how it can be returned.
-    DynamicStructuredType type = new DynamicStructuredType(referencedType);
     do {
       final Expression expression = new ExpressionParser(edm, odata)
-          .parse(tokenizer, type, crossjoinEntitySetNames, aliases);
+          .parse(tokenizer, referencedType, crossjoinEntitySetNames, aliases);
       final EdmType expressionType = ExpressionParser.getType(expression);
       if (expressionType.getKind() != EdmTypeKind.PRIMITIVE) {
         throw new UriParserSemanticException("Compute expressions must return primitive values.",
             UriParserSemanticException.MessageKeys.ONLY_FOR_PRIMITIVE_TYPES, "compute");
       }
-      final String alias = parseAsAlias(type, true);
-      type.addProperty(createDynamicProperty(alias, expressionType));
+      final String alias = parseAsAlias(referencedType, true);
+      ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, expressionType));
       compute.addExpression(new ComputeExpressionImpl()
           .setExpression(expression)
           .setAlias(alias));
@@ -348,10 +344,12 @@ public class ApplyParser {
     return compute;
   }
 
-  private Concat parseConcatTrafo(final EdmStructuredType referencedType)
+  private Concat parseConcatTrafo(EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     ConcatImpl concat = new ConcatImpl();
-    // TODO: Check when to create a new dynamic type and how it can be returned.
+    // A common type is used for all sub-transformations.
+    // If one sub-transformation aggregates properties away,
+    // this could have unintended consequences for subsequent sub-transformations.
     concat.addApplyOption(parseApply(referencedType));
     ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
     do {
@@ -453,15 +451,6 @@ public class ApplyParser {
                   .getType().getFullQualifiedName().getFullQualifiedNameAsString() :
               "");
     }
-    if (uriInfo.getLastResourcePart() != null
-        && uriInfo.getLastResourcePart().getKind() == UriResourceKind.navigationProperty) {
-      if (tokenizer.next(TokenKind.SLASH)) {
-        UriResourceNavigationPropertyImpl lastPart = (UriResourceNavigationPropertyImpl) uriInfo.getLastResourcePart();
-        final EdmStructuredType typeCast = ParserHelper.parseTypeCast(tokenizer, edm,
-            (EdmStructuredType) lastPart.getType());
-        lastPart.setCollectionTypeFilter(typeCast);
-      }
-    }
     return uriInfo;
   }
 
@@ -473,6 +462,7 @@ public class ApplyParser {
       throws UriParserException {
     final EdmStructuredType typeCast = ParserHelper.parseTypeCast(tokenizer, edm, referencedType);
     if (typeCast != null) {
+      uriInfo.addResourcePart(new UriResourceStartingTypeFilterImpl(typeCast, true));
       ParserHelper.requireNext(tokenizer, TokenKind.SLASH);
     }
     EdmStructuredType type = typeCast == null ? referencedType : typeCast;

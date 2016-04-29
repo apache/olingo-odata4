@@ -54,6 +54,7 @@ import org.apache.olingo.server.api.uri.queryoption.apply.Search;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
+import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.ExpandValidator;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
@@ -75,6 +76,13 @@ public class ApplyParserTest {
       new EdmTechProvider(), Collections.<EdmxReference> emptyList()).getEdm();
 
   @Test
+  public void basic() throws Exception {
+    parseEx("ESTwoKeyNav", "").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    parseEx("ESAllPrim(0)/PropertyInt16", "identity")
+        .isExValidation(UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED);
+  }
+
+  @Test
   public void aggregate() throws Exception {
     parse("ESTwoKeyNav", "aggregate(PropertyInt16 with sum as s)")
         .is(Aggregate.class)
@@ -91,6 +99,9 @@ public class ApplyParserTest {
     parse("ESTwoKeyNav", "aggregate(PropertyInt16 with custom.aggregate as c)")
         .is(Aggregate.class)
         .goAggregate(0).isCustomMethod(new FullQualifiedName("custom", "aggregate")).isAlias("c");
+    parse("ESTwoKeyNav", "aggregate(PropertyInt16 with min as min,PropertyInt16 with max as max)")
+        .goAggregate(0).isStandardMethod(StandardMethod.MIN).isAlias("min").goUp()
+        .goAggregate(1).isStandardMethod(StandardMethod.MAX).isAlias("max");
 
     parseEx("ESTwoKeyNav", "aggregate()")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
@@ -103,6 +114,8 @@ public class ApplyParserTest {
     parseEx("ESTwoKeyNav", "aggregate(PropertyInt16 with SUM as s)")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     parseEx("ESTwoKeyNav", "aggregate(PropertyString with countdistinct as PropertyInt16)")
+        .isExSemantic(UriParserSemanticException.MessageKeys.IS_PROPERTY);
+    parseEx("ESTwoKeyNav", "aggregate(PropertyInt16 with min as m,PropertyInt16 with max as m)")
         .isExSemantic(UriParserSemanticException.MessageKeys.IS_PROPERTY);
   }
 
@@ -163,6 +176,9 @@ public class ApplyParserTest {
   @Test
   public void identity() throws Exception {
     parse("ESTwoKeyNav", "identity").is(Identity.class);
+
+    parseEx("ESTwoKeyNav", "identity()")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
   }
 
   @Test
@@ -189,6 +205,8 @@ public class ApplyParserTest {
         .goConcat(0).goBottomTop().isMethod(Method.TOP_COUNT)
         .goUp().goUp()
         .goConcat(1).goBottomTop().isMethod(Method.BOTTOM_COUNT).goNumber().isLiteral("2");
+
+    parseEx("ESTwoKeyNav", "concat(identity)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -196,20 +214,26 @@ public class ApplyParserTest {
     parse("ESTwoKeyNav", "expand(NavPropertyETKeyNavMany,filter(PropertyInt16 gt 2))")
         .is(Expand.class).goExpand()
         .goPath().first().isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true)
-        .goUpExpandValidator().isFilterSerialized("<<PropertyInt16> gt <2>>");
+        .goUpExpandValidator().goFilter().is("<<PropertyInt16> gt <2>>");
     parse("ESTwoKeyNav",
         "expand(NavPropertyETKeyNavMany,expand(NavPropertyETTwoKeyNavMany,filter(PropertyInt16 gt 2)))")
-        .is(Expand.class).goExpand().goExpand().isFilterSerialized("<<PropertyInt16> gt <2>>");
+        .is(Expand.class).goExpand().goExpand().goFilter().is("<<PropertyInt16> gt <2>>");
     parse("ESTwoKeyNav",
         "expand(NavPropertyETKeyNavMany,expand(NavPropertyETTwoKeyNavMany,filter(PropertyInt16 gt 2)),"
         + "expand(NavPropertyETTwoKeyNavOne,expand(NavPropertyETKeyNavMany)))")
         .is(Expand.class).goExpand().goExpand().next().goExpand()
         .goPath().first().isNavProperty("NavPropertyETKeyNavMany", EntityTypeProvider.nameETKeyNav, true);
+
+    parseEx("ESTwoKeyNav", "expand()")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
   }
 
   @Test
   public void search() throws Exception {
     parse("ESTwoKeyNav", "search(String)").isSearch("'String'");
+
+    parseEx("ESTwoKeyNav", "search()")
+        .isExceptionMessage(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN);
   }
 
   @Test
@@ -218,6 +242,8 @@ public class ApplyParserTest {
         .is(Filter.class)
         .goFilter().isBinary(BinaryOperatorKind.GT)
         .left().isMember().goPath().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+
+    parseEx("ESTwoKeyNav", "filter()").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -274,6 +300,25 @@ public class ApplyParserTest {
     parse("ESTwoKeyNav",
         "groupby((NavPropertyETKeyNavOne/PropertyInt16,NavPropertyETKeyNavOne/PropertyString,PropertyString))")
         .goGroupBy(2).goPath().first().isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    parse("ESTwoKeyNav", "groupby((Namespace1_Alias.ETBaseTwoKeyNav/NavPropertyETBaseTwoKeyNavOne/PropertyInt16))")
+        .is(GroupBy.class)
+        .goGroupBy(0).goPath().first().isType(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .n().isNavProperty("NavPropertyETBaseTwoKeyNavOne", EntityTypeProvider.nameETBaseTwoKeyNav, false)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    parse("ESTwoKeyNav", "groupby((NavPropertyETTwoKeyNavOne/Namespace1_Alias.ETBaseTwoKeyNav/PropertyInt16))")
+        .is(GroupBy.class)
+        .goGroupBy(0).goPath()
+        .first().isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .n().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+
+    parseEx("ESTwoKeyNav", "groupby((wrongProperty))")
+        .isExSemantic(UriParserSemanticException.MessageKeys.EXPRESSION_PROPERTY_NOT_IN_TYPE);
+    parseEx("ESTwoKeyNav", "groupby((Namespace1_Alias.ETBaseTwoKeyNav))")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    parseEx("ESTwoKeyNav", "groupby((NavPropertyETTwoKeyNavOne/Namespace1_Alias.ETBaseTwoKeyNav))")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -311,6 +356,9 @@ public class ApplyParserTest {
         .goGroupByOption()
         .at(0).goBottomTop().isMethod(Method.TOP_COUNT)
         .goUp().at(1).goAggregate(0).isStandardMethod(StandardMethod.SUM);
+
+    parseEx("ESTwoKeyNav", "groupby((PropertyInt16),identity,identity)")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -332,6 +380,9 @@ public class ApplyParserTest {
         .goGroupBy(0).isRollupAll().goUp().goGroupByOption().goAggregate(0).goFrom(1)
         .isStandardMethod(StandardMethod.AVERAGE).goExpression().goPath().at(1)
         .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false);
+
+    parseEx("ESTwoKeyNav", "groupby((rollup($all)))")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
   @Test
@@ -420,6 +471,29 @@ public class ApplyParserTest {
         .at(0).is(Filter.class)
         .at(1).is(Expand.class)
         .at(2).is(GroupBy.class);
+
+    parseEx("ESTwoKeyNav", "identity/").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+
+  @Test
+  public void otherQueryOptions() throws Exception {
+    new TestUriValidator().setEdm(edm).run("ESTwoKeyNav",
+        "$apply=aggregate(PropertyInt16 with sum as s)&$filter=s gt 3&$select=s")
+        .goSelectItemPath(0).first().isPrimitiveProperty("s", PropertyProvider.nameDecimal, false)
+        .goUpUriValidator()
+        .goFilter().left().goPath().first().isPrimitiveProperty("s", PropertyProvider.nameDecimal, false);
+
+    new FilterValidator().setEdm(edm).runUriOrderBy("ESTwoKeyNav",
+        "$apply=aggregate(PropertyInt16 with sum as s)&$orderby=s")
+        .goOrder(0).goPath().first().isPrimitiveProperty("s", PropertyProvider.nameDecimal, false);
+  }
+
+  @Test
+  public void onCount() throws Exception {
+    parse("ESTwoKeyNav/$count", "aggregate(PropertyInt16 with sum as s)")
+        .goAggregate(0).isStandardMethod(StandardMethod.SUM).isAlias("s")
+        .goExpression().goPath().first()
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
   }
 
   private ApplyValidator parse(final String path, final String apply)

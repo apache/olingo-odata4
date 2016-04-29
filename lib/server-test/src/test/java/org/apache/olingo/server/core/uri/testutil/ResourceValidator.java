@@ -48,9 +48,6 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
-import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
-import org.apache.olingo.server.api.uri.queryoption.SelectItem;
-import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
@@ -79,19 +76,19 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator setUriInfoPath(final UriInfoResource uriInfoPath) {
     uriInfo = (UriInfo) uriInfoPath;
-    last();
+    if (!uriInfo.getUriResourceParts().isEmpty()) {
+      last();
+    }
     return this;
   }
 
   // --- Execution ---
 
   public ResourceValidator run(final String path) {
-    Parser testParser = new Parser(edm, odata);
-
     UriInfo uriInfoTmp = null;
     uriPathInfo = null;
     try {
-      uriInfoTmp = testParser.parseUri(path, null, null);
+      uriInfoTmp = new Parser(edm, odata).parseUri(path, null, null);
     } catch (final ODataLibraryException e) {
       fail("Exception occurred while parsing the URI: " + path + "\n"
           + " Message: " + e.getMessage());
@@ -104,10 +101,8 @@ public class ResourceValidator implements TestValidator {
           + " Message: " + e.getMessage());
     }
 
-    if (uriInfoTmp.getKind() != UriInfoKind.resource) {
-      fail("Invalid UriInfoKind: " + uriInfoTmp.getKind().toString());
-    }
     uriInfo = uriInfoTmp;
+    isKind(UriInfoKind.resource);
 
     first();
     return this;
@@ -132,43 +127,21 @@ public class ResourceValidator implements TestValidator {
     UriResourceFunction function = (UriResourceFunction) uriPathInfo;
 
     return new FilterValidator()
-    .setEdm(edm)
-    .setExpression(function.getParameters().get(index).getExpression())
-    .setValidator(this);
+        .setEdm(edm)
+        .setExpression(function.getParameters().get(index).getExpression())
+        .setValidator(this);
   }
 
   public FilterValidator goLambdaExpression() {
-    if (uriPathInfo.getKind() == UriResourceKind.lambdaAll) {
-      return new FilterValidator()
-      .setEdm(edm)
-      .setExpression(((UriResourceLambdaAll) uriPathInfo).getExpression());
-
-    } else if (uriPathInfo.getKind() == UriResourceKind.lambdaAny) {
-      return new FilterValidator()
-      .setEdm(edm)
-      .setExpression(((UriResourceLambdaAny) uriPathInfo).getExpression());
-    } else {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-    return null;
-  }
-
-  public ResourceValidator goSelectItem(final int index) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    return new ResourceValidator()
-        .setUpValidator(this)
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo.getKind() == UriResourceKind.lambdaAll
+        || uriPathInfo.getKind() == UriResourceKind.lambdaAny);
+    return new FilterValidator()
         .setEdm(edm)
-        .setUriInfoPath(item.getResourcePath());
-  }
-
-  public ExpandValidator goExpand() {
-    final ExpandOption expand = uriInfo.getExpandOption();
-    if (expand == null) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
-    return new ExpandValidator().setUpValidator(this).setExpand(expand);
+        .setExpression(uriPathInfo.getKind() == UriResourceKind.lambdaAll ?
+            ((UriResourceLambdaAll) uriPathInfo).getExpression() :
+            ((UriResourceLambdaAny) uriPathInfo).getExpression())
+        .setValidator(this);
   }
 
   public ResourceValidator first() {
@@ -176,15 +149,7 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator last() {
-    final List<UriResource> parts = uriInfo.getUriResourceParts();
-    if (parts.isEmpty()) {
-      uriResourceIndex = 0;
-      fail("not enough segments");
-    } else {
-      uriResourceIndex = parts.size() - 1;
-      uriPathInfo = parts.get(uriResourceIndex);
-    }
-    return this;
+    return at(uriInfo.getUriResourceParts().size() - 1);
   }
 
   public ResourceValidator n() {
@@ -193,11 +158,8 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator at(final int index) {
     uriResourceIndex = index;
-    if (index < uriInfo.getUriResourceParts().size()) {
-      uriPathInfo = uriInfo.getUriResourceParts().get(index);
-    } else {
-      fail("not enough segments");
-    }
+    assertTrue("not enough segments", index < uriInfo.getUriResourceParts().size());
+    uriPathInfo = uriInfo.getUriResourceParts().get(index);
     return this;
   }
 
@@ -231,26 +193,20 @@ public class ResourceValidator implements TestValidator {
       actualType = ((UriResourceSingleton) uriPathInfo).getEntityTypeFilter();
     }
 
-    if (actualType == null) {
-      fail("type information not set");
-    }
-
+    assertNotNull("type information not set", actualType);
     assertEquals(expectedType, actualType.getFullQualifiedName());
     return this;
   }
 
   public ResourceValidator isType(final FullQualifiedName type) {
-    if (!(uriPathInfo instanceof UriResourcePartTyped)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
+    assertTrue("invalid resource kind: "
+        + (uriPathInfo.getKind() == null ? "null" : uriPathInfo.getKind().toString()),
+        uriPathInfo instanceof UriResourcePartTyped);
     UriResourcePartTyped uriPathInfoTyped = (UriResourcePartTyped) uriPathInfo;
 
     EdmType actualType = uriPathInfoTyped.getType();
-    if (actualType == null) {
-      fail("type information not set");
-    }
+    assertNotNull("type information not set", actualType);
     assertEquals(type, actualType.getFullQualifiedName());
-
     return this;
   }
 
@@ -261,10 +217,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isTypeFilterOnEntry(final FullQualifiedName type) {
-    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceWithKeysImpl);
     UriResourceWithKeysImpl uriPathInfoKeyPred = (UriResourceWithKeysImpl) uriPathInfo;
 
     // input parameter type may be null in order to assert that the singleTypeFilter is not set
@@ -275,9 +229,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isTypeFilterOnCollection(final FullQualifiedName expectedType) {
-    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceWithKeysImpl);
     UriResourceWithKeysImpl uriPathInfoKeyPred = (UriResourceWithKeysImpl) uriPathInfo;
 
     // input parameter type may be null in order to assert that the collectionTypeFilter is not set
@@ -289,23 +242,19 @@ public class ResourceValidator implements TestValidator {
   }
 
   // other functions
-  public ResourceValidator isKeyPredicateRef(final int index, final String name, final String refencedProperty) {
-    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+  public ResourceValidator isKeyPredicateRef(final int index, final String name, final String referencedProperty) {
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceWithKeysImpl);
     UriResourceWithKeysImpl info = (UriResourceWithKeysImpl) uriPathInfo;
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
-    assertEquals(refencedProperty, keyPredicates.get(index).getReferencedProperty());
+    assertEquals(referencedProperty, keyPredicates.get(index).getReferencedProperty());
     return this;
   }
 
   public ResourceValidator isKeyPredicateAlias(final int index, final String name, final String alias) {
-    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceWithKeysImpl);
     UriResourceWithKeysImpl info = (UriResourceWithKeysImpl) uriPathInfo;
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
@@ -315,10 +264,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isKeyPredicate(final int index, final String name, final String text) {
-    if (!(uriPathInfo instanceof UriResourceWithKeysImpl)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceWithKeysImpl);
     UriResourceWithKeysImpl info = (UriResourceWithKeysImpl) uriPathInfo;
     List<UriParameter> keyPredicates = info.getKeyPredicates();
     assertEquals(name, keyPredicates.get(index).getName());
@@ -328,10 +275,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isParameter(final int index, final String name, final String text) {
-    if (!(uriPathInfo instanceof UriResourceFunction)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceFunction);
     UriResourceFunction info = (UriResourceFunction) uriPathInfo;
     List<UriParameter> keyPredicates = info.getParameters();
     assertEquals(name, keyPredicates.get(index).getName());
@@ -341,10 +286,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isParameterAlias(final int index, final String name, final String alias) {
-    if (!(uriPathInfo instanceof UriResourceFunction)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceFunction);
     UriResourceFunction info = (UriResourceFunction) uriPathInfo;
     List<UriParameter> keyPredicates = info.getParameters();
     assertEquals(name, keyPredicates.get(index).getName());
@@ -354,16 +297,15 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isKind(final UriInfoKind kind) {
-    assertEquals(kind, uriInfo.getKind());
+    assertEquals("Invalid UriInfoKind: " + uriInfo.getKind().toString(),
+        kind, uriInfo.getKind());
     return this;
   }
 
   public ResourceValidator isPrimitiveProperty(final String name,
       final FullQualifiedName type, final boolean isCollection) {
-    if (!(uriPathInfo instanceof UriResourcePrimitiveProperty)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourcePrimitiveProperty);
     UriResourcePrimitiveProperty uriPathInfoProp = (UriResourcePrimitiveProperty) uriPathInfo;
 
     EdmElement property = uriPathInfoProp.getProperty();
@@ -376,10 +318,8 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator isComplexProperty(final String name, final FullQualifiedName type,
       final boolean isCollection) {
-    if (!(uriPathInfo instanceof UriResourceComplexProperty)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceComplexProperty);
     UriResourceComplexProperty uriPathInfoProp = (UriResourceComplexProperty) uriPathInfo;
 
     EdmElement property = uriPathInfoProp.getProperty();
@@ -391,10 +331,8 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isNavProperty(final String name, final FullQualifiedName type, final boolean isCollection) {
-    if (!(uriPathInfo instanceof UriResourceNavigation)) {
-      fail("invalid resource kind: " + uriPathInfo.getKind().toString());
-    }
-
+    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
+        uriPathInfo instanceof UriResourceNavigation);
     UriResourceNavigation uriPathInfoProp = (UriResourceNavigation) uriPathInfo;
 
     EdmElement property = uriPathInfoProp.getProperty();
@@ -467,58 +405,5 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator isIt() {
     return isUriPathInfoKind(UriResourceKind.it);
-  }
-
-  public ResourceValidator isTopText(final String topText) {
-    assertEquals(topText, uriInfo.getTopOption().getText());
-    return this;
-  }
-
-  public ResourceValidator isFormatText(final String formatText) {
-    assertEquals(formatText, uriInfo.getFormatOption().getText());
-    return this;
-  }
-
-  public ResourceValidator isInlineCountText(final String inlineCountText) {
-    assertEquals(inlineCountText, uriInfo.getCountOption().getText());
-    return this;
-  }
-
-  public ResourceValidator isSkipText(final String skipText) {
-    assertEquals(skipText, uriInfo.getSkipOption().getText());
-    return this;
-  }
-
-  public ResourceValidator isSkipTokenText(final String skipTokenText) {
-    assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getText());
-    return this;
-  }
-
-  public ResourceValidator isSelectItemStar(final int index) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertTrue(item.isStar());
-    return this;
-  }
-
-  public ResourceValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
-    return this;
-  }
-
-  public ResourceValidator isSelectStartType(final int index, final FullQualifiedName fullName) {
-    final SelectOption select = uriInfo.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    EdmType actualType = item.getStartTypeFilter();
-    assertEquals(fullName, actualType.getFullQualifiedName());
-    return this;
-  }
-
-  public ResourceValidator isInAliasToValueMap(final String alias, final String value) {
-    String valueForAlias = uriInfo.getValueForAlias(alias);
-    assertEquals(value, valueForAlias);
-    return this;
   }
 }

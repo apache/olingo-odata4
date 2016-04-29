@@ -143,7 +143,7 @@ public class ParserTest {
     // test and verify
     testUri.setEdm(mockEdm)
         .run("Category", "$expand=Products")
-        .isKind(UriInfoKind.resource).goPath().goExpand()
+        .isKind(UriInfoKind.resource).goExpand()
         .first()
         .goPath().first()
         .isNavProperty("Products", nameProducts, false)
@@ -189,7 +189,7 @@ public class ParserTest {
       // test and verify
       testUri.setEdm(mockEdm)
           .run("Products", "$expand=Category")
-          .isKind(UriInfoKind.resource).goPath().goExpand()
+          .isKind(UriInfoKind.resource).goExpand()
           .first()
           .goPath().first()
           .isType(new FullQualifiedName("NS", "Category"), false);
