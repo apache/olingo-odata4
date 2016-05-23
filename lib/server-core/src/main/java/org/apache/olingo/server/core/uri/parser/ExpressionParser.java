@@ -339,8 +339,7 @@ public class ExpressionParser {
         return new AliasImpl(name,
             ParserHelper.parseAliasValue(name, null, true, true, edm, referringType, aliases));
       } else {
-        throw new UriValidationException("Alias '" + name + "' not found.",
-            UriValidationException.MessageKeys.MISSING_ALIAS, name);
+        return new AliasImpl(name, null);
       }
     }
 

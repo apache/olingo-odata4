@@ -5846,11 +5846,11 @@ public class TestFullResourcePath {
     testUri.runEx("ESAllPrim(PropertyInt16=@p1)", "@p1='ewe")
         .isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+        .isInAliasToValueMap("@alias", null);
     testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias&@alias=@alias")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+      .isInAliasToValueMap("@alias", "@alias");
     testFilter.runOnETKeyNavEx("@alias&@alias=@alias2&@alias2=true or @alias")
-        .isExValidation(UriValidationException.MessageKeys.MISSING_ALIAS);
+      .isInAliasToValueMap("@alias", "@alias2");
   }
 
   @Test
