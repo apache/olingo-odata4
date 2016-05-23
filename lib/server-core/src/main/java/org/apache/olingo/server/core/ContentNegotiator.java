@@ -41,6 +41,7 @@ public final class ContentNegotiator {
           ContentType.JSON,
           ContentType.JSON_NO_METADATA,
           ContentType.APPLICATION_JSON,
+          ContentType.JSON_FULL_METADATA,
           ContentType.APPLICATION_ATOM_XML,
           ContentType.APPLICATION_XML));
 

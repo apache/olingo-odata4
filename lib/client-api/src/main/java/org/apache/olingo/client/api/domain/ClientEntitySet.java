@@ -68,4 +68,19 @@ public interface ClientEntitySet extends ClientInvokeResult, ClientAnnotatable {
    * @param deltaLink delta link.
    */
   void setDeltaLink(URI deltaLink);
+  
+  /**
+   * Searches for operation with given title.
+   * 
+   * @param title operation to look for
+   * @return operation if found with given title, <tt>null</tt> otherwise
+   */
+  ClientOperation getOperation(String title);
+
+  /**
+   * Gets operations.
+   * 
+   * @return operations.
+   */
+  List<ClientOperation> getOperations();  
 }

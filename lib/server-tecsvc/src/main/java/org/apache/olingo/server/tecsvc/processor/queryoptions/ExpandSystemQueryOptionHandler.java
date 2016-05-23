@@ -196,7 +196,7 @@ public class ExpandSystemQueryOptionHandler {
     newEntitySet.setNext(entitySet.getNext());
     newEntitySet.setId(entitySet.getId());
     newEntitySet.setBaseURI(entitySet.getBaseURI());
-
+    newEntitySet.getOperations().addAll(entitySet.getOperations());
     return newEntitySet;
   }
 

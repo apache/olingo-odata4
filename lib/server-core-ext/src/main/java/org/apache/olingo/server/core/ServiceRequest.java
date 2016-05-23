@@ -220,14 +220,14 @@ public abstract class ServiceRequest {
     
     if (serilizerOptions.isAssignableFrom(EntitySerializerOptions.class)) {
       return (T) EntitySerializerOptions.with()
-          .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
+          .contextURL(contextUrl)
           .expand(uriInfo.getExpandOption()).select(this.uriInfo.getSelectOption())
           .writeOnlyReferences(references)
           .xml10InvalidCharReplacement(xmlReplacement)
           .build();
     } else if (serilizerOptions.isAssignableFrom(EntityCollectionSerializerOptions.class)) {
       return (T) EntityCollectionSerializerOptions.with()
-          .contextURL(isODataMetadataNone(getResponseContentType()) ? null : contextUrl)
+          .contextURL(contextUrl)
           .count(uriInfo.getCountOption()).expand(uriInfo.getExpandOption())
           .select(uriInfo.getSelectOption()).writeOnlyReferences(references)
           .id(getODataRequest().getRawBaseUri() + getODataRequest().getRawODataPath())
@@ -345,10 +345,5 @@ public abstract class ServiceRequest {
     dispatcher.visit(uriInfo);
     dispatcher.request.setUriInfo(uriInfo);
     return (DataRequest)dispatcher.request;
-  }
-  
-  private boolean isODataMetadataNone(final ContentType contentType) {
-    return contentType.isCompatible(ContentType.JSON) 
-        && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

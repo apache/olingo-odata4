@@ -21,6 +21,7 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 /**
@@ -69,6 +70,10 @@ public final class EdmStream extends SingletonPrimitiveType {
 
     if (returnType.isAssignableFrom(URI.class)) {
       return returnType.cast(stream);
+    } else if (returnType.isAssignableFrom(Link.class)) {
+      Link link = new Link();
+      link.setHref(value);
+      return returnType.cast(link);
     } else {
       throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
@@ -81,6 +86,8 @@ public final class EdmStream extends SingletonPrimitiveType {
 
     if (value instanceof URI) {
       return ((URI) value).toASCIIString();
+    } else if (value instanceof Link) {
+      return ((Link)value).getHref();
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }

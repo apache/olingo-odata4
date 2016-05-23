@@ -414,6 +414,14 @@ public class ODataBinderImpl implements ODataBinder {
     if (resource.getPayload().getCount() != null) {
       entitySet.setCount(resource.getPayload().getCount());
     }
+    
+    for (Operation op : resource.getPayload().getOperations()) {
+      ClientOperation operation = new ClientOperation();
+      operation.setTarget(URIUtils.getURI(base, op.getTarget()));
+      operation.setTitle(op.getTitle());
+      operation.setMetadataAnchor(op.getMetadataAnchor());
+      entitySet.getOperations().add(operation);
+    }    
 
     for (Entity entityResource : resource.getPayload().getEntities()) {
       add(entitySet, getODataEntity(
@@ -660,8 +668,13 @@ public class ODataBinderImpl implements ODataBinder {
     odataNavigationLinks(edmType, resource.getPayload(), entity, resource.getMetadataETag(), base);
 
     for (Link link : resource.getPayload().getMediaEditLinks()) {
-      entity.addLink(client.getObjectFactory().
-          newMediaEditLink(link.getTitle(), URIUtils.getURI(base, link.getHref())));
+      if (link.getRel().startsWith(Constants.NS_MEDIA_READ_LINK_REL)) {
+        entity.addLink(client.getObjectFactory().newMediaReadLink(link.getTitle(), 
+            URIUtils.getURI(base, link.getHref()), link.getType(), link.getMediaETag()));
+      } else {
+        entity.addLink(client.getObjectFactory().newMediaEditLink(link.getTitle(), 
+            URIUtils.getURI(base, link.getHref()), link.getType(), link.getMediaETag()));        
+      }
     }
 
     for (Operation op : resource.getPayload().getOperations()) {
@@ -735,7 +748,14 @@ public class ODataBinderImpl implements ODataBinder {
         getODataValue(typeInfo == null ? null : typeInfo.getFullQualifiedName(),
             payload, resource.getContextURL(), resource.getMetadataETag()));
     odataAnnotations(payload, property);
-
+    
+    for (Operation op : resource.getPayload().getOperations()) {
+      ClientOperation operation = new ClientOperation();
+      operation.setTarget(op.getTarget());
+      operation.setTitle(op.getTitle());
+      operation.setMetadataAnchor(op.getMetadataAnchor());
+      property.getOperations().add(operation);
+    }     
     return property;
   }
 

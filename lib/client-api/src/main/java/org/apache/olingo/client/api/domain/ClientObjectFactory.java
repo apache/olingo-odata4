@@ -105,8 +105,10 @@ public interface ClientObjectFactory {
 
   ClientLink newAssociationLink(String name, URI link);
 
-  ClientLink newMediaEditLink(String name, URI link);
-
+  ClientLink newMediaEditLink(String name, URI link, String type, String eTag);
+  
+  ClientLink newMediaReadLink(String name, URI link, String type, String eTag);
+  
   ClientPrimitiveValue.Builder newPrimitiveValueBuilder();
 
   ClientEnumValue newEnumValue(String typeName, String value);

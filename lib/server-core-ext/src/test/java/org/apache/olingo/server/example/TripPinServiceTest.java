@@ -163,6 +163,30 @@ public class TripPinServiceTest {
   }
 
   @Test
+  public void testReadEntityWithFullMetadata() throws Exception {
+    HttpResponse response = httpGET(
+        baseURL+ "/People('russellwhyte')?$format=application/json;odata.metadata=full",
+        200);
+    JsonNode node = getJSONNode(response);
+    assertEquals("#Collection(String)", node.get("Emails@odata.type").asText());
+    assertEquals("Microsoft.OData.SampleService.Models.TripPin.ShareTrip",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.ShareTrip").get("title").asText());
+    assertEquals("/People('russellwhyte')/Microsoft.OData.SampleService.Models.TripPin.ShareTrip",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.ShareTrip").get("target").asText());    
+
+    assertEquals("Microsoft.OData.SampleService.Models.TripPin.GetFavoriteAirline",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFavoriteAirline").get("title").asText());
+    assertEquals("/People('russellwhyte')/Microsoft.OData.SampleService.Models.TripPin.GetFavoriteAirline",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFavoriteAirline").get("target").asText());    
+
+    assertEquals("Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)").get("title").asText());
+    assertEquals("/People('russellwhyte')/Microsoft.OData."
+        + "SampleService.Models.TripPin.GetFriendsTrips(userName=@userName)",
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)").get("target").asText());
+  }
+  
+  @Test
   public void testErrorResponse() throws Exception {
     HttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
     Header[] headers = response.getHeaders("Content-Type");

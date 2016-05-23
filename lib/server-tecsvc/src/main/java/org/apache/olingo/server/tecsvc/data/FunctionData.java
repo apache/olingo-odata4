@@ -31,6 +31,7 @@ import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 
 public class FunctionData {
 
@@ -100,14 +101,17 @@ public class FunctionData {
       return data.get("ESCollAllPrim").getEntities().get(0).getProperty("CollPropertyString");
     } else if (name.equals("UFCRTCTTwoPrim")) {
       return DataCreator.createComplex(name,
+          ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
           DataCreator.createPrimitive("PropertyInt16", (short) 16),
           DataCreator.createPrimitive("PropertyString", "UFCRTCTTwoPrim string value"));
     } else if (name.equals("UFCRTCTTwoPrimParam")) {
       return DataCreator.createComplex(name,
+          ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
           DataCreator.createPrimitive("PropertyInt16", getParameterInt16(parameters)),
           DataCreator.createPrimitive("PropertyString", getParameterString(parameters)));
     } else if (name.equals("UFCRTCollCTTwoPrim")) {
       return DataCreator.createComplexCollection(name,
+          ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", (short) 16),
               DataCreator.createPrimitive("PropertyString", "Test123")),
           Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 17),
@@ -138,6 +142,7 @@ public class FunctionData {
       final String parameterString = getParameterString(parameters);
       if (parameterString == null) {
         return DataCreator.createComplexCollection(name,
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 1),
                 DataCreator.createPrimitive("PropertyString", name + " int16 value: " + parameterInt16)),
             Arrays.asList(DataCreator.createPrimitive("PropertyInt16", 2),

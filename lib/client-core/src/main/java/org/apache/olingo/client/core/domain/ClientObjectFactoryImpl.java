@@ -35,6 +35,7 @@ import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientSingleton;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class ClientObjectFactoryImpl implements ClientObjectFactory {
@@ -95,11 +96,20 @@ public class ClientObjectFactoryImpl implements ClientObjectFactory {
   }
 
   @Override
-  public ClientLink newMediaEditLink(final String name, final URI link) {
-    return new ClientLink.Builder().setURI(link).
-        setType(ClientLinkType.MEDIA_EDIT).setTitle(name).build();
+  public ClientLink newMediaEditLink(String name, URI link, String type, String eTag) {
+    return new ClientLink.Builder().setURI(link).setEtag(eTag).
+        setType(ClientLinkType.fromString(Constants.NS_MEDIA_EDIT_LINK_REL,
+            type == null ? Constants.MEDIA_EDIT_LINK_TYPE : type))
+        .setTitle(name).build();    
   }
-
+  
+  public ClientLink newMediaReadLink(String name, URI link, String type, String eTag) {
+    return new ClientLink.Builder().setURI(link).setEtag(eTag).
+        setType(ClientLinkType.fromString(Constants.NS_MEDIA_READ_LINK_REL,
+            type == null ? Constants.MEDIA_EDIT_LINK_TYPE : type))
+        .setTitle(name).build();    
+  }
+  
   @Override
   public ClientPrimitiveValue.Builder newPrimitiveValueBuilder() {
     return new ClientPrimitiveValueImpl.BuilderImpl();

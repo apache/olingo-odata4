@@ -26,6 +26,7 @@ import org.apache.olingo.client.api.domain.AbstractClientPayload;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.domain.ClientOperation;
 
 public class ClientEntitySetImpl extends AbstractClientPayload implements ClientEntitySet {
 
@@ -46,6 +47,8 @@ public class ClientEntitySetImpl extends AbstractClientPayload implements Client
   private final List<ClientEntity> entities = new ArrayList<ClientEntity>();
 
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  
+  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
 
   public ClientEntitySetImpl() {
     super(null);
@@ -92,6 +95,29 @@ public class ClientEntitySetImpl extends AbstractClientPayload implements Client
     return annotations;
   }
 
+  @Override
+  public ClientOperation getOperation(final String title) {
+    ClientOperation result = null;
+    for (ClientOperation operation : operations) {
+      if (title.equals(operation.getTitle())) {
+        result = operation;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Gets operations.
+   *
+   * @return operations.
+   */
+  @Override
+  public List<ClientOperation> getOperations() {
+    return operations;
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;

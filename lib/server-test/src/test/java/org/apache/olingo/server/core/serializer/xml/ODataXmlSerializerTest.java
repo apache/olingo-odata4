@@ -162,10 +162,170 @@ public class ODataXmlSerializerTest {
         "      </d:PropertyTimeOfDay>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "      title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "      target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>";
     checkXMLEqual(expected, resultString);
   }
 
+  @Test
+  public void entitySetSimple() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCollection = data.readAll(edmEntitySet);
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream result = serializer.entityCollection(metadata, edmEntitySet.getEntityType(), entityCollection,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "m:context=\"$metadata#ESAllPrim\" m:metadata-etag=\"metadataETag\">\n" + 
+        "   <m:action metadata=\"#olingo.odata.test1.BAESAllPrimRTETAllPrim\" "
+        + "title=\"olingo.odata.test1.BAESAllPrimRTETAllPrim\" "
+        + "target=\"ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim\" />\n" + 
+        "   <m:action metadata=\"#olingo.odata.test1.BAESAllPrimRT\" "
+        + "title=\"olingo.odata.test1.BAESAllPrimRT\" "
+        + "target=\"ESAllPrim/olingo.odata.test1.BAESAllPrimRT\" />\n" + 
+        "   <m:function metadata=\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
+        + "title=\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
+        + "target=\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" />\n" + 
+        "   <m:function metadata=\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2)\" "
+        + "title=\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
+        + "target=\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2=@Param2)\" />\n" + 
+        "   <a:entry>\n" + 
+        "      <a:id>ESAllPrim(32767)</a:id>\n" + 
+        "      <a:title />\n" + 
+        "      <a:summary />\n" + 
+        "      <a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" + 
+        "      <a:author>\n" + 
+        "         <a:name />\n" + 
+        "      </a:author>\n" + 
+        "      <a:link rel=\"edit\" href=\"ESAllPrim(32767)\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\" "
+        + "href=\"ESTwoPrim(32767)\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" "
+        + "href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\" />\n" + 
+        "      <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
+        "      <a:content type=\"application/xml\">\n" + 
+        "         <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
+        "            <d:PropertyString>First Resource - positive values</d:PropertyString>\n" + 
+        "            <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" + 
+        "            <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" + 
+        "            <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
+        "            <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" + 
+        "            <d:PropertyInt64 m:type=\"Int64\">9223372036854775807</d:PropertyInt64>\n" + 
+        "            <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" + 
+        "            <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" + 
+        "            <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" + 
+        "            <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=</d:PropertyBinary>\n" + 
+        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
+        "            <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2012-12-03T07:16:23Z"
+        + "</d:PropertyDateTimeOffset>\n" + 
+        "            <d:PropertyDuration m:type=\"Duration\">PT6S</d:PropertyDuration>\n" + 
+        "            <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef</d:PropertyGuid>\n" + 
+        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05</d:PropertyTimeOfDay>\n" + 
+        "         </m:properties>\n" + 
+        "      </a:content>\n" + 
+        "      <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "
+        + "title=\"olingo.odata.test1.BAETAllPrimRT\" "
+        + "target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
+        "   </a:entry>\n" + 
+        "   <a:entry>\n" + 
+        "      <a:id>ESAllPrim(-32768)</a:id>\n" + 
+        "      <a:title />\n" + 
+        "      <a:summary />\n" + 
+        "      <a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" + 
+        "      <a:author>\n" + 
+        "         <a:name />\n" + 
+        "      </a:author>\n" + 
+        "      <a:link rel=\"edit\" href=\"ESAllPrim(-32768)\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\" "
+        + "href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimOne\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" "
+        + "href=\"ESAllPrim(-32768)/NavPropertyETTwoPrimMany\" />\n" + 
+        "      <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
+        "      <a:content type=\"application/xml\">\n" + 
+        "         <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">-32768</d:PropertyInt16>\n" + 
+        "            <d:PropertyString>Second Resource - negative values</d:PropertyString>\n" + 
+        "            <d:PropertyBoolean m:type=\"Boolean\">false</d:PropertyBoolean>\n" + 
+        "            <d:PropertyByte m:type=\"Byte\">0</d:PropertyByte>\n" + 
+        "            <d:PropertySByte m:type=\"SByte\">-128</d:PropertySByte>\n" + 
+        "            <d:PropertyInt32 m:type=\"Int32\">-2147483648</d:PropertyInt32>\n" + 
+        "            <d:PropertyInt64 m:type=\"Int64\">-9223372036854775808</d:PropertyInt64>\n" + 
+        "            <d:PropertySingle m:type=\"Single\">-1.79E8</d:PropertySingle>\n" + 
+        "            <d:PropertyDouble m:type=\"Double\">-179000.0</d:PropertyDouble>\n" + 
+        "            <d:PropertyDecimal m:type=\"Decimal\">-34</d:PropertyDecimal>\n" + 
+        "            <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=</d:PropertyBinary>\n" + 
+        "            <d:PropertyDate m:type=\"Date\">2015-11-05</d:PropertyDate>\n" + 
+        "            <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2005-12-03T07:17:08Z"
+        + "</d:PropertyDateTimeOffset>\n" + 
+        "            <d:PropertyDuration m:type=\"Duration\">PT9S</d:PropertyDuration>\n" + 
+        "            <d:PropertyGuid m:type=\"Guid\">76543201-23ab-cdef-0123-456789dddfff</d:PropertyGuid>\n" + 
+        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">23:49:14</d:PropertyTimeOfDay>\n" + 
+        "         </m:properties>\n" + 
+        "      </a:content>\n" + 
+        "      <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "
+        + "title=\"olingo.odata.test1.BAETAllPrimRT\" "
+        + "target=\"ESAllPrim(-32768)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
+        "   </a:entry>\n" + 
+        "   <a:entry>\n" + 
+        "      <a:id>ESAllPrim(0)</a:id>\n" + 
+        "      <a:title />\n" + 
+        "      <a:summary />\n" + 
+        "      <a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" + 
+        "      <a:author>\n" + 
+        "         <a:name />\n" + 
+        "      </a:author>\n" + 
+        "      <a:link rel=\"edit\" href=\"ESAllPrim(0)\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\" "
+        + "href=\"ESAllPrim(0)/NavPropertyETTwoPrimOne\" />\n" + 
+        "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" "
+        + "href=\"ESAllPrim(0)/NavPropertyETTwoPrimMany\" />\n" + 
+        "      <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETAllPrim\" />\n" + 
+        "      <a:content type=\"application/xml\">\n" + 
+        "         <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">0</d:PropertyInt16>\n" + 
+        "            <d:PropertyString />\n" + 
+        "            <d:PropertyBoolean m:type=\"Boolean\">false</d:PropertyBoolean>\n" + 
+        "            <d:PropertyByte m:type=\"Byte\">0</d:PropertyByte>\n" + 
+        "            <d:PropertySByte m:type=\"SByte\">0</d:PropertySByte>\n" + 
+        "            <d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" + 
+        "            <d:PropertyInt64 m:type=\"Int64\">0</d:PropertyInt64>\n" + 
+        "            <d:PropertySingle m:type=\"Single\">0.0</d:PropertySingle>\n" + 
+        "            <d:PropertyDouble m:type=\"Double\">0.0</d:PropertyDouble>\n" + 
+        "            <d:PropertyDecimal m:type=\"Decimal\">0</d:PropertyDecimal>\n" + 
+        "            <d:PropertyBinary m:type=\"Binary\" />\n" + 
+        "            <d:PropertyDate m:type=\"Date\">1970-01-01</d:PropertyDate>\n" + 
+        "            <d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">2005-12-03T00:00:00Z"
+        + "</d:PropertyDateTimeOffset>\n" + 
+        "            <d:PropertyDuration m:type=\"Duration\">PT0S</d:PropertyDuration>\n" + 
+        "            <d:PropertyGuid m:type=\"Guid\">76543201-23ab-cdef-0123-456789cccddd</d:PropertyGuid>\n" + 
+        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">00:01:01</d:PropertyTimeOfDay>\n" + 
+        "         </m:properties>\n" + 
+        "      </a:content>\n" + 
+        "      <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "
+        + "title=\"olingo.odata.test1.BAETAllPrimRT\" "
+        + "target=\"ESAllPrim(0)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
+        "   </a:entry>\n" + 
+        "</a:feed>";
+    checkXMLEqual(expected, resultString);
+  }  
+  
   @Test
   public void entityAllPrimAllNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -223,6 +383,9 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyTimeOfDay m:null=\"true\" />\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "      title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "      target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>\n" +
         "";
     checkXMLEqual(expected, resultString);
@@ -950,7 +1113,7 @@ public class ODataXmlSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .select(select)
                 .build()).getContent();
-    final String resultString = IOUtils.toString(result);
+    final String resultString = IOUtils.toString(result);    
     final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
@@ -981,6 +1144,9 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "      title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "      target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>";
     checkXMLEqual(expectedResult, resultString);
   }
@@ -1282,6 +1448,9 @@ public class ODataXmlSerializerTest {
         "            </d:PropertyTimeOfDay>\n" +
         "          </m:properties>\n" +
         "        </a:content>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "          title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "          target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" +               
         "      </a:entry>\n" +
         "    </m:inline>\n" +
         "  </a:link>\n" +
@@ -1321,7 +1490,7 @@ public class ODataXmlSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()).getContent();
-    final String resultString = IOUtils.toString(inputStream);
+    final String resultString = IOUtils.toString(inputStream);    
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
@@ -1365,6 +1534,9 @@ public class ODataXmlSerializerTest {
         "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
         "          </m:properties>\n" +
         "        </a:content>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "          title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "          target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "      </a:entry>\n" +
         "    </m:inline>\n" +
         "  </a:link>\n" +
@@ -1498,6 +1670,9 @@ public class ODataXmlSerializerTest {
         "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "      title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "      target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>\n" +
         "";
     checkXMLEqual(expected, resultString);
@@ -1560,6 +1735,9 @@ public class ODataXmlSerializerTest {
         "      </d:PropertyTimeOfDay>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "      title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "      target=\"ESAllPrim(-32768)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>";
     checkXMLEqual(expected, resultString);
   }
@@ -1644,6 +1822,9 @@ public class ODataXmlSerializerTest {
         "              <d:PropertyInt32 m:type=\"Int32\">-2147483648</d:PropertyInt32>\n" +
         "            </m:properties>\n" +
         "          </a:content>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "          title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "          target=\"ESAllPrim(-32768)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "        </a:entry>\n" +
         "        <a:entry>\n" +
         "          <a:id>ESAllPrim(0)</a:id>\n" +
@@ -1758,6 +1939,9 @@ public class ODataXmlSerializerTest {
         "              <d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" +
         "            </m:properties>\n" +
         "          </a:content>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "+
+        "          title=\"olingo.odata.test1.BAETAllPrimRT\" "+
+        "          target=\"ESAllPrim(0)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "        </a:entry>\n" +
         "      </a:feed>\n" +
         "    </m:inline>\n" +

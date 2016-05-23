@@ -30,6 +30,7 @@ import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -488,6 +489,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     // copy of the entity set (new EntitySet, but exactly the same data).
     EntityCollection entitySet = new EntityCollection();
     entitySet.getEntities().addAll(entitySetInitial.getEntities());
+    entitySet.getOperations().addAll(entitySetInitial.getOperations());
 
     // Apply system query options.
     SearchHandler.applySearchSystemQueryOption(uriInfo.getSearchOption(), entitySet);
@@ -598,6 +600,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityIterator streamCollection = new EntityIterator() {
       Iterator<Entity> entityIterator = entityCollection.iterator();
 
+      @Override
+      public List<Operation> getOperations() {
+        return entityCollection.getOperations();
+      } 
+      
       @Override
       public boolean hasNext() {
         return entityIterator.hasNext();

@@ -18,12 +18,15 @@
  */
 package org.apache.olingo.server.core.responses;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -43,6 +46,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ReturnRepresentation;
 import org.apache.olingo.server.core.ServiceRequest;
+import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 
 public class EntityResponse extends ServiceResponse {
   private final ReturnRepresentation returnRepresentation;
@@ -92,6 +96,21 @@ public class EntityResponse extends ServiceResponse {
       return;
     }
 
+    if (ContentTypeHelper.isODataMetadataFull(this.responseContentType)) {
+      EdmAction action = this.metadata.getEdm().getBoundActionWithBindingType(
+          entityType.getFullQualifiedName(), false);
+      if (action != null) {
+        entity.getOperations().add(buildOperation(action, entity.getId().toASCIIString()));
+      }
+      
+      List<EdmFunction> functions = this.metadata.getEdm()
+          .getBoundFunctionsWithBindingType(entityType.getFullQualifiedName(),false);
+      
+      for (EdmFunction function:functions) {
+        entity.getOperations().add(buildOperation(function, entity.getId().toASCIIString()));
+      }
+    }
+    
     // write the entity to response
     this.response.setContent(this.serializer.entity(this.metadata, entityType, entity, this.options).getContent());
     writeOK(responseContentType);

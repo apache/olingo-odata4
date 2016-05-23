@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.domain.ClientAnnotation;
+import org.apache.olingo.client.api.domain.ClientOperation;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 
@@ -29,7 +30,8 @@ public final class ClientPropertyImpl extends ClientValuableImpl implements Clie
 
   private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
   private final String name;
-
+  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
+  
   public ClientPropertyImpl(final String name, final ClientValue value) {
     super(value);
     this.name = name;
@@ -45,6 +47,29 @@ public final class ClientPropertyImpl extends ClientValuableImpl implements Clie
     return name;
   }
 
+  @Override
+  public ClientOperation getOperation(final String title) {
+    ClientOperation result = null;
+    for (ClientOperation operation : operations) {
+      if (title.equals(operation.getTitle())) {
+        result = operation;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Gets operations.
+   *
+   * @return operations.
+   */
+  @Override
+  public List<ClientOperation> getOperations() {
+    return operations;
+  }
+  
   /**
    * Checks if has null value.
    *

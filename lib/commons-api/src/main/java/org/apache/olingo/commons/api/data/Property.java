@@ -18,12 +18,16 @@
  */
 package org.apache.olingo.commons.api.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Data representation for a property.
  */
 public class Property extends Valuable {
 
   private String name;
+  private final List<Operation> operations = new ArrayList<Operation>();
   
   /**
    * Creates a new property
@@ -79,6 +83,15 @@ public class Property extends Valuable {
   public boolean isNull() {
     return getValue() == null || "Edm.Null".equals(getType());
   }
+  
+  /**
+   * Gets operations.
+   *
+   * @return operations.
+   */
+  public List<Operation> getOperations() {
+    return operations;
+  }  
 
   @Override
   public boolean equals(final Object o) {

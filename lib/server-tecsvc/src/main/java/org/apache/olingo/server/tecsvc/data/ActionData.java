@@ -40,6 +40,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 
 public class ActionData {
 
@@ -118,6 +119,7 @@ public class ActionData {
 
   private static Property createCTTwoPrimComplexProperty(final String name, final Short number, final String text) {
     return DataCreator.createComplex(name,
+        ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
         DataCreator.createPrimitive("PropertyInt16", number),
         DataCreator.createPrimitive("PropertyString", text));
   }
@@ -244,18 +246,23 @@ public class ActionData {
     Entity entity = new Entity()
         .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
         .addProperty(DataCreator.createPrimitive("PropertyString", "UARTCollETKeyNavParam int16 value: " + number))
-        .addProperty(DataCreator.createComplex("PropertyCompNav", 
+        .addProperty(DataCreator.createComplex("PropertyCompNav",
+            ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
             DataCreator.createPrimitive("PropertyInt16", (short) 0)))
         .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
         .addProperty(DataCreator.createComplex("PropertyCompTwoPrim", 
+              ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
               DataCreator.createPrimitive("PropertyInt16", (short) 0),
               DataCreator.createPrimitive("PropertyString", ""))).addProperty(
               DataCreator.createPrimitiveCollection("CollPropertyString"))
         .addProperty(DataCreator.createPrimitiveCollection("CollPropertyInt16"))
-        .addProperty(DataCreator.createComplexCollection("CollPropertyComp"))
-        .addProperty(DataCreator.createComplex("PropertyCompCompNav", 
+        .addProperty(DataCreator.createComplexCollection("CollPropertyComp",
+            ComplexTypeProvider.nameCTPrimComp.getFullQualifiedNameAsString()))
+        .addProperty(DataCreator.createComplex("PropertyCompCompNav",
+            ComplexTypeProvider.nameCTCompNav.getFullQualifiedNameAsString(),
             DataCreator.createPrimitive("PropertyString", ""),
             DataCreator.createComplex("PropertyCompNav", 
+                ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
                 DataCreator.createPrimitive("PropertyInt16", (short) 0))));
     setEntityId(entity, "ESKeyNav", oData, edm);
     return entity;
@@ -273,6 +280,7 @@ public class ActionData {
 
   protected static Property createKeyNavAllPrimComplexValue(final String name) {
     return DataCreator.createComplex(name,
+        ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
         DataCreator.createPrimitive("PropertyString", ""),
         DataCreator.createPrimitive("PropertyBinary", new byte[] {}),
         DataCreator.createPrimitive("PropertyBoolean", false),

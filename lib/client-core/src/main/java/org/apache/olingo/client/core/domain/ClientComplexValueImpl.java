@@ -89,6 +89,7 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
       break;
 
     case MEDIA_EDIT:
+    case MEDIA_READ:
       throw new IllegalArgumentException("Complex values cannot have media links!");
 
     default:

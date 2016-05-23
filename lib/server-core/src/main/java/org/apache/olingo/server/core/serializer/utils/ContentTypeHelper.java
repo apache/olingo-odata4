@@ -30,4 +30,9 @@ public class ContentTypeHelper {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
         && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
+  
+  public static boolean isODataMetadataFull(final ContentType contentType) {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON)
+        && ContentType.VALUE_ODATA_METADATA_FULL.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+  }  
 }

@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -240,7 +241,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
-
+      writeOperations(entitySet.getOperations(), writer);
       if (options != null && options.getId() != null) {
         writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ID, NS_ATOM);
         writer.writeCharacters(options.getId());
@@ -487,7 +488,22 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     if (!entityType.hasStream()) { // content
       writer.writeEndElement();
     }
+    
+    writeOperations(entity.getOperations(), writer);
+    
     writer.writeEndElement(); // entry
+  }
+
+  private void writeOperations(final List<Operation> operations,
+      final XMLStreamWriter writer) throws XMLStreamException {
+    for (Operation operation : operations) {
+      boolean action = (operation.getType() != null && operation.getType() == Operation.Type.ACTION);
+      writer.writeStartElement(METADATA, action?Constants.ATOM_ELEM_ACTION:Constants.ATOM_ELEM_FUNCTION, NS_METADATA);
+      writer.writeAttribute(Constants.ATTR_METADATA, operation.getMetadataAnchor());
+      writer.writeAttribute(Constants.ATTR_TITLE, operation.getTitle());
+      writer.writeAttribute(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());
+      writer.writeEndElement();
+    }
   }
 
   private void writerAuthorInfo(final String title, final XMLStreamWriter writer) throws XMLStreamException {

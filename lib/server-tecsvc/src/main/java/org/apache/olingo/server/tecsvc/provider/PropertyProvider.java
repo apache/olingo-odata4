@@ -48,6 +48,7 @@ public class PropertyProvider {
 
   public static final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
   public static final FullQualifiedName nameTimeOfDay = EdmPrimitiveTypeKind.TimeOfDay.getFullQualifiedName();
+  public static final FullQualifiedName nameStream = EdmPrimitiveTypeKind.Stream.getFullQualifiedName();
 
   // Primitive Properties --------------------------------------------------------------------------------------------
   public static final CsdlProperty collPropertyBinary = new CsdlProperty()
@@ -563,6 +564,11 @@ public class PropertyProvider {
       .setType(nameTimeOfDay)
       .setNullable(true);
 
+  public static final CsdlProperty propertyStream = new CsdlProperty()
+      .setName("PropertyStream")
+      .setType(nameStream)
+      .setNullable(true);
+  
   // Complex Properties ----------------------------------------------------------------------------------------------
   public static final CsdlProperty collPropertyComp_CTPrimComp = new CsdlProperty()
       .setName("CollPropertyComp")
