@@ -20,13 +20,16 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
@@ -93,6 +96,7 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
       tree.remove(Constants.VALUE);
     }
 
+    Set<String> toRemove = new HashSet<String>();
     // any remaining entry is supposed to be an annotation or is ignored
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
@@ -106,9 +110,18 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
           throw new IOException(e);
         }
         property.getAnnotations().add(annotation);
+      } else if (field.getKey().charAt(0) == '#') {
+        final Operation operation = new Operation();
+        operation.setMetadataAnchor(field.getKey());
+
+        final ObjectNode opNode = (ObjectNode) tree.get(field.getKey());
+        operation.setTitle(opNode.get(Constants.ATTR_TITLE).asText());
+        operation.setTarget(URI.create(opNode.get(Constants.ATTR_TARGET).asText()));
+        property.getOperations().add(operation);
+        toRemove.add(field.getKey());
       }
     }
-
+    tree.remove(toRemove);
     return new ResWrap<Property>(contextURL, metadataETag, property);
   }
 }

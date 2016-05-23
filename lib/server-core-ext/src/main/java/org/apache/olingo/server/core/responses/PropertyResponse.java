@@ -18,17 +18,21 @@
  */
 package org.apache.olingo.server.core.responses;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ODataServerError;
@@ -40,6 +44,7 @@ import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ServiceRequest;
+import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 
 public class PropertyResponse extends ServiceResponse {
   private PrimitiveSerializerOptions primitiveOptions;
@@ -108,6 +113,24 @@ public class PropertyResponse extends ServiceResponse {
       writeNoContent(true);
       return;
     }
+    
+    if (ContentTypeHelper.isODataMetadataFull(this.responseContentType)) {
+      ContextURL contextURL = (this.complexOptions != null)
+          ? this.complexOptions.getContextURL()
+          : this.primitiveOptions.getContextURL();
+      EdmAction action = this.metadata.getEdm().getBoundActionWithBindingType(
+          edmType.getFullQualifiedName(), this.collection);
+      if (action != null) {
+        property.getOperations().add(buildOperation(action, buildOperationTarget(contextURL)));
+      }
+      
+      List<EdmFunction> functions = this.metadata.getEdm()
+          .getBoundFunctionsWithBindingType(edmType.getFullQualifiedName(), this.collection);
+      
+      for (EdmFunction function:functions) {
+        property.getOperations().add(buildOperation(function, buildOperationTarget(contextURL)));
+      }
+    }    
 
     if (edmType.getKind() == EdmTypeKind.PRIMITIVE) {
       writePrimitiveProperty((EdmPrimitiveType) edmType, property);
@@ -170,5 +193,25 @@ public class PropertyResponse extends ServiceResponse {
   public void writeNotModified() {
     this.response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     close();
+  }
+  
+  private String buildOperationTarget(ContextURL contextURL) {
+    StringBuilder result = new StringBuilder();
+    if (contextURL.getServiceRoot() != null) {
+      result.append(contextURL.getServiceRoot());
+    }
+    if (contextURL.getEntitySetOrSingletonOrType() != null) {
+      if (result.length() != 0) {
+        result.append("/");
+      }
+      result.append(Encoder.encode(contextURL.getEntitySetOrSingletonOrType()));
+    }
+    if (contextURL.getKeyPath() != null) {
+      result.append('(').append(contextURL.getKeyPath()).append(')');
+    }    
+    if (contextURL.getNavOrPropertyPath() != null) {
+      result.append('/').append(contextURL.getNavOrPropertyPath());
+    }
+    return result.toString();
   }  
 }

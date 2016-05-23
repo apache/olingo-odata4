@@ -36,7 +36,9 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
     private ClientLinkType type;
 
     private String title;
-
+    
+    private String mediaETag;
+    
     public Builder setURI(final URI uri) {
       this.uri = uri;
       return this;
@@ -57,8 +59,13 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
       return this;
     }
 
+    public Builder setEtag(final String eTag) {
+      this.mediaETag= eTag;
+      return this;
+    }
+
     public ClientLink build() {
-      return new ClientLink(uri, type, title);
+      return new ClientLink(uri, type, title, mediaETag);
     }
   }
 
@@ -110,10 +117,15 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
    * @param title title.
    */
   public ClientLink(final URI uri, final ClientLinkType type, final String title) {
+    this(uri, type, title, null);
+  }
+  
+  public ClientLink(final URI uri, final ClientLinkType type, final String title, final String eTag) {
     super(title);
 
     this.type = type;
     setLink(uri);
+    this.mediaETag = eTag;
 
     switch (this.type) {
     case ASSOCIATION:
@@ -126,12 +138,19 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
       break;
 
     case MEDIA_EDIT:
+      rel = Constants.NS_MEDIA_EDIT_LINK_REL + title;
+      break;
+
+    case MEDIA_READ:
+      rel = Constants.NS_MEDIA_READ_LINK_REL + title;
+      break;
+      
     default:
       rel = Constants.NS_MEDIA_EDIT_LINK_REL + title;
       break;
     }
   }
-
+  
   /**
    * Constructor.
    * 

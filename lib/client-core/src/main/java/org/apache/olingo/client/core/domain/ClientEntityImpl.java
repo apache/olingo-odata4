@@ -160,6 +160,7 @@ public class ClientEntityImpl extends AbstractClientPayload implements ClientEnt
         break;
 
       case MEDIA_EDIT:
+      case MEDIA_READ:
         result = mediaEditLinks.contains(link) ? false : mediaEditLinks.add(link);
         break;
 

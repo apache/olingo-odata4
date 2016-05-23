@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
@@ -415,5 +416,40 @@ public abstract class AbstractEdm implements Edm {
       final EdmAnnotations annotationsGroup) {
     TargetQualifierMapKey key = new TargetQualifierMapKey(targetName, annotationsGroup.getQualifier());
     annotationGroups.put(key, annotationsGroup);
+  }
+  
+  @Override
+  public EdmAction getBoundActionWithBindingType(FullQualifiedName bindingParameterTypeName,
+      Boolean isBindingParameterCollection) {
+    for (EdmSchema schema:getSchemas()) {
+      for (EdmAction action: schema.getActions()) {
+        if (action.isBound()) {
+          EdmParameter bindingParameter = action.getParameter(action.getParameterNames().get(0));
+          if (bindingParameter.getType().getFullQualifiedName().equals(bindingParameterTypeName)
+              && bindingParameter.isCollection() == isBindingParameterCollection) {
+            return action;  
+          }          
+        }
+      }
+    }
+    return null;
+  }
+  
+  @Override
+  public List<EdmFunction> getBoundFunctionsWithBindingType(FullQualifiedName bindingParameterTypeName,
+      Boolean isBindingParameterCollection){
+    List<EdmFunction> functions = new ArrayList<EdmFunction>();
+    for (EdmSchema schema:getSchemas()) {
+      for (EdmFunction function: schema.getFunctions()) {
+        if (function.isBound()) {
+          EdmParameter bindingParameter = function.getParameter(function.getParameterNames().get(0));
+          if (bindingParameter.getType().getFullQualifiedName().equals(bindingParameterTypeName)
+              && bindingParameter.isCollection() == isBindingParameterCollection) {
+            functions.add(function);
+          }
+        }
+      }
+    }
+    return functions;
   }
 }

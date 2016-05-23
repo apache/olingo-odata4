@@ -32,7 +32,8 @@ public class EntityCollection extends AbstractEntityCollection {
   private Integer count;
   private URI next;
   private URI deltaLink;
-
+  private final List<Operation> operations = new ArrayList<Operation>();
+  
   /**
    * Sets number of entries.
    *
@@ -98,6 +99,16 @@ public class EntityCollection extends AbstractEntityCollection {
   public void setDeltaLink(final URI deltaLink) {
     this.deltaLink = deltaLink;
   }
+  
+  /**
+   * Gets operations.
+   *
+   * @return operations.
+   */
+  @Override
+  public List<Operation> getOperations() {
+    return operations;
+  }  
 
   @Override
   public Iterator<Entity> iterator() {

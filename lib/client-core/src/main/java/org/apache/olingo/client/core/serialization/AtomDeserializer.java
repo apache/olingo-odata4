@@ -640,8 +640,8 @@ public class AtomDeserializer extends AbstractAtomDealer implements ODataDeseria
               inline(reader, event.asStartElement(), link);
             } else if (link.getRel().startsWith(Constants.NS_ASSOCIATION_LINK_REL)) {
               entity.getAssociationLinks().add(link);
-            } else if (link.getRel().startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
-
+            } else if (link.getRel().startsWith(Constants.NS_MEDIA_EDIT_LINK_REL) ||
+                link.getRel().startsWith(Constants.NS_MEDIA_READ_LINK_REL)) {
               final Attribute metag = event.asStartElement().getAttributeByName(etagQName);
               if (metag != null) {
                 link.setMediaETag(metag.getValue());

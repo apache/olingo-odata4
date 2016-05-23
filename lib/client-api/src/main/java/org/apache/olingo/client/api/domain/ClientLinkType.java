@@ -42,6 +42,11 @@ public enum ClientLinkType {
    * Media-edit link.
    */
   MEDIA_EDIT("*/*"),
+  
+  /**
+   * Media-read link
+   */
+  MEDIA_READ("*/*"),
 
   /**
    * Entity binding link.
@@ -79,6 +84,10 @@ public enum ClientLinkType {
   public static ClientLinkType fromString(final String rel, final String type) {
     if (rel != null && rel.startsWith(Constants.NS_MEDIA_EDIT_LINK_REL)) {
       return MEDIA_EDIT.setType(type == null || type.isEmpty() ? "*/*" : type);
+    }
+    
+    if (rel != null && rel.startsWith(Constants.NS_MEDIA_READ_LINK_REL)) {
+      return MEDIA_READ.setType(type == null || type.isEmpty() ? "*/*" : type);
     }
 
     if (ClientLinkType.ENTITY_NAVIGATION.type.equals(type)) {

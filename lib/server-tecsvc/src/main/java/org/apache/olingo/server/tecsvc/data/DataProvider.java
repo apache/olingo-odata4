@@ -267,10 +267,12 @@ public class DataProvider {
     } else {
       if (edmProperty.isCollection()) {
         @SuppressWarnings("unchecked")
-        Property newProperty2 = DataCreator.createComplexCollection(propertyName);
+        Property newProperty2 = DataCreator.createComplexCollection(propertyName, 
+            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString());
         newProperty = newProperty2;
       } else {
-        newProperty = DataCreator.createComplex(propertyName);
+        newProperty = DataCreator.createComplex(propertyName,
+            edmProperty.getType().getFullQualifiedName().getFullQualifiedNameAsString());
         createProperties((EdmComplexType) type, newProperty.asComplex().getValue());
       }
     }

@@ -121,6 +121,17 @@ public interface Edm {
       Boolean isBindingParameterCollection);
 
   /**
+   * Get Action by full qualified name and binding parameter type.
+   * Note: action can not be overloaded on binding type
+   * 
+   * @param bindingParameterTypeName must not be null
+   * @param isBindingParameterCollection may be null
+   * @return {@link EdmAction}
+   */  
+  EdmAction getBoundActionWithBindingType(FullQualifiedName bindingParameterTypeName,
+      Boolean isBindingParameterCollection);
+
+  /**
    * Get Function by full qualified name.
    *
    * @param functionName must not be null
@@ -148,6 +159,16 @@ public interface Edm {
    */
   EdmFunction getBoundFunction(FullQualifiedName functionName, FullQualifiedName bindingParameterTypeName,
       Boolean isBindingParameterCollection, List<String> parameterNames);
+
+  /**
+   * Get Function by binding parameter type
+   *
+   * @param bindingParameterTypeName must not be null
+   * @param isBindingParameterCollection may be null
+   * @return {@link EdmFunction}
+   */
+  List<EdmFunction> getBoundFunctionsWithBindingType(FullQualifiedName bindingParameterTypeName,
+      Boolean isBindingParameterCollection);  
 
   /**
    * Get Term full by qualified name.

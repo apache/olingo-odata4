@@ -36,16 +36,25 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.CsdlAction;
+import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
+import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.tecsvc.provider.ActionProvider;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
+import org.apache.olingo.server.tecsvc.provider.SchemaProvider;
 
 public class DataCreator {
 
@@ -77,6 +86,7 @@ public class DataCreator {
     data.put("ESCompMixPrimCollComp", createESCompMixPrimCollComp(edm, odata));
     data.put("ESMixEnumDefCollComp", createESMixEnumDefCollComp(edm, odata));
     data.put("ESStream", createESStream(edm, odata));
+    data.put("ESWithStream", createESWithStream(edm, odata));
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -93,7 +103,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixEnumDefCollComp));
     createEntityId(edm, odata, "ESMixEnumDefCollComp", entityCollection);
-
+    createOperations("ESMixEnumDefCollComp", entityCollection, EntityTypeProvider.nameETMixEnumDefCollComp);
     return entityCollection;
   }
 
@@ -114,7 +124,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     createEntityId(edm, odata, "ESCompMixPrimCollComp", entityCollection);
-
+    createOperations("ESCompMixPrimCollComp", entityCollection, EntityTypeProvider.nameETCompMixPrimCollComp);
     return entityCollection;
   }
 
@@ -123,6 +133,7 @@ public class DataCreator {
     return new Entity()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createComplex("PropertyMixedPrimCollComp",
+            ComplexTypeProvider.nameCTMixPrimCollComp.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 1),
             createPrimitiveCollection("CollPropertyString",
                 "Employee1@company.example",
@@ -130,10 +141,12 @@ public class DataCreator {
                 "Employee3@company.example"
             ),
             createComplex("PropertyComp",
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
                 createPrimitive("PropertyInt16", (short) 333),
                 createPrimitive("PropertyString", "TEST123")
             ),
             createComplexCollection("CollPropertyComp",
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
                 Arrays.asList(new Property[] {
                     createPrimitive("PropertyInt16", (short) 222),
                     createPrimitive("PropertyString", "TEST9876")
@@ -166,7 +179,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETBase));
     createEntityId(edm, odata, "ESBase", entityCollection);
-
+    createOperations("ESBase", entityCollection, EntityTypeProvider.nameETBase);
     return entityCollection;
   }
 
@@ -176,11 +189,14 @@ public class DataCreator {
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) 1))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 11),
             createPrimitive("PropertyString", "Num11")
             ))
         .addProperty(createComplex("PropertyCompComp",
+            ComplexTypeProvider.nameCTCompComp.getFullQualifiedNameAsString(),
             createComplex("PropertyComp",
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
                 createPrimitive("PropertyInt16", (short) 111),
                 createPrimitive("PropertyString", "Num111")
             )
@@ -189,7 +205,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETFourKeyAlias));
     createEntityId(edm, odata, "ESFourKeyAlias", entityCollection);
-
+    createOperations("ESFourKeyAlias", entityCollection, EntityTypeProvider.nameETFourKeyAlias);
     return entityCollection;
   }
 
@@ -201,6 +217,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompCollAllPrim));
     createEntityId(edm, odata, "ESCompCollAllPrim", entityCollection);
+    createOperations("ESCompCollAllPrim", entityCollection, EntityTypeProvider.nameETCompCollAllPrim);
     return entityCollection;
   }
 
@@ -208,6 +225,7 @@ public class DataCreator {
     return new Entity()
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTCollAllPrim.getFullQualifiedNameAsString(),
             createPrimitiveCollection("CollPropertyString",
                 "Employee1@company.example",
                 "Employee2@company.example",
@@ -305,7 +323,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETBaseTwoKeyNav));
     createEntityId(edm, odata, "ESBaseTwoKeyNav", entityCollection);
-
+    createOperations("ESBaseTwoKeyNav", entityCollection, EntityTypeProvider.nameETBaseTwoKeyNav);
     return entityCollection;
   }
 
@@ -331,7 +349,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoBase));
     createEntityId(edm, odata, "ESTwoBase", entityCollection);
-
+    createOperations("ESTwoBase", entityCollection, EntityTypeProvider.nameETTwoBase);
     return entityCollection;
   }
 
@@ -423,6 +441,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllNullable));
     createEntityId(edm, odata, "ESAllNullable", entityCollection);
+    createOperations("ESAllNullable", entityCollection, EntityTypeProvider.nameETAllNullable);
     return entityCollection;
   }
 
@@ -438,7 +457,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoKeyTwoPrim));
     createEntityId(edm, odata, "ESTwoKeyTwoPrim", entityCollection);
-
+    createOperations("ESTwoKeyTwoPrim", entityCollection, EntityTypeProvider.nameETTwoKeyTwoPrim);
     return entityCollection;
   }
 
@@ -459,7 +478,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETServerSidePaging));
     createEntityId(edm, odata, "ESServerSidePaging", entityCollection);
-
+    createOperations("ESServerSidePaging", entityCollection, EntityTypeProvider.nameETServerSidePaging);
     return entityCollection;
   }
 
@@ -472,7 +491,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETKeyNav));
     createEntityId(edm, odata, "ESKeyNav", entityCollection);
-
+    createOperations("ESKeyNav", entityCollection, EntityTypeProvider.nameETKeyNav);
     return entityCollection;
   }
 
@@ -482,9 +501,11 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
         .addProperty(createComplex("PropertyCompNav",
+            ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", 1)))
         .addProperty(createKeyNavAllPrimComplexValue("PropertyCompAllPrim"))
         .addProperty(createComplex("PropertyCompTwoPrim",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 16),
             createPrimitive("PropertyString", "Test123")))
         .addProperty(createPrimitiveCollection("CollPropertyString",
@@ -496,6 +517,7 @@ public class DataCreator {
             (short) 2000,
             (short) 30112))
         .addProperty(createComplexCollection("CollPropertyComp",
+            ComplexTypeProvider.nameCTPrimComp.getFullQualifiedNameAsString(),
             Arrays.asList(
                 createPrimitive("PropertyInt16", (short) 1),
                 createKeyNavAllPrimComplexValue("PropertyComp")),
@@ -506,8 +528,10 @@ public class DataCreator {
                 createPrimitive("PropertyInt16", (short) 3),
                 createKeyNavAllPrimComplexValue("PropertyComp"))))
         .addProperty(createComplex("PropertyCompCompNav",
+            ComplexTypeProvider.nameCTCompNav.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", "1"),
             createComplex("PropertyCompNav",
+                ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
                 createPrimitive("PropertyInt16", (short) 1))));
   }
 
@@ -521,7 +545,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav));
     createEntityId(edm, odata, "ESTwoKeyNav", entityCollection);
-
+    createOperations("ESTwoKeyNav", entityCollection, EntityTypeProvider.nameETTwoKeyNav);
     return entityCollection;
   }
 
@@ -531,8 +555,10 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyInt16", propertyInt16))
         .addProperty(createPrimitive("PropertyString", propertyString))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTPrimComp.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", 11),
             createComplex("PropertyComp",
+                ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
                 createPrimitive("PropertyString", "StringValue"),
                 createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
                 createPrimitive("PropertyBoolean", true),
@@ -549,22 +575,26 @@ public class DataCreator {
                 createPrimitive("PropertySByte", Byte.MAX_VALUE),
                 createPrimitive("PropertyTimeOfDay", getTime(21, 5, 59)))))
         .addProperty(createComplex("PropertyCompNav",
+            ComplexTypeProvider.nameCTBasePrimCompNav.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 1),
             createKeyNavAllPrimComplexValue("PropertyComp")))
-        .addProperty(createComplexCollection("CollPropertyComp"))
+        .addProperty(createComplexCollection("CollPropertyComp", null))
         .addProperty(createComplexCollection("CollPropertyCompNav",
+            ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
             Arrays.asList(
                 createPrimitive("PropertyInt16", (short) 1))))
         .addProperty(createPrimitiveCollection("CollPropertyString",
             "1",
             "2"))
         .addProperty(createComplex("PropertyCompTwoPrim",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 11),
             createPrimitive("PropertyString", "11")));
   }
 
   protected Property createKeyNavAllPrimComplexValue(final String name) {
     return createComplex(name,
+        ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
         createPrimitive("PropertyString", "First Resource - positive values"),
         createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
         createPrimitive("PropertyBoolean", true),
@@ -588,7 +618,9 @@ public class DataCreator {
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTCompCollComp.getFullQualifiedNameAsString(),
             createComplexCollection("CollPropertyComp",
+                ComplexTypeProvider.nameCTCompCollComp.getFullQualifiedNameAsString(),
                 Arrays.asList(
                     createPrimitive("PropertyInt16", (short) 555),
                     createPrimitive("PropertyString", "1 Test Complex in Complex Property")),
@@ -602,7 +634,9 @@ public class DataCreator {
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", 12345))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTCompCollComp.getFullQualifiedNameAsString(),
             createComplexCollection("CollPropertyComp",
+                ComplexTypeProvider.nameCTCompCollComp.getFullQualifiedNameAsString(),
                 Arrays.asList(
                     createPrimitive("PropertyInt16", (short) 888),
                     createPrimitive("PropertyString", "11 Test Complex in Complex Property")),
@@ -615,7 +649,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompCollComp));
     createEntityId(edm, odata, "ESCompCollComp", entityCollection);
-
+    createOperations("ESCompCollComp", entityCollection, EntityTypeProvider.nameETCompCollComp);
     return entityCollection;
   }
 
@@ -640,6 +674,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoPrim));
     createEntityId(edm, odata, "ESTwoPrim", entityCollection);
+    createOperations("ESTwoPrim", entityCollection, EntityTypeProvider.nameETTwoPrim);
     return entityCollection;
   }
 
@@ -710,8 +745,83 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllPrim));
     createEntityId(edm, odata, "ESAllPrim", entityCollection);
-
+    createOperations("ESAllPrim", entityCollection, EntityTypeProvider.nameETAllPrim);
     return entityCollection;
+  }
+
+  private void createOperations(String entitySetName,
+      EntityCollection entityCollection, FullQualifiedName entityTypeName) {
+    try {
+      List<CsdlAction> actions = ActionProvider.getBoundActionsForEntityType(entityTypeName);
+      for (CsdlAction action : actions) {
+        if (action.getParameters().get(0).isCollection()) {
+          Operation operation = buildOperation(action, entitySetName);
+          entityCollection.getOperations().add(operation);          
+        } else {
+          for (Entity entity:entityCollection.getEntities()) {
+            Operation operation = buildOperation(action, entity.getId().toASCIIString());
+            entity.getOperations().add(operation);
+          }
+        }
+      }
+      
+      List<CsdlFunction> functions = FunctionProvider.getBoundFunctionsForType(entityTypeName);
+      for (CsdlFunction func : functions) {
+        if (func.getParameters().get(0).isCollection()) {
+          Operation operation = buildOperation(func, entitySetName);
+          entityCollection.getOperations().add(operation);          
+        } else {
+          for (Entity entity:entityCollection.getEntities()) {
+            Operation operation = buildOperation(func, entity.getId().toASCIIString());
+            entity.getOperations().add(operation);
+          }
+        }
+      }
+    } catch (ODataException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private static Operation buildOperation(CsdlFunction function, String id) {
+    String fqn = SchemaProvider.NAMESPACE+"."+function.getName();
+    Operation operation = new Operation();          
+    operation.setType(Operation.Type.FUNCTION);
+    operation.setTitle(fqn);
+    StringBuilder params = new StringBuilder();
+    StringBuilder nameFQN = new StringBuilder();
+    params.append(fqn);
+    nameFQN.append(fqn);
+    if (!function.getParameters().isEmpty() && function.getParameters().size() > 1) {
+      params.append("(");
+      nameFQN.append("(");
+      boolean first = true;
+      for (int i = 1; i < function.getParameters().size(); i++) {
+        CsdlParameter p = function.getParameters().get(i);
+        if (first) {
+          first = false;
+        } else {
+          params.append(",");
+          nameFQN.append(",");                
+        }
+        params.append(p.getName()).append("=").append("@").append(p.getName());
+        nameFQN.append(p.getName());
+      }            
+      params.append(")");
+      nameFQN.append(")");
+    }
+    operation.setMetadataAnchor("#"+nameFQN);
+    operation.setTarget(URI.create(id+"/"+params.toString()));
+    return operation;
+  }
+
+  private Operation buildOperation(CsdlAction action, String id) {
+    String fqn = SchemaProvider.NAMESPACE+"."+action.getName();
+    Operation operation = new Operation();
+    operation.setMetadataAnchor("#"+fqn);
+    operation.setType(Operation.Type.ACTION);
+    operation.setTitle(fqn);
+    operation.setTarget(URI.create(id+"/"+fqn));
+    return operation;
   }
 
   private EntityCollection createESCompAllPrim(final Edm edm, final OData odata) {
@@ -720,6 +830,7 @@ public class DataCreator {
     Entity entity = new Entity()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", "First Resource - first"),
             createPrimitive("PropertyBinary",
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -743,6 +854,7 @@ public class DataCreator {
     entity = new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) 7))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", "Second Resource - second"),
             createPrimitive("PropertyBinary",
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -766,6 +878,7 @@ public class DataCreator {
     entity = new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) 0))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", "Third Resource - third"),
             createPrimitive("PropertyBinary",
                 new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
@@ -789,6 +902,7 @@ public class DataCreator {
     entity = new Entity()
         .addProperty(createPrimitive("PropertyInt16", (short) -32768))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyString", null),
             createPrimitive("PropertyBinary", null),
             createPrimitive("PropertyBoolean", null),
@@ -810,7 +924,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompAllPrim));
     createEntityId(edm, odata, "ESCompAllPrim", entityCollection);
-
+    createOperations("ESCompAllPrim", entityCollection, EntityTypeProvider.nameETCompAllPrim);
     return entityCollection;
   }
 
@@ -823,7 +937,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCollAllPrim));
     createEntityId(edm, odata, "ESCollAllPrim", entityCollection);
-
+    createOperations("ESCollAllPrim", entityCollection, EntityTypeProvider.nameETCollAllPrim);
     return entityCollection;
   }
 
@@ -906,6 +1020,7 @@ public class DataCreator {
             "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 111),
             createPrimitive("PropertyString", "TEST A")))
         .addProperty(createCollPropertyComp()));
@@ -917,6 +1032,7 @@ public class DataCreator {
             "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 222),
             createPrimitive("PropertyString", "TEST B")))
         .addProperty(createCollPropertyComp()));
@@ -928,13 +1044,14 @@ public class DataCreator {
             "Employee2@company.example",
             "Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 333),
             createPrimitive("PropertyString", "TEST C")))
         .addProperty(createCollPropertyComp()));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
     createEntityId(edm, odata, "ESMixPrimCollComp", entityCollection);
-
+    createOperations("ESMixPrimCollComp", entityCollection, EntityTypeProvider.nameETMixPrimCollComp);
     return entityCollection;
   }
 
@@ -948,6 +1065,7 @@ public class DataCreator {
             "Streamed-Employee2@company.example",
             "Streamed-Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            null,
             createPrimitive("PropertyInt16", (short) 111),
             createPrimitive("PropertyString", "TEST A")))
         .addProperty(createCollPropertyComp()));
@@ -959,6 +1077,7 @@ public class DataCreator {
             "Streamed-Employee2@company.example",
             "Streamed-Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            null,
             createPrimitive("PropertyInt16", (short) 222),
             createPrimitive("PropertyString", "TEST B")))
         .addProperty(createCollPropertyComp()));
@@ -970,19 +1089,48 @@ public class DataCreator {
             "Streamed-Employee2@company.example",
             "Streamed-Employee3@company.example"))
         .addProperty(createComplex("PropertyComp",
+            null,
             createPrimitive("PropertyInt16", (short) 333),
             createPrimitive("PropertyString", "TEST C")))
         .addProperty(createCollPropertyComp()));
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
     createEntityId(edm, odata, "ESStream", entityCollection);
-
+    createOperations("ESStream", entityCollection, EntityTypeProvider.nameETMixPrimCollComp);
     return entityCollection;
   }
 
+  private EntityCollection createESWithStream(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    Link readLink = new Link();
+    readLink.setRel(Constants.NS_MEDIA_READ_LINK_REL);
+    readLink.setHref("readLink");
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, readLink)));
+
+    Link editLink = new Link();
+    editLink.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
+    editLink.setHref("http://mediaserver:1234/editLink");
+    editLink.setMediaETag("eTag");
+    editLink.setType("image/jpeg");
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 7))
+        .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, editLink)));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETStream));
+    createEntityId(edm, odata, "ESWithStream", entityCollection);
+    createOperations("ESWithStream", entityCollection, EntityTypeProvider.nameETStream);
+    return entityCollection;
+  }
+  
   @SuppressWarnings("unchecked")
   private Property createCollPropertyComp() {
     return createComplexCollection("CollPropertyComp",
+        ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
         Arrays.asList(
             createPrimitive("PropertyInt16", (short) 123),
             createPrimitive("PropertyString", "TEST 1")),
@@ -1029,7 +1177,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllKey));
     createEntityId(edm, odata, "ESAllKey", entityCollection);
-
+    createOperations( "ESAllKey", entityCollection, EntityTypeProvider.nameETAllKey);
     return entityCollection;
   }
 
@@ -1039,7 +1187,9 @@ public class DataCreator {
     Entity entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", (short) 1));
     entity.addProperty(createComplex("PropertyComp",
+        ComplexTypeProvider.nameCTCompComp.getFullQualifiedNameAsString(),
         createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 123),
             createPrimitive("PropertyString", "String 1"))));
     entityCollection.getEntities().add(entity);
@@ -1048,7 +1198,8 @@ public class DataCreator {
     entity.addProperty(createPrimitive("PropertyInt16", (short) 2));
     entity.addProperty(createComplex("PropertyComp", 
         ComplexTypeProvider.nameCTCompCompExtended.getFullQualifiedNameAsString(), 
-        createComplex("PropertyComp",  
+        createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 987),
             createPrimitive("PropertyString", "String 2")),
         createPrimitive("PropertyDate", getDate(2012, 12, 3))));
@@ -1056,7 +1207,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompComp));
     createEntityId(edm, odata, "ESCompComp", entityCollection);
-
+    createOperations("ESCompComp", entityCollection, EntityTypeProvider.nameETCompComp);
     return entityCollection;
   }
 
@@ -1097,7 +1248,7 @@ public class DataCreator {
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMedia));
     createEntityId(edm, odata, "ESMedia", entityCollection);
-
+    createOperations("ESMedia", entityCollection, EntityTypeProvider.nameETMedia);
     return entityCollection;
   }
 
@@ -1211,31 +1362,48 @@ public class DataCreator {
     }
     return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, propertyValues);
   }
-
-  protected static Property createComplex(final String name, final Property... properties) {
-    ComplexValue complexValue = new ComplexValue();
-    for (final Property property : properties) {
-      complexValue.getValue().add(property);
-    }
-    return new Property(null, name, ValueType.COMPLEX, complexValue);
-  }
   
   protected static Property createComplex(final String name, final String type, final Property... properties) {
     ComplexValue complexValue = new ComplexValue();
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
-    return new Property(type, name, ValueType.COMPLEX, complexValue);
+    Property property = new Property(type, name, ValueType.COMPLEX, complexValue);
+    createOperations(name, type, property);
+    return property;
+  }
+
+  private static void createOperations(final String name, final String type,
+      Property property) {
+    if (type != null) {
+      try {
+        List<CsdlFunction> functions = FunctionProvider.getBoundFunctionsForType(new FullQualifiedName(type));
+        for (CsdlFunction func : functions) {
+          if (func.getParameters().get(0).isCollection() && property.isCollection()) {
+            Operation operation = buildOperation(func, name);
+            property.getOperations().add(operation);          
+          } else {
+            Operation operation = buildOperation(func, name);
+            property.getOperations().add(operation);
+          }
+        }        
+      } catch (ODataException e) {
+        // ignore
+      }
+    }
   }  
 
-  protected static Property createComplexCollection(final String name, final List<Property>... propertiesList) {
+  protected static Property createComplexCollection(final String name,
+      String type, final List<Property>... propertiesList) {
     List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
     for (final List<Property> properties : propertiesList) {
       ComplexValue complexValue = new ComplexValue();
       complexValue.getValue().addAll(properties);
       complexCollection.add(complexValue);
     }
-    return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+    Property property =  new Property(type, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+    createOperations(name, type, property);
+    return property;
   }
 
   private static Calendar getDateTime(final int year, final int month, final int day,

@@ -24,13 +24,16 @@ import java.net.URI;
  * Data representation for an operation.
  */
 public class Operation {
-
+  public enum Type {ACTION, FUNCTION};
+  
   private String metadataAnchor;
 
   private String title;
 
   private URI target;
 
+  private Type type;
+  
   /**
    * Gets metadata anchor.
    *
@@ -84,5 +87,20 @@ public class Operation {
   public void setTarget(final URI target) {
     this.target = target;
   }
+  
+  /**
+   * Gets the Operation Type 
+   * @return
+   */
+  public Type getType() {
+    return type;
+  }
 
+  /**
+   * Set the Operation type
+   * @param type
+   */
+  public void setType(Type type) {
+    this.type = type;
+  }
 }

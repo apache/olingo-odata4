@@ -102,6 +102,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNavCont"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNavCont"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESWithStream"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM));
 
     // Singletons
@@ -647,6 +648,10 @@ public class ContainerProvider {
                             "type primitive, collection of primitive, complex and collection of complex")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
+      } else if (name.equals("ESWithStream")) {
+        return new CsdlEntitySet()
+            .setName("ESWithStream")
+            .setType(EntityTypeProvider.nameETStream);        
       }
     }
 

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -79,8 +80,27 @@ public class ActionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
   public static final FullQualifiedName nameUARTByteNineParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTByteNineParam");
+  
+  public static List<CsdlAction> getBoundActionsForEntityType(FullQualifiedName entityType) throws ODataException {
+    FullQualifiedName[] actionNames = {nameBAESAllPrimRTETAllPrim, 
+        nameBAESTwoKeyNavRTESTwoKeyNav, nameBAESTwoKeyNavRTESKeyNav, nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav,
+        nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav,nameBAETTwoKeyNavRTETTwoKeyNav,
+        nameBAESAllPrimRT,nameBAETAllPrimRT};
+    
+    List<CsdlAction> actions = new ArrayList<CsdlAction>();
+    for (FullQualifiedName fqn:actionNames) {
+      List<CsdlAction> entityActions = getActions(fqn);
+      for (CsdlAction action:entityActions) {
+        CsdlParameter parameter = action.getParameters().get(0);
+        if (parameter.getTypeFQN().equals(entityType)) {
+          actions.add(action);
+        }
+      }
+    }
+    return actions;
+  }
 
-  public List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
+  public static List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
     if (actionName.equals(nameUARTString)) {
       return Collections.singletonList(
           new CsdlAction().setName(nameUARTString.getName())

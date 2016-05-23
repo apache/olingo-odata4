@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,11 @@ import org.apache.olingo.commons.api.ex.ODataException;
 public class FunctionProvider {
 
   // Bound Functions
+  
+  
+  public static final FullQualifiedName nameBFCColCTAllPrimRTESAllPrim =
+    new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCColCTAllPrimRTESAllPrim");
+
   public static final FullQualifiedName nameBFCCollCTPrimCompRTESAllPrim =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCCollCTPrimCompRTESAllPrim");
 
@@ -181,7 +187,56 @@ public class FunctionProvider {
   public static final FullQualifiedName nameUFNRTByteNineParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTByteNineParam");
 
-  public List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
+  
+  public static List<CsdlFunction> getBoundFunctionsForType(FullQualifiedName entityType) throws ODataException {
+    FullQualifiedName[] funcNames = {
+        nameBFCColCTAllPrimRTESAllPrim,
+        nameBFCCollCTPrimCompRTESAllPrim, 
+        nameBFCCollStringRTESTwoKeyNav,
+        nameBFCCTPrimCompRTESBaseTwoKeyNav,
+        nameBFCCTPrimCompRTESTwoKeyNav,
+        nameBFCCTPrimCompRTESTwoKeyNavParam,
+        nameBFCCTPrimCompRTETTwoKeyNavParam,
+        nameBFNESAllPrimRTCTAllPrim,
+        nameBFCESBaseTwoKeyNavRTESBaseTwoKey,
+        nameBFCESKeyNavRTETKeyNav,
+        nameBFCESKeyNavRTETKeyNavParam,
+        nameBFCESTwoKeyNavRTCollCTTwoPrim,
+        nameBFCESTwoKeyNavRTCollString,
+        nameBFCESTwoKeyNavRTCTTwoPrim,
+        nameBFCESTwoKeyNavRTESTwoKeyNav,
+        nameBFCESTwoKeyNavRTString,
+        nameBFCESTwoKeyNavRTStringParam,
+        nameBFCESTwoKeyNavRTTwoKeyNav,
+        nameBFCETBaseTwoKeyNavRTESBaseTwoKey,
+        nameBFCETBaseTwoKeyNavRTESTwoKeyNav,
+        nameBFCETBaseTwoKeyNavRTETTwoKeyNav,
+        nameBFCETKeyNavRTETKeyNav,
+        nameBFCETTwoKeyNavRTCTTwoPrim,
+        nameBFCETTwoKeyNavRTESTwoKeyNav,
+        nameBFCETTwoKeyNavRTETTwoKeyNav,
+        nameBFCSINavRTESTwoKeyNav,
+        nameBFCStringRTESTwoKeyNav,
+        nameBFESTwoKeyNavRTESTwoKeyNav,
+        nameBFCESTwoKeyNavRTCTNavFiveProp,
+        nameBFCESTwoKeyNavRTCollCTNavFiveProp,
+        nameBFCESKeyNavRTESTwoKeyNav
+    };
+    
+    List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+    for (FullQualifiedName fqn:funcNames) {
+      List<CsdlFunction> entityFuncs = getFunctions(fqn);
+      for (CsdlFunction func:entityFuncs) {
+        CsdlParameter parameter = func.getParameters().get(0);
+        if (parameter.getTypeFQN().equals(entityType)) {
+          functions.add(func);
+        }
+      }
+    }
+    return functions;
+  }
+  
+  public static List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
 
     if (functionName.equals(nameUFNRTInt16)) {
       return Collections.singletonList(
@@ -564,7 +619,7 @@ public class FunctionProvider {
                       .setNullable(false)));
 
     } else if (functionName.equals(nameBFNESAllPrimRTCTAllPrim)) {
-      return Collections.singletonList(
+      return Arrays.asList(
           new CsdlFunction()
               .setName("BFNESAllPrimRTCTAllPrim")
               .setBound(true)
@@ -573,7 +628,19 @@ public class FunctionProvider {
                       .setCollection(true).setNullable(false)))
               .setComposable(false)
               .setReturnType(
-                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false)));
+                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false)),
+              new CsdlFunction()
+              .setName("BFNESAllPrimRTCTAllPrim")
+              .setBound(true)
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETAllPrim)
+                      .setCollection(true).setNullable(false),
+                  new CsdlParameter().setName("Param2").setType(PropertyProvider.nameInt16)
+                  .setCollection(true).setNullable(false)))
+              .setComposable(false)
+              .setReturnType(
+                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))              
+          );
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCTTwoPrim)) {
       return Collections.singletonList(
@@ -714,6 +781,19 @@ public class FunctionProvider {
               .setComposable(true)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETBaseTwoKeyNav).setCollection(true)
+                      .setNullable(false)));
+
+    } else if (functionName.equals(nameBFCColCTAllPrimRTESAllPrim)) {
+      return Collections.singletonList(
+          new CsdlFunction()
+              .setName("BFCColCTAllPrimRTESAllPrim")
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("BindingParam").setType(ComplexTypeProvider.nameCTAllPrim)
+                      .setNullable(false)))
+              .setComposable(true)
+              .setReturnType(
+                  new CsdlReturnType().setType(EntityTypeProvider.nameETAllPrim).setCollection(true)
                       .setNullable(false)));
 
     } else if (functionName.equals(nameBFCCollCTPrimCompRTESAllPrim)) {

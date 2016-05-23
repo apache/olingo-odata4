@@ -51,6 +51,8 @@ public interface Constants {
   String NS_ASSOCIATION_LINK_REL = "http://docs.oasis-open.org/odata/ns/relatedlinks/";
 
   String NS_MEDIA_EDIT_LINK_REL = "http://docs.oasis-open.org/odata/ns/edit-media/";
+  
+  String NS_MEDIA_READ_LINK_REL = "http://docs.oasis-open.org/odata/ns/mediaresource/";
 
   String NS_DELTA_LINK_REL = "http://docs.oasis-open.org/odata/ns/delta";
 
@@ -274,6 +276,8 @@ public interface Constants {
   QName QNAME_ATOM_ELEM_CONTENT = new QName(NS_ATOM, ATOM_ELEM_CONTENT);
 
   String ATOM_ELEM_ACTION = "action";
+  
+  String ATOM_ELEM_FUNCTION = "function";
 
   String ATOM_ELEM_INLINE = "inline";
 

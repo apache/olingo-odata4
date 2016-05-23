@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.domain;
 
+import java.util.List;
+
 /**
  * OData entity property.
  */
@@ -29,4 +31,19 @@ public interface ClientProperty extends ClientInvokeResult, ClientAnnotatable, C
    * @return property name.
    */
   String getName();
+  
+  /**
+   * Searches for operation with given title.
+   * 
+   * @param title operation to look for
+   * @return operation if found with given title, <tt>null</tt> otherwise
+   */
+  ClientOperation getOperation(String title);
+
+  /**
+   * Gets operations.
+   * 
+   * @return operations.
+   */
+  List<ClientOperation> getOperations();  
 }

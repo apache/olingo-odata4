@@ -148,29 +148,41 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
 
       links(field, entity, toRemove, tree, parser.getCodec());
-      if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK))) {
+      if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_READ_LINK))) {
         final Link link = new Link();
         link.setTitle(getTitle(field));
-        link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
-        link.setHref(field.getValue().textValue());
+        link.setRel(Constants.NS_MEDIA_READ_LINK_REL + getTitle(field));
         link.setType(Constants.MEDIA_EDIT_LINK_TYPE);
+        link.setHref(field.getValue().textValue());
         entity.getMediaEditLinks().add(link);
-
+        
         if (tree.has(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG))) {
           link.setMediaETag(tree.get(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG)).asText());
           toRemove.add(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_ETAG));
         }
 
+        if (tree.has(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE))) {
+          link.setType(tree.get(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE)).asText());
+          toRemove.add(link.getTitle() + getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE));
+        }        
+        
+        toRemove.add(field.getKey());
+        toRemove.add(setInline(field.getKey(), getJSONAnnotation(Constants.JSON_MEDIA_READ_LINK), tree, parser
+            .getCodec(), link));
+      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK))) {
+        final Link link = getOrCreateMediaLink(entity, getTitle(field));
+        link.setRel(Constants.NS_MEDIA_EDIT_LINK_REL + getTitle(field));
+        link.setHref(field.getValue().textValue());
         toRemove.add(field.getKey());
         toRemove.add(setInline(field.getKey(), getJSONAnnotation(Constants.JSON_MEDIA_EDIT_LINK), tree, parser
             .getCodec(), link));
-      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE))) {
-        final String linkTitle = getTitle(field);
-        for (Link link : entity.getMediaEditLinks()) {
-          if (linkTitle.equals(link.getTitle())) {
-            link.setType(field.getValue().asText());
-          }
-        }
+      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_CONTENT_TYPE))) {        
+        final Link link = getOrCreateMediaLink(entity, getTitle(field));
+        link.setType(field.getValue().asText());
+        toRemove.add(field.getKey());
+      } else if (field.getKey().endsWith(getJSONAnnotation(Constants.JSON_MEDIA_ETAG))) {        
+        final Link link = getOrCreateMediaLink(entity, getTitle(field));
+        link.setMediaETag(field.getValue().asText());
         toRemove.add(field.getKey());
       } else if (field.getKey().charAt(0) == '#') {
         final Operation operation = new Operation();
@@ -225,5 +237,20 @@ public class JsonEntityDeserializer extends JsonDeserializer {
     }
 
     return new ResWrap<Entity>(contextURL, metadataETag, entity);
+  }
+  
+  private Link getOrCreateMediaLink(final Entity entity, final String name) {
+    final String rel = Constants.NS_MEDIA_EDIT_LINK_REL + name;
+    for (Link link : entity.getMediaEditLinks()) {
+      if (link.getRel().equals(rel)) {        
+        return link;
+      }
+    }
+    final Link link = new Link();
+    link.setTitle(name);
+    link.setRel(rel);
+    link.setType(Constants.MEDIA_EDIT_LINK_TYPE);
+    entity.getMediaEditLinks().add(link);
+    return link;
   }
 }
