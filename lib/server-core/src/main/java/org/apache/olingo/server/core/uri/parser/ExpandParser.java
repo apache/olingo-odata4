@@ -136,13 +136,13 @@ public class ExpandParser {
       UriResourcePartTyped lastPart = (UriResourcePartTyped) resource.getLastResourcePart();
 
       boolean hasSlash = false;
+      EdmStructuredType typeCastSuffix = null;
       if (tokenizer.next(TokenKind.SLASH)) {
         hasSlash = true;
         if (lastPart instanceof UriResourceNavigation) {
           UriResourceNavigationPropertyImpl navigationResource = (UriResourceNavigationPropertyImpl) lastPart;
           final EdmNavigationProperty navigationProperty = navigationResource.getProperty();
-          final EdmStructuredType typeCastSuffix = ParserHelper.parseTypeCast(tokenizer, edm,
-              navigationProperty.getType());
+          typeCastSuffix = ParserHelper.parseTypeCast(tokenizer, edm, navigationProperty.getType());
           if (typeCastSuffix != null) {
             if (navigationProperty.isCollection()) {
               navigationResource.setCollectionTypeFilter(typeCastSuffix);
@@ -154,7 +154,8 @@ public class ExpandParser {
         }
       }
 
-      final EdmStructuredType newReferencedType = (EdmStructuredType) lastPart.getType();
+      final EdmStructuredType newReferencedType = typeCastSuffix != null ? typeCastSuffix 
+        : (EdmStructuredType) lastPart.getType();
       final boolean newReferencedIsCollection = lastPart.isCollection();
       if (hasSlash || tokenizer.next(TokenKind.SLASH)) {
         if (tokenizer.next(TokenKind.REF)) {
