@@ -82,8 +82,9 @@ public class BatchRequest extends ServiceRequest {
           partResponse = processChangeSet(part, handler);
           if (partResponse.getResponses().get(0).getStatusCode() > 400) {
             handler.rollback(txnId);
+          } else {
+            handler.commit(txnId);
           }
-          handler.commit(txnId);
         } catch(ODataLibraryException e) {
           if (txnId != null) {
             handler.rollback(txnId);
