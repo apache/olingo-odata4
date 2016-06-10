@@ -40,6 +40,7 @@ public final class ContentNegotiator {
       Collections.unmodifiableList(Arrays.asList(
           ContentType.JSON,
           ContentType.JSON_NO_METADATA,
+          ContentType.JSON_FULL_METADATA,
           ContentType.APPLICATION_JSON,
           ContentType.APPLICATION_ATOM_XML,
           ContentType.APPLICATION_XML));
