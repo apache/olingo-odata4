@@ -125,9 +125,9 @@ public class ParserHelper {
 
         // The order of the next seven expressions is important in order to avoid
         // finding partly parsed tokens (counter-intuitive as it may be, even a GUID may start with digits ...).
+        TokenKind.GuidValue,
         TokenKind.DoubleValue,
         TokenKind.DecimalValue,
-        TokenKind.GuidValue,
         TokenKind.DateTimeOffsetValue,
         TokenKind.DateValue,
         TokenKind.TimeOfDayValue,
