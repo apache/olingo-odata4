@@ -22,6 +22,7 @@ import org.apache.olingo.commons.api.ex.ODataNotSupportedException;
 
 import java.net.URI;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Data representation as an Iterator for a collection of single entities.
@@ -48,6 +49,17 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
   public void remove() {
     //"Remove is not supported for iteration over Entities."
     throw new ODataNotSupportedException("Entity Iterator does not support remove()");
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p/>
+   * <b>ATTENTION:</b> <code>getOperations</code> is not supported by default.
+   */
+  @Override
+  public List<Operation> getOperations() {
+    //"Remove is not supported for iteration over Entities."
+    throw new ODataNotSupportedException("Entity Iterator does not support getOperations() by default");
   }
 
   /**
