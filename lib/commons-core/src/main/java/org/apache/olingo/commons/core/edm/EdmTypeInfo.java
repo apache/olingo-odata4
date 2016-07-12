@@ -18,6 +18,12 @@
  */
 package org.apache.olingo.commons.core.edm;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -34,16 +40,10 @@ public class EdmTypeInfo {
   public static class Builder {
 
     private String typeExpression;
-    private String defaultNamespace;
     private Edm edm;
 
     public Builder setTypeExpression(final String typeExpression) {
       this.typeExpression = typeExpression;
-      return this;
-    }
-
-    public Builder setDefaultNamespace(final String defaultNamespace) {
-      this.defaultNamespace = defaultNamespace;
       return this;
     }
 
@@ -53,10 +53,7 @@ public class EdmTypeInfo {
     }
 
     public EdmTypeInfo build() {
-      return new EdmTypeInfo(edm,
-          typeExpression.indexOf('.') == -1 && defaultNamespace != null && !defaultNamespace.isEmpty() ?
-              defaultNamespace + "." + typeExpression :
-              typeExpression);
+      return new EdmTypeInfo(edm, typeExpression);
     }
   }
 
@@ -84,10 +81,12 @@ public class EdmTypeInfo {
       baseType = typeExpression.substring(collStartIdx + 11, collEndIdx);
     }
 
-    baseType = baseType.replaceAll("^#", "");
+    if (baseType.startsWith("#")) {
+      baseType = baseType.substring(1);
+    }
 
-    final String typeName;
-    final String namespace;
+    String typeName;
+    String namespace;
 
     final int lastDotIdx = baseType.lastIndexOf('.');
     if (lastDotIdx == -1) {
@@ -105,7 +104,7 @@ public class EdmTypeInfo {
     fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
     try {
-      primitiveType = EdmPrimitiveTypeKind.valueOf(fullQualifiedName.getName());
+      primitiveType = EdmPrimitiveTypeKind.valueOf(typeName);
     } catch (final IllegalArgumentException e) {
       primitiveType = null;
     }
@@ -124,41 +123,30 @@ public class EdmTypeInfo {
   }
 
   public String internal() {
-    final StringBuilder deserialize = new StringBuilder();
-
-    if (isCollection()) {
-      deserialize.append("Collection(");
-    }
-
-    deserialize.append(getFullQualifiedName().toString());
-
-    if (isCollection()) {
-      deserialize.append(")");
-    }
-
-    return deserialize.toString();
+    return serialize(false);
   }
 
   public String external() {
-    final StringBuilder serialize = new StringBuilder();
+    return serialize(true);
+  }
+
+  private String serialize(final boolean external) {
+    StringBuilder serialize = new StringBuilder();
+
+    if (external && (!isPrimitiveType() || isCollection())) {
+      serialize.append('#');
+    }
 
     if (isCollection()) {
-      serialize.append('#');
       serialize.append("Collection(");
     }
 
-    if (isPrimitiveType()) {
-      serialize.append(getFullQualifiedName().getName());
-    } else {
-      serialize.append(getFullQualifiedName().toString());
-    }
+    serialize.append(external && isPrimitiveType() ?
+        getFullQualifiedName().getName() :
+        getFullQualifiedName().getFullQualifiedNameAsString());
 
     if (isCollection()) {
-      serialize.append(")");
-    }
-
-    if (!isPrimitiveType() && !isCollection()) {
-      serialize.insert(0, '#');
+      serialize.append(')');
     }
 
     return serialize.toString();
@@ -213,16 +201,48 @@ public class EdmTypeInfo {
   }
 
   public EdmType getType() {
-    return isPrimitiveType()
-        ? EdmPrimitiveTypeFactory.getInstance(getPrimitiveTypeKind())
-            : isTypeDefinition()
-            ? getTypeDefinition()
-                : isEnumType()
-                ? getEnumType()
-                    : isComplexType()
-                    ? getComplexType()
-                        : isEntityType()
-                        ? getEntityType()
-                            : null;
+    return isPrimitiveType() ? EdmPrimitiveTypeFactory.getInstance(getPrimitiveTypeKind()) :
+        isTypeDefinition() ? getTypeDefinition() :
+        isEnumType() ? getEnumType() :
+        isComplexType() ? getComplexType() :
+        isEntityType() ? getEntityType() :
+        null;
+  }
+
+  public static EdmPrimitiveTypeKind determineTypeKind(final Object value) {
+    if (value == null) {
+      return null;
+    }
+    final Class<? extends Object> cls = value.getClass();
+    if (value instanceof Boolean || boolean.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Boolean;
+    } else if (value instanceof String) {
+      return EdmPrimitiveTypeKind.String;
+    } else if (value instanceof UUID) {
+      return EdmPrimitiveTypeKind.Guid;
+    } else if (value instanceof Long || value instanceof BigInteger || long.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Int64;
+    } else if (value instanceof Integer || int.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Int32;
+    } else if (value instanceof Short || short.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Int16;
+    } else if (value instanceof Byte || byte.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.SByte;
+    } else if (value instanceof BigDecimal) {
+      return EdmPrimitiveTypeKind.Decimal;
+    } else if (value instanceof Double || double.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Double;
+    } else if (value instanceof Float || float.class.isAssignableFrom(cls)) {
+      return EdmPrimitiveTypeKind.Single;
+    } else if (value instanceof Calendar || value instanceof Date || value instanceof java.sql.Timestamp) {
+      return EdmPrimitiveTypeKind.DateTimeOffset;
+    } else if (value instanceof java.sql.Date) {
+      return EdmPrimitiveTypeKind.Date;
+    } else if (value instanceof java.sql.Time) {
+      return EdmPrimitiveTypeKind.TimeOfDay;
+    } else if (value instanceof byte[] || value instanceof Byte[]) {
+      return EdmPrimitiveTypeKind.Binary;
+    }
+    return null;
   }
 }

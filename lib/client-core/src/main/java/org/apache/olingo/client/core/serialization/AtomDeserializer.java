@@ -65,7 +65,29 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 
-public class AtomDeserializer extends AbstractAtomDealer implements ODataDeserializer {
+public class AtomDeserializer implements ODataDeserializer {
+
+  protected static final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG);
+  protected static final QName metadataEtagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_METADATAETAG);
+  protected static final QName inlineQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_INLINE);
+  protected static final QName actionQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ACTION);
+  protected static final QName propertiesQName = new QName(Constants.NS_METADATA, Constants.PROPERTIES);
+  protected static final QName typeQName = new QName(Constants.NS_METADATA, Constants.ATTR_TYPE);
+  protected static final QName nullQName = new QName(Constants.NS_METADATA, Constants.ATTR_NULL);
+  protected static final QName elementQName = new QName(Constants.NS_METADATA, Constants.ELEM_ELEMENT);
+  protected static final QName countQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_COUNT);
+  protected static final QName annotationQName = new QName(Constants.NS_METADATA, Constants.ANNOTATION);
+  protected static final QName contextQName = new QName(Constants.NS_METADATA, Constants.CONTEXT);
+  protected static final QName entryRefQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_ENTRY_REF);
+  protected static final QName propertyValueQName = new QName(Constants.NS_METADATA, Constants.VALUE);
+  protected static final QName reasonQName = new QName(Constants.NS_METADATA, Constants.ELEM_REASON);
+  protected static final QName linkQName = new QName(Constants.NS_METADATA, Constants.ATOM_ELEM_LINK);
+  protected static final QName deletedLinkQName = new QName(Constants.NS_METADATA, Constants.ELEM_DELETED_LINK);
+  protected static final QName errorCodeQName = new QName(Constants.NS_METADATA, Constants.ERROR_CODE);
+  protected static final QName errorMessageQName = new QName(Constants.NS_METADATA, Constants.ERROR_MESSAGE);
+  protected static final QName errorTargetQName = new QName(Constants.NS_METADATA, Constants.ERROR_TARGET);
+  protected static final QName deletedEntryQName =
+      new QName(Constants.NS_ATOM_TOMBSTONE, Constants.ATOM_ELEM_DELETED_ENTRY);
 
   protected static final XMLInputFactory FACTORY = new InputFactoryImpl();
 

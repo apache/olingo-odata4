@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -60,21 +59,21 @@ public class JsonEntitySerializer extends JsonSerializer {
       if (container.getContextURL() != null) {
         jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
-      if (StringUtils.isNotBlank(container.getMetadataETag())) {
+      if (container.getMetadataETag() != null) {
         jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
 
-      if (StringUtils.isNotBlank(entity.getETag())) {
+      if (entity.getETag() != null) {
         jgen.writeStringField(Constants.JSON_ETAG, entity.getETag());
       }
     }
 
-    if (StringUtils.isNotBlank(entity.getType()) && !isODataMetadataNone(contentType)) {
+    if (entity.getType() != null && !isODataMetadataNone) {
       jgen.writeStringField(Constants.JSON_TYPE,
           new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external());
     }
 
-    if (entity.getId() != null && !isODataMetadataNone(contentType)) {
+    if (entity.getId() != null && !isODataMetadataNone) {
       jgen.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
     }
 
@@ -86,9 +85,8 @@ public class JsonEntitySerializer extends JsonSerializer {
       valuable(jgen, property, property.getName());
     }
 
-    if (serverMode && entity.getEditLink() != null && StringUtils.isNotBlank(entity.getEditLink().getHref())) {
-      jgen.writeStringField(Constants.JSON_EDIT_LINK,
-          entity.getEditLink().getHref());
+    if (serverMode && entity.getEditLink() != null && entity.getEditLink().getHref() != null) {
+      jgen.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
 
       if (entity.isMediaEntity()) {
         jgen.writeStringField(Constants.JSON_MEDIA_READ_LINK,
@@ -96,7 +94,7 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (!isODataMetadataNone(contentType)) {
+    if (!isODataMetadataNone) {
       links(entity, jgen);
     }
 
@@ -119,7 +117,9 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     if (serverMode) {
       for (Operation operation : entity.getOperations()) {
-        jgen.writeObjectFieldStart("#" + StringUtils.substringAfterLast(operation.getMetadataAnchor(), "#"));
+        final String anchor = operation.getMetadataAnchor();
+        final int index = anchor.lastIndexOf('#');
+        jgen.writeObjectFieldStart('#' + anchor.substring(index < 0 ? 0 : (index + 1)));
         jgen.writeStringField(Constants.ATTR_TITLE, operation.getTitle());
         jgen.writeStringField(Constants.ATTR_TARGET, operation.getTarget().toASCIIString());
         jgen.writeEndObject();

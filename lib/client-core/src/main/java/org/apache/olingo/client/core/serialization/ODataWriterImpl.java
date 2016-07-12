@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.serialization.ODataSerializer;
 import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.client.api.serialization.ODataWriter;
 import org.apache.olingo.commons.api.Constants;
@@ -57,8 +58,9 @@ public class ODataWriterImpl implements ODataWriter {
       writer = null;
     }
     try {
+      final ODataSerializer serializer = client.getSerializer(contentType);
       for (ClientEntity entity : entities) {
-        client.getSerializer(contentType).write(writer, client.getBinder().getEntity(entity));
+        serializer.write(writer, client.getBinder().getEntity(entity));
       }
 
       return new ByteArrayInputStream(output.toByteArray());

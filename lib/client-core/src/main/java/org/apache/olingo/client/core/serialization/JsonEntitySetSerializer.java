@@ -20,7 +20,6 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.Annotation;
@@ -54,18 +53,20 @@ public class JsonEntitySetSerializer extends JsonSerializer {
         jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
 
-      if (StringUtils.isNotBlank(container.getMetadataETag())) {
-        jgen.writeStringField(
-            Constants.JSON_METADATA_ETAG,
-            container.getMetadataETag());
+      if (container.getMetadataETag() != null) {
+        jgen.writeStringField(Constants.JSON_METADATA_ETAG, container.getMetadataETag());
       }
     }
 
     if (entitySet.getId() != null) {
       jgen.writeStringField(Constants.JSON_ID, entitySet.getId().toASCIIString());
     }
-    jgen.writeNumberField(Constants.JSON_COUNT,
-        entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount());
+    final Integer count = entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount();
+    if (isIEEE754Compatible) {
+      jgen.writeStringField(Constants.JSON_COUNT, Integer.toString(count));
+    } else {
+      jgen.writeNumberField(Constants.JSON_COUNT, count);
+    }
     if (serverMode) {
       if (entitySet.getNext() != null) {
         jgen.writeStringField(Constants.JSON_NEXT_LINK,
