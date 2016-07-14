@@ -276,7 +276,10 @@ public class ODataHandlerImplTest {
     final String LOCALIZED_MESSAGE = "localized message";
     MetadataProcessor processor = mock(MetadataProcessor.class);
     
-    ODataApplicationException oDataApplicationException = new ODataApplicationException(ORIGINAL_MESSAGE, 425, Locale.ENGLISH, ODATA_ERRORCODE) {
+    ODataApplicationException oDataApplicationException = 
+        new ODataApplicationException(ORIGINAL_MESSAGE, 425, Locale.ENGLISH, ODATA_ERRORCODE) {
+      private static final long serialVersionUID = 1L;
+
       @Override
       public String getLocalizedMessage() {
           return LOCALIZED_MESSAGE;
