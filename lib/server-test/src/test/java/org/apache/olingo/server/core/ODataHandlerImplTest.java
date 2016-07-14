@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -266,7 +268,35 @@ public class ODataHandlerImplTest {
     assertEquals("application/json;odata.metadata=minimal",
         response.getHeader(HttpHeader.CONTENT_TYPE));
   }
-
+  
+  @Test
+  public void applicationExceptionInProcessorMessage() throws Exception {
+    final String ODATA_ERRORCODE = "425";
+    final String ORIGINAL_MESSAGE = "original message";
+    final String LOCALIZED_MESSAGE = "localized message";
+    MetadataProcessor processor = mock(MetadataProcessor.class);
+    
+    ODataApplicationException oDataApplicationException = new ODataApplicationException(ORIGINAL_MESSAGE, 425, Locale.ENGLISH, ODATA_ERRORCODE) {
+      @Override
+      public String getLocalizedMessage() {
+          return LOCALIZED_MESSAGE;
+      }
+    };
+    
+    doThrow(oDataApplicationException).when(processor).readMetadata(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    
+    final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", processor);
+    InputStream contentStream = response.getContent();
+    String responseContent = IOUtils.toString(contentStream, Charset.forName("UTF-8"));
+    // does the response contain the localized message and the status code?
+    boolean isMessage = responseContent.contains(LOCALIZED_MESSAGE) && responseContent.contains(ODATA_ERRORCODE);
+    // test if message is localized
+    assertEquals(true, isMessage);
+    // test if the original is hold
+    assertEquals(ORIGINAL_MESSAGE, oDataApplicationException.getMessage());
+  }
+  
   @Test
   public void applicationExceptionInProcessor() throws Exception {
     MetadataProcessor processor = mock(MetadataProcessor.class);

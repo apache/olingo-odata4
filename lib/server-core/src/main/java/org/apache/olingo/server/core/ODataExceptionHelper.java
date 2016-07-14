@@ -143,7 +143,7 @@ public class ODataExceptionHelper {
   }
 
   private static ODataServerError basicServerError(final Exception e) {
-    ODataServerError serverError = new ODataServerError().setException(e).setMessage(e.getMessage());
+    ODataServerError serverError = new ODataServerError().setException(e).setMessage(e.getLocalizedMessage());
     if (serverError.getMessage() == null) {
       serverError.setMessage("OData Library: An exception without message text was thrown.");
     }
