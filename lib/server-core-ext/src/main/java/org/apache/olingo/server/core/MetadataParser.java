@@ -915,7 +915,7 @@ public class MetadataParser {
     property.setName(attr(element, "Name"));
     property.setType(readType(element));
     property.setCollection(isCollectionType(element));
-    property.setNullable(Boolean.parseBoolean(attr(element, "Nullable")));
+    property.setNullable(Boolean.parseBoolean(attr(element, "Nullable") == null ? "true" : attr(element, "Nullable")));
     property.setPartner(attr(element, "Partner"));
     property.setContainsTarget(Boolean.parseBoolean(attr(element, "ContainsTarget")));
 
