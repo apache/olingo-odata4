@@ -28,11 +28,18 @@ public class ContentTypeHelper {
 
   public static boolean isODataMetadataNone(final ContentType contentType) {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
-        && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+        && ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(
+            contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
-  
+
   public static boolean isODataMetadataFull(final ContentType contentType) {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
-        && ContentType.VALUE_ODATA_METADATA_FULL.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
-  }  
+        && ContentType.VALUE_ODATA_METADATA_FULL.equalsIgnoreCase(
+            contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+  }
+
+  public static boolean isODataIEEE754Compatible(final ContentType contentType) {
+    return Boolean.TRUE.toString().equalsIgnoreCase(
+        contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE));
+  }
 }

@@ -368,6 +368,7 @@ public class CarsProcessor implements EntityCollectionProcessor, EntityProcessor
   
   public static boolean isODataMetadataNone(final ContentType contentType) {
     return contentType.isCompatible(ContentType.APPLICATION_JSON) 
-       && ContentType.VALUE_ODATA_METADATA_NONE.equals(contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+       && ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(
+           contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

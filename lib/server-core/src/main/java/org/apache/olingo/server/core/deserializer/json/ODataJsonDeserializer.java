@@ -62,6 +62,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
 import org.apache.olingo.server.core.deserializer.helper.ExpandTreeBuilder;
 import org.apache.olingo.server.core.deserializer.helper.ExpandTreeBuilderImpl;
+import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -82,16 +83,12 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private ServiceMetadata serviceMetadata;
 
   public ODataJsonDeserializer(final ContentType contentType) {
-    isIEEE754Compatible = isODataIEEE754Compatible(contentType);
+    this(contentType, null);
   }
-  
+
   public ODataJsonDeserializer(final ContentType contentType, final ServiceMetadata serviceMetadata) {
-    isIEEE754Compatible = isODataIEEE754Compatible(contentType);
+    isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.serviceMetadata = serviceMetadata;
-  }
-  
-  public void setMetadata(ServiceMetadata metadata) {
-    this.serviceMetadata = metadata;
   }
 
   @Override
@@ -825,12 +822,6 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       return new DeserializerException("An IOException occurred.", e,
           DeserializerException.MessageKeys.IO_EXCEPTION);
     }
-  }
-
-  private boolean isODataIEEE754Compatible(final ContentType contentType) {
-    return contentType.getParameters().containsKey(ContentType.PARAMETER_IEEE754_COMPATIBLE)
-        && Boolean.TRUE.toString().equalsIgnoreCase(
-            contentType.getParameter(ContentType.PARAMETER_IEEE754_COMPATIBLE));
   }
 
   private EdmType getDerivedType(final EdmStructuredType edmType, final JsonNode jsonNode)

@@ -212,27 +212,25 @@ public class EdmTypeInfo {
   public static EdmPrimitiveTypeKind determineTypeKind(final Object value) {
     if (value == null) {
       return null;
-    }
-    final Class<? extends Object> cls = value.getClass();
-    if (value instanceof Boolean || boolean.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Boolean) {
       return EdmPrimitiveTypeKind.Boolean;
     } else if (value instanceof String) {
       return EdmPrimitiveTypeKind.String;
     } else if (value instanceof UUID) {
       return EdmPrimitiveTypeKind.Guid;
-    } else if (value instanceof Long || value instanceof BigInteger || long.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Long || value instanceof BigInteger) {
       return EdmPrimitiveTypeKind.Int64;
-    } else if (value instanceof Integer || int.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Integer) {
       return EdmPrimitiveTypeKind.Int32;
-    } else if (value instanceof Short || short.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Short) {
       return EdmPrimitiveTypeKind.Int16;
-    } else if (value instanceof Byte || byte.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Byte) {
       return EdmPrimitiveTypeKind.SByte;
     } else if (value instanceof BigDecimal) {
       return EdmPrimitiveTypeKind.Decimal;
-    } else if (value instanceof Double || double.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Double) {
       return EdmPrimitiveTypeKind.Double;
-    } else if (value instanceof Float || float.class.isAssignableFrom(cls)) {
+    } else if (value instanceof Float) {
       return EdmPrimitiveTypeKind.Single;
     } else if (value instanceof Calendar || value instanceof Date || value instanceof java.sql.Timestamp) {
       return EdmPrimitiveTypeKind.DateTimeOffset;

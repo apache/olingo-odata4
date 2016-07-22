@@ -380,7 +380,7 @@ public class JsonSerializer implements ODataSerializer {
 
   private boolean isODataMetadataNone() {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
-        && ContentType.VALUE_ODATA_METADATA_NONE.equals(
+        && ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(
             contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

@@ -63,9 +63,9 @@ public class ODataImpl extends OData {
     if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       final String metadata = contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA);
       if (metadata == null
-          || ContentType.VALUE_ODATA_METADATA_MINIMAL.equals(metadata)
-          || ContentType.VALUE_ODATA_METADATA_NONE.equals(metadata)
-          || ContentType.VALUE_ODATA_METADATA_FULL.equals(metadata)) {
+          || ContentType.VALUE_ODATA_METADATA_MINIMAL.equalsIgnoreCase(metadata)
+          || ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(metadata)
+          || ContentType.VALUE_ODATA_METADATA_FULL.equalsIgnoreCase(metadata)) {
         serializer = new ODataJsonSerializer(contentType);
       }
     } else if (contentType.isCompatible(ContentType.APPLICATION_XML)

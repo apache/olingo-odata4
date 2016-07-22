@@ -67,7 +67,6 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
@@ -78,10 +77,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class ODataJsonSerializerTest {
-  private static final ServiceMetadata metadata = new ServiceMetadataImpl(
+  private static final OData odata = OData.newInstance();
+  private static final ServiceMetadata metadata = odata.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
-  private final OData odata = OData.newInstance();
   private final DataProvider data = new DataProvider(odata, metadata.getEdm());
   private final ODataSerializer serializer = new ODataJsonSerializer(ContentType.JSON);
   private final ODataSerializer serializerNoMetadata = new ODataJsonSerializer(ContentType.JSON_NO_METADATA);

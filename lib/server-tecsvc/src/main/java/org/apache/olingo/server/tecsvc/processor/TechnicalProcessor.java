@@ -257,7 +257,7 @@ public abstract class TechnicalProcessor implements Processor {
 
   protected boolean isODataMetadataNone(final ContentType contentType) {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
-        && ContentType.VALUE_ODATA_METADATA_NONE.equals(
+        && ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(
             contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }
