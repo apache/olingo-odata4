@@ -597,6 +597,10 @@ public final class CoreUtils {
               ComplexInvocationHandler.getInstance(itemValue.asComplex(), internalRef, service));
 
           collection.add(collItem);
+        } else if (itemValue.isEnum()) {
+          collection.add(CoreUtils.enumValueToObject(itemValue.asEnum(), ref));
+        } else {
+          throw new RuntimeException("Unsupported collection item type " + itemValue.getTypeName());
         }
       }
 
