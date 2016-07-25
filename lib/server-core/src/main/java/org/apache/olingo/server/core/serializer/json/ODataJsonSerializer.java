@@ -400,8 +400,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   protected EdmComplexType resolveComplexType(final ServiceMetadata metadata, final EdmComplexType baseType,
       final String derivedTypeName) throws SerializerException {
+      
+    String fullQualifiedName = baseType.getFullQualifiedName().getFullQualifiedNameAsString();
     if (derivedTypeName == null ||
-        baseType.getFullQualifiedName().getFullQualifiedNameAsString().equals(derivedTypeName)) {
+      fullQualifiedName.equals(derivedTypeName)) {
       return baseType;
     }
     EdmComplexType derivedType = metadata.getEdm().getComplexType(new FullQualifiedName(derivedTypeName));
@@ -611,8 +613,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         if (edmProperty.isCollection()) {
           writeComplexCollection(metadata, (EdmComplexType) type, property, selectedPaths, json);
         } else {
-          writeComplexValue(metadata, property, (EdmComplexType) type, property.asComplex().getValue(), selectedPaths,
-              json);
+         writeComplex(metadata, (EdmComplexType) type, property, selectedPaths, json);
         }
       } else {
         throw new SerializerException("Property type not yet supported!",
@@ -623,6 +624,20 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           SerializerException.MessageKeys.WRONG_PROPERTY_VALUE,
           edmProperty.getName(), property.getValue().toString());
     }
+  }
+
+  private void writeComplex(final ServiceMetadata metadata, final EdmComplexType type,
+      final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json) 
+          throws IOException, SerializerException{
+        json.writeStartObject();        
+        String derivedName = property.getType();
+        final EdmComplexType resolvedType = resolveComplexType(metadata, (EdmComplexType) type, derivedName);
+        if (!isODataMetadataNone && !resolvedType.equals(type) || isODataMetadataFull) {
+           json.writeStringField(Constants.JSON_TYPE, "#" + property.getType());
+        }          
+        writeComplexValue(metadata, resolvedType, property.asComplex().getValue(), selectedPaths,
+             json);
+        json.writeEndObject();
   }
 
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
@@ -662,7 +677,13 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     for (Object value : property.asCollection()) {
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(metadata, property, type, ((ComplexValue) value).getValue(), selectedPaths, json);
+        json.writeStartObject();
+        if (isODataMetadataFull) {
+             json.writeStringField(Constants.JSON_TYPE, "#" + 
+                     type.getFullQualifiedName().getFullQualifiedNameAsString());
+        }
+        writeComplexValue(metadata, type, ((ComplexValue) value).getValue(), selectedPaths, json);
+        json.writeEndObject();
         break;
       default:
         throw new SerializerException("Property type not yet supported!",
@@ -735,27 +756,19 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  protected void writeComplexValue(final ServiceMetadata metadata, final Property complexProperty,
+  protected void writeComplexValue(final ServiceMetadata metadata,
       final EdmComplexType type, final List<Property> properties,
       final Set<List<String>> selectedPaths, final JsonGenerator json)
       throws IOException, SerializerException {
-    json.writeStartObject();
 
-    final EdmComplexType resolvedType = resolveComplexType(metadata,
-        type, complexProperty.getType());
-    if (!isODataMetadataNone && !resolvedType.equals(type) || isODataMetadataFull) {
-      json.writeStringField(Constants.JSON_TYPE, "#" + complexProperty.getType());
-    }
-
-    for (final String propertyName : resolvedType.getPropertyNames()) {
+      for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
-        writeProperty(metadata, (EdmProperty) resolvedType.getProperty(propertyName), property,
+        writeProperty(metadata, (EdmProperty) type.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
             json);
       }
     }
-    json.writeEndObject();
   }
 
   private Property findProperty(final String propertyName, final List<Property> properties) {

@@ -938,9 +938,7 @@ public class ODataJsonSerializerTest {
     InputStream result = serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(helper.buildContextURLSelectList(entityType, null, null))
-                    .build())
+                .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     
@@ -986,7 +984,127 @@ public class ODataJsonSerializerTest {
         resultString);
   }
 
-
+    @Test
+    public void selectComplexNestedCollectionOfComplexWithMetadataFull() throws Exception{
+         final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+         final EntityCollection entitySet = data.readAll(edmEntitySet);
+         InputStream result = serializerFullMetadata
+             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+             EntityCollectionSerializerOptions.with()
+                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+                 .build())
+         .getContent();
+         final String resultString = IOUtils.toString(result);
+         final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
+             + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+             + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
+             + "\"@odata.id\":\"ESCompCollComp(32767)\","
+             + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
+             + "\"PropertyComp\":{"
+             + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
+             + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+             + "\"CollPropertyComp\":["
+             + "{" 
+             + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             + "\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":555,"
+             +"\"PropertyString\":\"1 Test Complex in Complex Property\""
+             +"},{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":666,"
+             +"\"PropertyString\":\"2 Test Complex in Complex Property\""
+             +"},{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":777,"
+             +"\"PropertyString\":\"3 Test Complex in Complex Property\""
+             +"}]}},{"
+             +"\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
+             +"\"@odata.id\":\"ESCompCollComp(12345)\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":12345,"
+             +"\"PropertyComp\":{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
+             +"\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+             +"\"CollPropertyComp\":["
+             +"{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":888,"
+             +"\"PropertyString\":\"11 Test Complex in Complex Property\""
+             +"},{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":999,"
+             +"\"PropertyString\":\"12 Test Complex in Complex Property\""
+             +"},{"
+             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+             +"\"PropertyInt16@odata.type\":\"#Int16\","
+             +"\"PropertyInt16\":0,"
+             +"\"PropertyString\":\"13 Test Complex in Complex Property\""
+             +"}]}}]}";
+         Assert.assertEquals(expectedResult, resultString);
+    }
+    
+    @Test
+    public void selectComplexNestedCollectionOfComplexWithMetadataMinimal() throws Exception{
+         final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+         final EntityCollection entitySet = data.readAll(edmEntitySet);
+         InputStream result = serializer
+             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+             EntityCollectionSerializerOptions.with()
+                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+                 .build())
+         .getContent();
+         final String resultString = IOUtils.toString(result);
+         final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
+             + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+             + "\"value\":[{"
+             + "\"PropertyInt16\":32767,"
+             + "\"PropertyComp\":{"
+             + "\"CollPropertyComp\":["
+             + "{" 
+             +"\"PropertyInt16\":555,"
+             +"\"PropertyString\":\"1 Test Complex in Complex Property\""
+             +"},{"
+             +"\"PropertyInt16\":666,"
+             +"\"PropertyString\":\"2 Test Complex in Complex Property\""
+             +"},{"
+             +"\"PropertyInt16\":777,"
+             +"\"PropertyString\":\"3 Test Complex in Complex Property\""
+             +"}]}},{"
+             +"\"PropertyInt16\":12345,"
+             +"\"PropertyComp\":{"
+             +"\"CollPropertyComp\":["
+             +"{"
+             +"\"PropertyInt16\":888,"
+             +"\"PropertyString\":\"11 Test Complex in Complex Property\""
+             +"},{"
+             +"\"PropertyInt16\":999,"
+             +"\"PropertyString\":\"12 Test Complex in Complex Property\""
+             +"},{"
+             +"\"PropertyInt16\":0,"
+             +"\"PropertyString\":\"13 Test Complex in Complex Property\""
+             +"}]}}]}";
+         Assert.assertEquals(expectedResult, resultString);
+    }
+   
+    @Test
+    public void selectComplexNestedCollectionOfComplexWithMetadataNone() throws Exception{
+        final String METADATA_TEXT = "@odata.";
+        final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+        final EntityCollection entitySet = data.readAll(edmEntitySet);
+          InputStream result = serializerNoMetadata
+             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+             EntityCollectionSerializerOptions.with()
+                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+                 .build())
+         .getContent();
+        final String resultString = IOUtils.toString(result);
+       Assert.assertEquals(false, resultString.contains(METADATA_TEXT));
+    }
+  
   @Test(expected = SerializerException.class)
   public void selectMissingId() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
