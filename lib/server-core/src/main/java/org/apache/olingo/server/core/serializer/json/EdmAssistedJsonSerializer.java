@@ -80,15 +80,13 @@ public class EdmAssistedJsonSerializer {
     return serialize(metadata, entityType, entity, contextURL);
   }
 
-  protected SerializerResult serialize(final ServiceMetadata metadata, final EdmEntityType entityType, final AbstractODataObject obj,
-      final ContextURL contextURL) throws SerializerException {
+  protected SerializerResult serialize(final ServiceMetadata metadata, final EdmEntityType entityType,
+      final AbstractODataObject obj, final ContextURL contextURL) throws SerializerException {
     final String metadataETag =
-        isODataMetadataNone || metadata == null || metadata.getServiceMetadataETagSupport() == null ?
-            null :
-            metadata.getServiceMetadataETagSupport().getMetadataETag();
-    final String contextURLString = isODataMetadataNone || contextURL == null ?
-        null :
-        ContextURLBuilder.create(contextURL).toASCIIString();
+        isODataMetadataNone || metadata == null || metadata.getServiceMetadataETagSupport() == null ? null : metadata
+            .getServiceMetadataETagSupport().getMetadataETag();
+    final String contextURLString = isODataMetadataNone || contextURL == null ? null : ContextURLBuilder.create(
+        contextURL).toASCIIString();
     OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
@@ -114,9 +112,8 @@ public class EdmAssistedJsonSerializer {
         try {
           outputStream.close();
         } catch (final IOException e) {
-          throw cachedException == null ?
-              new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION) :
-              cachedException;
+          throw cachedException == null ? new SerializerException(IO_EXCEPTION_TEXT, e,
+              SerializerException.MessageKeys.IO_EXCEPTION) : cachedException;
         }
       }
     }
@@ -164,9 +161,8 @@ public class EdmAssistedJsonSerializer {
 
     json.writeStartObject();
 
-    final String typeName = entity.getType() == null ?
-        null :
-        new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external();
+    final String typeName = entity.getType() == null ? null : new EdmTypeInfo.Builder().setTypeExpression(entity
+        .getType()).build().external();
     metadata(contextURLString, metadataETag, entity.getETag(), typeName, entity.getId(), true, json);
 
     for (final Annotation annotation : entity.getAnnotations()) {
@@ -175,9 +171,8 @@ public class EdmAssistedJsonSerializer {
 
     for (final Property property : entity.getProperties()) {
       final String name = property.getName();
-      final EdmProperty edmProperty = entityType == null || entityType.getStructuralProperty(name) == null ?
-          null :
-          entityType.getStructuralProperty(name);
+      final EdmProperty edmProperty = entityType == null || entityType.getStructuralProperty(name) == null ? null
+          : entityType.getStructuralProperty(name);
       valuable(json, property, name, edmProperty == null ? null : edmProperty.getType(), edmProperty);
     }
 
@@ -232,9 +227,8 @@ public class EdmAssistedJsonSerializer {
       }
 
       final EdmEntityType targetType =
-          entityType == null || name == null || entityType.getNavigationProperty(name) == null ?
-              null :
-              entityType.getNavigationProperty(name).getType();
+          entityType == null || name == null || entityType.getNavigationProperty(name) == null ? null : entityType
+              .getNavigationProperty(name).getType();
       if (link.getInlineEntity() != null) {
         json.writeFieldName(name);
         doSerialize(targetType, link.getInlineEntity(), null, null, json);
@@ -281,9 +275,8 @@ public class EdmAssistedJsonSerializer {
     EdmPrimitiveType type = valueType;
     if (type == null) {
       final EdmPrimitiveTypeKind kind =
-          typeName == null ?
-              EdmTypeInfo.determineTypeKind(value) :
-              new EdmTypeInfo.Builder().setTypeExpression(typeName).build().getPrimitiveTypeKind();
+          typeName == null ? EdmTypeInfo.determineTypeKind(value) : new EdmTypeInfo.Builder().setTypeExpression(
+              typeName).build().getPrimitiveTypeKind();
       type = kind == null ? null : EdmPrimitiveTypeFactory.getInstance(kind);
     }
 
@@ -312,13 +305,13 @@ public class EdmAssistedJsonSerializer {
           (type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
               || type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal))
           || type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Byte)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
-          && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)) {
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.SByte)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Single)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int16)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64)
+              && type != EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal)) {
         json.writeString(serialized);
       } else {
         json.writeNumber(serialized);
@@ -336,9 +329,8 @@ public class EdmAssistedJsonSerializer {
 
     for (final Property property : value.getValue()) {
       final String name = property.getName();
-      final EdmProperty edmProperty = valueType == null || valueType.getStructuralProperty(name) == null ?
-          null :
-          valueType.getStructuralProperty(name);
+      final EdmProperty edmProperty = valueType == null || valueType.getStructuralProperty(name) == null ? null
+          : valueType.getStructuralProperty(name);
       valuable(json, property, name, edmProperty == null ? null : edmProperty.getType(), edmProperty);
     }
     links(value, null, json);
@@ -348,9 +340,8 @@ public class EdmAssistedJsonSerializer {
 
   private void value(final JsonGenerator json, final Valuable value, final EdmType type, final EdmProperty edmProperty)
       throws IOException, SerializerException {
-    final String typeName = value.getType() == null ?
-        null :
-        new EdmTypeInfo.Builder().setTypeExpression(value.getType()).build().external();
+    final String typeName = value.getType() == null ? null : new EdmTypeInfo.Builder().setTypeExpression(value
+        .getType()).build().external();
 
     if (value.isNull()) {
       json.writeNull();
