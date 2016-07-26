@@ -30,10 +30,62 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerResult;
+import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
+import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.junit.Test;
 
 public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTest {
+
+  @Test
+  public void unbalancedESAllPrim() throws Exception {
+    final DeserializerResult result = deserializeWithResult("UnbalancedESAllPrimFeed.json");
+    ExpandOption root = result.getExpandTree();
+    assertEquals(1, root.getExpandItems().size());
+
+    ExpandItem etTwoPrimManyLevel = root.getExpandItems().get(0);
+    assertEquals("NavPropertyETTwoPrimMany", etTwoPrimManyLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertEquals(1, etTwoPrimManyLevel.getExpandOption().getExpandItems().size());
+
+    ExpandItem etAllPrimOneLevel = etTwoPrimManyLevel.getExpandOption().getExpandItems().get(0);
+    assertEquals("NavPropertyETAllPrimOne", etAllPrimOneLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertEquals(1, etAllPrimOneLevel.getExpandOption().getExpandItems().size());
+
+    ExpandItem etTwoPrimOneLevel = etAllPrimOneLevel.getExpandOption().getExpandItems().get(0);
+    assertEquals("NavPropertyETTwoPrimOne", etTwoPrimOneLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertNull(etTwoPrimOneLevel.getExpandOption());
+  }
+
+  @Test
+  public void unbalancedESAllPrim2() throws Exception {
+    final DeserializerResult result = deserializeWithResult("UnbalancedESAllPrimFeed2.json");
+    ExpandOption root = result.getExpandTree();
+    assertEquals(1, root.getExpandItems().size());
+
+    ExpandItem etTwoPrimManyLevel = root.getExpandItems().get(0);
+    assertEquals("NavPropertyETTwoPrimMany", etTwoPrimManyLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertEquals(1, etTwoPrimManyLevel.getExpandOption().getExpandItems().size());
+
+    ExpandItem etAllPrimOneLevel = etTwoPrimManyLevel.getExpandOption().getExpandItems().get(0);
+    assertEquals("NavPropertyETAllPrimOne", etAllPrimOneLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertEquals(2, etAllPrimOneLevel.getExpandOption().getExpandItems().size());
+
+    ExpandItem etTwoPrimOneLevel = etAllPrimOneLevel.getExpandOption().getExpandItems().get(0);
+    assertEquals("NavPropertyETTwoPrimMany", etTwoPrimOneLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertNull(etTwoPrimOneLevel.getExpandOption());
+
+    etTwoPrimOneLevel = etAllPrimOneLevel.getExpandOption().getExpandItems().get(1);
+    assertEquals("NavPropertyETTwoPrimOne", etTwoPrimOneLevel.getResourcePath().getUriResourceParts().get(0)
+        .getSegmentValue());
+    assertNull(etTwoPrimOneLevel.getExpandOption());
+  }
 
   @Test
   public void esAllPrimExpandedToOne() throws Exception {
@@ -150,6 +202,12 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
 
   private Entity deserialize(final String resourceName) throws IOException, DeserializerException {
     return ODataJsonDeserializerEntityTest.deserialize(getFileAsStream(resourceName),
+        "ETAllPrim", ContentType.JSON);
+  }
+
+  private DeserializerResult deserializeWithResult(final String resourceName) throws IOException,
+      DeserializerException {
+    return ODataJsonDeserializerEntityTest.deserializeWithResult(getFileAsStream(resourceName),
         "ETAllPrim", ContentType.JSON);
   }
 }

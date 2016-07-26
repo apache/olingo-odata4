@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.deserializer.helper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
@@ -25,43 +28,41 @@ import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 
 public class ExpandTreeBuilderImpl extends ExpandTreeBuilder {
 
+  private final Map<String, ExpandTreeBuilder> childBuilderCache = new HashMap<String, ExpandTreeBuilder>();
+  private final ExpandItemImpl parentItem;
   private ExpandOptionImpl expandOption = null;
 
+  private ExpandTreeBuilderImpl(final ExpandItemImpl parentItem) {
+    this.parentItem = parentItem;
+  }
+  
+  
   @Override
   public ExpandTreeBuilder expand(final EdmNavigationProperty edmNavigationProperty) {
-    ExpandItemImpl expandItem = buildExpandItem(edmNavigationProperty);
-
     if (expandOption == null) {
       expandOption = new ExpandOptionImpl();
+      if(parentItem != null && parentItem.getExpandOption() == null){
+        parentItem.setSystemQueryOption(expandOption);
+      }
     }
-    expandOption.addExpandItem(expandItem);
-
-    return new ExpandTreeBuilderInner(expandItem);
+    
+    ExpandTreeBuilder builder = childBuilderCache.get(edmNavigationProperty.getName());
+    if(builder == null){
+      ExpandItemImpl expandItem = buildExpandItem(edmNavigationProperty);
+      expandOption.addExpandItem(expandItem);
+      builder = new ExpandTreeBuilderImpl(expandItem);
+      childBuilderCache.put(edmNavigationProperty.getName(), builder);
+    }
+    
+    return builder;
   }
 
+  @Override
   public ExpandOption build() {
     return expandOption;
   }
-
-  private class ExpandTreeBuilderInner extends ExpandTreeBuilder {
-    private ExpandItemImpl parent;
-
-    public ExpandTreeBuilderInner(final ExpandItemImpl expandItem) {
-      parent = expandItem;
-    }
-
-    @Override
-    public ExpandTreeBuilder expand(final EdmNavigationProperty edmNavigationProperty) {
-      if (parent.getExpandOption() == null) {
-        final ExpandOptionImpl expandOption = new ExpandOptionImpl();
-        parent.setSystemQueryOption(expandOption);
-      }
-
-      final ExpandItemImpl expandItem = buildExpandItem(edmNavigationProperty);
-      ((ExpandOptionImpl) parent.getExpandOption()).addExpandItem(expandItem);
-
-      return new ExpandTreeBuilderInner(expandItem);
-    }
-
+  
+  public static ExpandTreeBuilder create(){
+    return new ExpandTreeBuilderImpl(null);
   }
 }

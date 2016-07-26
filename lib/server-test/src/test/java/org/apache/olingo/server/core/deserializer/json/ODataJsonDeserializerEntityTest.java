@@ -49,6 +49,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
+import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.junit.Assert;
@@ -1346,6 +1347,12 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     return OData.newInstance().createDeserializer(contentType, metadata)
         .entity(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)))
         .getEntity();
+  }
+  
+  protected static DeserializerResult deserializeWithResult(final InputStream stream, final String entityTypeName,
+      final ContentType contentType) throws DeserializerException {
+    return OData.newInstance().createDeserializer(contentType, metadata)
+        .entity(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)));
   }
 
   private static Entity deserialize(final String entityString, final String entityTypeName,

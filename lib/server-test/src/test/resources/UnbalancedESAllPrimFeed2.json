@@ -1,0 +1,24 @@
+{
+  "@odata.context": "$metadata#ESAllPrim\/$entity",
+  "@odata.metadataEtag": "W\/\"4efd6576-89c0-487c-8d6c-584e2acbae16\"",
+  "PropertyInt16": 1,
+  "NavPropertyETTwoPrimMany": [
+    {
+      "PropertyInt16": 2,
+      "NavPropertyETAllPrimOne": {
+          "PropertyInt16": 3,
+          "NavPropertyETTwoPrimMany": []
+        } 
+    },
+    {
+      "PropertyInt16": 2,
+      "NavPropertyETAllPrimOne": {
+          "PropertyInt16": 3,
+          "NavPropertyETTwoPrimOne": {
+            "PropertyInt16": 32766,
+            "PropertyString": "Innermost Entry"
+            }           
+        }      
+    }
+  ]
+}
