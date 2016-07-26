@@ -953,7 +953,6 @@ public class ODataJsonSerializerTest {
         "\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\"," + 
         "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"},\"PropertyDate\":\"2012-12-03\"}}]}";
     Assert.assertEquals(expected, resultString);
-
   }  
 
   @Test

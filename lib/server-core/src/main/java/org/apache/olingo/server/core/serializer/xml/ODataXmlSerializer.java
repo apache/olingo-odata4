@@ -81,7 +81,6 @@ import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
 public class ODataXmlSerializer extends AbstractODataSerializer {
 
   /** The default character set is UTF-8. */
-  public static final String DEFAULT_CHARSET = Constants.UTF8;
   private static final String ATOM = "a";
   private static final String NS_ATOM = Constants.NS_ATOM;
   private static final String METADATA = Constants.PREFIX_METADATA;
@@ -770,10 +769,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           writeComplexCollection(metadata, (EdmComplexType) edmProperty.getType(), property, selectedPaths, 
               xml10InvalidCharReplacement, writer);
         } else {
-          writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
-              "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), property.getType()));
-          writeComplexValue(metadata, property, (EdmComplexType) edmProperty.getType(), property.asComplex().getValue(),
-              selectedPaths, xml10InvalidCharReplacement, writer);
+            writeComplex(metadata, edmProperty, property, selectedPaths, xml10InvalidCharReplacement, writer);
         }
       } else {
         throw new SerializerException("Property type not yet supported!",
@@ -786,6 +782,22 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
   }
 
+  private void writeComplex(final ServiceMetadata metadata,
+      final EdmProperty edmProperty, final Property property,
+      final Set<List<String>> selectedPaths,
+      final String xml10InvalidCharReplacement, final XMLStreamWriter writer) 
+          throws XMLStreamException, SerializerException{
+      
+       writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE,
+              "#" + complexType(metadata, (EdmComplexType) edmProperty.getType(), 
+                      property.getType()));
+        String derivedName = property.getType();
+       final EdmComplexType resolvedType = resolveComplexType(metadata,
+        (EdmComplexType) edmProperty.getType(), derivedName);
+       
+        writeComplexValue(metadata, resolvedType, property.asComplex().getValue(),
+           selectedPaths, xml10InvalidCharReplacement, writer);
+  }
   private void writePrimitiveCollection(final EdmPrimitiveType type, final Property property,
       final Boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final Boolean isUnicode, final String xml10InvalidCharReplacement,
@@ -820,7 +832,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       }
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(metadata, property, type,
+        writeComplexValue(metadata, type,
             ((ComplexValue) value).getValue(), selectedPaths,
             xml10InvalidCharReplacement, writer);
         break;
@@ -875,18 +887,14 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   protected void writeComplexValue(final ServiceMetadata metadata,
-      Property complexProperty, final EdmComplexType type,
-      final List<Property> properties, final Set<List<String>> selectedPaths,
-      final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
-      throws XMLStreamException, SerializerException {
-
-    final EdmComplexType resolvedType = resolveComplexType(metadata,
-        type, complexProperty.getType());
+      final EdmComplexType type, final List<Property> properties, 
+      final Set<List<String>> selectedPaths, final String xml10InvalidCharReplacement, 
+      final XMLStreamWriter writer) throws XMLStreamException, SerializerException {   
     
-    for (final String propertyName : resolvedType.getPropertyNames()) {
+    for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
-        writeProperty(metadata, (EdmProperty) resolvedType.getProperty(propertyName), property,
+        writeProperty(metadata, (EdmProperty) type.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
             xml10InvalidCharReplacement, writer);
       }
