@@ -1366,7 +1366,7 @@ public class ODataXmlSerializerTest {
   }
 
   @Test
-  public void entitySetCompCollComp() throws SAXException, DataProvider.DataProviderException, SerializerException, IOException{
+  public void entitySetCompCollComp() throws Exception{
       final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     long currentTimeMillis = System.currentTimeMillis();
@@ -1395,7 +1395,8 @@ public class ODataXmlSerializerTest {
             "<a:name/>\n" +
             "</a:author>\n" +
             "<a:link rel=\"edit\" href=\"ESCompCollComp(32767)\"/>\n" +
-            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
+            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " + 
+            "term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
             "<a:content type=\"application/xml\">\n" +
             "<m:properties>\n" +
             "<d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
@@ -1427,7 +1428,8 @@ public class ODataXmlSerializerTest {
             "<a:name/>\n" +
             "</a:author>\n" +
             "<a:link rel=\"edit\" href=\"ESCompCollComp(12345)\"/>\n" +
-            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
+            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " + 
+            "term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
             "<a:content type=\"application/xml\">\n" +
             "<m:properties>\n" +
             "<d:PropertyInt16 m:type=\"Int16\">12345</d:PropertyInt16>\n" +
