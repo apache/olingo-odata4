@@ -1231,9 +1231,7 @@ public class ODataXmlSerializerTest {
     InputStream result = serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
-                .contextURL(ContextURL.with().entitySet(edmEntitySet)
-                    .selectList(helper.buildContextURLSelectList(entityType, null, null))
-                    .build())
+                .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
                 .id("http://host/svc/ESCompComp")
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
@@ -1367,6 +1365,96 @@ public class ODataXmlSerializerTest {
     checkXMLEqual(resultString, expected);
   }
 
+  @Test
+  public void entitySetCompCollComp() throws SAXException, DataProvider.DataProviderException, SerializerException, IOException{
+      final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream content = serializer.entityCollection(metadata,
+        edmEntitySet.getEntityType(), entitySet,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .id("http://host/svc/ESCompCollComp")
+            .build()).getContent();
+    final String resultString = IOUtils.toString(content);
+
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>" + 
+            "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" " +
+            "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESCompCollComp\" " +
+            "m:metadata-etag=\"metadataETag\">\n" +
+            "<a:id>\n" +
+            "http://host/svc/ESCompCollComp\n" +
+            "</a:id>\n" +
+            "<a:entry>\n" +
+            "<a:id>ESCompCollComp(32767)</a:id>\n" +
+            "<a:title/>\n" +
+            "<a:summary/>\n" +
+            "<a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" +
+            "<a:author>\n" +
+            "<a:name/>\n" +
+            "</a:author>\n" +
+            "<a:link rel=\"edit\" href=\"ESCompCollComp(32767)\"/>\n" +
+            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
+            "<a:content type=\"application/xml\">\n" +
+            "<m:properties>\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" +
+            "<d:PropertyComp m:type=\"#olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:CollPropertyComp m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">555</d:PropertyInt16>\n" +
+            "<d:PropertyString>1 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">666</d:PropertyInt16>\n" +
+            "<d:PropertyString>2 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">777</d:PropertyInt16>\n" +
+            "<d:PropertyString>3 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "</d:CollPropertyComp>\n" +
+            "</d:PropertyComp>\n" +
+            "</m:properties>\n" +
+            "</a:content>\n" +
+            "</a:entry>\n" +
+            "<a:entry>\n" +
+            "<a:id>ESCompCollComp(12345)</a:id>\n" +
+            "<a:title/>\n" +
+            "<a:summary/>\n" +
+            "<a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" +
+            "<a:author>\n" +
+            "<a:name/>\n" +
+            "</a:author>\n" +
+            "<a:link rel=\"edit\" href=\"ESCompCollComp(12345)\"/>\n" +
+            "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.ETCompCollComp\"/>\n" +
+            "<a:content type=\"application/xml\">\n" +
+            "<m:properties>\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">12345</d:PropertyInt16>\n" +
+            "<d:PropertyComp m:type=\"#olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:CollPropertyComp m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">888</d:PropertyInt16>\n" +
+            "<d:PropertyString>11 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">999</d:PropertyInt16>\n" +
+            "<d:PropertyString>12 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
+            "<d:PropertyInt16 m:type=\"Int16\">0</d:PropertyInt16>\n" +
+            "<d:PropertyString>13 Test Complex in Complex Property</d:PropertyString>\n" +
+            "</m:element>\n" +
+            "</d:CollPropertyComp>\n" +
+            "</d:PropertyComp>\n" +
+            "</m:properties>\n" +
+            "</a:content>\n" +
+            "</a:entry>\n" +
+            "</a:feed>";
+    
+    checkXMLEqual(expectedResult, resultString);
+  }
+  
   @Test
   public void expand() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
