@@ -1081,7 +1081,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);
-
+      writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writer.writeStartElement(METADATA, Constants.VALUE, NS_METADATA);
       writer.writeNamespace(METADATA, NS_METADATA);
       writer.writeNamespace(DATA, NS_DATA);

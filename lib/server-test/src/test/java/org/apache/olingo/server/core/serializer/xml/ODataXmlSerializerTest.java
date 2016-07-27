@@ -2175,7 +2175,8 @@ public class ODataXmlSerializerTest {
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                     .build())
                 .build()).getContent());
-    String expected = "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n"
+        + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
         "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
