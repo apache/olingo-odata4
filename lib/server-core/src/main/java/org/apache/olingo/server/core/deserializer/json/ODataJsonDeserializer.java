@@ -439,12 +439,15 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       bindingLink.setType(Constants.ENTITY_COLLECTION_BINDING_LINK_TYPE);
       bindingLink.setBindingLinks(bindingLinkStrings);
     } else {
-      assertIsNullNode(key, jsonNode);
       if (!jsonNode.isValueNode()) {
         throw new DeserializerException("Binding annotation: " + key + " must be a string value.",
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
       }
-      bindingLink.setBindingLink(jsonNode.asText());
+      if (jsonNode.isNull()) {
+        bindingLink.setBindingLink(null);
+      } else {
+        bindingLink.setBindingLink(jsonNode.asText());
+      }
       bindingLink.setType(Constants.ENTITY_BINDING_LINK_TYPE);
     }
     return bindingLink;
