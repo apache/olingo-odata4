@@ -40,6 +40,7 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
   private ServiceHandler handler;
   private final ServiceMetadata serviceMetadata;
   private final OData odata;
+  private int split = 0;
   private CustomContentTypeSupport customContentTypeSupport;
 
 
@@ -58,7 +59,7 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
     ODataResponse response = new ODataResponse();
 
     try {
-      request = createODataRequest(httpRequest, 0);
+      request = createODataRequest(httpRequest, this.split);
       validateODataVersion(request, response);
 
       ServiceDispatcher dispatcher = new ServiceDispatcher(this.odata, this.serviceMetadata,
@@ -121,5 +122,10 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
   @Override
   public void register(final CustomContentTypeSupport customContentTypeSupport) {
     this.customContentTypeSupport = customContentTypeSupport;
+  }
+
+  @Override
+  public void setSplit(int split) {
+    this.split = split;
   }
 }
