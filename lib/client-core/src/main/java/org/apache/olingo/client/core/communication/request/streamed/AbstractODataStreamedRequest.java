@@ -101,7 +101,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
     if (URIUtils.shouldUseRepeatableHttpBodyEntry(odataClient)) {
       futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
         @Override
-        public HttpResponse call() throws Exception {
+        public HttpResponse call() throws Exception { //NOSONAR
           ((HttpEntityEnclosingRequestBase) request).setEntity(
                   URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
 
@@ -114,7 +114,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
 
       futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
         @Override
-        public HttpResponse call() throws Exception {
+        public HttpResponse call() throws Exception { //NOSONAR
           return doExecute();
         }
       }));

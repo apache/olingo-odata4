@@ -239,7 +239,7 @@ public class BatchResponseSerializer {
     }
 
     private byte[] getContent() {
-      return content;
+      return content; //NOSONAR
     }
 
     private byte[] getBody(final ODataResponse response) {

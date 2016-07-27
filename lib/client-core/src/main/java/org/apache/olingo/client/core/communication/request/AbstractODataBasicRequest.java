@@ -70,7 +70,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
   public final Future<T> asyncExecute() {
     return odataClient.getConfiguration().getExecutor().submit(new Callable<T>() {
       @Override
-      public T call() throws Exception {
+      public T call() throws Exception { //NOSONAR
         return execute();
       }
     });

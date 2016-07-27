@@ -97,4 +97,16 @@
       </exclusions>
     </dependency>
   </dependencies>
+  
+  <build>
+   <plugins>
+     <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>${olingo.deploy.skip}</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
