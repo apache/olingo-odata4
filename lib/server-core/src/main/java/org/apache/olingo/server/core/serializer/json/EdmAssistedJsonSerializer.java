@@ -47,6 +47,8 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ServiceMetadata;
+import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
+import org.apache.olingo.server.api.serializer.EdmAssistedSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerException.MessageKeys;
 import org.apache.olingo.server.api.serializer.SerializerResult;
@@ -58,7 +60,7 @@ import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
-public class EdmAssistedJsonSerializer {
+public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
 
   private static final String IO_EXCEPTION_TEXT = "An I/O exception occurred.";
 
@@ -70,14 +72,16 @@ public class EdmAssistedJsonSerializer {
     this.isODataMetadataNone = ContentTypeHelper.isODataMetadataNone(contentType);
   }
 
+  @Override
   public SerializerResult entityCollection(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final AbstractEntityCollection entityCollection, final ContextURL contextURL) throws SerializerException {
-    return serialize(metadata, entityType, entityCollection, contextURL);
+      final AbstractEntityCollection entityCollection, final EdmAssistedSerializerOptions options)
+      throws SerializerException {
+    return serialize(metadata, entityType, entityCollection, options == null ? null : options.getContextURL());
   }
 
   public SerializerResult entity(final ServiceMetadata metadata, final EdmEntityType entityType, final Entity entity,
-      final ContextURL contextURL) throws SerializerException {
-    return serialize(metadata, entityType, entity, contextURL);
+      final EdmAssistedSerializerOptions options) throws SerializerException {
+    return serialize(metadata, entityType, entity, options == null ? null : options.getContextURL());
   }
 
   protected SerializerResult serialize(final ServiceMetadata metadata, final EdmEntityType entityType,

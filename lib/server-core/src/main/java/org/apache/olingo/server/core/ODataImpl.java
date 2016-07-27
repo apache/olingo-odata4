@@ -38,6 +38,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.prefer.Preferences;
+import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -50,6 +51,7 @@ import org.apache.olingo.server.core.deserializer.xml.ODataXmlDeserializer;
 import org.apache.olingo.server.core.etag.ETagHelperImpl;
 import org.apache.olingo.server.core.prefer.PreferencesImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
+import org.apache.olingo.server.core.serializer.json.EdmAssistedJsonSerializer;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
@@ -84,6 +86,15 @@ public class ODataImpl extends OData {
   @Override
   public FixedFormatSerializer createFixedFormatSerializer() {
     return new FixedFormatSerializerImpl();
+  }
+
+  @Override
+  public EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType) throws SerializerException {
+    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+      return new EdmAssistedJsonSerializer(contentType);
+    }
+    throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
+        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
   }
 
   @Override
@@ -165,5 +176,4 @@ public class ODataImpl extends OData {
     // TODO: Support more debug formats
     return new DebugResponseHelperImpl(debugFormat);
   }
-
 }

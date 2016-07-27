@@ -34,6 +34,7 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.prefer.Preferences;
+import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -175,4 +176,12 @@ public abstract class OData {
    * @return a debug-response helper
    */
   public abstract DebugResponseHelper createDebugResponseHelper(String debugFormat);
+
+  /**
+   * Creates a new serializer object capable of working without EDM information
+   * for rendering content in the specified format.
+   * @param contentType a content type supported by Olingo
+   */
+  public abstract EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType)
+      throws SerializerException;
 }
