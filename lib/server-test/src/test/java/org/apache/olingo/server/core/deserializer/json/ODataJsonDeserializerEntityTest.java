@@ -1023,18 +1023,28 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void bindingOperationNullOnToOne() throws Exception {
+  public void bindingOperationNullOnToOneNonNull() throws Exception {
     String entityString =
         "{\"PropertyInt16\":32767,"
             + "\"PropertyString\":\"First Resource - positive values\","
             + "\"NavPropertyETTwoPrimOne@odata.bind\":null"
             + "}";
-    
-    final Entity entity = deserialize(entityString, "ETAllPrim");
-    assertEquals("First Resource - positive values", entity.getProperty("PropertyString").asPrimitive());
-    assertNull(entity.getNavigationBinding("NavPropertyETTwoPrimOne").getBindingLink());
+    expectException(entityString, "ETAllPrim",
+        DeserializerException.MessageKeys.INVALID_NULL_ANNOTATION);    
   }
   
+  @Test
+  public void bindingOperationNullOnToOneNull() throws Exception {
+    String entityString =
+        "{\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"First Resource - positive values\","
+            + "\"NavPropertyETAllPrimOne@odata.bind\":null"
+            + "}";
+    
+    final Entity entity = deserialize(entityString, "ETTwoPrim");
+    assertEquals("First Resource - positive values", entity.getProperty("PropertyString").asPrimitive());
+    assertNull(entity.getNavigationBinding("NavPropertyETAllPrimOne").getBindingLink());
+  }  
   @Test
   public void bindingOperationNullOnToMany() throws Exception {
     String entityString =

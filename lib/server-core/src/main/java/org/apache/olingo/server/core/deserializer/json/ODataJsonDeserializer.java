@@ -443,10 +443,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         throw new DeserializerException("Binding annotation: " + key + " must be a string value.",
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
       }
-      if (jsonNode.isNull()) {
+      if (edmNavigationProperty.isNullable() && jsonNode.isNull()) {
         bindingLink.setBindingLink(null);
       } else {
-        bindingLink.setBindingLink(jsonNode.asText());
+        assertIsNullNode(key, jsonNode);
+        bindingLink.setBindingLink(jsonNode.asText());        
       }
       bindingLink.setType(Constants.ENTITY_BINDING_LINK_TYPE);
     }
