@@ -223,6 +223,9 @@ public class ResourceValidator implements TestValidator {
 
     // input parameter type may be null in order to assert that the singleTypeFilter is not set
     EdmType actualType = uriPathInfoKeyPred.getTypeFilterOnEntry();
+    if(actualType == null && type != null){
+      fail("Expected an entry type filter of type: " + type.getFullQualifiedNameAsString());
+    }
     assertEquals(type, type == null ? actualType : actualType.getFullQualifiedName());
 
     return this;
@@ -235,6 +238,9 @@ public class ResourceValidator implements TestValidator {
 
     // input parameter type may be null in order to assert that the collectionTypeFilter is not set
     EdmType actualType = uriPathInfoKeyPred.getTypeFilterOnCollection();
+    if(actualType == null && expectedType != null){
+      fail("Expected an collection type filter of type: " + expectedType.getFullQualifiedNameAsString());
+    }
     assertEquals(expectedType,
         expectedType == null || actualType == null ? actualType : actualType.getFullQualifiedName());
 

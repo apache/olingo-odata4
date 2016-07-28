@@ -2716,6 +2716,19 @@ public class TestFullResourcePath {
         .n()
         .isNavProperty("NavPropertyETTwoKeyNavOne", EntityTypeProvider.nameETTwoKeyNav, false);
 
+    testUri.run("ESKeyNav", "$expand=NavPropertyETTwoKeyNavMany/Namespace1_Alias.ETBaseTwoKeyNav"
+        + "($expand=NavPropertyETBaseTwoKeyNavOne)")
+        .isKind(UriInfoKind.resource)
+        .goExpand().goPath().first()
+        .isNavProperty("NavPropertyETTwoKeyNavMany", EntityTypeProvider.nameETTwoKeyNav, true)
+        .isType(EntityTypeProvider.nameETTwoKeyNav, true)
+        .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
+        .goUpExpandValidator()
+        // go to the expand options of the current expand
+        .goExpand()
+        .goPath().first()
+        .isNavProperty("NavPropertyETBaseTwoKeyNavOne", EntityTypeProvider.nameETBaseTwoKeyNav, false);
+
     testUri.run("ESKeyNav(1)", "$expand=NavPropertyETKeyNavMany/$ref,NavPropertyETTwoKeyNavMany($skip=2;$top=1)")
         .isKind(UriInfoKind.resource)
         .goExpand().first()
@@ -5848,9 +5861,9 @@ public class TestFullResourcePath {
     testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias")
         .isInAliasToValueMap("@alias", null);
     testFilter.runOnETKeyNavEx("PropertyInt16 gt @alias&@alias=@alias")
-      .isInAliasToValueMap("@alias", "@alias");
+        .isInAliasToValueMap("@alias", "@alias");
     testFilter.runOnETKeyNavEx("@alias&@alias=@alias2&@alias2=true or @alias")
-      .isInAliasToValueMap("@alias", "@alias2");
+        .isInAliasToValueMap("@alias", "@alias2");
   }
 
   @Test
