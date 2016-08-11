@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -72,10 +73,15 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     if (isNotModified) {
       response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     } else {
-      ODataSerializer serializer = odata.createSerializer(requestedContentType);
-      response.setContent(serializer.serviceDocument(serviceMetadata, null).getContent());
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      // HTTP HEAD requires no payload but a 200 OK response
+      if (HttpMethod.HEAD == request.getMethod()) {
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      } else {
+        ODataSerializer serializer = odata.createSerializer(requestedContentType);
+        response.setContent(serializer.serviceDocument(serviceMetadata, null).getContent());
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+        response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      }
     }
   }
 
@@ -97,10 +103,15 @@ public class DefaultProcessor implements MetadataProcessor, ServiceDocumentProce
     if (isNotModified) {
       response.setStatusCode(HttpStatusCode.NOT_MODIFIED.getStatusCode());
     } else {
-      ODataSerializer serializer = odata.createSerializer(requestedContentType);
-      response.setContent(serializer.metadataDocument(serviceMetadata).getContent());
-      response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      // HTTP HEAD requires no payload but a 200 OK response
+      if (HttpMethod.HEAD == request.getMethod()) {
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+      } else {
+        ODataSerializer serializer = odata.createSerializer(requestedContentType);
+        response.setContent(serializer.metadataDocument(serviceMetadata).getContent());
+        response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+        response.setHeader(HttpHeader.CONTENT_TYPE, requestedContentType.toContentTypeString());
+      }
     }
   }
 

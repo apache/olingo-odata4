@@ -157,9 +157,9 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       }
     }
 
-    if (odResponse.getContent() != null ) {
+    if (odResponse.getContent() != null) {
       copyContent(odResponse.getContent(), response);
-    } else if(odResponse.getODataContent() != null) {
+    } else if (odResponse.getODataContent() != null) {
       writeContent(odResponse, response);
     }
   }
@@ -229,9 +229,14 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   static HttpMethod extractMethod(final HttpServletRequest httpRequest) throws ODataLibraryException {
+    final HttpMethod httpRequestMethod;
     try {
-      HttpMethod httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
-
+      httpRequestMethod = HttpMethod.valueOf(httpRequest.getMethod());
+    } catch (IllegalArgumentException e) {
+      throw new ODataHandlerException("HTTP method not allowed" + httpRequest.getMethod(), e,
+          ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED, httpRequest.getMethod());
+    }
+    try {
       if (httpRequestMethod == HttpMethod.POST) {
         String xHttpMethod = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD);
         String xHttpMethodOverride = httpRequest.getHeader(HttpHeader.X_HTTP_METHOD_OVERRIDE);
@@ -301,7 +306,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   static void copyHeaders(ODataRequest odRequest, final HttpServletRequest req) {
     for (final Enumeration<?> headerNames = req.getHeaderNames(); headerNames.hasMoreElements();) {
       final String headerName = (String) headerNames.nextElement();
-      @SuppressWarnings("unchecked") 
+      @SuppressWarnings("unchecked")
       // getHeaders() says it returns an Enumeration of String.
       final List<String> headerValues = Collections.list(req.getHeaders(headerName));
       odRequest.addHeader(headerName, headerValues);

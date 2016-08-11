@@ -49,6 +49,7 @@ public class ODataHttpHandlerImplTest {
         { "POST", "PATCH", null, "PATCH" },
 
         { "POST", "GET", "GET", "GET" },
+        { "HEAD", null, null, "HEAD" }
     };
 
     for (String[] m : mm) {
@@ -68,8 +69,7 @@ public class ODataHttpHandlerImplTest {
     String[][] mm = {
         { "POST", "bla", null },
         { "POST", "PUT", "PATCH" },
-        { "OPTIONS", null, null },
-        { "HEAD", null, null },
+        { "OPTIONS", null, null }
     };
 
     for (String[] m : mm) {

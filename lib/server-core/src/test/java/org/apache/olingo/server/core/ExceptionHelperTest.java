@@ -106,9 +106,26 @@ public class ExceptionHelperTest {
     }
   }
 
+  @Test
+  public void httpHandlerExceptions() {
+    for (MessageKey key : ODataHandlerException.MessageKeys.values()) {
+      final ODataHandlerException e = new ODataHandlerException(DEV_MSG, key);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+
+      if (key.equals(ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED)
+          || key.equals(ODataHandlerException.MessageKeys.PROCESSOR_NOT_IMPLEMENTED)) {
+        checkStatusCode(serverError, HttpStatusCode.NOT_IMPLEMENTED, e);
+      } else if (key.equals(ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED)) {
+        checkStatusCode(serverError, HttpStatusCode.METHOD_NOT_ALLOWED, e);
+      } else {
+        checkStatusCode(serverError, HttpStatusCode.BAD_REQUEST, e);
+      }
+    }
+  }
+
   private void checkStatusCode(final ODataServerError serverError, final HttpStatusCode statusCode,
       final ODataLibraryException exception) {
     assertEquals("FailedKey: " + exception.getMessageKey().getKey(),
-        serverError.getStatusCode(), statusCode.getStatusCode());
+        statusCode.getStatusCode(), serverError.getStatusCode());
   }
 }

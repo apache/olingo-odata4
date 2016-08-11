@@ -23,6 +23,10 @@ package org.apache.olingo.commons.api.http;
  * and additional status codes as defined in RFC 6585
  */
 public enum HttpStatusCode {
+  
+  CONTINUE(100, "Continue"),
+  SWITCHING_PROTOCOLS(101, "Switching Protocols"),
+  
   OK(200, "OK"),
   CREATED(201, "Created"),
   ACCEPTED(202, "Accepted"),

@@ -19,6 +19,7 @@
 package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.HttpURLConnection;
@@ -37,6 +38,36 @@ import org.junit.Test;
 public class BasicHttpITCase extends AbstractBaseTestITCase {
 
   private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";
+
+  @Test
+  public void testHeadMethodOnServiceDocument() throws Exception {
+    URL url = new URL(SERVICE_URI);
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.HEAD.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertNull(connection.getHeaderField(HttpHeader.CONTENT_TYPE));
+    assertEquals("", IOUtils.toString(connection.getInputStream()));
+    connection.disconnect();
+  }
+  
+  @Test
+  public void testHeadMethodOnMetadataDocument() throws Exception {
+    URL url = new URL(SERVICE_URI + "$metadata");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.HEAD.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/xml");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertNull(connection.getHeaderField(HttpHeader.CONTENT_TYPE));
+    assertEquals("", IOUtils.toString(connection.getInputStream()));
+    connection.disconnect();
+  }
 
   @Test
   public void testFormat() throws Exception {

@@ -18,11 +18,10 @@
  */
 package org.apache.olingo.server.core;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -31,6 +30,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Locale;
 
@@ -90,10 +91,24 @@ public class ODataHandlerImplTest {
   @Test
   public void serviceDocumentNonDefault() throws Exception {
     final ServiceDocumentProcessor processor = mock(ServiceDocumentProcessor.class);
+    doThrow(new ODataApplicationException("msg", 100, Locale.ENGLISH)).when(processor)
+        .readServiceDocument(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+            any(ContentType.class));
     final ODataResponse response = dispatch(HttpMethod.GET, "/", processor);
-    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.CONTINUE.getStatusCode(), response.getStatusCode());
 
     verify(processor).readServiceDocument(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    // We support HEAD now too
+    final ServiceDocumentProcessor processor2 = mock(ServiceDocumentProcessor.class);
+    doThrow(new ODataApplicationException("msg", 100, Locale.ENGLISH)).when(processor2)
+    .readServiceDocument(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+    final ODataResponse response2 = dispatch(HttpMethod.HEAD, "/", processor2);
+    assertEquals(HttpStatusCode.CONTINUE.getStatusCode(), response2.getStatusCode());
+
+    verify(processor2).readServiceDocument(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "/", processor);
@@ -116,6 +131,11 @@ public class ODataHandlerImplTest {
 
     assertThat(doc, containsString("\"@odata.context\":\"$metadata\""));
     assertThat(doc, containsString("\"value\":"));
+    
+    final ODataResponse response2 = dispatch(HttpMethod.HEAD, "/", null);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response2.getStatusCode());
+    assertNull(response2.getHeader(HttpHeader.CONTENT_TYPE));
+    assertNull(response2.getContent());
   }
 
   @Test
@@ -123,15 +143,33 @@ public class ODataHandlerImplTest {
     final ODataResponse response = dispatch(HttpMethod.GET, "", null);
     assertEquals(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode(), response.getStatusCode());
     assertEquals(BASE_URI + "/", response.getHeader(HttpHeader.LOCATION));
+    
+    final ODataResponse responseHead = dispatch(HttpMethod.HEAD, "", null);
+    assertEquals(HttpStatusCode.TEMPORARY_REDIRECT.getStatusCode(), responseHead.getStatusCode());
+    assertEquals(BASE_URI + "/", responseHead.getHeader(HttpHeader.LOCATION));
   }
 
   @Test
   public void metadataNonDefault() throws Exception {
     final MetadataProcessor processor = mock(MetadataProcessor.class);
+    doThrow(new ODataApplicationException("msg", 100, Locale.ENGLISH)).when(processor)
+    .readMetadata(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", processor);
-    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.CONTINUE.getStatusCode(), response.getStatusCode());
 
     verify(processor).readMetadata(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    
+    // We support HEAD now too
+    final MetadataProcessor processor2 = mock(MetadataProcessor.class);
+    doThrow(new ODataApplicationException("msg", 100, Locale.ENGLISH)).when(processor2)
+    .readMetadata(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+    final ODataResponse response2 = dispatch(HttpMethod.HEAD, "$metadata", processor2);
+    assertEquals(HttpStatusCode.CONTINUE.getStatusCode(), response2.getStatusCode());
+
+    verify(processor2).readMetadata(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "$metadata", processor);
@@ -149,6 +187,11 @@ public class ODataHandlerImplTest {
     assertNotNull(response.getContent());
     assertThat(IOUtils.toString(response.getContent()),
         containsString("<edmx:Edmx Version=\"4.0\""));
+    
+    final ODataResponse response2 = dispatch(HttpMethod.HEAD, "$metadata", null);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response2.getStatusCode());
+    assertNull(response2.getHeader(HttpHeader.CONTENT_TYPE));
+    assertNull(response2.getContent());
   }
 
   @Test
@@ -209,7 +252,6 @@ public class ODataHandlerImplTest {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
   }
 
-
   @Test
   public void uriParserExceptionWithFormatQueryJson() throws Exception {
     final ODataResponse response = dispatch(HttpMethod.GET, "ESAllPrims", "$format=json", "", "", null);
@@ -225,7 +267,6 @@ public class ODataHandlerImplTest {
     assertEquals("application/json;odata.metadata=minimal",
         response.getHeader(HttpHeader.CONTENT_TYPE));
   }
-
 
   @Test
   public void uriParserExceptionWithFormatJsonAcceptAtom() throws Exception {
@@ -268,27 +309,27 @@ public class ODataHandlerImplTest {
     assertEquals("application/json;odata.metadata=minimal",
         response.getHeader(HttpHeader.CONTENT_TYPE));
   }
-  
+
   @Test
   public void applicationExceptionInProcessorMessage() throws Exception {
     final String ODATA_ERRORCODE = "425";
     final String ORIGINAL_MESSAGE = "original message";
     final String LOCALIZED_MESSAGE = "localized message";
     MetadataProcessor processor = mock(MetadataProcessor.class);
-    
-    ODataApplicationException oDataApplicationException = 
-        new ODataApplicationException(ORIGINAL_MESSAGE, 425, Locale.ENGLISH, ODATA_ERRORCODE) {
-      private static final long serialVersionUID = 1L;
 
-      @Override
-      public String getLocalizedMessage() {
-          return LOCALIZED_MESSAGE;
-      }
-    };
-    
+    ODataApplicationException oDataApplicationException =
+        new ODataApplicationException(ORIGINAL_MESSAGE, 425, Locale.ENGLISH, ODATA_ERRORCODE) {
+          private static final long serialVersionUID = 1L;
+
+          @Override
+          public String getLocalizedMessage() {
+            return LOCALIZED_MESSAGE;
+          }
+        };
+
     doThrow(oDataApplicationException).when(processor).readMetadata(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
-    
+
     final ODataResponse response = dispatch(HttpMethod.GET, "$metadata", processor);
     InputStream contentStream = response.getContent();
     String responseContent = IOUtils.toString(contentStream, Charset.forName("UTF-8"));
@@ -299,7 +340,7 @@ public class ODataHandlerImplTest {
     // test if the original is hold
     assertEquals(ORIGINAL_MESSAGE, oDataApplicationException.getMessage());
   }
-  
+
   @Test
   public void applicationExceptionInProcessor() throws Exception {
     MetadataProcessor processor = mock(MetadataProcessor.class);
@@ -345,6 +386,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -359,6 +401,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -374,15 +417,22 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
   public void dispatchCountWithNavigation() throws Exception {
     final CountEntityCollectionProcessor processor = mock(CountEntityCollectionProcessor.class);
-    dispatch(HttpMethod.GET, "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count", processor);
+    String uri = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$count";
+    dispatch(HttpMethod.GET, uri, processor);
 
     verify(processor).countEntityCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -406,6 +456,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, entityCountUri, entityCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, entityCountUri, entityCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, entityCountUri, entityCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, entityCountUri, entityCountProcessor);
 
     PrimitiveProcessor primitiveProcessor = mock(PrimitiveProcessor.class);
     dispatch(HttpMethod.GET, "FICRTString()", primitiveProcessor);
@@ -420,6 +471,7 @@ public class ODataHandlerImplTest {
     dispatchMethodWithError(HttpMethod.PATCH, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
     dispatchMethodWithError(HttpMethod.PUT, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
     dispatchMethodWithError(HttpMethod.DELETE, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
+    dispatchMethodWithError(HttpMethod.HEAD, valueUri, primitiveValueProcessor, HttpStatusCode.BAD_REQUEST);
 
     final String primitiveCollectionUri = "FICRTCollString()";
     PrimitiveCollectionProcessor primitiveCollectionProcessor = mock(PrimitiveCollectionProcessor.class);
@@ -430,6 +482,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, primitiveCollectionUri, primitiveCollectionProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, primitiveCollectionUri, primitiveCollectionProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, primitiveCollectionUri, primitiveCollectionProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, primitiveCollectionUri, primitiveCollectionProcessor);
 
     final String primitiveCountUri = "FICRTCollString()/$count";
     final CountPrimitiveCollectionProcessor primitiveCountProcessor = mock(CountPrimitiveCollectionProcessor.class);
@@ -440,6 +493,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, primitiveCountUri, primitiveCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, primitiveCountUri, primitiveCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, primitiveCountUri, primitiveCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, primitiveCountUri, primitiveCountProcessor);
 
     ComplexProcessor complexProcessor = mock(ComplexProcessor.class);
     dispatch(HttpMethod.GET, "FICRTCTTwoPrim()", complexProcessor);
@@ -460,6 +514,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, complexCountUri, complexCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, complexCountUri, complexCountProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, complexCountUri, complexCountProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, complexCountUri, complexCountProcessor);
 
     final String mediaUri = "FICRTESMedia(ParameterInt16=1)/$value";
     final MediaEntityProcessor mediaProcessor = mock(MediaEntityProcessor.class);
@@ -470,6 +525,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, mediaUri, mediaProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, mediaUri, mediaProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, mediaUri, mediaProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, mediaUri, mediaProcessor);
   }
 
   @Test
@@ -483,6 +539,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, ContainerProvider.AIRT_STRING, primitiveProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, ContainerProvider.AIRT_STRING, primitiveProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, ContainerProvider.AIRT_STRING, primitiveProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, ContainerProvider.AIRT_STRING, primitiveProcessor);
 
     ActionPrimitiveCollectionProcessor primitiveCollectionProcessor = mock(ActionPrimitiveCollectionProcessor.class);
     dispatch(HttpMethod.POST, ContainerProvider.AIRT_COLL_STRING_TWO_PARAM, primitiveCollectionProcessor);
@@ -534,6 +591,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, ContainerProvider.AIRT, voidProcessor);
     dispatchMethodNotAllowed(HttpMethod.PUT, ContainerProvider.AIRT, voidProcessor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, ContainerProvider.AIRT, voidProcessor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, ContainerProvider.AIRT, voidProcessor);
   }
 
   @Test
@@ -563,6 +621,7 @@ public class ODataHandlerImplTest {
         any(ContentType.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -587,8 +646,9 @@ public class ODataHandlerImplTest {
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
-  
+
   @Test
   public void dispatchValueOnNoMedia() throws Exception {
     final String uri = "ESAllPrim(1)/$value";
@@ -604,6 +664,9 @@ public class ODataHandlerImplTest {
     verifyZeroInteractions(processor);
 
     dispatch(HttpMethod.DELETE, uri, processor);
+    verifyZeroInteractions(processor);
+    
+    dispatch(HttpMethod.HEAD, uri, processor);
     verifyZeroInteractions(processor);
   }
 
@@ -621,7 +684,7 @@ public class ODataHandlerImplTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, "ESKeyNav(1)/NavPropertyETMediaOne", processor);
-    
+
     dispatchMethodNotAllowed(HttpMethod.POST, "ESKeyNav(1)/NavPropertyETMediaOne/$value", processor);
 
     dispatch(HttpMethod.PUT, uri, processor);
@@ -633,6 +696,7 @@ public class ODataHandlerImplTest {
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -641,6 +705,7 @@ public class ODataHandlerImplTest {
     dispatch(HttpMethod.DELETE, "ESMedia(1)", processor);
 
     verify(processor).deleteEntity(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    dispatchMethodNotAllowed(HttpMethod.HEAD, "ESMedia(1)", processor);
   }
 
   @Test
@@ -666,6 +731,7 @@ public class ODataHandlerImplTest {
     verify(processor).deletePrimitive(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -688,6 +754,7 @@ public class ODataHandlerImplTest {
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -708,6 +775,7 @@ public class ODataHandlerImplTest {
     verify(processor).deletePrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -722,6 +790,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -747,6 +816,7 @@ public class ODataHandlerImplTest {
     verify(processor).deleteComplex(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -767,6 +837,7 @@ public class ODataHandlerImplTest {
     verify(processor).deleteComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
     dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -781,6 +852,7 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -809,6 +881,8 @@ public class ODataHandlerImplTest {
 
     dispatch(HttpMethod.DELETE, uriMany, "$id=ESTwoPrim(1)", null, null, processor);
     verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
@@ -822,6 +896,7 @@ public class ODataHandlerImplTest {
 
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
   @Test
