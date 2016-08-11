@@ -63,6 +63,7 @@ public enum TargetType {
   OnDelete(EdmOnDelete.class),
   Property(EdmProperty.class),
   PropertyValue(EdmPropertyValue.class),
+  Parameter(EdmParameter.class),
   Record(EdmRecord.class),
   ReferentialConstraint(EdmReferentialConstraint.class),
   ReturnType(EdmReturnType.class),
