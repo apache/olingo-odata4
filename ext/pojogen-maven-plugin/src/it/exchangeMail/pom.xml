@@ -34,7 +34,7 @@
     <compiler.plugin.version>3.2</compiler.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <artifactId>pojogen-maven-plugin</artifactId>
@@ -42,7 +42,7 @@
       <version>@project.version@</version>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <artifactId>odata-client-proxy</artifactId>
       <groupId>org.apache.olingo</groupId>
@@ -82,7 +82,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>@project.groupId@</groupId>
         <artifactId>pojogen-maven-plugin</artifactId>
