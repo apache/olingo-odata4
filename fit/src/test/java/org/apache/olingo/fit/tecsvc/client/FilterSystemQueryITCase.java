@@ -31,6 +31,10 @@ import org.apache.olingo.client.api.communication.response.ODataEntityCreateResp
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
+import org.apache.olingo.client.api.uri.FilterArgFactory;
+import org.apache.olingo.client.api.uri.FilterFactory;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -44,6 +48,34 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
   private static final String ES_MIX_ENUM_DEF_COLL_COMP = "ESMixEnumDefCollComp";
 
+  
+  @Test
+  public void useFilterFactory() {
+    final URIFilter filter = getFilterFactory().eq(
+        getFilterArgFactory().property("PropertyInt16"), getFilterArgFactory().literal(new Integer(0)));
+
+    final URIBuilder uriBuilder =
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).filter(filter);
+
+    final ODataEntitySetRequest<ClientEntitySet> req =
+        getClient().getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build());
+
+    final ODataRetrieveResponse<ClientEntitySet> result = req.execute();
+    assertEquals(1, result.getBody().getEntities().size());
+
+    ClientEntity clientEntity = result.getBody().getEntities().get(0);
+    assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
+  }
+  
+  private FilterFactory getFilterFactory() {
+    return getClient().getFilterFactory();
+  }
+
+  private FilterArgFactory getFilterArgFactory() {
+    return getFilterFactory().getArgFactory();
+  }
+
+  
   @Test
   public void timeOfDayLiteral() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyTimeOfDay eq 03:26:05");
