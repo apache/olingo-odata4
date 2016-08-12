@@ -45,6 +45,8 @@ import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
@@ -439,5 +441,43 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
     final ClientPrimitiveValue value = response.getBody();
     assertNotNull(value);
     assertEquals("3", value.toValue());
+  }
+  
+  @Test
+  public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyInt16");
+    final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
+    req.setFormat(ContentType.TEXT_PLAIN);
+    assertEquals("32767", req.execute().getBody().toString());
+  }
+
+  @Test
+  public void retrieveBooleanPropertyValueTest() throws EdmPrimitiveTypeException {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyBoolean");
+    final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
+    req.setFormat(ContentType.TEXT_PLAIN);
+    assertEquals("true", req.execute().getBody().toString());
+  }
+
+  @Test
+  public void retrieveDatePropertyValueTest() {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyDate");
+    final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
+    req.setFormat(ContentType.TEXT_PLAIN);
+    final ClientPrimitiveValue property = req.execute().getBody();
+    assertEquals("2012-12-03", property.toString());
+  }
+
+  @Test
+  public void retrieveDecimalPropertyValueTest() throws EdmPrimitiveTypeException {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyDecimal");
+    final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
+    req.setFormat(ContentType.TEXT_PLAIN);
+    final ClientPrimitiveValue property = req.execute().getBody();
+    assertEquals("34", property.toString());
   }
 }
