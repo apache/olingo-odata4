@@ -23,10 +23,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.ext.proxy.api.Annotatable;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Company;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyCategory;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.IsBoss;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Company;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CompanyCategory;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.IsBoss;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 import org.junit.Test;
 
 public class SingletonTestITCase extends AbstractTestITCase {

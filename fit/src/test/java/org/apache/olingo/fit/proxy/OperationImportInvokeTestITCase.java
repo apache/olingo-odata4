@@ -22,15 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
-        .PersonComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
-        .ProductCollectionComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.AccessLevel;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Color;
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.HomeAddress;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.AccessLevel;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Color;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.HomeAddress;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonComposableInvoker;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollectionComposableInvoker;
 // CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Assert;
 import org.junit.Test;

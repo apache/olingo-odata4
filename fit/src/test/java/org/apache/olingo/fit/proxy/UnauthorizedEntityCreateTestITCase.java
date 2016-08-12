@@ -23,7 +23,7 @@ import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.staticservice.Service;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
 import org.junit.Test;
 
 public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {

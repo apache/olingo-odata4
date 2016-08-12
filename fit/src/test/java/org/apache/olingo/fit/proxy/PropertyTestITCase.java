@@ -23,8 +23,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import org.apache.olingo.ext.proxy.api.ODataFlushException;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.StoredPI;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.StoredPI;
 import org.junit.Test;
 
 /**

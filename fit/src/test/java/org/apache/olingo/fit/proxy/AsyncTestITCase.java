@@ -26,16 +26,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.RandomStringUtils;
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
-        .PersonComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.ProductCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types
-        .ProductCollectionComposableInvoker;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CustomerCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonComposableInvoker;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollectionComposableInvoker;
 // CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 

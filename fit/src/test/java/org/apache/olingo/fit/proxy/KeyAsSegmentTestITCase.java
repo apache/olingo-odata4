@@ -24,8 +24,8 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.staticservice.Service;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 import org.junit.Test;
 
 public class KeyAsSegmentTestITCase extends AbstractTestITCase {

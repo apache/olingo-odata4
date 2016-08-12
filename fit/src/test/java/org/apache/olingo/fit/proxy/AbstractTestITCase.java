@@ -36,9 +36,9 @@ import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.proxy.staticservice.Service;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Order;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {

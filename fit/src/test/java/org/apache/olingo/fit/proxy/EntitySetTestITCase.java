@@ -21,8 +21,8 @@ package org.apache.olingo.fit.proxy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 import org.junit.Assert;
 import org.junit.Test;
 

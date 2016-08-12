@@ -28,12 +28,11 @@ import java.util.List;
 
 import org.apache.olingo.ext.proxy.api.Search;
 import org.apache.olingo.ext.proxy.api.Sort;
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Employee;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.EmployeeCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.People;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PersonCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.People;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Employee;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.EmployeeCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonCollection;
 import org.junit.Test;
 
 // CHECKSTYLE:ON (Maven checkstyle)

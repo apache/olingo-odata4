@@ -25,16 +25,13 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CustomerCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CompanyAddress;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPI;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.CreditCardPICollection;
-
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Person;
-
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CompanyAddress;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CreditCardPI;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CreditCardPICollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CustomerCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 // CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 

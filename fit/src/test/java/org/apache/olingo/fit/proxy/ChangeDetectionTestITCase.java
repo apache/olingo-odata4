@@ -32,15 +32,14 @@ import org.apache.olingo.ext.proxy.api.EntityType;
 import org.apache.olingo.ext.proxy.commons.ComplexInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityCollectionInvocationHandler;
 import org.apache.olingo.ext.proxy.commons.EntityInvocationHandler;
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.InMemoryEntities;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Account;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Address;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Customer;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.Order;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.OrderCollection;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrument;
-import org.apache.olingo.fit.proxy.staticservice.microsoft.test.odata.services.odatawcfservice.types.PaymentInstrumentCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Account;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Address;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Order;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.OrderCollection;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PaymentInstrument;
+import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PaymentInstrumentCollection;
 // CHECKSTYLE:ON (Maven checkstyle)
 import org.junit.Test;
 
