@@ -19,7 +19,6 @@
 package org.apache.olingo.fit.base;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,55 +26,17 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.TargetType;
-import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
 public class MetadataTestITCase extends AbstractTestITCase {
-
-  @Test
-  public void retrieve() throws EdmPrimitiveTypeException {
-    final Edm edm = client.getRetrieveRequestFactory().getMetadataRequest(testStaticServiceRootURL).execute().getBody();
-    assertNotNull(edm);
-
-    final EdmEntityType order = edm.getEntityType(
-        new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService", "Order"));
-    assertNotNull(order);
-
-    final EdmProperty orderDate = order.getStructuralProperty("OrderDate");
-    assertNotNull(orderDate);
-    assertEquals("Edm.DateTimeOffset", orderDate.getType().getFullQualifiedName().toString());
-
-    final EdmTerm isBoss = edm.getTerm(new FullQualifiedName(edm.getSchemas().get(0).getNamespace(), "IsBoss"));
-    assertNotNull(isBoss);
-    assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean), isBoss.getType());
-
-    final EdmEntitySet orders = edm.getSchemas().get(0).getEntityContainer().getEntitySet("Orders");
-    assertNotNull(orders);
-    assertFalse(orders.getAnnotations().isEmpty());
-    assertTrue(orders.getAnnotations().get(0).getExpression().isDynamic());
-    assertTrue(orders.getAnnotations().get(0).getExpression().asDynamic().isRecord());
-    final EdmRecord record = orders.getAnnotations().get(0).getExpression().asDynamic().asRecord();
-    assertNotNull(record);
-    assertEquals(3, record.getPropertyValues().size());
-    assertTrue(record.getPropertyValues().get(0).getValue().isConstant());
-    assertTrue((Boolean) record.getPropertyValues().get(0).getValue().asConstant().asPrimitive());
-    assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().isCollection());
-    assertEquals(1, record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().size());
-    assertTrue(record.getPropertyValues().get(1).getValue().asDynamic().asCollection().getItems().get(0).isDynamic());
-    assertEquals("OrderID", record.getPropertyValues().get(1).getValue().asDynamic().asCollection().
-        getItems().get(0).asDynamic().asPropertyPath().getValue());
-  }
 
   @Test
   public void include() {
