@@ -47,6 +47,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRe
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
@@ -54,7 +55,9 @@ import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
 import org.apache.olingo.client.api.communication.response.ODataPropertyUpdateResponse;
+import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
+import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -68,6 +71,8 @@ import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
@@ -222,7 +227,42 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(property.getPrimitiveValue());
     assertShortOrInt(0, property.getPrimitiveValue().toValue());
   }
+  
+  @Test
+  public void readEntitySetWitInlineCount() {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESAllPrim").count(true);
 
+    final ODataRawRequest req = getClient().getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
+
+    final ODataRawResponse res = req.execute();
+    assertNotNull(res);
+
+    final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
+    assertEquals(3, entitySet.getPayload().getEntities().size());
+  }
+  
+  @Test
+  public void readEntitySetWitNext() {
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESServerSidePaging");
+
+    final ODataEntitySetRequest<ClientEntitySet> req = getClient().getRetrieveRequestFactory().
+        getEntitySetRequest(uriBuilder.build());
+
+    final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
+    final ClientEntitySet feed = res.getBody();
+
+    assertNotNull(feed);
+
+    assertEquals(10, feed.getEntities().size());
+    assertNotNull(feed.getNext());
+
+    final URI expected = URI.create(SERVICE_URI + "ESServerSidePaging?%24skiptoken=1%2A10");
+    final URI found = URIUtils.getURI(SERVICE_URI, feed.getNext().toASCIIString());
+
+    assertEquals(expected, found);
+  }
+  
   @Test
   public void readEntityCollectionCount() {
     ODataValueRequest request = getClient().getRetrieveRequestFactory()

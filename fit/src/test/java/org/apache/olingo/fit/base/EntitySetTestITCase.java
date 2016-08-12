@@ -22,21 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URI;
-
-import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetIteratorRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
-import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
-import org.apache.olingo.client.api.communication.response.ODataRawResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
-import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
@@ -44,62 +35,6 @@ import org.junit.Test;
  * This is the unit test class to check basic feed operations.
  */
 public class EntitySetTestITCase extends AbstractTestITCase {
-
-  private void rawRequest(final ContentType contentType) {
-    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
-
-    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(contentType.toContentTypeString());
-
-    final ODataRawResponse res = req.execute();
-    assertNotNull(res);
-
-    final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
-    assertNotNull(entitySet.getPayload());
-    assertTrue(entitySet.getContextURL().toASCIIString().endsWith("$metadata#People"));
-  }
-
-  @Test
-  public void rawRequestAsAtom() throws IOException {
-    rawRequest(ContentType.APPLICATION_ATOM_XML);
-  }
-
-  @Test
-  public void rawRequestAsJSON() throws IOException {
-    rawRequest(ContentType.JSON);
-  }
-
-  private void readWithInlineCount(final ODataClient client, final ContentType contentType) {
-    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-        appendEntitySetSegment("People").count(true);
-
-    final ODataRawRequest req = client.getRetrieveRequestFactory().getRawRequest(uriBuilder.build());
-    req.setFormat(contentType.toContentTypeString());
-
-    final ODataRawResponse res = req.execute();
-    assertNotNull(res);
-
-    final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
-    assertEquals(5, entitySet.getPayload().getEntities().size());
-
-    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.Address",
-        entitySet.getPayload().getEntities().get(2).getProperty("HomeAddress").getComplexValue().getTypeName());
-  }
-
-  @Test
-  public void readWithInlineCountAsJSON() throws IOException {
-    readWithInlineCount(edmClient, ContentType.JSON);
-  }
-
-  @Test
-  public void readWithInlineCountAsFullJSON() throws IOException {
-    readWithInlineCount(client, ContentType.JSON_FULL_METADATA);
-  }
-
-  @Test
-  public void readWithInlineCountAsAtom() throws IOException {
-    readWithInlineCount(client, ContentType.APPLICATION_ATOM_XML);
-  }
 
   private void readODataEntitySetIterator(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
@@ -142,37 +77,4 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   public void readODataEntitySetIteratorFromJSONNo() {
     readODataEntitySetIterator(ContentType.JSON_NO_METADATA);
   }
-
-  private void readWithNext(final ContentType format) {
-    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
-
-    final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().
-        getEntitySetRequest(uriBuilder.build());
-    req.setFormat(format);
-    req.setPrefer(client.newPreferences().maxPageSize(5));
-
-    final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
-    final ClientEntitySet feed = res.getBody();
-
-    assertNotNull(feed);
-
-    assertEquals(5, feed.getEntities().size());
-    assertNotNull(feed.getNext());
-
-    final URI expected = URI.create(testStaticServiceRootURL + "/People?$skiptoken=5");
-    final URI found = URIUtils.getURI(testStaticServiceRootURL, feed.getNext().toASCIIString());
-
-    assertEquals(expected, found);
-  }
-
-  @Test
-  public void readWithNextFromAtom() {
-    readWithNext(ContentType.APPLICATION_ATOM_XML);
-  }
-
-  @Test
-  public void readWithNextFromJSON() {
-    readWithNext(ContentType.JSON_FULL_METADATA);
-  }
-
 }
