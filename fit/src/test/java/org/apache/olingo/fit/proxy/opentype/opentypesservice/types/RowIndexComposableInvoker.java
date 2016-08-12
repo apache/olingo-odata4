@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;

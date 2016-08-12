@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
@@ -24,18 +24,18 @@ import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "Row",
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "RowIndex",
     openType = true,
     hasStream = false,
     isAbstract = false)
-public interface Row
+public interface RowIndex
     extends org.apache.olingo.ext.proxy.api.Annotatable,
-    org.apache.olingo.ext.proxy.api.EntityType<Row>, org.apache.olingo.ext.proxy.api.StructuredQuery<Row>,
+    org.apache.olingo.ext.proxy.api.EntityType<RowIndex>, org.apache.olingo.ext.proxy.api.StructuredQuery<RowIndex>,
     AbstractOpenType {
 
   @Key
   @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id",
-      type = "Edm.Guid",
+      type = "Edm.Int32",
       nullable = false,
       defaultValue = "",
       maxLenght = Integer.MAX_VALUE,
@@ -45,9 +45,20 @@ public interface Row
       unicode = true,
       collation = "",
       srid = "")
-  java.util.UUID getId();
+  java.lang.Integer getId();
 
-  void setId(java.util.UUID _id);
+  void setId(java.lang.Integer _id);
+
+  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Rows",
+      type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row",
+      targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV4",
+      targetContainer = "DefaultContainer",
+      targetEntitySet = "Row",
+      containsTarget = false)
+  Row getRows();
+
+  void
+      setRows(Row _rows);
 
   Operations operations();
 
@@ -60,9 +71,12 @@ public interface Row
   interface Annotations {
 
     @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Id",
-        type = "Edm.Guid")
+        type = "Edm.Int32")
     org.apache.olingo.ext.proxy.api.Annotatable getIdAnnotations();
 
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Rows",
+        type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row")
+    org.apache.olingo.ext.proxy.api.Annotatable getRowsAnnotations();
   }
 
 }

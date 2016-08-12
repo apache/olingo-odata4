@@ -16,29 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 
 // CHECKSTYLE:ON (Maven checkstyle)
+import org.apache.olingo.ext.proxy.api.annotations.Key;
 
-@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "Color",
-    underlyingType = EdmPrimitiveTypeKind.Int32,
-    isFlags = false)
-public enum Color {
-  Red(1),
-  Green(2),
-  Blue(4);
+public interface IndexedRowComposableInvoker
+    extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<IndexedRow, IndexedRow.Operations>
+    , AbstractOpenType {
 
-  private java.lang.Integer value;
+  @Override
+  IndexedRowComposableInvoker select(String... select);
 
-  public java.lang.Integer getValue() {
-    return value;
-  }
+  @Override
+  IndexedRowComposableInvoker expand(String... expand);
 
-  private Color(final java.lang.Integer value) {
-    this.value = value;
-  }
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id",
+      type = "Edm.Guid",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "")
+  java.util.UUID getId();
+
+  void setId(java.util.UUID _id);
+
 }

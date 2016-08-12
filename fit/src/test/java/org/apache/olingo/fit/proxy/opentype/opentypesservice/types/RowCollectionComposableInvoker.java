@@ -16,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
 
-public interface AccountInfoCollectionComposableInvoker
+public interface RowCollectionComposableInvoker
     extends
-    org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker<AccountInfoCollection, AccountInfoCollection.Operations> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker<RowCollection, RowCollection.Operations> {
 
   @Override
-  AccountInfoCollectionComposableInvoker select(String... select);
+  RowCollectionComposableInvoker select(String... select);
 
   @Override
-  AccountInfoCollectionComposableInvoker expand(String... expand);
+  RowCollectionComposableInvoker expand(String... expand);
 }

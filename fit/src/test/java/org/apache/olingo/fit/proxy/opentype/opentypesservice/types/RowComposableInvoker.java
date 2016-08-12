@@ -16,17 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
+import org.apache.olingo.ext.proxy.api.AbstractOpenType;
 
-public interface IndexedRowCollectionComposableInvoker
-    extends
-    org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker<IndexedRowCollection, IndexedRowCollection.Operations> {
+// CHECKSTYLE:ON (Maven checkstyle)
+import org.apache.olingo.ext.proxy.api.annotations.Key;
+
+public interface RowComposableInvoker
+    extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<Row, Row.Operations>
+    , AbstractOpenType {
 
   @Override
-  IndexedRowCollectionComposableInvoker select(String... select);
+  RowComposableInvoker select(String... select);
 
   @Override
-  IndexedRowCollectionComposableInvoker expand(String... expand);
+  RowComposableInvoker expand(String... expand);
+
+  @Key
+  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id",
+      type = "Edm.Guid",
+      nullable = false,
+      defaultValue = "",
+      maxLenght = Integer.MAX_VALUE,
+      fixedLenght = false,
+      precision = 0,
+      scale = 0,
+      unicode = true,
+      collation = "",
+      srid = "")
+  java.util.UUID getId();
+
+  void setId(java.util.UUID _id);
+
 }

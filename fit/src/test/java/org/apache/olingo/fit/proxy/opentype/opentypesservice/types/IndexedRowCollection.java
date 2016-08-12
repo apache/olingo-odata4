@@ -16,25 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.RowCollection;
-
+import java.util.Collection;
 // CHECKSTYLE:ON (Maven checkstyle)
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "Row",
-    container = "Microsoft.Test.OData.Services.OpenTypesServiceV4.DefaultContainer")
-public interface Row
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+
+public interface IndexedRowCollection
     extends
-    org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.Row, RowCollection>,
-    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<Row>,
-    AbstractEntitySet<org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.Row, java.util.UUID, RowCollection> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<IndexedRowCollection>,
+org.apache.olingo.ext.proxy.api.EntityCollection<IndexedRow, IndexedRowCollection, IndexedRowCollection> {
 
   Operations operations();
 
   interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
     // No additional methods needed for now.
   }
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

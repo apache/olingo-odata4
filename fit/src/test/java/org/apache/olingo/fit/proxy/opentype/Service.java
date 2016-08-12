@@ -26,12 +26,12 @@ import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.AccountInfo;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.Color;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.ContactDetails;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.IndexedRow;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.Row;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.AccountInfo;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.Color;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.ContactDetails;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.IndexedRow;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.Row;
+import org.apache.olingo.fit.proxy.opentype.opentypesservice.types.RowIndex;
 
 public class Service<C extends EdmEnabledODataClient> extends AbstractService<C> {
 

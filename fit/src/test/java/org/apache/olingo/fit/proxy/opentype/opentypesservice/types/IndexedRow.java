@@ -16,26 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
-// CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-// CHECKSTYLE:ON (Maven checkstyle)
+import java.util.concurrent.Future;
+
 import org.apache.olingo.ext.proxy.api.annotations.Key;
 
 @org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "RowIndex",
+@org.apache.olingo.ext.proxy.api.annotations.EntityType(name = "IndexedRow",
     openType = true,
     hasStream = false,
-    isAbstract = false)
-public interface RowIndex
-    extends org.apache.olingo.ext.proxy.api.Annotatable,
-    org.apache.olingo.ext.proxy.api.EntityType<RowIndex>, org.apache.olingo.ext.proxy.api.StructuredQuery<RowIndex>,
-    AbstractOpenType {
+    isAbstract = false,
+    baseType = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row")
+public interface IndexedRow extends Row {
 
+  @Override
+  IndexedRow load();
+
+  @Override
+  Future<? extends IndexedRow> loadAsync();
+
+  @Override
+  IndexedRow refs();
+
+  @Override
+  IndexedRow expand(String... expand);
+
+  @Override
+  IndexedRow select(String... select);
+
+  @Override
   @Key
   @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id",
-      type = "Edm.Int32",
+      type = "Edm.Guid",
       nullable = false,
       defaultValue = "",
       maxLenght = Integer.MAX_VALUE,
@@ -45,38 +58,30 @@ public interface RowIndex
       unicode = true,
       collation = "",
       srid = "")
-  java.lang.Integer getId();
+  java.util.UUID getId();
 
-  void setId(java.lang.Integer _id);
+  @Override
+  void setId(java.util.UUID _id);
 
-  @org.apache.olingo.ext.proxy.api.annotations.NavigationProperty(name = "Rows",
-      type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row",
-      targetSchema = "Microsoft.Test.OData.Services.OpenTypesServiceV4",
-      targetContainer = "DefaultContainer",
-      targetEntitySet = "Row",
-      containsTarget = false)
-  Row getRows();
-
-  void
-      setRows(Row _rows);
-
+  @Override
   Operations operations();
 
-  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
+  interface Operations extends
+          Row.Operations {
     // No additional methods needed for now.
   }
 
+  @Override
   Annotations annotations();
 
-  interface Annotations {
+  interface Annotations extends
+          Row.Annotations {
 
+    @Override
     @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Id",
-        type = "Edm.Int32")
+        type = "Edm.Guid")
     org.apache.olingo.ext.proxy.api.Annotatable getIdAnnotations();
 
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForNavigationProperty(name = "Rows",
-        type = "Microsoft.Test.OData.Services.OpenTypesServiceV4.Row")
-    org.apache.olingo.ext.proxy.api.Annotatable getRowsAnnotations();
   }
 
 }

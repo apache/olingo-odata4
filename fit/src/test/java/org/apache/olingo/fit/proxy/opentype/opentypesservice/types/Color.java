@@ -16,26 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import java.util.Collection;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+
 // CHECKSTYLE:ON (Maven checkstyle)
 
-import org.apache.olingo.ext.proxy.api.AbstractTerm;
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.EnumType(name = "Color",
+    underlyingType = EdmPrimitiveTypeKind.Int32,
+    isFlags = false)
+public enum Color {
+  Red(1),
+  Green(2),
+  Blue(4);
 
-public interface RowIndexCollection
-    extends
-    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RowIndexCollection>,
-org.apache.olingo.ext.proxy.api.EntityCollection<RowIndex, RowIndexCollection, RowIndexCollection> {
+  private java.lang.Integer value;
 
-  Operations operations();
-
-  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
-    // No additional methods needed for now.
+  public java.lang.Integer getValue() {
+    return value;
   }
 
-  Object getAnnotation(Class<? extends AbstractTerm> term);
-
-  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
+  private Color(final java.lang.Integer value) {
+    this.value = value;
+  }
 }

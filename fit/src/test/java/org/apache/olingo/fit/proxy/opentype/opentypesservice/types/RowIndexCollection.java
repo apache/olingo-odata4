@@ -16,17 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
+import java.util.Collection;
+// CHECKSTYLE:ON (Maven checkstyle)
 
-public interface RowCollectionComposableInvoker
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+
+public interface RowIndexCollection
     extends
-    org.apache.olingo.ext.proxy.api.StructuredCollectionComposableInvoker<RowCollection, RowCollection.Operations> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RowIndexCollection>,
+org.apache.olingo.ext.proxy.api.EntityCollection<RowIndex, RowIndexCollection, RowIndexCollection> {
 
-  @Override
-  RowCollectionComposableInvoker select(String... select);
+  Operations operations();
 
-  @Override
-  RowCollectionComposableInvoker expand(String... expand);
+  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
+    // No additional methods needed for now.
+  }
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

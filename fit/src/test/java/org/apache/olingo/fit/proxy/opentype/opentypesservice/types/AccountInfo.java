@@ -16,22 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
 import org.apache.olingo.ext.proxy.api.AbstractOpenType;
+import org.apache.olingo.ext.proxy.api.Annotatable;
 
 // CHECKSTYLE:ON (Maven checkstyle)
 
-public interface AccountInfoComposableInvoker
-    extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<AccountInfo, AccountInfo.Operations>
-    , AbstractOpenType {
-
-  @Override
-  AccountInfoComposableInvoker select(String... select);
-
-  @Override
-  AccountInfoComposableInvoker expand(String... expand);
+@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
+@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "AccountInfo",
+    isOpenType = true,
+    isAbstract = false)
+public interface AccountInfo
+    extends org.apache.olingo.ext.proxy.api.ComplexType<AccountInfo>,
+    org.apache.olingo.ext.proxy.api.StructuredQuery<AccountInfo>, AbstractOpenType {
 
   @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstName",
       type = "Edm.String",
@@ -63,4 +62,23 @@ public interface AccountInfoComposableInvoker
 
   void setLastName(java.lang.String _lastName);
 
+  Annotations annotations();
+
+  interface Annotations {
+
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FirstName",
+        type = "Edm.String")
+    Annotatable getFirstNameAnnotations();
+
+    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LastName",
+        type = "Edm.String")
+    Annotatable getLastNameAnnotations();
+
+  }
+
+  Operations operations();
+
+  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
+    // No additional methods needed for now.
+  }
 }

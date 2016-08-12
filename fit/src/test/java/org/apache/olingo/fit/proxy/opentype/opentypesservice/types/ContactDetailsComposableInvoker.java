@@ -16,20 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.Annotatable;
 
-// CHECKSTYLE:ON (Maven checkstyle)
+public interface ContactDetailsComposableInvoker
+    extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<ContactDetails, ContactDetails.Operations>
+{
 
-@org.apache.olingo.ext.proxy.api.annotations.Namespace("Microsoft.Test.OData.Services.OpenTypesServiceV4")
-@org.apache.olingo.ext.proxy.api.annotations.ComplexType(name = "ContactDetails",
-    isOpenType = false,
-    isAbstract = false)
-public interface ContactDetails
-    extends org.apache.olingo.ext.proxy.api.ComplexType<ContactDetails>,
-    org.apache.olingo.ext.proxy.api.StructuredQuery<ContactDetails> {
+  @Override
+  ContactDetailsComposableInvoker select(String... select);
+
+  @Override
+  ContactDetailsComposableInvoker expand(String... expand);
 
   @org.apache.olingo.ext.proxy.api.annotations.Property(name = "FirstContacted",
       type = "Edm.Binary",
@@ -211,63 +210,4 @@ public interface ContactDetails
 
   void setLong(java.lang.Long _long);
 
-  Annotations annotations();
-
-  interface Annotations {
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "FirstContacted",
-        type = "Edm.Binary")
-    Annotatable getFirstContactedAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "LastContacted",
-        type = "Edm.DateTimeOffset")
-    Annotatable getLastContactedAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Contacted",
-        type = "Edm.Date")
-    Annotatable getContactedAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "GUID",
-        type = "Edm.Guid")
-    Annotatable getGUIDAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "PreferedContactTime",
-        type = "Edm.TimeOfDay")
-    Annotatable getPreferedContactTimeAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Byte",
-        type = "Edm.Byte")
-    Annotatable getByteAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "SignedByte",
-        type = "Edm.SByte")
-    Annotatable getSignedByteAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Double",
-        type = "Edm.Double")
-    Annotatable getDoubleAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Single",
-        type = "Edm.Single")
-    Annotatable getSingleAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Short",
-        type = "Edm.Int16")
-    Annotatable getShortAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Int",
-        type = "Edm.Int32")
-    Annotatable getIntAnnotations();
-
-    @org.apache.olingo.ext.proxy.api.annotations.AnnotationsForProperty(name = "Long",
-        type = "Edm.Int64")
-    Annotatable getLongAnnotations();
-
-  }
-
-  Operations operations();
-
-  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
-    // No additional methods needed for now.
-  }
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
 import java.util.Collection;
@@ -24,10 +24,10 @@ import java.util.Collection;
 
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
 
-public interface AccountInfoCollection
+public interface RowCollection
     extends
-    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<AccountInfoCollection>,
-org.apache.olingo.ext.proxy.api.ComplexCollection<AccountInfo, AccountInfoCollection, AccountInfoCollection> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RowCollection>,
+org.apache.olingo.ext.proxy.api.EntityCollection<Row, RowCollection, RowCollection> {
 
   Operations operations();
 

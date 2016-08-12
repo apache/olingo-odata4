@@ -16,38 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.AbstractOpenType;
-
+import java.util.Collection;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.annotations.Key;
 
-public interface RowComposableInvoker
-    extends org.apache.olingo.ext.proxy.api.StructuredComposableInvoker<Row, Row.Operations>
-    , AbstractOpenType {
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
 
-  @Override
-  RowComposableInvoker select(String... select);
+public interface AccountInfoCollection
+    extends
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<AccountInfoCollection>,
+org.apache.olingo.ext.proxy.api.ComplexCollection<AccountInfo, AccountInfoCollection, AccountInfoCollection> {
 
-  @Override
-  RowComposableInvoker expand(String... expand);
+  Operations operations();
 
-  @Key
-  @org.apache.olingo.ext.proxy.api.annotations.Property(name = "Id",
-      type = "Edm.Guid",
-      nullable = false,
-      defaultValue = "",
-      maxLenght = Integer.MAX_VALUE,
-      fixedLenght = false,
-      precision = 0,
-      scale = 0,
-      unicode = true,
-      collation = "",
-      srid = "")
-  java.util.UUID getId();
+  interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
+    // No additional methods needed for now.
+  }
 
-  void setId(java.util.UUID _id);
+  Object getAnnotation(Class<? extends AbstractTerm> term);
 
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }

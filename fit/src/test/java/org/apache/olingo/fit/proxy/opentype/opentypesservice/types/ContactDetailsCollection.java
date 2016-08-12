@@ -16,25 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice;
+package org.apache.olingo.fit.proxy.opentype.opentypesservice.types;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import org.apache.olingo.ext.proxy.api.AbstractEntitySet;
-import org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndexCollection;
-
+import java.util.Collection;
 // CHECKSTYLE:ON (Maven checkstyle)
 
-@org.apache.olingo.ext.proxy.api.annotations.EntitySet(name = "RowIndex",
-    container = "Microsoft.Test.OData.Services.OpenTypesServiceV4.DefaultContainer")
-public interface RowIndex
+import org.apache.olingo.ext.proxy.api.AbstractTerm;
+
+public interface ContactDetailsCollection
     extends
-    org.apache.olingo.ext.proxy.api.EntitySet<org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex, RowIndexCollection>,
-    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<RowIndex>,
-    AbstractEntitySet<org.apache.olingo.fit.proxy.opentype.microsoft.test.odata.services.opentypesservice.types.RowIndex, java.lang.Integer, RowIndexCollection> {
+    org.apache.olingo.ext.proxy.api.StructuredCollectionQuery<ContactDetailsCollection>,
+org.apache.olingo.ext.proxy.api.ComplexCollection<ContactDetails, ContactDetailsCollection, ContactDetailsCollection> {
 
   Operations operations();
 
   interface Operations extends org.apache.olingo.ext.proxy.api.Operations {
     // No additional methods needed for now.
   }
+
+  Object getAnnotation(Class<? extends AbstractTerm> term);
+
+  Collection<Class<? extends AbstractTerm>> getAnnotationTerms();
 }
