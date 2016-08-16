@@ -105,13 +105,13 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void boundActionOnEsKeyNav() throws Exception {
-    assertTrue(mustValidate("ESKeyNav(1)/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
+    assertTrue(mustValidate("ESKeyNav(1)/Namespace1_Alias.BA_RTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test
   public void boundActionOnEsKeyNavWithNavigation() throws Exception {
     assertTrue(
-        mustValidate("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
+        mustValidate("ESKeyNav(1)/NavPropertyETKeyNavOne/Namespace1_Alias.BA_RTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test
@@ -131,12 +131,12 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void singletonWithAction() throws Exception {
-    assertTrue(mustValidate("SINav/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "SINav"));
+    assertTrue(mustValidate("SINav/Namespace1_Alias.BA_RTETTwoKeyNav", "SINav"));
   }
 
   @Test
   public void singletonWithActionAndNavigation() throws Exception {
-    assertTrue(mustValidate("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BAETTwoKeyNavRTETTwoKeyNav", "ESKeyNav"));
+    assertTrue(mustValidate("SINav/NavPropertyETKeyNavOne/Namespace1_Alias.BA_RTETTwoKeyNav", "ESKeyNav"));
   }
 
   @Test

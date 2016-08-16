@@ -83,9 +83,8 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoKeyNavCont));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
-    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstract));
-    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAbstractBase));
-
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETStream));
+    
     // ComplexTypes
     List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
     schema.setComplexTypes(complexTypes);
@@ -109,7 +108,7 @@ public class SchemaProvider {
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     schema.setActions(actions);
-    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNav));
+    actions.addAll(prov.getActions(ActionProvider.nameBA_RTETTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESAllPrimRTETAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAESTwoKeyNavRTESKeyNav));
@@ -158,7 +157,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETKeyNavContParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTByteNineParam));
 
-    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTESTwoKeyNav));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFC_RTESTwoKeyNav_));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCETBaseTwoKeyNavRTETTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESBaseTwoKeyNavRTESBaseTwoKey));

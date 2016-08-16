@@ -47,8 +47,8 @@ public class ActionProvider {
   public static final FullQualifiedName nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav");
 
-  public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNav");
+  public static final FullQualifiedName nameBA_RTETTwoKeyNav =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BA_RTETTwoKeyNav");
 
   public static final FullQualifiedName nameBAESAllPrimRT =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAESAllPrimRT");
@@ -84,7 +84,7 @@ public class ActionProvider {
   public static List<CsdlAction> getBoundActionsForEntityType(FullQualifiedName entityType) throws ODataException {
     FullQualifiedName[] actionNames = {nameBAESAllPrimRTETAllPrim, 
         nameBAESTwoKeyNavRTESTwoKeyNav, nameBAESTwoKeyNavRTESKeyNav, nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav,
-        nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav,nameBAETTwoKeyNavRTETTwoKeyNav,
+        nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav,nameBA_RTETTwoKeyNav,
         nameBAESAllPrimRT,nameBAETAllPrimRT};
     
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
@@ -203,16 +203,16 @@ public class ActionProvider {
                       .setCollection(true)))
               .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameByte)));
 
-    } else if (actionName.equals(nameBAETTwoKeyNavRTETTwoKeyNav)) {
+    } else if (actionName.equals(nameBA_RTETTwoKeyNav)) {
       return Arrays.asList(
-          new CsdlAction().setName(nameBAETTwoKeyNavRTETTwoKeyNav.getName())
+          new CsdlAction().setName("BA_RTETTwoKeyNav")
               .setParameters(Collections.singletonList(
                   new CsdlParameter().setName("ParameterETTwoKeyNav").setType(EntityTypeProvider.nameETTwoKeyNav)
                       .setNullable(false)))
               .setBound(true)
               .setReturnType(new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)),
 
-          new CsdlAction().setName(nameBAETTwoKeyNavRTETTwoKeyNav.getName())
+          new CsdlAction().setName("BA_RTETTwoKeyNav")
               .setParameters(Collections.singletonList(
                   new CsdlParameter().setName("ParameterETKeyNav").setType(EntityTypeProvider.nameETKeyNav)
                       .setNullable(false)))

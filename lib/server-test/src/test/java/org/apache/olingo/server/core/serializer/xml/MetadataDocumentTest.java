@@ -92,7 +92,7 @@ public class MetadataDocumentTest {
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
         + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
         + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\" Nullable=\"false\"/></Action>"));
-
+    
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
             + "<Parameter Name=\"ParameterESAllPrim\" "
@@ -104,7 +104,7 @@ public class MetadataDocumentTest {
             + "<ReturnType Type=\"Edm.Int16\"/></Function>"));
 
     assertThat(metadata,
-        containsString("<Function Name=\"BFCESTwoKeyNavRTESTwoKeyNav\" "
+        containsString("<Function Name=\"BFC_RTESTwoKeyNav_\" "
             + "EntitySetPath=\"BindingParam/NavPropertyETTwoKeyNavMany\" IsBound=\"true\" IsComposable=\"true\">"
             + "<Parameter Name=\"BindingParam\" Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" "
             + "Nullable=\"false\"/>"
@@ -137,9 +137,6 @@ public class MetadataDocumentTest {
 
     // BaseTypeCheck
     assertThat(metadata, containsString("<EntityType Name=\"ETBase\" BaseType=\"Namespace1_Alias.ETTwoPrim\">"));
-    assertThat(metadata, containsString("<EntityType Name=\"ETAbstract\" Abstract=\"true\">"));
-    assertThat(metadata,
-        containsString("<EntityType Name=\"ETAbstractBase\" BaseType=\"Namespace1_Alias.ETAbstract\">"));
 
     // TypeDefCheck
     assertThat(metadata,

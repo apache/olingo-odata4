@@ -76,8 +76,8 @@ public class FunctionProvider {
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCTTwoPrim =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTTwoPrim");
 
-  public static final FullQualifiedName nameBFCESTwoKeyNavRTESTwoKeyNav =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTESTwoKeyNav");
+  public static final FullQualifiedName nameBFC_RTESTwoKeyNav_ =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFC_RTESTwoKeyNav_");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTString =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTString");
@@ -142,8 +142,6 @@ public class FunctionProvider {
       "UFCRTCTTwoPrim");
   public static final FullQualifiedName nameUFCRTCTTwoPrimTwoParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCTTwoPrimTwoParam");
-  public static final FullQualifiedName nameUFCRTESMixPrimCollCompTwoParam =
-      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTESMixPrimCollCompTwoParam");
   public static final FullQualifiedName nameUFCRTCollETTwoKeyNavParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollETTwoKeyNavParam");
   public static final FullQualifiedName nameUFCRTETAllPrimTwoParam =
@@ -204,7 +202,7 @@ public class FunctionProvider {
         nameBFCESTwoKeyNavRTCollCTTwoPrim,
         nameBFCESTwoKeyNavRTCollString,
         nameBFCESTwoKeyNavRTCTTwoPrim,
-        nameBFCESTwoKeyNavRTESTwoKeyNav,
+        nameBFC_RTESTwoKeyNav_,
         nameBFCESTwoKeyNavRTString,
         nameBFCESTwoKeyNavRTStringParam,
         nameBFCESTwoKeyNavRTTwoKeyNav,
@@ -329,7 +327,6 @@ public class FunctionProvider {
       return Collections.singletonList(
           new CsdlFunction()
               .setName("UFCRTCollETKeyNavContParam")
-              .setBound(true)
               .setComposable(true)
               .setParameters(Collections.singletonList(
                   new CsdlParameter().setName("ParameterInt16")
@@ -398,9 +395,9 @@ public class FunctionProvider {
               .setComposable(false)
               .setBound(false)
               .setReturnType(
-                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTMixPrimCollComp)
-                      .setNullable(false)
-                      .setCollection(true)));
+                    new CsdlReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp)
+                       .setNullable(false)
+                       .setCollection(true)));
 
     } else if (functionName.equals(nameUFNRTByteNineParam)) {
       return Collections.singletonList(
@@ -503,7 +500,8 @@ public class FunctionProvider {
                           .setNullable(false),
                       new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
                           .setNullable(false)))
-              .setComposable(false)
+              .setComposable(true)
+              .setBound(false)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true)
                       .setNullable(false)));
@@ -522,21 +520,6 @@ public class FunctionProvider {
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETAllPrim).setNullable(false)));
 
-    } else if (functionName.equals(nameUFCRTESMixPrimCollCompTwoParam)) {
-      return Collections.singletonList(
-          new CsdlFunction()
-              .setName(functionName.getName())
-              .setParameters(
-                  Arrays.asList(
-                      new CsdlParameter().setName("ParameterString").setType(PropertyProvider.nameString)
-                          .setNullable(false),
-                      new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
-                          .setNullable(false)))
-              .setComposable(true)
-              .setReturnType(
-                  new CsdlReturnType().setType(EntityTypeProvider.nameETMixPrimCollComp).setCollection(true)
-                      .setNullable(false)));
-
     } else if (functionName.equals(nameUFNRTCollCTNavFiveProp)) {
       return Collections.singletonList(
           new CsdlFunction()
@@ -544,10 +527,10 @@ public class FunctionProvider {
               .setReturnType(
                   new CsdlReturnType().setType(ComplexTypeProvider.nameCTNavFiveProp).setCollection(true)));
 
-    } else if (functionName.equals(nameBFCESTwoKeyNavRTESTwoKeyNav)) {
+    } else if (functionName.equals(nameBFC_RTESTwoKeyNav_)) {
       return Arrays.asList(
           new CsdlFunction()
-              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+              .setName(nameBFC_RTESTwoKeyNav_.getName())
               .setEntitySetPath("BindingParam/NavPropertyETTwoKeyNavMany")
               .setBound(true)
               .setParameters(Collections.singletonList(
@@ -559,7 +542,7 @@ public class FunctionProvider {
                       .setNullable(false)),
 
           new CsdlFunction()
-              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+              .setName(nameBFC_RTESTwoKeyNav_.getName())
               .setBound(true)
               .setParameters(Arrays.asList(
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
@@ -572,7 +555,7 @@ public class FunctionProvider {
                       .setNullable(false)),
 
           new CsdlFunction()
-              .setName("BFCESTwoKeyNavRTESTwoKeyNav")
+              .setName(nameBFC_RTESTwoKeyNav_.getName())
               .setBound(true)
               .setParameters(Collections.singletonList(
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETKeyNav)
@@ -628,19 +611,7 @@ public class FunctionProvider {
                       .setCollection(true).setNullable(false)))
               .setComposable(false)
               .setReturnType(
-                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false)),
-              new CsdlFunction()
-              .setName("BFNESAllPrimRTCTAllPrim")
-              .setBound(true)
-              .setParameters(Arrays.asList(
-                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETAllPrim)
-                      .setCollection(true).setNullable(false),
-                  new CsdlParameter().setName("Param2").setType(PropertyProvider.nameInt16)
-                  .setCollection(true).setNullable(false)))
-              .setComposable(false)
-              .setReturnType(
-                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false))              
-          );
+                  new CsdlReturnType().setType(ComplexTypeProvider.nameCTAllPrim).setNullable(false)));
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCTTwoPrim)) {
       return Collections.singletonList(

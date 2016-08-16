@@ -74,13 +74,13 @@ public class TestUriParserImpl {
     .at(1).isUriPathInfoKind(UriResourceKind.function);
 
     // one input
-    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')")
+    testRes.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_(ParameterString='ABC')")
     .at(0).isUriPathInfoKind(UriResourceKind.entitySet)
     .at(1).isUriPathInfoKind(UriResourceKind.function)
     .isParameter(0, "ParameterString", "'ABC'");
 
     // two input
-    testRes.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
+    testRes.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
     .at(0)
     .isUriPathInfoKind(UriResourceKind.function)
     .isParameter(0, "ParameterInt16", "1")

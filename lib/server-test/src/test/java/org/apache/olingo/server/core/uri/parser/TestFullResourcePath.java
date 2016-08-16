@@ -137,7 +137,7 @@ public class TestFullResourcePath {
   @Test
   public void functionBound_varOverloading() throws Exception {
     // on ESTwoKeyNav
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -146,7 +146,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='ABC')").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_(ParameterString='ABC')").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -155,7 +155,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // with string parameter
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()").goPath()
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()").goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
         .isType(EntityTypeProvider.nameETTwoKeyNav, true)
@@ -335,14 +335,14 @@ public class TestFullResourcePath {
         .isTypeFilterOnCollection(EntityTypeProvider.nameETTwoBaseTwoKeyNav);
 
     testUri.run("ESTwoKeyNav"
-        + "/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()"
+        + "/olingo.odata.test1.BFC_RTESTwoKeyNav_()"
         + "/olingo.odata.test1.ETBaseTwoKeyNav(PropertyInt16=1,PropertyString='2')"
         + "/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnCollection(EntityTypeProvider.nameETBaseTwoKeyNav)
         .isKeyPredicate(0, "PropertyInt16", "1")
@@ -515,13 +515,13 @@ public class TestFullResourcePath {
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav);
 
     testUri
-        .run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')"
+        .run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()(PropertyInt16=1,PropertyString='2')"
             + "/NavPropertyETTwoKeyNavOne/olingo.odata.test1.ETTwoBaseTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isType(EntityTypeProvider.nameETTwoKeyNav, false)
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
@@ -635,56 +635,56 @@ public class TestFullResourcePath {
   @Test
   public void runBfuncBnEsRtEs() throws Exception {
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='2')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_(ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isParameter(0, "ParameterString", "'2'")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav(ParameterString='3')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_(ParameterString='3')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isParameter(0, "ParameterString", "'3'")
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()/$count")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .n()
         .isCount();
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()(PropertyInt16=1,PropertyString='2')")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()(PropertyInt16=1,PropertyString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .n()
-        .isFunction("BFCESTwoKeyNavRTESTwoKeyNav")
+        .isFunction("BFC_RTESTwoKeyNav_")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'");
 
@@ -845,22 +845,22 @@ public class TestFullResourcePath {
   @Test
   public void runActionBound_on_EntityEntry() throws Exception {
 
-    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
+    testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.BA_RTETTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESTwoKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .isKeyPredicate(1, "PropertyString", "'2'")
         .n()
-        .isAction("BAETTwoKeyNavRTETTwoKeyNav");
+        .isAction("BA_RTETTwoKeyNav");
 
-    testUri.run("ESKeyNav(PropertyInt16=1)/olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav")
+    testUri.run("ESKeyNav(PropertyInt16=1)/olingo.odata.test1.BA_RTETTwoKeyNav")
         .isKind(UriInfoKind.resource).goPath()
         .first()
         .isEntitySet("ESKeyNav")
         .isKeyPredicate(0, "PropertyInt16", "1")
         .n()
-        .isAction("BAETTwoKeyNavRTETTwoKeyNav");
+        .isAction("BA_RTETTwoKeyNav");
   }
 
   @Test
@@ -931,7 +931,7 @@ public class TestFullResourcePath {
         .isType(EntityTypeProvider.nameETTwoKeyNav);
 
     // on collection of entity
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .goPath()
         .at(0)
         .isUriPathInfoKind(UriResourceKind.entitySet)
@@ -1215,24 +1215,7 @@ public class TestFullResourcePath {
 
   @Test
   public void runNonComposableFunctions() throws Exception {
-    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')")
-        .isKind(UriInfoKind.resource)
-        .goPath().first()
-        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
-        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
-        .isParameter(0, "ParameterInt16", "1")
-        .isParameter(1, "ParameterString", "'1'");
 
-    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)")
-        .isKind(UriInfoKind.resource)
-        .goPath().first()
-        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
-        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
-        .isParameter(0, "ParameterInt16", "1")
-        .isParameter(1, "ParameterString", "'1'");
-
-    testUri.runEx("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)/PropertyInt16")
-        .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
 
     testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$skip=1");
     testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')", "$top=1");
@@ -1252,6 +1235,13 @@ public class TestFullResourcePath {
 
     testUri.runEx("ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim()"
         + "/PropertyString")
+        .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
+    
+    testUri.runEx("FINRTByteNineParam(ParameterEnum=Namespace1_Alias.ENString'String1',"
+        + "CollParameterETTwoPrim=@collComp,ParameterComp=@comp,ParameterDef='key1',"
+        + "ParameterETTwoPrim=@comp,CollParameterDef=@collDef,CollParameterByte=@collByte,"
+        + "CollParameterComp=@collComp,CollParameterEnum=@collEnum)/$value?@comp={\"PropertyInt16\":1}"
+        + "&@collByte=[1]&@collEnum=[\"String1,String1\"]&@collDef=[\"Test\"]&@collComp=[{\"PropertyInt16\":11}]")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
   }
 
@@ -2081,34 +2071,50 @@ public class TestFullResourcePath {
 
   @Test
   public void runFunctionImpEs() throws Exception {
-    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
-        .isFunction("UFCRTESMixPrimCollCompTwoParam")
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
         .isType(EntityTypeProvider.nameETMixPrimCollComp);
 
-    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
-        .isFunction("UFCRTESMixPrimCollCompTwoParam")
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
         .isType(EntityTypeProvider.nameETMixPrimCollComp);
 
-    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count")
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')/$count")
         .isKind(UriInfoKind.resource).goPath()
         .first()
-        .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
-        .isFunction("UFCRTESMixPrimCollCompTwoParam")
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'")
         .isType(EntityTypeProvider.nameETMixPrimCollComp)
         .n()
         .isCount();
+    
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'1'");
+
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='1')(0)")
+        .isKind(UriInfoKind.resource)
+        .goPath().first()
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
+        .isFunction("UFCRTCollETMixPrimCollCompTwoParam")
+        .isParameter(0, "ParameterInt16", "1")
+        .isParameter(1, "ParameterString", "'1'");
   }
 
   @Test
@@ -3110,10 +3116,10 @@ public class TestFullResourcePath {
         .goPath().first()
         .isSingleton("SINav");
 
-    testUri.run("FICRTESMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
+    testUri.run("FICRTCollETMixPrimCollCompTwoParam(ParameterInt16=1,ParameterString='2')")
         .isKind(UriInfoKind.resource)
         .goPath()
-        .isFunctionImport("FICRTESMixPrimCollCompTwoParam")
+        .isFunctionImport("FICRTCollETMixPrimCollCompTwoParam")
         .isType(EntityTypeProvider.nameETMixPrimCollComp)
         .isParameter(0, "ParameterInt16", "1")
         .isParameter(1, "ParameterString", "'2'");
@@ -3189,11 +3195,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESKeyNav")
         .n().isRef();
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
-        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+        .n().isFunction("BFC_RTESTwoKeyNav_");
 
     testUri.run("ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim")
         .isKind(UriInfoKind.resource)
@@ -3201,11 +3207,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESAllPrim")
         .n().isAction("BAESAllPrimRTETAllPrim");
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
-        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+        .n().isFunction("BFC_RTESTwoKeyNav_");
 
     testUri.run("ESTwoKeyNav/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource)
@@ -3254,11 +3260,11 @@ public class TestFullResourcePath {
         .isEntitySet("ESAllPrim")
         .n().isAction("BAESAllPrimRTETAllPrim");
 
-    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav()")
+    testUri.run("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_()")
         .isKind(UriInfoKind.resource)
         .goPath().first()
         .isEntitySet("ESTwoKeyNav")
-        .n().isFunction("BFCESTwoKeyNavRTESTwoKeyNav");
+        .n().isFunction("BFC_RTESTwoKeyNav_");
 
     testUri.run("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/olingo.odata.test1.ETBaseTwoKeyNav")
         .isKind(UriInfoKind.resource)
@@ -5600,7 +5606,7 @@ public class TestFullResourcePath {
         + "/olingo.odata.test1.CTBase/olingo.odata.test1.CTBase")
         .isExSemantic(MessageKeys.TYPE_FILTER_NOT_CHAINABLE);
 
-    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFCESTwoKeyNavRTESTwoKeyNav")
+    testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BFC_RTESTwoKeyNav_")
         .isExSemantic(MessageKeys.UNKNOWN_TYPE);
 
     // $ref
@@ -5615,7 +5621,7 @@ public class TestFullResourcePath {
     testUri.runEx(ContainerProvider.AIRTCT_TWO_PRIM_PARAM + "/PropertyInt16")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
     testUri.runEx("ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/"
-        + "olingo.odata.test1.BAETTwoKeyNavRTETTwoKeyNav/olingo.odata.test1.ETTwoKeyNav")
+        + "olingo.odata.test1.BA_RTETTwoKeyNav/olingo.odata.test1.ETTwoKeyNav")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);
     testUri.runEx("ESTwoKeyNav/olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav/$count")
         .isExValidation(UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH);

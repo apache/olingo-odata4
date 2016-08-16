@@ -24,9 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
@@ -78,7 +76,7 @@ public class BoundOpearionITCase extends AbstractParamTecSvcITCase {
 
     List<ClientOperation> ecOperations = entitySet.getOperations();
     assertNotNull(ecOperations);
-    assertEquals(4, ecOperations.size());
+    assertEquals(3, ecOperations.size());
     
     assertEquals("#olingo.odata.test1.BAESAllPrimRTETAllPrim", ecOperations.get(0).getMetadataAnchor());
     assertEquals("olingo.odata.test1.BAESAllPrimRTETAllPrim", ecOperations.get(0).getTitle());
@@ -95,12 +93,7 @@ public class BoundOpearionITCase extends AbstractParamTecSvcITCase {
     assertEquals("olingo.odata.test1.BFNESAllPrimRTCTAllPrim", ecOperations.get(2).getTitle());
     assertEquals("/ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim", 
         ecOperations.get(2).getTarget().toASCIIString());
-    
-    assertEquals("#olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2)", ecOperations.get(3).getMetadataAnchor());
-    assertEquals("olingo.odata.test1.BFNESAllPrimRTCTAllPrim", ecOperations.get(3).getTitle());
-    assertEquals("/ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2=@Param2)", 
-        ecOperations.get(3).getTarget().toASCIIString());
-    
+        
     final List<ClientEntity> entities = entitySet.getEntities();
     assertNotNull(entities);
     assertEquals(3, entities.size());

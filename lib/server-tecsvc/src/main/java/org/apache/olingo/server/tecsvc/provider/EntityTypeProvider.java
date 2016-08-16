@@ -61,8 +61,6 @@ public class EntityTypeProvider {
       "ETKeyNavCont");
   public static final FullQualifiedName nameETTwoKeyNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETTwoKeyNavCont");
-  public static final FullQualifiedName nameETKeyTwoKeyComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
-      "ETKeyTwoKeyComp");
   public static final FullQualifiedName nameETMedia = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETMedia");
   public static final FullQualifiedName nameETMixPrimCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETMixPrimCollComp");
@@ -78,9 +76,6 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETTwoKeyTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETTwoKeyTwoPrim");
   public static final FullQualifiedName nameETTwoPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoPrim");
-  public static final FullQualifiedName nameETAbstract = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAbstract");
-  public static final FullQualifiedName nameETAbstractBase = new FullQualifiedName(SchemaProvider.NAMESPACE,
-      "ETAbstractBase");
 
   public static final FullQualifiedName nameETMixEnumDefCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETMixEnumDefCollComp");
@@ -245,26 +240,6 @@ public class EntityTypeProvider {
           .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable))
           .setHasStream(true);
-
-    } else if (entityTypeName.equals(nameETKeyTwoKeyComp)) {
-      return new CsdlEntityType()
-          .setName("ETKeyTwoKeyComp")
-          .setKey(Arrays.asList(
-              new CsdlPropertyRef()
-                  .setName("PropertyInt16"),
-              new CsdlPropertyRef()
-                  .setName("PropertyComp/PropertyInt16")
-                  .setAlias("KeyAlias1"),
-              new CsdlPropertyRef()
-                  .setName("PropertyComp/PropertyString")
-                  .setAlias("KeyAlias2"),
-              new CsdlPropertyRef()
-                  .setName("PropertyCompComp/PropertyComp/PropertyString")
-                  .setAlias("KeyAlias3")))
-          .setProperties(
-              Arrays.asList(
-                  PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyComp_CTTwoPrim,
-                  PropertyProvider.propertyCompComp_CTCompComp));
 
     } else if (entityTypeName.equals(nameETServerSidePaging)) {
       return new CsdlEntityType()
@@ -447,19 +422,7 @@ public class EntityTypeProvider {
           .setProperties(
               Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
                   PropertyProvider.propertyMixedPrimCollComp_CTMixPrimCollComp));
-    } else if (entityTypeName.equals(nameETAbstract)) {
-      return new CsdlEntityType()
-          .setName("ETAbstract")
-          .setAbstract(true)
-          .setProperties(Arrays.asList(PropertyProvider.propertyString));
 
-    } else if (entityTypeName.equals(nameETAbstractBase)) {
-      return new CsdlEntityType()
-          .setName("ETAbstractBase")
-          .setBaseType(nameETAbstract)
-          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
-          .setProperties(Arrays.asList(
-              PropertyProvider.propertyInt16_NotNullable));
     } else if (entityTypeName.equals(nameETMixEnumDefCollComp)) {
       return new CsdlEntityType()
           .setName(nameETMixEnumDefCollComp.getName())

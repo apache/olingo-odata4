@@ -197,10 +197,6 @@ public class ODataJsonSerializerTest {
           "\"title\":\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\"," + 
           "\"target\":\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim\"" + 
         "}," + 
-        "\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2)\":{" + 
-          "\"title\":\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\"," + 
-          "\"target\":\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2=@Param2)\"" + 
-        "}," + 
         "\"value\":[" + 
           "{" + 
             "\"@odata.type\":\"#olingo.odata.test1.ETAllPrim\"," + 

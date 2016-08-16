@@ -193,9 +193,6 @@ public class ODataXmlSerializerTest {
         "   <m:function metadata=\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
         + "title=\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
         + "target=\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" />\n" + 
-        "   <m:function metadata=\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2)\" "
-        + "title=\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\" "
-        + "target=\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim(Param2=@Param2)\" />\n" + 
         "   <a:entry>\n" + 
         "      <a:id>ESAllPrim(32767)</a:id>\n" + 
         "      <a:title />\n" + 

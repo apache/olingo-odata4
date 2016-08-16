@@ -81,15 +81,12 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBase"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBase"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESBaseTwoKeyTwoPrim"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoBaseTwoKeyTwoPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllKey"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompAllPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompCollAllPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompCollComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMedia"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyTwoKeyComp"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESInvisible"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESServerSidePaging"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllNullable"));
@@ -140,7 +137,6 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTStringTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollStringTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCTAllPrimTwoParam"));
-    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTESMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollETMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollETMixPrimCollCompTwoParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollCTTwoPrim"));
@@ -255,29 +251,7 @@ public class ContainerProvider {
                     .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
                         .setValue("Contains entities with two primitive types with two keys")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
-
-      } else if (name.equals("ESBaseTwoKeyTwoPrim")) {
-        return new CsdlEntitySet()
-            .setName("ESBaseTwoKeyTwoPrim")
-            .setType(EntityTypeProvider.nameETBaseTwoKeyTwoPrim)
-            .setAnnotations(Arrays.asList(
-                new CsdlAnnotation().setTerm("Core.Description")
-                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains entities with two primitive types with two keys")),
-                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
-
-      } else if (name.equals("ESTwoBaseTwoKeyTwoPrim")) {
-        return new CsdlEntitySet()
-            .setName("ESTwoBaseTwoKeyTwoPrim")
-            .setType(EntityTypeProvider.nameETTwoBaseTwoKeyTwoPrim)
-            .setAnnotations(Arrays.asList(
-                new CsdlAnnotation().setTerm("Core.Description")
-                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains entities with two primitive types with two keys")),
-                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
       } else if (name.equals("ESAllKey")) {
         return new CsdlEntitySet()
@@ -345,17 +319,6 @@ public class ContainerProvider {
                         .setValue("Contains media entities")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
-
-      } else if (name.equals("ESKeyTwoKeyComp")) {
-        return new CsdlEntitySet()
-            .setName("ESKeyTwoKeyComp")
-            .setType(EntityTypeProvider.nameETKeyTwoKeyComp)
-            .setAnnotations(Arrays.asList(
-                new CsdlAnnotation().setTerm("Core.Description")
-                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
-                        .setValue("Contains Keys with alias")),
-                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
-                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))));
 
       } else if (name.equals("ESInvisible")) {
         return new CsdlEntitySet()
@@ -498,12 +461,6 @@ public class ContainerProvider {
                 new CsdlNavigationPropertyBinding()
                     .setPath("CollPropertyCompNav/NavPropertyETMediaMany")
                     .setTarget("ESMedia"),
-                new CsdlNavigationPropertyBinding()
-                    .setPath("NavPropertyETTwoBaseTwoKeyNavOne")
-                    .setTarget("ESBaseTwoKeyNav"),
-                new CsdlNavigationPropertyBinding()
-                    .setPath("ETBaseTwoKeyNav/CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
-                    .setTarget("ESTwoKeyNav"),
                 new CsdlNavigationPropertyBinding()
                     .setPath("ETBaseTwoKeyNav/NavPropertyETTwoBaseTwoKeyNavOne")
                     .setTarget("ESBaseTwoKeyNav"),
@@ -651,7 +608,13 @@ public class ContainerProvider {
       } else if (name.equals("ESWithStream")) {
         return new CsdlEntitySet()
             .setName("ESWithStream")
-            .setType(EntityTypeProvider.nameETStream);        
+            .setType(EntityTypeProvider.nameETStream)
+            .setAnnotations(Arrays.asList(
+            new CsdlAnnotation().setTerm("Core.Description")
+                .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                    .setValue("Entity set with a stream type")),
+            new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       }
     }
 
@@ -788,12 +751,6 @@ public class ContainerProvider {
         return new CsdlFunctionImport()
             .setName(name)
             .setFunction(FunctionProvider.nameUFCRTCTAllPrimTwoParam)
-            .setIncludeInServiceDocument(true);
-
-      } else if (name.equals("FICRTESMixPrimCollCompTwoParam")) {
-        return new CsdlFunctionImport()
-            .setName(name)
-            .setFunction(FunctionProvider.nameUFCRTESMixPrimCollCompTwoParam)
             .setIncludeInServiceDocument(true);
 
       } else if (name.equals("FINRTCollETMixPrimCollCompTwoParam")) {

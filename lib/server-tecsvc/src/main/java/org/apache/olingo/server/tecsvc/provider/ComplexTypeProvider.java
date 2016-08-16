@@ -141,7 +141,7 @@ public class ComplexTypeProvider {
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16))
           .setNavigationProperties((Arrays.asList(
               PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
               new CsdlNavigationProperty()
                   .setName("NavPropertyETMediaOne")
                   .setType(EntityTypeProvider.nameETMedia),
@@ -166,8 +166,8 @@ public class ComplexTypeProvider {
           .setName("CTBasePrimCompNav")
           .setBaseType(nameCTPrimComp)
           .setNavigationProperties(Arrays.asList(
-              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne,
               PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav,
               PropertyProvider.navPropertyETKeyNavOne_ETKeyNav,
               PropertyProvider.collectionNavPropertyETKeyNavMany_ETKeyNav));
 
