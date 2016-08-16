@@ -1153,11 +1153,12 @@ public class ODataXmlSerializerTest {
 
   @Test
   public void selectComplex() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyInt16"),
+        ExpandSelectMock.mockSelectItem(edmEntitySet,"PropertyCompComp", "PropertyComp", "PropertyString")));
     long currentTimeMillis = System.currentTimeMillis();
     InputStream result = serializer
         .entityCollection(metadata, entityType, entitySet,
@@ -1165,66 +1166,47 @@ public class ODataXmlSerializerTest {
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
-                .id("http://host/svc/ESCompComp")
+                .id("http://host/svc/ESFourKeyAlias")
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
-        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\"\n" +
-        "  m:metadata-etag=\"metadataETag\">\n" +
-        "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
-        "  <a:entry>\n" +
-        "    <a:id>ESCompComp(1)</a:id>\n" +
-        "    <a:title />\n" +
-        "    <a:summary />\n" +
-        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
-        "    <a:author>\n" +
-        "      <a:name />\n" +
-        "    </a:author>\n" +
-        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
-        "    <a:content type=\"application/xml\">\n" +
-        "      <m:properties>\n" +
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
-        "            <d:PropertyString>String 1</d:PropertyString>\n" +
-        "          </d:PropertyComp>\n" +
-        "        </d:PropertyComp>\n" +
-        "      </m:properties>\n" +
-        "    </a:content>\n" +
-        "  </a:entry>\n" +
-        "  <a:entry>\n" +
-        "    <a:id>ESCompComp(2)</a:id>\n" +
-        "    <a:title />\n" +
-        "    <a:summary />\n" +
-        "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
-        "    <a:author>\n" +
-        "      <a:name />\n" +
-        "    </a:author>\n" +
-        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
-        "    <a:content type=\"application/xml\">\n" +
-        "      <m:properties>\n" +
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompCompExtended\">\n" +
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
-        "            <d:PropertyString>String 2</d:PropertyString>\n" +
-        "          </d:PropertyComp>\n" +
-        "        </d:PropertyComp>\n" +
-        "      </m:properties>\n" +
-        "    </a:content>\n" +
-        "  </a:entry>\n" +
-        "</a:feed>\n";
+            "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+            "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
+            "m:context=\"$metadata#ESFourKeyAlias" + 
+            "(PropertyInt16,PropertyCompComp/PropertyComp/PropertyString)\"\n" +
+            "m:metadata-etag=\"metadataETag\">\n" +
+            "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
+            "<a:entry>\n" +
+                "<a:id>id</a:id>\n" +
+                "<a:title />\n" +
+                "<a:summary />\n" +
+                "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
+                "<a:author>\n" +
+                    "<a:name/>\n" +
+                "</a:author>\n" +
+                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
+                  "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
+                "<a:content type=\"application/xml\">\n" +
+                "<m:properties>\n" +
+                    "<d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
+                    "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+                    "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
+                        "<d:PropertyString>Num111</d:PropertyString>\n" +
+                        "</d:PropertyComp>\n" +
+                        "</d:PropertyCompComp>\n" +
+                    "</m:properties>\n" +
+                "</a:content>\n" +
+            "</a:entry>\n" +
+        "</a:feed>";
     checkXMLEqual(expected, resultString);
   }
 
   @Test
   public void selectComplexExtended() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     long currentTimeMillis = System.currentTimeMillis();
@@ -1232,73 +1214,56 @@ public class ODataXmlSerializerTest {
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
-                .id("http://host/svc/ESCompComp")
+                .id("http://host/svc/ESFourKeyAlias")
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" m:context=\"$metadata#ESCompComp\" "
-        + "m:metadata-etag=\"metadataETag\">\n" + 
-        "   <a:id>http://host/svc/ESCompComp</a:id>\n" + 
-        "   <a:entry>\n" + 
-        "      <a:id>ESCompComp(1)</a:id>\n" + 
-        "      <a:title />\n" + 
-        "      <a:summary />\n" + 
-        "      <a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" + 
-        "      <a:author>\n" + 
-        "         <a:name />\n" + 
-        "      </a:author>\n" + 
-        "      <a:link rel=\"edit\" href=\"ESCompComp(1)\" />\n" + 
-        "      <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
-        + "term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "      <a:content type=\"application/xml\">\n" + 
-        "         <m:properties>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" + 
-        "            <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" + 
-        "               <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "                  <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" + 
-        "                  <d:PropertyString>String 1</d:PropertyString>\n" + 
-        "               </d:PropertyComp>\n" + 
-        "            </d:PropertyComp>\n" + 
-        "         </m:properties>\n" + 
-        "      </a:content>\n" + 
-        "   </a:entry>\n" + 
-        "   <a:entry>\n" + 
-        "      <a:id>ESCompComp(2)</a:id>\n" + 
-        "      <a:title />\n" + 
-        "      <a:summary />\n" + 
-        "      <a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" + 
-        "      <a:author>\n" + 
-        "         <a:name />\n" + 
-        "      </a:author>\n" + 
-        "      <a:link rel=\"edit\" href=\"ESCompComp(2)\" />\n" + 
-        "      <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
-        + "term=\"#olingo.odata.test1.ETCompComp\" />\n" + 
-        "      <a:content type=\"application/xml\">\n" + 
-        "         <m:properties>\n" + 
-        "            <d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>\n" + 
-        "            <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompCompExtended\">\n" + 
-        "               <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" + 
-        "                  <d:PropertyInt16 m:type=\"Int16\">987</d:PropertyInt16>\n" + 
-        "                  <d:PropertyString>String 2</d:PropertyString>\n" + 
-        "               </d:PropertyComp>\n" + 
-        "               <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" + 
-        "            </d:PropertyComp>\n" + 
-        "         </m:properties>\n" + 
-        "      </a:content>\n" + 
-        "   </a:entry>\n" + 
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
+            "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+            "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
+            "m:context=\"$metadata#ESFourKeyAlias\"\n" +
+            "m:metadata-etag=\"metadataETag\">\n" +
+            "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
+            "<a:entry>\n" +
+                "<a:id>id</a:id>\n" +
+                "<a:title />\n" +
+                "<a:summary />\n" +
+                "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
+                "<a:author>\n" +
+                    "<a:name/>\n" +
+                "</a:author>\n" +
+                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
+                  "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
+               "<a:content type=\"application/xml\">\n" +
+                    "<m:properties>\n" +
+                    "<d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>\n" +
+                    "<d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+                        "<d:PropertyInt16 m:type=\"Int16\">11</d:PropertyInt16>\n" +
+                        "<d:PropertyString>Num11</d:PropertyString>\n" +
+                    "</d:PropertyComp>\n" +
+                    "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+                        "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
+                            "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
+                            "<d:PropertyString>Num111</d:PropertyString>\n" +
+                            "<d:AdditionalPropString>Test123</d:AdditionalPropString>\n" +
+                        "</d:PropertyComp>\n" +
+                    "</d:PropertyCompComp>\n" +
+                    "</m:properties>\n" +
+                "</a:content>\n" +
+            "</a:entry>\n" +
         "</a:feed>";
     checkXMLEqual(expected, resultString);
   }
   
   @Test
   public void selectComplexTwice() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyString"),
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyCompComp", "PropertyComp")));
     long currentTimeMillis = System.currentTimeMillis();
     InputStream inputStream = serializer
         .entityCollection(metadata, entityType, entitySet,
@@ -1306,62 +1271,45 @@ public class ODataXmlSerializerTest {
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .build())
-                .id("http://host/svc/ESCompComp")
+                .id("http://host/svc/ESFourKeyAlias")
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(inputStream);
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
-        "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
-        "  m:context=\"$metadata#ESCompComp(PropertyComp/PropertyComp)\"\n" +
-        "  m:metadata-etag=\"metadataETag\">\n" +
-        "  <a:id>http://host/svc/ESCompComp</a:id>\n" +
-        "  <a:entry>\n" +
-        "    <a:id>ESCompComp(1)</a:id>\n" +
-        "    <a:title />\n" +
-        "    <a:summary />\n" +
-        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
-        "    <a:author>\n" +
-        "      <a:name />\n" +
-        "    </a:author>\n" +
-        "    <a:link rel=\"edit\" href=\"ESCompComp(1)\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
-        "    <a:content type=\"application/xml\">\n" +
-        "      <m:properties>\n" +
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
-        "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
-        "            <d:PropertyString>String 1</d:PropertyString>\n" +
-        "          </d:PropertyComp>\n" +
-        "        </d:PropertyComp>\n" +
-        "      </m:properties>\n" +
-        "    </a:content>\n" +
-        "  </a:entry>\n" +
-        "  <a:entry>\n" +
-        "    <a:id>ESCompComp(2)</a:id>\n" +
-        "    <a:title />\n" +
-        "    <a:summary />\n" +
-        "    <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
-        "    <a:author>\n" +
-        "      <a:name />\n" +
-        "    </a:author>\n" +
-        "    <a:link rel=\"edit\" href=\"ESCompComp(2)\"/>\n" +
-        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
-        "      term=\"#olingo.odata.test1.ETCompComp\" />\n" +
-        "    <a:content type=\"application/xml\">\n" +
-        "      <m:properties>\n" +
-        "        <d:PropertyComp m:type=\"#olingo.odata.test1.CTCompCompExtended\">\n" +
-        "          <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
-        "            <d:PropertyInt16 m:type=\"Int16\">987</d:PropertyInt16>\n" +
-        "            <d:PropertyString>String 2</d:PropertyString>\n" +
-        "          </d:PropertyComp>\n" +
-        "        </d:PropertyComp>\n" +
-        "      </m:properties>\n" +
-        "    </a:content>\n" +
-        "  </a:entry>\n" +
-        "</a:feed>\n";
+            "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+            "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
+            "m:context=\"$metadata#ESFourKeyAlias" + 
+            "(PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\"\n" +
+            "m:metadata-etag=\"metadataETag\">\n" +
+            "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
+            "<a:entry>\n" +
+                "<a:id>id</a:id>\n" +
+                "<a:title />\n" +
+                "<a:summary />\n" +
+                "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
+                "<a:author>\n" +
+                    "<a:name/>\n" +
+                "</a:author>\n" +
+                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
+                 "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
+                "<a:content type=\"application/xml\">\n" +
+                    "<m:properties>\n" +
+                        "<d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
+                            "<d:PropertyString>Num11</d:PropertyString>\n" +
+                        "</d:PropertyComp>\n" +
+                        "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
+                            "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
+                                "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
+                                "<d:PropertyString>Num111</d:PropertyString>\n" +
+                                "<d:AdditionalPropString>Test123</d:AdditionalPropString>\n" +
+                            "</d:PropertyComp>\n" +
+                        "</d:PropertyCompComp>\n" +
+                    "</m:properties>\n" +
+                "</a:content>\n" +
+            "</a:entry>\n" +
+        "</a:feed>";
     checkXMLEqual(resultString, expected);
   }
 

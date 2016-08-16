@@ -196,9 +196,10 @@ public class DataCreator {
         .addProperty(createComplex("PropertyCompComp",
             ComplexTypeProvider.nameCTCompComp.getFullQualifiedNameAsString(),
             createComplex("PropertyComp",
-                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                ComplexTypeProvider.nameCTBase.getFullQualifiedNameAsString(),
                 createPrimitive("PropertyInt16", (short) 111),
-                createPrimitive("PropertyString", "Num111")
+                createPrimitive("PropertyString", "Num111"),
+                createPrimitive("AdditionalPropString", "Test123")
             )
             ))
         );
@@ -1197,12 +1198,11 @@ public class DataCreator {
     entity = new Entity();
     entity.addProperty(createPrimitive("PropertyInt16", (short) 2));
     entity.addProperty(createComplex("PropertyComp", 
-        ComplexTypeProvider.nameCTCompCompExtended.getFullQualifiedNameAsString(), 
+        ComplexTypeProvider.nameCTCompComp.getFullQualifiedNameAsString(), 
         createComplex("PropertyComp",
             ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
             createPrimitive("PropertyInt16", (short) 987),
-            createPrimitive("PropertyString", "String 2")),
-        createPrimitive("PropertyDate", getDate(2012, 12, 3))));
+            createPrimitive("PropertyString", "String 2"))));
     entityCollection.getEntities().add(entity);
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCompComp));

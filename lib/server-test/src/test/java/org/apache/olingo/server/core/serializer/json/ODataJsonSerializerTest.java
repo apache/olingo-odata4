@@ -904,11 +904,12 @@ public class ODataJsonSerializerTest {
 
   @Test
   public void selectComplex() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
-    final SelectOption select = ExpandSelectMock.mockSelectOption(Collections.singletonList(
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString")));
+   final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyInt16"),
+        ExpandSelectMock.mockSelectItem(edmEntitySet,"PropertyCompComp", "PropertyComp", "PropertyString")));
     InputStream result = serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
@@ -918,21 +919,26 @@ public class ODataJsonSerializerTest {
                 .select(select)
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp/PropertyString)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"value\":["
-        + "{\"@odata.id\":\"ESCompComp(1)\",\"PropertyComp\":"
-        + "{\"PropertyComp\":{\"PropertyString\":\"String 1\"}}},"
-        + "{\"@odata.id\":\"ESCompComp(2)\",\"PropertyComp\":"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
-        + "\"PropertyComp\":{\"PropertyString\":\"String 2\"}}}]}",
-        resultString);
+    final String expected = "{"
+           +     "\"@odata.context\":\"$metadata#ESFourKeyAlias"
+           +        "(PropertyInt16,PropertyCompComp/PropertyComp/PropertyString)\"," 
+           +     "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+           +     "\"value\":[" 
+           +     "{" 
+           +         "\"@odata.id\":\"id\"," 
+           +         "\"PropertyInt16\":1," 
+           +         "\"PropertyCompComp\":{" 
+           +             "\"PropertyComp\":{" 
+           +             "\"@odata.type\":\"#olingo.odata.test1.CTBase\"," 
+           +             "\"PropertyString\":\"Num111\"" 
+           +     "}}}]}";
+    
+   Assert.assertEquals(expected, resultString);
   }
   
   @Test
   public void selectExtendedComplexType() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     InputStream result = serializer
@@ -942,27 +948,34 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     
-    String expected = "{" + 
-        "\"@odata.context\":\"$metadata#ESCompComp\"," + 
-        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
-        "\"value\":[" + 
-        "{\"PropertyInt16\":1," +
-        "\"PropertyComp\":{\"PropertyComp\":{" + 
-        "\"PropertyInt16\":123,\"PropertyString\":\"String 1\"}}}," + 
-        "{\"PropertyInt16\":2," + 
-        "\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\"," + 
-        "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"},\"PropertyDate\":\"2012-12-03\"}}]}";
+    String expected = "{"
+            + "\"@odata.context\":\"$metadata#ESFourKeyAlias\","
+            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+            + "\"value\":[{"
+                + "\"PropertyInt16\":1,"
+                + "\"PropertyComp\":{"
+                    + "\"PropertyInt16\":11,"
+                    + "\"PropertyString\":\"Num11\""
+                + "},"
+                + "\"PropertyCompComp\":{"
+                    + "\"PropertyComp\":{"
+                        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+                        + "\"PropertyInt16\":111,"
+                        + "\"PropertyString\":\"Num111\","
+                        + "\"AdditionalPropString\":\"Test123\""
+            + "}}}]}";
+    
     Assert.assertEquals(expected, resultString);
   }  
 
   @Test
   public void selectComplexTwice() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompComp");
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESFourKeyAlias");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp", "PropertyString"),
-        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyComp")));
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyComp", "PropertyString"),
+        ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyCompComp", "PropertyComp")));
     final String resultString = IOUtils.toString(serializer
         .entityCollection(metadata, entityType, entitySet,
             EntityCollectionSerializerOptions.with()
@@ -971,16 +984,25 @@ public class ODataJsonSerializerTest {
                     .build())
                 .select(select)
                 .build()).getContent());
-    Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESCompComp(PropertyComp/PropertyComp)\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"value\":["
-        + "{\"@odata.id\":\"ESCompComp(1)\",\"PropertyComp\":{\"PropertyComp\":{\"PropertyInt16\":123,"
-        + "\"PropertyString\":\"String 1\"}}},"
-        + "{\"@odata.id\":\"ESCompComp(2)\",\"PropertyComp\":"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTCompCompExtended\","
-        + "\"PropertyComp\":{\"PropertyInt16\":987,\"PropertyString\":\"String 2\"}}}]}",
-        resultString);
+    
+    String expected = "{"
+            + "\"@odata.context\":\"$metadata#ESFourKeyAlias"
+            +   "(PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\","
+            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+            + "\"value\":[{"
+                + "\"@odata.id\":\"id\","
+                + "\"PropertyComp\":{"
+                    + "\"PropertyString\":\"Num11\""
+                + "},"
+                + "\"PropertyCompComp\":{"
+                    + "\"PropertyComp\":{"
+                        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+                        + "\"PropertyInt16\":111,"
+                        + "\"PropertyString\":\"Num111\","
+                        + "\"AdditionalPropString\":\"Test123\""
+            + "}}}]}";
+    
+    Assert.assertEquals(expected, resultString);
   }
 
     @Test

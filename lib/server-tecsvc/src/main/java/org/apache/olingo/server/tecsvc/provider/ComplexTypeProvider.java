@@ -38,8 +38,6 @@ public class ComplexTypeProvider {
   public static final FullQualifiedName nameCTCompCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTCompCollComp");
   public static final FullQualifiedName nameCTCompComp = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTCompComp");
-  public static final FullQualifiedName nameCTCompCompExtended = new FullQualifiedName(
-      SchemaProvider.NAMESPACE, "CTCompCompExtended");
   public static final FullQualifiedName nameCTCompNav = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTCompNav");
 
   public static final FullQualifiedName nameCTMixPrimCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
@@ -126,12 +124,6 @@ public class ComplexTypeProvider {
       return new CsdlComplexType()
           .setName("CTCompComp")
           .setProperties(Arrays.asList(PropertyProvider.propertyComp_CTTwoPrim));
-
-    } else if (complexTypeName.equals(nameCTCompCompExtended)) {
-      return new CsdlComplexType()
-        .setName("CTCompCompExtended")
-        .setBaseType(nameCTCompComp)
-        .setProperties(Arrays.asList(PropertyProvider.propertyDate));
       
     } else if (complexTypeName.equals(nameCTCompCollComp)) {
       return new CsdlComplexType()
