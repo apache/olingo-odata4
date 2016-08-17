@@ -55,7 +55,29 @@ public class ActionProvider {
 
   public static final FullQualifiedName nameBAETAllPrimRT =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETAllPrimRT");
-
+  
+  public static final FullQualifiedName nameBAETTwoPrimRTString =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoPrimRTString");
+    
+  public static final FullQualifiedName nameBAETTwoPrimRTCollString =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoPrimRTCollString");
+  
+  public static final FullQualifiedName nameBAETTwoPrimRTCTAllPrim =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoPrimRTCTAllPrim");
+  
+  public static final FullQualifiedName nameBAETTwoPrimRTCollCTAllPrim =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoPrimRTCollCTAllPrim");
+  
+  public static final FullQualifiedName nameBAETCompAllPrimRTETCompAllPrim =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETCompAllPrimRTETCompAllPrim");
+  
+  public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNavParam =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNavParam");
+  
+  // Unknown Actions
+  public static final FullQualifiedName name_A_RTTimeOfDay_ =
+     new FullQualifiedName(SchemaProvider.NAMESPACE, "_A_RTTimeOfDay_");
+  
   // Unbound Actions
   public static final FullQualifiedName nameUARTString = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "UARTString");
@@ -84,8 +106,10 @@ public class ActionProvider {
   public static List<CsdlAction> getBoundActionsForEntityType(FullQualifiedName entityType) throws ODataException {
     FullQualifiedName[] actionNames = {nameBAESAllPrimRTETAllPrim, 
         nameBAESTwoKeyNavRTESTwoKeyNav, nameBAESTwoKeyNavRTESKeyNav, nameBAETBaseTwoKeyNavRTETBaseTwoKeyNav,
-        nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav,nameBA_RTETTwoKeyNav,
-        nameBAESAllPrimRT,nameBAETAllPrimRT};
+        nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav, nameBA_RTETTwoKeyNav,nameBAESAllPrimRT, 
+        nameBAETAllPrimRT, nameBAETTwoPrimRTString, nameBAETTwoPrimRTCollString, nameBAETTwoPrimRTCTAllPrim,
+        nameBAETTwoPrimRTCollCTAllPrim, nameBAETCompAllPrimRTETCompAllPrim, nameBAETTwoKeyNavRTETTwoKeyNavParam, 
+        name_A_RTTimeOfDay_ };
     
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     for (FullQualifiedName fqn:actionNames) {
@@ -101,7 +125,39 @@ public class ActionProvider {
   }
 
   public static List<CsdlAction> getActions(final FullQualifiedName actionName) throws ODataException {
-    if (actionName.equals(nameUARTString)) {
+      
+    if(actionName.equals(name_A_RTTimeOfDay_)){
+        return  Arrays.asList(
+          new CsdlAction().setName(name_A_RTTimeOfDay_.getName())
+              .setParameters(Arrays.asList(
+                new CsdlParameter().setName("ParameterTimeOfDay").setType(PropertyProvider.nameTimeOfDay)
+                      .setNullable(false),
+                new CsdlParameter().setName("ParameterAny").setType(PropertyProvider.nameString)
+                      .setNullable(false)))
+              .setBound(false)
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)),
+                
+          new CsdlAction().setName(name_A_RTTimeOfDay_.getName())
+              .setParameters(Arrays.asList(
+                new CsdlParameter().setName("ParameterTimeOfDay").setType(PropertyProvider.nameTimeOfDay)
+                      .setNullable(false),
+                new CsdlParameter().setName("ParameterAny").setType(PropertyProvider.nameString)
+                      .setNullable(false)))
+              .setBound(true)
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)),
+
+          new CsdlAction().setName(name_A_RTTimeOfDay_.getName())
+              .setParameters(Arrays.asList(
+                new CsdlParameter().setName("ParameterString").setType(PropertyProvider.nameString)
+                      .setNullable(false),    
+                new CsdlParameter().setName("ParameterTimeOfDay").setType(PropertyProvider.nameTimeOfDay)
+                      .setNullable(false),
+                new CsdlParameter().setName("ParameterAny").setType(PropertyProvider.nameString)
+                      .setNullable(false)))
+              .setBound(true)
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+        
+    }else if (actionName.equals(nameUARTString)) {
       return Collections.singletonList(
           new CsdlAction().setName(nameUARTString.getName())
               .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString)));
@@ -288,8 +344,70 @@ public class ActionProvider {
                       .setNullable(false)
                       .setCollection(true)
                       .setType(EntityTypeProvider.nameETAllPrim))));
-    }
-
+    
+    }else if(actionName.equals(nameBAETTwoPrimRTString)){
+        return Collections.singletonList(
+          new CsdlAction().setName(nameBAETTwoPrimRTString.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("ParameterETTwoPrim").setType(EntityTypeProvider.nameETTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(PropertyProvider.nameString)));
+        
+    }else if(actionName.equals(nameBAETTwoPrimRTCollString)){
+        return Collections.singletonList(
+          new CsdlAction().setName(nameBAETTwoPrimRTCollString.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("ParameterETTwoPrim").setType(EntityTypeProvider.nameETTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType()
+                      .setType(PropertyProvider.nameString)
+                      .setCollection(true)));
+        
+    }else if(actionName.equals(nameBAETTwoPrimRTCTAllPrim)){
+        return Collections.singletonList(
+          new CsdlAction().setName(nameBAETTwoPrimRTCTAllPrim.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("ParameterETTwoPrim").setType(EntityTypeProvider.nameETTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType()
+                      .setType(ComplexTypeProvider.nameCTAllPrim)));
+        
+    }else if(actionName.equals(nameBAETTwoPrimRTCollCTAllPrim)){
+        return Collections.singletonList(
+          new CsdlAction().setName(nameBAETTwoPrimRTCollCTAllPrim.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("ParameterETTwoPrim").setType(EntityTypeProvider.nameETTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType()
+                      .setType(ComplexTypeProvider.nameCTAllPrim)
+                      .setCollection(true)));
+        
+    }else if(actionName.equals(nameBAETCompAllPrimRTETCompAllPrim)){
+        return Collections.singletonList(
+          new CsdlAction().setName(nameBAETCompAllPrimRTETCompAllPrim.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("ParameterETCompAllPrim").setType(EntityTypeProvider.nameETCompAllPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType()
+                      .setType(EntityTypeProvider.nameETCompAllPrim)));
+                  
+    }else if(actionName.equals(nameBAETTwoKeyNavRTETTwoKeyNavParam)){
+         return Collections.singletonList(
+          new CsdlAction().setName(nameBAETTwoKeyNavRTETTwoKeyNavParam.getName())
+              .setBound(true)
+              .setEntitySetPath("BindingParam/NavPropertyETTwoKeyNavOne")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                      .setNullable(false),
+                  new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)));
+    }    
     return null;
   }
 }

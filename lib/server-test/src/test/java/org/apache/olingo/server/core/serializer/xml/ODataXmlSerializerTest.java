@@ -615,6 +615,9 @@ public class ODataXmlSerializerTest {
         "      </d:PropertyComp>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "   <m:action metadata=\"#olingo.odata.test1.BAETCompAllPrimRTETCompAllPrim\" " +
+        "       title=\"olingo.odata.test1.BAETCompAllPrimRTETCompAllPrim\" " +
+        "       target=\"ESCompAllPrim(32767)/olingo.odata.test1.BAETCompAllPrimRTETCompAllPrim\"/>"   +
         "</a:entry>";
     checkXMLEqual(expected, resultString);
   }
@@ -1501,6 +1504,18 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyString>Test String4</d:PropertyString>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTString\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "</a:entry>\n" +
         "";
     checkXMLEqual(expected, resultString);
@@ -1587,6 +1602,18 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyString>Test String4</d:PropertyString>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+            "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTString\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+           "<m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+             "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "</a:entry>";
     checkXMLEqual(expected, resultString);
   }
@@ -1659,6 +1686,18 @@ public class ODataXmlSerializerTest {
         "            <d:PropertyString>Test String4</d:PropertyString>\n" +
         "          </m:properties>\n" +
         "        </a:content>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTString\" "
+                    + "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" "
+                    + "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "
+                    + "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "        <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "
+                    + "target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "      </a:entry>\n" +
         "    </m:inline>\n" +
         "  </a:link>\n" +
@@ -1694,6 +1733,18 @@ public class ODataXmlSerializerTest {
         "              <d:PropertyString>Test String2</d:PropertyString>\n" +
         "            </m:properties>\n" +
         "          </a:content>\n" +
+        "          <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTString\" "
+                    + "target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "          <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" "
+                    + "target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "          <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "
+                    + "target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "          <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "
+                    + "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "
+                    + "target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "        </a:entry>\n" +
         "      </a:feed>\n" +
         "    </m:inline>\n" +
@@ -1710,7 +1761,7 @@ public class ODataXmlSerializerTest {
         "      target=\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "</a:entry>\n" +
         "";
-    checkXMLEqual(expected, resultString);
+        checkXMLEqual(expected, resultString);
   }
 
   @Test
@@ -1909,6 +1960,18 @@ public class ODataXmlSerializerTest {
         "                      <d:PropertyString>Test String1</d:PropertyString>\n" +
         "                    </m:properties>\n" +
         "                  </a:content>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" " +
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTString\" \n" +
+        "                       target=\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" \n" +
+        "                       target=\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" " +
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "                </a:entry>\n" +
         "                <a:entry>\n" +
         "                  <a:id>ESTwoPrim(-32766)</a:id>\n" +
@@ -1936,6 +1999,18 @@ public class ODataXmlSerializerTest {
         "                      <d:PropertyString m:null=\"true\" />\n" +
         "                    </m:properties>\n" +
         "                  </a:content>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTString\" \n" +
+        "                       target=\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" \n" +
+        "                       target=\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "                </a:entry>\n" +
         "                <a:entry>\n" +
         "                  <a:id>ESTwoPrim(32767)</a:id>\n" +
@@ -1963,6 +2038,18 @@ public class ODataXmlSerializerTest {
         "                      <d:PropertyString>Test String4</d:PropertyString>\n" +
         "                    </m:properties>\n" +
         "                  </a:content>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTString\" \n" +
+        "                       target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" \n" +
+        "                       target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "                  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+                                "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" \n" +
+        "                       target=\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "                </a:entry>\n" +
         "              </a:feed>\n" +
         "            </m:inline>\n" +
@@ -1989,6 +2076,18 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyString>Test String2</d:PropertyString>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTString\" \n" +
+        "     target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTString\"/>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollString\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollString\" \n" +
+        "     target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollString\"/>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\" \n" +
+        "     target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"/>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" "+
+             "title=\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\" \n" +
+        "     target=\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"/>" +
         "</a:entry>";
     checkXMLEqual(expected, resultString);
   }

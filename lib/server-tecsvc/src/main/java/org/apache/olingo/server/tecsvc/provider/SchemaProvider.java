@@ -57,8 +57,9 @@ public class SchemaProvider {
     // EntityTypes
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     schema.setEntityTypes(entityTypes);
-
+    
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrim));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrimDefaultValues));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCollAllPrim));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoPrim));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMixPrimCollComp));
@@ -116,6 +117,12 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav));
     actions.addAll(prov.getActions(ActionProvider.nameBAETAllPrimRT));
     actions.addAll(prov.getActions(ActionProvider.nameBAESAllPrimRT));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTString));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTCollString));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTCTAllPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTCollCTAllPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETCompAllPrimRTETCompAllPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNavParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTString));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCollStringTwoParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCTTwoPrimParam));
@@ -128,11 +135,13 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameUARTParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTTwoParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTByteNineParam));
-
+    actions.addAll(prov.getActions(ActionProvider.name_A_RTTimeOfDay_));
+    
     // Functions
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
     schema.setFunctions(functions);
-
+    
+    functions.addAll(prov.getFunctions(FunctionProvider.name_FC_RTTimeOfDay_));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTInt16));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTETTwoKeyNav));
@@ -156,6 +165,8 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTCollCTNavFiveProp));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollETKeyNavContParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameUFNRTByteNineParam));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTCollDecimal));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameUFCRTDecimal));
 
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFC_RTESTwoKeyNav_));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCStringRTESTwoKeyNav));
@@ -187,6 +198,8 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTETKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTETTwoKeyNavParam));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTESTwoKeyNav));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFNESTwoKeyNavRTString)); 
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCollDecimal));
 
     // functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
 

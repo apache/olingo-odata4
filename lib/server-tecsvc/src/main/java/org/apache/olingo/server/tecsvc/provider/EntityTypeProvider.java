@@ -34,6 +34,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAllNullable");
   public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllPrim");
+  public static final FullQualifiedName nameETAllPrimDefaultValues = new FullQualifiedName(SchemaProvider.NAMESPACE, 
+         "ETAllPrimDefaultValues");
   public static final FullQualifiedName nameETBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETBase");
   public static final FullQualifiedName nameETBaseTwoKeyNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETBaseTwoKeyNav");
@@ -84,7 +86,33 @@ public class EntityTypeProvider {
   
 
   public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-    if (entityTypeName.equals(nameETAllPrim)) {
+    if(entityTypeName.equals(nameETAllPrimDefaultValues)){        
+        return new CsdlEntityType()
+          .setName("ETAllPrimDefaultValues")
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyString_NotNullable_WithDefaultValue,
+              PropertyProvider.propertyBoolean_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyByte_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertySByte_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyInt32_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyInt64_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertySingle_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyDouble_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyDecimal_Scale_NotNullable_WithDefaultValue,
+              PropertyProvider.propertyBinary_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyDate_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyDateTimeOffset_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyDuration_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyGuid_NotNullable_WithDefaultValue, 
+              PropertyProvider.propertyTimeOfDay_NotNullable_WithDefaultValue,
+              PropertyProvider.propertyEnumString_ENString_NonNullable_WithDefaultValue, 
+              PropertyProvider.propertyTypeDefinition_TDString_NonNullable_WithDefaultValue
+              ));
+        
+    }else if (entityTypeName.equals(nameETAllPrim)) {
       return new CsdlEntityType()
           .setName("ETAllPrim")
           .setKey(Arrays.asList(

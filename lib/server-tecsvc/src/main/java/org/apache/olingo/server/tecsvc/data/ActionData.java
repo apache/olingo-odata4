@@ -55,6 +55,13 @@ public class ActionData {
       return DataCreator.createPrimitive(null, "UARTString string value");
     } else if ("UARTByteNineParam".equals(name)) {
       return FunctionData.primitiveComplexFunction("UFNRTByteNineParam", parameters, null);
+    }else if("_A_RTTimeOfDay_".equals(name)){
+        Parameter paramTimeOfDay = parameters.get("ParameterTimeOfDay");
+        Calendar timeOfDay = Calendar.getInstance();
+      if (paramTimeOfDay != null && !paramTimeOfDay.isNull()) {
+        timeOfDay = (Calendar) paramTimeOfDay.asPrimitive();
+      }
+      return DataCreator.createPrimitive("ParameterTimeOfDay", timeOfDay);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);

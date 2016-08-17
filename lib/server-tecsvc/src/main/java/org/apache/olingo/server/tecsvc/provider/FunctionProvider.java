@@ -69,7 +69,10 @@ public class FunctionProvider {
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollCTTwoPrim =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollCTTwoPrim");
-
+  
+ public static final FullQualifiedName nameBFNESTwoKeyNavRTString =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFNESTwoKeyNavRTString");
+ 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollString =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollString");
 
@@ -126,6 +129,13 @@ public class FunctionProvider {
 
   public static final FullQualifiedName nameBFCESKeyNavRTESTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESKeyNavRTESTwoKeyNav");
+  
+  public static final FullQualifiedName nameBFCESTwoKeyNavRTCollDecimal =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollDecimal");
+  
+  // Unknown
+   public static final FullQualifiedName name_FC_RTTimeOfDay_ =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "_FC_RTTimeOfDay_");
 
   // Unbound Functions
   public static final FullQualifiedName nameUFCRTCollCTTwoPrim =
@@ -184,7 +194,12 @@ public class FunctionProvider {
 
   public static final FullQualifiedName nameUFNRTByteNineParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UFNRTByteNineParam");
-
+  
+   public static final FullQualifiedName nameUFCRTCollDecimal =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTCollDecimal");
+  
+   public static final FullQualifiedName nameUFCRTDecimal =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "UFCRTDecimal");
   
   public static List<CsdlFunction> getBoundFunctionsForType(FullQualifiedName entityType) throws ODataException {
     FullQualifiedName[] funcNames = {
@@ -218,7 +233,10 @@ public class FunctionProvider {
         nameBFESTwoKeyNavRTESTwoKeyNav,
         nameBFCESTwoKeyNavRTCTNavFiveProp,
         nameBFCESTwoKeyNavRTCollCTNavFiveProp,
-        nameBFCESKeyNavRTESTwoKeyNav
+        nameBFCESKeyNavRTESTwoKeyNav,
+        nameBFCESTwoKeyNavRTCollDecimal,
+        nameBFNESTwoKeyNavRTString,
+        name_FC_RTTimeOfDay_
     };
     
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
@@ -235,8 +253,132 @@ public class FunctionProvider {
   }
   
   public static List<CsdlFunction> getFunctions(final FullQualifiedName functionName) throws ODataException {
+      
+      if(functionName.equals(name_FC_RTTimeOfDay_)){
+        List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+       
+            functions.add(new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Collections.singletonList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(true)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
 
-    if (functionName.equals(nameUFNRTInt16)) {
+           functions.add( new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Arrays.asList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false),
+                 new CsdlParameter()
+                    .setName("ParameterAny")
+                    .setType(PropertyProvider.nameString)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(true)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+
+           functions.add( new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Arrays.asList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false),
+                 new CsdlParameter()
+                    .setName("ParameterString")
+                    .setType(PropertyProvider.nameString)
+                    .setNullable(false),
+                  new CsdlParameter()
+                    .setName("ParameterAny")
+                    .setType(PropertyProvider.nameInt32)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(true)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+        
+           functions.add(new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Collections.singletonList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(false)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+
+           functions.add( new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Arrays.asList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false),
+                 new CsdlParameter()
+                    .setName("ParameterAny")
+                    .setType(PropertyProvider.nameString)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(false)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+
+           functions.add( new CsdlFunction()
+            .setName(name_FC_RTTimeOfDay_.getName())
+            .setParameters(Arrays.asList(
+                new CsdlParameter()
+                    .setName("ParameterTimeOfDay")
+                    .setType(PropertyProvider.nameTimeOfDay)
+                    .setNullable(false),
+                 new CsdlParameter()
+                    .setName("ParameterString")
+                    .setType(PropertyProvider.nameString)
+                    .setNullable(false),
+                  new CsdlParameter()
+                    .setName("ParameterAny")
+                    .setType(PropertyProvider.nameInt32)
+                    .setNullable(false)))
+            .setComposable(true)
+            .setBound(false)
+            .setReturnType(
+                new CsdlReturnType().setType(PropertyProvider.nameTimeOfDay)));
+           
+        return functions;
+        
+    }else if(functionName.equals(nameUFCRTCollDecimal)){
+          return Collections.singletonList(
+          new CsdlFunction()
+              .setName(functionName.getName())
+              .setParameters(Collections.<CsdlParameter> emptyList())
+              .setComposable(true)
+              .setReturnType(new CsdlReturnType()
+                      .setType(PropertyProvider.nameDecimal)
+                      .setPrecision(12)
+                      .setScale(5)
+                      .setCollection(true)));
+          
+    }else if(functionName.equals(nameUFCRTDecimal)){
+        return Collections.singletonList(
+          new CsdlFunction()
+              .setName(functionName.getName())
+              .setParameters(Collections.<CsdlParameter> emptyList())
+              .setComposable(true)
+              .setReturnType(new CsdlReturnType()
+                      .setType(PropertyProvider.nameDecimal)
+                      .setPrecision(12)
+                      .setScale(5)));
+          
+    }else if (functionName.equals(nameUFNRTInt16)) {
       return Collections.singletonList(
           new CsdlFunction()
               .setName(functionName.getName())
@@ -649,6 +791,18 @@ public class FunctionProvider {
               .setComposable(true)
               .setReturnType(
                   new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(false)));
+      
+    } else if (functionName.equals(nameBFNESTwoKeyNavRTString)){
+        return Collections.singletonList(
+          new CsdlFunction()
+              .setName("BFNESTwoKeyNavRTString")
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                      .setCollection(true).setNullable(false)))
+              .setComposable(false)
+              .setReturnType(
+                  new CsdlReturnType().setType(PropertyProvider.nameString).setNullable(false)));
 
     } else if (functionName.equals(nameBFCESTwoKeyNavRTCollString)) {
       return Collections.singletonList(
@@ -861,6 +1015,26 @@ public class FunctionProvider {
               .setComposable(true)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setNullable(false)));
+      
+   } else if (functionName.equals(nameBFCESTwoKeyNavRTCollDecimal)){
+        return Collections.singletonList(
+          new CsdlFunction()
+              .setName("BFCESTwoKeyNavRTCollDecimal")
+              .setBound(true)
+              .setParameters(
+                  Collections.singletonList(
+                      new CsdlParameter().setName("BindingParam")
+                          .setType(EntityTypeProvider.nameETTwoKeyNav)
+                          .setNullable(false)
+                          .setCollection(true)))
+              .setComposable(true)
+              .setBound(true)
+              .setReturnType(
+                  new CsdlReturnType().setType(PropertyProvider.nameDecimal)
+                      .setPrecision(12)
+                      .setScale(5)
+                      .setCollection(true)
+                      .setNullable(false)));
 
     } else if (functionName.equals(nameBFCETTwoKeyNavRTCTTwoPrim)) {
       return Collections.singletonList(

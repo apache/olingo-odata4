@@ -332,6 +332,12 @@ public class PropertyProvider {
       .setType(nameBinary)
       .setNullable(false);
 
+  public static final CsdlProperty propertyBinary_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyBinary")
+      .setType(nameBinary)
+      .setDefaultValue("T0RhdGE")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyBinary_ExplicitNullable = new CsdlProperty()
       .setName("PropertyBinary")
       .setType(nameBinary)
@@ -346,6 +352,12 @@ public class PropertyProvider {
       .setType(nameBoolean)
       .setNullable(false);
 
+  public static final CsdlProperty propertyBoolean_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyBoolean")
+      .setType(nameBoolean)
+      .setDefaultValue("true")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyBoolean_ExplicitNullable = new CsdlProperty()
       .setName("PropertyBoolean")
       .setType(nameBoolean)
@@ -360,6 +372,12 @@ public class PropertyProvider {
       .setType(nameByte)
       .setNullable(false);
 
+  public static final CsdlProperty propertyByte_NotNullable_WithDefaultValue  = new CsdlProperty()
+      .setName("PropertyByte")
+      .setType(nameByte)
+      .setDefaultValue("255")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyByte_ExplicitNullable = new CsdlProperty()
       .setName("PropertyByte")
       .setType(nameByte)
@@ -374,6 +392,12 @@ public class PropertyProvider {
       .setType(nameDate)
       .setNullable(false);
 
+  public static final CsdlProperty propertyDate_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDate")
+      .setType(nameDate)
+      .setDefaultValue("2016-06-27")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyDate_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDate")
       .setType(nameDate)
@@ -393,6 +417,12 @@ public class PropertyProvider {
       .setType(nameDateTimeOffset)
       .setNullable(false);
 
+  public static final CsdlProperty propertyDateTimeOffset_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDateTimeOffset")
+      .setType(nameDateTimeOffset)
+      .setDefaultValue("2016-06-27T14:52:23.123Z")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyDateTimeOffset_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDateTimeOffset")
       .setType(nameDateTimeOffset)
@@ -414,6 +444,13 @@ public class PropertyProvider {
       .setType(nameDecimal)
       .setNullable(false);
 
+  public static final CsdlProperty propertyDecimal_Scale_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDecimal")
+      .setType(nameDecimal)
+      .setScale(10)
+      .setDefaultValue("123.0123456789")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyDecimal_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDecimal")
       .setType(nameDecimal)
@@ -428,6 +465,12 @@ public class PropertyProvider {
       .setType(nameDouble)
       .setNullable(false);
 
+  public static final CsdlProperty propertyDouble_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDouble")
+      .setType(nameDouble)
+      .setDefaultValue("3.1415926535897931")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyDouble_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDouble")
       .setType(nameDouble)
@@ -441,7 +484,13 @@ public class PropertyProvider {
       .setName("PropertyDuration")
       .setType(nameDuration)
       .setNullable(false);
-
+ 
+  public static final CsdlProperty propertyDuration_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDuration")
+      .setType(nameDuration)
+      .setDefaultValue("P12DT23H59M59.999S")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyDuration_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDuration")
       .setType(nameDuration)
@@ -456,6 +505,12 @@ public class PropertyProvider {
       .setType(nameGuid)
       .setNullable(false);
 
+  public static final CsdlProperty propertyGuid_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyGuid")
+      .setType(nameGuid)
+      .setDefaultValue("01234567-89ab-cdef-0123-456789abcdef")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyGuid_ExplicitNullable = new CsdlProperty()
       .setName("PropertyGuid")
       .setType(nameGuid)
@@ -470,6 +525,13 @@ public class PropertyProvider {
       .setType(nameInt16)
       .setNullable(false);
 
+   public static final CsdlProperty propertyInt16_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyInt16")
+      .setType(nameInt16)
+      .setDefaultValue("32767")
+      .setNullable(false);
+      
+  
   public static final CsdlProperty propertyInt16_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt16")
       .setType(nameInt16)
@@ -484,6 +546,12 @@ public class PropertyProvider {
       .setType(nameInt32)
       .setNullable(false);
 
+  public static final CsdlProperty propertyInt32_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyInt32")
+      .setType(nameInt32)
+      .setDefaultValue("2147483647")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyInt32_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt32")
       .setType(nameInt32)
@@ -498,6 +566,12 @@ public class PropertyProvider {
       .setType(nameInt64)
       .setNullable(false);
 
+  public static final CsdlProperty propertyInt64_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyInt64")
+      .setType(nameInt64)
+      .setDefaultValue("9223372036854775807")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyInt64_ExplicitNullable = new CsdlProperty()
       .setName("PropertyInt64")
       .setType(nameInt64)
@@ -512,6 +586,12 @@ public class PropertyProvider {
       .setType(nameSByte)
       .setNullable(false);
 
+  public static final CsdlProperty propertySByte_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertySByte")
+      .setType(nameSByte)
+      .setDefaultValue("127")
+      .setNullable(false);
+  
   public static final CsdlProperty propertySByte_ExplicitNullable = new CsdlProperty()
       .setName("PropertySByte")
       .setType(nameSByte)
@@ -526,6 +606,12 @@ public class PropertyProvider {
       .setType(nameSingle)
       .setNullable(false);
 
+  public static final CsdlProperty propertySingle_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertySingle")
+      .setType(nameSingle)
+      .setDefaultValue("1.23")
+      .setNullable(false);
+  
   public static final CsdlProperty propertySingle_ExplicitNullable = new CsdlProperty()
       .setName("PropertySingle")
       .setType(nameSingle)
@@ -540,6 +626,12 @@ public class PropertyProvider {
       .setType(nameString)
       .setNullable(false);
 
+   public static final CsdlProperty propertyString_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyString")
+      .setType(nameString)
+      .setDefaultValue("abc")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyString_ExplicitNullable = new CsdlProperty()
       .setName("PropertyString")
       .setType(nameString)
@@ -559,6 +651,12 @@ public class PropertyProvider {
       .setType(nameTimeOfDay)
       .setNullable(false);
 
+  public static final CsdlProperty propertyTimeOfDay_NotNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyTimeOfDay")
+      .setType(nameTimeOfDay)
+      .setDefaultValue("07:59:59.999")
+      .setNullable(false);
+  
   public static final CsdlProperty propertyTimeOfDay_ExplicitNullable = new CsdlProperty()
       .setName("PropertyTimeOfDay")
       .setType(nameTimeOfDay)
@@ -793,6 +891,12 @@ public class PropertyProvider {
       .setName("PropertyEnumString")
       .setType(EnumTypeProvider.nameENString)
       .setNullable(false);
+  
+  public static final CsdlProperty propertyEnumString_ENString_NonNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyEnumString")
+      .setType(EnumTypeProvider.nameENString)
+      .setDefaultValue("String1")
+      .setNullable(false);
 
   public static final CsdlProperty propertyEnumString_ENString = new CsdlProperty()
       .setName("PropertyEnumString")
@@ -813,6 +917,12 @@ public class PropertyProvider {
       .setType(TypeDefinitionProvider.nameTDString)
       .setNullable(false);
 
+  public static final CsdlProperty propertyTypeDefinition_TDString_NonNullable_WithDefaultValue = new CsdlProperty()
+      .setName("PropertyDefString")
+      .setType(TypeDefinitionProvider.nameTDString)
+      .setDefaultValue("CustomString")
+      .setNullable(false);
+  
   public static final CsdlProperty collPropertyTypeDefinition_TDString = new CsdlProperty()
       .setName("CollPropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)

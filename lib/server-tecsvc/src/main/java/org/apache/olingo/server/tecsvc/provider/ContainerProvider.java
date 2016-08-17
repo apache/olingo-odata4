@@ -49,6 +49,7 @@ public class ContainerProvider {
   public static final String AIRT_COLL_ES_ALL_PRIM_PARAM = "AIRTCollESAllPrimParam";
   public static final String AIRT = "AIRT";
   public static final String AIRT_PARAM = "AIRTParam";
+  public static final String AI_RT_TIME_OF_DAY = "AIRTTimeOfDay";
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
   public static final String AIRT_BYTE_NINE_PARAM = "AIRTByteNineParam";
   public static final String ES_STREAM = "ESStream";
@@ -75,6 +76,7 @@ public class ContainerProvider {
     List<CsdlEntitySet> entitySets = new ArrayList<CsdlEntitySet>();
     container.setEntitySets(entitySets);
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrim"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrimDefaultValues"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCollAllPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoPrim"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMixPrimCollComp"));
@@ -124,7 +126,8 @@ public class ContainerProvider {
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_PARAM));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_TWO_PARAM));
     actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AIRT_BYTE_NINE_PARAM));
-
+    actionImports.add(prov.getActionImport(ContainerProvider.nameContainer, AI_RT_TIME_OF_DAY));
+    
     // FunctionImports
     List<CsdlFunctionImport> functionImports = new ArrayList<CsdlFunctionImport>();
     container.setFunctionImports(functionImports);
@@ -151,6 +154,7 @@ public class ContainerProvider {
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTCollCTNavFiveProp"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FICRTCollESKeyNavContParam"));
     functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FINRTByteNineParam"));
+    functionImports.add(prov.getFunctionImport(ContainerProvider.nameContainer, "FIC_RTTimeOfDay_"));
 
     List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
     annotations.add(new CsdlAnnotation().setTerm(TermProvider.TERM_DESCRIPTION.getFullQualifiedNameAsString())
@@ -164,7 +168,19 @@ public class ContainerProvider {
 
   public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String name) throws ODataException {
     if (entityContainer == nameContainer) {
-      if (name.equals("ESAllPrim")) {
+      if (name.equals("ESAllPrimDefaultValues")) {
+        return new CsdlEntitySet()
+            .setName("ESAllPrimDefaultValues")
+            .setType(EntityTypeProvider.nameETAllPrimDefaultValues)
+            .setTitle("All PropertyTypes EntitySet with default values")
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                    "Contains entities with all primitive types with default values")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
+                ));
+        
+      }else if (name.equals("ESAllPrim")) {
         return new CsdlEntitySet()
             .setName("ESAllPrim")
             .setType(EntityTypeProvider.nameETAllPrim)
@@ -691,9 +707,19 @@ public class ContainerProvider {
         return new CsdlActionImport()
             .setName(AIRT_BYTE_NINE_PARAM)
             .setAction(ActionProvider.nameUARTByteNineParam);
-      }
-    }
 
+      } else if(name.equals(AI_RT_TIME_OF_DAY)){
+           return new CsdlActionImport()
+            .setName(AI_RT_TIME_OF_DAY)
+            .setAction(ActionProvider.name_A_RTTimeOfDay_)
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                    "Action Import returns the given time of day")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
+                )); 
+        }
+    }
     return null;
   }
 
@@ -701,7 +727,22 @@ public class ContainerProvider {
       throws ODataException {
 
     if (entityContainer.equals(nameContainer)) {
-      if (name.equals("FINRTInt16")) {
+        
+      if (name.equals("FIC_RTTimeOfDay_")){
+           return new CsdlFunctionImport()
+            .setName(name)
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm(
+                    TermProvider.TERM_DESCRIPTION.getFullQualifiedNameAsString()).setExpression(
+                new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                    "Overload with same unbound parameter name and different "
+                    + "type Composable Importing:Edm.TimeOfDay (Edm.TimeOfDay) "
+                    + "Returning:Edm.TimeOfDay")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "false"))))
+            .setFunction(FunctionProvider.name_FC_RTTimeOfDay_)
+            .setIncludeInServiceDocument(true);
+          
+      }else if (name.equals("FINRTInt16")) {
         return new CsdlFunctionImport()
             .setName(name)
             .setTitle("Simple FunctionImport")
