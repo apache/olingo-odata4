@@ -302,6 +302,8 @@ public interface Constants {
 
   String ERROR_DETAILS = "details";
 
+  String ERROR_DETAIL = "detail";
+  
   String ERROR_INNERERROR = "innererror";
 
   // canonical functions to be applied via dynamic annotation <tt>Apply</tt>

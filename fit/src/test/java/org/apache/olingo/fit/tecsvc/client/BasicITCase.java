@@ -296,7 +296,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
       final ODataError error = e.getODataError();
       assertThat(error.getMessage(), containsString("key"));
-    }
+    }    
   }
 
   @Test

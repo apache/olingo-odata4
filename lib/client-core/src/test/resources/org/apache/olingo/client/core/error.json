@@ -9,6 +9,10 @@
         "target": "$search",
         "message": "$search query option not supported"
       }
-    ]
+    ],
+    "innererror": {
+      "trace": ["callmethod1 etc", "callmethod2 etc"],
+      "context": {"key1": "for debug deployment only"}
+    }
   }
 }

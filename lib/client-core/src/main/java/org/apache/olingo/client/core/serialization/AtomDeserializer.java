@@ -64,6 +64,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
+import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 
 public class AtomDeserializer implements ODataDeserializer {
 
@@ -86,6 +87,7 @@ public class AtomDeserializer implements ODataDeserializer {
   protected static final QName errorCodeQName = new QName(Constants.NS_METADATA, Constants.ERROR_CODE);
   protected static final QName errorMessageQName = new QName(Constants.NS_METADATA, Constants.ERROR_MESSAGE);
   protected static final QName errorTargetQName = new QName(Constants.NS_METADATA, Constants.ERROR_TARGET);
+  protected static final QName errorDetailQName = new QName(Constants.NS_METADATA, Constants.ERROR_DETAIL);
   protected static final QName deletedEntryQName =
       new QName(Constants.NS_ATOM_TOMBSTONE, Constants.ATOM_ELEM_DELETED_ENTRY);
 
@@ -826,18 +828,21 @@ public class AtomDeserializer implements ODataDeserializer {
 
   private ODataError error(final XMLEventReader reader, final StartElement start) throws XMLStreamException {
     final ODataError error = new ODataError();
-
+    error.setDetails(new ArrayList<ODataErrorDetail>(0));
+    ODataErrorDetail errorDetail = null;
+    
     boolean setCode = false;
     boolean codeSet = false;
     boolean setMessage = false;
     boolean messageSet = false;
     boolean setTarget = false;
     boolean targetSet = false;
+    boolean isDetails = false;
 
     boolean foundEndElement = false;
     while (reader.hasNext() && !foundEndElement) {
       final XMLEvent event = reader.nextEvent();
-
+      
       if (event.isStartElement()) {
         if (errorCodeQName.equals(event.asStartElement().getName())) {
           setCode = true;
@@ -845,6 +850,9 @@ public class AtomDeserializer implements ODataDeserializer {
           setMessage = true;
         } else if (errorTargetQName.equals(event.asStartElement().getName())) {
           setTarget = true;
+        } else if (errorDetailQName.equals(event.asStartElement().getName())){
+          isDetails = true;
+          errorDetail = new ODataErrorDetail();
         }
       }
 
@@ -864,8 +872,26 @@ public class AtomDeserializer implements ODataDeserializer {
           setTarget = false;
           targetSet = true;
         }
+        // DETAIL Error
+        if(setCode && isDetails){
+          errorDetail.setCode(event.asCharacters().getData());
+          setCode = false;
+        }
+        if(setMessage && isDetails){
+          errorDetail.setMessage(event.asCharacters().getData());
+          setMessage = false;
+        }
+        if(setTarget && isDetails){
+          errorDetail.setTarget(event.asCharacters().getData());
+          setTarget = false;
+        }        
       }
-
+      
+      if(event.isEndElement() && errorDetailQName.equals(event.asEndElement().getName())){
+          isDetails = false;
+          error.getDetails().add(errorDetail);
+      }
+      
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
         foundEndElement = true;
       }
