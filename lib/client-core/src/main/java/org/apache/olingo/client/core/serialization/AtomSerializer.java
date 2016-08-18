@@ -53,13 +53,11 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 
-import com.fasterxml.aalto.stax.OutputFactoryImpl;
-
 public class AtomSerializer implements ODataSerializer {
 
   private static final String TYPE_TEXT = "text";
 
-  private static final XMLOutputFactory FACTORY = new OutputFactoryImpl();
+  private static final XMLOutputFactory FACTORY = XMLOutputFactory.newFactory();
 
   private final AtomGeoValueSerializer geoSerializer;
   private final boolean serverMode;

@@ -21,6 +21,8 @@ package org.apache.olingo.client.core.serialization;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.olingo.client.api.data.ResWrap;
@@ -41,8 +43,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 
-import com.fasterxml.aalto.stax.InputFactoryImpl;
-import com.fasterxml.aalto.stax.OutputFactoryImpl;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -90,7 +90,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   protected XmlMapper getXmlMapper() {
     final XmlMapper xmlMapper = new XmlMapper(
-        new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
+        new XmlFactory(XMLInputFactory.newFactory(), XMLOutputFactory.newFactory()), new JacksonXmlModule());
 
     xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(Boolean.class, Boolean.FALSE));
 
