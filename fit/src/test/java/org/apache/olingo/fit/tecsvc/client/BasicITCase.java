@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -581,6 +582,35 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         .toValue());
   }
 
+  @Test
+  public void readPropertyValueFromEntityWithAlias() {
+    Map<String, Object> segmentValues = new LinkedHashMap<String, Object>();
+    segmentValues.put("PropertyInt16", 1);
+    segmentValues.put("KeyAlias1", 11);
+    segmentValues.put("KeyAlias2", "Num11");
+    segmentValues.put("KeyAlias3", "Num111");
+
+    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
+        appendEntitySetSegment("ESFourKeyAlias")
+            .appendKeySegment(segmentValues)
+            .appendPropertySegment("PropertyCompComp");
+    final ODataPropertyRequest<ClientProperty> req = getClient().getRetrieveRequestFactory().
+        getPropertyRequest(uriBuilder.build());
+    req.setFormat(contentType);
+
+    final ClientProperty prop = req.execute().getBody();
+    assertNotNull(prop);
+    final ClientComplexValue complexValue = prop.getComplexValue();
+    assertNotNull(complexValue);
+    final ClientValue propertyComp = complexValue.get("PropertyComp").getValue();
+    assertNotNull(propertyComp);
+    final ClientProperty propertyInt = propertyComp.asComplex().get("PropertyInt16");
+    assertNotNull(propertyInt);
+    final ClientPrimitiveValue clientValue = propertyInt.getPrimitiveValue();
+    assertNotNull(clientValue);
+    assertEquals("111", clientValue.toString());
+  }
+  
   @Test
   public void updateCollectionOfComplexCollection() {
     final ClientEntity entity = getFactory().newEntity(ET_KEY_NAV);

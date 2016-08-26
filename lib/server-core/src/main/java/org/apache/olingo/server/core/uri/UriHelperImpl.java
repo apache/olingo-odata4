@@ -21,9 +21,11 @@ package org.apache.olingo.server.core.uri;
 import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -68,6 +70,7 @@ public class UriHelperImpl implements UriHelper {
     final List<String> keyNames = edmEntityType.getKeyPredicateNames();
     boolean first = true;
     for (final String keyName : keyNames) {
+      EdmKeyPropertyRef refType = edmEntityType.getKeyPropertyRef(keyName);
       if (first) {
         first = false;
       } else {
@@ -76,13 +79,13 @@ public class UriHelperImpl implements UriHelper {
       if (keyNames.size() > 1) {
         result.append(Encoder.encode(keyName)).append('=');
       }
-      final EdmProperty edmProperty = edmEntityType.getStructuralProperty(keyName);
+      final EdmProperty edmProperty =  refType.getProperty();
       if (edmProperty == null) {
         throw new SerializerException("Property not found (possibly an alias): " + keyName,
             SerializerException.MessageKeys.MISSING_PROPERTY, keyName);
       }
       final EdmPrimitiveType type = (EdmPrimitiveType) edmProperty.getType();
-      final Object propertyValue = entity.getProperty(keyName).getValue();
+      final Object propertyValue = findPropertyRefValue(entity, refType);
       try {
         final String value = type.toUriLiteral(
             type.valueToString(propertyValue,
@@ -96,7 +99,41 @@ public class UriHelperImpl implements UriHelper {
     }
     return result.toString();
   }
+  
+  private Object findPropertyRefValue(Entity entity, EdmKeyPropertyRef refType) {
+    final int INDEX_ERROR_CODE = -1;
+    final String propertyPath = refType.getName();
+    String tmpPropertyName;
+    int lastIndex;
+    int index = propertyPath.indexOf('/');
+    if (index == INDEX_ERROR_CODE) {
+        index  = propertyPath.length();
+    }
+    tmpPropertyName = propertyPath.substring(0, index);
+    //get first property
+    Property prop = entity.getProperty(tmpPropertyName);
+    //get following properties
+    while (index < propertyPath.length()) {
+        lastIndex = ++index;
+        index = propertyPath.indexOf('/', index+1);
+        if (index == INDEX_ERROR_CODE) {
+            index = propertyPath.length();
+        }
+        tmpPropertyName = propertyPath.substring(lastIndex, index);
+        prop = findProperty(tmpPropertyName, prop.asComplex().getValue());
+     }
+    return prop.getValue();
+  }
 
+  private Property findProperty(final String propertyName, final List<Property> properties) {
+    for (final Property property : properties) {
+      if (propertyName.equals(property.getName())) {
+        return property;
+      }
+    }
+    return null;
+  }
+  
   @Override
   public UriResourceEntitySet parseEntityId(final Edm edm, final String entityId, final String rawServiceRoot)
       throws DeserializerException {

@@ -1179,14 +1179,15 @@ public class ODataXmlSerializerTest {
             "m:metadata-etag=\"metadataETag\">\n" +
             "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
             "<a:entry>\n" +
-                "<a:id>id</a:id>\n" +
+                "<a:id>ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')</a:id>\n" +
                 "<a:title />\n" +
                 "<a:summary />\n" +
                 "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
                 "<a:author>\n" +
                     "<a:name/>\n" +
                 "</a:author>\n" +
-                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:link rel=\"edit\" " +
+                "href=\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"/>\n" +
                 "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
                   "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
                 "<a:content type=\"application/xml\">\n" +
@@ -1225,14 +1226,15 @@ public class ODataXmlSerializerTest {
             "m:metadata-etag=\"metadataETag\">\n" +
             "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
             "<a:entry>\n" +
-                "<a:id>id</a:id>\n" +
+                "<a:id>ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')</a:id>\n" +
                 "<a:title />\n" +
                 "<a:summary />\n" +
                 "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
                 "<a:author>\n" +
                     "<a:name/>\n" +
                 "</a:author>\n" +
-                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:link rel=\"edit\" " +
+                "href=\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"/>\n" +
                 "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
                   "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
                "<a:content type=\"application/xml\">\n" +
@@ -1284,14 +1286,15 @@ public class ODataXmlSerializerTest {
             "m:metadata-etag=\"metadataETag\">\n" +
             "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
             "<a:entry>\n" +
-                "<a:id>id</a:id>\n" +
+                "<a:id>ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')</a:id>\n" +
                 "<a:title />\n" +
                 "<a:summary />\n" +
                 "<a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>" +
                 "<a:author>\n" +
                     "<a:name/>\n" +
                 "</a:author>\n" +
-                "<a:link rel=\"edit\" href=\"id\"/>\n" +
+                "<a:link rel=\"edit\" " +
+                "href=\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"/>\n" +
                 "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" " +
                  "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
                 "<a:content type=\"application/xml\">\n" +

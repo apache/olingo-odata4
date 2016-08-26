@@ -1494,7 +1494,7 @@ public class DataCreator {
       try {
         entity.setId(URI.create(helper.buildCanonicalURL(entitySet, entity)));
       } catch (final SerializerException e) {
-        entity.setId(URI.create("id"));
+        entity.setId(null);
       }
     }
   }

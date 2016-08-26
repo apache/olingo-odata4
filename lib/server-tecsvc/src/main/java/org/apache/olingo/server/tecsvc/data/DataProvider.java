@@ -43,6 +43,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -95,16 +96,44 @@ public class DataProvider {
     final EntityCollection entitySet = readAll(edmEntitySet);
     return entitySet == null ? null : read(edmEntitySet.getEntityType(), entitySet, keys);
   }
-
+  
+  private Object findPropertyRefValue(Entity entity, EdmKeyPropertyRef refType) {
+    final int INDEX_ERROR_CODE = -1;
+    final String propertyPath = refType.getName();
+    String tmpPropertyName;
+    int lastIndex;
+    int index = propertyPath.indexOf('/');
+    if (index == INDEX_ERROR_CODE) {
+        index  = propertyPath.length();
+    }
+    tmpPropertyName = propertyPath.substring(0, index);
+    //get first property
+    Property prop = entity.getProperty(tmpPropertyName);
+    //get following properties
+    while (index < propertyPath.length()) {
+        lastIndex = ++index;
+        index = propertyPath.indexOf('/', index+1);
+        if (index == INDEX_ERROR_CODE) {
+            index = propertyPath.length();
+        }
+        tmpPropertyName = propertyPath.substring(lastIndex, index);
+        prop = findProperty(tmpPropertyName, prop.asComplex().getValue());
+     }
+    return prop.getValue();
+  }
+  
   public Entity read(final EdmEntityType edmEntityType, final EntityCollection entitySet,
       final List<UriParameter> keys) throws DataProviderException {
     try {
       for (final Entity entity : entitySet.getEntities()) {
         boolean found = true;
         for (final UriParameter key : keys) {
-          final EdmProperty property = (EdmProperty) edmEntityType.getProperty(key.getName());
+          EdmKeyPropertyRef refType = edmEntityType.getKeyPropertyRef(key.getName());
+          Object value =  findPropertyRefValue(entity, refType);
+          
+          final EdmProperty property = refType.getProperty();
           final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
-          final Object value = entity.getProperty(key.getName()).getValue();
+          
           if (key.getExpression() != null && !(key.getExpression() instanceof Literal)) {
             throw new DataProviderException("Expression in key value is not supported yet!",
                 HttpStatusCode.NOT_IMPLEMENTED);
