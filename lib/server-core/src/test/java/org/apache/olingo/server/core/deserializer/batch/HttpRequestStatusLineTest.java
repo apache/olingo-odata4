@@ -94,14 +94,14 @@ public class HttpRequestStatusLineTest {
   }
 
   HttpRequestStatusLine parse(final String uri) throws BatchDeserializerException {
-    Line statusline = new Line(HttpMethod.GET.toString().toUpperCase() + SPACE + uri + SPACE + HTTP_VERSION, 0);
+    Line statusline = new Line(HttpMethod.GET.name() + SPACE + uri + SPACE + HTTP_VERSION, 0);
     return new HttpRequestStatusLine(statusline, baseUri, serviceResolutionUri);
   }
 
   void parseFail(final String uri, final MessageKeys messageKey) {
     try {
       parse(uri);
-      fail("Expceted exception");
+      fail("Expected exception");
     } catch (BatchDeserializerException e) {
       assertEquals(messageKey, e.getMessageKey());
     }

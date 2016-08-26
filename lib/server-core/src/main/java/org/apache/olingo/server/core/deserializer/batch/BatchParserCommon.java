@@ -24,7 +24,6 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,35 +32,50 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 
 public class BatchParserCommon {
 
-  private static final String PATTERN_BOUNDARY =
-      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|"
-          + "\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\"";
+  // Multipart boundaries are defined in RFC 2046:
+  //     boundary      := 0*69<bchars> bcharsnospace
+  //     bchars        := bcharsnospace / " "
+  //     bcharsnospace := DIGIT / ALPHA / "'" / "(" / ")" / "+" / "_" / "," / "-" / "." / "/" / ":" / "=" / "?"
+  // The first alternative is for the case that only characters are used that don't need quoting.
+  private static final Pattern PATTERN_BOUNDARY = Pattern.compile(
+      "((?:\\w|[-.'+]){1,70})|"
+          + "\"((?:\\w|[-.'+(),/:=?]|\\s){0,69}(?:\\w|[-.'+(),/:=?]))\"");
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)\\r\\n\\s*", Pattern.DOTALL);
-  private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
+  // HTTP header fields are defined in RFC 7230:
+  //     header-field   = field-name ":" OWS field-value OWS
+  //     field-name     = token
+  //     field-value    = *( field-content / obs-fold )
+  //     field-content  = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+  //     field-vchar    = VCHAR / obs-text
+  //     obs-fold       = CRLF 1*( SP / HTAB )
+  //     token          = 1*tchar
+  //     tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+  //                      / DIGIT / ALPHA
+  // For the field-name the specification is followed strictly,
+  // but for the field-value the pattern currently accepts more than specified.
+  private static final Pattern PATTERN_HEADER_LINE = Pattern.compile("((?:\\w|[!#$%\\&'*+\\-.^`|~])+):\\s?(.*)\\s*");
 
   public static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
 
   protected static final String BOUNDARY = "boundary";
   public static final String BINARY_ENCODING = "binary";
 
-  private BatchParserCommon() { /* private ctor for helper class */}
+  private BatchParserCommon() { /* private constructor for helper class */ }
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
     final ContentType type = parseContentType(contentType, ContentType.MULTIPART_MIXED, line);
-    final Map<String, String> parameters = type.getParameters();
-    for (final Map.Entry<String, String> entries : parameters.entrySet()) {
-      if (BOUNDARY.equalsIgnoreCase(entries.getKey())) {
-        final String boundary = entries.getValue().trim();
-        if (boundary.matches(PATTERN_BOUNDARY)) {
-          return trimQuotes(boundary);
-        } else {
-          throw new BatchDeserializerException("Invalid boundary format",
-              BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, Integer.toString(line));
-        }
-      }
+    String boundary = type.getParameter(BOUNDARY);
+    if (boundary == null) {
+      throw new BatchDeserializerException("Missing boundary.",
+          BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER, Integer.toString(line));
     }
-    throw new BatchDeserializerException("Missing boundary.",
-        BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER, Integer.toString(line));
+    boundary = boundary.trim();
+    if (PATTERN_BOUNDARY.matcher(boundary).matches()) {
+      return trimQuotes(boundary);
+    } else {
+      throw new BatchDeserializerException("Invalid boundary format",
+          BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, Integer.toString(line));
+    }
   }
 
   /**
@@ -77,17 +91,16 @@ public class BatchParserCommon {
    */
   public static ContentType parseContentType(final String contentType, final ContentType expected, final int line)
       throws BatchDeserializerException {
+    if (contentType == null) {
+      throw new BatchDeserializerException("Missing content type",
+          BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE, Integer.toString(line));
+    }
     ContentType type;
     try {
       type = ContentType.create(contentType);
     } catch (final IllegalArgumentException e) {
-      if (contentType == null) {
-        throw new BatchDeserializerException("Missing content type", e,
-            BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE, Integer.toString(line));
-      } else {
-        throw new BatchDeserializerException("Invalid content type.", e,
-            BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, Integer.toString(line));
-      }
+      throw new BatchDeserializerException("Invalid content type.", e,
+          BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE, Integer.toString(line));
     }
     if (type.isCompatible(expected)) {
       return type;
