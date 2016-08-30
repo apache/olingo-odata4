@@ -69,6 +69,8 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientSingleton;
+import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -77,13 +79,16 @@ import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -129,15 +134,23 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   public void readMetadata() {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
-    setCookieHeader(request);
-
+    setCookieHeader(request);    
+    
     ODataRetrieveResponse<Edm> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     Edm edm = response.getBody();
-
     assertNotNull(edm);
+    
+    final EdmEntityContainer container = edm.getEntityContainer(
+        new FullQualifiedName("olingo.odata.test1", "Container"));
+    assertNotNull(container);
+    
+    final EdmEntitySet esAllPrim = container.getEntitySet("ESAllPrim");
+    assertNotNull(esAllPrim);
+    assertEquals("olingo.odata.test1", esAllPrim.getEntityType().getNamespace());
+    
     assertEquals(2, edm.getSchemas().size());
     assertEquals(SERVICE_NAMESPACE, edm.getSchema(SERVICE_NAMESPACE).getNamespace());
     assertEquals("Namespace1_Alias", edm.getSchema(SERVICE_NAMESPACE).getAlias());
@@ -145,6 +158,25 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals("Core", edm.getSchema("Org.OData.Core.V1").getAlias());
   }
 
+  @Test
+  public void readMetadataWithTerm() {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    assertNotNull(edm);
+    
+    final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core", "Description"));
+    assertNotNull(descriptionTerm);
+    assertEquals(descriptionTerm.getFullQualifiedName(),
+        edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")).getFullQualifiedName());  
+  }
+  
   @Test
   public void readMetadataWithAnnotations() {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
@@ -166,6 +198,9 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     EdmAnnotation annotation =
         entitySet.getAnnotation(edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")), null);
     assertNotNull(annotation);
+    
+    assertEquals("Contains entities with all primitive types",
+        annotation.getExpression().asConstant().getValueAsString());
     
     EdmActionImport actionImport = edm.getEntityContainer().getActionImport("AIRTString");
     annotations = actionImport.getAnnotations();
@@ -299,7 +334,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       assertThat(error.getMessage(), containsString("key"));
     }    
   }
-
+ 
   @Test
   public void readEntity() throws Exception {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()

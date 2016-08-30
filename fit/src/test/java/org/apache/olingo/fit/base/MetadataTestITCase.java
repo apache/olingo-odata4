@@ -24,8 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmSchema;
@@ -39,42 +37,10 @@ import org.junit.Test;
 public class MetadataTestITCase extends AbstractTestITCase {
 
   @Test
-  public void include() {
-    final Edm edm = client.getRetrieveRequestFactory().getMetadataRequest(testNorthwindRootURL).execute().getBody();
-    assertNotNull(edm);
-
-    final EdmEntityContainer container = edm.getEntityContainer(
-        new FullQualifiedName("ODataWebExperimental.Northwind.Model", "NorthwindEntities"));
-    assertNotNull(container);
-
-    final EdmEntitySet categories = container.getEntitySet("Categories");
-    assertNotNull(categories);
-    assertEquals("NorthwindModel", categories.getEntityType().getNamespace());
-  }
-
-  @Test
   public void vocabularies() {
     final Edm edm = client.getRetrieveRequestFactory().
         getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
     assertNotNull(edm);
-
-    // 1. core
-    final EdmSchema core = edm.getSchema("Org.OData.Core.V1");
-    assertNotNull(core);
-    final EdmSchema coreAlias = edm.getSchema("Core");
-    assertEquals(core, coreAlias);
-
-    final EdmTerm descriptionTerm = edm.getTerm(new FullQualifiedName("Core", "Description"));
-    assertNotNull(descriptionTerm);
-    assertEquals(descriptionTerm.getFullQualifiedName(),
-        edm.getTerm(new FullQualifiedName("Org.OData.Core.V1", "Description")).getFullQualifiedName());
-
-    final EdmAnnotation description = core.getAnnotation(descriptionTerm, null);
-    assertNotNull(description);
-    // assertEquals("Core terms needed to write vocabularies",
-    // description.getExpression().asConstant().getValue().asPrimitive().getName());
-    assertEquals("Core terms needed to write vocabularies",
-        description.getExpression().asConstant().getValueAsString());
 
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core", "IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
@@ -83,7 +49,6 @@ public class MetadataTestITCase extends AbstractTestITCase {
     assertEquals(edm.getTypeDefinition(new FullQualifiedName("Core", "Tag")), isLanguageDependent.getType());
     assertEquals(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean),
         ((EdmTypeDefinition) isLanguageDependent.getType()).getUnderlyingType());
-    assertNotNull(isLanguageDependent.getAnnotation(descriptionTerm, null));
 
     final EdmTerm permissions = edm.getTerm(new FullQualifiedName("Core", "Permissions"));
     assertNotNull(permissions);
