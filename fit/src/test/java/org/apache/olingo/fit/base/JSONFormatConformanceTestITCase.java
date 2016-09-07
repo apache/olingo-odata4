@@ -19,7 +19,6 @@
 package org.apache.olingo.fit.base;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -49,40 +48,6 @@ import org.junit.Test;
  * </a>.
  */
 public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
-
-  /**
-   * MUST either:
-   * <ol>
-   * <li>understand <tt>odata.metadata=minimal</tt> (section 3.1.1) or</li>
-   * <li>explicitly specify <tt>odata.metadata=none</tt>(section 3.1.3) or <tt>odata.metadata=full</tt> (section 3.1.2)
-   * in the request (client)</li>
-   * </ol>
-   * .
-   */
-  @Test
-  public void item1() throws EdmPrimitiveTypeException {
-    final URI uri = edmClient.newURIBuilder().
-        appendEntitySetSegment("Accounts").appendKeySegment(102).
-        appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();
-    final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
-
-    // request format (via Accept header) is set to minimal by default
-    assertEquals("application/json;odata.metadata=minimal", req.getAccept());
-
-    final ODataRetrieveResponse<ClientEntity> res = req.execute();
-
-    // response is odata.metadata=minimal
-    assertFalse(res.getContentType().contains("odata.metadata=none"));
-    assertFalse(res.getContentType().contains("odata.metadata=full"));
-
-    // response payload is understood
-    final ClientEntity entity = res.getBody();
-    assertNotNull(entity);
-    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument", entity.getTypeName().toString());
-    assertEquals(102902, entity.getProperty("PaymentInstrumentID").getPrimitiveValue().toCastValue(Integer.class), 0);
-    assertEquals("Edm.DateTimeOffset", entity.getProperty("CreatedDate").getPrimitiveValue().getTypeName());
-  }
-
   /**
    * MUST be prepared to consume a response with full metadata.
    */
