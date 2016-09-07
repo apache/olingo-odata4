@@ -70,6 +70,7 @@ import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.ODataWritableContent;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
@@ -77,6 +78,7 @@ import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
+import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 
 public class ODataXmlSerializer extends AbstractODataSerializer {
 
@@ -257,10 +259,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer, writeOnlyRef);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
+            options.getExpand(), null, 
+            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
       }
 
       writer.writeEndElement();
@@ -314,10 +317,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, writer, writeOnlyRef);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
+            options.getExpand(), null, 
+            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
       }
 
       writer.writeEndElement();
@@ -356,6 +360,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeStartDocument(DEFAULT_CHARSET, "1.0");
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
+          null,
           options == null ? null : options.getSelect(),
           options == null ? null : options.xml10InvalidCharReplacement(),
           writer, true, false);
@@ -397,17 +402,18 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
+      final AbstractEntityCollection entitySet, final ExpandOption expand, 
+      final Integer toDepth, final SelectOption select,
       final String xml10InvalidCharReplacement,final XMLStreamWriter writer, final boolean writeOnlyRef) 
           throws XMLStreamException, SerializerException {
     for (final Entity entity : entitySet) {
-      writeEntity(metadata, entityType, entity, null, expand, select, 
+      writeEntity(metadata, entityType, entity, null, expand, toDepth, select, 
           xml10InvalidCharReplacement, writer, false, writeOnlyRef);
     }
   }
 
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
-      final Entity entity, final ContextURL contextURL, final ExpandOption expand,
+      final Entity entity, final ContextURL contextURL, final ExpandOption expand, final Integer toDepth,
       final SelectOption select, final String xml10InvalidCharReplacement,
       final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef)
       throws XMLStreamException, SerializerException {
@@ -466,7 +472,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
 
     EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-    writeNavigationProperties(metadata, resolvedType, entity, expand, xml10InvalidCharReplacement, writer);
+    writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, xml10InvalidCharReplacement, writer);
 
     writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
     writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
@@ -591,36 +597,71 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   }
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
-      final EdmStructuredType type, final Linked linked, final ExpandOption expand,
+      final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
       final String xml10InvalidCharReplacement, final XMLStreamWriter writer) 
           throws SerializerException, XMLStreamException {
-    if (ExpandSelectHelper.hasExpand(expand)) {
-      final boolean expandAll = ExpandSelectHelper.isExpandAll(expand);
-      final Set<String> expanded = expandAll ? new HashSet<String>() :
-          ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
+    if ((toDepth != null && toDepth > 1) || (toDepth == null && ExpandSelectHelper.hasExpand(expand))) {
+      final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
       for (final String propertyName : type.getNavigationPropertyNames()) {
-        final EdmNavigationProperty property = type.getNavigationProperty(propertyName);
-        final Link navigationLink = getOrCreateLink(linked, propertyName);
-        if (expandAll || expanded.contains(propertyName)) {
-          final ExpandItem innerOptions = expandAll ? null :
-              ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
-          if (innerOptions != null && innerOptions.getLevelsOption() != null) {
-            throw new SerializerException("Expand option $levels is not supported.",
-                SerializerException.MessageKeys.NOT_IMPLEMENTED);
+        final ExpandItem innerOptions = ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
+        if (toDepth != null) {
+          final EdmNavigationProperty property = type.getNavigationProperty(propertyName);
+          final Link navigationLink = getOrCreateLink(linked, propertyName);
+          writeLink(writer, navigationLink, false);
+          writer.writeStartElement(METADATA, Constants.ATOM_ELEM_INLINE, NS_METADATA);
+          writeExpandedNavigationProperty(metadata, property, navigationLink,
+              expand, toDepth - 1,
+              innerOptions == null ? null : innerOptions.getSelectOption(),
+              innerOptions == null ? null : innerOptions.getCountOption(),
+              innerOptions == null ? false : innerOptions.hasCountPath(),
+              innerOptions == null ? false : innerOptions.isRef(),                                    
+              xml10InvalidCharReplacement, writer);
+          writer.writeEndElement();
+          writer.writeEndElement();
+          continue;
+        }
+        Integer levels = null;
+        if (expandAll != null || innerOptions != null) {
+          final EdmNavigationProperty property = type.getNavigationProperty(propertyName);
+          final Link navigationLink = getOrCreateLink(linked, propertyName);
+          ExpandOption childExpand = null;
+          LevelsExpandOption levelsOption = null;
+          if (innerOptions != null) {
+            levelsOption = innerOptions.getLevelsOption();
+            if (levelsOption == null) {
+              childExpand = innerOptions.getExpandOption();
+            } else {
+              ExpandOptionImpl expandOptionImpl = new ExpandOptionImpl();
+              expandOptionImpl.addExpandItem(innerOptions);
+              childExpand = expandOptionImpl;
+            }
+          } else if (expandAll != null) {
+            levels = 1;
+            levelsOption = expandAll.getLevelsOption();
+            ExpandOptionImpl expandOptionImpl = new ExpandOptionImpl();
+            expandOptionImpl.addExpandItem(expandAll);
+            childExpand = expandOptionImpl;
+          }  
+
+          if (levelsOption != null) {
+            if (levelsOption.isMax()) {
+              levels = Integer.MAX_VALUE;
+            } else {
+              levels = levelsOption.getValue();
+            }
           }
-          if (navigationLink != null) {
-            writeLink(writer, navigationLink, false);
-            writer.writeStartElement(METADATA, Constants.ATOM_ELEM_INLINE, NS_METADATA);
-            writeExpandedNavigationProperty(metadata, property, navigationLink,
-                innerOptions == null ? null : innerOptions.getExpandOption(),
-                innerOptions == null ? null : innerOptions.getSelectOption(),
-                innerOptions == null ? null : innerOptions.getCountOption(),
-                innerOptions == null ? false : innerOptions.hasCountPath(),
-                innerOptions == null ? false : innerOptions.isRef(),                                    
-                xml10InvalidCharReplacement, writer);
-            writer.writeEndElement();
-            writer.writeEndElement();
-          }
+          
+          writeLink(writer, navigationLink, false);
+          writer.writeStartElement(METADATA, Constants.ATOM_ELEM_INLINE, NS_METADATA);
+          writeExpandedNavigationProperty(metadata, property, navigationLink,
+              childExpand, levels,
+              innerOptions == null ? null : innerOptions.getSelectOption(),
+              innerOptions == null ? null : innerOptions.getCountOption(),
+              innerOptions == null ? false : innerOptions.hasCountPath(),
+              innerOptions == null ? false : innerOptions.isRef(),                                    
+              xml10InvalidCharReplacement, writer);
+          writer.writeEndElement();
+          writer.writeEndElement();
         } else {
           writeLink(writer, getOrCreateLink(linked, propertyName));
         }
@@ -676,7 +717,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeExpandedNavigationProperty(final ServiceMetadata metadata,
       final EdmNavigationProperty property, final Link navigationLink,
-      final ExpandOption innerExpand, final SelectOption innerSelect, final CountOption coutOption, 
+      final ExpandOption innerExpand, final Integer toDepth, 
+      final SelectOption innerSelect, final CountOption coutOption, 
       final boolean writeNavigationCount, final boolean writeOnlyRef,final String xml10InvalidCharReplacement,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
@@ -688,7 +730,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           if (coutOption != null && coutOption.getValue()) {
             writeCount(navigationLink.getInlineEntitySet(), writer);
           }
-          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
+          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand, toDepth,
               innerSelect, xml10InvalidCharReplacement, writer, writeOnlyRef);
         }
         writer.writeEndElement();
@@ -696,7 +738,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     } else {
       if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, innerSelect, xml10InvalidCharReplacement, writer, false, writeOnlyRef);
+            innerExpand, toDepth, innerSelect, xml10InvalidCharReplacement, writer, false, writeOnlyRef);
       }
     }
   }
