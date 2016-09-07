@@ -65,6 +65,7 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
@@ -1354,6 +1355,53 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
         + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
+        resultString);
+  }
+  
+  @Test
+  public void expandStarTwoLevels() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem expandItem = Mockito.mock(ExpandItem.class);
+    Mockito.when(expandItem.isStar()).thenReturn(true);
+    LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+    Mockito.when(levels.getValue()).thenReturn(2);
+    Mockito.when(expandItem.getLevelsOption()).thenReturn(levels);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Collections.singletonList(
+        ExpandSelectMock.mockSelectItem(innerEntitySet, "PropertyInt32")));
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(expandItem));
+    final String resultString = IOUtils.toString(serializer
+        .entity(metadata, entityType, entity,
+            EntitySerializerOptions.with()
+                .contextURL(ContextURL.with().entitySet(edmEntitySet)
+                    .selectList(helper.buildContextURLSelectList(entityType, expand, select))
+                    .suffix(Suffix.ENTITY).build())
+                .expand(expand)
+                .build()).getContent());
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+            + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
+            + "\"NavPropertyETAllPrimOne\":null,"
+            + "\"NavPropertyETAllPrimMany\":["
+            + "{\"PropertyInt16\":-32768,\"PropertyString\":\"Second Resource - negative values\","
+            + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,\"PropertyInt32\":-2147483648,"
+            + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
+            + "\"PropertyDecimal\":-34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
+            + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
+            + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\",\"PropertyTimeOfDay\":\"23:49:14\","
+            + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
+            + "{\"PropertyInt16\":0,\"PropertyString\":\"\",\"PropertyBoolean\":false,\"PropertyByte\":0,"
+            + "\"PropertySByte\":0,\"PropertyInt32\":0,\"PropertyInt64\":0,\"PropertySingle\":0.0,"
+            + "\"PropertyDouble\":0.0,\"PropertyDecimal\":0,\"PropertyBinary\":\"\","
+            + "\"PropertyDate\":\"1970-01-01\",\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
+            + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
+            + "\"PropertyTimeOfDay\":\"00:01:01\",\"NavPropertyETTwoPrimOne\":null,"
+            + "\"NavPropertyETTwoPrimMany\":["
+            + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
+            + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
+            + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
         resultString);
   }
 
