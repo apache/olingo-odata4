@@ -39,11 +39,11 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
-public class BoundOpearionITCase extends AbstractParamTecSvcITCase {
+public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   private static final ContentType CONTENT_TYPE_JSON_FULL_METADATA =
       ContentType.create(ContentType.JSON, ContentType.PARAMETER_ODATA_METADATA, 
           ContentType.VALUE_ODATA_METADATA_FULL);
-
+  
   @Parameterized.Parameters(name = "{0}")
   public static List<ContentType[]> parameters() {
     ContentType[] a = new ContentType[1];
@@ -51,7 +51,7 @@ public class BoundOpearionITCase extends AbstractParamTecSvcITCase {
     ArrayList<ContentType[]> type = new ArrayList<ContentType[]>();
     type.add(a);
     return type;
-  }  
+  }
   
   @Test
   public void readEntitySetOperation() {
@@ -138,5 +138,26 @@ public class BoundOpearionITCase extends AbstractParamTecSvcITCase {
     assertEquals("olingo.odata.test1.BFCColCTAllPrimRTESAllPrim", operations.get(0).getTitle());
     assertEquals("PropertyComp/olingo.odata.test1.BFCColCTAllPrimRTESAllPrim", 
         operations.get(0).getTarget().toASCIIString());                  
+  }
+  
+  @Test
+  public void invokeFunction(){
+      ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESAllPrim").build());    
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json; odata.metadata=full", response.getContentType());
+
+    final ClientEntitySet entitySet = response.getBody();
+    assertNotNull(entitySet);
+
+    entitySet.getOperation(SERVICE_URI);
+    
+    
   }
 }
