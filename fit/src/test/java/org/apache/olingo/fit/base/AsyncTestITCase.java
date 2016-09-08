@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -44,24 +42,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
-
-  @Test
-  public void clientAsync() throws InterruptedException, ExecutionException {
-    final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
-        appendEntitySetSegment("Customers");
-    final Future<ODataRetrieveResponse<ClientEntitySet>> futureRes =
-        client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
-    assertNotNull(futureRes);
-
-    while (!futureRes.isDone()) {
-      Thread.sleep(1000L);
-    }
-
-    final ODataRetrieveResponse<ClientEntitySet> res = futureRes.get();
-    assertNotNull(res);
-    assertEquals(200, res.getStatusCode());
-    assertFalse(res.getBody().getEntities().isEmpty());
-  }
 
   private void withInlineEntry(final ContentType contentType) {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).

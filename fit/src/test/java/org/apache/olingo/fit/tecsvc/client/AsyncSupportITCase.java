@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -45,12 +45,17 @@ import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
@@ -60,6 +65,21 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
   private static final String TEC_ASYNC_SLEEP = "tec.sleep";  // see TechnicalAsyncService
   private static final int SLEEP_TIMEOUT_IN_MS = 100;
 
+  @Test
+  public void clientAsync() throws InterruptedException, ExecutionException, TimeoutException {
+    ODataClient client = getClient();
+    final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_ALL_PRIM);
+    final Future<ODataRetrieveResponse<ClientEntitySet>> futureRes =
+        client.getRetrieveRequestFactory().getEntitySetRequest(uriBuilder.build()).asyncExecute();
+    assertNotNull(futureRes);
+    //wait a maximum of 10 seconds, otherwise throw TimeoutException
+    final ODataRetrieveResponse<ClientEntitySet> res = futureRes.get(10, TimeUnit.SECONDS);
+    assertNotNull(res);
+    assertEquals(200, res.getStatusCode());
+    assertFalse(res.getBody().getEntities().isEmpty());
+  }
+  
   @Test
   public void readEntity() throws Exception {
     ODataClient client = getClient();
